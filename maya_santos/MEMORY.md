@@ -1,5 +1,13 @@
 # Maya Santos — Memory
 
+## Cycle 21 Lessons — BYTE v003 + CLASSROOM POSE v002
+- **Byte Expression Sheet v003 COMPLETE.** 3×3 grid (9 panels). STORM/CRACKED added as panel 9. Generator: `LTG_TOOL_byte_expression_sheet_v003.py`. Output: `LTG_CHAR_byte_expression_sheet_v003.png` (784×1074px).
+- **7×7 dead-pixel glyph (Section 9B):** Upper-right dead zone, lower-left alive. Color map: 0=DEAD(void black), 1=ALIVE_NORMAL(dim cyan), 2=ALIVE_BRIGHT(white-cyan corona), 3=DIM(barely alive). Hot Magenta crack from (col4.5, row0) to (col2, row6). Eye bezel bg: Deep Cyan-Gray #1A3A40 (26,58,64).
+- **Storm variant spec locked:** body_tilt=+18 (vs RESIGNED +14), cracked_storm right eye (50% aperture, dim iris, deeper sag), flat storm mouth (shorter than RESIGNED), bent antenna (kinked midpoint, Hot Mag tip spark), circuit trace BG + UV flash bands.
+- **Cracked eye frame in storm:** irregular polygon (top-right corner chip), 2px border. Hot Mag crack line overlaid at 2px.
+- **Classroom Pose v002:** Line weight fix applied. Brows `width=5→2`, eye lid arcs `width=4→2`, hair overlay `width=8/7→3`. Expression reads clearly — no other issues. Output: `LTG_CHAR_luma_classroom_pose_v002.png`. Generator updated in place.
+- **Line weight rule (1x render):** silhouette=3px, interior=2px, detail=1px. Brows and eyelid arcs are INTERIOR weight, not silhouette.
+
 ## Cycle 20 Lessons — MIRI TURNAROUND COMPLETE
 - **Miri Turnaround v001 COMPLETE.** 1600×800 4-view PNG generated. FRONT/3/4/SIDE/BACK. Generator: `LTG_TOOL_miri_turnaround_v001.py`. Output: `LTG_CHAR_miri_turnaround_v001.png`. Pitch package gap filled.
 - **Turnaround render formula:** Draw at 2x (SCALE=2), base_y=`int(BODY_H * SCALE * 0.96)`, scale back with LANCZOS. Character H in draw fns = `int(hu() * SCALE)` where `hu() = CHAR_DRAW_H/3.2` (1 HU at 1x). CHAR_DRAW_H = `int(BODY_H * 0.88)`.

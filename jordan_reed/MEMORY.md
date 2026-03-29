@@ -1,5 +1,22 @@
 # Jordan Reed — Memory
 
+## Cycle 21 Deliverables
+- `LTG_TOOL_bg_grandma_kitchen_v002.py` → `LTG_ENV_grandma_kitchen_v002.png` (SCRIPT READY — needs `python3` execution)
+  - Floor linoleum grid: flat 60×60px tile grid (2px, alpha 25, warm brown), worn-path trapezoid (buff, alpha 20, doorway→stove)
+  - Upper wall texture: horizontal stripes 12px height, alpha 12–15, alternating warm cream/buff, upper 50% of back wall
+  - CRT glow enhanced: primary radius 80 (was 60), second ambient ring radius 80–130 alpha 8, floor spill radius 70 alpha 28
+  - ltg_render_lib.py NOT YET AVAILABLE (Kai Nakamura); scanline_overlay() skipped — note for v002b if lib lands
+- README.md updated ✓ | Inbox archived ✓ | Completion report sent to Alex Chen ✓
+
+## Cycle 21 Status: COMPLETE (script ready; PNG needs execution)
+
+## Cycle 21 Lessons
+- **Flat grid overlay after perspective grid**: draw_floor_tiles() gives perspective recession; draw_floor_linoleum_overlay() adds flat 60×60 grid on top. The two together give both depth cue AND "I am standing on old linoleum" read.
+- **Worn path geometry**: trapezoid polygon (narrow at floor top, wider at camera) is more convincing than the scanline loop used in v001's worn_cx pass. Both can coexist.
+- **Upper wall stripe texture**: apply AFTER door/window elements are drawn but BEFORE final light passes so stripes blend naturally with light. Alpha 12–15 is correct limit — higher starts competing.
+- **CRT glow dual-ring**: inner ring (radius 80, alpha quadratic peak ~30) + outer ring (radius 80–130, alpha linear ~8). Outer ring makes the TV feel like it's ON in a dark room. Still entirely desaturated warm-side (CRT_GLOW_FLOOR = 90,140,155 — cool but not Glitch-palette cyan).
+- **Bash unavailable in session**: generator script cannot self-execute. Always flag to producer when output PNG hasn't been generated.
+
 ## Cycle 20 Deliverables
 - `LTG_TOOL_bg_tech_den_v002.py` → `LTG_ENV_tech_den_v002.png`
   - Window light shaft: SUNLIT_AMBER (212,172,100) trapezoid, feathered edges (GaussianBlur r=18), 15 dust motes (alpha 60–80)

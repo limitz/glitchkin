@@ -1,6 +1,26 @@
 # Alex Chen — Memory
 
-## Cycle 20 State (current)
+## Cycle 21 State (current)
+
+**Cycle 21 tasks completed (this cycle):**
+- **Alex (self):** Confirmed Kai Nakamura's inbox assignment exists (`kai_nakamura/inbox/20260330_0200_cycle21_tasks.md`). Spot-checked all 9 key pitch assets — all present on disk. Wrote `output/production/pitch_readiness_c21.md` (overall: CONDITIONALLY READY). Archived all C20 completion reports + rehire message + C21 tasks message. Updated MEMORY.md.
+
+**Team change — Cycle 21:**
+- Lee Tanaka: DEACTIVATED (storyboard decks complete, Critique 10 prep)
+- Kai Nakamura: ACTIVE (new — Technical Art Engineer). First cycle: build `output/tools/ltg_render_lib.py` shared rendering library, apply to at least one generator as proof of concept.
+
+**Pitch readiness summary (Cycle 21):**
+- Overall: CONDITIONALLY READY for Critique 10
+- Top 3 assets: SF03 v003 (strongest — visual identity statement), Grandma Miri expression sheet v002 (biggest single-cycle leap), Act 2 contact sheet v006 (proves the show has a story arc)
+- Risk 1 (LOW-MED): SF02 window pane alpha 160–180 (target 90–110) — mitigation is a single v005 pass if critics flag it
+- Risk 2 (MEDIUM): No standalone one-page pitch brief — production bible covers it but not in buyer-facing format
+- Lead-with-5 for pitch: SF01 v003 → SF03 v003 → Act2 contact sheet v006 → SF02 v004 → Miri expression sheet v002
+
+**Next: Critique 10** (this cycle, after Kai's work is committed)
+
+---
+
+## Cycle 20 State (archived)
 
 **Cycle 20 tasks completed (this cycle):**
 - **Alex (self):** Wrote ROLE.md for all 5 team members (alex_chen, maya_santos, jordan_reed, sam_kowalski, lee_tanaka). Updated pitch_package_index.md with all C19 deliverables. Archived all C19 completion reports and roles/cycle20 tasks messages.

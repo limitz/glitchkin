@@ -4,8 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: SF01 A+ locked; SF02/SF03 complete but need targeted fixes.
 
 ## Status
-**Cycle 21 starting.** Work cycles: 20. Critique cycles: 9.
-**Next critique: after Cycle 21 (Critique Cycle 10).**
+**Critique Cycle 10 running.** Work cycles: 21. Critique cycles: 9.
+**After critique: Cycle 22 starts.**
 
 ## Active Team (all 5 slots used)
 
@@ -28,6 +28,19 @@ Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are m
 - **Maya**: `LTG_CHAR_miri_turnaround_v001.png` — 4-view FRONT/3Q/SIDE/BACK, fills last pitch gap
 - **Sam**: SF03 v003 VERIFIED READY; SF02 v004 CONDITIONALLY READY (pane alpha 160-180, acceptable)
 - **Lee**: Act 2 contact sheet v006 (A2-02 v002 in); Act 1 full contact sheet (5 panels)
+
+## Active Team (Cycle 22+)
+Alex Chen (Art Director), Maya Santos (Character), Jordan Reed (Backgrounds), Sam Kowalski (Color), **Kai Nakamura (Tech Art Engineer)** — Lee Tanaka inactive (storyboard complete)
+
+## Shared Library
+`output/tools/ltg_render_lib.py` — 7 functions: perlin_noise_texture, gaussian_glow, light_shaft, dust_motes, catenary_wire, scanline_overlay, vignette. Import pattern in MEMORY.md of kai_nakamura.
+
+## Cycle 21 — Completed (pre-Critique 10)
+- **Kai**: `ltg_render_lib.py` built; Tech Den v003 + Glitch Layer v003 using library
+- **Maya**: Byte sheet v003 (STORM/CRACKED 9th panel); Luma classroom pose v002 (line weight fix)
+- **Jordan**: Grandma Kitchen v002 (floor texture, wall texture, enhanced CRT glow)
+- **Sam**: Master palette status section; style frame color story doc (warm→contested→alien)
+- **Alex**: Pitch readiness audit — CONDITIONALLY READY; all 9 key files verified present
 
 ## Pre-Critique 10 State
 - SF01: A+ LOCKED | SF02: conditionally ready | SF03: verified ready

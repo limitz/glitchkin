@@ -87,8 +87,8 @@ def _draw_luma_head(draw, cx, cy):
 
 def _draw_hair_overlay(draw, cx, cy):
     """Foreground hair strands — same as expression sheet."""
-    draw.arc([cx-60, cy-195, cx-10, cy-140], start=30,  end=200, fill=HAIR, width=8)
-    draw.arc([cx-20, cy-190, cx+40, cy-130], start=10,  end=190, fill=HAIR, width=7)
+    draw.arc([cx-60, cy-195, cx-10, cy-140], start=30,  end=200, fill=HAIR, width=3)
+    draw.arc([cx-20, cy-190, cx+40, cy-130], start=10,  end=190, fill=HAIR, width=3)
 
 
 def _draw_nose(draw, cx, cy):
@@ -126,7 +126,7 @@ def _draw_at_rest_curiosity_face(draw, cx, cy):
     lex_pup = lex - 3
     draw.ellipse([lex_pup-9, ley-7, lex_pup+9, ley+9], fill=EYE_PUP)
     draw.ellipse([lex_pup+6, ley-9, lex_pup+13, ley-2], fill=(255, 252, 245))
-    draw.arc([lex-ew, ley-leh, lex+ew, ley+leh], start=200, end=340, fill=LINE, width=4)
+    draw.arc([lex-ew, ley-leh, lex+ew, ley+leh], start=200, end=340, fill=LINE, width=2)
 
     # Right eye (slightly less open — reh=22)
     draw.ellipse([rex-ew, rey-reh, rex+ew, rey+reh], fill=EYE_W, outline=LINE, width=2)
@@ -136,13 +136,13 @@ def _draw_at_rest_curiosity_face(draw, cx, cy):
     rex_pup = rex - 3
     draw.ellipse([rex_pup-9, rey-7, rex_pup+9, rey+9], fill=EYE_PUP)
     draw.ellipse([rex_pup+6, rey-9, rex_pup+13, rey-2], fill=(255, 252, 245))
-    draw.arc([rex-ew, rey-reh, rex+ew, rey+reh], start=200, end=340, fill=LINE, width=4)
+    draw.arc([rex-ew, rey-reh, rex+ew, rey+reh], start=200, end=340, fill=LINE, width=2)
 
     # Brows — softly raised (curiosity, not worry) — nearly horizontal with slight arch
     l_brow = [(lex-26, ley-32), (lex+0, ley-38), (lex+22, ley-30)]
-    draw.line(l_brow, fill=HAIR, width=5)
+    draw.line(l_brow, fill=HAIR, width=2)
     r_brow = [(rex-22, rey-30), (rex+0, rey-38), (rex+26, rey-32)]
-    draw.line(r_brow, fill=HAIR, width=5)
+    draw.line(r_brow, fill=HAIR, width=2)
 
     _draw_nose(draw, cx, cy)
 
@@ -399,7 +399,7 @@ def draw_annotation_panel(draw, x, y, w, h, font, font_sm):
     cur_x  = x + 14
 
     draw.text((cur_x, cur_y - 2),
-              "LUMA — Classroom Pose  v001",
+              "LUMA — Classroom Pose  v002",
               fill=title_color, font=font)
     cur_y += 28
     draw.line([(cur_x, cur_y), (x + w - 14, cur_y)], fill=(180, 168, 150), width=1)
@@ -423,7 +423,7 @@ def draw_annotation_panel(draw, x, y, w, h, font, font_sm):
     draw.line([(cur_x, y + h - 30), (x + w - 14, y + h - 30)],
               fill=(180, 168, 150), width=1)
     draw.text((cur_x, y + h - 24),
-              "Cycle 14 — Maya Santos",
+              "Cycle 21 — Maya Santos (v002: line weight fix)",
               fill=detail_color, font=font_sm)
 
 
@@ -444,7 +444,7 @@ def generate_luma_classroom_pose(output_path):
 
     # Sheet title
     draw.text((20, 12),
-              "LUMA — Classroom Pose  |  Beat A1-04: Near-Miss  |  Cycle 14",
+              "LUMA — Classroom Pose  |  Beat A1-04: Near-Miss  |  v002 Cycle 21",
               fill=(80, 56, 32), font=font_title)
 
     # Character area background (slightly warmer)
@@ -475,5 +475,5 @@ if __name__ == '__main__':
     out_dir = "/home/wipkat/team/output/characters/main"
     os.makedirs(out_dir, exist_ok=True)
     generate_luma_classroom_pose(
-        os.path.join(out_dir, "LTG_CHAR_luma_classroom_pose_v001.png")
+        os.path.join(out_dir, "LTG_CHAR_luma_classroom_pose_v002.png")
     )

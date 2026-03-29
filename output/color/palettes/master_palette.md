@@ -1372,4 +1372,86 @@ Lighting key: Overhead fluorescent — cool, flat, even, slightly greenish. No d
 *Cycle 13 revision (Sam Kowalski — 2026-03-30): C10-1 RESOLVED — cold overlay boundary arithmetic for SF01 documented in Section 1B (prior comment was wrong: alpha at 80px boundary is 30/11.8%, not near-zero). DRW-16 RESOLVED — painter warning for shoulder-under-Data-Stream-Blue-waterfall expanded and cross-referenced to luma_color_model.md. DRW-07 saturation corrected: #C07A70 → #C8695A (RGB 200,105,90), HSL saturation raised from ~39% to ~50% (Naomi C12-3). ENV-06 corrected: #9A8C8A (warm-dominant grey, wrong) → #96ACA2 (G>R, B>R, correctly cyan-lit) per Jordan Reed / Naomi C12-1. ENV-03 warm spill canonical alpha documented: 40/255 (~16%) — aligned LTG_TOOL_colorkey_glitchstorm_gen_v001.py from prior 150 to 40 (Naomi C12-2). CHAR-L-09 warm pixel activation: pending Alex Chen confirmation (message sent 2026-03-30 14:00).*
 *Cycle 14 revision (Sam Kowalski — 2026-03-30): CHAR-L-11 added — Luma Hoodie Pixel (Warm-Lit Activation), hex #E8C95A (Soft Gold, alias RW-02). Registered per Alex Chen Art Director confirmation. Constraints: lamp-lit hoodie pixel accents only, warm-dominant scenes only; neutral/cold scenes use GL-01 (#00D4E8). CHAR-L-09 warm pixel activation thread CLOSED — correctly occupied by shoe canvas; CHAR-L-11 is the warm pixel entry.*
 *Cycle 15 revision (Sam Kowalski — 2026-03-29): DRW-18 added — Luma Hair Base (Glitch Layer), hex #1A0F0A (26,15,10); derived from Deep Cocoa #3B2820 under UV Purple ambient. ENV-13 added — Far Structure Edge (Void-Scale), hex #211136 (33,17,54); derived as 20% UV Purple over Void Black; used for SF03 megastructure silhouettes at far-void distance. Source: SF03 Other Side spec color audit (sf03_other_side_color_notes.md).*
+*Cycle 21 revision (Sam Kowalski — 2026-03-30): Palette Status section added (final Critique 10 audit).*
 *Review cycle: Update after each critic feedback pass.*
+
+---
+
+## PALETTE STATUS — Cycle 21 Audit
+**Author:** Sam Kowalski — 2026-03-30 (pre-Critique 10)
+
+---
+
+### LOCKED (Canonical — must not change without Art Director sign-off)
+
+These are the show's foundational colors. Every generator, color key, and painted asset references them. Any change would require a full pipeline re-audit.
+
+| Code | Name | Hex | Section |
+|---|---|---|---|
+| GL-01 | Electric Cyan | `#00F0FF` | 2 |
+| GL-01a | Deep Cyan | `#00A8B4` | 2 |
+| GL-01b | Byte Teal | `#00D4E8` | 2 |
+| GL-02 | Hot Magenta | `#FF2D6B` | 2 |
+| GL-04 | UV Purple | `#7B2FBE` | 2 |
+| GL-07 | Corrupted Amber | `#FF8C00` | 2 |
+| GL-08 | Void Black | `#0A0A14` | 2 |
+| RW-01 | Warm Cream | `#FAF0DC` | 1 |
+| RW-02 | Soft Gold | `#E8C95A` | 1 |
+| RW-04 | Terracotta | `#C75B39` | 1 |
+| RW-10 | Warm Tan (skin base) | `#C4A882` | 1 |
+| RW-11 | Deep Cocoa (line) | `#3B2820` | 1 |
+| CHAR-L (hoodie) | Luma Hoodie Orange | `#E8703A` | 3 |
+| CHAR-L (hoodie shadow) | Luma Hoodie Shadow | `#B84A20` | 3 |
+| CHAR-L-08 | Hoodie Underside (Ambient) | `#B36250` | 5 |
+| All PROP-01 through PROP-07 | Couch/cable prop system | various | 6 |
+| ENV-06 | Terracotta under Cyan key | `#96ACA2` | 1C |
+| DRW-07 | Storm-Modified Hoodie | `#C8695A` | 1B |
+
+**Locking criteria:** Has appeared in two or more rendered generators, has passed at least one Critique cycle without challenge to the value, and has no outstanding correction note.
+
+---
+
+### PROVISIONAL (May be adjusted — carries outstanding note or single-script use)
+
+| Code | Name | Hex | Reason for Provisional Status |
+|---|---|---|---|
+| CHAR-L-11 | Hoodie Pixel (Warm-Lit) | `#E8C95A` | Alias of RW-02; production pixel-grid render not yet verified in OpenToonz; Pillow script uses gradient approximation only |
+| DRW-13b | Cool Skin Highlight (Glitch Layer) | `#8A6A7A` | Added Cycle 2; no rendering in any generator to date — derived spec only |
+| RW-NSM | Moon Ambient | `#C8BFD8` | No rendering yet; referenced in spec only |
+| TD-10/TD-11 | Monitor Screen / Glow | `#C8D4E0` / `#B8C8D4` | Close-but-not-identical variants appear in LTG_TOOL_bg_tech_den_v002.py (MON_GLOW_BRIGHT 200,218,240 and MON_GLOW_MID 180,200,210). Needs alignment pass. |
+| CHAR-M-04 | Miri Permanent Blush | `#D4956B` | Opacity-feel spec (25%) in grandma_miri_color_model.md not yet translated to a flat alpha render constant |
+| CHAR-C-01 | Cosmo Skin Base | `#D9C09A` | In character spec; no rendered SF or generator has used this value directly yet |
+| SH-01 through SH-12 | School Hallway palette | various | Documented in Section 8.3; no rendered generator exists for hallway environment yet |
+
+---
+
+### NAMED GAPS (Missing documentation — action required)
+
+1. **`UV_PURPLE_MID (42,26,64)` and `UV_PURPLE_DARK (43,32,80)` in LTG_TOOL_style_frame_03_other_side_v003.py** — These are construction values for the SF03 void sky gradient, sitting between GL-08 Void Black and GL-04a Deep Digital Void. They are not registered anywhere in the master palette. **Disposition:** These are legitimate atmospheric construction gradients. They should be documented as GL-04c (UV Purple Mid-Dark, #2A1A40 approx.) and GL-04d (UV Purple Near-Void, #2B2050 approx.) — or mapped to the existing ENV-11/ENV-12 entries if those match. Cross-check against ENV-11 `#2A1A40` (42,26,64 ≈ match) and ENV-12 `#2B2050` (43,32,80 ≈ match). **Likely already covered by ENV-11 and ENV-12; Jordan Reed to confirm and add cross-reference comment to the script.**
+
+2. **`CIRCUIT_TRACE_DIM (0,192,204)` in SF03 v003** — A dim circuit-trace color between GL-01a Deep Cyan and GL-01 Electric Cyan. Not registered. **Disposition:** Scene-specific construction value acceptable without registration if commented in the script (already is). Low priority.
+
+3. **`JEANS_BASE (38,61,90)` in SF03 v003** — Darker than CHAR-L-05 `#3A5A8C` (58,90,140). Significant departure (R −20, G −29, B −50). **Disposition:** The jeans read darker in Glitch Layer ambient, which is plausible. Should be registered as CHAR-L-05a (Luma Jeans — Glitch Layer ambient, approx. `#263D5A`) or confirmed as the existing jeans shadow CHAR-L-05 shadow entry `#263D5A`. Cross-check and add a comment to the script.
+
+4. **`LUMA_SHOE (220,215,200)` in SF03 v003** — Slightly lighter/cooler than CHAR-L-09 Warm Cream `#FAF0DC` (250,240,220). Under UV ambient the shoe canvas shifts slightly. Not registered. **Disposition:** Low priority; construction value. Add inline comment in script citing CHAR-L-09 parent and UV ambient modification.
+
+5. **`LTG_TOOL_bg_tech_den_v002.py` — Multiple new construction values** — WALL_WARM, SUNLIT_AMBER (note: different from master palette RW-03 `#D4923A`), CART_YELLOW/RED/GREY/BLUE, component colors, bedding colors. These are scene-specific prop construction values. **Disposition:** Section 8 covers the canonical Tech Den palette (TD-01 through TD-13). The bg_tech_den generator has additional scene-dressing props that are acceptable as construction values provided the canonical surfaces (walls, floor, CRT) match the Section 8 entries. CRT_CASING and CRT_SHADOW match exactly; wall/floor tones are close but the bg generator uses slightly different values (WALL_WARM 240,228,200 vs TD-01 232,216,184). Jordan Reed should add a comment in the generator noting the variance and citing TD-01.
+
+---
+
+### GL NUMBERING — COMPLETENESS CHECK
+
+The GL (Glitch Layer) palette numbering is **complete and unbroken**: GL-01, GL-01a, GL-01b, GL-02, GL-02a, GL-03, GL-03a, GL-04, GL-04a, GL-04b, GL-05, GL-05a, GL-06, GL-06a, GL-06b, GL-07, GL-07a, GL-08, GL-08a. No numbered gaps. All have documented shadow companions per the Section 2 table. The depth-tier construction values are documented separately and correctly attributed.
+
+---
+
+### ACT 2 ENVIRONMENTS — COMPLETENESS CHECK
+
+Section 8 is complete as of Cycle 18:
+- Grandma Miri character colors: CHAR-M-01 through CHAR-M-11 (11 entries) — COMPLETE
+- Tech Den environment: TD-01 through TD-13 (13 entries) — COMPLETE
+- School Hallway: SH-01 through SH-12 (12 entries) — COMPLETE
+
+Outstanding from Section 8: School Hallway has no rendered generator yet. This is an Act 2 asset — acceptable at this stage of production. Hallway generator is a future-cycle deliverable.
+
+---
