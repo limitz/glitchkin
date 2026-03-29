@@ -56,6 +56,7 @@ Keep a main MEMORY.md in the root of this project and update it when needed. Alw
 * Critics must always ask themselves: what needs to be improved to make the work even better.
 * Critics must only accept the best of the best!
 * **Critique responses must be compact.** Use a structured format: score (0–100), then a bullet list of issues (max 2 lines each), then a single "Bottom line" sentence. No lengthy prose. Total response per asset: ≤ 15 lines.
+* **QA tools are available** in `output/tools/` — use them instead of visual inspection where possible. Read `output/tools/README.md` for the full list before starting your critique.
 
 ## Ideabox
 * Every team member must submit **at least 1 idea per cycle** to `/home/wipkat/team/ideabox/`. See `ideabox/README.md` for format.
