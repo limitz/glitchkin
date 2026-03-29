@@ -30,8 +30,6 @@ Rules:
   - Never overwrite outputs — versioned v004
   - All procedural elements use seeded RNG
 
-# TODO: update import to LTG_TOOL_render_lib_v001 after Kai's rename
-
 Output: /home/wipkat/team/output/backgrounds/environments/LTG_ENV_tech_den_v004.png
 """
 
@@ -42,9 +40,8 @@ import sys
 from PIL import Image, ImageDraw, ImageFilter
 
 # Import shared rendering library (same directory)
-# TODO: update import to LTG_TOOL_render_lib_v001 after Kai's rename
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from ltg_render_lib import (  # noqa: E402
+from LTG_TOOL_render_lib_v001 import (  # noqa: E402
     light_shaft, dust_motes, gaussian_glow, vignette
 )
 

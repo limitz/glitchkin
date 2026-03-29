@@ -24,7 +24,7 @@ Technical Art Engineer for "Luma & the Glitchkin." Joined Cycle 21. Mission: upg
 
 ## LTG_TOOL_render_lib_v001.py — API Summary (Canonical name as of Cycle 22)
 Canonical file: `output/tools/LTG_TOOL_render_lib_v001.py` — __version__ = "1.0.0"
-Old name `ltg_render_lib.py` is a deprecated wrapper (removed Cycle 23).
+Old name `ltg_render_lib.py` was a deprecated wrapper — DELETED Cycle 23.
 Functions:
 - `perlin_noise_texture(width, height, scale, seed, octaves, alpha)` → RGBA Image
 - `gaussian_glow(img, center, radius, color, max_alpha, steps)` → img (RGBA, in-place); alpha floored at 1
@@ -54,6 +54,14 @@ from LTG_TOOL_render_lib_v001 import light_shaft, dust_motes, gaussian_glow, vig
 - Renamed CHAR_→TOOL_: luma v002/v003/v004, byte v004, cosmo v004 expression sheet generators
 - bg_glitch_layer_encounter.py misplaced file resolved: LTG_TOOL_ version already in tools/; README updated
 - Notified Jordan Reed of library rename (backward compat wrapper in place)
+
+## Cycle 23 — COMPLETE
+- DELETED `output/tools/ltg_render_lib.py` (deprecated wrapper — Cycle 23 as scheduled)
+- Updated all consumer scripts to import from `LTG_TOOL_render_lib_v001` directly:
+  - `LTG_TOOL_bg_tech_den_v003.py`, `LTG_TOOL_bg_tech_den_v004.py`, `LTG_TOOL_bg_glitchlayer_frame_v003.py`, `output/backgrounds/environments/LTG_ENV_tech_den_v004.py`
+- Updated `output/tools/README.md`: removed deprecated row, fixed v004 dep entry, updated to Cycle 23
+- Sent pipeline readiness message to Rin Yamamoto — canonical import path confirmed, perlin grain tips, offered edge_wobble/chromatic_blur/paper_texture if needed
+- Rin's `LTG_TOOL_stylize_handdrawn_v001.py` not yet delivered — review pending next interaction
 
 ## Lessons Learned (Cycle 21-22)
 - gaussian_glow() takes img directly (not a draw handle) — most natural for alpha_composite pattern

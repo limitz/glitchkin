@@ -2,8 +2,8 @@
 ## "Luma & the Glitchkin" — Complete Asset Inventory
 
 **Prepared by:** Jordan Reed, Background & Environment Artist / Updated by Alex Chen, Art Director
-**Date:** 2026-03-29 / Updated 2026-03-30 (Cycle 12) / Updated 2026-03-30 (Cycles 13–14–15) / Updated 2026-03-29 (Cycles 16–17–18) / Updated 2026-03-29 (Cycle 19) / Updated 2026-03-29 (Cycles 20–21–22)
-**Cycle:** 22
+**Date:** 2026-03-29 / Updated 2026-03-30 (Cycle 12) / Updated 2026-03-30 (Cycles 13–14–15) / Updated 2026-03-29 (Cycles 16–17–18) / Updated 2026-03-29 (Cycle 19) / Updated 2026-03-29 (Cycles 20–21–22) / Updated 2026-03-29 (Cycle 23)
+**Cycle:** 23
 **Purpose:** Single-document navigator for all pitch-ready assets. Use this to locate, assess, and present any component of the package. Quality grades are drawn from critic records where available.
 
 ---
@@ -112,7 +112,8 @@
 | Style Frame 01 — spec doc | `/home/wipkat/team/output/color/style_frames/style_frame_01_discovery.md` | Written spec: composition, lighting, color zones | Reference | None |
 | Style Frame 02 — BG render | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v001.png` | Compositing-ready BG: night sky, UV storm masses, main crack, town silhouette, street, characters (Luma+Cosmo+Byte), storefront, 4° Dutch angle | Delivered Cycle 12 (Jordan Reed) | None |
 | Style Frame 02 — v002 composited | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v002.png` | Full character composite (Cycle 13 — Alex Chen). Byte LEFT (~28%), Luma CENTER (~45%), Cosmo RIGHT (~62%). Byte = VOID_BLACK storm variant. CORRUPT_AMBER outlines. TERRACOTTA_CYAN_LIT color fix applied. | Superseded by v004 | Use v004 |
-| Style Frame 02 — v004 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v004.png` | Real shattered storefront window: structural frame with 6 panes (3 missing, 3 dirty glass), crack lines radiating from 2 impact points, glass shard debris + rubble scatter, HOT_MAGENTA highlights on frame edges. Window glow geometry: per-window downward trapezoid cone (200,160,80) at alpha 90–110 on ground below — domestic warmth vs cold storm sky. All Cycle 16 carries retained: cold confetti, Dutch angle, Byte outline, storm rims. (Cycle 19 — Jordan Reed) | Accepted (Cycle 19 — new) | None — PITCH READY |
+| Style Frame 02 — v004 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v004.png` | Real shattered storefront window: structural frame with 6 panes (3 missing, 3 dirty glass), crack lines radiating from 2 impact points, glass shard debris + rubble scatter, HOT_MAGENTA highlights on frame edges. Window glow geometry: per-window downward trapezoid cone (200,160,80) at alpha 90–110 on ground below — domestic warmth vs cold storm sky. All Cycle 16 carries retained: cold confetti, Dutch angle, Byte outline, storm rims. (Cycle 19 — Jordan Reed) | Superseded by v005 | Use v005 |
+| Style Frame 02 — v005 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v005.png` | Window pane alpha corrected: SOFT_GOLD 115, WARM_CREAM 110 (within Victoria/Naomi consensus 110–120). CORRUPT_AMBER corrected to canonical GL-07 #FF8C00 (was #C87A20 — wrong for 4 versions). Color story "load-bearing warm-cold complement contrast" now matches rendered output. (Cycle 22 — Sam Kowalski) | Accepted (Cycle 22) | None — PITCH READY |
 | Style Frame 02 — composition | `/home/wipkat/team/output/color/style_frames/compositions/frame02_glitch_storm_composition.png` | Composition layout card for Frame 02 (Glitch Storm) | Reference | BG delivered Cycle 12 |
 | Style Frame 02 — spec doc | `/home/wipkat/team/output/color/style_frames/style_frame_02_glitch_storm.md` | Written spec: composition, sky color architecture, confetti rules, Byte visibility fix | Approved for illustration (Sam Kowalski Cycle 2) | BG delivered — compositing can proceed |
 | Style Frame 03 — composition | `/home/wipkat/team/output/color/style_frames/compositions/frame03_other_side_composition.png` | Composition layout card for Frame 03 (Other Side) | Reference | None |
@@ -234,7 +235,7 @@
 | Character design sheets (all 4) | COMPLETE | Byte v3.1 header inconsistency: minor 1-line fix |
 | Character turnarounds (all 4) | COMPLETE | Delivered Cycle 10 |
 | Color model sheets | COMPLETE | All 4 characters |
-| Style frames (3 frames) | COMPLETE | SF01 v003 LOCKED A+ (Cycle 13); SF02 v004 (Cycle 19 — storefront + window glow); SF03 v003 (Cycle 19 — Byte body GL-01b fix) — all 3 pitch-ready |
+| Style frames (3 frames) | COMPLETE | SF01 v003 LOCKED A+ (Cycle 13); SF02 v005 (Cycle 22 — window pane alpha + GL-07 corrected); SF03 v003 (Cycle 19 — Byte body GL-01b fix) — all 3 pitch-ready |
 | Environment designs | COMPLETE | All 3 environments documented + rendered. Cycle 11: encounter frame, Glitch Layer v2. Cycle 13: Glitch Storm BG (color fix). Cycle 14: Classroom BG, Other Side BG. Cycle 16: Classroom v002 (lighting fix), Miri's Kitchen. Cycle 17: Tech Den, School Hallway. Cycle 19: School Hallway v002 (artifact+human evidence+camera), Millbrook Main Street v002 (power lines+road). |
 | Storyboard / cold open | COMPLETE | 25 panels + contact sheet + storyboard pitch export (Cycle 11). Act 1 contact sheet v002 (Cycle 19 — A1-03 MCU rebuild). Act 2: 12 panels + contact sheet v005 (Cycle 19 — adds A2-07b bridge). |
 | Show bible | COMPLETE | — |
@@ -397,6 +398,79 @@
 |---|---|---|
 | One-page pitch brief v001 | `/home/wipkat/team/output/production/ltg_pitch_brief_v001.md` | Standalone buyer-facing pitch document. Premise, Tone, Audience, Format, Visual Identity Statement. Closes standalone brief gap (Risk 2 from Cycle 21 readiness). (Cycle 22 — Alex Chen) |
 | Character sheet standards v001 | `/home/wipkat/team/output/production/character_sheet_standards_v001.md` | Binding conventions for all expression sheet generators from Cycle 22 onward. Label format, HEAD_R/format mapping, head unit ranges, construction guide policy, canvas/grid standards, line weights, expression counts. (Cycle 22 — Alex Chen) |
+| Byte expression sheet v004 | `/home/wipkat/team/output/characters/main/LTG_CHAR_byte_expression_sheet_v004.png` | CRACKED EYE glyph corrected per byte.md Section 9B (void-black crack overlay, not pixel state). STORM arm asymmetry 20+ units (unambiguous from RESIGNED). RELUCTANT JOY asymmetric (one arm resisting). POWERED DOWN squash 0.75 (unambiguous vs NEUTRAL). Supersedes v003. (Cycle 22 — Maya Santos) |
+| Cosmo expression sheet v004 | `/home/wipkat/team/output/characters/main/LTG_CHAR_cosmo_expression_sheet_v004.png` | SKEPTICAL arm posture fixed: arm_dy 2/2 (near-neutral, contained) vs previous -14/-10 (read as SURPRISED). body_squash 0.92 added. Supersedes v003. (Cycle 22 — Maya Santos) |
+| Luma expression sheet v004 | `/home/wipkat/team/output/characters/main/LTG_CHAR_luma_expression_sheet_v004.png` | show_guides=False clean export. CURIOUS upgraded: brow asymmetry -0.34HR, wider eye aperture, forward lean. Supersedes v003. Pitch export version. (Cycle 22 — Maya Santos) |
+| Luma expression sheet v004 (guides) | `/home/wipkat/team/output/characters/main/LTG_CHAR_luma_expression_sheet_v004_guides.png` | Construction guides visible version. Internal production reference only — do not ship in pitch package. (Cycle 22 — Maya Santos) |
+| Tech Den v004 | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_tech_den_v004.png` | Light shaft repositioned into desk zone (apex near window edge, base on DESK_TOP_Y). Three individuated monitor glow zones (CRT1/CRT2/flat panel — distinct temperature areas). Supersedes v003. (Cycle 22 — Jordan Reed) |
+| Grandma Kitchen v003 | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_grandma_kitchen_v003.png` | Side wall texture extended to all three wall surfaces (polygon mask approach). Floor grid conflict resolved: single perspective-correct grid with non-linear horizontal spacing. Supersedes v002. (Cycle 22 — Jordan Reed) |
+| SF02 Glitch Storm v005 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v005.png` | Window pane alpha corrected: SOFT_GOLD 115, WARM_CREAM 110 (within Victoria/Naomi 110–120 consensus). CORRUPT_AMBER corrected to GL-07 #FF8C00 (was #C87A20 for 4 versions). Color story now load-bearing as described. Supersedes v004. (Cycle 22 — Sam Kowalski) |
+| render_lib canonical rename | `/home/wipkat/team/output/tools/LTG_TOOL_render_lib_v001.py` | Renamed from ltg_render_lib.py. Fiona P1 resolved. gaussian_glow() dead alpha fixed. Backward compat wrapper retained. New canonical import. (Cycle 22 — Kai Nakamura) |
+| Pitch delivery manifest v001 | `/home/wipkat/team/output/production/pitch_delivery_manifest_v001.md` | One-page external studio delivery asset list. File count, formats, delivery notes, pre-ship checklist. (Cycle 23 — Alex Chen) |
+| Rin C23 creative brief | `/home/wipkat/team/output/production/rin_c23_creative_brief.md` | Art direction brief for Rin Yamamoto's hand-drawn stylization pass. Real World vs Glitch Layer split, per-asset instructions, tool spec, quality benchmark. (Cycle 23 — Alex Chen) |
+
+---
+
+### Cycle 23 Quality Review (Alex Chen)
+
+**Review scope:** All primary pitch assets verified against disk, Cycle 22 completion reports, and open blocker list.
+
+#### Style Frames
+
+| Asset | Status | Notes |
+|---|---|---|
+| SF01 Discovery v003 | LOCKED A+ — NO ISSUES | Ghost Bytes alpha calibrated. Victoria A+. Pitch-ready. |
+| SF02 Glitch Storm v005 | PITCH READY — CLEAN | Window pane alpha 115/110 (in target range). CORRUPT_AMBER now canonical GL-07 #FF8C00. All C10 color flags resolved. |
+| SF03 Other Side v003 | PITCH READY — CLEAN | Byte body GL-01b confirmed. Eye radius ≥15px. Void Black slash removed. All C9 Byte-visibility issues resolved. |
+
+**Color story consistency:** SF01→SF02→SF03 warm-to-cold narrative intact. Victoria pitch-deck callout ("SF01: This is Luma's world...") confirmed prominent in `ltg_style_frame_color_story.md`.
+
+#### Character Sheets
+
+| Asset | Status | Notes |
+|---|---|---|
+| Luma expression sheet v004 | PITCH READY | CURIOUS upgraded to confident squint. Clean version (no guides). show_guides architecture ready for production use. |
+| Byte expression sheet v004 | PITCH READY | Cracked-eye glyph spec-correct per byte.md §9B. STORM/RESIGNED/POWERED DOWN unambiguous at thumbnail. 9 expressions total. |
+| Cosmo expression sheet v004 | PITCH READY | SKEPTICAL arm posture resolved (was reading as SURPRISED). All 6 expressions distinct at thumbnail. |
+| Grandma Miri expression sheet v002 | PITCH READY | Full-body postures. 5 expressions with distinct silhouettes. Dmitri C-grade root cause closed. |
+| Character lineup v003 | PITCH READY | Float-gap dimension arrow. All four characters at correct scale. |
+
+**No blocking issues found in character package.**
+
+#### Environments
+
+| Asset | Status | Notes |
+|---|---|---|
+| Tech Den v004 | PITCH READY | Three individuated monitor glow zones — significant improvement over v003 uniform spill. Light shaft in desk zone. |
+| Grandma Kitchen v003 | PITCH READY | All three walls textured. Perspective floor grid — no more grid conflict. |
+| School Hallway v002 | PITCH READY | Camera corrected, human evidence present. |
+| Millbrook Main Street v002 | PITCH READY | Power lines, road plane complete. |
+| Classroom BG v002 | PITCH READY | Dual-source lighting, inhabitant evidence. |
+| Luma's house interior | PITCH READY | LTG-compliant copy present. |
+| Glitch Layer frame v001 | PITCH READY | Canonical copy verified. |
+
+#### Production Documents
+
+| Asset | Status | Notes |
+|---|---|---|
+| `ltg_pitch_brief_v001.md` | PITCH READY | 185 words, buyer-facing. All 5 sections complete. |
+| `production_bible.md` | REFERENCE READY | Fiona C10 B- overall — adequate for studio reference. |
+| `style_guide.md` | REFERENCE READY | 11 sections. Animation style, Glitchkin construction, prop design included. |
+| `master_palette.md` | PITCH READY | Naomi A- last review. JEANS_BASE UV-ambient rule documented (Cycle 22). GL-07 reconciled. |
+
+#### Outstanding Issues (Non-Blocking)
+
+1. **Logo placeholder text** — `show_logo.png` may contain placeholder tagline "A cartoon series by the Dream Team." Verify before external delivery. `LTG_BRAND_logo_asymmetric_v002.png` is safe alternative.
+2. **Luma Act 2 pose lean** — still at -5° (target -8°). Flagged as LOW priority since Cycle 21. Does not affect pitch readiness.
+3. **LTG renames outstanding** — multiple legacy filenames (cold open panels, storyboard contact sheet, old ENV files) still pending LTG rename. Does not affect asset quality. Internal housekeeping.
+4. **Color model visual PNGs for Luma/Byte/Cosmo** — `.md` specs exist but no standalone visual PNG exports. Flag for future cycle if studio requests color reference sheets.
+5. **Stylization pass pending** — Rin Yamamoto's hand-drawn treatment not yet delivered. Brief written and dispatched this cycle. Stylized assets will supersede current versions as pitch primaries once delivered.
+
+#### Overall Pitch Readiness (Cycle 23)
+
+**Status: PITCH READY**
+
+All critical path assets verified on disk. No blocking issues found. The package is structurally complete for external studio pitch. The stylization pass (Rin C23) is value-add — it will strengthen the package further but is not required for a first pitch meeting.
 
 ---
 
@@ -421,3 +495,4 @@
 *Updated by Alex Chen, Art Director — Cycles 16–17 — 2026-03-29*
 *Updated by Alex Chen, Art Director — Cycle 19 — 2026-03-29*
 *Updated by Alex Chen, Art Director — Cycles 20–21–22 — 2026-03-29*
+*Updated by Alex Chen, Art Director — Cycle 23 — 2026-03-29*

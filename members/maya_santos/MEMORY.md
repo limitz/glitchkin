@@ -1,5 +1,25 @@
 # Maya Santos — Memory
 
+## Cycle 23 Lessons — GLITCH v001 + QC PASS + MANIFEST
+
+- **Glitch character CREATED (NEW).** Antagonist Glitchkin. Diamond/rhombus body. Primary: GL-07 CORRUPT_AMBER #FF8C00. Secondary: HOT_MAG #FF2D6B cracks, UV_PURPLE #7B2FBE shadow. Pixel dual-eye (3×3 grid, left=primary glyph, right=destabilized). No organic eye — full digital entity. Top+bottom spikes, two arm-spikes. Corrupted confetti hover (HOT_MAG+UV_PURPLE — NOT friendly cyan). VOID_BLACK #0A0A14 outline.
+- **Glitch Expression Sheet v001 COMPLETE.** 800×800px, 2×2 grid, 4 expressions: NEUTRAL, MISCHIEVOUS, PANICKED, TRIUMPHANT. show_guides=False. Generator: `output/tools/LTG_CHAR_glitch_expression_sheet_v001.py`. Output: `output/characters/main/LTG_CHAR_glitch_expression_sheet_v001.png`.
+- **Glitch Turnaround v001 COMPLETE.** 1600×700px, 4 views: FRONT, 3/4, SIDE, BACK. Generator: `output/tools/LTG_CHAR_glitch_turnaround_v001.py`. Output: `output/characters/main/turnarounds/LTG_CHAR_glitch_turnaround_v001.png`.
+- **Glitch Color Model v001 COMPLETE.** 800×500px, 10 canonical swatches. Fixed bug: `reye_y` undefined (added `reye_y = face_cy - cell*3//2`). Generator: `output/tools/LTG_CHAR_glitch_color_model_v001.py`. Output: `output/characters/color_models/LTG_COLOR_glitch_color_model_v001.png`.
+- **QC PASS Cycle 23.** All 4 original characters QC'd against character_sheet_standards_v001.md:
+  - Luma v004: show_guides=False pitch export confirmed. CURIOUS/DELIGHTED differentiation confirmed.
+  - Byte v004: Section 9B glyph spec compliant. 3×3 grid retained. Body fill GL-01b confirmed.
+  - Cosmo v004: SKEPTICAL arm-neutral fix confirmed. Lean formula tilt_off×2.5 confirmed.
+  - Miri v002: 1200×900, line weight Warm Dark Brown, blush state rule confirmed.
+  - Non-standard canvas sizes (Byte/Cosmo) = grandfathered per standards doc policy.
+- **character_export_manifest_v001.md COMPLETE.** All 5 character assets documented. Location: `output/characters/main/character_export_manifest_v001.md`.
+- **Inbox archived.** `20260329_0900_cycle23_character_polish.md` → `inbox/archived/`.
+- **Glitch design rules for next iterations:**
+  - Pixel eye states: 0=VOID, 1=DIM(CORRUPT_AMB_SH), 2=ACTIVE(CORRUPT_AMB), 3=BRIGHT(SOFT_GOLD), 4=HOT(HOT_MAG), 5=ACID(ACID_GREEN)
+  - Right eye = destabilized bleed of left (some bright→void/dim) = corruption read
+  - Body is 2×SCALE render, LANCZOS to 1×. Diamond pts: top/right/bottom/left vertices.
+  - Confetti color MUST be HOT_MAG/UV_PURPLE — never cyan/acid (reserved for healthy/friendly Glitchkin).
+
 ## Cycle 22 Lessons — BYTE v004 + COSMO v004 + LUMA v004
 - **Byte Expression Sheet v004 COMPLETE.** Same 3×3 grid. Generator: `output/tools/LTG_CHAR_byte_expression_sheet_v004.py`. Output: `LTG_CHAR_byte_expression_sheet_v004.png` (784×1074px). Entry point wrapper: `output/characters/main/LTG_CHAR_byte_expression_sheet_v004.py`.
 - **Section 9B glyph LOCKED (v004 canonical):** CRACK is a void-black overlay line, NOT a pixel state. Glyph uses only: 0=DEAD, 1=ALIVE_NORMAL, 2=ALIVE_BRIGHT, 3=DIM. DIM color = (0,80,100) #005064. Crack overlay = void black LINE #0A0A14. HOT_MAG crack is body/frame EXTERIOR only.

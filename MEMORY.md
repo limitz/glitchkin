@@ -4,8 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: SF01 A+ locked; SF02 v005 + SF03 v003 PITCH READY; all characters documented.
 
 ## Status
-**Cycle 22 complete. Work cycles: 22. Critique cycles: 10.**
-**Cycle 23 starts next. Critique Cycle 11 after Cycle 24.**
+**Cycle 23 complete. Work cycles: 23. Critique cycles: 10.**
+**Cycle 24 starts next. Critique Cycle 11 after Cycle 24.**
 
 ## Active Team (all 5 slots used)
 
@@ -19,33 +19,37 @@ Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are m
 
 **Inactive:** Jordan Reed (environments complete C22), Lee Tanaka (storyboard complete C21)
 
-## Pitch Package Status — POST CYCLE 22
-- **SF01 Discovery**: `LTG_COLOR_styleframe_discovery_v003.png` — **A+ LOCKED**
-- **SF02 Glitch Storm**: `LTG_COLOR_styleframe_glitch_storm_v005.png` — pane alpha + CORRUPT_AMBER fixed. **PITCH READY**
-- **SF03 Other Side**: `LTG_COLOR_styleframe_otherside_v003.png` — **PITCH READY**
-- **Pitch brief**: `output/production/ltg_pitch_brief_v001.md` — **WRITTEN (critical gap closed)**
+## Pitch Package Status — POST CYCLE 23
+- **SF01 Discovery**: `LTG_COLOR_styleframe_discovery_v003.png` — **A+ LOCKED** | `_styled.png` (0.6×) flagged for Alex review
+- **SF02 Glitch Storm**: `LTG_COLOR_styleframe_glitch_storm_v005.png` — **PITCH READY** | `_styled.png` DELIVERED (mixed mode)
+- **SF03 Other Side**: `LTG_COLOR_styleframe_otherside_v003.png` — **PITCH READY** | `_styled.png` DELIVERED (glitch mode)
+- **Pitch brief**: `output/production/ltg_pitch_brief_v001.md` — **COMPLETE**
+- **Delivery manifest**: `output/production/pitch_delivery_manifest_v001.md` — **NEW C23**
+- **Stylization preset**: `output/production/stylization_preset_handdrawn_v001.md` — **NEW C23**
 - **Char sheet standards**: `output/production/character_sheet_standards_v001.md` — **COMPLETE**
-- All 4 characters: expression sheets + turnarounds + color models complete
+- All 4 characters: expression sheets + turnarounds + color models complete (Glitch polish confirmed C23)
 - All Act 1+2 storyboard panels complete
-- All main environments: Tech Den v004 (light shaft + glow fixed), Kitchen v003 (wall + floor fixed)
+- All main environments complete; Kitchen v003 stylized delivered
+- **Character export manifest**: `output/characters/main/character_export_manifest_v001.md` — **NEW C23**
 
-## Cycle 22 — Completed
-- **Alex**: ltg_pitch_brief_v001.md (pitch brief); character_sheet_standards_v001.md; pitch index updated
-- **Maya**: Byte v004 (glyph spec compliant, STORM differentiated, RELUCTANT JOY, POWERED DOWN); Cosmo v004 (SKEPTICAL containment); Luma v004 (clean pitch export + CURIOUS fix)
-- **Jordan**: Tech Den v004 (light shaft to desk, individuated monitor glows); Kitchen v003 (side wall texture, single floor grid)
-- **Sam**: SF02 v005 (pane alpha 115/110, CORRUPT_AMBER #FF8C00); JEANS_BASE documented; color story updated
-- **Kai**: LTG_TOOL_render_lib_v001.py (renamed, versioned, dead alpha fix); deprecated wrapper; README debt cleared
+## Cycle 23 — Completed
+- **Alex**: pitch_package_index.md updated; rin_c23_creative_brief.md; pitch_delivery_manifest_v001.md; full QC review PITCH READY
+- **Maya**: All 4 chars QC confirmed; Glitch polish (turnaround, expressions, color model); character_export_manifest_v001.md
+- **Sam**: Palette audit PASS; color story confirmed pitch-ready; SF02/SF03 final check PASS; fidelity review plan for stylized outputs
+- **Kai**: ltg_render_lib.py deleted (4 scripts migrated); README updated; Rin integration support
+- **Rin**: LTG_TOOL_stylize_handdrawn_v001.py built; SF02 styled (mixed), SF03 styled (glitch), SF01 styled (realworld 0.6× FLAGGED for review), Kitchen styled; preset doc
 
-## Cycle 23 Plan
-- **Rin Yamamoto**: First cycle — stylization pass on pitch package assets. Build `LTG_TOOL_stylize_handdrawn_v001.py` or similar; apply organic texture/ink variation treatment to key PNGs for pitch package polish.
-- **Maya**: Any remaining character polish per Critique 11 feedback
-- **Sam**: Color maintenance / pitch package finalization
-- **Kai**: Remove deprecated ltg_render_lib.py wrapper; help Rin integrate with pipeline
-- **Alex**: Pitch package final review; prep for external presentation
+## Cycle 24 Plan
+- **Alex**: Review SF01 styled (discovery_v003_styled.png) — approve or give Rin revision notes
+- **Maya**: Standby / additional character work if Alex review surfaces issues
+- **Sam**: Color fidelity review of Rin's stylized outputs
+- **Rin**: Apply revision direction from Alex's SF01 review; optionally treat additional assets
+- **Kai**: Any pipeline support needed
 
 ## Shared Library
 `output/tools/LTG_TOOL_render_lib_v001.py` — 7 functions: perlin_noise_texture, gaussian_glow, light_shaft, dust_motes, catenary_wire, scanline_overlay, vignette.
-Old `ltg_render_lib.py` = deprecated wrapper (remove in Cycle 23).
+`output/tools/LTG_TOOL_stylize_handdrawn_v001.py` — NEW C23. `stylize(input, output, mode, intensity, seed)`. Modes: realworld/glitch/mixed.
+Old `ltg_render_lib.py` DELETED (C23).
 Import: `from output.tools.LTG_TOOL_render_lib_v001 import *`
 
 ## Key Output Locations

@@ -150,10 +150,19 @@
 - **Color story doc references must track the rendered version.** Updated source file to v005 and added confirmation note that GL-07 is now reconciled between generator and palette.
 - **Three-sentence pitch-deck callout is now prominent.** Victoria's "pitch-deck quality" sentence added as a standalone header section near the top of ltg_style_frame_color_story.md.
 
+## Cycle 23 Lessons
+- **Full generator audit by RGB value, not just name, is mandatory for every pitch pass.** GL-07 and GL-01b were confirmed correct in SF02 v005 and SF03 v003. Lesson: run a systematic constants-vs-palette table check each cycle, not just a spot check on flagged values.
+- **SF02 v005 = PITCH READY.** CORRUPT_AMBER (255,140,0) confirmed. Window pane alpha 115/110 confirmed. ENV-06 (150,172,162) confirmed G>R, B>R. All checks pass.
+- **SF03 v003 = PITCH READY.** Zero warm light sources enforced in code. BYTE_BODY (0,212,232) confirmed. Eyes 14.1:1 and 5.5:1. Amber outline correctly absent (UV-dominant, not cyan-dominant).
+- **UV_PURPLE_MID/DARK in SF03 ARE ENV-11/ENV-12.** RGB exact match confirmed: (42,26,64) = ENV-11 #2A1A40, (43,32,80) = ENV-12 #2B2050. Jordan to add cross-reference comment to script. Named Gap 1 effectively resolved (pending Jordan's comment).
+- **Color story document is current.** All three SFs covered with correct source file versions. GL-07 reconciliation note added. Cycle 23 verification note added.
+- **Stylization fidelity review plan documented.** Rin Yamamoto has not yet delivered stylized assets. Color fidelity review plan is in LTG_COLOR_sf_final_check_c23.md — critical values to check: GL-07 outline, GL-01b body, GL-04 sky purple, DRW-07 storm hoodie saturation. SF01 stylization must be extremely conservative (A+ locked frame).
+
 ## Carry Forward
-- ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001 (TERRA_CYAN_LIT still old value). v002 is correct. Coordinate with Jordan Reed on v001 if it is still used.
+- ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001 (TERRA_CYAN_LIT still old value). v001 likely superseded by v005 — low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan should add inline comment on next revision pass (low priority).
 - BYTE_GLOW (0,168,180) vs GL-01a (0,168,192): CLOSED as acceptable. Jordan may add inline comment on next pass (low priority, not a production fix).
-- SF03 confetti full-canvas distribution still unresolved (carry from C16). Constrain to within 150px of platform.
-- SF03 v003 UV_PURPLE_MID/DARK — Jordan to confirm these map to ENV-11/ENV-12 and add inline comment.
+- SF03 confetti full-canvas distribution still unresolved (carry from C16). Constrain to within 150px of platform for v004.
+- SF03 v003 UV_PURPLE_MID/DARK — Jordan to add inline comment citing ENV-11/ENV-12 (values confirmed matching).
 - Tech Den generator WALL_WARM slightly off from TD-01 — Jordan to add citing comment.
+- Rin Yamamoto stylization fidelity review: PENDING delivery. Review plan in LTG_COLOR_sf_final_check_c23.md.

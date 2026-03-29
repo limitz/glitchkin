@@ -25,7 +25,7 @@ from PIL import Image, ImageDraw
 
 # Import shared rendering library (same directory)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from ltg_render_lib import scanline_overlay
+from LTG_TOOL_render_lib_v001 import scanline_overlay  # noqa: E402
 
 # ── Canvas ──────────────────────────────────────────────────────────────────
 W, H = 1920, 1080

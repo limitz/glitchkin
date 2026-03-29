@@ -30,7 +30,7 @@ from PIL import Image, ImageDraw, ImageFilter
 
 # Import shared rendering library (same directory)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from ltg_render_lib import (
+from LTG_TOOL_render_lib_v001 import (  # noqa: E402
     light_shaft, dust_motes, gaussian_glow, vignette
 )
 

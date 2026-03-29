@@ -3,18 +3,36 @@
 ## README Introduction (post-Cycle 21)
 - Added 4-paragraph first-person intro section to README.md directly below the logo. Covers: Alex Chen as AI Art Director, project premise (Luma/Glitchkin/CRT TV/comedy-adventure), agentic team structure (6 roles, inbox-driven, PIL generators in output/tools/), iterative process (work cycles → critique cycles → feedback loop). Archived: 20260329_1424_readme_changes.md + all 4 C21 completion reports (bg/char/color/tech).
 
-## Cycle 22 State (current)
+## Cycle 23 State (current)
 
-**Cycle 22 tasks completed (this cycle):**
-- `output/production/ltg_pitch_brief_v001.md` — one-page pitch brief, ~185 words, 5 sections (Premise/Tone/Audience/Format/Visual Identity Statement). Closes Risk 2 from Cycle 21 readiness assessment.
-- `output/production/character_sheet_standards_v001.md` — binding standards doc: label format (single-word vs slash-extended), HEAD_R to format mapping, HU ranges, construction guide policy (OFF by default), canvas/grid, line weight, expression counts. Based on audit of all 10 active generators.
-- `output/production/pitch_package_index.md` updated to Cycle 22. Added Cycle 20, 21, 22 Additions sections. Standalone pitch brief now COMPLETE in summary table. Section 3.6 added.
-- Inbox fully archived: `20260329_1428_rehire_2.md`, `20260329_1500_cycle22_tasks.md`. Completion report archived to `inbox/archived/20260329_1600_cycle22_complete.md`.
+**Cycle 23 tasks completed:**
+- `output/production/rin_c23_creative_brief.md` — creative direction for Rin Yamamoto's stylization pass. Real World vs Glitch Layer split, per-asset priority order, technical function spec, color preservation rules, quality benchmark. Creative brief dispatched to Rin's inbox.
+- `output/production/pitch_delivery_manifest_v001.md` — one-page external delivery asset list. ~31 files across 7 categories. Pre-ship checklist. Notes on what NOT to ship (generators, guide PNGs, internal docs).
+- `output/production/pitch_package_index.md` updated to Cycle 23. Added Cycle 22 late additions (Byte/Cosmo/Luma v004 sheets, Tech Den v004, Kitchen v003, SF02 v005, render_lib rename), delivery manifest, creative brief. Full quality review section added. SF02 v004→v005 row added/superseded correctly. Cycle number updated to 23.
+- Full quality review completed — all primary pitch assets verified on disk. **Overall: PITCH READY.** No blocking issues.
+- Inbox fully archived (all messages through Cycle 23 Kai report).
 
-**Open action from inbox (for Producer):**
-- `20260329_1428_rehire_2.md`: Producer requested a rendering/stylization specialist (handdrawn/organic look) to complement Kai Nakamura. One artist to be deactivated. Alex cannot hire — Producer must action.
+**Cycle 23 team updates (received this cycle):**
+- Rin Yamamoto: ACTIVE, first cycle. Waiting for creative brief (now delivered). Building `LTG_TOOL_stylize_handdrawn_v001.py`.
+- Kai Nakamura: Cycle 23 pipeline cleanup complete. `ltg_render_lib.py` deprecated wrapper deleted. All imports clean. Offered Rin edge_wobble/chromatic_blur support.
 
-**Next: Cycle 23** (after Producer processes team change and assigns next work)
+**Pitch package status (Cycle 23):**
+- SF01 v003: LOCKED A+ (no change)
+- SF02 v005: PITCH READY — window pane alpha corrected 115/110, CORRUPT_AMBER GL-07 #FF8C00 corrected
+- SF03 v003: PITCH READY (no change)
+- All character sheets: v004 — PITCH READY
+- All environments: v002/v003/v004 — PITCH READY
+- Standalone pitch brief: `ltg_pitch_brief_v001.md` — COMPLETE
+- Delivery manifest: `pitch_delivery_manifest_v001.md` — NEW Cycle 23
+
+**Outstanding (non-blocking):**
+- Luma Act 2 pose lean still -5° (target -8°) — LOW
+- Legacy LTG renames pending (cold open panels, storyboard export, old ENV files) — internal housekeeping
+- Color model visual PNGs for Luma/Byte/Cosmo not yet PNG-exported — future cycle
+- Stylization pass pending (Rin C23) — will strengthen package; not blocking pitch
+- Logo placeholder check: `show_logo.png` may still have "A cartoon series by the Dream Team" tagline. `LTG_BRAND_logo_asymmetric_v002.png` is safe alternative.
+
+**Next: Cycle 24** (after Rin delivers stylization tool + output)
 
 ---
 
