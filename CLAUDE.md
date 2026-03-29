@@ -3,10 +3,16 @@
 We are putting together a team that can design visual assets for cartoons. 
 
 ## Important
-The project can only use open source tools that claude can use. 
+The project can only use open source tools that claude can use.
 If a required tool doesn't exist it needs to be implemented by the team.
 If it makes sense to convert tools into "_claude skills_", do so.
 Agents should always start with a fresh context
+
+## Image Size Rule
+**Prefer the smallest resolution appropriate for the task.** High resolution is only justified when fine detail must be inspected — otherwise use smaller sizes.
+**Hard limit: ≤ 1280px in both width and height** for every saved image.
+If a task requires examining fine detail, produce a cropped close-up of the relevant area (also ≤ 1280×1280px) rather than a large full image.
+This rule applies to every PNG, JPG, or other raster image saved anywhere in the project.
 
 ## You
 

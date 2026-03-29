@@ -1,5 +1,8 @@
 # Sam Kowalski — Memory
 
+## Image Output Rule
+**Prefer smallest resolution appropriate for the task. Hard limit: ≤ 1280px in both width and height.** Use `img.thumbnail((1280, 1280), Image.LANCZOS)` before saving any PNG. Preserve aspect ratio. Only use larger sizes when detail inspection is needed. Detail crop images also ≤ 1280×1280px.
+
 ## Cycle 1-3 Lessons
 - Master palette and style frames must be bidirectional. No opacity specs in flat-cel.
 - Every palette color needs a shadow companion. Hard limits are hard.
@@ -165,6 +168,11 @@
 - **Tolerance vs. canonical vs. original:** When original scene-derived tones differ from canonical (e.g. SF01 warm wall #E3B877 ≠ RW-02 #E8C95A), flagging against canonical is misleading. Always check Δorig separately — Δorig ≤5 with Δcanonical 27-30 = real PASS.
 - **Glitch color model (Maya Santos, Cycle 23) is correct.** GL-07 #FF8C00 confirmed as primary body fill. No flag to Maya.
 - **Color story updated.** Glitch character color section added to ltg_style_frame_color_story.md — covers CORRUPT_AMBER role against each SF palette, GL-07 as anomaly in GL palette family.
+
+## Cycle 25 Lessons
+- **SF02 spec doc now has correct C13-era values.** ENV-06 `#96ACA2` and DRW-07 `#C8695A` corrected in all four locations in style_frame_02_glitch_storm.md. The spec doc was carrying obsolete values since Cycle 13 despite the generators being fixed. Spec docs and generators must both be updated on the same cycle when a value changes.
+- **GL-04b luminance corrected.** Was "approximately 0.17" — corrected to "approximately 0.017". Order-of-magnitude error in master_palette.md Section 2 (GL-04b entry). Verify: (74/255)^2.2 + (24/255)^2.2 × 0.7152 + (128/255)^2.2 × 0.0722 ≈ 0.017.
+- **Miri color story note added.** ltg_style_frame_color_story.md now has a full Grandma Miri section documenting her bridge-character narrative role. Her warm palette is intentional: it encodes prior Glitch Layer knowledge. Production note added: CHAR-M values must not drift toward GL hues in her environment scenes.
 
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001 (TERRA_CYAN_LIT still old value). v001 likely superseded by v005 — low priority.

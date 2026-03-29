@@ -1,6 +1,10 @@
-# Stylization Preset — Hand-Drawn v001
-**Tool:** `output/tools/LTG_TOOL_stylize_handdrawn_v001.py`
+# Stylization Preset — Hand-Drawn v001 / v002
+**Tools:**
+- `output/tools/LTG_TOOL_stylize_handdrawn_v001.py` — Cycle 23 (RETIRED — do not use on new assets)
+- `output/tools/LTG_TOOL_stylize_handdrawn_v002.py` — Cycle 25 (CURRENT — use for all new assets)
+
 **Author:** Rin Yamamoto / Cycle 23 / 2026-03-29
+**v002 Update:** Rin Yamamoto / Cycle 25 / 2026-03-29
 
 ---
 
@@ -13,12 +17,68 @@
 | `LTG_COLOR_styleframe_discovery_v003.png` | realworld | 0.6 | 42 | `LTG_COLOR_styleframe_discovery_v003_styled.png` |
 | `LTG_ENV_grandma_kitchen_v003.png` | realworld | 1.0 | 42 | `LTG_ENV_grandma_kitchen_v003_styled.png` |
 
+## Assets Treated (Cycle 25) — v002 Tool
+
+| Asset | Mode | Intensity | Seed | Output | Notes |
+|-------|------|-----------|------|--------|-------|
+| `LTG_COLOR_styleframe_glitch_storm_v005.png` | mixed | 1.0 | 42 | `LTG_COLOR_styleframe_glitch_storm_v005_styled_v002.png` | SF02 — rebuilt with Fix 4 cross-dissolve; HOT_MAGENTA crack elements verified readable |
+| `LTG_COLOR_styleframe_otherside_v003.png` | glitch | 1.0 | 42 | `LTG_COLOR_styleframe_otherside_v003_styled_v002.png` | SF03 — Byte teal GL-01b protected; zero warm light confirmed |
+
+**SF01 Discovery:** LOCKED — v001 output (`discovery_v003_styled.png`) approved by Alex Chen. Not reprocessed with v002.
+
+---
+
 ## Assets Treated (Cycle 24)
 
 | Asset | Mode | Intensity | Seed | Output | Notes |
 |-------|------|-----------|------|--------|-------|
 | `LTG_ENV_tech_den_v004.png` | realworld | 0.8 | 42 | `LTG_ENV_tech_den_v004_styled.png` | Tech Den is Real World room; intensity 0.8 preserves tech/screen detail |
 | `LTG_CHAR_lineup_v003.png` | realworld | 0.7 | 42 | `LTG_CHAR_lineup_v003_styled.png` | Character sheets need lighter touch; intensity 0.7 preserves line clarity |
+
+---
+
+---
+
+## v002 Changes (Cycle 25) — Critical Fixes
+
+### Fix 1 — Full Canonical Color Protection
+All canonical palette colors are now protected across all color-modifying passes (chalk highlights, color bleed).
+
+**PROTECTED_HUES table** (PIL HSV hue, 0–255 range):
+
+| Color | Hex | PIL Hue Center | Tolerance |
+|-------|-----|---------------|-----------|
+| CORRUPT_AMBER | #FF8C00 | ~23.3 | ±12 |
+| BYTE_TEAL | #00D4E8 | ~131.2 | ±12 |
+| UV_PURPLE | #6A0DAD | ~194.7 | ±12 |
+| HOT_MAGENTA | #FF0080 | ~233.7 | ±12 |
+| ELECTRIC_CYAN | #00F0FF | ~130.0 | ±12 |
+| SUNLIT_AMBER | #D4923A | ~24.3 | ±12 |
+
+Any pixel whose PIL hue falls within any range above is skipped entirely in color-modifying passes.
+
+### Fix 2 — Chalk Pass Exclusions
+The chalk pass (`_pass_chalk_highlights`) now additionally skips:
+- **(a) Cyan-family pixels**: PIL H 100–160. Protects CRT screen glow, Byte teal, Electric Cyan specular pops.
+- **(b) Light source pixels**: V > 216 AND S > 100 in non-protected hues. Protects warm cream ceilings, sunlit wall values, CRT glow (which are saturated light sources, not material surfaces that should look chalky).
+
+### Fix 3 — Warm Bleed Zone Boundary Gate
+`_pass_color_bleed()` now checks the source pixel's PIL hue before including it in the warm detection mask.
+- **Gate**: if source pixel PIL H is 100–160 (cyan family), it is excluded from the warm bleed source mask.
+- Prevents SUNLIT_AMBER from bleeding into cyan-lit skin regions (Luma face split, Glitch Layer boundaries).
+
+### Fix 4 — Mixed Mode Cross-Dissolve Compositing
+`_apply_mixed_treatment()` (mixed mode, SF02) now uses per-pixel weighted-average blend in the transition zone.
+- Formula: `blended = (1 - blend_weight) * realworld_pixel + blend_weight * glitch_pixel`
+- `blend_weight` is a smooth-step spatial gradient (0.0=realworld, 1.0=glitch) across the ~200px transition zone.
+- Replaces the previous `alpha_composite` approach which produced double-edge ghost artifacts.
+- Pure zones (above and below transition) still copy pixel rows directly for performance.
+
+### Verification Step
+After every `stylize()` call, `verify_canonical_colors()` runs automatically and prints:
+- OK message if all canonical colors within 5° (≈3.5 PIL hue units) of canonical.
+- WARNING per color if drift detected. Batch-safe — does NOT abort.
+- TODO: Replace inline implementation with Kai Nakamura's `LTG_TOOL_color_verify_v001.py` import once available.
 
 ---
 

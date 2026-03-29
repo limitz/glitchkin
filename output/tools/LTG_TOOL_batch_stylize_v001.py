@@ -2,10 +2,17 @@
 """
 LTG_TOOL_batch_stylize_v001.py — Batch Stylization Runner
 "Luma & the Glitchkin" — Technical Art / Kai Nakamura / Cycle 24
+Updated Cycle 25: calls LTG_TOOL_stylize_handdrawn_v002; adds color verification.
 
-Runs LTG_TOOL_stylize_handdrawn_v001.stylize() on a list of images in a
+Runs LTG_TOOL_stylize_handdrawn_v002.stylize() on a list of images in a
 single command. Supports both a programmatic API (pass a list of job tuples)
 and a CLI interface (pass a JSON job list or a glob pattern).
+
+Color verification (Cycle 25): after each job, verify_canonical_colors() is
+called on the output PNG and the result is included in the per-job report under
+the "color_verify" key. A failed color verification is logged as a warning but
+does NOT set status="error" — the file is still written. This allows Rin or the
+Art Director to review color drift without blocking the batch.
 
 Usage (module):
     import sys, os
@@ -33,7 +40,8 @@ Usage (CLI — glob all PNGs through one mode):
         --mode realworld \\
         --intensity 1.0
 
-Dependencies: Python 3.8+, Pillow, LTG_TOOL_stylize_handdrawn_v001
+Dependencies: Python 3.8+, Pillow, LTG_TOOL_stylize_handdrawn_v002,
+              LTG_TOOL_color_verify_v001
 Runnable from: /home/wipkat/team (project root)
 
 Each job tuple: (input_path, output_path, mode, intensity)
@@ -41,11 +49,16 @@ Each job tuple: (input_path, output_path, mode, intensity)
   - output_path : str — destination PNG (directories created automatically)
   - mode        : str — "realworld" | "glitch" | "mixed"
   - intensity   : float — 0.0–2.0
+
+Cycle 25 changes:
+  - Switched stylize() import from v001 → v002 (full canonical color protection)
+  - Added post-processing color verification via LTG_TOOL_color_verify_v001
+  - Per-job result dict gains "color_verify" key (see batch_stylize() docstring)
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __author__ = "Kai Nakamura"
-__cycle__ = 24
+__cycle__ = 25
 
 import sys
 import os
@@ -62,7 +75,10 @@ _THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 if _THIS_DIR not in sys.path:
     sys.path.insert(0, _THIS_DIR)
 
-from LTG_TOOL_stylize_handdrawn_v001 import stylize  # noqa: E402
+from LTG_TOOL_stylize_handdrawn_v002 import stylize  # noqa: E402 — C25: upgraded to v002
+from LTG_TOOL_color_verify_v001 import (              # noqa: E402 — C25: color verification
+    verify_canonical_colors, get_canonical_palette
+)
 
 # ---------------------------------------------------------------------------
 # Types
@@ -82,30 +98,41 @@ def batch_stylize(
     seed: int = 42,
     stop_on_error: bool = False,
     verbose: bool = True,
+    verify_colors: bool = True,
+    color_max_delta_hue: float = 5.0,
 ) -> List[dict]:
     """Run stylize() on a list of (input_path, output_path, mode, intensity) jobs.
 
     Args:
-        jobs          (list): List of 4-tuples:
-                              (input_path: str, output_path: str, mode: str, intensity: float)
-                              - input_path:  path to source PNG
-                              - output_path: path for stylized output PNG
-                              - mode:        "realworld" | "glitch" | "mixed"
-                              - intensity:   0.0–2.0 global effect multiplier
-        seed          (int):  RNG seed applied to every job for reproducibility.
-        stop_on_error (bool): If True, raise on first failure; if False, log and continue.
-        verbose       (bool): Print per-job progress to stdout.
+        jobs                (list):  List of 4-tuples:
+                                     (input_path: str, output_path: str, mode: str, intensity: float)
+                                     - input_path:  path to source PNG
+                                     - output_path: path for stylized output PNG
+                                     - mode:        "realworld" | "glitch" | "mixed"
+                                     - intensity:   0.0–2.0 global effect multiplier
+        seed                (int):   RNG seed applied to every job for reproducibility.
+        stop_on_error       (bool):  If True, raise on first failure; if False, log and continue.
+        verbose             (bool):  Print per-job progress to stdout.
+        verify_colors       (bool):  If True (default), run verify_canonical_colors() on each
+                                     output PNG and include the result in the report. A failed
+                                     color check is logged as a warning but does NOT set
+                                     status="error". (C25)
+        color_max_delta_hue (float): Hue drift threshold in degrees for color verification.
+                                     Default: 5.0 (matches LTG_TOOL_color_verify_v001 default).
 
     Returns:
         list of dicts, one per job:
         {
-            "input":    str,
-            "output":   str,
-            "mode":     str,
-            "intensity":float,
-            "status":   "ok" | "error",
-            "error":    str | None,
-            "elapsed":  float  (seconds)
+            "input":         str,
+            "output":        str,
+            "mode":          str,
+            "intensity":     float,
+            "status":        "ok" | "error",
+            "error":         str | None,
+            "elapsed":       float  (seconds),
+            "color_verify":  dict | None  — result from verify_canonical_colors(), or None
+                                           if verify_colors=False or job failed before output.
+                                           overall_pass=False means hue drift detected.
         }
     """
     if not jobs:
@@ -152,6 +179,7 @@ def batch_stylize(
             "status": "ok",
             "error": None,
             "elapsed": 0.0,
+            "color_verify": None,
         }
 
         if verbose:
@@ -165,6 +193,35 @@ def batch_stylize(
             record["elapsed"] = round(time.time() - t0, 2)
             if verbose:
                 print(f"         done in {record['elapsed']}s")
+
+            # --- Color verification (C25) ---
+            if verify_colors and os.path.exists(output_path):
+                try:
+                    from PIL import Image as _Image
+                    _palette = get_canonical_palette()
+                    _out_img = _Image.open(output_path)
+                    cv_result = verify_canonical_colors(
+                        _out_img, _palette,
+                        max_delta_hue=color_max_delta_hue,
+                    )
+                    record["color_verify"] = cv_result
+                    if not cv_result.get("overall_pass", True):
+                        _drifted = [
+                            k for k, v in cv_result.items()
+                            if k != "overall_pass"
+                            and isinstance(v, dict)
+                            and not v.get("pass", True)
+                        ]
+                        if verbose:
+                            print(f"         WARNING: color drift detected — {_drifted}")
+                    else:
+                        if verbose:
+                            print(f"         color verify: PASS")
+                except Exception as cv_exc:
+                    if verbose:
+                        print(f"         color verify ERROR — {cv_exc}")
+                    record["color_verify"] = {"overall_pass": None, "error": str(cv_exc)}
+
         except Exception as exc:
             record["status"] = "error"
             record["error"] = str(exc)
@@ -180,9 +237,18 @@ def batch_stylize(
     if verbose:
         ok_count = sum(1 for r in results if r["status"] == "ok")
         err_count = total - ok_count
+        # Color verification summary
+        cv_results = [r["color_verify"] for r in results if r.get("color_verify") is not None]
+        cv_pass = sum(1 for cv in cv_results if cv.get("overall_pass") is True)
+        cv_warn = sum(1 for cv in cv_results if cv.get("overall_pass") is False)
+        cv_skip = total - len(cv_results)
         print("-" * 70)
         print(f"[batch_stylize] Complete — {ok_count}/{total} succeeded"
               + (f", {err_count} error(s)" if err_count else ""))
+        if verify_colors:
+            print(f"[batch_stylize] Color verify — {cv_pass} pass"
+                  + (f", {cv_warn} WARNING(s) (hue drift)" if cv_warn else "")
+                  + (f", {cv_skip} skipped" if cv_skip else ""))
 
     return results
 
@@ -258,8 +324,9 @@ def _validate_job(input_path: str, output_path: str, mode: str, intensity: float
 def _cli():
     parser = argparse.ArgumentParser(
         description=(
-            "LTG Batch Stylization Runner v001 — Luma & the Glitchkin\n"
-            "Runs stylize() from LTG_TOOL_stylize_handdrawn_v001 on multiple images."
+            "LTG Batch Stylization Runner v001 (C25: v1.1.0) — Luma & the Glitchkin\n"
+            "Runs stylize() from LTG_TOOL_stylize_handdrawn_v002 on multiple images.\n"
+            "Color verification (LTG_TOOL_color_verify_v001) is run on each output."
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""

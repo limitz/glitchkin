@@ -106,6 +106,8 @@ All expression sheets must conform to the following unless a character-specific 
 | Output format | PNG, RGB mode |
 | Canvas background | Near-void dark: `(28, 20, 14)` or equivalent |
 
+**Image Size Rule (added Cycle 25):** The saved output PNG must be ≤ 1280px in both dimensions. Prefer smaller output sizes when fine detail is not required for inspection. Apply `img.thumbnail((1280, 1280), Image.LANCZOS)` before saving if canvas exceeds 1280px in either dimension.
+
 ---
 
 ## 6. Line Weight Standards (3-Tier)

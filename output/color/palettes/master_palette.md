@@ -559,7 +559,7 @@ The Glitch palette is an invader. These colors do not belong to the natural worl
 - **RGB:** 74, 24, 128
 - **Role:** Atmospheric perspective band in the Glitch Layer sky at mid-depth; the distinct value layer between ambient UV Purple (`#7B2FBE`) and the near-void upper sky (`#3A1060`). Ensures adjacent aurora bands are separated by at least 2 luminance steps for readability at thumbnail scale.
 - **Shadow companion:** `#3A1060` (Deep Digital Void — GL-04a)
-- **Relative luminance:** approximately 0.17 — sits between UV Purple (~0.28) and Deep Digital Void (~0.06), creating a legible 4-band value ladder (Void Black → GL-04b → UV Purple → Data Blue).
+- **Relative luminance:** approximately 0.017 — sits between UV Purple (~0.28) and Deep Digital Void (~0.06), creating a legible 4-band value ladder (Void Black → GL-04b → UV Purple → Data Blue).
 - **Use-case notes:** Use exclusively as an atmospheric sky band at the mid-depth layer in Glitch Layer scenes. It is not a character color, not a fill for structural surfaces, and not a substitute for UV Purple in shadow roles. Its sole purpose is to create visible tonal separation in Glitch Layer sky gradients where UV Purple and Deep Digital Void would otherwise merge at thumbnail scale. Documented in `color_key_generator.py` as `deep_uv_sep` (Key 03 aurora fix).
 - **Pairs with:** `#7B2FBE` (UV Purple — immediate lighter neighbor), `#3A1060` (Deep Digital Void — immediate darker neighbor)
 - **Avoid using:** As a surface fill, character color, or anywhere outside atmospheric sky-band context. Do not substitute for GL-04a in shadow roles.

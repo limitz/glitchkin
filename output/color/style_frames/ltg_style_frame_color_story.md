@@ -140,6 +140,20 @@ Glitch does not sit in either the Real World palette (RW-xx) or the Glitch Layer
 
 **Production constraint:** GL-07 #FF8C00 must never be desaturated, cooled, or hue-shifted in any asset. A murkier amber reads as Real World weathered material. A cooler amber reads as a Glitch Layer artifact. The exact value — maximum saturation, pure warm orange, no red or yellow drift — is what makes CORRUPT_AMBER legible as corrupted rather than merely warm.
 
+## Grandma Miri — Palette as Narrative Signal
+
+**Character palette:** Warm Cream `#FAF0DC`, Soft Amber `#D4A35A`, Aged Wood tones (CHAR-M series, master_palette.md Section 8)
+
+### Miri's Narrative Role — Bridge Character
+
+Miri is a bridge character: she knew about the Glitch Layer before Luma ever discovered it. Her warm domestic palette — cream, soft amber, aged wood tones — is not simply an elderly-woman-in-a-cozy-kitchen color story. It is an intentional design choice that carries a second meaning.
+
+The same warm palette that codes her home as a place of safety and belonging is also the palette of someone who has lived with the knowledge of the Glitch Layer for a long time. Her warmth is not naive. The cream and amber that feel most like the Real World at its most grounded are also, in her case, the colors of a person who has learned to hold a secret.
+
+This creates a deliberate color ambiguity: to a first-time viewer, Miri's palette reads as purely comforting and domestic. On a second viewing, after the Glitch Layer has been revealed, the same palette reads as the camouflage of someone who knew. The warm tones did not change — the context did.
+
+**Production note for painters:** Miri's palette must remain in the CHAR-M series values without drift toward cooler or more saturated tones. Any contamination from GL palette hues in her environment scenes would undercut this ambiguity — her space should read as unambiguously warm until the story itself provides the recontextualization.
+
 ---
 
 **Cross-references:**
@@ -158,3 +172,5 @@ Glitch does not sit in either the Real World palette (RW-xx) or the Glitch Layer
 *Cycle 23 verification (Sam Kowalski, 2026-03-29): All source file references confirmed current. GL-07 `#FF8C00` and GL-01b `#00D4E8` reconciled between generators and master palette. SF02 v005 = PITCH READY. SF03 v003 = PITCH READY. Color arc (warm → contested → cold/alien) intact across all three frames. No corrections needed to this document.*
 
 *Cycle 24 update (Sam Kowalski, 2026-03-29): Glitch character color section added. GL-07 CORRUPT_AMBER #FF8C00 verified as primary body fill in Glitch color model (generator confirmed). Stylization fidelity check complete — see LTG_COLOR_stylization_fidelity_report_c24.md. SF02 and SF03 stylized PNGs flagged for rework (hue rotation artifact). SF01 and Kitchen stylized PNGs: PASS.*
+
+*Cycle 25 update (Sam Kowalski, 2026-03-29): Grandma Miri character section added — documents her bridge-character narrative role and explains why her warm palette (cream, soft amber, aged wood) is an intentional design choice that encodes her prior knowledge of the Glitch Layer.*

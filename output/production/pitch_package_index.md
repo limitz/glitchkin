@@ -222,7 +222,8 @@
 
 | Asset | File Path | What It Shows | Quality Status | Needs Work |
 |---|---|---|---|---|
-| Show logo | `/home/wipkat/team/output/production/show_logo.png` | Title treatment: "Luma" in SUNLIT_AMBER, "& the Glitchkin" in ELEC_CYAN with pixel corruption; void background with warm/cold glow zones; 1200×480 | Accepted (Fiona C10 PASS — first time in 10 cycles) | **Tagline "A cartoon series by the Dream Team" is a placeholder — replace before external pitch use.** LTG rename outstanding. |
+| Show logo | `/home/wipkat/team/output/production/show_logo.png` | Title treatment: "Luma" in SUNLIT_AMBER, "& the Glitchkin" in ELEC_CYAN with pixel corruption; void background with warm/cold glow zones; 1200×480 | Legacy — superseded | Use `LTG_BRAND_logo_v001.png` for all external delivery. |
+| Show logo canonical v001 | `/home/wipkat/team/output/production/LTG_BRAND_logo_v001.png` | **CANONICAL.** Asymmetric layout. "Luma" dominant amber left, "&" warm-to-cold gradient hinge, "the Glitchkin" stacked cyan right. Bi-color scan bar. A grade (Victoria Ashford Cycle 13). No placeholder text. 1200×480. | **PITCH READY** (Cycle 25 canonical decision) | None — use this for all external delivery. |
 
 ---
 
@@ -230,12 +231,12 @@
 
 | Requirement | Status | Notes |
 |---|---|---|
-| Title treatment / logo | COMPLETE | Delivered Cycle 10 — tagline placeholder needs replacement |
+| Title treatment / logo | **COMPLETE** | `LTG_BRAND_logo_v001.png` — canonical decision made Cycle 25. No tagline, delivery-safe. |
 | Character lineup | COMPLETE | Delivered Cycle 10 |
 | Character design sheets (all 4) | COMPLETE | Byte v3.1 header inconsistency: minor 1-line fix |
 | Character turnarounds (all 4) | COMPLETE | Delivered Cycle 10 |
 | Color model sheets | COMPLETE | All 4 characters |
-| Style frames (3 frames) | IN PROGRESS | SF01 v003 unlocked (A+ lock removed C24) → v004 open; SF02 v005 PITCH READY (original); SF03 v003 PITCH READY (original). SF04 Luma+Byte scene needed. |
+| Style frames (4 frames) | IN PROGRESS | SF01 v003 unlocked (A+ lock removed C24) → v004 open; SF02 v005 PITCH READY; SF03 v003 PITCH READY; **SF04 v001 DELIVERED** (Cycle 25 — Luma+Byte dynamic, closes Critique 11 P1 gap). |
 | Environment designs | COMPLETE | All 3 environments documented + rendered. Cycle 11: encounter frame, Glitch Layer v2. Cycle 13: Glitch Storm BG (color fix). Cycle 14: Classroom BG, Other Side BG. Cycle 16: Classroom v002 (lighting fix), Miri's Kitchen. Cycle 17: Tech Den, School Hallway. Cycle 19: School Hallway v002 (artifact+human evidence+camera), Millbrook Main Street v002 (power lines+road). |
 | Storyboard / cold open | COMPLETE | 25 panels + contact sheet + storyboard pitch export (Cycle 11). Act 1 contact sheet v002 (Cycle 19 — A1-03 MCU rebuild). Act 2: 12 panels + contact sheet v005 (Cycle 19 — adds A2-07b bridge). |
 | Show bible | COMPLETE | — |
@@ -460,7 +461,7 @@
 
 #### Outstanding Issues (Non-Blocking)
 
-1. **Logo placeholder text** — `show_logo.png` may contain placeholder tagline "A cartoon series by the Dream Team." Verify before external delivery. `LTG_BRAND_logo_asymmetric_v002.png` is safe alternative.
+1. ~~**Logo placeholder text**~~ — **RESOLVED Cycle 25.** `LTG_BRAND_logo_v001.png` is now the canonical show logo. Source: asymmetric v002 (A grade, Victoria Ashford Cycle 13). No placeholder tagline. Delivery-safe.
 2. **Luma Act 2 pose lean** — still at -5° (target -8°). Flagged as LOW priority since Cycle 21. Does not affect pitch readiness.
 3. **LTG renames outstanding** — multiple legacy filenames (cold open panels, storyboard contact sheet, old ENV files) still pending LTG rename. Does not affect asset quality. Internal housekeeping.
 4. **Color model visual PNGs for Luma/Byte/Cosmo** — `.md` specs exist but no standalone visual PNG exports. Flag for future cycle if studio requests color reference sheets.
@@ -520,6 +521,39 @@ All critical path assets verified on disk. No blocking issues found. The package
 
 ---
 
+### Cycle 25 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| SF04 — Luma + Byte: The Dynamic | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_luma_byte_v001.png` | **NEW.** 4th style frame. Closes Critique 11's single biggest gap: "No asset shows Luma and Byte in the same frame at readable scale with their emotional dynamic legible." Scene: Luma CURIOUS (looking right at monitor/signal), Byte on her right shoulder looking UP at her with WORRIED/skeptical expression. She hasn't noticed his protest — this is the show's core dynamic. Dual lighting: warm window left (RW-03 Sunlit Amber) + cool monitor right (GL-01b Elec Cyan). Bedroom setting. 1920×1080. (Cycle 25 — Alex Chen) |
+| SF04 generator | `/home/wipkat/team/output/tools/LTG_COLOR_styleframe_luma_byte_v001.py` | Generator for SF04. Full PIL/Pillow implementation, seeded RNG for reproducibility. (Cycle 25 — Alex Chen) |
+| Canonical show logo v001 | `/home/wipkat/team/output/production/LTG_BRAND_logo_v001.png` | **DECISION RECORD.** Closes the 24-cycle logo ambiguity. Canonical show logo = asymmetric layout (received A grade from Victoria Ashford Cycle 13). "Luma" dominant amber left, "&" warm-to-cold gradient hinge, "the Glitchkin" stacked cyan right. Bi-color scan bar. `LTG_BRAND_logo_asymmetric_v002.png` is the underlying source. This path is now the canonical external-delivery filename. (Cycle 25 — Alex Chen) |
+| Canonical logo generator | `/home/wipkat/team/output/tools/LTG_BRAND_logo_v001.py` | Entry point for canonical logo generation. Delegates to LTG_TOOL_logo_asymmetric_v002.py and copies output to canonical path. (Cycle 25 — Alex Chen) |
+| Character lineup v004 | `/home/wipkat/team/output/characters/main/LTG_CHAR_lineup_v004.png` | All 5 characters (Luma, Byte, Cosmo, Miri, Glitch). Glitch at far right, diamond body, canonical amber palette. Float gap ratio same as Byte. Height ref lines updated. (Cycle 24 — Maya Santos, confirmed Cycle 25) |
+| Glitch expression sheet v002 | `/home/wipkat/team/output/characters/main/LTG_CHAR_glitch_expression_sheet_v002.png` | 1200×900, 3×2, 6 expressions. NEUTRAL, MISCHIEVOUS, PANICKED, TRIUMPHANT, STUNNED, CALCULATING. Silhouette-level differentiation on all 6. Supersedes v001. (Cycle 24 — Maya Santos, confirmed Cycle 25) |
+| Glitch turnaround v002 | `/home/wipkat/team/output/characters/main/turnarounds/LTG_CHAR_glitch_turnaround_v002.png` | SIDE view UV_PURPLE shadow replaced with CORRUPT_AMB_SH. Faceted geometry now reads via Void Black divider lines. Profile no longer reads as flat kite. Supersedes v001. (Cycle 24 — Maya Santos, confirmed Cycle 25) |
+
+#### Cycle 25 Director Directives (to Maya Santos)
+
+| Item | Message File | Direction |
+|---|---|---|
+| Luma canonical reference | `members/maya_santos/inbox/20260329_1900_luma_canonical_ref_directive.md` | Expression sheet v004 is canonical. Style frame Luma must align to sheet — not vice versa. v005 sheet: fix body language (full-body silhouette differentiation in ≥2 cells). Turnaround v002: match v004 proportions exactly. |
+| Miri KNOWING expression | `members/maya_santos/inbox/20260329_1901_miri_narrative_expression_directive.md` | Replace PENSIVE slot with KNOWING. Weighted glance + suppressed asymmetric smile. She knew about the Glitch Layer. Miri v003 expression sheet. |
+
+#### Cycle 25 Package Status (Updated)
+
+| Requirement | Status | Notes |
+|---|---|---|
+| Show logo (canonical) | **RESOLVED** | `LTG_BRAND_logo_v001.png` delivered. Logo ambiguity closed after 24 cycles. |
+| SF04 — Luma+Byte dynamic | **DELIVERED** | `LTG_COLOR_styleframe_luma_byte_v001.png` — Valentina's P1 gap closed. |
+| Luma canonical alignment | IN PROGRESS | Directive sent to Maya. v005 expression sheet + v002 turnaround pending. |
+| Miri KNOWING expression | IN PROGRESS | Directive sent to Maya. Miri v003 pending. |
+| Character lineup — all 5 | **COMPLETE** | `LTG_CHAR_lineup_v004.png` — Glitch integrated at correct scale. |
+| Glitch expression sheet v002 | **COMPLETE** | 6 expressions, 1200×900, silhouette-level differentiation. |
+| Glitch turnaround v002 | **COMPLETE** | Shadow contrast fixed — profile no longer flat. |
+
+---
+
 *Jordan Reed — Cycle 11 — 2026-03-29*
 *Updated by Alex Chen, Art Director — Cycle 12 — 2026-03-30*
 *Updated by Alex Chen, Art Director — Cycles 13–14–15 — 2026-03-30*
@@ -528,3 +562,18 @@ All critical path assets verified on disk. No blocking issues found. The package
 *Updated by Alex Chen, Art Director — Cycles 20–21–22 — 2026-03-29*
 *Updated by Alex Chen, Art Director — Cycle 23 — 2026-03-29*
 *Updated by Alex Chen, Art Director — Cycle 24 — 2026-03-29*
+*Updated by Alex Chen, Art Director — Cycle 25 — 2026-03-29*
+
+### Cycle 25 Additional Team Deliverables
+
+| Asset | File Path | Notes |
+|---|---|---|
+| Stylization tool v002 | `/home/wipkat/team/output/tools/LTG_TOOL_stylize_handdrawn_v002.py` | Full rebuild. 4 critical fixes: canonical color protection (all 6 GL colors), chalk pass cyan exclusions, warm bleed zone gate, mixed mode cross-dissolve. v001 retired. (Cycle 25 — Rin Yamamoto) |
+| SF02 styled v002 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v005_styled_v002.png` | Regenerated with stylize v002. Mixed mode, boundary cross-dissolve fixes ghost artifact. HOT_MAG crack geometry protected. (Cycle 25 — Rin Yamamoto) |
+| SF03 styled v002 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_otherside_v003_styled_v002.png` | Regenerated with stylize v002. Byte GL-01b body protected by hue guard. No warm contamination. (Cycle 25 — Rin Yamamoto) |
+| Color verification tool | `/home/wipkat/team/output/tools/LTG_TOOL_color_verify_v001.py` | Canonical 6-color hue verification. `verify_canonical_colors()` + `get_canonical_palette()`. Integrated into batch stylize v1.1.0. (Cycle 25 — Kai Nakamura) |
+| Batch stylize v1.1.0 | `/home/wipkat/team/output/tools/LTG_TOOL_batch_stylize_v001.py` | Updated to call stylize v002 + post-job color verification. WARNING on drift, no abort. (Cycle 25 — Kai Nakamura) |
+| Tools legacy archive | `/home/wipkat/team/output/tools/legacy/` | 20 non-LTG-named scripts archived. `output/tools/` now LTG-names only. (Cycle 25 — Kai Nakamura) |
+| SF02 spec doc correction | `/home/wipkat/team/output/color/style_frames/style_frame_02_glitch_storm.md` | ENV-06 #9A8C8A→#96ACA2 and DRW-07 #C07A70→#C8695A corrected. Spec now matches generators. (Cycle 25 — Sam Kowalski) |
+| Master palette GL-04b fix | `/home/wipkat/team/output/color/palettes/master_palette.md` | GL-04b relative luminance 0.17→0.017 (order of magnitude error corrected). (Cycle 25 — Sam Kowalski) |
+| Miri color story section | `/home/wipkat/team/output/color/style_frames/ltg_style_frame_color_story.md` | "Grandma Miri — Palette as Narrative Signal" section added. CHAR-M values = camouflage, not just warmth. Production note: no GL hue drift in Miri scenes. (Cycle 25 — Sam Kowalski) |

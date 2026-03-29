@@ -1,11 +1,11 @@
 # PRODUCER MEMORY — "Luma & the Glitchkin"
 
 ## Project
-Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: SF01 A+ locked; SF02 v005 + SF03 v003 PITCH READY; all characters documented.
+Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present; Cycle 25 major gap closures complete.
 
 ## Status
-**Cycle 24 + Critique 11 complete. Work cycles: 24. Critique cycles: 11.**
-**Cycle 25 starts next. Critique Cycle 12 after Cycle 27.**
+**Cycle 25 complete. Work cycles: 25. Critique cycles: 11.**
+**Cycle 26 starts next. Critique Cycle 12 after Cycle 27.**
 
 ## Active Team (all 5 slots used)
 
@@ -15,72 +15,101 @@ Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are m
 | Maya Santos | Character Designer | Alex Chen |
 | Sam Kowalski | Color & Style Artist | Alex Chen |
 | Kai Nakamura | Tech Art Engineer | Alex Chen |
-| Rin Yamamoto | Visual Stylization Artist (NEW C23) | Alex Chen |
+| Rin Yamamoto | Visual Stylization Artist (from C23) | Alex Chen |
 
 **Inactive:** Jordan Reed (environments complete C22), Lee Tanaka (storyboard complete C21)
 
-## Pitch Package Status — POST CYCLE 24 / CRITIQUE 11
-- **SF01 Discovery**: v003 **UNLOCKED** (was A+ locked C13 — lock removed C24 per critique feedback) | open for v004 | `_styled.png` on hold pending v004
-- **SF02 Glitch Storm**: v005 PITCH READY | `_styled.png` — DO NOT USE (hue rotation artifact — awaiting v002)
-- **SF03 Other Side**: v003 PITCH READY | `_styled.png` — DO NOT USE (hue rotation artifact — awaiting v002)
-- **SF04 Luma+Byte**: MISSING — central relationship not shown. Commission in C25.
-- **Logo**: NO CANONICAL LOGO — placeholder only. Blocking external delivery. Fix C25.
-- **Pitch brief**: `output/production/ltg_pitch_brief_v001.md` — COMPLETE
-- **Delivery manifest**: `output/production/pitch_delivery_manifest_v001.md` — C23
-- **Characters**: Luma v004, Byte v004, Cosmo v004, Miri v002, Glitch v002 (sheets) — present but UNLOCKED:
-  - Luma v004 expression sheet: **UNLOCKED** — body language invisible; previously "PITCH READY" status removed. → v005
-  - Cosmo v004 turnaround: **UNLOCKED** — side view architecturally broken; was "Accepted". → v002
-  - Luma turnaround: **UNLOCKED** — Cycle 10 asset, doesn't match Act 2 proportions; was "Accepted"
-  - Miri v002 expressions: **UNLOCKED** — narrative secret missing; was "best-executed" but not complete
-  - Color model PNGs for Luma/Byte/Cosmo: MISSING — Maya C25
-- **Environments**: All complete + styled (Kitchen, Tech Den)
-- **Character lineup**: v004 (all 5 characters)
+## Image Output Rule (MANDATORY — added C25)
+**Prefer smallest resolution appropriate for the task. Hard limit: ≤ 1280px in both dimensions.**
+Use `img.thumbnail((1280, 1280), Image.LANCZOS)` before saving. `thumbnail()` only shrinks — never upscales. Detail crops also ≤ 1280×1280px.
+Rule is in: CLAUDE.md, all member MEMORYs, tools/README.md, character_sheet_standards_v001.md, naming_conventions.md.
+53 existing images resized in-place (C25 resize pass).
 
-## Cycle 24 — Completed
-- **Alex**: SF01 styled APPROVED; critique11_self_assessment.md (A-); Glitch integration feedback to Maya; index updated
-- **Maya**: Glitch expression sheet v002 (1200×900, 6 expressions); turnaround v002 (shadow fixed); lineup v004 (5 chars)
-- **Sam**: Stylization fidelity report — SF02/SF03 styled FAIL, SF01/Kitchen PASS; color story updated with Glitch
-- **Kai**: batch_stylize tool; paper_texture() in render lib; pipeline audit clean; README complete
-- **Rin**: Tech Den + lineup styled; preset doc updated
+## Pitch Package Status — POST CYCLE 25
 
-## Critique 11 — Key Findings (relay sent to all members)
-- **Rin**: Stylization tool v001 BROKEN — color protection only covers amber, destroys Glitch palette. Rebuild as v002.
-  Fixes: extend hue protection to all canonical colors; chalk pass must skip cyan/light sources; warm bleed zone-aware; mixed mode pixel blend not alpha
-- **Maya**: Color model PNGs for Luma/Byte/Cosmo missing (blocking); Luma body language invisible; Cosmo side view broken; Luma turnaround outdated
-- **Sam**: SF02 spec doc has obsolete color values (Cycle 13); GL-04b luminance 0.17 → should be 0.017
-- **Kai**: ~20 legacy scripts unarchived; production docs not LTG-named
-- **Alex**: SF04 Luma+Byte scene needed; logo decision; Luma inconsistency; Miri narrative expression
+### Style Frames
+- **SF01 Discovery**: v003 LOCKED (Alex approved C24) | `_styled.png` PASS (v001 tool, approved)
+- **SF02 Glitch Storm**: v005 | `_styled_v002.png` REGENERATED C25 — v002 tool (hue fixes applied)
+- **SF03 Other Side**: v003 | `_styled_v002.png` REGENERATED C25 — v002 tool (hue fixes applied)
+- **SF04 Luma+Byte**: v001 NEW C25 — Luma CURIOUS, Byte WORRIED on shoulder, dual warm/cool lighting
 
-## Cycle 25 Plan
-- **Rin**: LTG_TOOL_stylize_handdrawn_v002.py (all 4 fixes); regen SF02+SF03 styled v002
-- **Maya**: Color models for Luma/Byte/Cosmo; Luma expression sheet v005 (body language); Cosmo side view fix
-- **Sam**: Fix SF02 spec doc obsolete values; GL-04b luminance fix; Miri color story note
-- **Kai**: Archive ~20 legacy scripts; production naming decision
-- **Alex**: Commission SF04 (Luma+Byte); resolve logo; direct Miri narrative expression
+### Logo
+- **LTG_BRAND_logo_v001.png** — DECIDED C25 (asymmetric layout, A grade). Closes 24-cycle ambiguity.
+
+### Characters
+- Luma: expr v005 (full body), turnaround v002 (Act 2 proportions), color model v001 NEW C25
+- Byte: expr v004, turnaround v001, color model v001 NEW C25
+- Cosmo: expr v004, turnaround v002 (side view fixed) NEW C25, color model v001 NEW C25
+- Miri: expr v003 (KNOWING expression added) NEW C25, turnaround v001, color model v001
+- Glitch: expr v002, turnaround v002, color model v001
+- Character lineup: v004 (all 5)
+
+### Environments
+All complete (Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street) — styled versions present
+
+### Documentation
+- Pitch brief: `ltg_pitch_brief_v001.md` — COMPLETE
+- Delivery manifest: `pitch_delivery_manifest_v001.md`
+- Pitch package index: updated C25
+
+## Cycle 25 — Completed
+
+### Rin Yamamoto
+- LTG_TOOL_stylize_handdrawn_v002.py — 4 critical fixes: full 6-color hue protection, chalk pass exclusions (cyan+light sources), warm bleed zone gate, mixed mode cross-dissolve
+- SF02 + SF03 styled v002 regenerated. SF01 LOCKED — not re-processed.
+- Verify warning: hue drift warnings on cyan/purple expected in glitch mode (geometric channel offset = intentional aesthetic, not palette corruption)
+
+### Kai Nakamura
+- LTG_TOOL_color_verify_v001.py — `verify_canonical_colors(img, palette_dict, max_delta_hue=5)` + `get_canonical_palette()`
+- 20 legacy tool scripts → `output/tools/legacy/`; 27 legacy storyboard panels → `output/storyboards/panels/legacy/`
+- Production doc naming exemption documented in naming_conventions.md
+- LTG_TOOL_batch_stylize_v001.py → v1.1.0 (calls v002 stylize, adds color verify per job)
+- **HOT_MAGENTA canonical: #FF2D6B (NOT #FF0090)** — always verify in master_palette.md
+
+### Sam Kowalski
+- SF02 spec doc: ENV-06 #96ACA2 and DRW-07 #C8695A corrected (4 locations — was Cycle 13 stale values)
+- Master palette GL-04b luminance: 0.17 → 0.017 (order-of-magnitude error fixed)
+- Color story: Miri bridge-character section added (warm palette encodes prior Glitch knowledge)
+
+### Alex Chen
+- SF04 Luma+Byte created — closes Critique 11 P1 gap (core relationship was invisible)
+- Logo canonical decision made — closes 24-cycle ambiguity
+- Luma canonical = expression sheet v004 (directed Maya); Miri KNOWING expression directed
+
+### Maya Santos
+- Color models for Luma, Byte, Cosmo (800×500 each, 14 swatches, same format as Glitch model)
+- Luma expression sheet v005: full body, every expression unique at silhouette level (6 poses)
+- Cosmo turnaround v002: side view fixed (profile head polygon, stripe depth lines, staggered legs)
+- Luma turnaround v002: Act 2 proportions (3.2 heads, A-line hoodie, chunky sneakers)
+- Miri expression sheet v003: KNOWING STILLNESS added (6th panel — narrative secret)
+- Note: Alex's direction arrived after Maya completed; she used correct fallback (expr sheet v004 canonical)
 
 ## Shared Library
-`output/tools/LTG_TOOL_render_lib_v001.py` (v1.1.0) — 8 functions: perlin_noise_texture, gaussian_glow, light_shaft, dust_motes, catenary_wire, scanline_overlay, vignette, paper_texture.
-`output/tools/LTG_TOOL_stylize_handdrawn_v001.py` — C23. BROKEN — hue rotation artifact destroys Glitch palette. DO NOT USE on SF02/SF03. Awaiting v002.
-`output/tools/LTG_TOOL_batch_stylize_v001.py` — NEW C24. Batch runner for stylize().
-Import: `from output.tools.LTG_TOOL_render_lib_v001 import *`
+`LTG_TOOL_render_lib_v001.py` (v1.1.0) — 8 functions incl. paper_texture
+`LTG_TOOL_stylize_handdrawn_v002.py` — CURRENT (v001 RETIRED/DO NOT USE)
+`LTG_TOOL_batch_stylize_v001.py` — v1.1.0 (calls v002, includes color verify)
+`LTG_TOOL_color_verify_v001.py` — NEW C25
+
+## Canonical Palette Reminders
+- Byte body = GL-01b #00D4E8 BYTE_TEAL (NOT #00F0FF)
+- CORRUPT_AMBER = GL-07 #FF8C00 (255,140,0)
+- HOT_MAGENTA = GL-02 #FF2D6B (NOT #FF0090)
+- UV_PURPLE = #7B2FBE (not #6A0DAD — verify in master_palette.md)
+- Cyan-lit surface: G > R AND B > R individually
+- SF03: zero warm light; Classroom: zero Glitch palette
 
 ## Key Output Locations
-- Style Frames: `/output/color/style_frames/`
-- Characters: `/output/characters/main/`
-- Backgrounds: `/output/backgrounds/environments/`
-- Storyboard: `/output/storyboards/`
-- Tools: `/output/tools/README.md`
-- Master Palette: `/output/color/palettes/master_palette.md`
-- Pitch Package Index: `/output/production/pitch_package_index.md`
-- Pitch Brief: `/output/production/ltg_pitch_brief_v001.md`
+- Style Frames: `output/color/style_frames/`
+- Characters: `output/characters/main/`
+- Environments: `output/backgrounds/environments/`
+- Tools: `output/tools/` (legacy → `output/tools/legacy/`)
+- Master Palette: `output/color/palettes/master_palette.md`
+- Pitch Package Index: `output/production/pitch_package_index.md`
 
-## Pipeline & Standards
+## Pipeline Standards
 - Open source only: Python PIL
 - Naming: `LTG_[CATEGORY]_[descriptor]_v[###].[ext]`
-- Valid categories: CHAR, ENV, COLOR, SB, TOOL, BRAND
-- Byte body color = GL-01b (#00D4E8 Byte Teal), NOT GL-01 (#00F0FF Electric Cyan)
-- GL-07 CORRUPT_AMBER = #FF8C00 (255,140,0) — canonical
-- Cyan-lit surface: G > R AND B > R individually (not just G+B > R)
-- Classroom: zero Glitch palette; SF03: zero warm light
-- After img.paste(), always refresh draw = ImageDraw.Draw(img)
-- Character sheet: show_guides=False for pitch exports
+- Categories: CHAR, ENV, COLOR, SB, TOOL, BRAND
+- output/production/ files EXEMPT from LTG naming
+- After img.paste(): always refresh draw = ImageDraw.Draw(img)
+- show_guides=False for all pitch exports

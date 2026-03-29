@@ -98,10 +98,10 @@ The sky is the most complex element of this frame. It must read as:
 ### Primary Light Source — The Crack
 - **Color:** `#00F0FF` (Electric Cyan) — the crack is the sun of this scene. It is the source.
 - **Direction:** From the upper right (where the crack is). Light floods down and left across the scene.
-- **On Luma (right-facing side):** Her right side (facing the crack) is washed in intense Cyan. Her orange hoodie `#E8703A` under the cyan key reads as `#C07A70` (DRW-07 — Storm-Modified Hoodie Orange). The warm color fights the cool light, and NEITHER WINS — the result is a complex, deeply cinematic color that looks neither purely warm nor purely cold.
+- **On Luma (right-facing side):** Her right side (facing the crack) is washed in intense Cyan. Her orange hoodie `#E8703A` under the cyan key reads as `#C8695A` (DRW-07 — Storm-Modified Hoodie Orange). The warm color fights the cool light, and NEITHER WINS — the result is a complex, deeply cinematic color that looks neither purely warm nor purely cold.
 - **On Cosmo:** Since he is behind Luma and slightly angled differently, the Cyan hits him at a slightly different angle. His Dusty Lavender jacket `#A89BBF` under Cyan light reads as `#80C0CC` (DRW-09 — Storm-Modified Jacket). The lavender's purple component partially cancels against the cyan and what remains reads as a coherent teal-lavender.
 - **On the road surface:** A strong cyan pool of light on the tarmac directly below the crack — the most intense zone of Cyan in the ground plane, fading as it goes left (toward safety).
-- **On building facades:** Cyan light strikes the right-facing walls of buildings on the left side of the frame. The terracotta walls under cyan light read as `#9A8C8A` (ENV-06 — Terracotta under Cyan) — the familiar warm world visually neutralized by the glitch light.
+- **On building facades:** Cyan light strikes the right-facing walls of buildings on the left side of the frame. The terracotta walls under cyan light read as `#96ACA2` (ENV-06 — Terracotta under Cyan) — the familiar warm world visually neutralized by the glitch light.
 
 ### Secondary Light Source — Hot Magenta Edge
 - **Color:** `#FF2D6B` (Hot Magenta) — from the burning edges of the storm
@@ -149,7 +149,7 @@ In scenes where Electric Cyan is the dominant ambient color (including all storm
 - Cosmo's cast shadow: overlapping Luma's, same `#0A2A3A`
 
 ### Main Street Buildings (background)
-- Wall faces (terracotta, right-facing, Cyan-lit): `#9A8C8A` (ENV-06 — desaturated warm, Terracotta neutralized by Cyan key)
+- Wall faces (terracotta, right-facing, Cyan-lit): `#96ACA2` (ENV-06 — desaturated warm, Terracotta neutralized by Cyan key)
 - Wall faces (left-facing, away from storm): `#5A3820` (ENV-07 — deep warm shadow; only ambient UV Purple fills here, creating a deep nearly-void zone)
 - Window glow: `#FAF0DC` and `#E8C95A` (warm light from inside — the visual memory of safety)
 - Roof lines against sky: `#1A1820` (ENV-08 — nearly void, just catching the very edge of light on upper faces)
@@ -163,7 +163,7 @@ In scenes where Electric Cyan is the dominant ambient color (including all storm
 - Interior of store seen through window: `#0A0A14` with faint `#7B2FBE` glow — inside being consumed
 
 ### Luma — Full Color (under storm lighting)
-- Body right side (Cyan key): orange hoodie desaturated to `#C07A70` (DRW-07), skin to `#6AB4AE` (DRW-08 — Storm skin)
+- Body right side (Cyan key): orange hoodie desaturated to `#C8695A` (DRW-07), skin to `#6AB4AE` (DRW-08 — Storm skin)
 - Body left side (facing away from crack): shadow side reads as `#3A1A14` (DRW-03 deep shadow — the hoodie's orange fights all the way into the shadows)
 - Hair windstream (motion): `#3B2820` base with `#6A2A3A` (DRW-17) magenta-influenced highlights at edges of motion arc
 - Laces (Electric Cyan): at this lighting, the `#00F0FF` laces merge with the scene's ambient Cyan light — a small detail; they are present but do not read distinctly

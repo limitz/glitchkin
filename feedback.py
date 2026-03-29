@@ -4,7 +4,7 @@
 import os
 from datetime import datetime
 
-inbox = os.path.join(os.path.dirname(__file__), "alex_chen", "inbox")
+inbox = os.path.join(os.path.dirname(__file__), "members", "alex_chen", "inbox")
 os.makedirs(inbox, exist_ok=True)
 
 print("Message to Alex Chen (end with a single '.' on its own line):")
@@ -38,4 +38,4 @@ content = f"""**Date:** {now.strftime("%Y-%m-%d %H:%M")}
 with open(filepath, "w") as f:
     f.write(content)
 
-print(f"Message written to alex_chen/inbox/{filename}")
+print(f"Message written to members/alex_chen/inbox/{filename}")

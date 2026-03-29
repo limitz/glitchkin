@@ -1,0 +1,50 @@
+# Legacy Tools Archive
+
+**Archived by:** Kai Nakamura (Technical Art Engineer)
+**Archive date:** Cycle 25 — 2026-03-29
+
+---
+
+## Why these files are here
+
+These scripts were created in early production cycles before the LTG naming
+convention was established. Each has a fully-compliant `LTG_TOOL_*` equivalent
+in `output/tools/`. The originals were retained as a precaution through the
+naming migration (Cycles 12–22) but were never removed.
+
+**These files are superseded. Use the LTG-named versions for all new work.**
+
+---
+
+## Archived files and their LTG equivalents
+
+| Legacy file | LTG equivalent |
+|---|---|
+| `bg_glitch_layer_frame.py` | `LTG_TOOL_bg_glitch_layer_frame_v001.py` (+ v003) |
+| `bg_house_interior_frame01.py` | `LTG_TOOL_bg_grandma_kitchen_v001.py` (+ later versions) |
+| `bg_layout_generator.py` | `LTG_TOOL_bg_tech_den_v001.py`, `LTG_TOOL_bg_other_side_v001.py`, etc. |
+| `byte_expressions_generator.py` | `LTG_TOOL_byte_expression_sheet_v002.py` (+ later versions) |
+| `character_lineup_generator.py` | `LTG_TOOL_character_lineup_v003.py` |
+| `character_turnaround_generator.py` | `LTG_TOOL_miri_turnaround_v001.py` (and related turnaround tools) |
+| `color_key_generator.py` | `LTG_TOOL_colorkey_glitchstorm_gen_v001.py`, `LTG_TOOL_colorkey_otherside_gen_v001.py` |
+| `color_swatch_generator.py` | `LTG_TOOL_glitch_color_model_v001.py` (and related color model tools) |
+| `contact_sheet_generator.py` | `LTG_TOOL_sb_act1_contact_sheet_v001.py` (+ later versions) |
+| `logo_generator.py` | `LTG_TOOL_logo_asymmetric_v001.py` (+ v002) |
+| `luma_expression_sheet_generator.py` | `LTG_TOOL_luma_expression_sheet_v002.py` (+ later versions) |
+| `luma_face_generator.py` | `LTG_TOOL_luma_expression_sheet_v002.py` |
+| `panel_chaos_generator.py` | `LTG_TOOL_sb_panel_a207_v001.py` (and other panel tools) |
+| `panel_interior_generator.py` | `LTG_TOOL_sb_panel_a104_kitchen_v001.py` (and other panel tools) |
+| `proportion_diagram.py` | Character sheets (`LTG_TOOL_luma_expression_sheet_v004.py`, etc.) |
+| `silhouette_generator.py` | `LTG_TOOL_luma_act2_standing_pose_v001.py` (and pose tools) |
+| `storyboard_panel_generator.py` | `LTG_TOOL_sb_panel_a101_v001.py` (and all `LTG_TOOL_sb_panel_*` tools) |
+| `storyboard_pitch_export_generator.py` | `LTG_TOOL_sb_act2_contact_sheet_v006.py` (pitch export) |
+| `style_frame_01_rendered.py` | `LTG_TOOL_style_frame_01_discovery_v003.py` |
+| `style_frame_generator.py` | All `LTG_TOOL_style_frame_*` tools |
+
+---
+
+## Policy
+
+- Do not run these scripts for new production work. Use the LTG-named equivalents.
+- Do not delete these files — they are preserved for historical reference and diff audit.
+- Do not create new files in this directory — it is a read-only archive.

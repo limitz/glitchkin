@@ -3,7 +3,41 @@
 ## README Introduction (post-Cycle 21)
 - Added 4-paragraph first-person intro section to README.md directly below the logo. Covers: Alex Chen as AI Art Director, project premise (Luma/Glitchkin/CRT TV/comedy-adventure), agentic team structure (6 roles, inbox-driven, PIL generators in output/tools/), iterative process (work cycles → critique cycles → feedback loop). Archived: 20260329_1424_readme_changes.md + all 4 C21 completion reports (bg/char/color/tech).
 
-## Cycle 24 State (current)
+## Image Output Rule
+**Prefer smallest resolution appropriate for the task. Hard limit: ≤ 1280px in both width and height.** Use `img.thumbnail((1280, 1280), Image.LANCZOS)` before saving any PNG. Preserve aspect ratio. Only use large sizes when fine detail inspection requires it. Detail crops also ≤ 1280×1280px. Note: SF04 and logo generated at 1920×1080 this cycle — resize agent corrected these in-place.
+
+## Cycle 25 State (current)
+
+**Cycle 25 tasks completed:**
+- SF04 — Luma + Byte interaction style frame created: `output/color/style_frames/LTG_COLOR_styleframe_luma_byte_v001.png`. Scene: Luma CURIOUS (looking right at monitor), Byte on her right shoulder looking UP at her with WORRIED expression. Dual warm/cool lighting. 1920×1080 → resized to ≤1280px (see image output rule above). Generator: `output/tools/LTG_COLOR_styleframe_luma_byte_v001.py`. Closes Critique 11 P1 gap (Valentina).
+- Canonical logo decision made: `LTG_BRAND_logo_v001.png` = asymmetric v002 layout. Generator wrapper `LTG_BRAND_logo_v001.py`. Closes 24-cycle logo ambiguity. Pitch package index and completeness table updated.
+- Luma canonical reference directive sent to Maya (`20260329_1900_luma_canonical_ref_directive.md`): Expression sheet v004 IS canonical — style frame Luma must align to it. v005 sheet needs full-body silhouette differentiation. Turnaround v002 must match v004 proportions.
+- Miri KNOWING expression directive sent to Maya (`20260329_1901_miri_narrative_expression_directive.md`): Replace PENSIVE with KNOWING — weighted sideways glance + suppressed asymmetric smile (she knew about the Glitch Layer all along). Miri expression sheet v003 target.
+- Pitch package index updated to Cycle 25. SF04 entry, canonical logo, Cycle 25 open items table.
+- All inbox messages archived (4 messages: 2 Maya C24 completion reports, critique11 feedback, C25 assignment).
+
+**Critique 11 summary (received this cycle):**
+- Overall package: B+ (Valentina). Self-assessment A- was accurate.
+- PASSED: SF triptych, color system docs, Byte design ("strongest design"), Miri expression sheet ("best-executed sheet"), pitch brief.
+- GAPS: No Luma+Byte dynamic frame (P1 — CLOSED C25 SF04), Luma inconsistency between sheets and frames (active — directed Maya), logo unresolved (CLOSED C25), Miri secret expression missing (active — directed Maya).
+
+**Cycle 25 team completions:**
+- Sam Kowalski: SF02 spec doc corrected (ENV-06/DRW-07 stale values), master palette GL-04b luminance fixed (~0.17 → ~0.017), Miri color story section added to ltg_style_frame_color_story.md (warm palette as narrative camouflage — she knew all along).
+- Kai Nakamura: `LTG_TOOL_color_verify_v001.py` built (canonical 6-color hue verification), legacy scripts archived (20 tools, 27 storyboard panels to legacy/), production doc naming exemption documented, batch stylize v1.1.0 (color verify integrated).
+- Rin Yamamoto: `LTG_TOOL_stylize_handdrawn_v002.py` rebuilt (4 fixes: full canonical color protection for all 6 GL colors, chalk pass cyan exclusions, warm bleed zone gate, mixed mode cross-dissolve replaces alpha composite). SF02+SF03 re-styled with v002. SF01 not re-processed (Cycle 24 approval stands).
+
+**Cycle 25 pending (Maya to deliver):**
+- Luma expression sheet v005: full-body silhouette differentiation in ≥2 cells, hoodie pixel pattern legible.
+- Luma turnaround v002: match expression sheet v004 proportions.
+- Miri expression sheet v003: KNOWING replaces PENSIVE.
+
+**Canonical decisions locked (C25):**
+- Luma canonical = expression sheet v004 spec (3.5 heads, skin #C8885A, 5 curls locked)
+- Logo canonical = `LTG_BRAND_logo_v001.png` (asymmetric layout, A grade C13)
+
+---
+
+## Cycle 24 State (archived)
 
 **Cycle 24 tasks completed:**
 - SF01 styled review: APPROVED. `LTG_COLOR_styleframe_discovery_v003_styled.png` approved as pitch primary. Approval + notes sent to Rin's inbox (`20260329_1530_sf01_review.md`). Key notes: paper tooth integrates correctly on warm zones, chalk highlights work, ghost Byte/digital layer unaffected, composition 100% intact.

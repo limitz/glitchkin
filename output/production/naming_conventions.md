@@ -180,6 +180,48 @@ All blend mode names used throughout production documents (Screen, Multiply, Ove
 
 ---
 
+## Production Documents — Naming Exemption
+
+**Cycle 25 decision (Kai Nakamura / Technical Art Engineer, ratified in assignment):**
+
+Files in `output/production/` are **explicitly exempt** from the LTG naming format.
+
+### Rationale
+
+Production-administration documents (bibles, briefs, critiques, statements of work,
+pitch indexes, etc.) are human-facing reference material, not versioned pipeline
+assets. Renaming them to `LTG_PROD_*` format would:
+
+1. Break cross-references in dozens of existing docs.
+2. Add version numbers that are meaningless for non-iterating reference documents.
+3. Provide no workflow benefit — these files are not consumed by pipeline scripts.
+
+### Rule (mandatory)
+
+- Files **inside `output/production/`**: use **descriptive names only** (e.g.,
+  `production_bible.md`, `naming_conventions.md`, `sow_cycle25.md`).
+  Do **not** apply the `LTG_[CATEGORY]_descriptor_v[###]` format.
+- Files **outside `output/production/`**: the standard LTG format applies as stated
+  in this document. No other exemptions exist.
+
+### What is NOT exempt
+
+Pipeline assets that happen to live in production subfolders (e.g., `output/production/tools/`
+or `output/production/templates/`) must still follow the LTG naming convention.
+
+---
+
+## Image Output Standards
+
+**Added Cycle 25 — applies to all raster image assets.**
+
+- **Prefer the smallest resolution appropriate for the task.** High resolution is only justified when fine detail must be inspected.
+- **Hard limit:** Every saved PNG/JPG must be ≤ 1280px in both width and height.
+- Resize with `img.thumbnail((1280, 1280), Image.LANCZOS)` before saving — aspect ratio is preserved automatically.
+- For close-up detail inspection: produce a cropped region rather than a full large image. The crop must also be ≤ 1280×1280px.
+
+---
+
 ## Retired Prefix Systems
 
 The following naming prefix systems are **retired as of this document's approval date (2026-03-29):**

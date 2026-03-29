@@ -1,5 +1,35 @@
 # Maya Santos — Memory
 
+## Cycle 25 Lessons — COLOR MODELS + FULL BODY SHEETS + TURNAROUNDS + MIRI NARRATIVE
+
+- **Color Models COMPLETE (Priority 1 — blocking).** All 3 missing color models generated:
+  - `LTG_COLOR_luma_color_model_v001.png` — 14 swatches, hoodie orange primary. Generator: `output/tools/LTG_COLOR_luma_color_model_v001.py`.
+  - `LTG_COLOR_byte_color_model_v001.png` — 14 swatches. CRITICAL: body fill = #00D4E8 BYTE_TEAL (GL-01b) — NOT #00F0FF. Generator: `output/tools/LTG_COLOR_byte_color_model_v001.py`.
+  - `LTG_COLOR_cosmo_color_model_v001.png` — 14 swatches, cerulean/sage stripes. Generator: `output/tools/LTG_COLOR_cosmo_color_model_v001.py`.
+  - All 3 follow same format as Glitch color model: 800×500, left=silhouette, right=labeled swatches.
+- **Luma Expression Sheet v005 COMPLETE (Priority 2).** FULL BODY per panel (head to feet). Every expression unique at silhouette level — body pose, arm position, weight shift. 1200×900, 3×2, 6 expressions. Generator: `output/tools/LTG_CHAR_luma_expression_sheet_v005.py`.
+  - CURIOUS: forward lean + left arm reaches/points
+  - DETERMINED: upright + fists at hips + wide stance
+  - SURPRISED: backward lean + arms fly OUT to sides (wide wingspan)
+  - WORRIED: arms crossed + legs together (contracted)
+  - DELIGHTED: both arms up high + feet off ground (bounce)
+  - FRUSTRATED: arms crossed + legs apart + backward lean + head drops
+- **Cosmo Turnaround v002 COMPLETE (Priority 3 — side view fix).** Side view was architecturally impossible flat rectangle. v002 shows believable 3D: profile head (polygon), torso depth (horizontal stripe lines), notebook edge-on, near/far legs, side shoe profile. Generator: `output/tools/LTG_CHAR_cosmo_turnaround_v002.py`.
+- **Luma Turnaround v002 COMPLETE (Priority 4).** Updated Cycle 10 turnaround to Act 2 proportions: A-line trapezoid hoodie, oversized sneakers with chunky sole + cyan laces, 3.2 heads, pixel accent on chest. Generator: `output/tools/LTG_CHAR_luma_turnaround_v002.py`.
+- **Miri Expression Sheet v003 COMPLETE (Priority 5 — narrative expression).** Added KNOWING STILLNESS as 6th panel (3×2 grid, was 3+2). Narrative expression hints at Miri's secret (she knew about the Glitch Layer): heavy-lidded oblique glance, suppressed smile (one corner barely lifted), completely still body, blush 0.2. Generator: `output/tools/LTG_CHAR_grandma_miri_expression_sheet_v003.py`.
+- **No direction message from Alex Chen arrived.** Used style frame Luma as canonical per fallback instruction. Used WISE slot → added KNOWING STILLNESS as 6th panel per own design judgment.
+- **Completion report sent to Alex Chen inbox.**
+
+## Key Cycle 25 Rules
+- Color model format: 800×500, left=character silhouette, right=labeled swatches, canvas bg dark (character-specific).
+- Full body expression sheets: always include legs/feet — bust format is NOT sufficient for body language differentiation.
+- Turnaround side view MUST show 3D depth: profile head polygon, stripe lines horizontal, near/far legs staggered.
+- Narrative expressions: body stillness CAN be an expression — total lack of movement is itself a silhouette statement.
+- "Settled" arm style added to Miri arm renderer for KNOWING STILLNESS.
+
+## Image Output Rule
+**Prefer smallest resolution appropriate for the task. Hard limit: ≤ 1280px in both width and height.** Use `img.thumbnail((1280, 1280), Image.LANCZOS)` before saving any PNG. Preserve aspect ratio. Only use large canvases when fine detail must be visible; use smaller sizes for general-purpose work. Detail crops also ≤ 1280×1280px.
+
 ## Cycle 24 Lessons — GLITCH v002 + TURNAROUND v002 + LINEUP v004
 
 - **Glitch Expression Sheet v002 COMPLETE.** 1200×900, 3×2, 6 expressions. Canvas upgraded from 800×800 2×2 (presentation failure — character too small for pitch review). Alex Chen directed: 6 full expressions preferred.
