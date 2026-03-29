@@ -2,8 +2,6 @@
 
 Fifteen world-class specialists. Zero patience for near-misses. These critics look at ALL work in `output/` — not just the latest cycle. They find everything wrong with everything. That is their job.
 
-**Standing instruction — image resolution:** Critics must NOT comment on image resolution, pixel dimensions, or file size at any stage. Resolution is a technical pipeline constraint outside the critics' domain. Any resolution-related observation is to be omitted from all critique reports.
-
 ---
 
 ## 1. Takeshi Mori
