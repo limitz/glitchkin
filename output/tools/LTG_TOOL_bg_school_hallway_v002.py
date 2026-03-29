@@ -217,7 +217,7 @@ def draw_school_hallway():
     row_ys = []
     for i in range(n_rows + 1):
         t = i / n_rows
-        t_persp = t ** 2  # exponent > 1 = convex curve: rows get taller toward camera (correct perspective)
+        t_persp = t ** 1.5  # convex: rows get taller toward camera (1.5 = moderate compression, more natural than 2.0)
         y = int(lerp(FL_FAR_L[1], FL_NEAR_L[1], t_persp))
         row_ys.append(y)
 
@@ -287,7 +287,7 @@ def draw_school_hallway():
     # Ceiling grid
     for ri in range(n_rows + 1):
         t = ri / n_rows
-        t_p = t ** 2  # convex: ceiling grid lines compress toward vanishing point
+        t_p = t ** 1.5  # convex: ceiling grid lines compress toward vanishing point
         y = int(lerp(CEIL_FAR_L[1], CEIL_NEAR_L[1], t_p))
         xl = int(wall_x_at_y(y, CEIL_NEAR_L, CEIL_FAR_L))
         xr = int(wall_x_at_y(y, CEIL_NEAR_R, CEIL_FAR_R))
@@ -306,7 +306,7 @@ def draw_school_hallway():
     for fi in range(n_fixtures):
         t_near = (fi + 1) / (n_fixtures + 1)
         t_far  = (fi + 0.6) / (n_fixtures + 1)
-        y_near = int(lerp(CEIL_FAR_L[1], CEIL_NEAR_L[1], t_near ** 2))
+        y_near = int(lerp(CEIL_FAR_L[1], CEIL_NEAR_L[1], t_near ** 1.5))
         y_far  = int(lerp(CEIL_FAR_L[1], CEIL_NEAR_L[1], t_far ** 2))
         xl_n = int(wall_x_at_y(y_near, CEIL_NEAR_L, CEIL_FAR_L))
         xr_n = int(wall_x_at_y(y_near, CEIL_NEAR_R, CEIL_FAR_R))
@@ -323,7 +323,7 @@ def draw_school_hallway():
         if fy_bot - fy_top >= 3 and fx1_r > fx0_r:
             draw_rect(draw, fx0_r, fy_top + 1, fx1_r, fy_bot - 1, CEIL_FIXTURE)
 
-        floor_y_fi = int(lerp(FAR_H_FLOOR, H, t_near ** 2))
+        floor_y_fi = int(lerp(FAR_H_FLOOR, H, t_near ** 1.5))
         floor_xl = int(floor_left_x(floor_y_fi))
         floor_xr = int(floor_right_x(floor_y_fi))
         pool_cx = (floor_xl + floor_xr) // 2
@@ -353,21 +353,25 @@ def draw_school_hallway():
         for li in range(n_lockers_visible):
             t_near = li / n_lockers_visible
             t_far  = (li + 1) / n_lockers_visible
+            # Perspective-correct spacing: matches floor tile t**1.5 (far→near).
+            # Lockers go near→far, so invert: 1-(1-t)**1.5 gives wider near, narrower far.
+            t_near_p = 1.0 - (1.0 - t_near) ** 1.5
+            t_far_p  = 1.0 - (1.0 - t_far)  ** 1.5
 
             if side == "left":
-                near_x = int(lerp(0,     FL_FAR_L[0], t_near))
-                far_x  = int(lerp(0,     FL_FAR_L[0], t_far))
-                near_floor_y = int(lerp(H, FL_FAR_L[1], t_near))
-                far_floor_y  = int(lerp(H, FL_FAR_L[1], t_far))
-                near_ceil_y  = int(lerp(CEIL_NEAR_L[1], CEIL_FAR_L[1], t_near))
-                far_ceil_y   = int(lerp(CEIL_NEAR_L[1], CEIL_FAR_L[1], t_far))
+                near_x = int(lerp(0,     FL_FAR_L[0], t_near_p))
+                far_x  = int(lerp(0,     FL_FAR_L[0], t_far_p))
+                near_floor_y = int(lerp(H, FL_FAR_L[1], t_near_p))
+                far_floor_y  = int(lerp(H, FL_FAR_L[1], t_far_p))
+                near_ceil_y  = int(lerp(CEIL_NEAR_L[1], CEIL_FAR_L[1], t_near_p))
+                far_ceil_y   = int(lerp(CEIL_NEAR_L[1], CEIL_FAR_L[1], t_far_p))
             else:
-                near_x = int(lerp(W,     FL_FAR_R[0], t_near))
-                far_x  = int(lerp(W,     FL_FAR_R[0], t_far))
-                near_floor_y = int(lerp(H, FL_FAR_R[1], t_near))
-                far_floor_y  = int(lerp(H, FL_FAR_R[1], t_far))
-                near_ceil_y  = int(lerp(CEIL_NEAR_R[1], CEIL_FAR_R[1], t_near))
-                far_ceil_y   = int(lerp(CEIL_NEAR_R[1], CEIL_FAR_R[1], t_far))
+                near_x = int(lerp(W,     FL_FAR_R[0], t_near_p))
+                far_x  = int(lerp(W,     FL_FAR_R[0], t_far_p))
+                near_floor_y = int(lerp(H, FL_FAR_R[1], t_near_p))
+                far_floor_y  = int(lerp(H, FL_FAR_R[1], t_far_p))
+                near_ceil_y  = int(lerp(CEIL_NEAR_R[1], CEIL_FAR_R[1], t_near_p))
+                far_ceil_y   = int(lerp(CEIL_NEAR_R[1], CEIL_FAR_R[1], t_far_p))
 
             locker_top_near = int(lerp(near_floor_y, near_ceil_y, 0.28))
             locker_top_far  = int(lerp(far_floor_y,  far_ceil_y,  0.28))
