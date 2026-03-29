@@ -55,6 +55,14 @@
 - **Character lineup generator complete.** `character_lineup_generator.py` renders all 4 chars in COLOR at correct relative heights on shared baseline. Height ref lines show Cosmo top, Luma top, Miri top, Byte/Luma-chest. Per-char brackets with px labels.
 - **3/4 far-side leg guard:** When `far_bw` < `lw + 4`, the rectangle inverts. Guard: `far_leg_x2 = cx + max(far_bw - 4, lw + 8)`. Apply in any 3/4 body with asymmetric width values.
 
+## Cycle 13 Lessons
+- **Scale calibration is a design spec, not a code detail.** A 2px eye aperture difference at full render scale becomes ~1.1px after LANCZOS resize — invisible. Always verify asymmetry differentials POST-resize. For panel scale FACE_SCALE=0.55: minimum visible differential = ~4px at full render scale (~2.2px panel scale). Luma Neutral leh fixed from 24→28 (6px diff, ~3.3px at panel scale).
+- **Three differentiators rule for low-register expressions.** When two adjacent expressions share neutral body language, all three of: mouth corner, collar tilt, AND pupil offset must all be changed together. Any two alone is insufficient at panel scale. At-Rest Curiosity now has: asymmetric mouth corner (right 3px higher), collar rotate_deg=3, pupils shifted to lex-3/rex-3 (5px right of Neutral lex-8 position).
+- **Byte Neutral expression: "flat" left-eye + "half_open" right eye + "default" mouth.** byte.md spec: thin horizontal line mouth with slightly downturned ends. Arms close to body (arm_dy=4, arm_x_scale=0.75). No body tilt. New `half_open` right-eye style added to draw_right_eye(): 60% aperture, centered pupil, muted highlight.
+- **New tool: `LTG_TOOL_byte_expression_sheet_v001.py`.** 4×2 grid (7 expressions + 1 reserved slot). Per-panel emotional BGs. Migrated from `byte_expressions_generator.py`. Output: `LTG_CHAR_byte_expression_sheet_v001.png` (1040×738px).
+- **New tool: `LTG_CHAR_luma_expression_sheet_v003.py`.** Fixes Panel 7 (Neutral) eye asymmetry and Panel 8 (At-Rest Curiosity) differentiators. Output: `luma_expression_sheet.png` (1210×886px). v002 retained.
+- **Asymmetric arc via polyline with per-point tilt offset.** Drawing a mouth corner with one side higher: iterate arc points, compute tilt_x ratio (0..1 left to right), subtract `tilt_x * tilt_amount` from each y. Cleaner than two separate arcs.
+
 ## Cycle 12 Lessons
 - **Neutral/Resting is a structural requirement, not optional.** Without it, no expression has a measured distance from baseline. Left eye fractionally more open than right (leh=24 vs reh=22) establishes left as the lead eye even at zero emotional intensity.
 - **Eye asymmetry mechanism documented in character bible (Section 13).** Symmetric Luma = maximal stress/shutdown. Degree of left-right asymmetry = readout of personality intensity. This must be treated as animation spec, not a stylistic choice.

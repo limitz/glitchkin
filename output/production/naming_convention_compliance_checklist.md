@@ -4,7 +4,8 @@
 **Author:** Sam Kowalski, Color & Style Artist
 **Date:** 2026-03-29
 **Status:** Cycle 9 — First issue
-**Reference doc:** `naming_conventions.md` (Alex Chen, 2026-03-29, v1.0 APPROVED)
+**Updated:** Alex Chen (Art Director), 2026-03-30 — Cycle 13 category ratification
+**Reference doc:** `naming_conventions.md` (Alex Chen, v1.1 — BRAND ratified, COL retired)
 
 > Fiona O'Sullivan (Cycle 8 critique) found zero naming convention compliance in the output folder.
 > The naming_conventions.md document is clear, specific, and mandatory. This checklist is not a
@@ -41,9 +42,16 @@ Use the right code or ask the Art Director:
 | Particle system spec, FX reference, visual effects document | `FX` |
 | Storyboard panels, animatic, thumbnail sequence | `SB` |
 | Production document, bible, specification, SOW, schedule | `PROD` |
-| Color palette, color key, style frame | `COLOR` |
+| Color palette, color key, style frame, color model swatch | `COLOR` |
 | Prop design sheet, hand prop reference | `PROP` |
 | Script, tool, template, pipeline utility | `TOOL` |
+| Show logo, title card, brand identity asset, pitch graphic | `BRAND` |
+
+**IMPORTANT — Cycle 13 decisions (Art Director, Alex Chen):**
+
+**`BRAND` is now RATIFIED.** Use `LTG_BRAND_*` for all show logos, title treatments, lockups, and brand identity assets. This is an official addition to the category code table. Files using `BRAND` are compliant.
+
+**`COL` is RETIRED and was never valid.** Any file beginning with `LTG_COL_*` is NON-COMPLIANT. Do NOT create new files with `LTG_COL_*`. The correct code is `COLOR`. Existing `LTG_COL_*` files will be renamed in the batch reconciliation pass — do not rename individually.
 
 When in doubt — one primary category. If the file is genuinely two things (e.g., a color key that is also a style frame), use `COLOR` and note the dual function in the file itself.
 
@@ -162,16 +170,37 @@ Both exist for cross-reference; use Jordan Reed's LTG_COLOR_ versions as canonic
 - `cosmo_swatches.png` → `LTG_COL_cosmo_colormodel_v001.png` ✓ (secondary alias)
 - `grandma_miri_swatches.png` → `LTG_COL_miri_colormodel_v001.png` ✓ (secondary alias)
 
+**Storyboard Panels — COMPLETE (Jordan Reed, Cycle 13, 2026-03-30):**
+All 26 storyboard panels (panels 01–25, including 22a, plus contact sheet) have LTG-compliant copies.
+Files confirmed in `/home/wipkat/team/output/storyboards/panels/`:
+- `LTG_SB_coldopen_panel_01_v001.png` through `LTG_SB_coldopen_panel_25_v001.png` ✓ (26 panels)
+- `LTG_SB_coldopen_panel_22a_v001.png` ✓ (insert panel)
+- `LTG_SB_coldopen_contactsheet_v001.png` ✓ (contact sheet)
+Status: DONE. No panels outstanding.
+
+**LTG_COL_* Category Note (flagged to Alex Chen for ratification):**
+Sam Kowalski created `LTG_COL_*_colormodel_v001.png` files using `COL` as a category code.
+`COL` is not in the approved category table (naming_conventions.md). Valid code for color assets is `COLOR`.
+Alex Chen is reviewing whether `COL` should be ratified as a short-form alias or files renamed to `LTG_COLOR_*`.
+Do not use `COL` as a category code until Alex Chen ratifies it.
+
 **Still Outstanding (require coordinated batch rename by Alex Chen):**
-- All storyboard panels (panel_p01_exterior.png through panel_p25_title_card.png → LTG_SB_*)
 - All legacy background layout and environment PNGs not yet LTG-named
 - color_model .md documents (CHAR category, not yet addressed)
 - `naming_conventions.md` and `naming_convention_compliance_checklist.md` themselves (PROD rename irony — flag to Alex Chen)
+- `LTG_CHAR_luma_expression_sheet_v002.py` — misnamed script in tools/; should be `LTG_TOOL_*` (see tools/README.md)
+- `bg_glitch_layer_encounter.py` — misplaced in environments/, belongs in tools/ as `LTG_TOOL_*` (see tools/README.md)
 
-**Tools created this cycle (TOOL):**
+**Tools created Cycle 12 (TOOL):**
 - `LTG_TOOL_naming_compliance_copier_v001.py` — copies legacy assets to LTG-named versions
 - `LTG_TOOL_naming_compliance_copier_v002.py` — ENV pass
-- `LTG_TOOL_style_frame_02_glitch_storm_v001.py` — Style Frame 02 BG generator
+- `LTG_TOOL_naming_compliance_copy_v001.py` — alternate compliance copy tool (consolidation review pending)
+- `LTG_TOOL_style_frame_02_glitch_storm_v001.py` — Style Frame 02 BG + characters generator
+- `LTG_TOOL_colorkey_glitchstorm_gen_v001.py` — SF02 color key thumbnail (Sam Kowalski)
+- `LTG_TOOL_logo_asymmetric_v001.py` — asymmetric show logo generator
+
+**Tools created Cycle 13 (TOOL):**
+- `LTG_TOOL_bg_glitch_storm_colorfix_v001.py` — BG-only Glitch Storm with corrected TERRACOTTA_CYAN_LIT=(150,172,162); outputs `LTG_ENV_glitch_storm_bg_v001.png` (Jordan Reed)
 
 ---
 

@@ -1,5 +1,14 @@
 # Jordan Reed — Memory
 
+## Cycle 13 Lessons
+- **Cyan-lit surface rule: G > R AND B > R individually.** Not just G+B > R. Old TERRA_CYAN_LIT=(154,140,138) failed both. Correct TERRACOTTA_CYAN_LIT=(150,172,162) passes both. Start from unlit base and apply key: R-30, G+52, B+72 for electric cyan key.
+- **Background-only exports go to `output/backgrounds/environments/` with ENV category.** Character compositing scripts go to `output/tools/` with TOOL category. These are different files for a reason.
+- **Register tools in the same session you create them.** The README in tools/ is the team's only tool discovery mechanism. A 65%-missing registry is useless.
+- **Category code TOOL applies to all Python scripts regardless of subject matter.** A script generating character expressions = `LTG_TOOL_*`, not `LTG_CHAR_*`. Category describes file type, not content domain.
+- **Generator scripts in the wrong folder are pipeline liabilities.** `bg_glitch_layer_encounter.py` in environments/ is invisible to the tools registry. Flag and move.
+- **When updating a color constant shared between scripts, add a named constant in each file.** Never leave inline tuples after a color spec change — they will diverge again.
+
+
 ## Cycle 1-3 Lessons
 - Always specify working resolution. Rules need hierarchy.
 - Cross-reference prop docs with environment docs.

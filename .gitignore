@@ -1,0 +1,14 @@
+# Python cache files — never commit compiled bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Common OS artifacts
+.DS_Store
+Thumbs.db
+
+# Editor artifacts
+*.swp
+*.swo
+*~

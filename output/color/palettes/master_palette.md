@@ -256,9 +256,13 @@ These are not freestanding palette colors — they are the documented results of
 - **Scene use:** Style Frame 01 — CRT casing face only.
 
 ### DRW-07 — Storm-Modified Hoodie Orange
-- **Hex:** `#C07A70`
-- **Source:** `#E8703A` under intense Cyan storm key (less complementary-neutralized than DRW-03 — storm light angle differs from direct screen glow)
-- **Scene use:** Style Frame 02 storm sequence. Luma's right-facing hoodie surface.
+- **Hex:** `#C8695A` *(Cycle 13 corrected — was `#C07A70`)*
+- **RGB:** 200, 105, 90
+- **Source:** `#E8703A` under intense Cyan storm key. Complementary hue relationship (orange vs. cyan) desaturates the orange toward a muted warm tone. The B channel (90) reflects the cyan temperature shift.
+- **HSL:** approx. (9°, 50%, 57%) — 50% saturation. Exceeds background building walls (ENV-06 saturation ~28%) per character-over-background saturation rule.
+- **Cycle 13 correction (Sam Kowalski — Naomi C12-3):** Prior value `#C07A70` RGB(192,122,112) calculated HSL saturation ≈39% — however background building walls (ENV-06 after correction) have saturation ~28%, and prior ENV-06 `#9A8C8A` had only ~5% saturation. With the ENV-06 correction, the saturation differential was marginal. Fix: increase DRW-07 saturation to min 40%. New value RGB(200,105,90) achieves ~50% saturation — clear margin above corrected ENV-06 background. Orange material identity retained.
+- **Scene use:** Style Frame 02 storm sequence. Luma's front-facing hoodie surface (storm key angle).
+- **Cross-reference:** Updated in `LTG_TOOL_style_frame_02_glitch_storm_v001.py` and `LTG_TOOL_colorkey_glitchstorm_gen_v001.py` (Cycle 13).
 
 ### DRW-08 — Storm-Modified Skin (Cyan key)
 - **Hex:** `#6AB4AE`
@@ -306,15 +310,49 @@ These are not freestanding palette colors — they are the documented results of
 - **Source:** Bottom hem of hoodie under platform bounce Cyan light (Style Frame 03)
 - **Scene use:** Style Frame 03 — lowest inch of hoodie only.
 
-### DRW-16 — Shoulder Under Waterfall Blue
+### DRW-16 — Shoulder Under Waterfall Blue — DRW-16 RESOLVED (Cycle 13)
 - **Hex:** `#9A7AA0`
-- **Source:** Hoodie orange right shoulder under Data Stream Blue waterfall light; the most complex single-surface color in the show
-- **Scene use:** Style Frame 03.
+- **RGB:** 154, 122, 160
+- **Source:** Hoodie orange right shoulder under Data Stream Blue (`#2B7FFF`) waterfall overhead light. Complementary hue shift: orange (warm) under blue (cold) key → desaturated violet-grey result. R=154 retains slight orange warmth; B=160 reflects the Data Stream Blue dominance.
+- **Painter warning (DRW-16):** This is the most complex single-surface color on Luma. It is NOT a shadow value and NOT a neutral grey — it is a hue-shift result specific to the Data Stream Blue key angle at this position in Style Frame 03. Do NOT substitute HOODIE_AMBIENT (#B36250) or HOODIE_SHADOW (#B84A20) — both are too warm and read incorrectly under a blue-dominant overhead key.
+- **Scene use:** Style Frame 03 — Luma's right shoulder under the Data Stream Blue waterfall. Glitch Layer scenes with active blue overhead source.
+- **Cross-reference:** `luma_color_model.md` — DRW-16 painter warning added Cycle 13.
+- **Resolution note:** DRW-16 was flagged by Naomi Bridges Cycle 7 as a required painter warning. The entry existed in this section but the warning was not propagated to `luma_color_model.md`. Cross-reference now bidirectional. DRW-16 RESOLVED — Cycle 13 (Sam Kowalski).
 
 ### DRW-17 — Magenta-Influenced Hair (Storm)
 - **Hex:** `#6A2A3A`
 - **Source:** `#3B2820` hair under Hot Magenta fill light from storm (style frame 02)
 - **Scene use:** Style Frame 02 motion arcs, hair rim highlights.
+
+---
+
+### C10-1 RESOLVED — Cold Overlay Boundary Arithmetic (Style Frame 01)
+
+**Status: RESOLVED — Cycle 13 (Sam Kowalski)**
+**Originally flagged: Naomi Bridges Cycle 10. Outstanding 3 cycles.**
+
+**The Issue:** The `draw_lighting_overlay()` function in `style_frame_01_rendered.py` had an incorrect comment claiming the cold overlay alpha was "near-zero / 3.5%" at the 80px warm/cold boundary zone. Naomi identified this as arithmetically wrong in her Cycle 10 report.
+
+**The Arithmetic (verified):**
+- Resolution: W=1920, H=1080
+- Monitor center x: `monitor_cx = W * 11 // 15 ≈ 1408`
+- Warm/cold boundary x: `W // 2 - 80 = 880`
+- Distance from monitor center to boundary: 1408 - 880 = 528px
+- Cold overlay max radius: `int(W * 0.55) = 1056px`
+- Normalized distance at boundary: t = 528 / 1056 = 0.50
+- Cold alpha at boundary: `int(cold_alpha_max * (1 - t)) = int(60 * 0.50) = 30`
+- As percentage: 30/255 = **11.8%**
+
+**The incorrect prior comment said:** "both alphas near-zero / ~3.5%" — this was wrong.
+
+**Correct values (documented in `style_frame_01_rendered.py` since Cycle 10):**
+- `cold_alpha_max = 60` — peak alpha at monitor center
+- At the 80px overlap zone (x=880), cold alpha ≈ **30 (~11.8%)**
+- At the warm zone's starting edge (x=960), cold alpha ≈ 0 (fully feathered out)
+
+**Visual decision:** `cold_alpha_max = 60` RETAINED. At ~12% opacity, the cold cyan cross-light at the 80px boundary reads as a plausible split-light transition (warm lamp left / cool monitor right). This is not cold contamination — it is intentional atmospheric separation. The warm skin tones under ~12% cold cyan overlay remain readable as warm.
+
+**Code location:** `style_frame_01_rendered.py` header (Cycle 10 note, lines 12–19) and `draw_lighting_overlay()` function inline comments (lines 1292–1294).
 
 ---
 
@@ -329,13 +367,27 @@ Flat hex values for environment surfaces under specific lighting conditions. Est
 | ENV-03 | `#4A3A2A` | Asphalt under warm spill | Road under building window light | Frame 02 |
 | ENV-04 | `#3A3848` | Nighttime sidewalk | Sidewalk surface, night | Frame 02 |
 | ENV-05 | `#0A2A3A` | Cyan-cast shadow | Character cast shadows under Cyan key | Frame 02 |
-| ENV-06 | `#9A8C8A` | Terracotta under Cyan | Building walls Cyan-lit, storm | Frame 02 |
+| ENV-06 | `#96ACA2` | Terracotta under Cyan key — CORRECTED Cycle 13 | Building walls Cyan-lit, storm | Frame 02 |
 | ENV-07 | `#5A3820` | Dark Warm Wood / Deep warm shadow (building) | Building shadow side, storm; background wood surfaces in warm/amber lighting | Frame 02, Frame 03 |
 | ENV-08 | `#1A1820` | Near-void roofline | Roof silhouettes against storm sky | Frame 02 |
 | ENV-09 | `#1A2838` | Dark blue-grey slab | Glitch Layer platform surfaces facing up | Frame 03 |
 | ENV-10 | `#0A1420` | Near-void slab face | Glitch Layer vertical structure faces | Frame 03 |
 | ENV-11 | `#2A1A40` | Deep atmospheric purple | Far-distance Glitch Layer structures | Frame 03 |
 | ENV-12 | `#2B2050` | Layer 4-5 transition sky | Glitch Layer sky near-void transition | Frame 03 |
+
+### ENV-06 — Terracotta Under Cyan Key (Corrected Cycle 13)
+- **Hex:** `#96ACA2`
+- **RGB:** 150, 172, 162
+- **Cycle 13 correction (Jordan Reed / Naomi C12-1):** The prior value `#9A8C8A` RGB(154,140,138) was arithmetically wrong — R channel dominated (154 > G:140 > B:138), making the wall read WARMER on the cyan-lit face than on the shadow face. This is the opposite of how cyan key light behaves. Correct derivation requires G > R and B near/above R on any cyan-lit face. New value RGB(150,172,162): G=172 > R=150, B=162 > R=150 — correctly signals cool (cyan) lighting. Implemented in `LTG_TOOL_colorkey_glitchstorm_gen_v001.py` (Cycle 13).
+- **NOTE for Jordan Reed:** The SF02 background generator (`LTG_TOOL_style_frame_02_glitch_storm_v001.py`) still uses the old value `TERRA_CYAN_LIT = (154, 140, 138)`. Update to `(150, 172, 162)` (#96ACA2) on next pass.
+- **Naomi reference formula (35% cyan wash, for verification):** R: 199×0.65+0×0.35=129, G: 91×0.65+240×0.35=143, B: 57×0.65+255×0.35=126 → RGB(129,143,126). Both formulas agree on the direction: G>R, B≈R. The implemented value RGB(150,172,162) has a stronger cyan influence (~40% mix) and is acceptable.
+
+### ENV-03 — Warm Window Spill (Canonical Alpha)
+- **Hex:** `#4A3A2A`
+- **RGB:** 74, 58, 42
+- **Canonical warm spill alpha:** **40/255 (~16%)** — used in `LTG_TOOL_style_frame_02_glitch_storm_v001.py` (gradient falloff, max 40).
+- **Cycle 13 alignment (Sam Kowalski — Naomi C12-2):** The color key generator (`LTG_TOOL_colorkey_glitchstorm_gen_v001.py`) previously used a flat alpha of 150/255 (~59%) for this same scene value. This was misaligned with the SF02 bg script. Both scripts now use alpha 40 (~16%). Rationale: warm window spill in a storm night scene is a subtle background light, not a dominant source — 16% is correct. 59% would overpower the dominant cyan key from the crack.
+- **This is the same ENV-03 entry as in the table above — this note adds the canonical alpha specification.**
 
 ### ENV-07 — Dark Warm Wood
 - **Hex:** `#5A3820`
@@ -1198,4 +1250,5 @@ When any human character is in a cool-ambient or Glitch Layer environment, warm 
 *Cycle 8 revision: Section 6 added (Environment / Props — couch PROP-01/02/03, cable PROP-04/05/06, neutral grey PROP-07 deprecated/replaced); CHAR-L-08 placeholder added (hoodie underside, lavender ambient).*
 *Cycle 9 revision: Section 7 added (Skin Color System — two-tier system, CHAR-C-01 for Cosmo, warm/cool skin tables, Fiona critique resolution); PROP-07 finalized (CABLE_NEUTRAL_PLUM, #504064); CHAR-L-08 finalized (#B06040, HOODIE_AMBIENT); CHAR-L-09/10 added (Luma shoe canvas/sole per Naomi Bridges Cycle 8 feedback).*
 *Cycle 10 revision: CHAR-L-08 hex corrected from #B06040 (176,96,64) to #B36250 (179,98,80) — blue channel arithmetic error resolved (Naomi Bridges C9-5). Glitch Layer depth-tier construction values documented in comment block (Naomi C9-1). luma_color_model.md cross-reference confirmed present in both documents.*
+*Cycle 13 revision (Sam Kowalski — 2026-03-30): C10-1 RESOLVED — cold overlay boundary arithmetic for SF01 documented in Section 1B (prior comment was wrong: alpha at 80px boundary is 30/11.8%, not near-zero). DRW-16 RESOLVED — painter warning for shoulder-under-Data-Stream-Blue-waterfall expanded and cross-referenced to luma_color_model.md. DRW-07 saturation corrected: #C07A70 → #C8695A (RGB 200,105,90), HSL saturation raised from ~39% to ~50% (Naomi C12-3). ENV-06 corrected: #9A8C8A (warm-dominant grey, wrong) → #96ACA2 (G>R, B>R, correctly cyan-lit) per Jordan Reed / Naomi C12-1. ENV-03 warm spill canonical alpha documented: 40/255 (~16%) — aligned LTG_TOOL_colorkey_glitchstorm_gen_v001.py from prior 150 to 40 (Naomi C12-2). CHAR-L-09 warm pixel activation: pending Alex Chen confirmation (message sent 2026-03-30 14:00).*
 *Review cycle: Update after each critic feedback pass.*

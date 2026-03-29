@@ -74,7 +74,14 @@
 - **DRW-16 painter warning still outstanding** (Luma shoulder under Data Stream Blue waterfall, `#9A7AA0`). Must be added to luma_color_model.md. Carried forward since Cycle 7.
 - **luma_color_model.md does not yet have a DRW-16 warning.** Add to luma.md Section 3 (or color model) next available cycle.
 
+## Cycle 13 Lessons
+- **C10-1 RESOLVED.** Cold overlay boundary arithmetic was wrong in prior cycles ("near-zero/3.5%"). Actual: at x=880 (80px boundary), t≈0.50, alpha=int(60×0.50)=30 (~11.8%). Visual decision: cold_alpha_max=60 retained — ~12% cold cyan over warm skin is a valid split-light cross-light effect. Documented in master_palette.md Section 1B as C10-1 RESOLVED.
+- **DRW-16 RESOLVED.** Painter warning added to luma_color_model.md (shoulder under Data Stream Blue waterfall, #9A7AA0). Cross-reference now bidirectional: master_palette.md DRW-16 ↔ luma_color_model.md.
+- **DRW-07 saturation fix.** Storm hoodie #C07A70 RGB(192,122,112) had saturation below background walls. Corrected to #C8695A RGB(200,105,90), HSL≈50% saturation. Updated in both SF02 scripts.
+- **Warm spill alpha canonical: 40/255 (~16%).** Color key generator used alpha=150 (~59%) vs SF02 bg script alpha=40. Aligned to 40 — the correct value for a subtle background window spill under dominant cyan storm key.
+- **ENV-06 corrected by Jordan Reed.** Old #9A8C8A (R dominant — reads warm, wrong for cyan key). New #96ACA2 (G>R, B>R — correctly cool). Applied in color key generator; SF02 bg generator still needs updating (note added to master_palette.md for Jordan).
+- **CHAR-L-09 warm pixel activation still pending.** Message sent to Alex Chen inbox 2026-03-30 14:00. If Alex confirms, register as CHAR-L-09b or CHAR-L-11 in master_palette.md Section 5 (hex #E8C95A). Current CHAR-L-09 = shoe canvas (Cycle 9).
+
 ## Carry Forward
-- DRW-16 painter warning for Luma character spec still outstanding (shoulder-under-waterfall-blue).
-- Coordinate with Alex Chen: CHAR-L-09 registration (warm-side pixel activation) — confirm if SF01 visual surprise uses this.
-- Full batch rename pass for storyboards + remaining legacy files still needs Alex Chen coordination.
+- CHAR-L-09 warm pixel activation: awaiting Alex Chen confirmation. Check next cycle.
+- ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py (TERRA_CYAN_LIT still old value). Coordinate with Jordan Reed.

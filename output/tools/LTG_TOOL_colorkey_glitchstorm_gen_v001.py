@@ -68,9 +68,19 @@ ROOFLINE        = ( 26,  24,  32)   # ENV-08 — Near-void rooflines
 CYAN_CAST_SHAD  = ( 10,  42,  58)   # ENV-05 — Cast shadows under Cyan key
 VOID_SKY_CORE   = ( 10,  10,  20)   # Sky void core (= VOID_BLACK, named alias)
 STORM_GROUND    = ( 26,  20,  40)   # Desaturated deep for townspeople silhouettes
+# ENV-06 CORRECTED (Cycle 13, Jordan Reed — Naomi CRITICAL):
+# Old value RGB(154,140,138): G=140 < R=154, B=138 < R=154 — reads WARM GREY, not cyan-lit.
+# Fix: start from unlit terracotta ~(180,120,90), apply cyan key (R-30, G+52, B+72).
+# G=172 > R=150 [PASS], B=162 > R=150 [PASS], G+B=334 > R+R=300 [PASS].
+TERRACOTTA_CYAN_LIT = (150, 172, 162)  # ENV-06 — terracotta wall under ELEC_CYAN key
 
 # Character colors (storm-lit, from SF02 spec)
-LUMA_HOODIE_STM = (192, 122, 112)   # DRW-07 — Storm-Modified Hoodie Orange
+LUMA_HOODIE_STM = (200, 105,  90)   # DRW-07 — Storm-Modified Hoodie Orange
+# Cycle 13 saturation fix (Sam Kowalski — Naomi C12-3):
+# Prior value RGB(192,122,112) had lower saturation than background building walls — violates
+# character-over-background saturation rule (style_guide.md). New value RGB(200,105,90),
+# HSL≈(9°,50%,57%), hex #C8695A. See LTG_TOOL_style_frame_02_glitch_storm_v001.py for
+# full derivation. master_palette.md DRW-07 entry updated to #C8695A.
 LUMA_SKIN_STM   = (106, 180, 174)   # DRW-08 — Storm-Modified Skin (Cyan key)
 COSMO_JACKET_S  = (128, 192, 204)   # DRW-09 — Storm-Modified Jacket (Cosmo)
 LUMA_HAIR_STM   = ( 59,  40,  32)   # base hair, with RIM_MAGENTA on motion edges
@@ -256,7 +266,7 @@ def generate_sf02_glitch_storm_colorkey():
         # Right-facing walls (Cyan-lit) — terracotta neutralized by Cyan key
         # Simplified: right 40% of building face is Cyan-contaminated
         cx_split = bx0 + int((bx1 - bx0) * 0.60)
-        draw.rectangle([cx_split, by0, bx1, by1], fill=(154, 140, 138))  # ENV-06
+        draw.rectangle([cx_split, by0, bx1, by1], fill=TERRACOTTA_CYAN_LIT)  # ENV-06 (Cycle 13 fix)
         # Roofline (near-void)
         draw.rectangle([bx0, by0, bx1, by0 + 3], fill=ROOFLINE)
         # Warm windows (last vestige of safety — interior lit)
@@ -289,7 +299,15 @@ def generate_sf02_glitch_storm_colorkey():
     ov3 = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     ov3_draw = ImageDraw.Draw(ov3)
     ov3_draw.rectangle([0, street_y + int(H * 0.04), int(W * 0.35), H],
-                       fill=(74, 58, 42, 150))  # ENV-03, alpha 150
+                       fill=(74, 58, 42, 40))  # ENV-03, alpha 40
+    # Cycle 13 alpha alignment (Sam Kowalski — Naomi C12-2):
+    # Prior value: alpha=150 (~59%). SF02 background script (LTG_TOOL_style_frame_02_glitch_storm_v001.py)
+    # uses alpha=40 (~16%) for the same warm window spill scene value.
+    # CANONICAL: alpha=40 (~16%). Rationale: this is a background building window spill on
+    # a stormy night — a subtle warm glow, not a dominant light source. 59% was too strong
+    # and would overpower the dominant cyan key from the crack. 16% reads as the correct
+    # "last light in a dark building" quality. Updated this script to match the SF02 bg value.
+    # Document: master_palette.md Section 1C ENV-03 note, warm spill canonical alpha = 40/255.
     img = img.convert("RGBA")
     img = Image.alpha_composite(img, ov3)
     img = img.convert("RGB")

@@ -39,30 +39,18 @@
 - **Chaos panels need a still point.** P24 (breach apex) works because Luma+Byte at center-lower are the ONLY non-chaotic elements. Maximum contrast between still protagonists and surrounding chaos is what makes the hook frame land.
 - **Contact sheet: 26 panels, QUIET → CURIOUS → BREACH → CHAOS → PEAK CHAOS arc. Full cold open P01-P25 now rendered.**
 
-## Cycle 12 Milestone
-- **P15 right arm FIXED (Cycle 12):** Endpoint moved from `body_top + 18` to `body_top + 10` — true horizontal flung arm read. Carmen flagged this in Cycle 11 brief as the last geometric imprecision.
-- **LTG naming compliance COMPLETE:** All 26 panels + contact sheet now have `LTG_SB_coldopen_panel_[##]_v001.png` compliant copies in `/output/storyboards/panels/`. P22a uses `panel_22a_v001.png`.
-- **Contact sheet version updated to Cycle 12.** Module docstrings updated in both `panel_chaos_generator.py` (now says "Cycle 11" in docstring, "Cycle 12" in print) and `contact_sheet_generator.py`.
-- **Act 2 thumbnail plan created:** `/output/storyboards/act2_thumbnail_plan_v001.md` — 8 Act 1 beats + 8 Act 2 escalation beats with shot types, emotional temperatures, and production notes.
-- **Cold open storyboard: PITCH-READY. No open issues.** All Carmen feedback from Cycles 9–11 closed.
-
-## Cycle 11 Milestone
-- **26-panel cold open COMPLETE at A- / 92% (Carmen, 2026-03-29).** Pitch-ready for development-stage presentations. P23 Glitchkin now use 4-7 sided irregular polygons (matching P22/P24 approach). Module docstring updated to Cycle 11. `storyboard_pitch_export_generator.py` generates 6-page composite pitch PNG at `/output/production/storyboard_pitch_export.png` — title page, 4 panel-grid pages, hero spread.
-- **Polygon consistency rule:** ALL Glitchkin shapes in ALL panels must use the `num_sides = 4 + rng.randint(0, 3)` + per-vertex jitter pattern. Rectangles are never acceptable for Glitchkin at any scale.
-- **Version strings:** Check and update module docstring every cycle before any review.
-
-## Cycle 10 Lessons
-- **ECU = MORE detail, not less.** Extreme close-up is the closest audience look — it must deliver maximum visual specificity. P22 Glitchkin were rectangles at ECU scale. Fixed: use 4-7 sided irregular polygons (same as P24). The `num_sides = 4 + rng.randint(0, 3)` pattern plus per-vertex jitter creates organic, distinct shapes at any scale.
-- **Threat contrast must be physically felt, not aesthetically noted.** P23 monitor bowing read as "decorative" at 30% contrast. Fix: white-hot bull's-eye center, distortion rings that break OUTSIDE the bezel boundary (physics violation = danger signal), thick dark bezel surround for maximum contrast, bright outline on the screen face. If a screen is "about to burst," it must look like it.
-- **Body language tells the story before the face.** P15 had symmetric windmill arms and spread-eagle legs — balanced, readable as "falling," not "startled." Fix: torso squash (compressed ellipse width > height), one arm raised defensively (bent, above head), one arm flung outward (asymmetric — uncontrolled), one knee pulled to chest (fetal shock reflex), other leg extended. Geometry asymmetry = physical comedy. The body IS the performance.
-- **Version strings must be current before any review.** Contact sheet "Cycle 8" string survived two full cycles before being caught. Check version annotations after every code cycle. A wrong version on a production document breaks trust immediately.
-
 ## Cycle 9 Lessons
 - **Dutch tilt means ROTATING THE ENTIRE SCENE — not tilting one polygon.** A 12° Dutch tilt must use `Image.rotate(12, expand=False)` on the full draw-area canvas after all scene content is drawn. A tilted floor polygon delivers ~1°, not 12°. Geometry always wins over annotation text. Use `apply_dutch_tilt()` helper + `make_panel(dutch_tilt_deg=12)`.
 - **"Pulling back and up slightly" = 40-45° high angle isometric — NOT 90° top-down.** At 90° top-down, characters are unreadable circles. At 40-45° we see profile + top: characters have face profiles visible, bodies foreshortened. Back wall with monitors faces camera; floor plane recedes into frame. Characters are distinguishable from Glitchkin shapes.
 - **Foreground hero framing = partial crop at bottom edge.** If the script says "foreground lower-left," the character body must extend BELOW the frame bottom (intentionally cropped). That is what makes the camera read as looking UP at the figure. Centering at 38% from top = center-frame, not foreground.
 - **Expression library: three distinct emotional states that 'curious' cannot cover.** 'settling' (P17) = wide eyes, softly open mouth, brows raised in wonder. 'recognition' (P18) = one brow raised high (asymmetric), other eye squinted (concentration), pursed mouth. 'warmth' (P20) = eyes slightly narrowed (warmth squint), soft smile without teeth, gentle brow raise, cheek crinkle lines.
 - **Byte's expression must match the scene's emotional temperature.** 'alarmed' at maximum during the quiet chip-falling beat (P17) kills the silence. Use 'resigned' or 'post-alarm' for quiet beats. The expression state is a story beat, not a default.
+
+## Cycle 10 Lessons
+- **ECU = MORE detail, not less.** Extreme close-up is the closest audience look — it must deliver maximum visual specificity. P22 Glitchkin were rectangles at ECU scale. Fixed: use 4-7 sided irregular polygons (same as P24). The `num_sides = 4 + rng.randint(0, 3)` pattern plus per-vertex jitter creates organic, distinct shapes at any scale.
+- **Threat contrast must be physically felt, not aesthetically noted.** P23 monitor bowing read as "decorative" at 30% contrast. Fix: white-hot bull's-eye center, distortion rings that break OUTSIDE the bezel boundary (physics violation = danger signal), thick dark bezel surround for maximum contrast, bright outline on the screen face. If a screen is "about to burst," it must look like it.
+- **Body language tells the story before the face.** P15 had symmetric windmill arms and spread-eagle legs — balanced, readable as "falling," not "startled." Fix: torso squash (compressed ellipse width > height), one arm raised defensively (bent, above head), one arm flung outward (asymmetric — uncontrolled), one knee pulled to chest (fetal shock reflex), other leg extended. Geometry asymmetry = physical comedy. The body IS the performance.
+- **Version strings must be current before any review.** Contact sheet "Cycle 8" string survived two full cycles before being caught. Check version annotations after every code cycle. A wrong version on a production document breaks trust immediately.
 
 ## Cycle 5 Lessons
 - **Pulse must be visible in the image, not just named in the caption.** Concentric glow rings around the pixel are the solution — they read even at thumbnail scale.
@@ -71,3 +59,42 @@
 - **Bridge panels are spatial contracts.** They don't just fill gaps — they establish geometry and character positions that the climax panel (P13) inherits.
 - **Contact sheet is the first test.** Read the strip before individual panels. If the arc doesn't read in thumbnail, there's a structural problem.
 - **Distinctive house details go in the image, not the production bible.** Antenna cluster, thin power lines — they must appear on-panel in P01, not just in documentation.
+
+## Cycle 11 Milestone
+- **26-panel cold open COMPLETE at A- / 92% (Carmen, 2026-03-29).** Pitch-ready for development-stage presentations. P23 Glitchkin now use 4-7 sided irregular polygons (matching P22/P24 approach). Module docstring updated to Cycle 11. `storyboard_pitch_export_generator.py` generates 6-page composite pitch PNG at `/output/production/storyboard_pitch_export.png` — title page, 4 panel-grid pages, hero spread.
+- **Polygon consistency rule:** ALL Glitchkin shapes in ALL panels must use the `num_sides = 4 + rng.randint(0, 3)` + per-vertex jitter pattern. Rectangles are never acceptable for Glitchkin at any scale.
+- **Version strings:** Check and update module docstring every cycle before any review.
+
+## Cycle 12 Milestone
+- **P15 right arm FIXED (Cycle 12):** Endpoint moved from `body_top + 18` to `body_top + 10` — true horizontal flung arm read. Carmen flagged this in Cycle 11 brief as the last geometric imprecision.
+- **LTG naming compliance COMPLETE:** All 26 panels + contact sheet now have `LTG_SB_coldopen_panel_[##]_v001.png` compliant copies in `/output/storyboards/panels/`. P22a uses `panel_22a_v001.png`.
+- **Contact sheet version updated to Cycle 12.** Module docstrings updated in both `panel_chaos_generator.py` (now says "Cycle 11" in docstring, "Cycle 12" in print) and `contact_sheet_generator.py`.
+- **Act 2 thumbnail plan created:** `/output/storyboards/act2_thumbnail_plan_v001.md` — 8 Act 1 beats + 8 Act 2 escalation beats with shot types, emotional temperatures, and production notes.
+- **Cold open storyboard: PITCH-READY. No open issues.** All Carmen feedback from Cycles 9–11 closed.
+
+## Cycle 13 Milestone
+- **P13 SCREAM FIXED:** Mouth changed from small circle (24×14px) to tall yell oval (52×32px, jaw drops far below chin). Tongue added (pale pink fill, lower 40% of mouth aperture). Brows changed from arcs to SHARP SPIKE LINES (two-line ^ shape per brow, high above eye). Body recoils: torso tilted backward, weight shifted. Generator: `LTG_TOOL_cycle13_panel_fixes_v001.py`.
+- **P15 ARM URGENCY FIXED:** Right arm endpoint extended from `luma_cx + 52` (~287px) to `luma_cx + 125` (~360px). Arm now strains toward frame edge. Hand blob added at extended tip. Urgency annotation updated.
+- **P03 CRT FRAMING FIXED:** Monitor fills near-full frame (10px margin vs original 50px margin). CRT curvature, screen reflections, power LED all added. Pixel and pulse rings now centered on screen (not floating in void). Creates strong contrast punch vs P04 wide room reveal.
+- **P08 HIGH ANGLE / P09 EYE LEVEL differentiated:** P08 `floor_y` moved from 0.70 to 0.62 (camera looks down at Byte — diminishes him in first real-world moment). P09 remains at 0.76 (true eye level — camera equals Byte's floating height — he's now decisive/present). Annotation text updated in both panels with color-coded labels.
+- **Act 2 plan v002 created:** `/output/storyboards/act2_thumbnail_plan_v002.md` — all Carmen notes incorporated. A2-02 reframed as Byte MCU. A1-04 near-miss added. A2-05b Cosmo app setup panel added. A2-06 INSERT panel added. Pixel confetti note added to production notes.
+- **Byte glyph dependency flagged to Alex Chen:** Message at `/home/wipkat/team/alex_chen/inbox/20260330_1500_byte_dead_pixel_glyph_design_needed.md`. A2-02 and A2-07 are blocked until design is resolved.
+- **New LTG v002 files:** panel_03, 08, 09, 13, 15 all have v002 copies. Contact sheet v002 generated.
+
+## Key Rules (active)
+- Scream = jaw DOWN + tall oval mouth (NOT small circle) + tongue + spike brows + body recoil
+- Urgency = limbs straining toward frame edges (arm must REACH, not politely extend)
+- CRT ECU = fill the frame — surround space contradicts the "close" shot type
+- Camera differentiation between adjacent panels: floor_y position IS the camera angle geometry
+- Contact sheet always regenerated after any panel change
+- Dutch tilt = Image.rotate() on entire scene canvas
+- Glow effects ADD light (RGBA composite), never darkness
+- Naming: `LTG_[CATEGORY]_[descriptor]_v[###].[ext]`
+- Never overwrite LTG versioned files — new version numbers
+- Pixel confetti required near ALL active Glitch Layer intrusion events
+
+## Current Status (after Cycle 13)
+- Cold open: 26 panels COMPLETE, all Carmen notes resolved through Cycle 13
+- Act 2 plan: v002 complete with all Carmen Cycle 12 notes
+- BLOCKED: A2-02 MCU and A2-07 ECU panels await Byte glyph design from Alex Chen
+- Ready for: Act 2 panel generation (A2-01, A2-03, A2-04 series, A2-05/05b, A2-06, A2-08) once glyph arrives

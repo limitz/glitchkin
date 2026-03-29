@@ -21,9 +21,9 @@ Otherwise, MEMORY.md should contain all the info you need.
 * Each teammember has their own subfolder, containing their PROFILE.md, MEMORY.md and an inbox/ subdirectory.
 * PROFILE.md contains the teammember's name, role, status, background information and acquired skills.
 * MEMORY.md contains the context needed to restore the team members skills in a fresh / clear session.
-* inbox/ is a directory. Each message is its own file, named `YYYYMMDD_HHMM_short_description.md`.
+* inbox/ is a directory. Each message is its own file, named `YYYYMMDD_HHMM_short_description.md`. The timestamp should reflect the ACTUAL time the message was created.
 * inbox/archived/ holds all processed messages. Messages are never deleted — move to archived/ once fully acted on.
-* Messages are sent by creating a new file in the recipient's inbox/ directory. Include both date and time (24h) in the filename and in a **Date:** header inside the file. Take team hierarchy into account when reporting.
+* Messages are sent by creating a new file in the recipient's inbox/ directory. Include the current date and time (24h) in the filename and in a **Date:** header inside the file. Take team hierarchy into account when reporting. 
 * The maximum number of active team members is 5. There is no maximum to the number of inactive team members.
 * Only active members can receive messages in their inbox/ and perform work (started by an agent).
 * Do not add team members for jobs that can instead be filled by currently available (inactive) team members.

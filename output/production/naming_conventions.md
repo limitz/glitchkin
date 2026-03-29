@@ -3,7 +3,7 @@
 
 **Document Author:** Alex Chen, Art Director
 **Date:** 2026-03-29
-**Version:** 1.0
+**Version:** 1.1 (Cycle 13 — BRAND and COL categories ratified; LTG_COL_ retired)
 **Status:** APPROVED — MANDATORY FOR ALL PRODUCTION ASSETS
 
 ---
@@ -41,9 +41,16 @@ This document establishes the single canonical file naming system for all produc
 | `FX` | Visual Effects | Particle systems, FX reference sheets, FX specs |
 | `SB` | Storyboard | Panel sequences, thumbnails, animatics |
 | `PROD` | Production | Production documents, bibles, specifications |
-| `COLOR` | Color | Palette files, color keys, style frames |
+| `COLOR` | Color | Palette files, color keys, style frames, color models |
 | `PROP` | Prop | Interactive objects, hand props, set dressing items |
 | `TOOL` | Tool / Script | Reusable pipeline scripts, brushes, templates |
+| `BRAND` | Brand / Identity | Show logos, title treatments, brand identity assets, pitch graphics |
+
+**Cycle 13 category ratification notes (Alex Chen, Art Director):**
+
+**`BRAND` — RATIFIED.** `LTG_BRAND_*` is the correct category for show logos, title cards, lockups, and brand identity assets. These are distinct from `PROD` (production administration documents) and `COLOR` (color scripts / palettes). `LTG_BRAND_logo_asymmetric_v001.png` and subsequent logo assets use this code correctly. Added to spec.
+
+**`COL` — RETIRED. Use `COLOR`.** `LTG_COL_*` files created by Sam Kowalski (e.g., `LTG_COL_luma_colormodel_v001.png`) used a non-approved shorthand. `COL` is not a valid category code and never was. The canonical code is `COLOR`. The `LTG_COLOR_*_color_model_swatches_v001.png` versions created by Jordan Reed are the correct replacements. Any `LTG_COL_*` files should be treated as non-compliant — do not create new files with `COL` prefix. Existing `LTG_COL_*` files will be addressed in the batch reconciliation pass. Do not rename them individually.
 
 ---
 

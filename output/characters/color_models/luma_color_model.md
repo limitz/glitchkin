@@ -52,5 +52,20 @@ At medium shot and smaller, reduce pixel pattern to the simplified versions spec
 
 ---
 
+## DRW-16 RESOLVED — Painter Warning: Shoulder Under Data Stream Blue Waterfall
+
+**DRW-16 — Hoodie Orange Shoulder Under Data Stream Blue Waterfall**
+- **Hex:** `#9A7AA0`
+- **RGB:** 154, 122, 160
+- **Scene:** Style Frame 03 — Luma's RIGHT shoulder, directly beneath the Data Stream Blue (`#2B7FFF`) waterfall in the Glitch Layer
+- **Source derivation:** Hoodie orange (`#E8703A`, RGB 232,112,58) modified by intense Data Stream Blue overhead key light. The complementary hue relationship between orange and blue desaturates and lifts the surface toward the violet-grey range. The result retains slight orange warmth (R channel still > B) while being dominated by the cool blue key.
+- **Painter warning:** This is the most complex single-surface color on Luma. It is NOT a shadow value and NOT a neutral grey — it is a hue-shift result specific to the Data Stream Blue key angle. Do NOT substitute HOODIE_AMBIENT (#B36250) or HOODIE_SHADOW (#B84A20) here — both are too warm and read incorrectly under a blue-dominant key.
+- **Figure-ground note:** `#9A7AA0` on the right shoulder creates a strong visual bridge between Luma's warm hoodie body and the cool Glitch Layer environment — intentional. It should read as "Luma touched by the Glitch Layer" rather than "corruption."
+- **Use strictly for:** Luma's right shoulder surface in scenes with active Data Stream Blue overhead source (Style Frame 03 and equivalent Glitch Layer shots).
+- **Cross-reference:** master_palette.md Section 1B, DRW-16. Added Sam Kowalski — Cycle 13 (DRW-16 RESOLVED — outstanding since Cycle 7, Naomi Bridges flag).
+
+---
+
 *Compiled by Maya Santos, Character Designer — Cycle 3*
 *Source: luma.md v2.1. All values consolidated from that document. Blush disambiguation added per Cycle 3 critic feedback.*
+*Cycle 13 addition: DRW-16 painter warning (Sam Kowalski) — Shoulder Under Data Stream Blue Waterfall. Resolves carry-forward item outstanding since Cycle 7.*

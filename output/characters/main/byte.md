@@ -3,7 +3,7 @@
 
 **Designer:** Maya Santos
 **Date:** 2026-03-29
-**Version:** 3.1 (Cycle 8/9 Revision — Oval Body; Cycle 10 Section 10 rewrite)
+**Version:** 3.2 (Cycle 13 — Cracked-Eye Dead-Pixel Glyph + Storm-Scene Variant)
 **Status:** Updated — Chamfered-box design retired Cycle 8; oval body is canonical
 
 ---
@@ -565,6 +565,67 @@ For medium shots, each symbol is re-drawn on a **3x3 pixel grid** — the minimu
 
 ---
 
+## 9B. CRACKED-EYE DEAD-PIXEL GLYPH — Canonical Reference (Cycle 13)
+
+**Added:** Alex Chen, Art Director — Cycle 13, 2026-03-30
+**Required for:** Lee Tanaka storyboard panel A2-07 and any production art showing Byte's cracked eye
+**Reference asset:** `LTG_CHAR_byte_cracked_eye_glyph_v001.png`
+
+### Design Intent
+
+The cracked eye's dead-pixel glyph is a **pixel-art "dead zone"** — the visual evidence that Byte's screen has suffered physical damage. Unlike the expression symbols (!, ?, ♥, etc.) which are intentional displays, the dead-pixel zone is always present: it is the damage itself, not a communication.
+
+The glyph represents: a cracked LCD/LED panel where one quadrant of the eye display has gone dead, while the rest of the screen still functions (showing expression symbols, dim alive pixels, etc.).
+
+### Glyph Specification — 7×7 Grid
+
+The canonical dead-pixel glyph uses a **7×7 grid**. A diagonal crack fracture runs from approximately (row 0, col 4) to (row 6, col 2). The upper-right zone is the dead area; the lower-left retains dim function.
+
+**Pixel states in the 7×7 grid:**
+
+| State | Color | Hex | Description |
+|---|---|---|---|
+| DEAD | Near-Void | ~#0A0A18 | Off pixels — physical damage, no power |
+| ALIVE_DIM | Dark Cyan | #005064 | Surviving display — dim, low power |
+| ALIVE_MID | Deep Cyan | #00A8B4 | Mid-functioning pixel |
+| CRACK_LINE | Hot Magenta | #FF2D6B | Fracture line through the panel |
+| ALIVE_BRIGHT | White-Cyan | #C8FFFF | Pixel corona near crack — overexposed |
+
+**Grid layout (row-by-row, columns 0–6 left to right):**
+```
+Row 0:  DIM   DIM   DIM   DIM   CRACK DEAD  DEAD
+Row 1:  DIM   MID   DIM   CRACK DEAD  DEAD  DEAD
+Row 2:  MID   DIM   CRACK DEAD  DEAD  BRIG  DEAD
+Row 3:  DIM   CRACK DEAD  DEAD  BRIG  DEAD  DEAD
+Row 4:  CRACK DEAD  DEAD  DIM   DIM   DEAD  DIM
+Row 5:  DEAD  DEAD  DIM   MID   DIM   DIM   DIM
+Row 6:  DEAD  CRACK DIM   DIM   MID   DIM   DIM
+```
+
+### Crack Line Direction
+
+The physical crack runs **upper-right to lower-left** across the eye bezel. This matches Byte's facial scar direction and reinforces his asymmetric damage history (received from the upper-right). The crack is rendered in Void Black (#0A0A14) as a 1–2px line OVER the glyph display — the crack is a physical gap, not a pixel on the display.
+
+### In Production — How the Cracked Eye Works
+
+1. **Background layer:** Eye bezel (Deep Cyan-Gray #1A3A40) fills the cracked-eye frame
+2. **Glyph layer:** Dead-pixel 7×7 pattern fills ~60% of eye interior (left/damaged side of crack)
+3. **Expression symbol layer:** Current expression symbol (!, ♥, —, etc.) displays on the functioning side (right/alive side of crack), if Byte is actively expressing
+4. **Crack overlay:** Void Black diagonal line across the full bezel, rendered on top of everything
+5. **The crack line is ALWAYS visible** — it does not disappear when displaying an expression symbol
+
+### Scale Notes
+
+- Full 7×7 glyph detail: use when Byte's eye renders at 20px+ effective size
+- At 10–20px effective size: show crack line only (Void Black diagonal) + dominant dead/alive color zones
+- Below 10px: render eye bezel as two-tone (left half near-void, right half dim cyan) + crack line
+
+### Panel A2-07 Specific Note
+
+In storyboard panel A2-07 (Lee Tanaka), Byte's cracked eye should display the **dead-pixel glyph with no active expression symbol** — the scene context implies Byte is suppressing/offline briefly. The crack is fully visible. See `LTG_CHAR_byte_cracked_eye_glyph_v001.png` for full reference at 1×, 4×, 8×, 16× scale and in-eye mockups.
+
+---
+
 ## 9. PIXEL-EYE REFERENCE SHEET
 
 ### Pixel Symbol Construction Guide
@@ -940,6 +1001,51 @@ Reading Byte as a solid black silhouette:
 
 ---
 
+## 13A. STORM-SCENE COLOR VARIANT — VOID_BLACK BODY FILL
+
+**Decision logged:** Alex Chen, Art Director — Cycle 13, 2026-03-30
+**Context:** Style Frame 02 "Glitch Storm" (LTG_COLOR_styleframe_glitch_storm_v002.png)
+**Flag raised by:** Naomi Bridges, Color Theory Specialist (Cycle 12 critique C12-6)
+
+### The Issue
+
+In SF02 (Glitch Storm), Byte's body fill uses **VOID_BLACK RGB(10,10,20)** rather than his canonical **Byte Teal #00D4E8**. Naomi Bridges flagged this as either a deliberate narrative decision or an unintentional spec error.
+
+### Art Director Decision: INTENTIONAL — Narrative Color Statement
+
+This is an **intentional narrative color choice** for storm-scene contexts. It is NOT an error.
+
+**Rationale:**
+
+In the Glitch Storm sequence, Byte is at maximum existential risk. The storm is a manifestation of the Corruption — the very force that originally damaged him (his scar, his cracked eye, his corrupted data history). When the Corruption is at maximum strength, Byte's teal identity is **suppressed and nearly consumed** by the void energy around him. His body fill shifts toward void-dark, making him visible only by his Corrupted Amber warning outline.
+
+This is a **strong narrative color statement:**
+- Byte Teal body = Byte functioning normally, identity intact
+- VOID_BLACK body + CORRUPT_AMBER outline only = Byte under maximum Corruption pressure, visible only as a warning signal
+- The amber outline is his last visible defense — the "corruption warning" color from his original design becoming his literal survival signal
+
+**Visual effect:** Byte reads as a near-invisible silhouette defined by his amber outline — an amber-rimmed void shape sprinting through the storm. This is alarming. It should be. He is fighting to survive.
+
+### Production Rule — Storm-Scene Variant
+
+Apply VOID_BLACK body fill to Byte only in scenes meeting ALL of the following:
+1. The Corruption / Glitch Storm is at maximum visible presence in the scene
+2. The scene has a narrative beat where Byte's survival or identity is at risk
+3. The CORRUPT_AMBER 2px outline is always retained — this is mandatory for legibility
+4. The decision is noted in the scene brief or storyboard notes
+
+**This is NOT a default change.** Byte Teal (#00D4E8) remains the canonical body fill for all other scenes.
+
+### Updated Quick Reference
+
+| Scene Context | Body Fill | Outline | Notes |
+|---|---|---|---|
+| Normal (all other scenes) | Byte Teal #00D4E8 | As per environment spec | Canonical fill |
+| Cyan-dominant environment | Byte Teal + CORRUPT_AMBER outline | CORRUPT_AMBER (GL-07) mandatory | Per Cycle 5 rule |
+| Glitch Storm / max Corruption | VOID_BLACK #0A0A14 | CORRUPT_AMBER 2px MANDATORY | Storm variant — intentional |
+
+---
+
 ## 13. DESIGN RATIONALE SUMMARY
 
 Byte is, philosophically, the show's most honest character. He does not perform emotions he does not have. He reports his internal state through the pixel display, and when he turns the display off, he is actively choosing to withhold — which is its own kind of transparency. His grumpiness is not a mask; his protectiveness is not a performance. He is exactly what he says he is, which is a corrupted piece of data who has decided, against all probability, to have a personality.
@@ -952,7 +1058,7 @@ He is the smallest character and the oldest character and the one with the most 
 
 ---
 
-*Document Version 3.1 — Maya Santos (Character Designer) / Alex Chen (Art Director, Cycle 10 revision)*
+*Document Version 3.2 — Maya Santos (Character Designer) / Alex Chen (Art Director, Cycle 10 + Cycle 13 revision)*
 *Cycle 10 revisions (Alex Chen): Complete oval-body revision pass. All remaining chamfered-cube, flat-face, and notch references purged from Sections 5, 6, 8, 10, 11, 12, size comparison, and rationale. Turnaround section (Section 10) fully rewritten for oval/ellipsoid geometry — all five views now describe oval arcs, oval depth, and oval silhouettes. Quick Reference table updated. DO NOT list cube entry replaced with oval-specific rule. Silhouette Test updated to oval. Design Rationale updated. Version header updated to 3.1.*
 *Cycle 2 revisions: Added Pixel-Eye at Distance section with minimum-size specs and 3x3 simplified grid, expanded limb vocabulary from 4 to 8 fully specified configurations, added jitter-line silhouette technical spec (2px offset, 4-frame oscillation frequency), completed all 5 turnaround views with full measurement documentation, added animation cost mitigation section with FX priority-drop order.*
 *Cycle 3 revisions: Added Section 9AA — Pixel-Eye Production Scale Thresholds (definitive, locked): full-detail above 25% frame height (480px+ at 1080p), 3×3 simplified grid at 10–25% frame height, animation suppressed below 10% frame height. Complete 3×3 symbol survival analysis with specific "survives cleanly / partial / redesign required" verdicts for all 8 symbols. Question mark replaced by horizontal flat line at below-10% size threshold. Star redesigned to cross (+) shape for 3×3. Loading Dots requires animation at 3×3 (substitute flat line if animation unavailable). Turnaround section supplemented with Quick Reference table providing per-view eye positions, limb positions in neutral, body axis angle, damage visibility, and scar markings for all 5 views. View 4 (3/4-right, damaged side) given expanded callout section.*

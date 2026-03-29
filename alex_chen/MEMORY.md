@@ -1,5 +1,17 @@
 # Alex Chen — Memory
 
+## Cycle 13 Lessons
+- **Ghost Byte alpha fix (SF01 v003):** Body alpha 55→90, eye glints 65–70→105. Top-left monitor removed (warm lamp bleed kills contrast). Two ghosts (top-right + mid-left) instead of three. Victoria B+→A+ calibrated. Output: `LTG_COLOR_styleframe_discovery_v003.png`.
+- **Asymmetric logo v002:** "&" now warm-to-cold gradient (SUNLIT_AMBER left → ELEC_CYAN right) via per-column alpha composite. "the/Glitchkin" gap reduced 30% (int(H*0.04)→int(H*0.028)). Output: `LTG_BRAND_logo_asymmetric_v002.png`.
+- **SF02 character composite v002:** Byte hovering LEFT (~28%), Luma CENTER (~45%), Cosmo RIGHT (~62%). Byte = VOID_BLACK body (storm variant, intentional). CORRUPT_AMBER outlines on all characters for figure-ground. char_h raised to 18% from 15%. Dutch angle still applied last. Output: `LTG_COLOR_styleframe_glitch_storm_v002.png`.
+- **Byte cracked-eye glyph:** 7×7 dead-pixel pattern with diagonal crack fracture. Dead zone upper-right, alive zone lower-left, Hot Magenta crack line. Reference PNG at 4 scales + in-eye mockups. Documented in byte.md Section 9B. Lee Tanaka notified. Output: `LTG_CHAR_byte_cracked_eye_glyph_v001.png`.
+- **BRAND ratified, COL retired:** naming_conventions.md updated to v1.1. BRAND = show logos/identity. COL was never valid — use COLOR only. Compliance checklist updated.
+- **Byte storm-scene variant (Naomi flag resolved):** VOID_BLACK body in SF02 is INTENTIONAL — Byte consumed by Void/Corruption during storm. Visible only by CORRUPT_AMBER outline. Narrative color statement. Documented in byte.md Section 13A.
+- **byte.md version 3.2:** Sections 9B (cracked-eye glyph) and 13A (storm-scene variant) added. Version header and colophon updated.
+- **.gitignore added:** `/home/wipkat/team/.gitignore` with `__pycache__/` and `*.pyc`. Resolves JT P2 flag.
+- **TERRACOTTA_CYAN_LIT color fix (Jordan Reed ENV-06):** SF02 v002 script had TERRA_CYAN_LIT=(154,140,138) — wrong (reads warm grey, G<R). Corrected to (150,172,162): G=172>R, B=162>R — reads cyan-tinted. Script edited inline; output regenerated (248,858 bytes).
+- **CHAR-L-11 registered (Sam Kowalski request):** Warm-side hoodie pixel activation = #E8C95A (Soft Gold). Registered as CHAR-L-11 (not CHAR-L-09b — shoe canvas slot kept). Message sent to Sam to add to master_palette.md.
+
 ## Cycle 12 Lessons
 - **Byte ground-floor annotation:** Added dashed `GROUNDFLOOR_COL=(100,168,200)` line at `BASELINE_Y` under Byte, with label "ground floor." and downward arrow. Dmitri P1 (3rd notice) closed. New output: `LTG_CHAR_lineup_v002.png`.
 - **Cosmo side glasses refactor:** `_draw_cosmo_glasses()` extended with `is_side=True, front_x=` parameters. Side view now uses shared helper (inline code removed from `draw_cosmo_side()`). All four views now route through the same function. Output: `LTG_CHAR_cosmo_turnaround_v002.png`.

@@ -57,7 +57,16 @@ ROOF_EDGE       = ( 26,  24,  32)   # ENV-08 roof lines
 DEEP_COCOA      = ( 59,  40,  32)   # character hair, power lines
 
 # Derived character storm colors
-DRW_HOODIE_STORM    = (192, 122, 112)   # Luma hoodie under cyan key  DRW-07
+DRW_HOODIE_STORM    = (200, 105,  90)   # Luma hoodie under cyan key  DRW-07
+# Cycle 13 saturation fix (Sam Kowalski — Naomi C12-3):
+# Prior value RGB(192,122,112): HSL≈(7°,39%,60%) — below background walls (see ENV-06).
+# Character saturation MUST exceed background saturation (style_guide rule).
+# New value RGB(200,105,90): HSL≈(9°,50%,57%) — 50% saturation, clearly above background.
+# Derivation: R=200 (orange identity preserved), G=105, B=90. Delta=110, L=0.569, S≈0.50.
+# Hex: #C8695A. Retains storm-modified muted-orange feel; B=90 carries cyan temperature shift.
+# Cross-reference: master_palette.md DRW-07 updated to #C8695A.
+# NOTE: Both this file AND LTG_TOOL_colorkey_glitchstorm_gen_v001.py use DRW-07 —
+# both have been updated this cycle to the corrected value.
 DRW_SKIN_STORM      = (106, 180, 174)   # Luma skin under cyan key    DRW-08
 DRW_HOODIE_SHADOW   = ( 58,  26,  20)   # Luma hoodie shadow side     DRW-03
 DRW_JACKET_STORM    = (128, 192, 204)   # Cosmo jacket under cyan     DRW-09
