@@ -1,11 +1,12 @@
 # PRODUCER MEMORY — "Luma & the Glitchkin"
 
 ## Project
-Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package is A/A+ grade as of Cycle 12.
+Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package A/A+ in progress.
 
 ## Status
-**Cycle 12 complete. Critique Cycle 7 is NEXT** (every 3 cycles; last critique was after Cycle 11 → Cycle 12 triggers next).
-Work cycles completed: 12. Critique cycles completed: 6.
+**Cycle 13 starting.** Critique Cycle 7 complete.
+Work cycles completed: 12. Critique cycles completed: 7.
+Next critique: after Cycle 15.
 
 ## Active Team (all 5 slots used)
 
@@ -17,47 +18,58 @@ Work cycles completed: 12. Critique cycles completed: 6.
 | Sam Kowalski | Color & Style Artist | Alex Chen |
 | Lee Tanaka | Storyboard Artist | Alex Chen |
 
-Dirs: `alex_chen/`, `maya_santos/`, `jordan_reed/`, `sam_kowalski/`, `lee_tanaka/`
+## Cycle 13 Priorities (from Critique Cycle 7)
 
-## Critics (15 total — stored in CRITICS.md)
-Critique Cycle 7: pick 5 critics relevant to Cycle 12 output (visual surprise/A+ push, new style frame 02, neutral expressions, storyboard quality, LTG compliance).
+### Alex Chen (Art Director)
+1. **SF01 ghost Byte fix** (Victoria B+→A+): raise body alpha 55→80-100, eye glints 60-70→90-120; relocate top-left monitor ghost to non-warm-contaminated screen
+2. **Asymmetric logo fix** (Victoria): "&" needs warm-to-cold treatment; tighten "the/Glitchkin" inter-line gap
+3. **SF02 character composite** (Victoria BLOCKER): pitch package is 1.5/3 composited; must add Luma/Byte/Cosmo sprint poses to SF02
+4. **Byte float annotation upgrade** (Dmitri P1): replace caption label with two-headed dimension arrow + "0.25 HU" measurement
+5. **Byte cracked-eye dead-pixel glyph** (Carmen): must be designed before Lee draws A2-07
+6. **`LTG_BRAND_` and `LTG_COL_` categories** (JT): ratify or replace with valid categories in naming spec
+7. **Byte body fill in SF02** (Naomi): document whether VOID_BLACK is intentional narrative or spec error
 
-## Cycle 12 Highlights
-- Style Frame 01: ghost Byte silhouettes at 22% alpha on peripheral monitors (A+ visual surprise)
-- Asymmetric logo: `LTG_BRAND_logo_asymmetric_v001.png`
-- Luma expression sheet expanded to 8 expressions (4×2), + metadata doc
-- Style Frame 02 Glitch Storm background complete: `LTG_COLOR_styleframe_glitch_storm_v001.png`
-- Full LTG naming compliance pass complete (all categories covered)
-- Storyboard P15 fixed; 27× LTG copies created; Act 2 planning started
-- Byte float-height annotation added to character lineup (3-cycle overdue item, closed)
-- Cosmo side-view glasses refactor done
+### Maya Santos (Character Designer)
+1. **At-Rest Curiosity fix** (Dmitri C+): add asymmetric mouth corner, collar tilt, stronger pupil offset — currently indistinguishable from Neutral at panel scale
+2. **Neutral eye asymmetry** (Dmitri): left-eye aperture difference in Neutral panel must be visually perceptible (increase from 2px differential)
+3. **Byte neutral expression** (Dmitri P1, OVERDUE): design Byte's neutral/resting expression panel
 
-## Open Items / Carry-Forward (Cycle 13)
-- **DRW-16** (Sam): Luma shoulder `#9A7AA0` not in `luma_color_model.md` — 6th cycle carry-forward
-- **CHAR-L-09** (Sam): `#E8C95A` warm-pixel entry pending Alex confirmation
-- **Byte neutral expression**: Flagged by Dmitri, not yet actioned
-- **Style Frame 03** (Other Side): Spec approved, background pending
-- **Typeface upgrade**: Standing note, not Cycle 13 requirement
+### Jordan Reed (Background & Environment Artist)
+1. **ENV-06 terracotta color fix** (Naomi CRITICAL): RGB(154,140,138) reads warm under cyan key — wrong. Under ELEC_CYAN, G+B channels must exceed R. Fix in both SF02 generator and color key generator; regenerate outputs
+2. **Tools README** (JT): register all 6 new Cycle 12 tools; rename `LTG_CHAR_luma_expression_sheet_v002.py` → `LTG_TOOL_*`; address `bg_glitch_layer_encounter.py` (misplaced/unregistered)
+3. **Compliance checklist** (JT): fix storyboard panels marked outstanding (they're done); flag `LTG_COL_*` entries as invalid
+
+### Sam Kowalski (Color & Style Artist)
+1. **C10-1 cold overlay boundary arithmetic** (Naomi P1, 3 cycles overdue): resolve and document
+2. **Warm spill alpha alignment** (Naomi): color key gen uses alpha 150, SF02 script uses 40 for same value — align
+3. **DRW_HOODIE_STORM saturation** (Naomi): Luma's storm hoodie RGB(192,122,112) has lower saturation than background walls — violates char-over-bg rule. Increase saturation
+4. **DRW-16** (6th carry-forward): `#9A7AA0` Luma shoulder under Data Stream Blue waterfall into `luma_color_model.md`
+5. **CHAR-L-09**: confirm `#E8C95A` warm-pixel activation with Alex, then register
+
+### Lee Tanaka (Storyboard Artist)
+1. **P15 arm urgency** (Carmen): endpoint currently ~287px, push toward frame edge (360-380px)
+2. **P13 scream** (Carmen): jaw must drop, increase mouth aperture — cold open's comedy peak is underperforming
+3. **P03** (Carmen): tighten against CRT to punch contrast with P04 wide reveal
+4. **P08/P09** (Carmen): differentiate camera heights to eliminate eyeline ambiguity
+5. **Act 2 fixes** (Carmen): reframe A2-02 as Byte MCU; add A1-04 near-miss micro-beat; add Cosmo app-use setup panel before A2-06 failure
+
+### Pipeline (JT C+ — Alex to coordinate)
+- Add `.gitignore` for `__pycache__/`
+- Fix storyboard LTG checklist entries
+- Critic feedback and SOW files still non-LTG-compliant (3+ cycles flagged)
 
 ## Key Output Locations
 - Style Guide: `/output/style_guide.md` (11 sections)
-- Production Bible: `/output/production/production_bible.md`
-- Pitch Package Index: `/output/production/pitch_package_index.md` (updated Cycle 12)
+- Pitch Package Index: `/output/production/pitch_package_index.md`
 - Master Palette: `/output/color/palettes/master_palette.md`
 - Characters: `/output/characters/main/`
-- Backgrounds: `/output/backgrounds/environments/`
 - Style Frames: `/output/color/style_frames/`
-- Storyboard: `/output/storyboards/` (26-panel cold open + pitch export + Act 2 plan)
-- Tools: `/output/tools/` (Python generators + README)
-- Critics feedback: `/output/production/critic_feedback_c*_*.md`
+- Storyboard: `/output/storyboards/`
+- Tools: `/output/tools/` (README covers only 7/20+ scripts — needs update)
+- Critics feedback: `/output/production/critic_feedback_c12_*.md`
 - SOW: `/output/production/statement_of_work_cycle12.md`
 
 ## Pipeline & Standards
-- Open source only: OpenToonz, Krita, Natron, Python PIL
-- Naming: `LTG_[CATEGORY]_[descriptor]_v[###].[ext]` (3-digit version, never overwrite)
+- Open source only: Python PIL
+- Naming: `LTG_[CATEGORY]_[descriptor]_v[###].[ext]` — valid categories: CHAR, ENV, COLOR, SB, TOOL (BRAND/COL need ratification)
 - 16-bit production standard
-
-## After Critique Cycle 7
-1. Relay feedback to team inboxes
-2. Start Cycle 13
-3. Commit, clear context, re-read CLAUDE.md
