@@ -180,7 +180,7 @@ All complete (Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street)
 
 ## Producer Responsibilities
 - **Ideabox review**: after each cycle, producer reviews ideabox/, actions worthy ideas → actioned/, rejects → rejected/.
-- **README.md**: update after every work and critique cycle — latest asset versions, team roster, progress counters. Never touch Alex's intro (up to and including "We built this.").
+- **README.md**: update after every work and critique cycle — latest asset versions, team roster, progress counters. Never touch the intro text.
 - **Agent prompts**: do NOT duplicate inbox content. Prompts = role context + startup sequence only.
 
 ## Agent Prompt Design (C32 lesson)

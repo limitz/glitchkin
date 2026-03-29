@@ -73,7 +73,7 @@ Keep a main MEMORY.md in the root of this project and update it when needed. Alw
 * Keep MEMORY.md compact!
 * After all work is done, a statement of work is added to the output dir.
 * Update your main MEMORY.md to track status and progress. Everything you need when starting fresh.
-* After writing the statement of work and your main MEMORY.md, update `README.md` to reflect the current state of the project — latest asset versions, team roster, progress counters. Do not touch Alex Chen's intro text (everything up to and including "We built this."). Then commit everything to git.
+* After writing the statement of work and your main MEMORY.md, update `README.md` to reflect the current state of the project — latest asset versions, team roster, progress counters. Do not touch the intro text. Then commit everything to git.
 
 ## Critique
 * Every 3 work cycles, after the work is commited, a critique cycle is started.
@@ -82,7 +82,7 @@ Keep a main MEMORY.md in the root of this project and update it when needed. Alw
 * Store the lessons learned from the feedback in MEMORY.md, and make sure it is reloaded when the agents is restarted.
 * Keep MEMORY.md compact!
 * Update your main MEMORY.md to track status and progress. Everything you need when starting fresh.
-* Update `README.md` to reflect the current state of the project — latest asset versions, team roster, progress counters. Do not touch Alex Chen's intro text (everything up to and including "We built this.").
+* Update `README.md` to reflect the current state of the project — latest asset versions, team roster, progress counters. Do not touch the intro text.
 * After writing your main MEMORY.md commit everything to git.
 
 ## Asset Status
