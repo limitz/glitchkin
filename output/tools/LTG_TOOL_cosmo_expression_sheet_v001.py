@@ -6,11 +6,19 @@ Cosmo Expression Sheet Generator — "Luma & the Glitchkin"
 Cycle 14: First expression sheet for Cosmo (best friend / sidekick).
 Required by Act 2 storyboard: A2-05b and A2-06 need Cosmo emotional range.
 
-Expressions (4 + 1 reserved):
+Cycle 16 fixes (Maya Santos — Dmitri critique response):
+  - SKEPTICAL body_tilt: -3 → +6 (backward lean, body-language anchor for thumbnail legibility)
+  - Populated 2 empty expression slots:
+      5. WORRIED — A2-02: watching Byte's vulnerable cracked-eye moment (background figure)
+      6. SURPRISED — A2-04c: energy drink cans all pop simultaneously (chaos beat)
+
+Expressions (6 — sheet fully populated):
   1. NEUTRAL / OBSERVING      — default resting: watching, waiting, notebook tucked
   2. FRUSTRATED / DEFEATED    — A2-06 payoff: plan failed, notebook closing
   3. DETERMINED               — A2-05b setup: app running, this will work
   4. SKEPTICAL / ONE-BROW-UP  — A2-03 reaction to Luma's plan: I have concerns
+  5. WORRIED                  — A2-02: watching Byte exposition with concern
+  6. SURPRISED                — A2-04c: carbonation chaos pop
 
 Cosmo anatomy (from cosmo.md v2.0):
   - Head: tall rounded rectangle (h:w = 1.16:1, corner_r = 0.12 head units)
@@ -70,6 +78,8 @@ BG_NEUTRAL  = (210, 208, 200)   # warm light grey — resting baseline
 BG_FRUSTRAT = (200, 192, 195)   # cool-warm grey — defeated low energy
 BG_DETERMIN = (195, 210, 218)   # cool blue-grey — focused, pre-action
 BG_SKEPTIC  = (205, 210, 200)   # neutral sage-grey — skeptical calm
+BG_WORRIED  = (196, 200, 208)   # cool grey-blue — anxiety, watching the hard thing
+BG_SURPRISED = (214, 208, 198)  # warm neutral — startled energy, not danger
 
 CANVAS_BG   = (28, 24, 20)      # dark card background
 
@@ -168,14 +178,16 @@ EXPRESSIONS = [
     # ── SKEPTICAL / ONE-BROW-UP ───────────────────────────────────────────────
     # A2-03: Watching Luma's plan on the whiteboard. Classic Cosmo signature move:
     # left brow (viewer's right) shoots up, right brow holds flat.
-    # Body: arms crossed in front — containment posture. Notebook tucked.
-    # Glasses: 9° tilt (slight increase — the skeptical lean nudges the glasses).
-    # Mouth: perfectly flat — deadpan. The "I told you so" setup.
+    # Body: BACKWARD lean (+6° tilt) — Cycle 16 fix (Dmitri: body-language anchor for squint test).
+    #   Previous body_tilt=-3 (barely forward) was face-only expression, didn't read at thumbnail.
+    #   +6 backward = leaning away from the board, skeptical containment posture.
+    # Arms: slightly raised / crossed (containment). Notebook tucked.
+    # Glasses: 9° tilt. Mouth: perfectly flat — deadpan. The "I told you so" setup.
     {
         "name":     "SKEPTICAL",
         "body_data": {
             "arm_l_dy": -8, "arm_r_dy": -5,
-            "body_tilt": -3, "body_squash": 1.0,
+            "body_tilt": 6, "body_squash": 1.0,   # Cycle 16: -3→+6 backward lean
             "notebook_show": True, "notebook_open": False,
         },
         "panel_bg": BG_SKEPTIC,
@@ -185,6 +197,54 @@ EXPRESSIONS = [
         "blush": False,
         "prev_state": "← was: NEUTRAL / OBSERVING",
         "next_state": "→ next: RESIGNED / PREPARING ANYWAY",
+    },
+    # ── WORRIED ───────────────────────────────────────────────────────────────
+    # NEW Cycle 16 — A2-02: Byte MCU, Cosmo is background blur watching Byte's
+    # vulnerable cracked-eye moment. Expression: genuine concern, not fear.
+    # He knows what this costs Byte. He cares more than he usually admits.
+    # Body: slight forward lean (-4°), arms drawn close (hugging himself slightly),
+    #   notebook tucked tight (not used here — this is an emotional moment).
+    # Brows: both raised at inner corners (corrugator kink = worry, not aggression).
+    #   Outer brow: level. Inner corners: pulled up = "genuine concern" geometry.
+    # Glasses tilt: 8° (slight increase from 7° neutral — emotional perturbation).
+    # Mouth: flat + slightly compressed — not grimace, just... holding it together.
+    {
+        "name":     "WORRIED",
+        "body_data": {
+            "arm_l_dy": 6, "arm_r_dy": 6,
+            "body_tilt": -4, "body_squash": 0.98,
+            "notebook_show": True, "notebook_open": False,
+        },
+        "panel_bg": BG_WORRIED,
+        "glasses_tilt": 8,
+        "brow_data": {"l_raise": 6, "r_raise": 6, "l_furrow": 8, "r_furrow": 8},
+        "mouth_data": {"style": "compressed"},
+        "blush": False,
+        "prev_state": "← was: NEUTRAL / SKEPTICAL",
+        "next_state": "→ next: FRUSTRATED / TRYING ANYWAY",
+    },
+    # ── SURPRISED ─────────────────────────────────────────────────────────────
+    # NEW Cycle 16 — A2-04c: All energy drink cans pop simultaneously. Carbonated
+    # spray everywhere. Cosmo did NOT see this coming. Not dangerous — just chaotic.
+    # Body: slight backward startle lean (+5°), arms snapped up instinctively (high),
+    #   notebook open (he had it out for the plan).
+    # Brows: BOTH fully raised — symmetrically (surprise = bilateral, not skeptical).
+    # Glasses tilt: 10° (peak emotional tilt — Cosmo is maximally disrupted).
+    # Mouth: small open oval — the "oh no" pause before the laugh.
+    {
+        "name":     "SURPRISED",
+        "body_data": {
+            "arm_l_dy": -18, "arm_r_dy": -22,
+            "body_tilt": 5, "body_squash": 0.97,
+            "notebook_show": True, "notebook_open": True,
+        },
+        "panel_bg": BG_SURPRISED,
+        "glasses_tilt": 10,
+        "brow_data": {"l_raise": 16, "r_raise": 16, "l_furrow": 0, "r_furrow": 0},
+        "mouth_data": {"style": "open_surprised"},
+        "blush": False,
+        "prev_state": "← was: DETERMINED (plan in action)",
+        "next_state": "→ next: FRUSTRATED / ACCEPTING CHAOS",
     },
 ]
 
@@ -434,6 +494,13 @@ def _draw_cosmo_mouth(draw, cx, cy, hu, mouth_data):
             tx = cx - mw + 8 + i * (int(mw * 0.45))
             draw.line([(tx, mouth_y - 4), (tx, mouth_y + 6)], fill=LINE, width=1)
 
+    elif style == "open_surprised":
+        # Small open oval — the "oh no" pause (SURPRISED A2-04c)
+        # Not a fear-scream rectangle — small contained oval, jaw dropped slightly
+        draw.ellipse([cx - int(mw * 0.55), mouth_y - 4,
+                      cx + int(mw * 0.55), mouth_y + int(hu * 0.10)],
+                     fill=(210, 180, 150), outline=LINE, width=2)
+
 
 def _draw_cosmo_body(draw, cx, body_top_y, hu, body_data):
     """Draw Cosmo's full body: striped shirt, pants, shoes, notebook.
@@ -631,7 +698,7 @@ def draw_cosmo(draw, cx, cy, hu, expr):
 # ── Sheet generator ───────────────────────────────────────────────────────────
 
 def generate_cosmo_expression_sheet(output_path):
-    """Render 3×2 expression grid for Cosmo. 4 expressions + 1 empty slot + 1 reserved."""
+    """Render 3×2 expression grid for Cosmo. 6 expressions — fully populated (Cycle 16)."""
     total_w = COLS * (PANEL_W + PAD) + PAD
     total_h = HEADER + ROWS * (PANEL_H + PAD) + PAD
 
@@ -650,7 +717,7 @@ def generate_cosmo_expression_sheet(output_path):
 
     # Sheet header
     draw.text((PAD, 14),
-              "COSMO — Expression Sheet — Luma & the Glitchkin  |  v001  |  Cycle 14",
+              "COSMO — Expression Sheet — Luma & the Glitchkin  |  v001  |  Cycle 16",
               fill=(91, 141, 184), font=font_title)
 
     # Head unit for panel rendering — character renders at ~55% of panel height
@@ -694,23 +761,13 @@ def generate_cosmo_expression_sheet(output_path):
             "FRUSTRATED / DEFEATED":  "A2-06",
             "DETERMINED":             "A2-05b",
             "SKEPTICAL":              "A2-03",
+            "WORRIED":                "A2-02",
+            "SURPRISED":              "A2-04c",
         }
         tag = beat_tags.get(expr["name"])
         if tag:
             draw.text((ppx + PANEL_W - 60, ppy + 6),
                       tag, fill=(100, 160, 120), font=font_sm)
-
-    # Remaining slots (5th = empty, 6th = reserved)
-    for j in range(len(EXPRESSIONS), COLS * ROWS):
-        col = j % COLS
-        row = j // COLS
-        epx = PAD + col * (PANEL_W + PAD)
-        epy = HEADER + row * (PANEL_H + PAD)
-        draw.rectangle([epx, epy, epx + PANEL_W, epy + PANEL_H], fill=(16, 13, 12))
-        draw.rectangle([epx, epy, epx + PANEL_W, epy + PANEL_H], outline=(36, 30, 28), width=1)
-        label = "[NEXT BEAT]" if j == len(EXPRESSIONS) else "[RESERVED]"
-        draw.text((epx + PANEL_W // 2 - 36, epy + PANEL_H // 2 - 8),
-                  label, fill=(50, 42, 40), font=font_sm)
 
     img.save(output_path)
     print(f"Saved: {output_path}  ({total_w}×{total_h}px)")
@@ -721,5 +778,5 @@ if __name__ == '__main__':
     out_dir = "/home/wipkat/team/output/characters/main"
     os.makedirs(out_dir, exist_ok=True)
     generate_cosmo_expression_sheet(
-        os.path.join(out_dir, "LTG_CHAR_cosmo_expression_sheet_v001.png")
+        os.path.join(out_dir, "LTG_CHAR_cosmo_expression_sheet_v002.png")
     )

@@ -1,5 +1,19 @@
 # Alex Chen — Memory
 
+## Cycle 16 State (current)
+
+**Cycle 16 completed work (mid-cycle):**
+- **Maya Santos DONE:** Byte RESIGNED right eye fixed (45% aperture, +10px downcast pupil, parabolic lid droop, body_tilt +14°). Cosmo SKEPTICAL lean +6° added, 2 new expressions (WORRIED, SURPRISED) added — sheet now 6/6. Luma Act 2 pose mitten geometry corrected. New files: `LTG_CHAR_byte_expression_sheet_v002.png` (regen), `LTG_CHAR_cosmo_expression_sheet_v002.png`, `LTG_CHAR_luma_act2_standing_pose_v002.png`.
+- **Sam Kowalski DONE:** BYTE_SH shadow corrected to GL-01a `(0,168,192)`. BG_ALARM corrected to cold `(18,28,44)`. Faceplate sizing made proportional. DRW-07 `DRW_HOODIE_STORM` corrected to `(200,105,90)`. ENV-06 verified correct. SF03 color review notes sent (see inbox archived). DRW-18 hair sheen present in generator but thin — Jordan to amplify.
+- **Lee Tanaka UNBLOCKED:** A2-07 confirmed unblocked. Notified via inbox.
+- **Jordan Reed IN PROGRESS:** SF02 v003, SF03 v002, Classroom v002, Grandma Miri's Kitchen — SF03 color notes relayed. DRW-07 fix confirmed in SF02 v002 generator before Jordan's v003 regen.
+- README.md updated for Cycle 16 with ASCII art and visual language swatch.
+- Next critique: Cycle 18.
+
+**Open items still awaited:**
+- Jordan: SF02 v003, SF03 v002, Classroom v002, Kitchen v001
+- Lee: A2-07, A2-03 restage, A2-06 MED two-shot, A2-04 Byte addition, contact sheet v003
+
 ## Cycle 15 Lessons
 - **RESIGNED expression delivered:** `LTG_TOOL_byte_expression_sheet_v002.py` adds 8th expression. Key distinctions: `↓` pixel symbol (distinct from flat-line NEUTRAL), `droopy_resigned` right eye (NO suppressed smile, downcast pupil — distinct from RELUCTANT JOY's `droopy`), arms arm_x_scale=0.50 (tighter than NEUTRAL 0.75), body_tilt=+8 (backward avoidance lean). A2-02 no longer blocked. Lee Tanaka notified.
 - **SF03 already complete:** Jordan Reed's `LTG_TOOL_style_frame_03_other_side_v001.py` was built this cycle (Cycle 15 per README) — full generator including characters and lighting overlay. `LTG_COLOR_styleframe_otherside_v001.png` exists. All 3 style frames now pitch-ready. Task was to "check if BG ready and composite" — BG existed AND Jordan's full tool already handled the composite. My role: verify, register, update index.

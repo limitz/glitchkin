@@ -421,14 +421,13 @@ def draw_luma_standing(draw, cx, ground_y):
     ]
     draw.polygon(r_fore_pts, fill=HOODIE_C, outline=LINE, width=2)
 
-    # Right hand (open, slightly splayed)
-    draw.ellipse([r_hand_x - 14, r_hand_y - 12,
-                  r_hand_x + 18, r_hand_y + 14],
+    # Right hand — MITTEN geometry (Cycle 16 fix per Dmitri/production rule).
+    # Production rule: rough/reference poses use CLEAN MITTEN hands — no finger or thumb
+    # differentiation. A single rounded oval blob reads as "open/reaching" at reference scale.
+    # Removed: thumb arc, finger spread lines — replaced with solid mitten oval.
+    draw.ellipse([r_hand_x - 14, r_hand_y - 10,
+                  r_hand_x + 18, r_hand_y + 16],
                  fill=SKIN, outline=LINE, width=2)
-    # Thumb gesture line
-    draw.arc([r_hand_x + 8, r_hand_y - 14,
-              r_hand_x + 22, r_hand_y],
-             start=250, end=60, fill=SKIN_SH, width=3)
 
     # ── Left arm (viewer-left = Luma's right) — AT WAIST (grounded) ──────────
     l_shoulder_x = body_cx - shoulder_w - int(hu * 0.04)
@@ -591,7 +590,7 @@ def draw_annotation_panel(draw, x, y, w, h, font, font_sm):
     cur_x  = x + 14
 
     draw.text((cur_x, cur_y - 2),
-              "LUMA — Act 2 Standing Pose  v001",
+              "LUMA — Act 2 Standing Pose  v001 (C16)",
               fill=title_c, font=font)
     cur_y += 28
     draw.line([(cur_x, cur_y), (x + w - 14, cur_y)],
@@ -625,7 +624,7 @@ def draw_annotation_panel(draw, x, y, w, h, font, font_sm):
     draw.line([(cur_x, y + h - 14), (x + w - 14, y + h - 14)],
               fill=(180, 168, 150), width=1)
     draw.text((cur_x, y + h - 10),
-              "Cycle 15 — Maya Santos",
+              "Cycle 15/16 — Maya Santos",
               fill=detail_c, font=font_sm)
 
 
@@ -680,6 +679,6 @@ def generate_luma_act2_standing_pose(output_path):
 if __name__ == "__main__":
     output_path = (
         "/home/wipkat/team/output/characters/main/"
-        "LTG_CHAR_luma_act2_standing_pose_v001.png"
+        "LTG_CHAR_luma_act2_standing_pose_v002.png"
     )
     generate_luma_act2_standing_pose(output_path)

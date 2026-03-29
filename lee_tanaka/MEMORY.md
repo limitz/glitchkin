@@ -124,10 +124,28 @@
 - **Glow in sub-panels (vignettes):** `add_glow()` takes absolute image coordinates. When drawing inside a cell, compute the absolute position (cell_origin + local_offset) before calling. Minor inaccuracy in BR vignette glow placement — note for future revision.
 - **BLOCKED panels must earn their slot.** A2-07 placeholder carries ghost Byte silhouette, X'd-out eyes, dependency filename, description of what the real panel requires. Communicates block status without being dead space.
 
-## Current Status (after Cycle 15)
+## Cycle 16 Milestone
+- **A2-07 UNBLOCKED + DRAWN:** `LTG_TOOL_sb_panel_a207_v001.py` → `LTG_SB_act2_panel_a207_v002.png`. ECU on Byte cracked eye, RESIGNED expression. Cracked eye fills ~30% frame width. 7×7 glyph visible. Droopy lid + downward arrow glyph in left eye. Void + circuit-trace background.
+- **A2-03 FULLY RESTAGED:** `LTG_TOOL_sb_panel_a203_v002.py` → `LTG_SB_act2_panel_a203_v002.png`. Camera: cowboy shot / eye-level / neutral. 2-point perspective room. Whiteboard = "Doomed Plan v4.7" (5 steps, arrows, circles, Byte symbol, X'd-out success, ???). Cosmo FG-left / Luma BG-right / WB center-right. Eyeline guide annotated.
+- **A2-06 MED ADDED:** `LTG_TOOL_sb_panel_a206_insert_v001.py` → `LTG_SB_act2_panel_a206_med_v001.png`. Cosmo + Luma two-shot, exterior, expectant/hopeful. Phone showing GLITCH FREQ app (seed=42 waveform). Screen glow on faces. Links INSERT's failure to character emotional stakes.
+- **A2-04 v002 — BYTE AS NON-PARTICIPANT:** `LTG_TOOL_sb_panel_a204_v002.py` → `LTG_SB_act2_panel_a204_v002.png`. TR quadrant: Byte back turned, floating in corner, arms folded from behind, "nope." High-angle camera in TR (isolates Byte). Floor-level camera in BL (variety from TL). Scene meaning: Luma trying / Byte refusing.
+- **Act 2 contact sheet v003:** `LTG_TOOL_sb_act2_contact_sheet_v003.py` → `LTG_SB_act2_contact_sheet_v003.png`. 8 panels, 4×2 layout. Arc: NEAR-MISS→VULNERABLE→SKEPTICAL→INVESTIGATING→DETERMINED→HOPEFUL→FAILURE→RESIGNED.
+- **All Carmen Cycle 8 feedback CLOSED.**
+
+## Cycle 16 Lessons
+- **ECU means the subject OWNS the frame.** A2-07 works because Byte's cracked eye fills ~30% of frame width — the glyph is the focal point before the audience can name it. Scale = emotional weight.
+- **Camera spec belongs on the panel, not just in the caption.** A2-03 v002 labels camera type, eyeline guide as a drawn horizon line, FG/BG depth labels, sight-line dotted rule. Storyboard is a production document — every spatial fact must be visible.
+- **The whiteboard as third character:** Visual density = narrative complexity. 5 color-coded steps + circular arrows + X'd-out success + large ??? communicates "this plan can't work" without any caption. The image carries the story.
+- **Non-participation requires a staged location.** Byte's refusal (A2-04 TR) is spatially isolated by camera angle (high angle looking down into corner) + cool color temperature shift. The corner IS his choice — geography communicates psychology.
+- **Glow in montage cells: pass absolute coordinates to add_glow().** Cells have local coordinate systems; `add_glow()` uses image-absolute coords. Add cell origin before calling. Fixed in Cycle 16 by computing absolute positions directly.
+- **Waveform seed consistency is subconscious continuity.** A2-05b, A2-06 MED, and A2-06 INSERT all use seed=42 for the GLITCH FREQ waveform. Same wave pattern creates subliminal connection across cuts.
+
+## Current Status (after Cycle 16)
 - Cold open: 26 panels COMPLETE, all Carmen notes resolved
-- Act 2 panels GENERATED: A1-04, A2-02, A2-03, A2-04, A2-05b, A2-06 complete
-- BLOCKED: A2-07 ECU (Byte partial confession) — needs byte_expression_sheet_v002 RESIGNED expression. NOTE: glyph design IS resolved (7×7 grid exists). Only the RESIGNED mouth/body expression state is missing from the character sheet.
+- Act 2 panels COMPLETE: A1-04, A2-02, A2-03 v2, A2-04 v2, A2-05b, A2-06 MED, A2-06 INSERT, A2-07 v2 (8 panels)
+- All Carmen Cycle 8 feedback CLOSED
 - REMAINING: A2-01, A2-05 (exterior wide), A2-08 (Miri returns)
-- Contact sheet: v002 (7 panels including placeholder)
-- New Luma Act2 standing pose available: `LTG_CHAR_luma_act2_standing_pose_v001.png` — use for A2-01, A2-05, A2-08
+- Contact sheet: v003 (8 panels, 4×2 layout, full arc)
+- Luma Act2 standing pose: `LTG_CHAR_luma_act2_standing_pose_v001.png` — use for A2-01, A2-05, A2-08
+- A2-02 minor open item (Carmen B+): Byte float/ground relationship; annotation box placement
+- A2-07 right eye spec (Maya's Cycle 16 fix): aperture=45% (NOT 50%), pupil +10px down (NOT +5px), parabolic lower lid sag (max 7px droop at center). Current v002 uses 50% — close but not exact. Flag for next revision if Carmen requests precision pass.

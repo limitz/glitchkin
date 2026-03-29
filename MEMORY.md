@@ -4,7 +4,7 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: SF01 A+ locked; SF02/SF03 complete but need targeted fixes.
 
 ## Status
-**Cycle 16 starting.** Work cycles: 15. Critique cycles: 8.
+**Cycle 17 starting.** Work cycles: 16. Critique cycles: 8.
 **Next critique: after Cycle 18 (Critique Cycle 9).**
 
 ## Active Team (all 5 slots used)
@@ -19,8 +19,32 @@ Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are m
 
 ## Style Frame Status
 - **SF01 Discovery**: `LTG_COLOR_styleframe_discovery_v003.png` — **A+ LOCKED**
-- **SF02 Glitch Storm**: `LTG_COLOR_styleframe_glitch_storm_v002.png` — needs fixes (warm glow missing, HUD element, Byte amber outline, Dutch angle, storm threat tone)
-- **SF03 Other Side**: `LTG_COLOR_styleframe_otherside_v001.png` — needs fixes (Byte dual-eye legibility, character spotlight oval, Luma hair rim, waterfall luminance)
+- **SF02 Glitch Storm**: `LTG_COLOR_styleframe_glitch_storm_v003.png` — C16 fixes: dominant cold confetti, Dutch angle 4°, Byte amber outline, storm building lighting, DRW-07 corrected. **Pending critique review.**
+- **SF03 Other Side**: `LTG_COLOR_styleframe_otherside_v002.png` — C16 fixes: waterfall luminance reduced, mid-distance arch bridge added, right-side void irregularity, DRW-18 Luma hair rim added. **Pending critique review.**
+
+## Cycle 16 — Completed Fixes
+
+### Sam Kowalski
+- Byte expression sheet v002: shadow → GL-01a, ALARMED BG → cold blue, faceplate proportional
+- SF02: DRW-07 corrected to #C8695A; ENV-06 verified passing G>R AND B>R
+
+### Maya Santos
+- Byte RESIGNED: 45% aperture, +10px downcast pupil, parabolic drooping lower lid, body tilt +14°
+- Cosmo sheet: SKEPTICAL +6° backward lean, WORRIED + SURPRISED added → sheet 6/6 full
+- Luma Act 2 pose: mitten hand (no finger detail)
+
+### Jordan Reed
+- SF02 v003: DATA_BLUE dominant confetti, Dutch 4°, Byte amber outline, storm building lighting
+- SF03 v002: waterfall alpha 110 (was 255), arch bridge mid-distance, void variation, DRW-18 hair rim
+- Classroom v002: dual-source lighting unified, inhabitant evidence added
+- NEW: `LTG_ENV_grandma_kitchen_v001.png` (warm morning daylight, CRT TV story element)
+
+### Lee Tanaka
+- A2-07 v002: RESIGNED ECU — cracked eye glyph 30% frame, drew for real
+- A2-03 v002: full restage — camera spec, 2-point perspective, whiteboard as doomed plan
+- A2-06 MED: new establishing two-shot (Cosmo+Luma hopeful before phone failure)
+- A2-04 v002: Byte as non-participant (back turned, TR quadrant)
+- Contact sheet v003: 8 panels, full arc NEAR-MISS → RESIGNED
 
 ## Critique Cycle 8 — Key Findings (Cycle 16 priorities)
 
@@ -54,12 +78,14 @@ Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are m
 - Luma Act 2 pose: clean raised hand to mitten geometry
 
 ## Act 2 Storyboard Status
-- A2-02: Done (NEUTRAL approx) — regen with RESIGNED next cycle
-- A2-03: **Needs full restage** (camera, whiteboard, 3D spatial clarity)
-- A2-04: Done — add Byte as non-participant
-- A2-06: INSERT done, **MED establishing shot MISSING**
-- A2-07: **Draw now** — RESIGNED unblocked
-- Contact sheet: `LTG_SB_act2_contact_sheet_v002.png` (7 panels) — regen after fixes
+- A2-02: Done — NOTE: still uses NEUTRAL approx for Byte, not RESIGNED (may need regen)
+- A2-03: **Restaged C16** — `LTG_SB_act2_panel_a203_v002.png`
+- A2-04: **Updated C16** — `LTG_SB_act2_panel_a204_v002.png` (Byte non-participant added)
+- A2-05b: Done
+- A2-06: INSERT done + **MED two-shot added C16** — `LTG_SB_act2_panel_a206_med_v001.png`
+- A2-07: **Drew for real C16** — `LTG_SB_act2_panel_a207_v002.png` (RESIGNED ECU)
+- Contact sheet: `LTG_SB_act2_contact_sheet_v003.png` (8 panels) — updated C16
+- **NOT STARTED**: A2-01 (tech den wide), A2-05 (Millbrook street), A2-08 (Grandma Miri returns)
 
 ## Key Output Locations
 - Style Frames: `/output/color/style_frames/`

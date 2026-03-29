@@ -3,6 +3,21 @@
 LTG_TOOL_byte_expression_sheet_v002.py
 Byte Expression Sheet Generator — "Luma & the Glitchkin"
 
+v002 Cycle 16 color fixes (Sam Kowalski — Critique C8 / Naomi Bridges violations):
+  1. BYTE_SH corrected: #0090B0 → #00A8C0 (GL-01a Deep Cyan). Shadow must stay in cyan
+     family — generic grey shadow breaks Byte's glitch-entity visual identity.
+  2. BG_ALARM corrected: warm cocoa (44,22,18) → cold danger blue (18,28,44). ALARMED is
+     a danger state; warm background inverts the semantic. Cold reads as system threat.
+  3. Pixel faceplate now scales with body_ry (not fixed s//4). POWERED DOWN body_squash=0.88
+     was causing the faceplate to appear relatively oversized vs. NEUTRAL. Fix: eye_size
+     derived from body_ry so faceplate-to-head ratio is consistent across all expressions.
+
+v002 Cycle 16 prev fix (Maya Santos): RESIGNED right eye 'droopy_resigned' reworked.
+      Previously had flat lower lid identical to NEUTRAL — indistinguishable at thumbnail scale.
+      Fix: eye_h now 45% aperture (heavier than before), pupil offset strongly downward (+10px),
+      lower lid drawn as a visible drooping curve (not a flat arc), iris shifted down to match.
+      Body tilt amplified: +8 → +14 (backward avoidance lean more readable as silhouette shape).
+
 v002: Added RESIGNED / RELUCTANT DISCLOSURE expression (Cycle 15, Maya Santos request A2-02).
       8 expressions — fills 4×2 grid completely. No empty slot.
       New expression: RESIGNED — arms very close to body, backward avoidance lean,
@@ -32,9 +47,9 @@ Byte anatomy:
 from PIL import Image, ImageDraw, ImageFont
 import math
 
-BYTE_TEAL  = (0, 212, 232)    # #00D4E8 — body fill
-BYTE_HL    = (0, 240, 255)    # #00F0FF — highlights only
-BYTE_SH    = (0, 144, 176)    # #0090B0 — shadow
+BYTE_TEAL  = (0, 212, 232)    # GL-01b #00D4E8 — body fill (Byte Teal, NOT Electric Cyan)
+BYTE_HL    = (0, 240, 255)    # GL-01  #00F0FF — highlights/circuit traces only
+BYTE_SH    = (0, 168, 192)    # GL-01a #00A8C0 — Deep Cyan shadow companion (Cycle 16 fix: was #0090B0)
 SCAR_MAG   = (255, 45, 107)   # #FF2D6B
 LINE       = (10, 10, 20)     # #0A0A14 void black
 EYE_W      = (240, 240, 245)
@@ -44,7 +59,7 @@ BG         = (20, 18, 28)
 BG_NEUTRAL  = (28, 34, 42)    # deep blue-grey — resting default, no emotional temperature
 BG_GRUMPY   = (38, 20, 28)    # deep red-plum — confrontational
 BG_SEARCH   = (22, 30, 44)    # dark slate blue — scanning
-BG_ALARM    = (44, 22, 18)    # deep warm red — danger
+BG_ALARM    = (18, 28, 44)    # deep cold blue — system danger/threat (Cycle 16 fix: was warm cocoa (44,22,18) which inverted the semantic)
 BG_RELJOY   = (22, 34, 32)    # deep teal-green — suppressed warmth
 BG_CONFUSE  = (30, 24, 42)    # deep indigo — confusion
 BG_PWRDOWN  = (14, 12, 18)    # near-black — powered down
@@ -194,7 +209,7 @@ EXPRESSIONS = [
         "resigned",     # emotion tag — drives mouth render
         {
             "arm_dy": 14, "arm_x_scale": 0.50, "leg_spread": 0.70,
-            "body_tilt": 8, "body_squash": 1.0,
+            "body_tilt": 14, "body_squash": 1.0,  # Cycle 16: +8→+14 for silhouette diff from NEUTRAL
             "arm_l_dy": 14, "arm_r_dy": 14,    # arms very close to body sides
         },
         "droopy_resigned",  # right eye: droopy WITHOUT the suppressed smile
@@ -378,23 +393,40 @@ def draw_right_eye(draw, cx, cy, size, style):
         draw.line([(cx - ew, cy + 5), (cx - ew + 4, cy + 2)], fill=LINE, width=2)
 
     elif style == "droopy_resigned":
-        # RESIGNED — droopy like RELUCTANT JOY but:
-        #   1. No upward mouth/smile energy reflected in the eye
-        #   2. Pupil shifted DOWNWARD (defeat gaze, looking away/down, not suppressing anything)
-        #   3. Heavier upper lid than RELUCTANT JOY (more closed = more withdrawn)
-        #   4. No lower-lid smile crinkle line (that tiny arc at bottom left of droopy style)
-        eye_h = int(eh * 0.5)   # 50% aperture — more closed than RELUCTANT JOY (6px offset = ~55%)
-        draw.ellipse([cx - ew, cy - eye_h + 4, cx + ew, cy + eye_h + 4], fill=EYE_W)
-        # Iris: same color as RELUCTANT JOY but shifted further down (downcast, not suppressing)
-        draw.ellipse([cx - cell + 1, cy + 2, cx + cell + 1, cy + cell * 2 + 2], fill=(60, 38, 20))
-        # Pupil: shifted further down than RELUCTANT JOY — defeat gaze, avoidance
-        draw.ellipse([cx - 4 + 1, cy + 5, cx + 4 + 1, cy + 13], fill=LINE)
-        # Minimal highlight — no energy, dim
-        draw.ellipse([cx + cell - 2, cy + 1, cx + ew - 4, cy + cell - 2], fill=(180, 175, 165))
-        # Heavy upper lid line — pressing down, resignation (heavier than droopy)
-        draw.arc([cx - ew, cy - eye_h + 4, cx + ew, cy + eye_h + 4],
-                 start=195, end=345, fill=LINE, width=7)
-        # No lower smile crinkle — this is the key visual distinction from RELUCTANT JOY
+        # RESIGNED — Cycle 16 fix (Maya Santos): MUST be visually distinct from NEUTRAL at thumbnail.
+        # Key differences from NEUTRAL ('half_open'):
+        #   NEUTRAL:  60% aperture, centered pupil, flat lower lid arc
+        #   RESIGNED: 45% aperture (narrower), pupil strongly shifted DOWN (+10px),
+        #             drooping lower lid (curved downward at corners = defeat geometry),
+        #             iris pulled down to match pupil direction, dim highlight only
+        # NO smile crinkle (key distinction from RELUCTANT JOY droopy style)
+        eye_h = int(eh * 0.45)  # 45% aperture — measurably narrower than NEUTRAL's 60%
+        # Eye white — slightly lower center than NEUTRAL (the weight of defeat)
+        draw.ellipse([cx - ew, cy - eye_h + 6, cx + ew, cy + eye_h + 6], fill=EYE_W)
+        # Iris: shifted DOWN strongly — avoidance gaze, not suppressing anything
+        draw.ellipse([cx - cell + 1, cy + 4, cx + cell + 1, cy + cell * 2 + 4], fill=(60, 38, 20))
+        # Pupil: strongly downward (+10px offset from NEUTRAL's centered position) — defeat gaze
+        draw.ellipse([cx - 4 + 1, cy + 8, cx + 4 + 1, cy + 16], fill=LINE)
+        # Dim highlight — barely-there (no energy), positioned low-right like iris
+        draw.ellipse([cx + cell - 2, cy + 4, cx + ew - 5, cy + cell], fill=(165, 160, 150))
+        # Heavy upper lid — pressing down hard (heavier than both NEUTRAL and RELUCTANT JOY)
+        draw.arc([cx - ew, cy - eye_h + 6, cx + ew, cy + eye_h + 6],
+                 start=195, end=345, fill=LINE, width=8)
+        # Drooping lower lid — key geometry distinguishing RESIGNED from NEUTRAL's flat lower arc.
+        # Draw a concave-downward curve: starts at left edge, sags down in middle, back up right.
+        # This is the "heavy eyelid" droop — eyelid weight pulling lower lid down at center.
+        import math as _math
+        droop_pts = []
+        for i in range(11):
+            t = i / 10.0   # 0..1 left to right
+            dx = int(-ew + t * 2 * ew)
+            # Parabolic sag: maximum droop at center (t=0.5)
+            sag = int(7 * 4 * t * (1 - t))   # max sag = 7px at t=0.5
+            dy = int(eye_h + 6 + sag)
+            droop_pts.append((cx + dx, cy + dy))
+        if len(droop_pts) > 1:
+            draw.line(droop_pts, fill=LINE, width=3)
+        # No smile crinkle — this is the key visual distinction from RELUCTANT JOY
 
     elif style == "squint":
         # CONFUSED — slightly squinted/tilted, upward glance
@@ -471,8 +503,11 @@ def draw_byte(draw, cx, cy, size, expression_name, cracked_symbol, emotion, body
     draw.polygon(notch_pts, fill=BG, outline=LINE, width=1)
 
     # Eyes
+    # eye_size scaled from body_ry (not fixed s//4) so faceplate-to-head ratio is consistent
+    # across all expressions regardless of body_squash. Cycle 16 fix for POWERED DOWN faceplate
+    # appearing oversized: body_squash=0.88 shrinks body_ry but s//4 stayed constant → mismatch.
     eye_y      = bcy - body_ry // 5
-    eye_size   = s // 4
+    eye_size   = max(14, int(body_ry * 0.46))  # ~46% of body half-height = proportional to head
 
     # Left eye (pixel display)
     lx              = bcx - s // 5

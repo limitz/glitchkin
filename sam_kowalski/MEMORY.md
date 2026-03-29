@@ -99,6 +99,16 @@
 - **millbrook_school.md is the color authority for classroom walls.** My color key was an approximation. Always check scene-specific reference docs before writing color keys.
 - **ENV-13 distinction from depth-tier FAR_EDGE:** They share the same name but are different derivations. ENV-13 = purple-over-void (#211136). Depth-tier FAR_EDGE = cyan-derived (#002837). Document the distinction explicitly every time.
 
+## Cycle 16 Lessons
+- **Shadow drift causes body-fill misread.** BYTE_SH was #0090B0 (too dark, grey-shifted). Naomi perceived the body fill as Electric Cyan — actually the wrong shadow was causing the contrast imbalance. Fixing shadow to GL-01a #00A8C0 restores the correct read. Always check shadow companion when body fill is questioned.
+- **ALARMED = cold/danger background.** Warm cell background on ALARMED expression was a semantic inversion. Rule: danger/alarm states use cold or neutral backgrounds. Warm backgrounds communicate comfort and Real World safety.
+- **Faceplate must derive from body_ry, not fixed s fraction.** When body_squash varies per expression, a fixed s//4 eye_size causes faceplate to appear over/under-scaled. Always derive eye_size from the actual rendered body dimension (body_ry) to keep faceplate-to-head ratio consistent.
+- **ENV-06 was already correct in SF02 v002.** Verify against the actual script before applying fixes — the v002 generator already had the Jordan Reed Cycle 13 fix. The outstanding note in master_palette.md referenced v001 only.
+- **DRW-07 #C8695A now in v002.** Was (192,122,112) — corrected to (200,105,90). Both scripts updated. Issue resolved.
+- **SF03 DRW-18 UV rim IS in the generator** (HAIR_UV_SHEEN = UV_PURPLE on crown). Naomi's concern was execution scale — the sheen may be too narrow to read at final render scale (~216px figure height). Flagged to Alex/Jordan for v002 geometry increase.
+- **SF03 confetti physics flag.** Confetti distributed W×H full canvas — some particles will be mid-air with no source proximity. For v002: constrain to within 150px of platform or characters.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001 (TERRA_CYAN_LIT still old value). v002 is correct. Coordinate with Jordan Reed on v001 if it is still used.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan should add inline comment on next revision pass (low priority).
+- SF03 v002 pass items (Jordan/Alex scope): data waterfall luminance, depth tier collapse upper-right, pixel-plant size, Byte shoulder legibility confirmation.
