@@ -32,9 +32,9 @@
 
 | Asset | File Path | What It Shows | Quality Status | Needs Work |
 |---|---|---|---|---|
-| Luma turnaround | `/home/wipkat/team/output/characters/main/turnarounds/luma_turnaround.png` | 4-view turnaround (front, 3/4, side, back) in color | Accepted (Fiona C10 PASS) | None |
+| Luma turnaround | `/home/wipkat/team/output/characters/main/turnarounds/luma_turnaround.png` | 4-view turnaround (front, 3/4, side, back) in color | **UNLOCKED** (Fiona C10 PASS was stale — Cycle 10 asset, does not match Act 2 proportions) | **NEEDS WORK:** Update to current Act 2 proportions → v002 |
 | Byte turnaround | `/home/wipkat/team/output/characters/main/turnarounds/byte_turnaround.png` | 4-view turnaround, oval body (Cycle 10 fix — cube retired) | Accepted (Fiona C10 PASS) | LTG rename outstanding |
-| Cosmo turnaround | `/home/wipkat/team/output/characters/main/turnarounds/cosmo_turnaround.png` | 4-view turnaround, glasses visible all angles | Accepted (Fiona C10 PASS — new Cycle 10) | LTG rename outstanding |
+| Cosmo turnaround | `/home/wipkat/team/output/characters/main/turnarounds/cosmo_turnaround.png` | 4-view turnaround, glasses visible all angles | **UNLOCKED** (Fiona C10 PASS was stale — side view architecturally broken) | **NEEDS WORK:** Side view has no 3D depth — production-blocking. → v002 |
 | Miri turnaround | `/home/wipkat/team/output/characters/main/turnarounds/miri_turnaround.png` | 4-view turnaround, MIRI-A canonical | Accepted (Fiona C10 PASS — new Cycle 10) | LTG rename outstanding |
 
 ### 1.3 Character Lineup & Supporting Sheets
@@ -107,7 +107,7 @@
 |---|---|---|---|---|
 | Style Frame 01 — rendered PNG | `/home/wipkat/team/output/color/style_frames/style_frame_01_rendered.png` | Composited style frame: Luma at desk, Byte emerging from monitor — discovery moment. Cycle 11: mid-air transition element + 15px screen pixel figures added. | Accepted (Victoria C11 A) | Visual surprise element (A+ gap) — Cycle 12 work |
 | Style Frame 01 — LTG export | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v001.png` | LTG-named canonical copy of Style Frame 01 | Accepted (Cycle 11 — LTG-compliant) | None |
-| Style Frame 01 — v003 LOCKED | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v003.png` | Ghost Byte alpha calibration fix (Cycle 13 — Alex Chen). Body alpha 55→90, eye glints 65→105. Top-left ghost removed. Two ghosts (top-right + mid-left). LOCKED as canonical discovery style frame. | A+ (Victoria C13) | None — PITCH READY |
+| Style Frame 01 — v003 **UNLOCKED** | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v003.png` | Ghost Byte alpha calibration fix (Cycle 13). A+ lock REMOVED Cycle 24. Open for v004. | Was A+ (Victoria C13) — lock removed | **NEEDS WORK:** Luma visual inconsistency with expression sheets; warm bleed pass violates SF01 face split boundary. v004 in development. |
 | Style Frame 01 — composition | `/home/wipkat/team/output/color/style_frames/compositions/frame01_discovery_composition.png` | Composition layout card for Frame 01 | Reference | None |
 | Style Frame 01 — spec doc | `/home/wipkat/team/output/color/style_frames/style_frame_01_discovery.md` | Written spec: composition, lighting, color zones | Reference | None |
 | Style Frame 02 — BG render | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v001.png` | Compositing-ready BG: night sky, UV storm masses, main crack, town silhouette, street, characters (Luma+Cosmo+Byte), storefront, 4° Dutch angle | Delivered Cycle 12 (Jordan Reed) | None |
@@ -235,7 +235,7 @@
 | Character design sheets (all 4) | COMPLETE | Byte v3.1 header inconsistency: minor 1-line fix |
 | Character turnarounds (all 4) | COMPLETE | Delivered Cycle 10 |
 | Color model sheets | COMPLETE | All 4 characters |
-| Style frames (3 frames) | COMPLETE | SF01 v003 LOCKED A+ (Cycle 13); SF02 v005 (Cycle 22 — window pane alpha + GL-07 corrected); SF03 v003 (Cycle 19 — Byte body GL-01b fix) — all 3 pitch-ready |
+| Style frames (3 frames) | IN PROGRESS | SF01 v003 unlocked (A+ lock removed C24) → v004 open; SF02 v005 PITCH READY (original); SF03 v003 PITCH READY (original). SF04 Luma+Byte scene needed. |
 | Environment designs | COMPLETE | All 3 environments documented + rendered. Cycle 11: encounter frame, Glitch Layer v2. Cycle 13: Glitch Storm BG (color fix). Cycle 14: Classroom BG, Other Side BG. Cycle 16: Classroom v002 (lighting fix), Miri's Kitchen. Cycle 17: Tech Den, School Hallway. Cycle 19: School Hallway v002 (artifact+human evidence+camera), Millbrook Main Street v002 (power lines+road). |
 | Storyboard / cold open | COMPLETE | 25 panels + contact sheet + storyboard pitch export (Cycle 11). Act 1 contact sheet v002 (Cycle 19 — A1-03 MCU rebuild). Act 2: 12 panels + contact sheet v005 (Cycle 19 — adds A2-07b bridge). |
 | Show bible | COMPLETE | — |
@@ -279,7 +279,7 @@
 
 | Asset | File Path | Notes |
 |---|---|---|
-| Style Frame 01 v003 (LOCKED) | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v003.png` | Ghost Byte alpha calibration. Victoria A+. CANONICAL SF01. |
+| Style Frame 01 v003 (UNLOCKED) | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v003.png` | A+ lock removed C24. Open for v004. See Critique 11 findings. |
 | Style Frame 02 v002 (composite) | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v002.png` | Character composite: Byte L / Luma C / Cosmo R. Storm variant intentional. |
 | Show logo asymmetric v002 | `/home/wipkat/team/output/production/LTG_BRAND_logo_asymmetric_v002.png` | "&" warm-to-cold gradient. "the/Glitchkin" gap reduced 30%. |
 | Glitch Storm BG (color fix) | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_glitch_storm_bg_v001.png` | TERRACOTTA_CYAN_LIT corrected (150,172,162). BG-only compositing reference. |
@@ -419,7 +419,7 @@
 
 | Asset | Status | Notes |
 |---|---|---|
-| SF01 Discovery v003 | LOCKED A+ — NO ISSUES | Ghost Bytes alpha calibrated. Victoria A+. Pitch-ready. |
+| SF01 Discovery v003 | **UNLOCKED — OPEN FOR v004** | A+ lock removed C24. Issues: Luma inconsistency, warm bleed boundary. v004 to fix. |
 | SF02 Glitch Storm v005 | PITCH READY — CLEAN | Window pane alpha 115/110 (in target range). CORRUPT_AMBER now canonical GL-07 #FF8C00. All C10 color flags resolved. |
 | SF03 Other Side v003 | PITCH READY — CLEAN | Byte body GL-01b confirmed. Eye radius ≥15px. Void Black slash removed. All C9 Byte-visibility issues resolved. |
 
@@ -429,10 +429,10 @@
 
 | Asset | Status | Notes |
 |---|---|---|
-| Luma expression sheet v004 | PITCH READY | CURIOUS upgraded to confident squint. Clean version (no guides). show_guides architecture ready for production use. |
-| Byte expression sheet v004 | PITCH READY | Cracked-eye glyph spec-correct per byte.md §9B. STORM/RESIGNED/POWERED DOWN unambiguous at thumbnail. 9 expressions total. |
-| Cosmo expression sheet v004 | PITCH READY | SKEPTICAL arm posture resolved (was reading as SURPRISED). All 6 expressions distinct at thumbnail. |
-| Grandma Miri expression sheet v002 | PITCH READY | Full-body postures. 5 expressions with distinct silhouettes. Dmitri C-grade root cause closed. |
+| Luma expression sheet v004 | **UNLOCKED — NEEDS WORK** | Body language invisible below neck; 4/6 expressions head-only. → v005 with full-body silhouette differentiation. (Kwame C11) |
+| Byte expression sheet v004 | PITCH READY | Cracked-eye glyph spec-correct. STORM/RESIGNED/POWERED DOWN unambiguous. 9 expressions. No issues flagged C11. |
+| Cosmo expression sheet v004 | **UNLOCKED — NEEDS WORK** | Side view architecturally broken (flat rectangle, no depth). → v002 turnaround. (Kwame C11) |
+| Grandma Miri expression sheet v002 | **UNLOCKED — NEEDS WORK** | Technically strong but narrative secret (knew about Glitch Layer) absent. → Add knowing expression. (Valentina C11) |
 | Character lineup v003 | PITCH READY | Float-gap dimension arrow. All four characters at correct scale. |
 
 **No blocking issues found in character package.**

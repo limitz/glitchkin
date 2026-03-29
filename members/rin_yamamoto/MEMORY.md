@@ -32,13 +32,13 @@ Visual Stylization Artist on "Luma & the Glitchkin." Post-processing specialist:
 ## Asset → Mode Mapping
 - SF02 Glitch Storm = mixed
 - SF03 Other Side = glitch (Glitch Layer — no paper grain)
-- SF01 Discovery = realworld (conservative, intensity=0.6; A+ locked — flag Alex for review)
+- SF01 Discovery = **UNLOCKED** — A+ lock removed C24. v004 in development by Sam/Alex. Restyle after v004 delivered.
 - Real world envs (Kitchen etc.) = realworld
 
 ## Cycle 23 Outputs
 - `LTG_COLOR_styleframe_glitch_storm_v005_styled.png` (mixed, 1.0)
 - `LTG_COLOR_styleframe_otherside_v003_styled.png` (glitch, 1.0)
-- `LTG_COLOR_styleframe_discovery_v003_styled.png` (realworld, 0.6) ← FLAGGED for Alex review (no response by C24 end)
+- `LTG_COLOR_styleframe_discovery_v003_styled.png` — ON HOLD. SF01 unlocked, v004 incoming. Restyle from v004 once delivered.
 - `LTG_ENV_grandma_kitchen_v003_styled.png` (realworld, 1.0)
 - Preset doc: `output/production/stylization_preset_handdrawn_v001.md`
 

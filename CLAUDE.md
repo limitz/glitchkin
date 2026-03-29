@@ -59,6 +59,11 @@ Keep a main MEMORY.md in the root of this project and update it when needed. Alw
 * Update your main MEMORY.md to track status and progress. Everything you need when starting fresh.
 * After writing your main MEMORY.md commit everything to git.
 
+## Asset Status
+* **Never lock any asset** (e.g. "A+ LOCKED", "PITCH READY — no changes", "CANONICAL — no revision") unless the human explicitly instructs a lock.
+* High grades from critics mean the work is strong — not that it is finished. Every asset remains open for improvement until the human says otherwise.
+* Status labels like "PITCH READY" and "ACCEPTED" are informational only — they do not prevent future revision.
+
 ## Final Note
 Team members and critics can work in parallel, as long as there are no more than 5 agents active at any one time.
 Prefer the use (and creation) of tools for tasks that repeat, if that is more efficient.

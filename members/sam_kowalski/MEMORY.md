@@ -156,7 +156,7 @@
 - **SF03 v003 = PITCH READY.** Zero warm light sources enforced in code. BYTE_BODY (0,212,232) confirmed. Eyes 14.1:1 and 5.5:1. Amber outline correctly absent (UV-dominant, not cyan-dominant).
 - **UV_PURPLE_MID/DARK in SF03 ARE ENV-11/ENV-12.** RGB exact match confirmed: (42,26,64) = ENV-11 #2A1A40, (43,32,80) = ENV-12 #2B2050. Jordan to add cross-reference comment to script. Named Gap 1 effectively resolved (pending Jordan's comment).
 - **Color story document is current.** All three SFs covered with correct source file versions. GL-07 reconciliation note added. Cycle 23 verification note added.
-- **Stylization fidelity review plan documented.** Rin Yamamoto has not yet delivered stylized assets. Color fidelity review plan is in LTG_COLOR_sf_final_check_c23.md — critical values to check: GL-07 outline, GL-01b body, GL-04 sky purple, DRW-07 storm hoodie saturation. SF01 stylization must be extremely conservative (A+ locked frame).
+- **Stylization fidelity review plan documented.** Rin Yamamoto has not yet delivered stylized assets. Color fidelity review plan is in LTG_COLOR_sf_final_check_c23.md — critical values to check: GL-07 outline, GL-01b body, GL-04 sky purple, DRW-07 storm hoodie saturation. SF01 A+ lock has been REMOVED (C24). SF01 v004 is in development. Stylization approach should be reconsidered once v004 is available.
 
 ## Cycle 24 Lessons
 - **Stylization hue rotation is a systemic failure mode.** Rin Yamamoto's styled PNGs for SF02 and SF03 show a ~30-60° hue rotation artifact: amber→olive/yellow, cyan→green, UV_PURPLE→dark teal/green. Real World assets (SF01, Kitchen) are unaffected. Glitch palette colors (GL-07, GL-01b, UV_PURPLE) must be flagged as protected in any stylization pipeline.

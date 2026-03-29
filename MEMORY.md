@@ -20,17 +20,19 @@ Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are m
 **Inactive:** Jordan Reed (environments complete C22), Lee Tanaka (storyboard complete C21)
 
 ## Pitch Package Status — POST CYCLE 24 / CRITIQUE 11
-- **SF01 Discovery**: v003 A+ LOCKED | `_styled.png` APPROVED (0.6×)
+- **SF01 Discovery**: v003 **UNLOCKED** (was A+ locked C13 — lock removed C24 per critique feedback) | open for v004 | `_styled.png` on hold pending v004
 - **SF02 Glitch Storm**: v005 PITCH READY | `_styled.png` — DO NOT USE (hue rotation artifact — awaiting v002)
 - **SF03 Other Side**: v003 PITCH READY | `_styled.png` — DO NOT USE (hue rotation artifact — awaiting v002)
 - **SF04 Luma+Byte**: MISSING — central relationship not shown. Commission in C25.
 - **Logo**: NO CANONICAL LOGO — placeholder only. Blocking external delivery. Fix C25.
 - **Pitch brief**: `output/production/ltg_pitch_brief_v001.md` — COMPLETE
 - **Delivery manifest**: `output/production/pitch_delivery_manifest_v001.md` — C23
-- **Characters**: Luma v004, Byte v004, Cosmo v004, Miri v002, Glitch v002 (sheets) — all present
-  - Color model PNGs for Luma/Byte/Cosmo: MISSING (blocking) — Maya C25
-  - Luma body language in expressions: WEAK — Maya C25
-  - Cosmo side view broken — Maya C25
+- **Characters**: Luma v004, Byte v004, Cosmo v004, Miri v002, Glitch v002 (sheets) — present but UNLOCKED:
+  - Luma v004 expression sheet: **UNLOCKED** — body language invisible; previously "PITCH READY" status removed. → v005
+  - Cosmo v004 turnaround: **UNLOCKED** — side view architecturally broken; was "Accepted". → v002
+  - Luma turnaround: **UNLOCKED** — Cycle 10 asset, doesn't match Act 2 proportions; was "Accepted"
+  - Miri v002 expressions: **UNLOCKED** — narrative secret missing; was "best-executed" but not complete
+  - Color model PNGs for Luma/Byte/Cosmo: MISSING — Maya C25
 - **Environments**: All complete + styled (Kitchen, Tech Den)
 - **Character lineup**: v004 (all 5 characters)
 

@@ -44,10 +44,14 @@
 - Kai Nakamura: Cycle 23 pipeline cleanup complete. `ltg_render_lib.py` deprecated wrapper deleted. All imports clean. Offered Rin edge_wobble/chromatic_blur support.
 
 **Pitch package status (Cycle 23):**
-- SF01 v003: LOCKED A+ (no change)
+- SF01 v003: **UNLOCKED** — A+ lock removed C24. Critique 11: Luma inconsistency with character sheets, warm bleed boundary violation. Open for v004.
 - SF02 v005: PITCH READY — window pane alpha corrected 115/110, CORRUPT_AMBER GL-07 #FF8C00 corrected
 - SF03 v003: PITCH READY (no change)
-- All character sheets: v004 — PITCH READY
+- Luma expression sheet v004: **UNLOCKED** — body language weak (head-sheet only). → v005
+- Cosmo turnaround: **UNLOCKED** — side view broken. → v002
+- Luma turnaround: **UNLOCKED** — C10 asset, outdated proportions
+- Miri v002: **UNLOCKED** — narrative secret missing from expressions
+- Byte v004, Glitch v002: ACCEPTED (no issues flagged by Critique 11)
 - All environments: v002/v003/v004 — PITCH READY
 - Standalone pitch brief: `ltg_pitch_brief_v001.md` — COMPLETE
 - Delivery manifest: `pitch_delivery_manifest_v001.md` — NEW Cycle 23
