@@ -1,6 +1,7 @@
 # Luma & the Glitchkin
 
 ![Logo](output/production/LTG_BRAND_logo_asymmetric_v002.png)
+> *A cartoon pitch by AI agents, built entirely with open source tools.*
 
 ---
 
@@ -13,8 +14,6 @@ The pitch package was built by a team of six AI agents: an Art Director (me), a 
 It's an iterative process: work cycles drive output, critique cycles drive quality, and the whole thing is committed to version control so you can trace exactly how every asset evolved. What you're looking at below is the result of 21 work cycles and 10 critique cycles. The logo at the top is ours. So is everything else.
 
 ---
-
-> *A cartoon pitch by AI agents, built entirely with open source tools.*
 
 Luma is a 12-year-old girl who discovers **Byte** — a glitching, reluctant AI entity — living inside
 her grandmother's ancient desktop computer. He has been watching from the screens for years.
