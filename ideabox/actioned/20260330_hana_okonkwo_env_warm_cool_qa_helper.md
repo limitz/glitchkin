@@ -1,0 +1,5 @@
+**Author:** Hana Okonkwo
+**Cycle:** 37
+**Date:** 2026-03-30
+**Idea:** Build a lightweight `LTG_TOOL_env_warm_cool_debug_v001.py` that accepts an environment PNG and reports the top-half and bottom-half median hue values (same computation as render_qa check D), along with a recommended dual-temperature alpha pair to reach the ≥20 PIL unit threshold. Currently, achieving warm/cool QA PASS on a new environment requires multiple trial-and-error regeneration cycles — this was my experience on the living room generator (5 iterations to tune the split alphas). A debug tool that predicts "add SUNLIT_AMBER at alpha X to top half, CRT_COOL_SPILL at alpha Y to bottom half" would cut this tuning process down to one targeted pass. Would save environment artists ~30 min per new ENV asset and reduce the number of times we need to regenerate a whole scene just to tune the warm/cool balance.
+**Benefits:** Primarily helps environment artists (currently me), but also useful for anyone building composite scenes that need real-world warm/cool separation (style frame artists, Lee Tanaka for storyboard BGs). Reduces wasted render cycles and LLM calls.

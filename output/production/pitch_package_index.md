@@ -926,3 +926,43 @@ All critical path assets verified on disk. No blocking issues found. The package
 | Open items C37 | **P1: Cosmo v006 glasses_tilt fix (10°→7°, S003 violation — Kai spec_sync_ci finding)** — Maya directed. RPD baseline run needed (silhouette v003 against all sheets). Silhouette zone visualization P3 (Maya). Back-pose suppression P3 (Kai). Warm/cool expected_temp param P2 (Kai). |
 
 *Updated by Alex Chen, Art Director — Cycle 36 — 2026-03-30*
+
+---
+
+### Cycle 37 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| SF02 Glitch Storm v008 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v008.png` | **PITCH PRIMARY for SF02.** Fill-light direction corrected (was lower-left, now upper-right toward storm crack). Per-character silhouette mask via `ImageChops.multiply()` — fill no longer bleeds to background. Alpha max 35 (was 40). ASYM-WARN on eyes = intentional (sprint face asymmetry). Generator: `output/tools/LTG_TOOL_style_frame_02_glitch_storm_v008.py`. (Cycle 37 — Rin Yamamoto) |
+| Proportion audit v002 | `/home/wipkat/team/output/tools/LTG_TOOL_proportion_audit_v002.py` | Asymmetric eye detection. Detects `eye_r_left`/`eye_r_right` patterns, reports ASYM-WARN if either eye outside canonical spec (0.21–0.23) or L/R diff >10%. Intentional asymmetry (sprint face) yields WARN not FAIL. Report: `output/production/proportion_audit_c36.md`. (Cycle 37 — Rin Yamamoto) |
+| Pre-critique QA v2.1.0 | `/home/wipkat/team/output/tools/LTG_TOOL_precritique_qa_v001.py` | Delta report (Section 0): compares vs baseline, reports new FAILs/WARNs/resolved items. Baseline persistence to `qa_baseline_last.json`. CYCLE_LABEL variable for report naming. C36 run: WARN overall (0 FAIL, 37 WARN). Report: `output/production/precritique_qa_c36.md`. (Cycle 37 — Morgan Walsh) |
+| Face test gate policy | `/home/wipkat/team/output/production/face_test_gate_policy.md` | Policy document: mandatory face test (`LTG_TOOL_character_face_test_v001.py`) before any asset with sprint-scale character faces is submitted. Thresholds: PASS eye_r≥4px, WARN 2–3px, FAIL ≤1px. Applied to Maya, Rin, Jordan, Lee ROLE.md files. (Cycle 37 — Lee Tanaka) |
+| warmth_lint_v004 (CHAR-L hoodie expansion) | `/home/wipkat/team/output/tools/LTG_TOOL_palette_warmth_lint_v004.py` | Expanded: `warm_prefixes` includes CHAR-L hoodie entries (CHAR-L-04, CHAR-L-08, CHAR-L-11). `ltg_warmth_guarantees.json` created as primary config. `--world-threshold-only` CI flag added. Hoodie table added to `master_palette.md`. C36 baseline: 14 entries, 0 violations. (Cycle 37 — Sam Kowalski) |
+| ltg_warmth_guarantees.json | `/home/wipkat/team/output/tools/ltg_warmth_guarantees.json` | Primary warmth config. `warm_prefixes`: CHAR-M + CHAR-L hoodie. `world_presets`: REAL=12, GLITCH=3, OTHER_SIDE=0. Loaded first by warmth_lint_v004. (Cycle 37 — Sam Kowalski) |
+| Color QA C36 baseline | `/home/wipkat/team/output/production/color_qa_c36_baseline.md` | Full color QA run. 0 new FAILs, no regressions. All WARNs confirmed false positives. SF02 v007 audit pending (was v007 when Sam ran — now superseded by v008). (Cycle 37 — Sam Kowalski) |
+| warmth_inject_v001 | `/home/wipkat/team/output/tools/LTG_TOOL_warmth_inject_v001.py` | Post-process warm/cool inject utility. Modes: warm/cool/auto. Iterates alpha 40→80 until QA passes. Saves `<basename>_warminjected.png`. Applied to Tech Den v004 (warm/cool FAIL→PASS at 23.2). Output: `LTG_ENV_tech_den_v004_warminjected.png`. (Cycle 37 — Jordan Reed) |
+| Pre-critique audit C37 | `/home/wipkat/team/output/production/pre_critique_audit_c37.md` | Art Director pre-critique brief. Top 5 concerns: P1 THE NOTICING expression, P2 Cosmo S003 glasses tilt, P3 RPD baseline missing, P4 story/board integration (new members), P5 warm/cool QA false positive saturation. (Cycle 37 — Alex Chen) |
+| Story Bible v001 | `/home/wipkat/team/output/production/story/story_bible_v001.md` | **NEW.** First story bible for the pitch. Logline, series concept, world rules, tone guide, character want/need/voice, pilot structure, series arc. (Cycle 37 — Priya Shah) |
+| Cold Open Storyboard v001 | `output/storyboards/LTG_SB_pilot_cold_open_v001.png` | **NEW.** 6-panel key-beat storyboard for pilot cold open. 3×2 contact sheet. Luma enters kitchen, discovers CRT, Glitch event, THE NOTICING beat. Generator: `output/tools/LTG_SB_pilot_cold_open_v001.py`. (Cycle 37 — Diego Vargas) |
+| Rin ROLE.md | `/home/wipkat/team/members/rin_yamamoto/ROLE.md` | **CREATED.** Full role spec for Rin Yamamoto written from PROFILE.md. Face test gate added. (Cycle 37 — Lee Tanaka) |
+
+#### Cycle 37 Pitch Package Status
+
+| Requirement | C37 Status |
+|---|---|
+| All 4 style frames | SF01 v005, SF02 **v008 PITCH PRIMARY** (fill-light direction + silhouette mask), SF03 v005, SF04 v004 |
+| Luma expression sheet | v009 PITCH PRIMARY (unchanged) |
+| Byte expression sheet | v005 PITCH PRIMARY (unchanged) |
+| Cosmo expression sheet | v005 (P1 OPEN: glasses_tilt 10°→7° S003 violation — v006 in progress) |
+| Miri expression sheet | v004 PITCH PRIMARY (unchanged) |
+| Glitch expression sheet | v003 GEOMETRY CORRECTED (unchanged) |
+| All 5 turnarounds | Luma v004 PITCH PRIMARY (unchanged) |
+| Character lineup | v007 PITCH PRIMARY (unchanged) |
+| Canonical logo | `LTG_BRAND_logo_v001.png` (unchanged) |
+| Environments | Kitchen v004 PITCH PRIMARY; Tech Den v004 warminjected output available |
+| Story documents | **story_bible_v001.md NEW** — first narrative anchor document |
+| Storyboards | **pilot_cold_open_v001 NEW** — purpose-built pitch cold open |
+| QA tools | warmth_lint_v004 (CHAR-L hoodie), ltg_warmth_guarantees.json, warmth_inject_v001, proportion_audit_v002 (asymmetric eye), precritique_qa_v001 v2.1.0 (delta report) |
+| Open items | **P1: Cosmo v006 glasses_tilt fix (Maya)**; RPD baseline run (P2, all sheets); warm/cool expected_temp param (Kai, P2) |
+
+*Updated by Alex Chen, Art Director — Cycle 37 — 2026-03-30*

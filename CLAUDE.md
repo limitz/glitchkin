@@ -72,7 +72,7 @@ Keep a main MEMORY.md in the root of this project and update it when needed. Alw
 * Work can be anything, from reusable tools to text to imagery. Whatever is required to get the project done.
 * Work starts by reading the member's `ROLE.md` (if present) to load their current role context and standards, then reading `output/tools/README.md` to know what tools are available, then reading all files in the member's `inbox/` directory for assignments or other information. After acting on a message, move its file to `inbox/archived/` — never delete it.
 * If a team member can not start work because of a dependency on another task, it should be reported to their superior.
-* An agent is started for each active worker that has work to do, in batches of up to 8 simultaneous agents. **Agents expected to run longest (image generation, complex tool builds) must start first.** Documentation and policy tasks run in later batches.
+* An agent is started for each active worker that has work to do, up to 8 simultaneous agents. **Agents expected to run longest (image generation, complex tool builds) must start first.** As soon as any agent completes, immediately launch the next queued agent — do not wait for a full batch to finish. Keep all 8 slots filled at all times. **Dependency priority:** if an agent produces output that other agents are waiting on (e.g. a tool build that downstream agents need), launch it first regardless of how much work it has — unblocking others takes priority over task size.
 * Store the lessons learned in the cycle in MEMORY.md, and make sure it is reloaded when the agents is restarted.
 * Keep MEMORY.md compact!
 * After all work is done, a statement of work is added to the output dir.

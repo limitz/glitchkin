@@ -257,11 +257,19 @@
 - **C36 QA baseline: 0 new FAILs.** SF01/SF02/SF03/SF04 all WARN on warm/cool = documented false positives. SF03/SF04 color fidelity FAIL = documented pre-existing FPs. Byte color model PASS. Full report: output/production/color_qa_c36_baseline.md.
 - **Warmth lint v004 already existed** (Kai Nakamura built the --world-type flag stub). Sam's task was to expand it (CHAR-L hoodie, ltg_warmth_guarantees.json, --world-threshold-only, update built-in config). Always check if a v4 stub exists before starting from scratch.
 
+## Cycle 37 Lessons
+- **render_qa v1.4.0 resolves SF03 warm/cool WARN only.** `infer_world_type()` on PNG paths: `otherside` → OTHER_SIDE threshold=0 (PASS). `glitch_storm` → REAL threshold=20 (still WARN). `discovery` → REAL threshold=20 (still WARN at sep=17.9). render_qa REAL=20 differs from FP-006 spec (interior=12, storm=3). SF01/SF02/SF04 still WARN.
+- **FP-006 partially resolved.** SF03 warm/cool now PASS. SF01/SF02/SF04 require render_qa threshold split: REAL_INTERIOR=12, REAL_STORM=3. Ideabox submitted.
+- **Hana Okonkwo living room v001 — CLEAN.** Zero GL-* values. Warm/cool system correct (SUNLIT_AMBER window + CRT_COOL_SPILL secondary). CRT spill (0,128,148) is a desaturated REAL-world glow, NOT a Glitch color. Deep shadow floor confirmed.
+- **warmth_lint API keys:** `total_checked`, `total_violations`, `violations` (list of dicts), `prefixes_checked`, `result` ("PASS"/"WARN"). Not `entries_checked`.
+- **QA runner script created:** `LTG_TOOL_color_qa_c37_runner.py` — runs full baseline + living room env. Call with `python3 output/tools/LTG_TOOL_color_qa_c37_runner.py`.
+- **FP registry updated.** FP-006 entry now shows SF03 resolved, SF01/SF02/SF04 threshold-mismatch gap documented.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001. Low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan to add inline comment. Low priority.
 - SF03 v003 UV_PURPLE_MID/DARK — Jordan to add inline comment citing ENV-11/ENV-12.
 - Tech Den generator WALL_WARM slightly off from TD-01 — Jordan to add citing comment.
 - TD-10/TD-11 monitor glow alignment — Jordan to compare bg_tech_den_v002.py values vs canonical Section 8 entries. Medium priority.
-- **SF02 v007 color audit PENDING.** Rin Yamamoto delivering v007 this cycle. Run color_verify when arrives.
-- **Kai Nakamura: integrate --world-type into render_qa.** Use `warmth_lint_v004 --world-type X --world-threshold-only` to get threshold; apply to `_check_warm_cool()` call. This would eliminate 4 recurring false WARNs on SF01-SF04.
+- **SF02 v007 color audit CLOSED.** SF02 v008 is current (C36 confirmed clean).
+- **Kai Nakamura: split render_qa REAL threshold** into REAL_INTERIOR=12 + REAL_STORM=3 to eliminate SF01/SF02 warm/cool WARNs. Ideabox: 20260330_sam_kowalski_render_qa_real_threshold_split.md.

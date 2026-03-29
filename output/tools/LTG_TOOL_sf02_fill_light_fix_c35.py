@@ -3,6 +3,7 @@
 LTG_TOOL_sf02_fill_light_fix_c35.py — SF02 Fill Light Direction Fix (C35)
 "Luma & the Glitchkin" — Style Frame 02 Glitch Storm
 Author: Jordan Reed | Cycle 35
+Updated: Rin Yamamoto | Cycle 37 — canvas_w/canvas_h parameters added to all public functions
 
 PURPOSE:
   Corrected draw_magenta_fill_light() for integration into SF02 v007.
@@ -32,10 +33,14 @@ INTEGRATION:
   the corrected version from this module.
 
   Import:
-    from LTG_TOOL_sf02_fill_light_fix_c35 import draw_magenta_fill_light_v007
+    from LTG_TOOL_sf02_fill_light_fix_c35 import draw_magenta_fill_light_v007_fast
 
   Then call:
-    img = draw_magenta_fill_light_v007(img, luma_cx, byte_cx, cosmo_cx, char_h)
+    img = draw_magenta_fill_light_v007_fast(img, luma_cx, byte_cx, cosmo_cx, char_h)
+
+  For non-standard canvas sizes, pass canvas_w and canvas_h:
+    img = draw_magenta_fill_light_v007_fast(img, luma_cx, byte_cx, cosmo_cx, char_h,
+                                             canvas_w=1920, canvas_h=1080)
 
   Coordinate: tell Rin which parameters need to be passed.
 
@@ -52,7 +57,9 @@ import os
 import sys
 from PIL import Image, ImageDraw, ImageFilter
 
-# Canvas dimensions (matching SF02 standard)
+# Default canvas dimensions (matching SF02 standard)
+# These are module-level defaults for the __main__ test block only.
+# All public functions accept canvas_w / canvas_h overrides.
 W, H = 1280, 720
 
 # Colors
@@ -72,7 +79,8 @@ def _alpha_paste(base, overlay):
     return rgba_base.convert("RGB")
 
 
-def _make_char_silhouette_mask(img, char_cx, char_h, char_cy, threshold=80):
+def _make_char_silhouette_mask(img, char_cx, char_h, char_cy, threshold=80,
+                               canvas_w=None, canvas_h=None):
     """
     Build a silhouette mask for a single character by:
     1. Cropping a zone around char_cx × char_cy (2× char_h wide, 2.5× char_h tall)
@@ -80,13 +88,25 @@ def _make_char_silhouette_mask(img, char_cx, char_h, char_cy, threshold=80):
     3. Pasting the mask back at the correct position on a full-canvas mask
 
     Returns a full-canvas "L" mask (0=background, 255=character).
+
+    Parameters
+    ----------
+    canvas_w, canvas_h : int or None
+        Canvas dimensions. Default None uses module-level W/H (1280×720).
+        Pass explicit values for non-standard canvas sizes.
     """
+    cw = canvas_w if canvas_w is not None else W
+    ch = canvas_h if canvas_h is not None else H
+
+    # GaussianBlur radius scales with canvas width (radius=4 at 1280px, radius=6 at 1920px)
+    blur_radius = max(4, int(4 * cw / 1280))
+
     zone_w = int(char_h * 2.0)
     zone_h = int(char_h * 2.5)
     x0 = max(0, char_cx - zone_w // 2)
     y0 = max(0, char_cy - zone_h // 2)
-    x1 = min(W, char_cx + zone_w // 2)
-    y1 = min(H, char_cy + zone_h)
+    x1 = min(cw, char_cx + zone_w // 2)
+    y1 = min(ch, char_cy + zone_h)
 
     crop = img.crop((x0, y0, x1, y1))
     gray = crop.convert("L")
@@ -95,18 +115,19 @@ def _make_char_silhouette_mask(img, char_cx, char_h, char_cy, threshold=80):
     mask_crop = gray.point(lambda p: 255 if p > threshold else 0, mode="L")
 
     # Paste back onto full-canvas mask
-    full_mask = Image.new("L", (W, H), 0)
+    full_mask = Image.new("L", (cw, ch), 0)
     full_mask.paste(mask_crop, (x0, y0))
 
     # Dilate the mask slightly (blur + threshold) to catch character edges
-    full_mask_blur = full_mask.filter(ImageFilter.GaussianBlur(radius=4))
+    full_mask_blur = full_mask.filter(ImageFilter.GaussianBlur(radius=blur_radius))
     full_mask_dilated = full_mask_blur.point(lambda p: 255 if p > 30 else 0, mode="L")
 
     return full_mask_dilated
 
 
 def draw_magenta_fill_light_v007(img, luma_cx, byte_cx, cosmo_cx, char_h,
-                                  luma_cy=None, byte_cy=None, cosmo_cy=None):
+                                  luma_cy=None, byte_cy=None, cosmo_cy=None,
+                                  canvas_w=1280, canvas_h=720):
     """
     CORRECTED HOT_MAGENTA fill light for SF02 v007.
 
@@ -131,20 +152,26 @@ def draw_magenta_fill_light_v007(img, luma_cx, byte_cx, cosmo_cx, char_h,
     char_h : int
         Standard character height (e.g. int(H * 0.18))
     luma_cy, byte_cy, cosmo_cy : int or None
-        Character vertical centers. If None, defaults to int(H * 0.65) for
-        Luma/Cosmo (feet on ground) and int(H * 0.60) for Byte (floating).
+        Character vertical centers. If None, defaults to int(canvas_h * 0.65) for
+        Luma/Cosmo (feet on ground) and int(canvas_h * 0.60) for Byte (floating).
+    canvas_w : int
+        Canvas width in pixels. Default 1280 (SF02 standard). Pass 1920 for full-res.
+    canvas_h : int
+        Canvas height in pixels. Default 720 (SF02 standard). Pass 1080 for full-res.
     """
+    cw, ch = canvas_w, canvas_h
+
     # Default vertical centers
     if luma_cy is None:
-        luma_cy = int(H * 0.65)
+        luma_cy = int(ch * 0.65)
     if byte_cy is None:
-        byte_cy = int(H * 0.60)
+        byte_cy = int(ch * 0.60)
     if cosmo_cy is None:
-        cosmo_cy = int(H * 0.65)
+        cosmo_cy = int(ch * 0.65)
 
     # Storm crack source coordinates
-    crack_x = int(W * CRACK_SOURCE_X_FRAC)
-    crack_y = int(H * CRACK_SOURCE_Y_FRAC)
+    crack_x = int(cw * CRACK_SOURCE_X_FRAC)
+    crack_y = int(ch * CRACK_SOURCE_Y_FRAC)
 
     FILL_ALPHA_MAX = 35   # direct from upper-right, clean (not scatter bounce)
     FILL_RADIUS_SCALE = 1.6
@@ -159,11 +186,12 @@ def draw_magenta_fill_light_v007(img, luma_cx, byte_cx, cosmo_cx, char_h,
         # Build character silhouette mask
         # Use low threshold (60) to capture any bright character pixels in zone
         char_mask = _make_char_silhouette_mask(
-            img, char_cx_pos, char_h, char_cy_pos, threshold=60
+            img, char_cx_pos, char_h, char_cy_pos, threshold=60,
+            canvas_w=cw, canvas_h=ch
         )
 
         # Build fill gradient overlay
-        fill_overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        fill_overlay = Image.new("RGBA", (cw, ch), (0, 0, 0, 0))
         fd = ImageDraw.Draw(fill_overlay)
 
         # CORRECTED: fill source is UPPER-RIGHT of character
@@ -190,9 +218,9 @@ def draw_magenta_fill_light_v007(img, luma_cx, byte_cx, cosmo_cx, char_h,
         fill_alpha = fill_arr[3]
 
         # Multiply fill alpha by character mask
-        masked_alpha = Image.new("L", (W, H), 0)
-        for x in range(W):
-            for y in range(H):
+        masked_alpha = Image.new("L", (cw, ch), 0)
+        for x in range(cw):
+            for y in range(ch):
                 fa = fill_alpha.getpixel((x, y))
                 ma = char_mask.getpixel((x, y))
                 # Both must be non-zero (mask present AND fill has alpha)
@@ -209,7 +237,8 @@ def draw_magenta_fill_light_v007(img, luma_cx, byte_cx, cosmo_cx, char_h,
 # ── Pixel-efficient version (for production use — avoids per-pixel loop) ──────
 
 def draw_magenta_fill_light_v007_fast(img, luma_cx, byte_cx, cosmo_cx, char_h,
-                                       luma_cy=None, byte_cy=None, cosmo_cy=None):
+                                       luma_cy=None, byte_cy=None, cosmo_cy=None,
+                                       canvas_w=1280, canvas_h=720):
     """
     Production-speed version of draw_magenta_fill_light_v007.
     Uses numpy-free vectorized PIL operations instead of per-pixel loops.
@@ -217,15 +246,38 @@ def draw_magenta_fill_light_v007_fast(img, luma_cx, byte_cx, cosmo_cx, char_h,
 
     Uses ImageChops.multiply() to apply the character mask to the fill overlay
     alpha channel without per-pixel iteration.
+
+    Parameters
+    ----------
+    img : PIL.Image.Image
+        RGB image after characters have been drawn.
+    luma_cx, byte_cx, cosmo_cx : int
+        Character horizontal centers (from geometry constants).
+    char_h : int
+        Standard character height in pixels.
+    luma_cy, byte_cy, cosmo_cy : int or None
+        Character vertical centers. If None, defaults to int(canvas_h * 0.65) for
+        Luma/Cosmo and int(canvas_h * 0.60) for Byte.
+    canvas_w : int
+        Canvas width in pixels. Default 1280 (SF02 standard). Pass 1920 for full-res.
+    canvas_h : int
+        Canvas height in pixels. Default 720 (SF02 standard). Pass 1080 for full-res.
+
+    Returns
+    -------
+    PIL.Image.Image
+        RGB image with HOT_MAGENTA fill light applied to character zones.
     """
     from PIL import ImageChops
 
+    cw, ch = canvas_w, canvas_h
+
     if luma_cy is None:
-        luma_cy = int(H * 0.65)
+        luma_cy = int(ch * 0.65)
     if byte_cy is None:
-        byte_cy = int(H * 0.60)
+        byte_cy = int(ch * 0.60)
     if cosmo_cy is None:
-        cosmo_cy = int(H * 0.65)
+        cosmo_cy = int(ch * 0.65)
 
     FILL_ALPHA_MAX = 35
     FILL_RADIUS_SCALE = 1.6
@@ -239,11 +291,12 @@ def draw_magenta_fill_light_v007_fast(img, luma_cx, byte_cx, cosmo_cx, char_h,
     for (char_cx_pos, char_cy_pos, char_name) in character_zones:
         # Build silhouette mask (fast version using blur threshold)
         char_mask = _make_char_silhouette_mask(
-            img, char_cx_pos, char_h, char_cy_pos, threshold=60
+            img, char_cx_pos, char_h, char_cy_pos, threshold=60,
+            canvas_w=cw, canvas_h=ch
         )
 
         # Build radial gradient
-        fill_overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        fill_overlay = Image.new("RGBA", (cw, ch), (0, 0, 0, 0))
         fd = ImageDraw.Draw(fill_overlay)
 
         fill_src_x = char_cx_pos + int(char_h * 0.5)

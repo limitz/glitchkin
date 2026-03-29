@@ -7,15 +7,25 @@ Evaluates rendered PNGs against LTG rendering standards across six checks:
   A. Silhouette readability
   B. Value range
   C. Color fidelity (wraps LTG_TOOL_color_verify_v001)
-  D. Warm/cool separation
+  D. Warm/cool separation (with per-world-type thresholds in v1.4.0)
   E. Line weight consistency
   F. Value ceiling guard (thumbnail downscale brightness loss detection)
 
 Author: Kai Nakamura (Technical Art Engineer)
 Created: Cycle 26 — 2026-03-29
-Version: 1.3.0
+Version: 1.4.0
 
 Changelog:
+  1.4.0 (Cycle 37): World-type-aware warm/cool thresholds (Sam Kowalski ideabox,
+                    Kai Nakamura C37). Imports infer_world_type() from
+                    LTG_TOOL_palette_warmth_lint_v004 and applies per-world thresholds:
+                      REAL        → min separation = 20 PIL units (original default)
+                      GLITCH      → min separation =  3 PIL units (near-zero warm)
+                      OTHER_SIDE  → min separation =  0 PIL units (skip warm/cool)
+                      None (unknown world) → 20 PIL units (original default, safe)
+                    Eliminates ~4 persistent false WARN results on GLITCH/OTHER_SIDE
+                    style frames and environments. Falls back gracefully if
+                    palette_warmth_lint_v004 is not importable.
   1.3.0 (Cycle 35): Check F — Value Ceiling Guard (Jordan Reed / C34 ideabox,
                     implemented Morgan Walsh C35). Detects when thumbnail
                     downscaling drops image max brightness below ≥225 threshold.
@@ -57,16 +67,27 @@ if str(_TOOLS_DIR) not in sys.path:
 from LTG_TOOL_color_verify_v001 import verify_canonical_colors, get_canonical_palette
 
 # ---------------------------------------------------------------------------
+# Optional: world-type inference from palette_warmth_lint_v004 (v1.4.0)
+# ---------------------------------------------------------------------------
+try:
+    from LTG_TOOL_palette_warmth_lint_v004 import infer_world_type as _infer_world_type_external
+    _WORLD_TYPE_AVAILABLE = True
+except ImportError:
+    _WORLD_TYPE_AVAILABLE = False
+    def _infer_world_type_external(path):
+        return None
+
+# ---------------------------------------------------------------------------
 # Version
 # ---------------------------------------------------------------------------
-__version__ = "1.3.0"
+__version__ = "1.4.0"  # C37: world-type-aware warm/cool thresholds
 
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
 SILHOUETTE_THUMB_SIZE = (100, 100)
 _MAX_OUTPUT_PX = 1280
-_WARM_COOL_MIN_SEPARATION = 20.0   # PIL hue units (0–255 scale)
+_WARM_COOL_MIN_SEPARATION = 20.0   # PIL hue units (0–255 scale) — default for REAL world
 _VALUE_MIN_DARK = 30
 _VALUE_MIN_BRIGHT = 225
 _VALUE_MIN_RANGE = 150
@@ -75,6 +96,19 @@ random.seed(42)   # reproducible sampling
 
 # Asset types that skip warm/cool check (uniform neutral bg by design)
 _SKIP_WARM_COOL = {"character_sheet", "color_model", "turnaround"}
+
+# Per-world warm/cool minimum separation thresholds (v1.4.0)
+# Based on world_presets from palette_warmth_lint_v004:
+#   REAL        → 20 PIL units (lamp-lit interiors, warm windows present)
+#   GLITCH      →  3 PIL units (near-zero warm; some residual hot-spot allowed)
+#   OTHER_SIDE  →  0 PIL units (fully digital, zero warm — effectively skip)
+#   None        → 20 PIL units (unknown world; apply conservative default)
+_WORLD_WARM_COOL_THRESHOLD = {
+    "REAL":       20.0,
+    "GLITCH":      3.0,
+    "OTHER_SIDE":  0.0,   # 0 = always pass warm/cool (no warm expected)
+    None:         20.0,
+}
 
 
 # ---------------------------------------------------------------------------
@@ -272,9 +306,17 @@ def _rgb_to_pil_hue(r: int, g: int, b: int) -> float:
     return h * 255.0
 
 
-def _check_warm_cool(img: Image.Image) -> dict:
+def _check_warm_cool(img: Image.Image, min_separation: float = None) -> dict:
     """
     Check warm/cool separation by comparing median hue of top half vs bottom half.
+
+    Parameters
+    ----------
+    img : PIL.Image
+    min_separation : float | None
+        Minimum PIL-hue-unit separation to pass. If None, uses the default
+        _WARM_COOL_MIN_SEPARATION (20.0). Per-world thresholds are applied
+        by qa_report() via _WORLD_WARM_COOL_THRESHOLD.
 
     Returns
     -------
@@ -283,10 +325,14 @@ def _check_warm_cool(img: Image.Image) -> dict:
           "zone_a_hue": float,   # median hue of first zone (PIL 0–255 scale)
           "zone_b_hue": float,   # median hue of second zone
           "separation": float,   # angular distance (PIL scale)
+          "threshold":  float,   # threshold used for this check
           "pass": bool,
           "notes": list[str]
         }
     """
+    if min_separation is None:
+        min_separation = _WARM_COOL_MIN_SEPARATION
+
     rgb = img.convert("RGB")
     w, h = rgb.size
 
@@ -315,6 +361,7 @@ def _check_warm_cool(img: Image.Image) -> dict:
             "zone_a_hue": hue_a,
             "zone_b_hue": hue_b,
             "separation": 0.0,
+            "threshold": min_separation,
             "pass": True,   # skip, don't penalise achromatic images
             "notes": notes,
         }
@@ -325,17 +372,18 @@ def _check_warm_cool(img: Image.Image) -> dict:
         delta = 255.0 - delta
     separation = delta
 
-    passed = separation >= _WARM_COOL_MIN_SEPARATION
+    passed = separation >= min_separation
     if not passed:
         notes.append(
             f"Flat palette — warm/cool separation is {separation:.1f} PIL units "
-            f"(minimum {_WARM_COOL_MIN_SEPARATION} required)"
+            f"(minimum {min_separation} required)"
         )
 
     return {
         "zone_a_hue": round(hue_a, 2),
         "zone_b_hue": round(hue_b, 2),
         "separation": round(separation, 2),
+        "threshold": min_separation,
         "pass": passed,
         "notes": notes,
     }
@@ -667,6 +715,7 @@ def qa_report(img_path: str, asset_type: str = "auto") -> dict:
     color_result = verify_canonical_colors(img, palette, max_delta_hue=5)
 
     # D — Warm/cool separation (conditional on asset type)
+    # v1.4.0: also infer world-type to apply per-world threshold
     skip_warm_cool = asset_type in _SKIP_WARM_COOL
     if skip_warm_cool:
         warm_cool_result = {
@@ -674,7 +723,13 @@ def qa_report(img_path: str, asset_type: str = "auto") -> dict:
             "reason": f"{asset_type} — uniform bg by design",
         }
     else:
-        warm_cool_result = _check_warm_cool(img)
+        # Infer world type from generator filename (not the PNG filename — same stem)
+        world_type = _infer_world_type_external(img_path) if _WORLD_TYPE_AVAILABLE else None
+        # OTHER_SIDE threshold=0 means always pass (zero warm expected)
+        warm_cool_threshold = _WORLD_WARM_COOL_THRESHOLD.get(world_type, _WARM_COOL_MIN_SEPARATION)
+        warm_cool_result = _check_warm_cool(img, min_separation=warm_cool_threshold)
+        if world_type is not None:
+            warm_cool_result["world_type"] = world_type
 
     # E — Line weight consistency
     line_weight_result = _check_line_weight(img)

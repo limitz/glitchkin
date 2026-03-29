@@ -1,0 +1,31 @@
+{
+  "_comment": "Suppression list for LTG_TOOL_glitch_spec_lint_v001.py — known false positives",
+  "suppressions": [
+    {"file": "LTG_TOOL_color_verify_v001.py",       "rule": "G007", "reason": "color verify tool, not a Glitch generator"},
+    {"file": "LTG_TOOL_color_verify_v002.py",       "rule": "G007", "reason": "color verify tool, not a Glitch generator"},
+    {"file": "LTG_TOOL_render_qa_v001.py",          "rule": "G007", "reason": "QA tool, not a Glitch generator"},
+    {"file": "LTG_TOOL_render_lib_v001.py",         "rule": "G007", "reason": "render lib, not a Glitch generator"},
+    {"file": "LTG_TOOL_draw_order_lint_v001.py",    "rule": "G007", "reason": "lint tool, not a Glitch generator"},
+    {"file": "LTG_TOOL_draw_order_lint_v002.py",    "rule": "G007", "reason": "lint tool, not a Glitch generator"},
+    {"file": "LTG_TOOL_stub_linter_v001.py",        "rule": "G007", "reason": "lint tool, not a Glitch generator"},
+    {"file": "LTG_TOOL_palette_warmth_lint_v001.py","rule": "G007", "reason": "palette tool, not a Glitch generator"},
+    {"file": "LTG_TOOL_palette_warmth_lint_v002.py","rule": "G007", "reason": "palette tool, not a Glitch generator"},
+    {"file": "LTG_TOOL_palette_warmth_lint_v003.py","rule": "G007", "reason": "palette tool, not a Glitch generator"},
+    {"file": "LTG_TOOL_palette_warmth_lint_v004.py","rule": "G007", "reason": "palette tool, not a Glitch generator"},
+    {"file": "LTG_TOOL_spec_sync_ci_v001.py",       "rule": "G007", "reason": "CI tool, not a Glitch generator"},
+    {"file": "LTG_TOOL_char_spec_lint_v001.py",     "rule": "G007", "reason": "spec lint tool, not a Glitch generator"},
+    {"file": "LTG_TOOL_glitch_spec_lint_v001.py",   "rule": "G007", "reason": "self-referential; not a Glitch generator"},
+    {"file": "LTG_TOOL_spec_extractor_v001.py",     "rule": "G007", "reason": "spec extractor tool, not a Glitch generator"},
+    {"file": "LTG_TOOL_naming_cleanup_v001.py",     "rule": "G007", "reason": "naming tool, not a Glitch generator"},
+    {"file": "LTG_TOOL_naming_compliance_copier_v001.py", "rule": "G007", "reason": "naming tool, not a Glitch generator"},
+    {"file": "LTG_TOOL_naming_compliance_copier_v002.py", "rule": "G007", "reason": "naming tool, not a Glitch generator"},
+    {"file": "LTG_TOOL_naming_compliance_copy_v001.py",   "rule": "G007", "reason": "naming tool, not a Glitch generator"},
+    {"file": "LTG_TOOL_ci_suite_v001.py",           "rule": "G007", "reason": "CI suite tool, not a Glitch generator"},
+    {"file": "LTG_TOOL_draw_order_lint_back_pose_diagnostic.py", "rule": "G007", "reason": "diagnostic tool, not a Glitch generator"},
+    {"file": "LTG_TOOL_proportion_audit_v001.py",   "rule": "G007", "reason": "audit tool, not a Glitch generator"},
+    {"file": "LTG_TOOL_proportion_audit_v002.py",   "rule": "G007", "reason": "audit tool, not a Glitch generator"},
+    {"file": "LTG_TOOL_warmth_inject_v001.py",      "rule": "G007", "reason": "warmth inject tool, not a Glitch generator"},
+    {"file": "LTG_TOOL_batch_stylize_v001.py",      "rule": "G007", "reason": "legacy stylize tool (retired), not a Glitch generator"},
+    {"file": "LTG_TOOL_batch_stylize_v002.py",      "rule": "G007", "reason": "legacy stylize tool (retired), not a Glitch generator"}
+  ]
+}

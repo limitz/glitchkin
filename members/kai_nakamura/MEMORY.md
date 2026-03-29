@@ -331,6 +331,56 @@ Import: `from LTG_TOOL_render_lib_v001 import ...`
 - `alpha_composite` false positives in v001 were the largest source: most files use
   `tmp = Image.alpha_composite(...)` (not img reassignment) — v002 correctly skips these
 
+## Cycle 37 — C37 CI Suite + Suppression List + Back-Pose W003 + QA World-Type
+
+**Status:** COMPLETE
+
+**Tasks completed:**
+- Built `LTG_TOOL_ci_suite_v001.py` — runs all 5 CI checks in sequence (stub, draw_order, glitch_spec, spec_sync_ci, char_spec). `--fail-on WARN|FAIL` threshold. Combined report. API: `run_suite()`, `format_suite_report()`.
+- Created `glitch_spec_suppressions.json` — 26 false-positive (file, rule) suppression entries
+- Updated `LTG_TOOL_glitch_spec_lint_v001.py` → v1.2.0: suppression list support; `_load_suppressions()`, `_apply_suppressions()` added; `lint_directory()` loads once for batch; `format_report()` shows suppressed counts
+- Updated `LTG_TOOL_draw_order_lint_v002.py` → v2.1.0: `# LINT: back_pose_begin/end` block comment suppression for W003. New: `_compute_back_pose_ranges()`, `_lineno_in_back_pose()`. `_check_shadow_after_element()` takes `back_pose_ranges` param.
+- Updated `LTG_TOOL_render_qa_v001.py` → v1.4.0: imports `infer_world_type()` from palette_warmth_lint_v004. Per-world thresholds: REAL=20 / GLITCH=3 / OTHER_SIDE=0. `_check_warm_cool()` now accepts `min_separation` param. `qa_report()` result includes `world_type` when inferred.
+- README.md updated: header C37, all 4 new/updated tools registered
+- Inbox archived: 20260330_0910 + 20260330_1000
+- Ideabox: `20260330_kai_nakamura_ci_suite_scheduled_run.md` submitted
+- Completion report sent to Alex Chen inbox
+
+## LTG_TOOL_ci_suite_v001.py (C37 NEW)
+- `run_suite(tools_dir, fail_on) → dict` — runs 5 checks, returns combined result
+- `format_suite_report(result, include_details) → str` — human-readable
+- Checks: stub_linter → draw_order_lint → glitch_spec_lint → spec_sync_ci → char_spec_lint
+- `fail_on`: "FAIL" (default) or "WARN". Exit: 0/1/2.
+- Dependencies: all 5 linter tools must be importable from tools_dir
+
+## glitch_spec_suppressions.json (C37 NEW)
+- 26 suppression entries — primarily G007 false positives on tool files
+- Auto-loaded by glitch_spec_lint_v001 v1.2.0+
+- Location: `output/tools/glitch_spec_suppressions.json`
+
+## LTG_TOOL_glitch_spec_lint_v001.py — v1.2.0 (C37 UPDATED)
+- suppression list support: `_load_suppressions()` → set of (basename, rule)
+- `lint_file(filepath, suppressions=None)` — optional arg, auto-loads if None
+- `lint_directory()` loads suppressions once, shares across batch
+- result dict gains `suppressed_count` key
+
+## LTG_TOOL_draw_order_lint_v002.py — v2.1.0 (C37 UPDATED)
+- `# LINT: back_pose_begin` / `# LINT: back_pose_end` suppresses W003 inside block
+- Open-ended block (no end) → suppression extends to EOF
+- `_check_shadow_after_element(events, back_pose_ranges=None)`
+
+## LTG_TOOL_render_qa_v001.py — v1.4.0 (C37 UPDATED)
+- `_WORLD_WARM_COOL_THRESHOLD`: REAL=20, GLITCH=3, OTHER_SIDE=0, None=20
+- Imports `_infer_world_type_external` from palette_warmth_lint_v004 (graceful fallback)
+- `_check_warm_cool(img, min_separation=None)` — new param
+- `qa_report()` passes world-specific threshold; adds `world_type` key to warm_cool result
+
+## Lessons Learned (C37)
+- ci_suite spec_sync_ci result: key is "p1_fail" not "fail"; check source before assuming schema
+- glitch_spec_lint issues are list[str] (not list[dict]) — suppression extracts rule with regex
+- Back-pose suppression is prophylactic; no current generators use the markers, but it's ready
+- render_qa graceful import fallback is critical — tool must run even if warmth_lint is absent
+
 ## Cycle 36 — C36 Spec Sync CI + Warmth Lint v004
 
 **Status:** COMPLETE

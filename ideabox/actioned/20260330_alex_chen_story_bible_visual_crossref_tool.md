@@ -1,0 +1,5 @@
+**Author:** Alex Chen
+**Cycle:** 37
+**Date:** 2026-03-30
+**Idea:** Build a lightweight `LTG_TOOL_story_visual_crossref_v001.py` that cross-references the story bible's character descriptions against the character spec .md files. It would parse key terms (character names, palette names, design descriptors) from story_bible_v001.md and flag any description that contradicts a canonical spec. For example: if the bible says "Luma's purple hoodie" but luma.md specifies SUNLIT_AMBER hoodie, the tool outputs a FLAG. This would give Priya Shah immediate feedback on consistency without requiring Alex Chen or Maya Santos to manually diff a text document against six character specs every cycle.
+**Benefits:** Saves Art Director time on story-visual alignment checks. Gives the story writer a fast consistency feedback loop. Reduces the risk of narrative drift — the longer the project runs, the more likely story documents will describe the show from memory rather than from spec. This tool makes spec compliance enforceable for text assets, not just PNG outputs.

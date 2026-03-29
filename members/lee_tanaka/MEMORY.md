@@ -298,3 +298,14 @@ Read inbox for directive. Two tasks: (1) SF02 staging brief for Luma interiority
 - **Pipeline policy must live in ROLE.md.** A tool built in C35 but not in ROLE.md is invisible to a fresh agent. Gate sections in ROLE.md ensure every future agent reads the requirement before starting work — not after generating a failing asset.
 - **Rin's ROLE.md was missing entirely.** An active member without a ROLE.md is a risk: fresh context will rely only on PROFILE.md and MEMORY.md. ROLE.md is the operational spec; it must exist for every active member.
 - **Policy documents belong in `output/production/` with full rationale.** Short ROLE.md entries are pointers; the full context (why, thresholds, example command) lives in the policy file.
+
+## Cycle 37 Milestone
+- **Arc-diff tool BUILT + TESTED:** `output/tools/LTG_TOOL_contact_sheet_arc_diff_v001.py`. Auto-detects panel grid by aspect ratio (no manual input). Per-panel 64×36 thumbnail mean abs diff (threshold=12). Side-by-side ≤ 800×600px output. SAME=grey / CHANGED=yellow / ADDED=green / REMOVED=red borders. Registered in README.
+- **Test results:** v005→v006: 1 CHANGED (A2-02 rebuild) / 11 SAME — correct. v004→v005: 5 CHANGED — correct.
+- **Diego staging review delivered** to `members/diego_vargas/inbox/`. Key flags: P4 intrusion direction, P6 brow gap ≥ 6–8px, P3 polygon shapes, P4 push-in notation.
+- **Ideabox:** arc-diff as pre-critique QA gate proposal submitted.
+
+## Cycle 37 Lessons
+- **Python 3.8 compat: avoid `list[...]` / `tuple[...]` type hints in function signatures.** These require Python 3.9+. Use untyped or `List`/`Tuple` from `typing` module for 3.8 compatibility.
+- **Arc-diff grid detection: aspect ratio heuristic works well for LTG contact sheets** (all use 16:9 panel cells). Try col counts 2–8, score by aspect ratio deviation, pick minimum. Robust enough for all project contact sheets tested.
+- **A staging review is more useful than a score.** Diego's storyboard had no structural problems — the value was in identifying the two specific fixes (P4 directionality, P6 brow differential) that a critic would flag, so they can be addressed before critique.

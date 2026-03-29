@@ -60,12 +60,18 @@ Usage:
           [--mode full|arms]
           [--arms-top 0.25] [--arms-bot 0.75] [--center-mask 0.30]
           [--threshold 0.85] [--warn-threshold 0.70]
-          [--output silhouettes.png] [--json]
+          [--output silhouettes.png] [--json] [--output-zones]
 
-  --mode arms   Isolates arm/shoulder region only (no HEAD/LEGS contribution).
-  --arms-top    Top of arm zone as fraction of bounding-box height (default 0.25).
-  --arms-bot    Bottom of arm zone as fraction of bounding-box height (default 0.75).
-  --center-mask Fraction of band width masked from center (trunk exclusion, default 0.30).
+  --mode arms     Isolates arm/shoulder region only (no HEAD/LEGS contribution).
+  --arms-top      Top of arm zone as fraction of bounding-box height (default 0.25).
+  --arms-bot      Bottom of arm zone as fraction of bounding-box height (default 0.75).
+  --center-mask   Fraction of band width masked from center (trunk exclusion, default 0.30).
+  --output-zones  Adds colored zone overlay bars to the --output contact sheet (full mode only):
+                    HEAD zone = blue left bar (top 25%)
+                    ARMS zone = orange left bar (middle 50%)
+                    LEGS zone = green left bar (bottom 25%)
+                  Helps designers instantly see which zone drove a WARN/FAIL result.
+                  Added in C37 (actioned ideabox idea, Maya Santos).
 
 Auto-detects rows/cols from common LTG sheet sizes. Override with --rows / --cols.
 
@@ -519,14 +525,80 @@ def crop_arm_region_display(sil: Image.Image,
 
 # ─── CONTACT SHEET ───────────────────────────────────────────────────────────
 
+def draw_zone_overlays(img: Image.Image, sil: Image.Image, x0: int, y0: int,
+                        panel_w: int, panel_h: int) -> None:
+    """
+    Draw colored zone overlay rectangles on the contact sheet canvas at (x0, y0).
+
+    Zone colors (semi-transparent style via blended fill lines):
+      HEAD zone  — blue   (0, 80, 200)
+      ARMS zone  — orange (200, 100, 0)
+      LEGS zone  — green  (0, 140, 60)
+
+    Each zone is indicated by a colored left-edge bar (4px wide) and a
+    right-aligned label, so the silhouette itself remains fully legible.
+    The overlay does NOT obscure the silhouette content — it uses border lines only.
+    """
+    draw = ImageDraw.Draw(img)
+
+    # Derive zone pixel boundaries from the bounding box of character pixels in the
+    # scaled silhouette panel. Fall back to panel-proportional bands if no bbox found.
+    bb = bounding_box(sil)
+    if bb is not None:
+        # Map bbox to the scaled display panel coordinates
+        sil_w, sil_h = sil.size
+        scale_x = panel_w / max(1, sil_w)
+        scale_y = panel_h / max(1, sil_h)
+        bb_y_min = y0 + int(bb[1] * scale_y)
+        bb_h     = max(1, int((bb[3] - bb[1]) * scale_y))
+    else:
+        # No character found — use full panel height as fallback
+        bb_y_min = y0
+        bb_h     = panel_h
+
+    # Zone y-pixel positions (display space)
+    head_top_px = bb_y_min + int(bb_h * ZONE_HEAD_TOP)
+    head_bot_px = bb_y_min + int(bb_h * ZONE_HEAD_BOT)
+    arms_top_px = bb_y_min + int(bb_h * ZONE_ARMS_TOP)
+    arms_bot_px = bb_y_min + int(bb_h * ZONE_ARMS_BOT)
+    legs_top_px = bb_y_min + int(bb_h * ZONE_LEGS_TOP)
+    legs_bot_px = bb_y_min + int(bb_h * ZONE_LEGS_BOT)
+
+    # Draw left-edge zone bars (4px wide colored rectangles)
+    BAR_W = 4
+    zones = [
+        (head_top_px, head_bot_px, (0,  80, 200), "H"),   # HEAD — blue
+        (arms_top_px, arms_bot_px, (200, 100, 0), "A"),   # ARMS — orange
+        (legs_top_px, legs_bot_px, (0,  140,  60), "L"),  # LEGS — green
+    ]
+    for (zt, zb, col, ltr) in zones:
+        zt = max(y0, min(y0 + panel_h, zt))
+        zb = max(y0, min(y0 + panel_h, zb))
+        if zb <= zt:
+            continue
+        draw.rectangle([x0, zt, x0 + BAR_W - 1, zb], fill=col)
+        # Small letter label at top of bar
+        mid_y = (zt + zb) // 2 - 5
+        draw.text((x0 + BAR_W + 1, mid_y), ltr, fill=col)
+
+
 def make_silhouette_contact_sheet(silhouettes: list, rows: int, cols: int,
                                    panel_w: int, panel_h: int,
                                    labels: list = None,
-                                   mode: str = "full") -> Image.Image:
-    """Build a contact sheet showing all silhouettes in a grid."""
+                                   mode: str = "full",
+                                   output_zones: bool = False) -> Image.Image:
+    """Build a contact sheet showing all silhouettes in a grid.
+
+    Parameters:
+      output_zones — if True, draw colored zone overlay bars on each panel:
+                     HEAD zone (blue left bar), ARMS zone (orange left bar),
+                     LEGS zone (green left bar). Only meaningful in --mode full.
+    """
     LABEL_H = 22
     PAD = 8
     mode_label = f"Mode: {mode.upper()}  |  Metric: Regional Pose Delta (RPD) v3"
+    if output_zones and mode == "full":
+        mode_label += "  |  ZONES ON"
     total_w = cols * (panel_w + PAD) + PAD
     total_h = rows * (panel_h + LABEL_H + PAD) + PAD + 46
     out = Image.new("RGB", (total_w, total_h), (245, 245, 245))
@@ -543,6 +615,8 @@ def make_silhouette_contact_sheet(silhouettes: list, rows: int, cols: int,
         sil_rgb = sil.convert("RGB")
         sil_rgb = sil_rgb.resize((panel_w, panel_h), Image.LANCZOS)
         out.paste(sil_rgb, (x0, y0))
+        if output_zones and mode == "full":
+            draw_zone_overlays(out, sil, x0, y0, panel_w, panel_h)
         label = labels[idx] if labels and idx < len(labels) else f"P{idx:02d}"
         draw.text((x0, y0 + panel_h + 2), label[:22], fill=(60, 60, 60))
 
@@ -562,7 +636,8 @@ def run_test(sheet_path: str,
              mode: str = "full",
              arms_top_frac: float = ARMS_TOP_FRAC,
              arms_bot_frac: float = ARMS_BOT_FRAC,
-             center_mask_frac: float = CENTER_MASK_FRAC) -> dict:
+             center_mask_frac: float = CENTER_MASK_FRAC,
+             output_zones: bool = False) -> dict:
     """
     Run silhouette differentiation test on an expression sheet.
 
@@ -690,11 +765,13 @@ def run_test(sheet_path: str,
         arm_h = int(panel_h * (arms_bot_frac - arms_top_frac)) if mode == "arms" else panel_h
         contact = make_silhouette_contact_sheet(
             display_sils, rows, cols, panel_w, arm_h if mode == "arms" else panel_h,
-            panel_labels, mode=mode
+            panel_labels, mode=mode, output_zones=output_zones
         )
         contact.save(output_path)
         if verbose:
             print(f"\nSilhouette contact sheet saved: {output_path}")
+            if output_zones and mode == "full":
+                print("Zone overlays: H=blue (HEAD top 25%), A=orange (ARMS mid 50%), L=green (LEGS bot 25%)")
 
     return result
 
@@ -783,6 +860,14 @@ if __name__ == "__main__":
                         help="Save silhouette contact sheet PNG to this path")
     parser.add_argument("--json", action="store_true",
                         help="Output JSON result to stdout (in addition to report)")
+    parser.add_argument("--output-zones", action="store_true",
+                        help=(
+                            "Draw colored zone overlay bars on each panel in the contact sheet. "
+                            "HEAD zone = blue left bar, ARMS zone = orange left bar, "
+                            "LEGS zone = green left bar. Only active in --mode full. "
+                            "Requires --output to save the contact sheet. "
+                            "Helps designers immediately see which zone drove a WARN/FAIL."
+                        ))
     args = parser.parse_args()
 
     result = run_test(
@@ -797,6 +882,7 @@ if __name__ == "__main__":
         arms_top_frac=args.arms_top,
         arms_bot_frac=args.arms_bot,
         center_mask_frac=args.center_mask,
+        output_zones=args.output_zones,
     )
 
     if args.json:

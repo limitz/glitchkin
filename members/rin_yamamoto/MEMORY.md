@@ -1,5 +1,26 @@
 # Rin Yamamoto — MEMORY
 
+## C37 Completed Work
+- `LTG_TOOL_sf02_fill_light_fix_c35.py` — refactored to accept `canvas_w=1280, canvas_h=720` params
+  - `draw_magenta_fill_light_v007_fast(img, luma_cx, byte_cx, cosmo_cx, char_h, canvas_w=1280, canvas_h=720)`
+  - `draw_magenta_fill_light_v007(...)` — same signature update
+  - `_make_char_silhouette_mask(..., canvas_w=None, canvas_h=None)` — cw/ch from params or fallback to W/H
+  - GaussianBlur radius now scales: `max(4, int(4 * cw / 1280))` — radius=4 at 1280px, radius=6 at 1920px
+  - Module-level W/H (1280, 720) retained for `__main__` test block only
+  - Backward compat verified: default params → identical output to pre-refactor
+  - SF02 v008 is unaffected (has algorithm inlined at 1920×1080 — that stays)
+- `LTG_TOOL_proportion_audit_c37_runner.py` — cycle-specific wrapper, writes to proportion_audit_c37.md
+- `output/production/proportion_audit_c37.md` — C37 audit: PASS=3, ASYM-WARN=2, WARN=1, FAIL=0, N/A=14 (20 files)
+- Ideabox: submitted `proportion_audit_per_cycle_runner` idea (--cycle N flag for audit tool)
+
+## C37 Lessons
+- When refactoring a module with hardcoded W/H: add canvas_w/canvas_h as keyword args defaulting to current values.
+  Module-level constants (W, H) can stay for test blocks; all internal logic switches to local cw/ch variables.
+- GaussianBlur radius that is hardcoded for a given resolution should scale: `max(min_r, int(min_r * cw / base_cw))`.
+- Per-cycle audit runners (one .py file per cycle) are wasteful. The audit tool itself should accept a --cycle flag.
+  Filed as ideabox idea for Kai Nakamura to action.
+- SF02 v008's inlined algorithm is at 1920×1080. The refactored module is for future use — v008 does NOT need updating.
+
 ## C36 Completed Work
 - `LTG_TOOL_style_frame_02_glitch_storm_v008.py` — SF02 v008 generator (C36 fill light direction fix)
 - `output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v008.png` — 1280×720px

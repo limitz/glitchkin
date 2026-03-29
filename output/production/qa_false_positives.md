@@ -111,9 +111,7 @@ The QA tool samples at canonical saturation and misses the shadowed version.
 **Assets:** All 4 pitch style frames (SF01, SF02, SF03, SF04)
 **Tool:** `LTG_TOOL_render_qa_v001.py` (check D — `_check_warm_cool()`)
 **Reported separation:** SF01=17.9, SF02=6.5, SF03=3.1, SF04=1.1 (all below threshold 20.0)
-**Status:** METRIC RECALIBRATION REQUIRED — accepted C35 (Alex Chen decision,
-`output/production/warm_cool_decision_c35.md`). Per-world thresholds defined in
-`output/tools/warmth_lint_config.json` `world_presets` section.
+**Status:** PARTIALLY RESOLVED in C37 — SF03 now PASS. SF01/SF02/SF04 still WARN.
 
 **Root cause:** `_check_warm_cool()` splits the image into top/bottom halves and compares
 median hue. This tests vertical atmospheric separation — appropriate for naturalistic scenes.
@@ -123,11 +121,17 @@ a vertical split. The metric cannot distinguish "intentionally warm frame" from 
 **Correct per-world thresholds:**
 - real_world_interior (SF01): threshold=12 (PASS at 17.9)
 - real_world_night_storm (SF02): threshold=3 (PASS at 6.5)
-- glitch_world (SF03, SF04): threshold=0 (PASS at any reading — warm absence is correct)
+- glitch_world (SF03): threshold=0 (PASS at any reading — warm absence is correct) — **RESOLVED C37**
+- SF04 (soft-key, world_type=None): threshold=0 desired — still WARN (no filename match)
 
-**Kai Nakamura action:** Integrate `--world-type` parameter into `LTG_TOOL_render_qa_v001.py`
-reading thresholds from `warmth_lint_config.json` world_presets section.
+**C37 update (render_qa v1.4.0):** SF03 (`otherside` in filename → OTHER_SIDE → threshold=0) is
+now PASS. SF01/SF02/SF04 remain WARN because render_qa uses REAL→20 for all REAL filenames —
+higher than the FP-006 spec thresholds of 12 (interior) and 3 (storm). See ideabox idea
+`20260330_sam_kowalski_render_qa_real_threshold_split.md` for the proposed fix.
+
+**Remaining Kai Nakamura action:** Add REAL_INTERIOR (threshold=12) and REAL_STORM (threshold=3)
+sub-types to render_qa world-type inference. This would eliminate the SF01 and SF02 warm/cool WARNs.
 
 ---
 
-*Sam Kowalski — Color & Style Artist — Cycle 35*
+*Sam Kowalski — Color & Style Artist — Cycle 35 (updated C37)*

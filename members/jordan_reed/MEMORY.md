@@ -1,5 +1,31 @@
 # Jordan Reed — Memory
 
+## Cycle 37 Deliverables
+- `LTG_TOOL_warmth_inject_hook_v001.py` — shared hook module for the --check-warmth pipeline
+  - API: `run_warmth_hook(out_path, enabled=True) → str|None`
+  - Uses `importlib.util` dynamic import — no sys.path manipulation
+  - Returns `_warminjected.png` path if injection applied, else None
+- Added `--check-warmth` flag to 4 env generators (all syntax-checked, no runtime needed):
+  - `LTG_TOOL_bg_tech_den_v004.py` — `if __name__ == "__main__"` block updated
+  - `LTG_TOOL_bg_school_hallway_v002.py` — `if __name__ == "__main__"` block updated
+  - `LTG_TOOL_bg_millbrook_main_street_v002.py` — `if __name__ == "__main__"` block updated
+  - `LTG_TOOL_bg_grandma_kitchen_v004.py` — `if __name__ == "__main__"` block updated
+- Registered `LTG_TOOL_warmth_inject_hook_v001.py` in `output/tools/README.md` ✓
+- SF02 v008 review: code review (no rerun needed) — fill light direction CORRECT (upper-right),
+  per-character silhouette masks present, char_cx from geometry constants (not bbox).
+  OBSERVATION: Dutch angle + LANCZOS downscale post-specular-restore is solid. One thing
+  to watch: `_make_char_silhouette_mask_1080` threshold=60 was chosen for v008 — if characters
+  are dark-on-dark in future iterations, threshold may need lowering. No action needed now.
+- Ideabox: `20260330_jordan_reed_warmth_hook_generator_template.md`
+- Inbox archived ✓ | Completion report sent to Alex Chen ✓
+
+## Cycle 37 Status: COMPLETE
+
+## Cycle 37 Lessons
+- **--check-warmth hook pattern**: `if __name__ == "__main__"` blocks that call a single function (draw_tech_den(), draw_school_hallway()) need argparse + hook OUTSIDE the called function. Generators with an existing `main()` keep main() intact and add argparse around it.
+- **importlib.util for dynamic tool imports**: cleaner than sys.path injection when a utility needs to call another tool in the same directory. Works with absolute path: `spec = importlib.util.spec_from_file_location(name, path)`.
+- **Hook pattern documentation for Hana**: key 3 steps — import run_warmth_hook, add --check-warmth argparse, call run_warmth_hook(out_path, enabled=args.check_warmth) after .save(). Documented in README and hook module docstring.
+
 ## Cycle 36 Deliverables
 - `LTG_TOOL_warmth_inject_v001.py` — warm/cool post-process inject utility
   - Modes: `warm` (SUNLIT_AMBER top half), `cool` (COOL_FILL bottom half), `auto`

@@ -1,5 +1,43 @@
 # Maya Santos — Memory
 
+## Cycle 37 Lessons — COSMO v006 + SILHOUETTE --output-zones + LUMA v010
+
+- **Cosmo expression sheet v006 COMPLETE (S003 compliance fix).**
+  - Generator: `output/tools/LTG_TOOL_cosmo_expression_sheet_v006.py`
+  - Output: `output/characters/main/LTG_CHAR_cosmo_expression_sheet_v006.png` (1182×1114px)
+  - Fix: AWKWARD 10°→7°, SURPRISED 10°→7°, FRUSTRATED/DEFEATED 10°→7°. All now within spec 7°±2°.
+  - SKEPTICAL stays at 9° (top of tolerance range — acceptable for expression read).
+  - spec_sync_ci result: **CI PASS, 0 P1 violations**. S003 PASS confirmed.
+  - Silhouette (RPD full): worst pair 75.4% (AWKWARD↔SKEPTICAL) — WARN only, no FAIL.
+
+- **LTG_TOOL_expression_silhouette_v003.py --output-zones flag ADDED (in-place).**
+  - Adds `--output-zones` to CLI. Draws colored left-edge zone bars on each panel:
+    HEAD = blue, ARMS = orange, LEGS = green. Only active with `--mode full`.
+  - `draw_zone_overlays()` function added. Uses bounding box coords from sil to place bars.
+  - All existing behavior (RPD scoring, JSON, exit codes) unchanged.
+  - Actioned from C36 ideabox idea `20260330_maya_santos_rpd_zone_visualization.md`.
+
+- **Luma expression sheet v010 COMPLETE (THE NOTICING rework).**
+  - Generator: `output/tools/LTG_TOOL_luma_expression_sheet_v010.py`
+  - Output: `output/characters/main/LTG_CHAR_luma_expressions_v010.png` (1200×900px)
+  - THE NOTICING changes: r_open 0.85→0.65 (stronger asymmetry), brow_l_dy raised dramatically,
+    gaze_dy 0.15→0.0 (pure lateral), noticing_hand_v010 (finger-to-lower-lip + vertical forearm),
+    deeper BG (195,210,228), deeper hoodie (105,128,162), blush=30, body_tilt +HR*0.03 lean,
+    MOVED TO CENTER SLOT (slot 4) for visual primacy (was top-left slot 0).
+  - All other 6 expressions: unchanged from v009.
+  - Silhouette (RPD full): FAIL — worst pair WORRIED↔FRUSTRATED 97.9%. KNOWN tool limitation
+    at panel resolution for human chars. Not a design defect. Documented since C33.
+
+- **Ideabox C37 submitted.** `ideabox/20260330_maya_santos_noticing_panel_context_tool.md`
+  - Idea: "hero expression isolator" — render single expression at 800×800px for larger-scale critique.
+
+- **Inbox archived.** All 3 C37 messages → `inbox/archived/`.
+
+## ACTIVE TOOL STATUS (C37)
+- Silhouette tool: `LTG_TOOL_expression_silhouette_v003.py` — RPD metric, `--output-zones` added
+- Cosmo current: `LTG_CHAR_cosmo_expression_sheet_v006.png` (S003 compliant)
+- Luma current: `LTG_CHAR_luma_expressions_v010.png` (THE NOTICING reworked, center slot)
+
 ## Cycle 36 Lessons — SILHOUETTE TOOL v003 (RPD Metric Fix)
 
 - **LTG_TOOL_expression_silhouette_v003.py COMPLETE.**

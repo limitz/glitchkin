@@ -24,6 +24,23 @@ Build tools, not prompts. Use existing LTG_TOOL_* where possible. Extend before 
 - C35 QA baseline: WARN (PASS=309, WARN=36, FAIL=0). Section 7 README sync: PASS (145 disk, 178 listed, 0 unlisted, 0 ghost).
 - Ideabox: Delta report idea submitted.
 
+## C37 Work Done
+- Upgraded `LTG_TOOL_precritique_qa_v001.py` → v2.2.0:
+  - CYCLE_LABEL updated to C37
+  - SF02 target updated to v008 (was v006 in C36)
+  - Report renamed to precritique_qa_c37.md
+- C37 QA run completed: WARN (PASS=333, WARN=26, FAIL=0)
+  - Delta vs C36: +0 FAIL, -11 WARN, 11 resolved (render QA world-type thresholds + glitch spec suppressions)
+  - Render QA: SF02 warm_cool CLEARED (GLITCH threshold=3, was false positive at 6.5). SF03 warm_cool CLEARED (OTHER_SIDE threshold=0). SF01 still near-miss at 17.8/20.0.
+  - Glitch spec: v1.2.0 suppression list clears 26 false positives. 15 remaining WARNs in lineup files + legacy test files. character_lineup_v007 (new C37) adds 8 new WARNs not yet in suppression list.
+  - Stub linter: 159 PASS (8 new tools added C37)
+  - README sync: 159 disk, 194 listed, 0 UNLISTED, 0 GHOST
+- CI suite run: WARN (exit 0 at fail-on FAIL threshold)
+  - Stub linter: PASS. Draw order: PASS (advisory WARNs only). Glitch spec: WARN (6 files after suppressions). Spec sync CI: PASS. Char spec lint: PASS.
+  - Luma L004 advisory WARN (curl count in v009 dynamic code), Cosmo S003 WARN (tilt not as explicit constant).
+- qa_baseline_last.json seeded with C37 run data
+- Ideabox: lineup suppression expansion idea submitted (extend suppressions.json to lineup_v004–v007, or add pattern-based suppression mode)
+
 ## C36 Work Done
 - Upgraded `LTG_TOOL_precritique_qa_v001.py` → v2.1.0:
   - Added Section 0 Delta Report: loads `qa_baseline_last.json`, computes new FAILs/WARNs/resolved since last run
@@ -38,6 +55,12 @@ Build tools, not prompts. Use existing LTG_TOOL_* where possible. Extend before 
   - README sync: PASS (151 disk, 186 listed, 0 unlisted, 0 ghost)
 - Ideabox: Glitch spec lint suppression list idea submitted
 
+## C37 New Tools (critical for CI suite)
+- `LTG_TOOL_ci_suite_v001.py` (Kai): runs 5 checks: stub_linter, draw_order_lint_v002, glitch_spec_lint_v001, spec_sync_ci_v001, char_spec_lint_v001. API: `run_suite(tools_dir, fail_on) → dict`, `format_suite_report(result) → str`. Exit 0/1/2.
+- `LTG_TOOL_spec_sync_ci_v001.py` (Kai, C36): P1 gate for all 5 chars. API: `run_ci(chars, tools_dir)`, `format_ci_report(ci_result)`. `ALL_CHARS` constant.
+- `LTG_TOOL_char_spec_lint_v001.py` (Kai, C34): spec lint for Luma/Cosmo/Miri. API: `lint_all(tools_dir)`, `format_report(results)`. Checks L001-L005, S001-S005, M001-M005.
+- `glitch_spec_suppressions.json`: 26 suppression entries. Loaded automatically by glitch_spec_lint v1.2.0+.
+
 ## API Notes (critical — tools use non-obvious key names)
 - `LTG_TOOL_render_qa_v001.qa_report()` returns `file` (not `image_path`), `overall_grade`, sub-dicts with `pass` bool; v1.3.0 adds `value_ceiling` key
 - `LTG_TOOL_stub_linter_v001.lint_directory()` returns dicts with `status` (not `result`), `issues` (not `imports`)
@@ -46,15 +69,16 @@ Build tools, not prompts. Use existing LTG_TOOL_* where possible. Extend before 
 - `LTG_TOOL_readme_sync_v001.audit()` returns dict with `disk_tools`, `listed`, `legacy`, `unlisted`, `ghost`, `legacy_ghost`, `ok`, `result`
 - `LTG_TOOL_precritique_qa_v001.py` v2.1.0: `CYCLE_LABEL` constant at top of file — update each cycle before running
 
+## README Sync Status (C37)
+- 159 tools on disk, 194 listed in README (35 extra = forwarding stubs/aliases/legacy)
+- 0 UNLISTED, 0 GHOST — clean PASS
+
 ## Known QA False Positives
 - Render QA warm/cool WARN fires on intentionally cold-dominant style frames (SF03)
 - Glitch spec lint G006 fires on multi-character lineup files (other chars' skin tones)
 - Proportion verify cannot handle multi-panel turnaround sheets (algo limitation)
 - Glitch spec lint fires on QA tool Python files that contain color constant tuples (G005/G007 false positives on color_verify, fidelity_check etc.)
 - Glitch spec lint G006 fires on lineup files (non-Glitch character skin tones trigger organic color check)
-- ~26 persistent glitch spec lint WARNs are known false positives on legacy tools — tracked, ideabox idea submitted for suppression list
-
-## README Sync Status (C36)
-- 151 tools on disk, 186 listed in README (35 extra listed rows are forwarding stubs/aliases/legacy entries)
-- 0 UNLISTED, 0 GHOST — clean PASS
-- Non-standard files (not LTG_TOOL_*): `run_c31_qa.py`, `test_face_lighting_v001.py` — tracked, not renamed
+- ~15 persistent glitch spec lint WARNs remain after 26 suppressions — all in lineup files + legacy test files. Submit suppression expansion to cover lineup_v004–v007 (ideabox C37)
+- character_lineup_v007 (new C37) not yet in suppression list — adds 8 WARNs same pattern as v004–v006
+- render_qa v1.4.0: GLITCH threshold=3, OTHER_SIDE threshold=0 — SF02 and SF03 warm_cool now PASS; SF01 still WARN at 17.8/20.0

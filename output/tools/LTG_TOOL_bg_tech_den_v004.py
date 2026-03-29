@@ -779,4 +779,17 @@ def draw_tech_den():
 
 
 if __name__ == "__main__":
-    draw_tech_den()
+    import argparse
+    from LTG_TOOL_warmth_inject_hook_v001 import run_warmth_hook
+
+    parser = argparse.ArgumentParser(description="LTG_TOOL_bg_tech_den_v004 — Cosmo's Tech Den")
+    parser.add_argument(
+        "--check-warmth",
+        action="store_true",
+        help="After generation run LTG_TOOL_warmth_inject_v001 if warm/cool QA fails; "
+             "saves <name>_warminjected.png alongside the output.",
+    )
+    args = parser.parse_args()
+
+    out_path = draw_tech_den()
+    run_warmth_hook(out_path, enabled=args.check_warmth)

@@ -51,13 +51,70 @@ API
 
     results = lint_directory("/path/to/output/tools")
     print(format_report(results))
+
+Changelog
+---------
+v1.2.0 (C37): Suppression list support via glitch_spec_suppressions.json.
+    lint_file() accepts optional suppressions= set of (basename, rule) tuples.
+    lint_directory() loads suppressions once and shares across batch.
+    format_report() shows suppressed issue counts.
+    _load_suppressions() and _apply_suppressions() added.
+v1.1.0 (C35): G002 spec constants corrected (rx=34, ry=38); G001 range widened.
+v1.0.0 (C33): Initial implementation.
 """
 
-__version__ = "1.1.0"  # C35: G002 spec constants corrected (rx=34, ry=38); wider G001 range
+__version__ = "1.2.0"  # C37: suppression list support (glitch_spec_suppressions.json)
+                       # C35: G002 spec constants corrected (rx=34, ry=38); wider G001 range
 
+import json
 import os
 import re
 import sys
+
+# ── Suppression list ──────────────────────────────────────────────────────────────
+
+_SUPPRESSION_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "glitch_spec_suppressions.json")
+
+
+def _load_suppressions(path=None):
+    """
+    Load suppression list from glitch_spec_suppressions.json.
+
+    Returns a set of (basename, rule) tuples that should be silenced.
+    Returns empty set if file is missing or malformed.
+    """
+    p = path or _SUPPRESSION_FILE
+    if not os.path.isfile(p):
+        return set()
+    try:
+        with open(p, "r", encoding="utf-8") as fh:
+            data = json.load(fh)
+        entries = data.get("suppressions", [])
+        return {(e["file"], e["rule"]) for e in entries if "file" in e and "rule" in e}
+    except (json.JSONDecodeError, OSError):
+        return set()
+
+
+def _apply_suppressions(issues, basename, suppression_set):
+    """
+    Filter *issues* (list of str) using the suppression set.
+
+    An issue is suppressed if its rule code (e.g. "G007") appears in
+    a suppression entry for this file's basename.
+
+    Returns (kept_issues, suppressed_count).
+    """
+    kept = []
+    suppressed = 0
+    for issue in issues:
+        # Extract rule code: first word that matches G\d{3}
+        m = re.match(r'(G\d{3}):', issue)
+        rule = m.group(1) if m else None
+        if rule and (basename, rule) in suppression_set:
+            suppressed += 1
+        else:
+            kept.append(issue)
+    return kept, suppressed
 
 # ── Spec constants (from glitch.md) ────────────────────────────────────────────
 
@@ -287,32 +344,39 @@ def _check_g008_interior_bilateral(source):
 
 # ── Main lint function ──────────────────────────────────────────────────────────
 
-def lint_file(filepath):
+def lint_file(filepath, suppressions=None):
     """
     Lint a single Glitchkin generator file against the spec.
 
     Parameters
     ----------
-    filepath : str
-        Absolute path to the .py file.
+    filepath     : str   — Absolute path to the .py file.
+    suppressions : set | None
+        Set of (basename, rule) tuples to suppress. If None, loaded automatically
+        from glitch_spec_suppressions.json in the same directory as this tool.
 
     Returns
     -------
     dict with keys:
-        file       : str
-        is_glitch  : bool  — True if file appears to be a Glitch generator
-        issues     : list of str (issue descriptions)
-        status     : "PASS" | "WARN" | "SKIP"
-            PASS  — is_glitch=True, 0 issues
-            WARN  — is_glitch=True, 1+ issues
+        file              : str
+        is_glitch         : bool  — True if file appears to be a Glitch generator
+        issues            : list of str (issue descriptions, after suppression)
+        suppressed_count  : int   — how many issues were suppressed
+        status            : "PASS" | "WARN" | "SKIP"
+            PASS  — is_glitch=True, 0 active issues (suppressed issues do not count)
+            WARN  — is_glitch=True, 1+ active issues
             SKIP  — is_glitch=False (not a Glitch generator; not linted)
     """
+    if suppressions is None:
+        suppressions = _load_suppressions()
+
     source, err = _read_source(filepath)
     if source is None:
         return {
             "file": filepath,
             "is_glitch": False,
             "issues": [f"READ ERROR: {err}"],
+            "suppressed_count": 0,
             "status": "WARN",
         }
 
@@ -321,24 +385,29 @@ def lint_file(filepath):
             "file": filepath,
             "is_glitch": False,
             "issues": [],
+            "suppressed_count": 0,
             "status": "SKIP",
         }
 
-    issues = []
-    issues.extend(_check_g001_dimensions(source))
-    issues.extend(_check_g002_body_mass_ratio(source))
-    issues.extend(_check_g003_multi_glitchkin(source))
-    issues.extend(_check_g004_crack_draw_order(source))
-    issues.extend(_check_g005_uv_shadow(source))
-    issues.extend(_check_g006_no_organic_fill(source))
-    issues.extend(_check_g007_void_outline(source))
-    issues.extend(_check_g008_interior_bilateral(source))
+    raw_issues = []
+    raw_issues.extend(_check_g001_dimensions(source))
+    raw_issues.extend(_check_g002_body_mass_ratio(source))
+    raw_issues.extend(_check_g003_multi_glitchkin(source))
+    raw_issues.extend(_check_g004_crack_draw_order(source))
+    raw_issues.extend(_check_g005_uv_shadow(source))
+    raw_issues.extend(_check_g006_no_organic_fill(source))
+    raw_issues.extend(_check_g007_void_outline(source))
+    raw_issues.extend(_check_g008_interior_bilateral(source))
+
+    basename = os.path.basename(filepath)
+    issues, suppressed_count = _apply_suppressions(raw_issues, basename, suppressions)
 
     status = "WARN" if issues else "PASS"
     return {
         "file": filepath,
         "is_glitch": True,
         "issues": issues,
+        "suppressed_count": suppressed_count,
         "status": status,
     }
 
@@ -356,8 +425,12 @@ def lint_directory(directory, pattern="*.py", skip_legacy=True):
     Returns
     -------
     list of result dicts from lint_file()
+
+    Note: suppressions are loaded once from glitch_spec_suppressions.json
+    and shared across all files in the batch for efficiency.
     """
     import fnmatch
+    suppressions = _load_suppressions()
     results = []
     for fname in sorted(os.listdir(directory)):
         if skip_legacy and fname == "legacy":
@@ -367,7 +440,7 @@ def lint_directory(directory, pattern="*.py", skip_legacy=True):
         fpath = os.path.join(directory, fname)
         if not os.path.isfile(fpath):
             continue
-        result = lint_file(fpath)
+        result = lint_file(fpath, suppressions=suppressions)
         if result["status"] != "SKIP":
             results.append(result)
     return results
@@ -387,18 +460,22 @@ def format_report(results):
     """
     lines = []
     lines.append("=" * 70)
-    lines.append("LTG Glitch Spec Linter v1.0.0 — Report")
+    lines.append(f"LTG Glitch Spec Linter v{__version__} — Report")
     lines.append(f"Glitch generators found: {len(results)}")
     passes = [r for r in results if r["status"] == "PASS"]
     warns  = [r for r in results if r["status"] == "WARN"]
+    total_suppressed = sum(r.get("suppressed_count", 0) for r in results)
     lines.append(f"  PASS : {len(passes)}")
     lines.append(f"  WARN : {len(warns)}")
+    if total_suppressed:
+        lines.append(f"  (suppressed issues across all files: {total_suppressed})")
     lines.append("=" * 70)
 
     for result in results:
         fname = os.path.basename(result["file"])
         status = result["status"]
-        lines.append(f"\n[{status}] {fname}")
+        sup_note = f"  [{result.get('suppressed_count', 0)} suppressed]" if result.get("suppressed_count") else ""
+        lines.append(f"\n[{status}] {fname}{sup_note}")
         if result["issues"]:
             for iss in result["issues"]:
                 lines.append(f"  - {iss}")
@@ -409,6 +486,7 @@ def format_report(results):
     lines.append("Checks: G001 dimensions | G002 body ratio | G003 multi-uniqueness |")
     lines.append("        G004 crack order | G005 UV shadow | G006 organic fill |")
     lines.append("        G007 void outline | G008 interior bilateral")
+    lines.append("Suppressions: glitch_spec_suppressions.json")
 
     if warns:
         lines.append(f"\n{len(warns)} Glitch generator(s) have spec violations. Review before critique.")
@@ -422,7 +500,7 @@ def format_report(results):
 def main():
     import argparse
     parser = argparse.ArgumentParser(
-        description="LTG Glitch Spec Linter v1.0.0 — validate Glitchkin generators against spec"
+        description=f"LTG Glitch Spec Linter v{__version__} — validate Glitchkin generators against spec"
     )
     parser.add_argument(
         "target",

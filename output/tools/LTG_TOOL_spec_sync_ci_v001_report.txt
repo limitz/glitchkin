@@ -1,29 +1,18 @@
 ========================================================================
 LTG Spec Sync CI Gate — v1.0.0
-Characters: luma, cosmo
+Characters: cosmo
 ========================================================================
 
   ────────────────────────────────────────────────────────────────────
-  WARN    LUMA  [LTG_TOOL_luma_expression_sheet_v009.py]
+  WARN    COSMO  [LTG_TOOL_cosmo_expression_sheet_v006.py]
   ────────────────────────────────────────────────────────────────────
   Checks: 4 PASS / 1 WARN / 0 FAIL
   No P1 violations.
 
   Advisory WARNs (1) — not a CI failure:
-    WARN [L004] L004: Luma curl count: spec requires exactly 5 curls. No clear CURL_COUNT=5 constant or range(5) ...
-
-  ────────────────────────────────────────────────────────────────────
-  FAIL    COSMO  [LTG_TOOL_cosmo_expression_sheet_v005.py]
-  ────────────────────────────────────────────────────────────────────
-  Checks: 3 PASS / 1 WARN / 1 FAIL
-
-  P1 VIOLATIONS (1):
-    FAIL [S003] S003: Cosmo glasses tilt: spec=7°±2, found neutral=10°.
-
-  Advisory WARNs (1) — not a CI failure:
     WARN [S002] S002: Eye-width coefficient 0.18 not confirmed in source. Check that `ew = int(HR * 0.18)` patter...
 
 ========================================================================
-P1 violations: 1  |  Per-char: LUMA:WARN, COSMO:FAIL  |  CI FAIL
-CI RESULT: FAIL — P1 violations must be fixed before merge.
+P1 violations: 0  |  Per-char: COSMO:WARN  |  CI PASS
+CI RESULT: PASS
 ========================================================================

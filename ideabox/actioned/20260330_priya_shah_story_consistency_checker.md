@@ -1,0 +1,5 @@
+**Author:** Priya Shah
+**Cycle:** 37
+**Date:** 2026-03-30
+**Idea:** Build a lightweight story consistency checker tool — a Python script that reads all character `.md` spec files and the story bible and cross-checks named story elements (character names, world names, design descriptions) for contradictions. During writing the story bible, I found three consistency gaps (Byte's shape language description in production_bible.md conflicts with his actual design spec; Grandma Miri and Glitch Layer Miri share a name with no visual plant noted; "Glitch" character not addressed in narrative docs). These were small enough to flag manually, but as the pitch package grows across 37+ cycles, a script that auto-detects name inconsistencies and spec conflicts across production documents would save story and art staff significant cross-referencing time each cycle.
+**Benefits:** Primarily helps Story & Script Developer, Art Director, and any new team members who need to cross-reference visual specs against narrative docs. Reduces manual flag-filing. Could be run as part of the pre-critique QA pipeline. Low engineering complexity — mostly text parsing and matching.

@@ -1,0 +1,5 @@
+**Author:** Sam Kowalski
+**Cycle:** 37
+**Date:** 2026-03-30
+**Idea:** Split the REAL world-type threshold in render_qa into two subtypes: REAL_INTERIOR (threshold=12) and REAL_STORM (threshold=3). Currently render_qa uses REAL→20 for both SF01 (warm interior) and SF02 (contested storm) — both still WARN even though per FP-006 spec they should PASS. The fix: infer REAL_STORM from filenames containing `glitch_storm` or `storm`, and apply threshold=3. Infer REAL_INTERIOR for all other REAL filenames, threshold=12. This eliminates the last two remaining warm/cool WARNs (SF01 at sep=17.9, SF02 at sep=6.5) without changing the fallback behavior for unknown files.
+**Benefits:** Kai Nakamura (saves render_qa maintenance): one targeted change eliminates 2 persistent false WARNs. Sam Kowalski (cleaner QA reports): C38 baseline would show 0 warm/cool WARNs on known pitch-primary assets. The change is backward-compatible — any file without an inferrable subtype still gets the conservative 20-unit threshold.

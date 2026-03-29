@@ -29,6 +29,17 @@ New result code: "PASS" | "WARN" (same as v001 — no new result states).
 Comparison mode:
   --compare  run both v001 and v002 and show delta (WARN count reduction)
 
+v2.1.0 additions (C37 — Alex Chen ideabox):
+  Back-pose W003 suppression via block comment markers.
+  Within a block delimited by `# LINT: back_pose_begin` and `# LINT: back_pose_end`,
+  W003 (shadow after element) warnings are suppressed. This prevents false positives
+  from back-pose rendering sections where shadow-keyword variable names like
+  `back_leg_shadow` appear AFTER the body polygon (correct for back views,
+  as the shadow falls behind the element in back perspective).
+
+  If a file has `# LINT: back_pose_begin` but no matching `# LINT: back_pose_end`,
+  the suppression block extends to end-of-file (open-ended suppression).
+
 Usage (standalone):
     python LTG_TOOL_draw_order_lint_v002.py
     python LTG_TOOL_draw_order_lint_v002.py path/to/file.py
@@ -41,7 +52,7 @@ API:
     # result["warnings"] is list of {"line": int, "code": str, "message": str}
 """
 
-__version__ = "2.0.0"
+__version__ = "2.1.0"
 
 import os
 import re
@@ -84,6 +95,41 @@ W_HEAD_BEFORE_BODY   = "W001"
 W_OUTLINE_BEFORE_FILL = "W002"
 W_SHADOW_AFTER_ELEMENT = "W003"
 W_MISSING_DRAW_REFRESH = "W004"
+
+# ── Back-pose block comment suppression markers (v2.1.0) ─────────────────────
+_BACK_POSE_BEGIN_RE = re.compile(r'#\s*LINT\s*:\s*back_pose_begin', re.IGNORECASE)
+_BACK_POSE_END_RE   = re.compile(r'#\s*LINT\s*:\s*back_pose_end',   re.IGNORECASE)
+
+
+def _compute_back_pose_ranges(lines):
+    """
+    Scan *lines* for `# LINT: back_pose_begin` / `# LINT: back_pose_end` markers
+    and return a list of (start_lineno, end_lineno) ranges (1-based, inclusive)
+    within which W003 should be suppressed.
+
+    If a begin has no matching end, the range extends to the last line of the file.
+    """
+    ranges = []
+    open_start = None
+    for i, raw in enumerate(lines, start=1):
+        stripped = raw.strip()
+        if _BACK_POSE_BEGIN_RE.search(stripped):
+            open_start = i
+        elif _BACK_POSE_END_RE.search(stripped) and open_start is not None:
+            ranges.append((open_start, i))
+            open_start = None
+    # Open-ended block: no matching end
+    if open_start is not None:
+        ranges.append((open_start, len(lines)))
+    return ranges
+
+
+def _lineno_in_back_pose(lineno, back_pose_ranges):
+    """Return True if *lineno* falls inside any back-pose suppression range."""
+    for (start, end) in back_pose_ranges:
+        if start <= lineno <= end:
+            return True
+    return False
 
 
 # ── v002 scope-aware helpers ─────────────────────────────────────────────────
@@ -270,11 +316,23 @@ def _check_outline_before_fill(events):
     return warnings
 
 
-def _check_shadow_after_element(events):
+def _check_shadow_after_element(events, back_pose_ranges=None):
+    """
+    Check W003 — shadow drawn after the element it should underlay.
+
+    v2.1.0: *back_pose_ranges* is a list of (start, end) lineno ranges (1-based)
+    within which W003 is suppressed. Pass the result of _compute_back_pose_ranges()
+    to enable back-pose suppression.
+    """
+    if back_pose_ranges is None:
+        back_pose_ranges = []
     warnings = []
     WINDOW = 80
     for i, ev in enumerate(events):
         if not ev["is_shadow"]:
+            continue
+        # v2.1.0: suppress W003 inside back_pose blocks
+        if _lineno_in_back_pose(ev["lineno"], back_pose_ranges):
             continue
         for j in range(max(0, i - WINDOW), i):
             prev = events[j]
@@ -430,10 +488,13 @@ def lint_file(path):
 
     events = _extract_draw_events(lines)
 
+    # v2.1.0: compute back-pose suppression ranges for W003
+    back_pose_ranges = _compute_back_pose_ranges(lines)
+
     all_warnings = []
     all_warnings.extend(_check_head_before_body(events))
     all_warnings.extend(_check_outline_before_fill(events))
-    all_warnings.extend(_check_shadow_after_element(events))
+    all_warnings.extend(_check_shadow_after_element(events, back_pose_ranges=back_pose_ranges))
     all_warnings.extend(_check_missing_draw_refresh_v2(lines))
 
     seen = set()

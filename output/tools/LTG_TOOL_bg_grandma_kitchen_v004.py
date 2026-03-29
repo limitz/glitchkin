@@ -1401,4 +1401,18 @@ def main():
 
 
 if __name__ == "__main__":
+    import argparse
+    from LTG_TOOL_warmth_inject_hook_v001 import run_warmth_hook
+
+    parser = argparse.ArgumentParser(description="LTG_TOOL_bg_grandma_kitchen_v004 — Grandma Miri's Kitchen")
+    parser.add_argument(
+        "--check-warmth",
+        action="store_true",
+        help="After generation run LTG_TOOL_warmth_inject_v001 if warm/cool QA fails; "
+             "saves <name>_warminjected.png alongside the output.",
+    )
+    args = parser.parse_args()
+
     main()
+    out_path = "/home/wipkat/team/output/backgrounds/environments/LTG_ENV_grandma_kitchen_v004.png"
+    run_warmth_hook(out_path, enabled=args.check_warmth)

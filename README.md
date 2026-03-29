@@ -44,9 +44,9 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 ### Full Lineup (v007 — Byte shadow + Miri slipper fixes)
 ![Character Lineup](output/characters/main/LTG_CHAR_character_lineup_v007.png)
 
-### Luma — Expression Sheet (v009)
-*Includes THE NOTICING. C34: eye-width corrected to HR×0.22 (22px); pose vocabulary added for silhouette differentiation.*
-![Luma Expressions](output/characters/main/LTG_CHAR_luma_expressions_v009.png)
+### Luma — Expression Sheet (v010)
+*C37: THE NOTICING moved to center slot, stronger brow asymmetry, finger-to-lower-lip gesture, lateral gaze.*
+![Luma Expressions](output/characters/main/LTG_CHAR_luma_expressions_v010.png)
 
 ### Luma — Turnaround (v004 — construction master, 3.2 heads)
 ![Luma Turnaround](output/characters/main/turnarounds/LTG_CHAR_luma_turnaround_v004.png)
@@ -61,9 +61,9 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 ### Byte — Turnaround (v001)
 ![Byte Turnaround](output/characters/main/turnarounds/LTG_CHAR_byte_turnaround_v001.png)
 
-### Cosmo — Expression Sheet (v005)
-*C35: AWKWARD (max asymmetry, jagged silhouette), WORRIED (head-grab bracket) per Lee's brief.*
-![Cosmo Expressions](output/characters/main/LTG_CHAR_cosmo_expression_sheet_v005.png)
+### Cosmo — Expression Sheet (v006)
+*C37: Glasses tilt corrected 10°→7° per spec. CI PASS.*
+![Cosmo Expressions](output/characters/main/LTG_CHAR_cosmo_expression_sheet_v006.png)
 
 ### Cosmo — Turnaround (v002)
 ![Cosmo Turnaround](output/characters/main/turnarounds/LTG_CHAR_cosmo_turnaround_v002.png)
@@ -147,32 +147,37 @@ Three-world palette system:
 
 ## Progress
 
-- **Work cycles:** 36 | **Critique cycles:** 14
-- **Next:** Cycle 37 (critique cycle at C37)
-- **Ideabox:** 8 ideas actioned C36 (all queued C37)
-- **Critics panel:** 20 total (15 professionals + 5 audience members added C36)
-- **Team:** 12 active (4 new members joined C37: Diego Vargas, Priya Shah, Hana Okonkwo, Ryo Hasegawa)
-- **QA baseline:** 321 PASS / 37 WARN / 0 FAIL
+- **Work cycles:** 37 | **Critique cycles:** 14 (Critique 15 running)
+- **Next:** Cycle 38
+- **Ideabox:** 12 ideas actioned C37 (all queued C38)
+- **Critics panel:** 20 total (15 professionals + 5 audience)
+- **Team:** 12 active
+- **QA baseline:** 333 PASS / 26 WARN / 0 FAIL
 
 ### Pitch Package Status
 | Asset | Latest | Notes |
 |-------|--------|-------|
 | SF01 Discovery | v005 | unchanged |
-| SF02 Glitch Storm | **v008** | C36: fill light direction fix (upper-right), per-char silhouette mask |
+| SF02 Glitch Storm | v008 | unchanged |
 | SF03 The Other Side | v005 | unchanged |
 | SF04 Luma + Byte | v004 | unchanged |
-| Luma expressions | v009 | unchanged |
+| Luma expressions | **v010** | C37: THE NOTICING center slot, stronger asymmetry, lip-touch gesture |
 | Luma turnaround | v004 | unchanged |
 | Byte expressions | v005 | unchanged |
-| Cosmo expressions | v005 | **P1 FAIL: glasses tilt 10° vs spec 7°±2 — v006 fix queued C37** |
+| Cosmo expressions | **v006** | C37: glasses tilt fixed 10°→7°, CI PASS |
 | Miri expressions | v004 | unchanged |
 | Character lineup | v007 | unchanged |
 | Logo | v001 | Canonical |
 | Kitchen | v004 | unchanged |
-| Tech Den | **v004_warminjected** | C36: warm/cool separation fixed 7.9→23.2 |
+| Tech Den | v004_warminjected | unchanged |
+| **Living Room** | **v001** | C37: NEW — CRT focal point, QA PASS |
 | Glitch Layer | v003 | unchanged |
 | School Hallway | v002 | unchanged |
 | Millbrook Street | v002 | unchanged |
+| **Storyboard** | **cold open v001** | C37: NEW — 6-panel pilot cold open |
+| **Story Bible** | **v001** | C37: NEW — "Dead Pixels" pilot, world rules, character voices |
+| **Motion — Luma** | **v001** | C37: NEW — 4-panel motion spec sheet |
+| **Motion — Byte** | **v001** | C37: NEW — 3-panel motion spec sheet |
 
 ---
 
@@ -180,8 +185,8 @@ Three-world palette system:
 
 One `CLAUDE.md` starts a producer agent. The producer builds a team of AI agents, assigns work via inbox message files, runs critique cycles with 20 critics (15 professionals + 5 audience members), and iterates. No human drew these images.
 
-All output generated with Python + PIL (open source only). Generators in `output/tools/` — 150+ tools, compounding each cycle.
+All output generated with Python + PIL (open source only). Generators in `output/tools/` — 160+ tools, compounding each cycle.
 
 ---
 
-*Cycle 36 — 2026-03-30*
+*Cycle 37 — 2026-03-30*

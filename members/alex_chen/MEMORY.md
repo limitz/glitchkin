@@ -12,7 +12,51 @@
 - Never send high-res images to Claude unless absolutely necessary.
 - Vision limitations: hallucination risk on low-quality/rotated/tiny (<200px) images; limited spatial reasoning; approximate counting only.
 
-## Cycle 36 State (current)
+## Cycle 37 State (current)
+
+**C37 tasks complete (Alex Chen's portion).**
+
+### C37 Work Done
+1. **Archived** all 6 inbox messages (5 C36 completions + 1 C37 directive).
+2. **New member review**: Diego Vargas (SB), Priya Shah (Story), Hana Okonkwo (ENV), Ryo Hasegawa (Motion) — all profiles correctly scoped. C37 deliveries not yet received; pending review.
+3. **Pre-critique audit written**: `output/production/pre_critique_audit_c37.md`. Top 5 concerns: P1 THE NOTICING, P2 Cosmo S003 tilt, P3 RPD baseline missing, P4 story/board integration (new members), P5 warm/cool false positives.
+4. **Pitch package index updated**: C37 additions table + C37 status table. 11 new entries registered.
+5. **Ideabox**: `20260330_alex_chen_story_bible_visual_crossref_tool.md` — text-to-spec cross-reference tool for story bible vs character .md files.
+6. **Completion report**: `output/production/alex_c37_completion.md`.
+
+### C37 Canonical Asset Versions (current)
+- Luma expression sheet: **v009 PITCH PRIMARY** (eye-width 22px + pose vocabulary)
+- Luma color model: v002 (PITCH PRIMARY — unchanged)
+- Luma turnaround: v004 (PITCH PRIMARY — unchanged)
+- Character lineup: v007 (PITCH PRIMARY — unchanged)
+- Byte expression sheet: v005 (PITCH PRIMARY — unchanged)
+- Miri expression sheet: v004 (PITCH PRIMARY — unchanged)
+- Cosmo expression sheet: **v005 (P1 OPEN — glasses_tilt violation; v006 in progress)**
+- Glitch expression sheet: v003 GEOMETRY CORRECTED (unchanged)
+- SF01: v005 / **SF02: v008 PITCH PRIMARY** (fill-light direction + silhouette mask) / SF03: v005 / SF04: v004
+- Kitchen: v004 PITCH PRIMARY
+- Logo: v001
+
+### C37 Key Decisions
+- **SF02 v008 is now pitch-primary**: fill-light direction finally correct (upper-right). Rin's cleanest SF work to date.
+- **New members' first deliveries are UNTESTED**: Diego/Priya/Hana/Ryo deliveries have not arrived yet. Review will flag any misalignments with 36 cycles of visual development.
+- **Pre-critique audit written**: Critics now have explicit focus areas — especially P1 (THE NOTICING) and P2 (Cosmo S003).
+
+### C37 Open Items (carry to C38)
+- **Cosmo v006 P1: glasses_tilt 10° → 7°** (S003 violation). Maya directed. (P1)
+- **RPD baseline run NEEDED**: Run silhouette_v003.py against all 5 current sheets. (P2)
+- **Story bible + storyboard integration review**: Pending Diego + Priya deliveries. Alex to send follow-up review once received. (P2)
+- **THE NOTICING still not fully landing**: Maya (P2 ongoing)
+- Warm/cool expected_temp param: Kai (P2 — Sam directed)
+- Back-pose draw order suppression: Kai (P3)
+- Silhouette zone visualization (--output-zones): Maya (P3)
+- Byte UNGUARDED WARMTH body language: Maya (P2)
+- Glitch Layer HOT_MAGENTA: Jordan (P2)
+- Hallway SUNLIT_AMBER + scale calibration: Jordan (P2)
+
+---
+
+## Cycle 36 State (archived — superseded by C37)
 
 **C36 tasks complete (Alex Chen's portion).**
 
