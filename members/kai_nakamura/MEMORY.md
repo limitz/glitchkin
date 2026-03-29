@@ -250,3 +250,40 @@ Import: `from LTG_TOOL_render_lib_v001 import ...`
 - W002 linter rule generates false positives on PIL draw.rectangle(fill=X, outline=Y) — this is valid single-call syntax, not a draw-order violation. Future v002 could skip single-call fill+outline combos.
 - W004 is widespread in older generators — good candidate for a team-wide fix sprint
 - Histogram mode in color_verify v002 is a powerful false-positive elimination tool — see Test 5: peak at 170-175° vs canonical at 180-185° makes drift obvious at a glance
+
+## Cycle 33 — C33 Stub Linter + Glitch Spec Linter
+
+**Status:** COMPLETE
+
+**Tasks completed:**
+- Built `LTG_TOOL_stub_linter_v001.py` — scans all output/tools/*.py for broken imports
+  (LTG_CHAR_*, LTG_COLOR_*, LTG_BRAND_*, LTG_ENV_* prefixes). Reports PASS/WARN/ERROR.
+  `--pre-commit` flag exits code 1 on any ERROR — suitable for CI gate.
+  API: lint_file(), lint_directory(), format_report()
+- Built `LTG_TOOL_glitch_spec_lint_v001.py` — validates Glitchkin generator code against glitch.md
+  8 checks: G001 dimensions, G002 mass ratio, G003 multi-uniqueness, G004 crack order,
+  G005 UV shadow, G006 organic fill, G007 void outline, G008 interior bilateral eyes.
+  Non-Glitch files are SKIP. Only files with diamond_pts/CORRUPT_AMB markers are linted.
+- README.md: both tools registered, header updated to C33
+- Ideabox: submitted `20260330_kai_nakamura_spec_lint_expansion.md` — general char spec linter framework idea
+- Inbox archived: 20260330_0200_ideabox_stub_linter.md
+
+## LTG_TOOL_stub_linter_v001.py (C33 NEW)
+- `lint_file(filepath, tools_dir=None) → dict` — PASS/WARN/ERROR + issues list
+- `lint_directory(directory, pattern="*.py", skip_legacy=True) → list`
+- `format_report(results, include_pass=False) → str`
+- CLI: `--pre-commit`, `--include-legacy`, `--save-report PATH`
+
+## LTG_TOOL_glitch_spec_lint_v001.py (C33 NEW)
+- `lint_file(filepath) → dict` — PASS/WARN/SKIP + issues list
+- `lint_directory(directory, skip_legacy=True) → list` — only Glitch generators
+- `format_report(results) → str`
+- Checks G001–G008; non-Glitch files are SKIP (not counted in results)
+- CLI: `python LTG_TOOL_glitch_spec_lint_v001.py [file_or_dir] [--save-report PATH]`
+
+## Lessons Learned (C33)
+- README file is frequently updated by multiple agents in same cycle — always re-read before editing
+- Regex-based spec linting on Python source is effective for known patterns (palette constants, draw calls)
+  but has false-positive risk on docstrings/comments — document known false-positive cases clearly
+- G008 bilateral check: proxy approach (detect interior state keywords + destabilize function) is
+  conservative; may flag files that correctly implement bilateral but use different variable names

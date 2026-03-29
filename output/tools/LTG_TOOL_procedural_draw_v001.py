@@ -11,6 +11,7 @@ Adapted from artistry project techniques (Zeno Particelli AI artist):
   - Rim lights: thin bright edge on character silhouettes
   - Value study / silhouette test: QA diagnostic tools
   - Volumetric face lighting: split-light with brow, nose-on-cheek, and chin shadows (C27)
+  - Character bbox: auto-compute character center x from silhouette for rim-light use (C33)
 
 Library design:
   - All drawing functions accept seeded RNG for reproducibility
@@ -24,7 +25,8 @@ Import:
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     from LTG_TOOL_procedural_draw_v001 import (
         wobble_line, wobble_polygon, variable_stroke,
-        add_rim_light, silhouette_test, value_study
+        add_rim_light, silhouette_test, value_study,
+        get_char_bbox
     )
 
 CLI demo:
@@ -33,7 +35,7 @@ CLI demo:
 Dependencies: Python 3.8+, Pillow (PIL). No NumPy required.
 """
 
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 __author__ = "Rin Yamamoto"
 __cycle__ = 26
 
@@ -312,6 +314,69 @@ def silhouette_test(img, threshold=128):
     gray = img.convert("L")
     binary = gray.point(lambda p: 255 if p >= threshold else 0, mode="L")
     return binary.convert("RGB")
+
+
+def get_char_bbox(img, threshold=128):
+    """Return the bounding box and center of the character silhouette.
+
+    Detects all pixels brighter than 'threshold' in grayscale and returns
+    the axis-aligned bounding box of that bright region, plus its centre x/y.
+    Designed to auto-compute char_cx for add_rim_light() without the caller
+    needing to manually track the character's head centre through the draw loop.
+
+    Usage pattern:
+        add_rim_light(img, side="right", char_cx=get_char_bbox(img)[0])
+
+    Args:
+        img       (PIL.Image): Input image (any mode; converted internally).
+        threshold (int)      : Luminance cutoff (0–255). Default 128.
+                               Use a higher value (e.g. 180) to isolate only
+                               the bright character against a dark background.
+
+    Returns:
+        tuple: (cx, cy, left, top, right, bottom) where:
+            cx     (int)  : Horizontal centre of the bright-pixel bounding box.
+            cy     (int)  : Vertical centre of the bright-pixel bounding box.
+            left   (int)  : Leftmost bright column.
+            top    (int)  : Topmost bright row.
+            right  (int)  : Rightmost bright column.
+            bottom (int)  : Bottommost bright row.
+
+        Returns (w//2, h//2, 0, 0, w-1, h-1) — canvas centre — if no bright
+        pixels are found, so the caller always gets a usable fallback.
+
+    Notes:
+        - Caller accesses char_cx as result[0], char_cy as result[1].
+        - For characters against mid-tone backgrounds, raise threshold toward 180.
+        - Modifies nothing — pure inspection, no side effects.
+    """
+    w, h = img.size
+    gray = img.convert("L")
+
+    # Collect all pixel positions above threshold
+    pixels = gray.load()
+    min_x, min_y = w, h
+    max_x, max_y = -1, -1
+
+    for y in range(h):
+        for x in range(w):
+            if pixels[x, y] >= threshold:
+                if x < min_x:
+                    min_x = x
+                if x > max_x:
+                    max_x = x
+                if y < min_y:
+                    min_y = y
+                if y > max_y:
+                    max_y = y
+
+    # Fallback: no bright pixels found — return canvas centre
+    if max_x < 0:
+        return (w // 2, h // 2, 0, 0, w - 1, h - 1)
+
+    cx = (min_x + max_x) // 2
+    cy = (min_y + max_y) // 2
+    return (cx, cy, min_x, min_y, max_x, max_y)
 
 
 def value_study(img):
@@ -746,13 +811,14 @@ if __name__ == "__main__":
 
     print("LTG_TOOL_procedural_draw_v001 — Demo")
     print("=" * 50)
-    print("Testing all six API functions:")
+    print("Testing all seven API functions:")
     print("  1. wobble_line       — organic wobbly line")
     print("  2. wobble_polygon    — wobbly closed shape + fill")
     print("  3. variable_stroke   — tapered brush stroke")
     print("  4. add_rim_light     — bright edge on silhouette")
     print("  5. silhouette_test   — pure B&W shape read")
     print("  6. value_study       — contrast-stretched grayscale")
+    print("  7. get_char_bbox     — auto-detect character bbox / char_cx")
     print()
 
     _build_test_image(_out, size=600)

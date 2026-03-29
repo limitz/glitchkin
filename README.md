@@ -41,8 +41,8 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 
 ## Characters
 
-### Full Lineup (v006 — 3.2-head canon)
-![Character Lineup](output/characters/main/LTG_CHAR_luma_lineup_v006.png)
+### Full Lineup (v007 — Byte shadow + Miri slipper fixes)
+![Character Lineup](output/characters/main/LTG_CHAR_character_lineup_v007.png)
 
 ### Luma — Expression Sheet (v008)
 *Includes THE NOTICING — Luma's signature expression: the face of a kid who sees what no one else does.*
@@ -54,8 +54,9 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 ### Luma — Color Model (v002)
 ![Luma Color Model](output/characters/color_models/LTG_COLOR_luma_color_model_v002.png)
 
-### Byte — Expression Sheet (v004)
-![Byte Expressions](output/characters/main/LTG_CHAR_byte_expression_sheet_v004.png)
+### Byte — Expression Sheet (v005 — UNGUARDED WARMTH)
+*Star+Heart eye pairing (SOFT_GOLD + UV_PURPLE), gold confetti — Byte's softest state.*
+![Byte Expressions](output/characters/main/LTG_CHAR_byte_expression_sheet_v005.png)
 
 ### Byte — Turnaround (v001)
 ![Byte Turnaround](output/characters/main/turnarounds/LTG_CHAR_byte_turnaround_v001.png)
@@ -121,7 +122,7 @@ Three-world palette system:
 
 ---
 
-## Team (Cycle 32)
+## Team (Cycle 33)
 
 | Member | Role | Status |
 |--------|------|--------|
@@ -137,20 +138,21 @@ Three-world palette system:
 
 ## Progress
 
-- **Work cycles:** 32 (in progress) | **Critique cycles:** 13
+- **Work cycles:** 33 | **Critique cycles:** 13
 - **Next critique:** Critique 14 (after Cycle 34)
-- **Ideabox:** active — 1 idea per member per cycle, compounding into pipeline tools
+- **Ideabox:** active — 5 ideas actioned C33 (all queued C34)
 
 ### Pitch Package Status
 | Asset | Latest | Notes |
 |-------|--------|-------|
-| SF01 Discovery | v005 | Procedural — rim light char-cx fix in progress |
+| SF01 Discovery | v005 | Rim light char-cx fix applied C32 |
 | SF02 Glitch Storm | v005 | Current |
 | SF03 The Other Side | v005 | Current |
-| SF04 Luma + Byte | v004 | Rebuilt C32 |
-| Luma expressions | v008 | THE NOTICING added |
+| SF04 Luma + Byte | v004 | Rebuilt C32; Byte teal exception documented |
+| Luma expressions | v008 | THE NOTICING |
 | Luma turnaround | v004 | 3.2-head construction master |
-| Character lineup | v006 | 3.2 heads throughout |
+| Byte expressions | v005 | UNGUARDED WARMTH added C33 |
+| Character lineup | v007 | Byte shadow + Miri slipper fixes C33 |
 | Logo | v001 | Canonical |
 | Environments | — | All 5 complete |
 
@@ -160,8 +162,8 @@ Three-world palette system:
 
 One `CLAUDE.md` starts a producer agent. The producer builds a team of 5 AI agents, assigns work via inbox message files, runs critique cycles with 15 external critics, and iterates. No human drew these images.
 
-All output generated with Python + PIL (open source only). Generators in `output/tools/` — 30+ tools, compounding each cycle.
+All output generated with Python + PIL (open source only). Generators in `output/tools/` — 35+ tools, compounding each cycle.
 
 ---
 
-*Cycle 32 — 2026-03-29*
+*Cycle 33 — 2026-03-29*

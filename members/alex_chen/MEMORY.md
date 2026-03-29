@@ -12,7 +12,36 @@
 - Never send high-res images to Claude unless absolutely necessary.
 - Vision limitations: hallucination risk on low-quality/rotated/tiny (<200px) images; limited spatial reasoning; approximate counting only.
 
-## Cycle 32 State (current)
+## Cycle 33 State (current)
+
+**C33 tasks complete (Alex Chen's portion).**
+
+### C33 Work Done
+1. **Archived** all C32 inbox reports (5 messages + stale C31 stubs).
+2. **Character lineup v007** built (`LTG_CHAR_character_lineup_v007.png`, `LTG_TOOL_character_lineup_v007.py`):
+   - BYTE_SH fixed: `(0, 144, 176)` → `(0, 168, 180)` canonical Deep Cyan GL-01a #00A8B4. Was 2-cycle P2 backlog.
+   - MIRI_SLIPPER fixed: `(90, 122, 90)` → `(196, 144, 122)` warm apricot #C4907A per Sam C32 palette correction.
+3. **Maya directive sent**: Byte expression v005 — UNGUARDED WARMTH. Spec complete (body, pixel eyes, confetti, narrative context). P2.
+4. **Pitch package index updated** through C32. Added Cycle 29–32 addition sections + current status table.
+5. **Ideabox submitted**: `20260329_alex_chen_character_lineup_palette_audit.md` — lineup palette audit tool idea.
+
+### C33 Canonical Asset Versions
+- Luma expression sheet: **v008** (PITCH PRIMARY — THE NOTICING + eye-width 45px)
+- Luma color model: v002 (PITCH PRIMARY)
+- Character lineup: **v007** (PITCH PRIMARY — Byte shadow fix, Miri slipper fix)
+- SF01: **v005** (PITCH PRIMARY — rim-light char_cx fix)
+- SF02: v005 (unchanged)
+- SF03: v005 (unchanged)
+- SF04: **v004** (PITCH PRIMARY — full rebuild, value PASS)
+- Byte/Cosmo/Miri/Glitch expression sheets: v004/v004/v003/v003
+- Luma turnaround: **v004** (PITCH PRIMARY — eye-width fix)
+- Logo: `LTG_BRAND_logo_v001.png`
+
+### C33 Open Items (P2)
+- Byte expression v005 (UNGUARDED WARMTH): Maya has spec directive. P2.
+- Maya asked for canonical eye-width confirmation re: v008 (used head_height×0.22 not head_radius×0.22). **RESOLUTION:** v008 eye width (45px) is consistent with turnaround v003 values, which is the canonical source. Acceptable. If C14 critique flags it, Maya builds v009.
+
+## Cycle 32 State (archived)
 
 **C32 tasks complete (Alex Chen's portion).**
 

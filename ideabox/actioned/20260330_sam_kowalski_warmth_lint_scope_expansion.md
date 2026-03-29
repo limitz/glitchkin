@@ -1,0 +1,5 @@
+**Author:** Sam Kowalski
+**Cycle:** 33
+**Date:** 2026-03-30
+**Idea:** Expand `LTG_TOOL_palette_warmth_lint_v001.py` to cover all character palette groups with documented warm-guarantees — not just CHAR-M. Luma's hoodie orange palette (CHAR-L) has a similar strong-warm requirement, and any future characters in Real World domestic settings will carry the same constraint. The tool should accept a configurable list of code prefixes (e.g. `["CHAR-M", "CHAR-L-hoodie"]`) so the warm-channel-ratio check can be applied to whichever character groups the Art Director designates as warm-guaranteed. The prefix list could live in a small JSON config file (`ltg_warmth_guarantees.json`) that the team can update without touching the tool code.
+**Benefits:** Prevents the CHAR-M-11 class of error from appearing in any character's warm palette, not just Miri's. The Art Director gains explicit, tracked control over which characters have warm-guarantee constraints. Zero additional tool maintenance — the tool logic is already built; expanding the prefix list is a config change only.

@@ -1,5 +1,39 @@
 # Maya Santos — Memory
 
+## Cycle 33 Lessons — SILHOUETTE TOOL + MIRI v003
+
+- **LTG_TOOL_expression_silhouette_v001.py COMPLETE.**
+  - Location: `output/tools/LTG_TOOL_expression_silhouette_v001.py`
+  - Algorithm: per-pixel BG classification (BG_TOLERANCE=45) → binary silhouette → combined similarity (0.6×IoM + 0.4×XOR). Dark BG sheets (Glitch) work with MIN_CHAR_FRACTION=1%.
+  - C33 Baseline: Glitch v003=PASS(71%), Luma v008=FAIL(91%), Miri v003=FAIL(96% WISE/KNOWING), Cosmo v003=FAIL(96%), Byte v003=FAIL(89%).
+  - Key finding: ALL human character sheets fail. This is partly genuine design problem + partly measurement limit (arm diff < 20px lost at panel resolution). Ideabox filed for arm-region mode.
+
+- **Miri expression sheet v003 COMPLETE (C25 rebuild).**
+  - Generator: `output/tools/LTG_TOOL_grandma_miri_expression_sheet_v003.py`
+  - Output: `output/characters/main/LTG_CHAR_grandma_miri_expression_sheet_v003.png` (1200×900)
+  - 6 expressions, 3×2 full grid. KNOWING STILLNESS added.
+  - KNOWING STILLNESS design: heavy-lidded (l/r_open=0.48), oblique gaze (gaze_dx=+0.12), knowing_oblique mouth (one corner lifted left side), minimal blush=0.2, still body = folded arms (same as WISE).
+  - KNOWN: WISE↔KNOWING silhouette = 96.4% (accepted — distinction is face-only, as per brief).
+
+- **Byte expression sheet v005 COMPLETE (C33 late directive).**
+  - Generator: `output/tools/LTG_TOOL_byte_expression_sheet_v005.py`
+  - Output: `output/characters/main/LTG_CHAR_byte_expression_sheet_v005.png` (712×1280px)
+  - UNGUARDED WARMTH: body_tilt=-4, arms float -5dy, left leg +2px forward
+  - Eyes: star_gold (right, SOFT_GOLD full brightness) + heart_purple (left, UV_PURPLE)
+  - Mouth: "warmth" (barely-there upward arc, very subtle)
+  - Confetti: SOFT_GOLD squares ONLY (no cyan/magenta for this expression)
+  - Grid: 4×3, 10 filled, 2 empty
+  - Silhouette test: UNGUARDED WARMTH passes distinctiveness check (not in flagged pairs)
+
+- **Inbox archived.** All C32+C33 messages → `inbox/archived/`.
+
+- **Ideabox C33 submitted.** `ideabox/20260329_maya_santos_silhouette_test_improvements.md`
+
+## CANONICAL EYE-WIDTH (Alex Chen C32 directive — FINAL)
+- `ew = int(head_r * 0.22)` where `head_r` = head RADIUS
+- HEAD_R=105 (1x) → ew=23px. HEAD_R=210 (2x) → ew=46px.
+- NOTE: v008 used HEAD_HEIGHT×0.22 (turnaround v003 interpretation) — ew=45px at 2x. Alex Chen's C32 memo says head_r×0.22 = 23px at 1x / 46px at 2x. Practically same result (45 vs 46) — use head_r×0.22 going forward.
+
 ## Cycle 32 Lessons — LUMA v008 + GLITCH SPEC + EYE-WIDTH FIX
 
 - **Luma expression sheet v008 COMPLETE.**

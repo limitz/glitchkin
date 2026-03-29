@@ -229,14 +229,17 @@
 - **Color verify C32: 2 PASS / 2 FAIL-no-regressions / 3 FAIL-known-false-positives.** SF01 PASS, SF02 PASS, Byte model PASS. SF03 UV_PURPLE and SUNLIT_AMBER FAIL = documented false positives. Character models SUNLIT_AMBER FAIL = systematic skin-tone false positive (known C26+). SF04 failures = pre-existing C31 issues. No C32 regressions.
 - **Histogram mode on color_verify v002 is working correctly.** Canonical bucket clearly marked; spread visible; confirms false-positive diagnosis without needing visual inspection.
 
+## Cycle 33 Lessons
+- **LTG_TOOL_palette_warmth_lint_v001.py built and deployed.** Parses CHAR-M-xx markdown table rows via regex; flags G > R or B > R violations. No Pillow dependency. C33 baseline: 11 entries checked, 0 violations — current palette passes. Registered in tools/README.md.
+- **SF04 Byte teal dim: CLOSED as SCENE-LIGHTING — ACCEPTED.** Alex Chen's Art Director decision documented in master_palette.md QA Scene-Lighting Exceptions section. GL-01b at 60-70% luminance in SF04 is intentional discovery-scene low-key lighting. QA tool flags are expected and documented; they do not represent production errors. This carry-forward item is resolved.
+- **Python 3.8 compatibility:** Use `from __future__ import annotations` + `from typing import ...` for type hints. `list[str]` syntax requires 3.9+. All new scripts must use typing module imports.
+- **Ideabox idea:** Warmth lint scope expansion — make CHAR-M prefix list configurable via JSON config so future warm-guaranteed characters can be added without code changes.
+
 ## Carry Forward
-- ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001 (TERRA_CYAN_LIT still old value). v001 likely superseded by v005 — low priority.
-- SHADOW_COOL #7A9080 in classroom generator: Jordan should add inline comment on next revision pass (low priority).
-- BYTE_GLOW (0,168,180) vs GL-01a (0,168,192): CLOSED as acceptable. Jordan may add inline comment on next pass (low priority, not a production fix).
-- ~~SF03 confetti full-canvas distribution~~ **RESOLVED C27.** v004 constrains to 150px of anchors.
-- SF03 v003 UV_PURPLE_MID/DARK — Jordan to add inline comment citing ENV-11/ENV-12 (values confirmed matching). NOTE: UV_PURPLE_DARK value itself corrected in v005 (was ENV-12 value, now correctly GL-04a).
+- ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001. Low priority.
+- SHADOW_COOL #7A9080 in classroom generator: Jordan to add inline comment. Low priority.
+- SF03 v003 UV_PURPLE_MID/DARK — Jordan to add inline comment citing ENV-11/ENV-12.
 - Tech Den generator WALL_WARM slightly off from TD-01 — Jordan to add citing comment.
-- ~~**Rin Yamamoto SF02 + SF03 styled_v002: STILL FAILING.** UV_PURPLE Δ13-14° hue rotation.~~ **CLOSED (C26).** Post-processing pipeline retired. No styled outputs exist. Issue moot.
-- **SF04 (luma_byte): Byte teal below canonical — PENDING Alex Chen decision.** Teal hue correct (183-185°) but luminance at ~60-70% of canonical (0,212,232). May be intentional scene lighting. Alex investigating.
-- **SF04 generator source missing — HIGH.** All three luma_byte_v*.py are forwarding stubs; originals gone. Kai must git mv or rebuild. SF04 PNG exists but is non-reproducible.
+- **SF04 generator source missing — HIGH.** All luma_byte_v*.py are forwarding stubs; originals gone. Kai must rebuild. SF04 PNG exists but is non-reproducible. (SF04 v004 was rebuilt by Rin in C32 — check if generator now exists.)
 - TD-10/TD-11 monitor glow alignment — Jordan to compare bg_tech_den_v002.py values vs canonical Section 8 entries. Medium priority.
+- **Warmth lint expansion ideabox** — if actioned, add JSON config prefix list to palette_warmth_lint. Low effort.

@@ -35,7 +35,7 @@ Do NOT reference, fix, or regenerate any of these.
 
 ## Active Tools
 `output/tools/LTG_TOOL_render_lib_v001.py` (v1.1.0) — 8 render functions incl. paper_texture
-`output/tools/LTG_TOOL_procedural_draw_v001.py` — **v1.3.0** (C32 update). Procedural drawing library:
+`output/tools/LTG_TOOL_procedural_draw_v001.py` — **v1.4.0** (C33 update). Procedural drawing library:
 - `wobble_line(draw, p1, p2, color, width, amplitude, frequency, seed)`
 - `wobble_polygon(draw, points, color, width, amplitude, frequency, seed, fill)`
 - `variable_stroke(img, p1, p2, max_width, min_width, color, seed)` — modifies in-place
@@ -46,6 +46,9 @@ Do NOT reference, fix, or regenerate any of these.
   left-of-center characters (e.g. Luma at ~0.29W in SF01). Default None = canvas center.
 - `silhouette_test(img, threshold) -> PIL.Image` — returns RGB B&W
 - `value_study(img) -> PIL.Image` — returns contrast-stretched RGB grayscale
+- `get_char_bbox(img, threshold=128) -> (cx, cy, left, top, right, bottom)` — C33 NEW
+  Returns silhouette bounding box centre + extents from bright-pixel scan.
+  Use: `char_cx=get_char_bbox(img)[0]` for add_rim_light(). Falls back to canvas centre if no bright pixels.
 - `add_face_lighting(img, face_center, face_radius, light_dir, shadow_color, highlight_color, seed)` — C27
 - Test images: `output/tools/test_procedural_draw_v001.png`, `output/tools/test_face_lighting_v001.png`
 - Kai interface-compatible: silhouette_test/value_study both PIL.Image in/out
@@ -111,6 +114,15 @@ In generators that use `h = int(hu() * SCALE)` (head HEIGHT at scale):
   - Byte body fill fixed: BYTE_TEAL (0, 212, 232) canonical GL-01b (was (0, 190, 210))
   - Rim light fixed: side="right" — cyan only on monitor-facing side of Luma
 
+## C33 Completed Work
+- `LTG_TOOL_procedural_draw_v001.py` bumped to **v1.4.0**
+  - `get_char_bbox(img, threshold=128) -> (cx, cy, left, top, right, bottom)` added
+  - Scans all pixels above threshold for silhouette bbox; returns centre x/y + extents
+  - Fallback: canvas centre if no bright pixels found (always safe)
+  - Usage: `char_cx=get_char_bbox(img)[0]` — eliminates manual head_cx tracking
+  - SF02 / SF03 audit: neither uses add_rim_light() — no canvas-midpoint bug present
+  - Ideabox: submitted scene-snapshot utility idea
+
 ## C32 Completed Work
 - `LTG_TOOL_procedural_draw_v001.py` bumped to **v1.3.0**
   - add_rim_light() now takes optional `char_cx` parameter
@@ -161,6 +173,13 @@ In generators that use `h = int(hu() * SCALE)` (head HEIGHT at scale):
   - add_rim_light(side="right"): CRT teal (0,220,232) from right — discovery source
   - Blush corrected to warm peach (232,168,124) — matching SF04 v003 correction
   - BYTE_TEAL canonical (0,212,232) used throughout
+
+## C33 Lessons
+- get_char_bbox() pixel-scan is O(w×h) — fast enough for 1280×720 at draw time, no caching needed
+- Bright-pixel threshold should match add_rim_light() threshold for consistent results
+- SF02 and SF03 do not call add_rim_light() — they draw rim-like effects as direct geometry
+  Only generators that use the procedural_draw library are at risk of canvas-midpoint bug
+- Always check which generators actually import procedural_draw before assuming canvas-midpoint risk
 
 ## C32 Lessons
 - add_rim_light() MUST receive char_cx for any left-of-center character — without it, the

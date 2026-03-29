@@ -710,3 +710,86 @@ All critical path assets verified on disk. No blocking issues found. The package
 *Updated by Alex Chen, Art Director — Cycle 26 — 2026-03-29*
 *Updated by Alex Chen, Art Director — Cycle 27 — 2026-03-29*
 *Updated by Kai Nakamura, Technical Art Engineer — Cycle 28 — 2026-03-29*
+
+---
+
+### Cycle 29 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| Luma expression sheet v007 | `/home/wipkat/team/output/characters/main/LTG_CHAR_luma_expressions_v007.png` | **PITCH PRIMARY for Luma expressions.** Proportion fix: head-to-body ratio 3.2 heads (was 3.5), eye width HR×0.22 (was HR×0.28). All 6 expressions retained from v006 with corrected proportions. Generator: `output/tools/LTG_TOOL_luma_expression_sheet_v007.py`. (Cycle 29 — Maya Santos) |
+| Character lineup v006 | `/home/wipkat/team/output/characters/main/LTG_CHAR_luma_lineup_v006.png` | **PITCH PRIMARY for lineup.** Luma updated to v007 canonical proportions: 3.2 heads (was 3.5), eye width r×0.22. All 5 characters present. Supersedes v005. Generator: `output/tools/LTG_TOOL_character_lineup_v006.py`. (Cycle 29 — Maya Santos) |
+| SF01 Discovery v004 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v004.png` | **PITCH PRIMARY for SF01.** Procedural quality pass: wobble_polygon on Luma head/CRT frame/couch, variable_stroke on head perimeter arcs (8-arc), add_face_lighting (warm lamp upper-left), add_rim_light (cool CRT from right). All v003 ghost Byte fixes retained. 1280×720. Generator: `output/tools/LTG_TOOL_styleframe_discovery_v004.py`. (Cycle 29 — Rin Yamamoto) |
+| Naming cleanup script | `/home/wipkat/team/output/tools/LTG_TOOL_naming_cleanup_v001.py` | Removes original LTG_CHAR_/LTG_COLOR_/LTG_BRAND_ `.py` source files from output/tools/ once canonical LTG_TOOL_ copies confirmed. Run with `--dry-run` to preview. (Cycle 29 — Kai Nakamura) |
+
+#### Cycle 29 Pitch Package Status
+
+| Requirement | C29 Status |
+|---|---|
+| All 4 style frames | SF01 **v004 PITCH PRIMARY** (procedural), SF02 v005, SF03 v005, SF04 v003 |
+| Luma expression sheet | **v007 PITCH PRIMARY** (3.2 heads, eye HR×0.22) |
+| Byte expression sheet | v004 (unchanged) |
+| Cosmo expression sheet | v004 (unchanged) |
+| Miri expression sheet | v003 (unchanged) |
+| Glitch expression sheet | v003 (unchanged) |
+| All 5 turnarounds | Luma v003 (unchanged), all others present |
+| Character lineup | **v006 PITCH PRIMARY** (Luma 3.2 heads) |
+| Canonical logo | `LTG_BRAND_logo_v001.png` (unchanged) |
+| All environments | Present — unchanged |
+
+---
+
+### Cycle 30 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| Proportion verifier tool | `/home/wipkat/team/output/tools/LTG_TOOL_proportion_verify_v001.py` | PNG proportion verifier. Detects head via topmost dense pixel cluster, measures head-to-body ratio vs 3.2 spec (±5%). Optional --ew/--hr args check ew/HR ratio vs canonical 0.22. Pure PIL. PASS/FAIL/WARN per metric. (Cycle 31 — Alex Chen) |
+| Draw order linter | `/home/wipkat/team/output/tools/LTG_TOOL_draw_order_lint_v001.py` | Static linter for painter's-algorithm violations. Regex-based, no execution. W001-W004 categories. (Cycle 31 — Kai Nakamura) |
+| Color verify v002 | `/home/wipkat/team/output/tools/LTG_TOOL_color_verify_v002.py` | Full v001 API + histogram mode. `verify_canonical_colors(histogram=True)` adds per-color hue distribution (5° buckets). Eliminates false-positive investigation. (Cycle 31 — Kai Nakamura) |
+| Luma color model v002 | `/home/wipkat/team/output/characters/main/LTG_COLOR_luma_color_model_v002.png` | **PITCH PRIMARY for Luma color model.** Eye width corrected (HR×0.22), cheek nubs added, 3.2-head label. Supersedes v001. (Cycle 30 — Maya Santos) |
+| Render QA v1.2.0 | `/home/wipkat/team/output/tools/LTG_TOOL_render_qa_v001.py` | Added automatic downscale to ≤1280px on input before QC checks. All prior API preserved. (Cycle 30 — Kai Nakamura) |
+| Pitch audit C30 | `/home/wipkat/team/output/production/pitch_audit_cycle30.md` | Full asset audit after Critique 13 deliveries. (Cycle 30 — Alex Chen) |
+
+---
+
+### Cycle 31 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| Cosmo expression sheet v004 | `/home/wipkat/team/output/characters/main/LTG_CHAR_cosmo_expression_sheet_v004.png` | SURPRISED expression gains blush. Cosmo v004 now PITCH PRIMARY for Cosmo expressions. (Cycle 32 fix by Kai Nakamura — was byte-identical to v003) |
+| Character sheet standards v001 | `/home/wipkat/team/output/production/character_sheet_standards_v001.md` | Canonical proportion standards document. Eye-width canonical definition: ew = int(head_r × 0.22) where head_r = head RADIUS. Luma head ratio 3.2, line weights. (Cycle 32 — Alex Chen) |
+| Proportion audit C31 | `/home/wipkat/team/output/production/proportion_audit_c31.md` | Full proportion audit across all character assets. (Cycle 31 — Rin Yamamoto) |
+
+---
+
+### Cycle 32 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| Luma expression sheet v008 | `/home/wipkat/team/output/characters/main/LTG_CHAR_luma_expressions_v008.png` | **PITCH PRIMARY for Luma expressions.** Adds 7th expression: THE NOTICING — signature "notices what no one else sees" pose (one hand at chin, wide stance, asymmetric gaze). Eye width corrected to 45px (head_height×0.22 canonical). 3×3 grid, 1200×900. Generator: `output/tools/LTG_TOOL_luma_expression_sheet_v008.py`. (Cycle 32 — Maya Santos) |
+| Glitch construction spec | `/home/wipkat/team/output/characters/main/glitch.md` | Complete Glitch character construction document: diamond geometry, spike system, arm-spike system, rotation rules, pixel eye system, bilateral eye rule, performance vs interior state groupings, hover confetti rules, 4-view turnaround rules, step-by-step reproduction guide. (Cycle 32 — Maya Santos) |
+| Luma turnaround v004 | `/home/wipkat/team/output/characters/main/turnarounds/LTG_CHAR_luma_turnaround_v004.png` | **PITCH PRIMARY for Luma turnaround.** Eye-width canonical fix: ew=int(head_r×0.22) where head_r=radius (v003 used ew=int(head_h×0.22) = 2× too wide). All 3 views (FRONT, 3/4, SIDE) corrected. 1280×560. Generator: `output/tools/LTG_TOOL_luma_turnaround_v004.py`. (Cycle 32 — Rin Yamamoto) |
+| SF01 Discovery v005 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v005.png` | **PITCH PRIMARY for SF01.** rim-light char_cx fix: Luma at ~x=0.29W now receives correct character-relative rim (char_cx=head_cx). All C29 procedural quality retained. Requires procedural_draw v1.3.0. 1280×720. Generator: `output/tools/LTG_TOOL_styleframe_discovery_v005.py`. (Cycle 32 — Rin Yamamoto) |
+| SF04 Luma+Byte v004 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_luma_byte_v004.png` | **PITCH PRIMARY for SF04.** Full rebuild (sources lost C28). Sven C13 fixes: value ceiling 255 (was 198, FAIL), clear silhouettes, Byte body GL-01b #00D4E8, BYTE_TEAL monitor contribution on Byte's CRT-facing side, Luma blush #E8A87C, warm face lighting, char_cx rim lights. 1280×720. Generator: `output/tools/LTG_TOOL_styleframe_luma_byte_v004.py`. (Cycle 32 — Rin Yamamoto) |
+| Procedural draw library v1.3.0 | `/home/wipkat/team/output/tools/LTG_TOOL_procedural_draw_v001.py` | `add_rim_light()` gains optional `char_cx` parameter. When provided, right/left side mask is character-relative (x > char_cx) instead of canvas-center. Fixes rim-light exclusion bug for left-of-center characters. Backward compatible. (Cycle 32 — Rin Yamamoto) |
+| Master palette corrections C32 | `/home/wipkat/team/output/color/palettes/master_palette.md` | CHAR-L-11 cross-reference corrected (#00D4E8→#00F0FF). CHAR-M-11 slipper color corrected (#5A7A5A cool sage→#C4907A warm apricot, palette guarantee violation fixed). DRW-18 hair warmth documented (7% lightness = functionally imperceptible). (Cycle 32 — Sam Kowalski) |
+| Color verify C32 spot check | `/home/wipkat/team/output/production/color_verify_c32_spot_check.md` | 7-asset color fidelity run. SF01/SF02 PASS. All FAILs documented false positives. Histogram mode confirmed efficient for false-positive diagnosis. (Cycle 32 — Sam Kowalski) |
+| Color statement C13 | `/home/wipkat/team/output/production/color_statement_critique13.md` | Post-Critique 13 color statement and decisions record. (Cycle 32 — Sam Kowalski) |
+
+#### Cycle 32 Pitch Package Status (CURRENT)
+
+| Requirement | C32 Status |
+|---|---|
+| All 4 style frames | SF01 **v005 PITCH PRIMARY** (rim-light fix), SF02 v005 (unchanged), SF03 v005 (unchanged), SF04 **v004 PITCH PRIMARY** (full rebuild, value PASS) |
+| Luma expression sheet | **v008 PITCH PRIMARY** (THE NOTICING expression added, eye-width 45px canonical) |
+| Byte expression sheet | v004 (P2 open: Unguarded Warmth expression, C33 directive sent to Maya) |
+| Cosmo expression sheet | **v004 PITCH PRIMARY** (SURPRISED blush fix, Kai C32) |
+| Miri expression sheet | v003 (unchanged) |
+| Glitch expression sheet | v003 (unchanged; glitch.md spec now complete) |
+| All 5 turnarounds | Luma **v004 PITCH PRIMARY** (eye-width fix), all others present |
+| Character lineup | **v007 PITCH PRIMARY** (C33 — Byte shadow #00A8B4, Miri slipper warm apricot) |
+| Canonical logo | `LTG_BRAND_logo_v001.png` (unchanged) |
+| All environments | Present — unchanged since C22 |
+| Canonical proportions | **Locked spec:** head_r×0.22 eye-width, 3.2-head ratio. Written into luma.md + character_sheet_standards_v001.md |
+
+*Updated by Alex Chen, Art Director — Cycle 33 — 2026-03-29*

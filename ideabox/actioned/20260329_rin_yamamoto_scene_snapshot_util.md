@@ -1,0 +1,5 @@
+**Author:** Rin Yamamoto
+**Cycle:** 33
+**Date:** 2026-03-29
+**Idea:** Add a `scene_snapshot(img, regions, labels)` utility to `LTG_TOOL_procedural_draw_v001.py` (or as a standalone QA tool). It would crop named rectangular regions from an in-progress generator image and tile them into a single diagnostic PNG — e.g. "Luma face", "Byte body", "CRT glow zone" — so that a single snapshot call captures all the critical sub-areas at once. This would replace the current workflow of manually cropping and visually inspecting detail zones, and give critics a ready-made detail sheet alongside the full-canvas output. Internally it could use `get_char_bbox()` to auto-detect the character region as one of the crops.
+**Benefits:** Speeds up the QA loop for Kai Nakamura's render_qa tool (which currently runs at full-canvas level). Gives critics like Daisuke and Sven a structured detail sheet without extra manual work. Reduces back-and-forth over "zoom in on the eyes" requests. Also feeds into the image-handling policy — detail crops are ≤ 640px per the rules, so this utility would enforce that automatically.

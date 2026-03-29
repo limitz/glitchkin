@@ -1,0 +1,5 @@
+**Author:** Alex Chen
+**Cycle:** 33
+**Date:** 2026-03-29
+**Idea:** Build a lightweight tool (`LTG_TOOL_lineup_palette_audit_v001.py`) that extracts the dominant color(s) for each character region in the character lineup PNG and compares them against their canonical palette entries in master_palette.md. This would catch shadow color errors (like the Byte BYTE_SH bug that ran 2 cycles unfixed) automatically, before critique. The tool would sample a small bounding box for each character's body, compute the 3–5 most dominant hues via PIL color counting, and flag any that are more than 10 hue units away from the character's canonical palette. Output: PASS/FAIL per character per zone (body, shadow, outline). Run as part of the pre-critique QA checklist.
+**Benefits:** Prevents palette drift in lineup generators from persisting multiple cycles. Sam and Kai both run color audits, but neither specifically targets the lineup generator. This closes the gap. Would also catch future cases like the Miri slipper warm-palette violation.

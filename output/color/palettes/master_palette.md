@@ -1405,6 +1405,7 @@ Lighting key: Overhead fluorescent — cool, flat, even, slightly greenish. No d
 *Cycle 30 revision (Sam Kowalski — 2026-03-29): CHAR-L-11 Constraint 1 hex error corrected — prior text cited `#00D4E8` (GL-01b Byte Teal) for neutral/cold-scene hoodie pixel accents; correct value is GL-01 Electric Cyan `#00F0FF`. Byte Teal is Byte's body fill only and must never appear as a hoodie pixel color.*
 *Cycle 32 revision (Sam Kowalski — 2026-03-30): CHAR-L-11 cross-reference corrected — cross-ref line cited `#00D4E8` (GL-01b Byte Teal) for cold-scene hoodie pixels; correct is GL-01 `#00F0FF` Electric Cyan (Priya Nair C13 P1). CHAR-M-11 Miri House Slippers corrected — `#5A7A5A` Deep Sage (cool-neutral green, G>R) replaced with `#C4907A` Dusty Warm Apricot (R>G>B, warm family) per Priya Nair C13 P2; Deep Sage contradicted Miri warm-palette guarantee in color story. DRW-18 warmth clarification — added HSL lightness note (7%); warmth of R:26>G:15>B:10 is theoretically present but functionally imperceptible at this luminance; DRW-18 does NOT contribute visual warmth to SF03; warm values in SF03 are hoodie orange and skin only. Color story doc updated with same clarification.*
 *Review cycle: Update after each critic feedback pass.*
+*Cycle 33 revision (Sam Kowalski — 2026-03-30): QA Scene-Lighting Exceptions section added — SF04 Byte teal dim documented as SCENE-LIGHTING — ACCEPTED per Alex Chen Art Director decision (C32 directive). GL-01b in SF04 at ~60-70% canonical luminance is intentional discovery-scene low-key lighting, not a generation error. LTG_TOOL_palette_warmth_lint_v001.py created and registered in tools README — catches G>R or B>R violations in all CHAR-M entries (actioned ideabox: warmth linter). C33 baseline: 11 CHAR-M entries, 0 violations.*
 
 ---
 
@@ -1486,5 +1487,19 @@ Section 8 is complete as of Cycle 18:
 - School Hallway: SH-01 through SH-12 (12 entries) — COMPLETE
 
 Outstanding from Section 8: School Hallway has no rendered generator yet. This is an Act 2 asset — acceptable at this stage of production. Hallway generator is a future-cycle deliverable.
+
+---
+
+### QA SCENE-LIGHTING EXCEPTIONS
+
+These are cases where a QA tool (e.g. `LTG_TOOL_render_qa_v001.py` or `LTG_TOOL_color_verify_v002.py`) will flag a value that does NOT represent a production error. Each entry is tagged `SCENE-LIGHTING — ACCEPTED` and must not trigger a production fix request.
+
+| Asset | QA Flag | Canonical Value | Scene Value | Reason | Status | Decision |
+|---|---|---|---|---|---|---|
+| `LTG_COLOR_styleframe_luma_byte_v004.png` (SF04) | GL-01b BYTE_TEAL below canonical | `#00D4E8` (0,212,232) | Dominant teal at ~(0,138–160), hue 183-185° | SF04 is Luma's first entry into the Glitch Layer — dramatic low-key discovery lighting. Byte exists within his environment at reduced luminance (60-70% of canonical). This is **intentional scene lighting**, not a generation error. Byte's hue is correct; only luminance is reduced. | SCENE-LIGHTING — ACCEPTED | Alex Chen, Art Director — Cycle 33 (2026-03-30) |
+
+**Rule:** A `SCENE-LIGHTING — ACCEPTED` exception does not prevent the underlying canonical value from being updated in the generator if/when the scene lighting intent changes. It prevents QA tools from treating the existing rendered state as a production failure requiring immediate correction.
+
+*Added: Sam Kowalski — Cycle 33 (2026-03-30). Per Alex Chen Art Director decision (C32 directive, carried forward from C26). Closing outstanding carry-forward item.*
 
 ---

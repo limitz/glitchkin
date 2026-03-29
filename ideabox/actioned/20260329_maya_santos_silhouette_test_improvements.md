@@ -1,0 +1,5 @@
+**Author:** Maya Santos
+**Cycle:** 33
+**Date:** 2026-03-29
+**Idea:** The expression silhouette test (now built!) reveals that ALL human characters fail at the 85% threshold. This is partly a genuine design problem and partly a measurement limitation: at 382×282px panel resolution, arm differences smaller than ~20px are lost. I propose the tool add a second analysis mode: instead of full-panel similarity, extract only the UPPER and LOWER arm regions (top 40% and bottom 40% of the character bounding box separately) and compute similarity there. Arms-only comparison would be much more sensitive to pose changes without being swamped by the similar torso mass. Add as `--mode arms` flag. Would help identify which specific body regions are too similar, not just whether the overall silhouette passes or fails.
+**Benefits:** More actionable critique output — instead of "FAIL", the report would say "torso OK, arms too similar" so Maya can target specific pose elements in the next revision. Saves review time for Alex Chen and critics.

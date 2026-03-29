@@ -4,8 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present.
 
 ## Status
-**Cycle 32 complete. Work cycles: 32. Critique cycles: 13.**
-**Cycle 33 starts next. Critique 14 after Cycle 34.**
+**Cycle 33 complete. Work cycles: 33. Critique cycles: 13.**
+**Cycle 34 starts next. Critique 14 after Cycle 34.**
 
 ## Active Team (all 5 slots used)
 
@@ -28,43 +28,37 @@ Before sending any image to Claude: prefer tools; downscale if lower-res suffice
 ## Critique Format
 Critics use: Score (0–100) → bullet issues (≤2 lines each) → single Bottom line sentence. ≤15 lines per asset. Rule in CLAUDE.md.
 
-## Pitch Package Status — POST CYCLE 30
+## Pitch Package Status — POST CYCLE 33
 
 ### Style Frames
-- **SF01 Discovery**: v005 NEW C32 (char_cx rim light fix; Luma right silhouette correctly lit)
+- **SF01 Discovery**: v005 (char_cx rim light fix C32)
 - **SF02 Glitch Storm**: v005
-- **SF03 Other Side**: v005 (Luma = intentional pixel-art silhouette — may draw C13 scrutiny)
-- **SF04 Luma+Byte**: v004 NEW C32 (full rebuild: value ceiling 255, monitor contribution, canonical specs)
+- **SF03 Other Side**: v005 (Luma = intentional pixel-art silhouette)
+- **SF04 Luma+Byte**: v004 (Byte teal exception formally documented in master_palette.md C33)
 
 ### Logo
 - **LTG_BRAND_logo_v001.png** — DECIDED C25
 
 ### Characters
-- Luma: **expr v008 NEW C32** (THE NOTICING anchor expression; 3.2 heads, eye head_r×0.22), **turnaround v004 NEW C32** (ew=head_r×0.22 canonical), color model v002
-- Byte: expr v004, turnaround v001, color model v001
-- Cosmo: expr v004 (generator is dupe of v003 — PNG correct), turnaround v002, color model v001
-- Miri: expr v003 (KNOWING), turnaround v001 (stub generator broken — PNG correct)
-- Glitch: expr v003 (YEARNING/COVETOUS/HOLLOW; bilateral eyes = genuine feeling), turnaround v002, color model v001
-- Character lineup: v006 (3.2 heads)
+- Luma: expr v008 (THE NOTICING), turnaround v004 (ew=head_r×0.22), color model v002
+- Byte: **expr v005 NEW C33** (UNGUARDED WARMTH: star+heart eyes, gold confetti), turnaround v001, color model v001
+- Cosmo: expr v004, turnaround v002, color model v001
+- Miri: **expr v003 REBUILT C33** (proper KNOWING STILLNESS; was broken stub), turnaround v001
+- Glitch: expr v003 (YEARNING/COVETOUS/HOLLOW), turnaround v002, color model v001
+- **Character lineup: v007 NEW C33** (Byte shadow GL-01a fix + Miri slipper warm fix)
 
 ### Environments
 All complete (Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street)
 
 ### Documentation
-- Pitch brief: `ltg_pitch_brief_v001.md` — COMPLETE
-- Delivery manifest: `pitch_delivery_manifest_v001.md`
-- Pitch audit C30: `pitch_audit_cycle30.md`
-- Color audit C30: `LTG_COLOR_audit_c30_preCritique13.md` — all 4 SFs PASS
-- Color continuity: `color_continuity_c30.md`
+- Pitch package index updated through C32 (Alex C33)
+- SF04 Byte teal scene-lighting exception: `output/color/palettes/master_palette.md` (Sam C33)
 
-## Known Risks for Critique 13
-1. SF04 source generators = stubs (cannot regenerate)
-2. Miri v003 stub generator broken (PNG correct)
-3. Cosmo v004 generator = dupe of v003 (PNG correct)
-4. SF03 Luma = pixel-art silhouette (intentional — may draw style-consistency critique)
-5. Byte teal in SF04 at 60–70% luminance (intentional dual-lighting — Alex's call)
-6. Miri v003 line weight slightly heavy (silhouette=6 at 2× vs canonical ~4)
-7. Byte v004 droopy/storm eye arcs at width=5–8 at 1× (may draw scrutiny)
+## Known Risks for Critique 14
+1. SF02/SF03 do not use add_rim_light() — lighting drawn as direct geometry (Rin C33 confirmed: no canvas-midpoint bug)
+2. Luma expr v008 eye-width = 45px (head_height×0.22) vs canonical head_radius×0.22 (~23px) — unresolved; defer to C14 critique
+3. All human expression sheets fail silhouette test at 85% threshold (Maya C33 baseline) — design problem, not tool problem
+4. SF04 source generators remain stubs (cannot regenerate)
 
 ## Ideabox — C30 (5 ideas, all filed)
 - Alex: proportion verifier tool (actioned → Kai C31)
@@ -186,9 +180,9 @@ All complete (Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street)
 ## Agent Prompt Design (C32 lesson)
 Do NOT duplicate inbox message content in agent prompts. The inbox message IS the assignment. Agent prompts should only contain: role context, startup sequence (read CLAUDE.md, PROFILE.md, MEMORY.md, tools/README.md, then inbox). Task detail belongs in the inbox only — duplication causes drift.
 
-## Technical Debt (C31)
-- **W004 in 55 generators**: missing draw refresh after paste/composite — latent bug risk, Kai to fix C32
+## Technical Debt
 - **SF04 source generators missing**: proportion audit impossible; stubs only on disk
+- **W004 warnings**: largely false positives per Kai C32 investigation; scope-aware linter queued C34
 
 ## Canonical Palette Reminders
 - Byte body = GL-01b #00D4E8 BYTE_TEAL (NOT #00F0FF)
@@ -214,3 +208,44 @@ Do NOT duplicate inbox message content in agent prompts. The inbox message IS th
 - output/production/ files EXEMPT from LTG naming
 - After img.paste(): always refresh draw = ImageDraw.Draw(img)
 - show_guides=False for all pitch exports
+- Python 3.8 compat: use `from __future__ import annotations` + `typing` module imports (no `list[str]` subscript)
+
+## Cycle 33 — Completed (Ideabox Implementation Round 2)
+
+### Alex Chen
+- Character lineup v007: Byte shadow GL-01a fix (#00A8B4), Miri slipper warm fix (#C4907A)
+- Byte expr v005 directive sent to Maya (UNGUARDED WARMTH)
+- Pitch package index updated through C32
+- Ideabox: lineup palette audit tool proposal
+
+### Maya Santos
+- LTG_TOOL_expression_silhouette_v001.py: silhouette differentiation test; combined IoM+XOR metric; auto-detects grid; dark-BG support
+- Miri expr v003 rebuilt properly (was broken stub); KNOWING STILLNESS 6th expression
+- Byte expr v005: UNGUARDED WARMTH (star+heart eyes, gold confetti, body leaning in)
+- C33 baseline: all human chars FAIL at 85% threshold — design problem, not tool problem
+
+### Sam Kowalski
+- LTG_TOOL_palette_warmth_lint_v001.py: warm-channel compliance check for CHAR-M; 0 violations C33 baseline
+- SF04 Byte teal exception formally documented in master_palette.md
+
+### Kai Nakamura
+- LTG_TOOL_stub_linter_v001.py: scans for broken LTG_CHAR_*/LTG_COLOR_* imports; --pre-commit CI flag
+- LTG_TOOL_glitch_spec_lint_v001.py: G001–G008 checks against glitch.md; SKIP non-Glitch files
+
+### Rin Yamamoto
+- procedural_draw v1.4.0: get_char_bbox(img, threshold) utility added
+- SF02/SF03 audit: neither calls add_rim_light() — both draw lighting as direct geometry; no latent bugs
+
+## Ideabox — C33 (5 ideas, all actioned → C34)
+- Rin: scene_snapshot() diagnostic crop utility
+- Kai: general char spec linter framework (all characters, not just Glitch)
+- Sam: warmth lint scope expansion (configurable prefix list via JSON)
+- Alex: lineup palette audit tool
+- Maya: expression silhouette --mode arms (regional similarity)
+
+## Shared Library (updated C33)
+`LTG_TOOL_procedural_draw_v001.py` (v1.4.0 — get_char_bbox() added)
+`LTG_TOOL_expression_silhouette_v001.py` — C33. Silhouette diff test for expression sheets
+`LTG_TOOL_stub_linter_v001.py` — C33. Broken import scanner; --pre-commit flag
+`LTG_TOOL_glitch_spec_lint_v001.py` — C33. Glitchkin generator validator (G001–G008)
+`LTG_TOOL_palette_warmth_lint_v001.py` — C33. Warm-channel compliance (CHAR-M)
