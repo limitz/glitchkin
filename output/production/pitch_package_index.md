@@ -44,7 +44,8 @@
 | Character lineup | `/home/wipkat/team/output/characters/main/character_lineup.png` | All 4 characters in color at correct relative heights, labelled | Accepted (Fiona C10 PASS — 5-cycle overdue, now delivered) | LTG rename outstanding |
 | Character lineup v003 | `/home/wipkat/team/output/characters/main/LTG_CHAR_lineup_v003.png` | Character lineup with corrected Byte float-gap dimension arrow (Dmitri P1 — RESOLVED Cycle 14). Two-headed vertical arrow with serif ticks, "0.25 HU" label. | Superseded by v004 | Use v004+ |
 | Character lineup v004 | `/home/wipkat/team/output/characters/main/LTG_CHAR_lineup_v004.png` | All 5 characters (Luma, Byte, Cosmo, Miri, Glitch). Glitch at far right, diamond body, CORRUPT_AMBER palette. Float gap ratio same as Byte. Height ref lines updated. (Cycle 24 — Maya Santos) | Superseded by v005 | Use v005 |
-| Character lineup v005 | `/home/wipkat/team/output/characters/main/LTG_CHAR_lineup_v005.png` | Luma rebuilt to v006-era construction: 8-ellipse hair curl cloud, circle+chin+cheek nub head, near-circular eyes, 3-tier line weight at lineup scale. All 5 characters present. (Cycle 27 — Maya Santos) | **PITCH PRIMARY for lineup** | None |
+| Character lineup v005 | `/home/wipkat/team/output/characters/main/LTG_CHAR_lineup_v005.png` | Luma rebuilt to v006-era construction: 8-ellipse hair curl cloud, circle+chin+cheek nub head, near-circular eyes, 3-tier line weight at lineup scale. All 5 characters present. (Cycle 27 — Maya Santos) | Superseded by v006 | Use v006 |
+| Character lineup v006 | `/home/wipkat/team/output/characters/main/LTG_CHAR_luma_lineup_v006.png` | Luma updated to v007 canonical proportions: 3.2 heads (was 3.5), eye width r×0.22. All 5 characters present. (Cycle 29 — Maya Santos) | **PITCH PRIMARY for lineup** | None |
 | Character lineup doc | `/home/wipkat/team/output/characters/main/character_lineup.md` | Written spec for the lineup: height references, scale rationale | Supporting reference | None |
 | Silhouettes | `/home/wipkat/team/output/characters/main/silhouettes/character_silhouettes.png` | All 4 characters as readable silhouettes — distinctiveness test | Accepted | None |
 | Proportion diagram | `/home/wipkat/team/output/characters/main/proportion_diagram.png` | Head-unit proportions for all characters | Accepted | None |
@@ -109,7 +110,8 @@
 |---|---|---|---|---|
 | Style Frame 01 — rendered PNG | `/home/wipkat/team/output/color/style_frames/style_frame_01_rendered.png` | Composited style frame: Luma at desk, Byte emerging from monitor — discovery moment. Cycle 11: mid-air transition element + 15px screen pixel figures added. | Accepted (Victoria C11 A) | Visual surprise element (A+ gap) — Cycle 12 work |
 | Style Frame 01 — LTG export | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v001.png` | LTG-named canonical copy of Style Frame 01 | Accepted (Cycle 11 — LTG-compliant) | None |
-| Style Frame 01 — v003 **UNLOCKED** | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v003.png` | Ghost Byte alpha calibration fix (Cycle 13). A+ lock REMOVED Cycle 24. Open for v004. | Was A+ (Victoria C13) — lock removed | **NEEDS WORK:** Luma visual inconsistency with expression sheets; warm bleed pass violates SF01 face split boundary. v004 in development. |
+| Style Frame 01 — v003 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v003.png` | Ghost Byte alpha calibration fix (Cycle 13). A+ lock removed Cycle 24. Open for improvement. | Superseded by v004 | Use v004 |
+| Style Frame 01 — v004 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v004.png` | **PITCH PRIMARY for SF01.** Procedural quality pass (Cycle 29 — Rin Yamamoto): wobble outlines on Luma head/CRT frame/couch, variable stroke on head perimeter arcs (8-arc technique), face lighting (warm lamp from upper-left), rim light (cool CRT from right). All v003 fixes retained. 1280×720 canvas. | **PITCH PRIMARY for SF01** | None |
 | Style Frame 01 — composition | `/home/wipkat/team/output/color/style_frames/compositions/frame01_discovery_composition.png` | Composition layout card for Frame 01 | Reference | None |
 | Style Frame 01 — spec doc | `/home/wipkat/team/output/color/style_frames/style_frame_01_discovery.md` | Written spec: composition, lighting, color zones | Reference | None |
 | Style Frame 02 — BG render | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v001.png` | Compositing-ready BG: night sky, UV storm masses, main crack, town silhouette, street, characters (Luma+Cosmo+Byte), storefront, 4° Dutch angle | Delivered Cycle 12 (Jordan Reed) | None |
@@ -555,6 +557,28 @@ All critical path assets verified on disk. No blocking issues found. The package
 *Updated by Alex Chen, Art Director — Cycles 20–21–22 — 2026-03-29*
 *Updated by Alex Chen, Art Director — Cycle 23 — 2026-03-29*
 *Updated by Alex Chen, Art Director — Cycle 24 — 2026-03-29*
+---
+
+### Cycle 29 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| Luma expression sheet v007 (PROPORTION FIX) | `/home/wipkat/team/output/characters/main/LTG_CHAR_luma_expressions_v007.png` | **PITCH PRIMARY for Luma expression sheet.** Head-to-body ratio corrected to 3.2 heads (was ~3.0 in v006). Eye width corrected to h×0.22 (canonical from turnaround v003). Full-body silhouette differentiation 6 poses. Warm parchment BG. Classroom-style head/hair/eyes, 3-tier line weight. (Cycle 29 — Maya Santos) |
+| Character lineup v006 | `/home/wipkat/team/output/characters/main/LTG_CHAR_luma_lineup_v006.png` | **PITCH PRIMARY for character lineup.** Luma updated to v007 canonical proportions (3.2 heads, eye h×0.22). All 5 characters (Luma, Byte, Cosmo, Miri, Glitch) present at correct relative scales. Supersedes v005 as the lineup with accurate Luma proportions. (Cycle 29 — Maya Santos) |
+| Style Frame 01 v004 (procedural quality) | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v004.png` | **PITCH PRIMARY for SF01.** Procedural quality pass: wobble outlines on Luma head/CRT/couch, variable stroke on head perimeter arcs, face lighting (warm lamp from upper-left), rim light (cool CRT from right). 1280×720 canvas. All v003 fixes retained. (Cycle 29 — Rin Yamamoto) |
+| Naming cleanup tool | `/home/wipkat/team/output/tools/LTG_TOOL_naming_cleanup_v001.py` | Tool to remove 22 legacy LTG_CHAR_/LTG_COLOR_/LTG_BRAND_ .py files that have LTG_TOOL_ canonical equivalents. Run with --dry-run first. (Cycle 29 — Kai Nakamura) |
+
+#### Cycle 29 Pitch Package Status
+
+| Requirement | C29 Status |
+|---|---|
+| Luma expression sheet | **UPDATED** — v007 (3.2 heads, correct eye width) |
+| Character lineup | **UPDATED** — v006 (v007 Luma proportions) |
+| SF01 Discovery | **UPDATED** — v004 (procedural quality, wobble outlines, face lighting) |
+| All other assets | Unchanged from C28 |
+
+*Updated by Kai Nakamura, Technical Art Engineer — Cycle 29 — 2026-03-29*
+
 *Updated by Alex Chen, Art Director — Cycle 25 — 2026-03-29*
 
 ### Cycle 25 Additional Team Deliverables

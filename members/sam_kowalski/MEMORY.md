@@ -208,6 +208,13 @@
 - **Image Handling Policy applies to all agents.** Before sending any image to Claude: (1) could a tool extract the needed insight? If so, make the tool. (2) Would lower resolution suffice? If so, downscale. Never send high-res images unless absolutely necessary. Vision limitations: hallucination on low-quality/rotated/tiny (<200px) images; limited spatial reasoning; approximate counting only.
 - **Bilateral eye rule for interior desire states is locked in color story.** YEARNING=UV_PURPLE, COVETOUS=ACID_GREEN, HOLLOW=near-void. Bilateral symmetry = genuine emotion (breaks asymmetric standard pattern). Never use asymmetric eyes in these states.
 
+## Cycle 30 Lessons
+- **LTG_TOOL_color_verify false positives are systematic.** Three failure categories documented: (1) gradient/AA edge pixels pull UV_PURPLE median off target in SF03 despite canonical value present; (2) warm-orange family overlap — GL-07/RW-03/hoodie UV-mod are Euclidean neighbors at radius=40, causing SUNLIT_AMBER "hits" on orange hoodie + amber crack pixels; (3) Soft Gold (hue ~46°) triggers SUNLIT_AMBER (hue 34.3°) sample in SF04. Always investigate pixel identity before calling a tool failure a production error.
+- **CHAR-L-11 hex error found and fixed.** Constraint 1 cited `#00D4E8` (GL-01b Byte Teal) as the hoodie pixel color in cold scenes — correct value is GL-01 `#00F0FF` Electric Cyan. Byte Teal is Byte's body fill only. Copy-error present since CHAR-L-11 was registered C14 — fixed C30 in master_palette.md.
+- **SF01 color story doc reference was stale.** Cited `v003.png` as source; correct pitch primary is `v004.png` (C29 Rin Yamamoto procedural lift). Fix: always check color story source references when a new version lands.
+- **SF04 generator source files are gone.** LTG_TOOL_styleframe_luma_byte_v001/v002/v003.py are forwarding stubs; the actual LTG_COLOR_* originals are missing. SF04 v003 PNG exists but cannot be regenerated. HIGH risk item for Kai to resolve.
+- **Tool hue-histogram improvement submitted to ideabox.** Requested Kai add histogram output to color_verify v002 — this would eliminate all three false-positive investigation cycles. Ideabox: `20260329_sam_kowalski_color_verify_gradient_mode.md`.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001 (TERRA_CYAN_LIT still old value). v001 likely superseded by v005 — low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan should add inline comment on next revision pass (low priority).
@@ -217,4 +224,5 @@
 - Tech Den generator WALL_WARM slightly off from TD-01 — Jordan to add citing comment.
 - ~~**Rin Yamamoto SF02 + SF03 styled_v002: STILL FAILING.** UV_PURPLE Δ13-14° hue rotation.~~ **CLOSED (C26).** Post-processing pipeline retired. No styled outputs exist. Issue moot.
 - **SF04 (luma_byte): Byte teal below canonical — PENDING Alex Chen decision.** Teal hue correct (183-185°) but luminance at ~60-70% of canonical (0,212,232). May be intentional scene lighting. Alex investigating.
-- **SF04 blush + Byte fill — PENDING Rin Yamamoto.** Spec sent C28. Blush: #E8A87C; Byte: (0,212,232).
+- **SF04 generator source missing — HIGH.** All three luma_byte_v*.py are forwarding stubs; originals gone. Kai must git mv or rebuild. SF04 PNG exists but is non-reproducible.
+- TD-10/TD-11 monitor glow alignment — Jordan to compare bg_tech_den_v002.py values vs canonical Section 8 entries. Medium priority.

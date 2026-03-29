@@ -15,6 +15,10 @@ Created: Cycle 26 — 2026-03-29
 Version: 1.1.0
 
 Changelog:
+  1.2.0 (Cycle 30): Automatic downscale to ≤1280px before QA checks.
+                    Images larger than 1280px in either dimension are
+                    downscaled (thumbnail, LANCZOS, aspect-ratio-preserved)
+                    before all checks run. Compliant with Image Size Rule.
   1.1.0 (Cycle 27): Add asset_type param to qa_report() and qa_batch().
                     Warm/cool check is skipped for character_sheet, color_model,
                     and turnaround asset types. Auto-inference from filename.
@@ -46,7 +50,7 @@ from LTG_TOOL_color_verify_v001 import verify_canonical_colors, get_canonical_pa
 # ---------------------------------------------------------------------------
 # Version
 # ---------------------------------------------------------------------------
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -491,6 +495,14 @@ def qa_report(img_path: str, asset_type: str = "auto") -> dict:
 
     img = Image.open(img_path)
     img.load()
+
+    # ── Image size rule enforcement (C30 — v1.2.0) ──────────────────────────
+    # Downscale to ≤1280px in both dimensions before QA processing.
+    # This ensures QA runs on a compliant image and prevents large images from
+    # inflating processing time. Preserves aspect ratio (thumbnail).
+    if img.width > _MAX_OUTPUT_PX or img.height > _MAX_OUTPUT_PX:
+        img = img.copy()
+        img.thumbnail((_MAX_OUTPUT_PX, _MAX_OUTPUT_PX), Image.LANCZOS)
 
     # A — Silhouette
     sil_thumb = silhouette_test(img)

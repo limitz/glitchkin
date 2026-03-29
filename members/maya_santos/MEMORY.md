@@ -1,5 +1,20 @@
 # Maya Santos — Memory
 
+## Cycle 30 Lessons — CRITIQUE 13 PREP + COLOR MODEL v002
+
+- **Luma color model v002 COMPLETE.** Eye proportions corrected to `ew = head_r * 0.22` (was 0.30 in v001). Cheek nubs added to head silhouette (classroom-style). Label updated to "3.2 heads". Generator: `output/tools/LTG_TOOL_luma_color_model_v002.py`. Output: `output/characters/color_models/LTG_COLOR_luma_color_model_v002.png` (800×500).
+- **Character sheet standards v001 UPDATED.** Section 7 version table updated to reflect v007/v004/v003 current sheets. Known inconsistencies logged: Miri silhouette weight, Byte eye arc weight, Cosmo v004 tool identity issue.
+- **Critique 13 pre-check doc CREATED.** `output/production/critique13_precheck_maya_santos.md` — full audit of line weight consistency, proportion chain, and known defects.
+- **Key C30 findings:**
+  - Luma proportion chain (expr v007 + lineup v006 + turnaround v003) = fully consistent. ✓
+  - Luma color model was outdated (v001 eye ratio ~0.30 vs canonical 0.22). Fixed → v002.
+  - Miri expression sheets use silhouette=6px at 2× (~3px actual) vs canonical 4px→2px. Grandfathered but will be flagged at C13.
+  - Byte droopy/storm eye arcs at width=5–8 (1× native) = above standard. Justified by character design but non-standard.
+  - Cosmo v004 tool = byte-identical to v003. No actual changes — known defect, documented.
+  - Miri v003 stub generator is broken (missing source module). PNG is correct; generator needs C31 rebuild.
+- **Ideabox submitted.** `ideabox/20260329_maya_santos_character_diff_tool.md` — automated proportion diff tool idea.
+- **Inbox archived.** `20260329_2030_ideabox.md` → `inbox/archived/`.
+
 ## Cycle 29 Lessons — LUMA EXPRESSION v007 + LINEUP v006 (Proportion Fix)
 
 - **Expression Sheet v007 COMPLETE.** Resolves C28 P1 blocker.

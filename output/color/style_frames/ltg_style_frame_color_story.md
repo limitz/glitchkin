@@ -18,7 +18,7 @@ These three sentences are the complete pitch for the show's visual grammar. Ever
 
 ## SF01 — Discovery
 
-**Source file:** `LTG_COLOR_styleframe_discovery_v003.png`
+**Source file:** `LTG_COLOR_styleframe_discovery_v004.png` *(v004 is pitch primary as of C29 — Rin Yamamoto procedural quality lift + blush correction)*
 **Palette:** Warm Real World + first appearance of Electric Cyan
 
 ### What It Communicates
@@ -210,3 +210,5 @@ This creates a deliberate color ambiguity: to a first-time viewer, Miri's palett
 *Cycle 25 update (Sam Kowalski, 2026-03-29): Grandma Miri character section added — documents her bridge-character narrative role and explains why her warm palette (cream, soft amber, aged wood) is an intentional design choice that encodes her prior knowledge of the Glitch Layer.*
 
 *Cycle 29 update (Sam Kowalski, 2026-03-29): SF03 updated — v005 is pitch primary; UV_PURPLE_DARK corrected to true deep digital purple (#3A1060). SF04 section added — v003 is pitch primary; documents the three C28 fixes (blush, Byte canonical teal, directional rim light) and their narrative meaning. SF02 palette line updated — DATA_BLUE renamed to GL-06c STORM_CONFETTI_BLUE (#0A4F8C); GL-06c note added explaining this as deliberate atmospheric depth value registered in C28. Glitch character section updated — interior desire expressions (YEARNING, COVETOUS, HOLLOW) documented with bilateral eye-color rule.*
+
+*Cycle 30 update (Sam Kowalski, 2026-03-29): SF01 source file reference corrected from v003 to v004 (Rin Yamamoto C29 procedural quality lift + blush correction is pitch primary). Color audit C30 complete — all four pitch frames verified via LTG_TOOL_color_verify_v001.py; SF01/SF02 cleared; SF03/SF04 tool failures are documented false positives (gradient edge pixels and warm-orange family radius overlap). See LTG_COLOR_audit_c30_preCritique13.md for full analysis.*

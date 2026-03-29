@@ -2,7 +2,7 @@
 """
 LTG_TOOL_styleframe_discovery_v004.py
 Style Frame 01 — The Discovery (Procedural Quality Pass)
-"Luma & the Glitchkin" — Cycle 29
+"Luma & the Glitchkin" — Cycle 29 / C30 proportion fix
 
 Art Director: Alex Chen
 Procedural Art Engineer: Rin Yamamoto
@@ -18,6 +18,11 @@ C29 changes (Rin Yamamoto):
   - add_rim_light(side="right") — cool CRT teal glow from right (the discovery source)
   Naming conventions: LTG_TOOL_gen_* (procedural generator, integrated style)
   Canvas: 1280x720 (≤ 1280px rule, scaled from 1920x1080 coords via SX/SY factors)
+
+C30 fix (Rin Yamamoto):
+  - eye width ew corrected: p(18) → int(head_r * 0.22) per canonical spec
+    (turnaround v003 and expr v007: ew = int(HR * 0.22))
+  - Height proportions verified correct: ~3.2 heads tall (6.4×HR at 2× render)
 
 Prior history (SF01 v003, Cycle 13):
   - Ghost Byte alpha calibrated 55→90 (Victoria Ashford B+→A+)
@@ -607,7 +612,7 @@ def draw_luma_head(img, draw, cx, cy, scale=1.0):
     ley = cy - p(10)
     rex = cx + p(28)
     rey = cy - p(8)
-    ew  = p(18)
+    ew  = int(head_r * 0.22)  # C30 fix: canonical spec ew = HR*0.22 (was p(18) = HR*0.25)
     leh = p(30)
     draw.ellipse([lex - ew, ley - leh, lex + ew, ley + leh], fill=EYE_W_C, outline=LINE, width=sp(2))
     iris_r = p(15)

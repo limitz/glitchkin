@@ -128,14 +128,21 @@ Brows are structure weight (width=3 at 2×), NOT head outline weight. The Cycle 
 
 | Character | Expression Count | Grid | Sheet Version |
 |---|---|---|---|
-| Luma | 6 | 3×2 | v003 (current) |
-| Cosmo | 6 | 3×2 | v003 (current) |
-| Byte | 9 | 3×3 | v003 (current) |
-| Grandma Miri | 5 | 3×2 (last panel intentionally empty or used for credit) | v002 (current) |
+| Luma | 6 | 3×2 | v007 (current — C29 proportion fix: 3.2 heads, eye ew=HR×0.22) |
+| Cosmo | 6 | 3×2 | v004 (current — C22 SKEPTICAL arm-neutral fix) |
+| Byte | 9 | 3×3 | v004 (current — C22 grid upgrade from 4×2; Section 9B glyph locked) |
+| Grandma Miri | 6 | 3×2 | v003 (current — C25 KNOWING STILLNESS added as 6th panel) |
+| Glitch | 9 | 3×3 | v003 (current — C28 interior desire states: YEARNING, COVETOUS, HOLLOW) |
 
 Byte's 9-expression grid is intentional: the STORM/CRACKED variant added in Cycle 21 required a grid upgrade from 4×2 to 3×3. Do not revert Byte to 4×2.
+
+**Known inconsistencies (C30 pre-Critique 13 audit):**
+- Miri expression sheet (v002/v003) uses silhouette width=6 at 2× render (~3px actual). Canonical standard is head=4 at 2× (~2px actual). Miri predates standards doc — grandfathered per Section intro, but flagged for review.
+- Byte expression sheet (v004) uses width=5/6/8 for organic right-eye eyelid arcs at native 1× render. Byte does not use 2× render scaling. Canonical 1× standard: silhouette=3px, detail=2px. Heavy arcs are character-specific emotional design choices; functionally justified but non-standard. Flagged for discussion.
+- Cosmo expression sheet tool v004 (`LTG_TOOL_cosmo_expression_sheet_v004.py`) is byte-identical to v003 and outputs `_v003.png` filename. Version chain is inconsistent. Next Cosmo rebuild should unify.
+- Luma color model (v001, C25) was created before v007 proportion fix. Eye schematic uses eye_r_x=14 at head_r=46 (~0.30 ratio) vs v007 canonical ew=HR×0.22. Color model silhouette is schematic only — palette values are current.
 
 ---
 
 *LTG_PROD_character_sheet_standards_v001.md — Alex Chen, Art Director*
-*Cycle 22 — 2026-03-29*
+*Cycle 22 — 2026-03-29 | Updated C30 by Maya Santos — version table and inconsistency log*

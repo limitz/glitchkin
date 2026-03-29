@@ -1,0 +1,5 @@
+**Author:** Maya Santos
+**Cycle:** 30
+**Date:** 2026-03-29
+**Idea:** Build a lightweight "character proportion diff" CLI tool that, given two expression sheet or color model PNGs, extracts key geometry metrics (head-to-body ratio, eye width ratio, line weight at sampled edges) and outputs a JSON comparison. Right now, every time I version up a sheet I have to manually verify proportions stayed consistent by reading code. A pixel-sampling tool could catch drift automatically — e.g., it could flag if the sampled eye width at a known face position deviates more than 10% from the expected ratio. This would be especially useful before critique cycles: run the diff against the canonical reference PNG and get a pass/fail report rather than an eyes-on review.
+**Benefits:** Saves Maya time on pre-critique audits. Helps Kai Nakamura catch accidental proportion drift when touching shared tools. Reduces the risk of critics flagging issues that should have been caught internally. Could also serve as an automated QC gate in the pipeline.

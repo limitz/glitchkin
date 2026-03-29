@@ -101,6 +101,15 @@ All key techniques have been extracted to MEMORY and implemented. No further rea
   - Byte body fill fixed: BYTE_TEAL (0, 212, 232) canonical GL-01b (was (0, 190, 210))
   - Rim light fixed: side="right" — cyan only on monitor-facing side of Luma
 
+## C30 Completed Work
+- SF01 v004 proportion verified and fixed:
+  - Height: correct (3.2 heads, 6.4×HR) — no change needed
+  - Eye width: `ew = p(18)` was HR×0.25, corrected to `int(head_r * 0.22)` per canonical spec
+  - Regenerated: `output/color/style_frames/LTG_COLOR_styleframe_discovery_v004.png`
+- SF02 (glitch_storm v005): no Luma — proportion check N/A
+- SF03 (other_side v005): Luma is pixel-art style — intentional, canonical organic spec N/A
+- Ideabox: submitted proportion_audit_tool idea (automated ew/HR checker for all SFs)
+
 ## C29 Completed Work
 - `output/tools/LTG_TOOL_styleframe_discovery_v004.py` — SF01 v004 generator
 - `output/color/style_frames/LTG_COLOR_styleframe_discovery_v004.png` — 1280×720
@@ -111,6 +120,12 @@ All key techniques have been extracted to MEMORY and implemented. No further rea
   - add_rim_light(side="right"): CRT teal (0,220,232) from right — discovery source
   - Blush corrected to warm peach (232,168,124) — matching SF04 v003 correction
   - BYTE_TEAL canonical (0,212,232) used throughout
+
+## C30 Lessons
+- SF proportion bugs are easy to introduce when eye width uses a `p(n)` shorthand instead of `int(head_r * ratio)` — always derive from head_r directly
+- Canonical eye width is always `int(HR * 0.22)` — never hardcoded pixels
+- SF02 (glitch storm) has no Luma — skip for proportion checks
+- SF03 uses pixel-art Luma (intentional style) — canonical organic spec doesn't apply
 
 ## C27/C28/C29 Lessons
 - Composition scales: use SX/SY factors (W/1920, H/1080) to port 1920×1080 coords to 1280×720

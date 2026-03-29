@@ -12,20 +12,32 @@
 - Never send high-res images to Claude unless absolutely necessary.
 - Vision limitations: hallucination risk on low-quality/rotated/tiny (<200px) images; limited spatial reasoning; approximate counting only.
 
-## Cycle 29 State (current)
+## Cycle 30 State (current)
 
-**C29 audit filed:** `output/production/pitch_audit_cycle29.md`
-- Weakest asset: SF01 v003 (Luma proportions predate 3.2-head spec; v004 still pending from Rin)
-- Critique 13 will target: (1) Luma consistency across all assets, (2) draw-order errors in generators, (3) naming compliance forwarding stubs
-- C29 in-progress items did NOT complete before audit: Maya v007/v006, Rin SF01 v004, Kai git mv pass all still pending
+**C30 audit filed:** `output/production/pitch_audit_cycle30.md`
 
-**C30 directives (from pitch_audit_cycle29.md):**
-- P1: Rin — SF01 v004 must correct Luma proportions to 3.2 heads + h×0.22 eyes (not just procedural lift)
-- P2: Kai — drawing order audit across all active generators (painter's algorithm compliance)
-- P3: Kai — complete git mv pass, remove forwarding stubs
-- P4: Maya — deliver Luma expression sheet v007 + lineup v006 (3.2 heads, carried from C29)
+**C29 all-clear — all 4 deliverables landed:**
+- Maya: Luma expression sheet v007 (3.2 heads + h×0.22 eyes) — `output/characters/main/LTG_CHAR_luma_expressions_v007.png`
+- Maya: Character lineup v006 (3.2 heads) — `output/characters/main/LTG_CHAR_luma_lineup_v006.png`
+- Rin: SF01 v004 procedural lift + blush fix — `output/color/style_frames/LTG_COLOR_styleframe_discovery_v004.png`
+- Kai: Naming cleanup script ready (`LTG_TOOL_naming_cleanup_v001.py`) — not yet executed
 
-**Image handling policy message archived:** `inbox/archived/20260329_2000_image_handling_policy.md`
+**Residual risks going into Critique 13:**
+1. SF01 v004 Luma proportions NOT confirmed against 3.2-head spec (Rin's C29 report silent on this)
+2. Naming cleanup script NOT yet run — 22 originals still on disk, forwarding stubs live
+3. Draw-order audit not yet done
+4. Pitch package index stale — C29 deliveries not registered
+
+**C30 directives sent:**
+- Kai: Run cleanup script + build proportion_check tool (LTG_TOOL_proportion_check_v001.py) + draw-order audit
+- Rin: Standby on SF01 v005 pending Kai proportion check result; procedural library maintenance
+- Maya: Update pitch_package_index.md to C30 + cross-character consistency review
+- Sam: Color continuity audit across all 4 style frames (`output/production/color_continuity_c30.md`)
+
+**Ideabox (C30):**
+- My idea submitted: `ideabox/20260329_alex_chen_proportion_verifier.md` — proportion extraction tool for Kai to build
+- No other ideas submitted yet (first cycle for ideabox)
+- Routed my idea to Kai as actionable (C30 P1.5 in his directive)
 
 ## Cycle 28 State (previous)
 

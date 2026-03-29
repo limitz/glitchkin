@@ -1167,7 +1167,7 @@ Formal documentation of inline color values used in `style_frame_01_rendered.py`
 - **Role:** Hoodie pixel grid accents on the lamp-lit (left) side of Luma's torso — warm-side discrete pixel activation
 - **Narrative:** Warm world touching digital identity pattern; bridge between real-world Luma and Byte's domain. The pixel pattern on Luma's hoodie carries both her Real World warmth (Soft Gold, lamp-lit) and her connection to the Glitch Layer (Electric Cyan, neutral/cold).
 - **Scene use:** SF01 — lamp-lit (left-side) hoodie pixel accents only
-- **Constraint 1:** Use ONLY when a warm lamp source is present AND dominant on that face/side. Neutral-lit and cold-lit scenes use GL-01 Electric Cyan (`#00D4E8`) for all hoodie pixel accents.
+- **Constraint 1:** Use ONLY when a warm lamp source is present AND dominant on that face/side. Neutral-lit and cold-lit scenes use GL-01 Electric Cyan (`#00F0FF`) for all hoodie pixel accents. *(Cycle 30 correction: prior text cited `#00D4E8` which is GL-01b Byte Teal — that is Byte's body fill, not the hoodie pixel color. Correct value is GL-01 `#00F0FF`.)*
 - **Constraint 2:** Warm-dominant scenes only. If the scene key is cyan, UV, or neutral, all hoodie pixel accents revert to GL-01.
 - **Constraint 3:** Lamp-lit hoodie pixel accents only — this is not a fill color, a shadow color, or a large-area tone. It is strictly the small discrete pixel-grid accent elements on the hoodie surface under warm lamp key.
 - **Production note:** The SF01 v003 Pillow script uses a continuous gradient (HOODIE_ORANGE → HOODIE_CYAN_LIT) rather than a discrete pixel grid. CHAR-L-11 defines the production spec (OpenToonz pixel-grid activation) — the Pillow approximation is noted as a limitation of the raster preview.
@@ -1400,6 +1400,7 @@ Lighting key: Overhead fluorescent — cool, flat, even, slightly greenish. No d
 *Cycle 14 revision (Sam Kowalski — 2026-03-30): CHAR-L-11 added — Luma Hoodie Pixel (Warm-Lit Activation), hex #E8C95A (Soft Gold, alias RW-02). Registered per Alex Chen Art Director confirmation. Constraints: lamp-lit hoodie pixel accents only, warm-dominant scenes only; neutral/cold scenes use GL-01 (#00D4E8). CHAR-L-09 warm pixel activation thread CLOSED — correctly occupied by shoe canvas; CHAR-L-11 is the warm pixel entry.*
 *Cycle 15 revision (Sam Kowalski — 2026-03-29): DRW-18 added — Luma Hair Base (Glitch Layer), hex #1A0F0A (26,15,10); derived from Deep Cocoa #3B2820 under UV Purple ambient. ENV-13 added — Far Structure Edge (Void-Scale), hex #211136 (33,17,54); derived as 20% UV Purple over Void Black; used for SF03 megastructure silhouettes at far-void distance. Source: SF03 Other Side spec color audit (sf03_other_side_color_notes.md).*
 *Cycle 21 revision (Sam Kowalski — 2026-03-30): Palette Status section added (final Critique 10 audit).*
+*Cycle 30 revision (Sam Kowalski — 2026-03-29): CHAR-L-11 Constraint 1 hex error corrected — prior text cited `#00D4E8` (GL-01b Byte Teal) for neutral/cold-scene hoodie pixel accents; correct value is GL-01 Electric Cyan `#00F0FF`. Byte Teal is Byte's body fill only and must never appear as a hoodie pixel color.*
 *Review cycle: Update after each critic feedback pass.*
 
 ---

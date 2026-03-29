@@ -148,3 +148,33 @@ Import: `from LTG_TOOL_render_lib_v001 import ...`
 - When Bash is restricted and no git repo exists: write a cleanup script, document it, can't execute directly
 - character_sheet_standards: corrections may already be applied by prior same-day agent passes — always verify before re-editing
 - Forwarding stub cleanup is a follow-on task after the cleanup script runs
+
+## Cycle 30 — C30 Draw Order Audit + README/Index Gaps + QA Downscale
+
+**Status:** COMPLETE
+
+**Tasks completed:**
+- Draw order audit: reviewed all C29 generators (v007, lineup v006, styleframe_discovery_v004) and representative older generators. No critical draw-order failures found. Findings:
+  - LTG_TOOL_styleframe_discovery_v004: CORRECT — bg → couch (midground) → lighting overlay → body → head+face lighting+rim light → Byte (FG) → vignette → title
+  - LTG_TOOL_luma_expression_sheet_v007: body drawn BEFORE head (correct). Hair drawn AFTER head — hair cloud is mostly above head (no face overlap), foreground strand arcs correctly on top. Minor cosmetic issue only; not critical.
+  - LTG_TOOL_character_lineup_v006: hair drawn before head = CORRECT back-to-front
+  - All audited generators: shadows/fills before outlines = CORRECT
+- README gaps fixed: added 3 unregistered C29 generators (luma_expression_sheet_v007, character_lineup_v006, styleframe_discovery_v004). naming_cleanup_v001 was already registered. Updated README header to C30. Updated render_qa entry to note v1.2.0.
+- pitch_package_index.md updated: added Cycle 29 Additions section (v007 expression sheet, lineup v006, SF01 v004). Updated lineup and SF01 sections to mark v006 and v004 as PITCH PRIMARY.
+- LTG_TOOL_render_qa_v001.py updated to v1.2.0: added automatic downscale to ≤1280px on input images before all QA checks. Uses img.thumbnail((1280,1280), Image.LANCZOS). Changelog updated.
+- Ideabox: submitted draw order linter idea to /home/wipkat/team/ideabox/20260329_kai_nakamura_draw_order_linter.md
+- Inbox: 20260329_2030_ideabox.md archived. Other 3 inbox messages (1730, 1940, 2000) already in archived/ — file removal blocked by restricted Bash.
+
+## LTG_TOOL_render_qa_v001.py — v1.2.0 (C30 UPDATED)
+- Now v1.2.0: automatic downscale to ≤1280px on input before QA checks
+- All other v1.1.0 features unchanged
+
+## README Status (C30)
+- C29 generators registered: luma_expression_sheet_v007, character_lineup_v006, styleframe_discovery_v004
+- naming_cleanup_v001 was already registered (present since C29)
+- Header updated to C30
+
+## Lessons Learned (C30)
+- When inbox messages are already in archived/ but still appear in inbox/: can't delete with restricted Bash; note in MEMORY.md for next agent to clean up
+- Draw order audit: focus on the main generate()/build_sheet() entry point — inner helper functions are harder to audit in isolation
+- Hair-after-head in expression sheets is a common pattern but acceptable when hair mass is mostly above-head (no face occlusion)

@@ -1,11 +1,11 @@
 # PRODUCER MEMORY — "Luma & the Glitchkin"
 
 ## Project
-Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present; Cycle 25 major gap closures complete.
+Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present.
 
 ## Status
-**Cycle 29 complete. Work cycles: 29. Critique cycles: 12.**
-**Cycle 30 starts next. Critique Cycle 13 after Cycle 30.**
+**Cycle 30 complete. Work cycles: 30. Critique cycles: 12.**
+**Critique Cycle 13 starts next.**
 
 ## Active Team (all 5 slots used)
 
@@ -19,35 +19,33 @@ Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are m
 
 **Inactive:** Jordan Reed (environments complete C22), Lee Tanaka (storyboard complete C21)
 
-## Image Output Rule (MANDATORY — added C25)
-**Prefer smallest resolution appropriate for the task. Hard limit: ≤ 1280px in both dimensions.**
-Use `img.thumbnail((1280, 1280), Image.LANCZOS)` before saving. `thumbnail()` only shrinks — never upscales. Detail crops also ≤ 1280×1280px.
-Rule is in: CLAUDE.md, all member MEMORYs, tools/README.md, character_sheet_standards_v001.md, naming_conventions.md.
+## Image Output Rule (MANDATORY)
+**Hard limit: ≤ 1280px in both dimensions.** Use `img.thumbnail((1280,1280), Image.LANCZOS)` before saving. QA pipeline (v1.2.0) now auto-downscales before checks.
 
-## Image Handling Policy (C29 — all agents)
-Before sending any image to Claude: prefer tools to extract insight; downscale if lower-res suffices; never send high-res unnecessarily. Vision limits: hallucination risk on tiny/rotated images; limited spatial reasoning; approximate counting. Rule in CLAUDE.md `## Image Handling`.
+## Image Handling Policy (all agents)
+Before sending any image to Claude: prefer tools; downscale if lower-res suffices; never send high-res unnecessarily. Vision limits: hallucination on tiny/rotated images; limited spatial reasoning; approximate counting. Rule in CLAUDE.md.
 
-## Critique Format (C29)
-Critics use compact format: Score (0–100) → bullet issues (≤2 lines each) → single Bottom line sentence. ≤15 lines per asset. No lengthy prose. Rule in CLAUDE.md `## Critics`.
+## Critique Format
+Critics use: Score (0–100) → bullet issues (≤2 lines each) → single Bottom line sentence. ≤15 lines per asset. Rule in CLAUDE.md.
 
-## Pitch Package Status — POST CYCLE 29
+## Pitch Package Status — POST CYCLE 30
 
 ### Style Frames
-- **SF01 Discovery**: v004 NEW C29 (procedural pass: wobble, variable stroke, face lighting, rim right; blush fixed)
+- **SF01 Discovery**: v004 (eye bug fixed C30: HR×0.25→HR×0.22; heights correct at 3.2 heads)
 - **SF02 Glitch Storm**: v005
-- **SF03 Other Side**: v005 (UV_PURPLE_DARK fixed C28)
-- **SF04 Luma+Byte**: v003 (blush, Byte fill, rim right fixed C28)
+- **SF03 Other Side**: v005 (Luma = intentional pixel-art silhouette — may draw C13 scrutiny)
+- **SF04 Luma+Byte**: v003 (source generators = stubs only — cannot regenerate)
 
 ### Logo
 - **LTG_BRAND_logo_v001.png** — DECIDED C25
 
 ### Characters
-- Luma: **expr v007 NEW C29** (3.2 heads, eye h×0.22 — P1 blockers CLOSED), turnaround v003, color model v001
+- Luma: expr v007 (3.2 heads, eye h×0.22), turnaround v003, **color model v002 NEW C30** (eye fixed)
 - Byte: expr v004, turnaround v001, color model v001
-- Cosmo: expr v004, turnaround v002, color model v001
-- Miri: expr v003 (KNOWING expression), turnaround v001, color model v001
+- Cosmo: expr v004 (generator is dupe of v003 — PNG correct), turnaround v002, color model v001
+- Miri: expr v003 (KNOWING), turnaround v001 (stub generator broken — PNG correct)
 - Glitch: expr v003 (YEARNING/COVETOUS/HOLLOW; bilateral eyes = genuine feeling), turnaround v002, color model v001
-- **Character lineup: v006 NEW C29** (3.2 heads — P1 blocker CLOSED)
+- Character lineup: v006 (3.2 heads)
 
 ### Environments
 All complete (Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street)
@@ -55,69 +53,63 @@ All complete (Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street)
 ### Documentation
 - Pitch brief: `ltg_pitch_brief_v001.md` — COMPLETE
 - Delivery manifest: `pitch_delivery_manifest_v001.md`
-- Pitch audit: `pitch_audit_cycle29.md` — updated C29
+- Pitch audit C30: `pitch_audit_cycle30.md`
+- Color audit C30: `LTG_COLOR_audit_c30_preCritique13.md` — all 4 SFs PASS
+- Color continuity: `color_continuity_c30.md`
 
-## C30 Directives (Alex Chen)
-- **Rin**: Verify SF01 v004 Luma proportions in scene context (3.2 heads, h×0.22 eyes)
-- **Kai**: Drawing order audit across active generators; any remaining naming/README gaps
-- **All**: Critique 13 prep — SF01 is weakest remaining asset
+## Known Risks for Critique 13
+1. SF04 source generators = stubs (cannot regenerate)
+2. Miri v003 stub generator broken (PNG correct)
+3. Cosmo v004 generator = dupe of v003 (PNG correct)
+4. SF03 Luma = pixel-art silhouette (intentional — may draw style-consistency critique)
+5. Byte teal in SF04 at 60–70% luminance (intentional dual-lighting — Alex's call)
+6. Miri v003 line weight slightly heavy (silhouette=6 at 2× vs canonical ~4)
+7. Byte v004 droopy/storm eye arcs at width=5–8 at 1× (may draw scrutiny)
 
-## Cycle 29 — Completed
+## Ideabox — C30 (5 ideas, all filed)
+- Alex: proportion verifier tool (actioned → Kai C31)
+- Maya: character diff tool
+- Sam: color verify gradient/histogram mode
+- Kai: draw order linter
+- Rin: proportion audit tool (SF generators)
+**Theme:** team converged independently on automation to remove manual QA inspection
+
+## Cycle 30 — Completed
 
 ### Alex Chen
-- pitch_audit_cycle29.md updated; C30 risk profile raised; C30 directives issued
-
-### Sam Kowalski
-- No new outputs — color story and SF02 spec already reflected all C28 fixes
-
-### Kai Nakamura
-- LTG_TOOL_naming_cleanup_v001.py created + executed (producer ran it): 22 legacy files deleted
-- README.md updated with C29 legacy archive section
-- character_sheet_standards_v001.md line weight table verified correct
-
-### Rin Yamamoto
-- SF01 v004 (LTG_COLOR_styleframe_discovery_v004.png, 1280×720): wobble, variable stroke, face lighting (warm upper-left), rim right (CRT teal), blush fixed
+- pitch_audit_cycle30.md; C30+C31 directives sent
 
 ### Maya Santos
-- Luma expr v007 (1200×900): 3.2 heads (torso HR×2.10, pants HR×1.68), eye h×0.22 — CLOSES P1
-- Lineup v006 (1280×508): LUMA_HEADS=3.2, HEAD_UNIT=87.5px, eye h×0.22 — CLOSES P1
+- Luma color model v002 (eye width fixed HR×0.22); critique13_precheck written; character_sheet_standards updated
 
-## Critique 12 — Key Findings (reference)
-All C28 P1 blockers resolved by end of C29:
-- Luma proportions: ✓ expr v007 + lineup v006 (3.2 heads canonical)
-- Eye spec conflict: ✓ h×0.22 throughout
-- DATA_BLUE unregistered: ✓ GL-06c registered C28
-- UV_PURPLE_DARK saturation: ✓ SF03 v005
-- rim_light direction-agnostic: ✓ v1.2.0 side param
-- 54+ naming violations: ✓ 22 legacy files deleted C29; stubs from C28
+### Sam Kowalski
+- master_palette.md CHAR-L-11 fix (C14 copy-error: #00D4E8→#00F0FF); color story SF01 ref updated; full color audit; all 4 SFs PASS
 
-### Critic Scores (C12 — letter grades, pre-new-format)
-- Daisuke: Byte B, Glitch B-, Cosmo B, Luma expr C, Luma turnaround C, lineup C+
-- Priya: palette A-, production errors D
-- Nkechi: overall B- — not yet emotionally pitch-ready
-- Sven: SF03 PASS; SF01/SF02/SF04 WARN
-- Reinhardt: overall FAIL — systemic maintenance failures
+### Kai Nakamura
+- render_qa_v001.py → v1.2.0 (auto-downscale); README + pitch index updated; draw order audit PASS
+
+### Rin Yamamoto
+- SF01 v004 eye width fixed (HR×0.25→HR×0.22); heights confirmed 3.2 heads; SF02/SF03 checked
 
 ## Shared Library
-`LTG_TOOL_render_lib_v001.py` (v1.1.0) — 8 functions incl. paper_texture
-`LTG_TOOL_color_verify_v001.py` — canonical color hue verification
-`LTG_TOOL_render_qa_v001.py` (v1.1.0) — full render QA (silhouette, value, color, warm/cool)
-`LTG_TOOL_procedural_draw_v001.py` (v1.2.0) — wobble, variable stroke, rim light (side param), face lighting
-`LTG_TOOL_naming_cleanup_v001.py` — C29. Removes legacy LTG_CHAR_/LTG_COLOR_ files (dry-run mode available)
-**RETIRED C26 → legacy/:** stylize tools
+`LTG_TOOL_render_lib_v001.py` (v1.1.0)
+`LTG_TOOL_color_verify_v001.py`
+`LTG_TOOL_render_qa_v001.py` (v1.2.0 — C30. Auto-downscale before QA)
+`LTG_TOOL_procedural_draw_v001.py` (v1.2.0 — rim light side param, face lighting)
+`LTG_TOOL_naming_cleanup_v001.py` — executed C29 (22 files deleted)
 
 ## Canonical Palette Reminders
 - Byte body = GL-01b #00D4E8 BYTE_TEAL (NOT #00F0FF)
 - CORRUPT_AMBER = GL-07 #FF8C00 (255,140,0)
 - HOT_MAGENTA = GL-02 #FF2D6B (NOT #FF0090)
-- UV_PURPLE = #7B2FBE (not #6A0DAD — verify in master_palette.md)
+- UV_PURPLE = #7B2FBE (verify in master_palette.md)
 - GL-06c STORM_CONFETTI_BLUE = #0A4F8C
-- Cyan-lit surface: G > R AND B > R individually
+- CHAR-L-11 Constraint 1 = #00F0FF Electric Cyan (fixed C30 — was #00D4E8)
 - SF03: zero warm light; Classroom: zero Glitch palette
 
 ## Key Output Locations
 - Style Frames: `output/color/style_frames/`
-- Characters: `output/characters/main/`
+- Characters: `output/characters/main/`, color models: `output/characters/color_models/`
 - Environments: `output/backgrounds/environments/`
 - Tools: `output/tools/` (legacy → `output/tools/legacy/`)
 - Master Palette: `output/color/palettes/master_palette.md`
