@@ -1,6 +1,40 @@
 # Alex Chen — Memory
 
-## Cycle 18 State (current)
+## Cycle 19 State (current)
+
+**Cycle 19 assignments dispatched (this cycle):**
+- **Alex (self):** Translated Critique 9 findings into four team inbox messages. Updated production_bible.md v4.0 with Section 12 (permanent record of SF03 Void Black spec violation). Archived critique summary + all C18 completion reports.
+
+**Cycle 19 open work (awaiting team delivery):**
+- **Jordan Reed:** SF03 v003 (Byte body GL-01b fix + eye radius + magenta slash removal), SF02 v004 (storefront = shattered window, window glow = per-window downward cone at alpha 80–100), School Hallway v002 (artifact + human evidence + low camera), Millbrook v002 (power lines perspective + sag + varied weight, road plane + center line)
+- **Maya Santos:** Miri expression sheet v002 REBUILD (5 full-body expressions with body posture + hands; replace NOSTALGIC with SKEPTICAL/AMUSED), Luma expression sheet v003 DELIGHTED fix (arms raised + bounce on toes + forward lean), Cosmo expression sheet v003 SKEPTICAL lean formula fix (tilt_off multiplier 0.4 → 2.5)
+- **Sam Kowalski:** SF03 v003 color review (Byte body GL-01b confirm, eye contrast ≥4.5:1 cyan, ≥3.0:1 magenta), hoodie base color reconcile (#E8722A luma_color_model.md vs #E8703A master_palette.md canonical), SF02 v004 warm/cool balance review
+- **Lee Tanaka:** A1-03 v002 rebuild (MCU, CRT-lit face below-left, legible pixel shapes on screen, caption "Discovery"), A2-08 v002 camera fix (Luma POV eye-level OR two-shot, no low angle), NEW panel A2-07b (kitchen doorway bridging shot — Miri silhouette, warm light behind), Act 2 contact sheet v005
+
+**Sam dependency on Jordan:** Sam cannot start SF03 or SF02 reviews until Jordan delivers v003/v004. Sam can start hoodie reconciliation immediately.
+
+**Critique 9 critical findings (permanent):**
+- SF03 BYTE BODY = VOID BLACK (10,10,20) — spec violation, body invisible on UV Purple. Fixed in C19. Documented in production_bible.md Section 12.
+- SF02 storefront still HUD-read (C+, 3 cycles unresolved), window glow left-edge gradient still wrong (D, 4 cycles)
+- Miri sheet face-only, no body language — C. Rebuild assigned.
+- Luma DELIGHTED/SURPRISED squint fail — body must differentiate
+- Cosmo SKEPTICAL lean formula produces 2.4px (invisible) — multiplier fix assigned
+- A1-03 compositionally passive — MCU rebuild assigned
+- A2-08 wrong camera grammar (low angle) — intimacy fix assigned
+- A2-07→A2-08 hard cut across settings — new bridging panel A2-07b assigned
+
+**What's working (C9 positives):**
+- SF03 atmospheric perspective: correct
+- Act 2 arc: Carmen A- — coherent, color-coded, structurally complete
+- A2-01 vs A2-07 cohesion: Carmen A-
+- Luma cold overlay (Sam C18): Naomi A-
+- Master palette Act 2 (Sam C18): Naomi A
+
+**Next critique:** Critique 10 (after Cycle 21, i.e., every 3 cycles from C18 → C21)
+
+---
+
+## Cycle 18 State (archived)
 
 **Cycle 18 work completed (this cycle):**
 - **Alex (self):** README logo moved to top (Task 1). Pitch package index updated with all C16 + C17 assets (Task 2). SF02/SF03 pre-critique assessment written: `output/production/sf02_sf03_precritique_c18.md` (Task 3). All C17 completion reports archived.

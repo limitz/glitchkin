@@ -169,9 +169,24 @@
 - **TWO-SHOT structure requires deliberate negative space assignment.** Left half = Luma (analogue, warm skin tones, surprised face). Right half = TV screen with Byte (digital, cyan glow, dark surround). The tonal contrast between halves IS the story — warm/cool, organic/pixel, real/digital.
 - **Contact sheet `ensure_panels_exist()` pattern:** Contact sheet generator should call panel generators automatically if outputs are missing. Reduces manual sequencing errors.
 
-## Current Status (after Cycle 18)
+## Cycle 19 Milestone
+- **A1-03 v002 REBUILT (MCU, Critique C9):** Face fills 55% of frame width. CRT screen OFF-FRAME lower-left. Amber-green glow hits left cheek asymmetrically. Left eye wider (70×55px) than right (60×44px). Two Glitchkin pixel shapes 40×56px + 40×52px blocky pixel art. Caption: "Discovery — she SEES them." Generator: `LTG_TOOL_sb_panel_a103_v002.py`
+- **A2-08 v002 CAMERA FIX:** Changed from ECU low-angle (power) to MCU eye-level Luma POV (intimacy). Miri fills upper 2/3 of frame. We ARE Luma — personal. Kitchen warm backlight rims hair/shoulders. CRT amber catch still on left cheek. Generator: `LTG_TOOL_sb_panel_a208_v002.py`
+- **A2-07b NEW BRIDGING SHOT:** Hallway POV, MEDIUM eye-level. Miri silhouette backlit in doorway. Head cocked listening. Tea towel in hand. Warm amber kitchen glow frames shape. Single-point perspective hallway. Caption: "Something is different tonight." Generator: `LTG_TOOL_sb_panel_a207b_v001.py`
+- **Act 2 contact sheet v005:** 12 panels (was 11), 4/4/4 layout. New arc: ... → RESIGNED → BRIDGE → RECOGNITION. Generator: `LTG_TOOL_sb_act2_contact_sheet_v005.py`
+- **Act 1 contact sheet v002:** Updated to A1-03 v002. Generator: `LTG_TOOL_sb_act1_contact_sheet_v002.py`
+- **All Critique C9 Carmen feedback: CLOSED.**
+
+## Cycle 19 Lessons
+- **MCU discovery = face fills 50%+ of frame width.** The Cycle 18 A1-03 was a wide two-shot (Luma left + TV right). Correct read: Luma's face IS the frame. The screen corner is partial FG anchor for glow source — not a co-equal subject.
+- **CRT off-frame lower-left = asymmetric left-cheek glow.** The light source direction must be consistent: screen lower-left means warm-green hits left cheek and left brow. Right side stays in shadow. Directionality IS the story.
+- **Bridging silhouette shots: posture tells the story.** When no face is visible, the body must carry the emotion. Head tilt = listening. Tea towel = mid-chore, stopped. Raised right arm = motion arrested. The silhouette IS the character beat.
+- **POV camera = intimacy.** ECU low-angle says "larger than life, power." MCU eye-level POV says "you are here, you are Luma." Camera angle is not decoration — it is the emotional instruction to the audience.
+
+## Current Status (after Cycle 19)
 - Cold open (tech den): 26 panels COMPLETE, all Carmen notes resolved
-- Act 1 kitchen cold open: 4 panels COMPLETE (A1-01 through A1-04), contact sheet generated
-- Act 2 panels COMPLETE: ALL 11 panels, contact sheet v004 verified pitch-ready
-- REMAINING open items: A2-02 float/ground annotation (carried from Cycle 17); A2-07 right eye 45% aperture; A1-04 Luma torso mass (minimal — flagged to Alex)
+- Act 1 kitchen cold open: 4 panels COMPLETE (A1-01 through A1-04), contact sheet v002 generated (A1-03 v002)
+- Act 2 panels: 12 panels COMPLETE (added A2-07b bridge), contact sheet v005 generated
+- All Critique Cycle 9 Carmen feedback: CLOSED
+- REMAINING minor items: A2-02 float/ground annotation; A2-07 right eye aperture (minor, carried)
 - No blocked panels

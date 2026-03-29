@@ -70,6 +70,7 @@ At medium shot and smaller, reduce pixel pattern to the simplified versions spec
 *Source: luma.md v2.1. All values consolidated from that document. Blush disambiguation added per Cycle 3 critic feedback.*
 *Cycle 13 addition: DRW-16 painter warning (Sam Kowalski) — Shoulder Under Data Stream Blue Waterfall. Resolves carry-forward item outstanding since Cycle 7.*
 *Cycle 18 addition: Cold/Cyan Overlay Variants section (Sam Kowalski) — Recalculated C18, correct alpha-composite formula applied. Resolves pitch_package_index.md open item #6 (Naomi Bridges C10 flag).*
+*Cycle 19 correction: C19 — Reconciled hoodie orange base and shadow to master palette canonical values. Hoodie orange corrected from `#E8722A` to `#E8703A`; hoodie shadow corrected from `#B85520` to `#B84A20`. All cold overlay values and thresholds recalculated. Threshold for hoodie orange moves from 43% to 41%. Per Naomi Bridges C9 flag (Sam Kowalski).*
 
 ---
 
@@ -128,34 +129,40 @@ Note: Neutral skin (#C4A882) has a higher G and B channel than lamp-lit skin (#C
 
 ---
 
-### Cold Overlay on Hoodie Orange (Base — `#E8722A`, R:232, G:114, B:42)
+### Cold Overlay on Hoodie Orange (Base — `#E8703A`, R:232, G:112, B:58)
+
+**C19 — Reconciled to master palette canonical `#E8703A` per Naomi Bridges C9 flag.**
+*Prior version incorrectly used `#E8722A` (G:114 B:42). Corrected to `#E8703A` (G:112 B:58) — master palette Section 5, HOODIE main fill. All overlay values and threshold recalculated.*
 
 | α | % | C_result RGB | Hex | G > R | B > R | Cyan-dominant |
 |---|---|---|---|---|---|---|
-| 0.10 | 10% | (209, 127, 63) | `#D17F3F` | ✗ | ✗ | ✗ |
-| 0.20 | 20% | (186, 139, 85) | `#BA8B55` | ✗ | ✗ | ✗ |
-| 0.30 | 30% | (162, 152, 106) | `#A2986A` | ✗ | ✗ | ✗ |
-| 0.35 | 35% | (151, 158, 117) | `#979E75` | ✓ | ✗ | ✗ |
-| **0.43** | **43%** | **(132, 168, 134)** | **`#84A886`** | **✓** | **✓** | **✓ — threshold** |
-| 0.50 | 50% | (116, 175, 149) | `#74AF95` | ✓ | ✓ | ✓ |
+| 0.10 | 10% | (208, 124, 77) | `#D07C4D` | ✗ | ✗ | ✗ |
+| 0.20 | 20% | (185, 137, 97) | `#B98961` | ✗ | ✗ | ✗ |
+| 0.30 | 30% | (162, 150, 117) | `#A29675` | ✗ | ✗ | ✗ |
+| 0.35 | 35% | (150, 156, 126) | `#969C7E` | ✓ | ✗ | ✗ |
+| **0.41** | **41%** | **(136, 164, 138)** | **`#84A48A`** | **✓** | **✓** | **✓ — threshold** |
+| 0.50 | 50% | (116, 176, 156) | `#74B09C` | ✓ | ✓ | ✓ |
 
-**Cyan-dominance threshold for hoodie orange: α ≥ 0.43 (43%)**
+**Cyan-dominance threshold for hoodie orange: α ≥ 0.41 (41%)**
 
-The orange hoodie resists cyan-dominance until very high overlay alpha — this is physically correct. Highly saturated orange (R:232) is the hardest surface to make cyan-dominant. At the DRW-15 level (Hoodie Hem Under Cyan Bounce, `#5AA8A0`), a strong localized bounce source is used rather than a global overlay.
+The orange hoodie resists cyan-dominance until very high overlay alpha — this is physically correct. Highly saturated orange (R:232) is the hardest surface to make cyan-dominant. At the DRW-15 level (Hoodie Hem Under Cyan Bounce, `#5AA8A0`), a strong localized bounce source is used rather than a global overlay. Note: threshold moved from 43% to 41% due to B channel correction (+16pts raises baseline B, requiring less cyan overlay to achieve B>R).
 
 ---
 
-### Cold Overlay on Hoodie Shadow (Base — `#B85520`, R:184, G:85, B:32)
+### Cold Overlay on Hoodie Shadow (Base — `#B84A20`, R:184, G:74, B:32)
+
+**C19 — Reconciled to master palette canonical shadow `#B84A20` per Naomi Bridges C9 flag.**
+*Prior version incorrectly used `#B85520` (G:85). Corrected to `#B84A20` (G:74) — master palette Section 5, HOODIE Shadow. All overlay values recalculated.*
 
 | α | % | C_result RGB | Hex | G > R | B > R | Cyan-dominant |
 |---|---|---|---|---|---|---|
-| 0.10 | 10% | (166, 100, 54) | `#A66436` | ✗ | ✗ | ✗ |
-| 0.20 | 20% | (147, 116, 77) | `#93744D` | ✗ | ✗ | ✗ |
-| 0.30 | 30% | (129, 132, 99) | `#818463` | ✓ | ✗ | ✗ |
-| **0.38** | **38%** | **(114, 144, 117)** | **`#729075`** | **✓** | **✓** | **✓ — threshold** |
-| 0.40 | 40% | (110, 147, 121) | `#6E9379` | ✓ | ✓ | ✓ |
+| 0.10 | 10% | (165, 90, 54) | `#A55A36` | ✗ | ✗ | ✗ |
+| 0.20 | 20% | (147, 107, 76) | `#936B4C` | ✗ | ✗ | ✗ |
+| 0.30 | 30% | (128, 123, 98) | `#807B62` | ✗ | ✗ | ✗ |
+| **0.38** | **38%** | **(114, 137, 116)** | **`#718974`** | **✓** | **✓** | **✓ — threshold** |
+| 0.40 | 40% | (110, 140, 121) | `#6E8C79` | ✓ | ✓ | ✓ |
 
-**Cyan-dominance threshold for hoodie shadow: α ≥ 0.38 (38%)**
+**Cyan-dominance threshold for hoodie shadow: α ≥ 0.38 (38%)** — unchanged from prior version despite G-channel correction.
 
 ---
 
@@ -165,8 +172,8 @@ The orange hoodie resists cyan-dominance until very high overlay alpha — this 
 |---|---|---|---|
 | Skin (lamp-lit) | `#C8885A` | **31%** | SF01 never reaches this — intentional cross-light only |
 | Skin (neutral) | `#C4A882` | **21%** | Glitch Layer neutral-skin exposure |
-| Hoodie orange | `#E8722A` | **43%** | Use DRW-15 for localized bounce |
-| Hoodie shadow | `#B85520` | **38%** | — |
+| Hoodie orange | `#E8703A` | **41%** | Use DRW-15 for localized bounce. C19: corrected from 43% (prior base error) |
+| Hoodie shadow | `#B84A20` | **38%** | C19: corrected base from #B85520 |
 
 **Rule:** Do NOT apply a "Glitch Layer lit" label to any surface color derived from an α below its cyan-dominance threshold. SF01 cold overlay values are cross-light effects, not Glitch Layer immersion values. See master_palette.md Section 1B (C10-1 RESOLVED) and DRW-01/DRW-11/DRW-13 for full Glitch Layer skin derivations.
 

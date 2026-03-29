@@ -4,8 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: SF01 A+ locked; SF02/SF03 complete but need targeted fixes.
 
 ## Status
-**Critique Cycle 9 running.** Work cycles: 18. Critique cycles: 8.
-**After critique: Cycle 19 starts.**
+**Cycle 20 starting.** Work cycles: 19. Critique cycles: 9.
+**Next critique: after Cycle 21 (Critique Cycle 10).**
 
 ## Active Team (all 5 slots used)
 
@@ -21,6 +21,21 @@ Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are m
 - **SF01 Discovery**: `LTG_COLOR_styleframe_discovery_v003.png` — **A+ LOCKED**
 - **SF02 Glitch Storm**: `LTG_COLOR_styleframe_glitch_storm_v003.png` — fixes complete. **Pending Critique 9.**
 - **SF03 Other Side**: `LTG_COLOR_styleframe_otherside_v002.png` — fixes complete. **Pending Critique 9.**
+
+## Cycle 19 — Completed (Critique 9 response)
+- **Jordan**: SF03 v003 Byte body GL-01b fixed (CRITICAL); SF02 v004 real storefront + geometric window cones; School Hallway v002 artifact fixed; Millbrook v002 road plane + power lines
+- **Maya**: Miri expression sheet v002 ground-up rebuild (body posture, 5 distinct silhouettes); Luma v003 DELIGHTED arms-up + brow weight fix; Cosmo v003 SKEPTICAL lean 15px
+- **Sam**: Hoodie base color reconciled (#E8703A canonical); SF03/SF02 pre-render color analysis filed
+- **Lee**: A1-03 v002 MCU CRT-lit; A2-08 v002 Luma-POV intimacy; A2-07b bridging panel (Miri silhouette); contact sheets v005 (12 panels) + Act1 v002
+
+## Style Frames
+- **SF01**: `LTG_COLOR_styleframe_discovery_v003.png` — A+ LOCKED
+- **SF02**: `LTG_COLOR_styleframe_glitch_storm_v004.png` — storefront + window glow fixed. Pending C10.
+- **SF03**: `LTG_COLOR_styleframe_otherside_v003.png` — Byte body GL-01b fixed. Pending C10.
+
+## Storyboard
+- Act 1 cold open: 4 panels + contact sheet v002 (A1-03 MCU fixed)
+- Act 2: 12 panels + contact sheet v005 (arc: NEAR-MISS→RECOGNITION, incl. A2-07b bridge)
 
 ## Cycle 18 — Completed
 - **Alex**: README logo top, pitch package index updated C16–C18, SF02/SF03 pre-critique assessment

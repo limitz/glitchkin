@@ -123,7 +123,18 @@
 - **Master palette was missing Act 2 environment section entirely.** Grandma Miri character colors (CHAR-M-01 to -11), Tech Den (TD-01 to -13), School Hallway (SH-01 to -12) all added as Section 8.
 - **After img.paste(), always refresh draw = ImageDraw.Draw(img).** Rule followed in LTG_TOOL_luma_cold_overlay_swatches_v001.py.
 
+## Cycle 19 Lessons
+- **Hoodie base discrepancy was a Cycle 18 authoring error.** The cold overlay section was added in C18 with `#E8722A` (G:114, B:42) instead of master palette canonical `#E8703A` (G:112, B:58). The master palette is always the authoritative source. Any new section added to `luma_color_model.md` must cite master_palette.md explicitly and cross-check the hex values.
+- **B-channel correction shifts cyan-dominance threshold.** Correcting hoodie base from B:42 to B:58 (+16pts) moves the threshold from 43% to 41% — physically correct (higher baseline B means less cyan overlay needed). Always re-derive thresholds when base values change.
+- **Pre-render analysis is valuable when Jordan's files haven't arrived yet.** Contrast calculations from generator code give reliable predictive numbers. Document as "pre-render" so the distinction is clear.
+- **SF02 window alpha is 160–180 — double the target 90–110.** This is the warm-cold competition issue. Recommend SUNLIT_AMBER (212,146,58) at alpha 100 for v004.
+- **SF03 Byte eye contrasts pass without intervention.** Cyan eye: 14.1:1. Magenta eye: 5.5:1. Background at Byte's position is near-void (effective ~(25,12,39)), not the full UV_PURPLE cloud density.
+- **Jordan removing Void Black slash from magenta eye in SF03 v003** — confirm this is intentional. It changes the corrupted-eye expression read.
+- **BYTE_GLOW minor discrepancy:** (0,168,180) vs canonical GL-01a (0,168,192). B channel 12pt off. Low priority carry-forward.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001 (TERRA_CYAN_LIT still old value). v002 is correct. Coordinate with Jordan Reed on v001 if it is still used.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan should add inline comment on next revision pass (low priority).
-- SF03 v002 pass items (Jordan/Alex scope): data waterfall luminance, depth tier collapse upper-right, pixel-plant size, Byte shoulder legibility confirmation.
+- SF03 v003 and SF02 v004 color reviews are PENDING — Jordan's files not delivered in Cycle 19. Pre-render analyses filed. Full review pending delivery.
+- BYTE_GLOW (0,168,180) vs GL-01a (0,168,192) — B channel 12pt off. Low priority fix for Jordan in next pass.
+- SF03 confetti full-canvas distribution still unresolved (carry from C16). Constrain to within 150px of platform.

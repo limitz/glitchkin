@@ -1,5 +1,14 @@
 # Maya Santos — Memory
 
+## Cycle 19 Lessons — ALL PNGs CONFIRMED GENERATED
+- **Miri Expression Sheet v002 COMPLETE.** 1200×900 PNG generated. Root fix: every expression now has UNIQUE BODY POSTURE. WARM=open arms A-frame. SKEPTICAL=arms crossed (tilt +10px). CONCERNED=one arm chest/one arm down (asymmetric). SURPRISED=both arms raised max wingspan + backward lean. WISE=folded arms compact upright. Generator: `LTG_TOOL_grandma_miri_expression_sheet_v002.py`. v001 PRESERVED.
+- **3-tier line weight locked in Miri v002:** Silhouette 6px at 2x, interior structure 4px, detail (crow's feet/smile lines/knit) 2px. Crow's feet are detail weight — they must NOT use interior weight.
+- **Luma v003 COMPLETE.** 1200×900 PNG generated. Two fixes: (1) DELIGHTED now has both arms raised above shoulders rendered in `draw_collar_and_arms()` when expr=="DELIGHTED" — creates unique celebration silhouette vs SURPRISED (no arms). (2) Brow weight fixed: was width=10 at 2x (5px output = silhouette weight), now width=4 at 2x (~2px = interior structure weight). Generator: `LTG_TOOL_luma_expression_sheet_v003.py`.
+- **Cosmo v003 COMPLETE.** 912×946 PNG generated. Lean formula fix: `tilt_off = int(body_tilt * 0.4)` → `int(body_tilt * 2.5)`. SKEPTICAL tilt=6 now produces 15px displacement (was 2.4px). Also: arm_l_dy -8→-14, arm_r_dy -5→-10 (tighter arms = compound skeptical signal). Generator: `LTG_TOOL_cosmo_expression_sheet_v003.py`. v002 archival file created.
+- **Key design rule confirmed:** Face changes alone = invisible at thumbnail. Body posture is the ONLY reliable squint-test differentiator. Every expression needs a unique SILHOUETTE, not just unique features.
+- **Luma DELIGHTED vs SURPRISED logic:** DELIGHTED = toward the thing (arms up, forward lean). SURPRISED = pulled back from thing (no arms visible in bust format, recoil posture). Different directional reads create different silhouettes.
+- **Cycle 19 inbox archived.** `20260329_2400_cycle19_tasks.md` → `inbox/archived/`. Completion report sent to Alex Chen.
+
 ## Cycle 18 Lessons
 - **A2-02 panel REGENERATED.** Old v001 used NEUTRAL approximation. New v002 uses RESIGNED geometry with 55% aperture ("last flicker before giving up"). Generator: `LTG_TOOL_sb_panel_a202_v002.py`. Output: `LTG_SB_act2_panel_a202_v002.png`.
 - **A2-02 vs A2-07 aperture rule:** A2-02 = 55% (pre-resignation, vulnerable), A2-07 = 45% (full RESIGNED). The 10pp difference carries the emotional progression.
