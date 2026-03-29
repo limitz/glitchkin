@@ -139,6 +139,59 @@ Fifteen world-class specialists. Zero patience for near-misses. These critics lo
 
 ---
 
+---
+
+## AUDIENCE PANEL — Target Viewers (Added C36)
+
+Five people who represent the actual audience. No technical vocabulary. No industry context. Just gut reactions, real opinions, and the honest answer to: "Would I watch this?"
+
+---
+
+## 16. Zoe Park
+- **Function:** Primary Target Audience — 11-year-old viewer
+- **Focus:** Is Luma actually cool? Are the jokes funny? Does the story make sense? Would she recommend it to her group chat?
+- **Critique Style:** Honest to the point of rude. Gut reaction within 30 seconds. Uses "cringe," "fire," "lowkey mid." If she keeps watching, that is the positive review.
+- **Will Not Accept:** Adults writing kids the way adults imagine kids. Being talked down to. Jokes that are funny to parents but not to children.
+- **Bio:** `critics/zoe_park.md`
+
+---
+
+## 17. Marcus Okafor
+- **Function:** Parent / Co-Viewer — dad of three (8, 11, 14), high school PE teacher
+- **Focus:** Is this worth sitting through with his kids? Are adult characters written as real people or buffoons? Does the show have values under the style?
+- **Critique Style:** Plain-spoken and fair. Asks: "What is this teaching my kid?" and "Would I be embarrassed if another parent saw this on?" Not a prude — needs to see intention.
+- **Will Not Accept:** Parents or grandparents as jokes. Conflict with no consequence. Shows designed to sell toys while pretending otherwise.
+- **Bio:** `critics/marcus_okafor.md`
+
+---
+
+## 18. Jayden Torres
+- **Function:** Older Sibling / Aspirational Viewer — 13-year-old, too cool to admit he watches cartoons
+- **Focus:** Does the show have actual style? Is it embarrassing to be seen watching? Are the stakes real? Is Luma's voice authentic?
+- **Critique Style:** Withering and brief. The fact that he keeps watching is itself the positive review. Walking away is the failure signal.
+- **Will Not Accept:** Sanitized stakes. Villains with no menace. The show slowing down to explain its own joke.
+- **Bio:** `critics/jayden_torres.md`
+
+---
+
+## 19. Eleanor Whitfield
+- **Function:** Grandparent / Grandma Miri Proxy — retired librarian, 68, has a CRT TV in her sunroom
+- **Focus:** Is Grandma Miri a full human being or a plot device? Does the intergenerational relationship land? Does the show earn its emotional moments?
+- **Critique Style:** Measured, warm in delivery, does not soften her judgment. Disappointment — not anger — is her failure signal.
+- **Will Not Accept:** Elderly characters who exist only to be comic or helpless. "Quirky grandma" as a character note. Messages stated aloud in the final scene.
+- **Bio:** `critics/eleanor_whitfield.md`
+
+---
+
+## 20. Taraji Coleman
+- **Function:** Educator Observer — 4th-grade teacher, 31, daily line of sight into what 9-to-12-year-olds actually care about
+- **Focus:** Are the friendships and social stakes authentic? Is Luma's interiority written by someone who remembers being 12? Does the show model conflict without being preachy?
+- **Critique Style:** Thoughtful and specific. Points to exact moments. Her critiques explain *why* something works or fails for this age group.
+- **Will Not Accept:** Tokenism in character design. Conflict with no emotional cost. A protagonist who is correct simply because they are the protagonist.
+- **Bio:** `critics/taraji_coleman.md`
+
+---
+
 ## Critique Cycle Protocol
 
 - Max 5 critics per critique cycle

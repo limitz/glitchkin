@@ -12,18 +12,50 @@
 - Never send high-res images to Claude unless absolutely necessary.
 - Vision limitations: hallucination risk on low-quality/rotated/tiny (<200px) images; limited spatial reasoning; approximate counting only.
 
-## Cycle 35 State (current)
+## Cycle 36 State (current)
 
-**C35 tasks complete (Alex Chen's portion).**
+**C36 tasks complete (Alex Chen's portion).**
 
-### C35 Work Done
-1. **Archived** all C34/C35 inbox messages (4 messages).
-2. **Warm/cool decision**: documented in `output/production/warm_cool_decision_c35.md`. 20-unit threshold miscalibrated — Glitch World near-zero warm is CORRECT. Sam directed to recalibrate warmth_lint_config.json with per-world thresholds.
-3. **SUNLIT_AMBER decision**: SF04 15.7° drift = compositing false positive. Source constant canonical. Accepted. Sam to register in false-positive registry.
-4. **Pre-critique checklist**: `output/production/pre_critique_checklist.md` — mandatory gate for expression sheet promotions. Silhouette full-mode ≤88% required. Maya ROLE.md updated.
-5. **Pitch package index updated**: C35 Additions section + status table added.
-6. **Ideabox**: `20260329_alex_chen_per_world_warmcool_qa.md` — per-world threshold idea for Sam.
-7. **Statement of work**: `output/production/statement_of_work_c35.md`.
+### C36 Work Done
+1. **Archived** all 9 inbox messages (8 C35 completion reports + 1 C36 directive).
+2. **Draw order lint investigation**: All 5 turnaround generators PASS on both linter versions. No false positives. Latent W003 risk documented for future back-pose generators using "shadow" keyword in comments. Full diagnostic: `output/production/draw_order_lint_back_pose_diagnostic_c36.md`. P3 enhancement directed to Kai via inbox.
+3. **Pitch package index updated**: C35 Completions section + current status table (C35/36 cycle). SF02 v007, Cosmo v005, Miri v004, Glitch G002 fix, Kitchen v004, all new QA tools registered.
+4. **Ideabox**: `20260330_alex_chen_draw_order_back_pose_suppression.md` — back-pose W003 suppression for Kai.
+5. **Completion report**: `output/production/alex_c36_completion.md`.
+
+### C36 Canonical Asset Versions (current)
+- Luma expression sheet: **v009 PITCH PRIMARY** (eye-width 22px + pose vocabulary)
+- Luma color model: v002 (PITCH PRIMARY — unchanged)
+- Luma turnaround: v004 (PITCH PRIMARY — unchanged)
+- Character lineup: v007 (PITCH PRIMARY — unchanged)
+- Byte expression sheet: v005 (PITCH PRIMARY — unchanged)
+- Miri expression sheet: **v004 DELIVERED** (silhouette differentiation)
+- Cosmo expression sheet: **v005 DELIVERED** (silhouette differentiation)
+- Glitch expression sheet: **v003 GEOMETRY CORRECTED** (rx=34, ry=38 — ry>rx)
+- SF01: v005 / **SF02: v007 PITCH PRIMARY** (Luma face-sprint) / SF03: v005 / SF04: v004
+- Kitchen: **v004 DELIVERED** (value floor + warm/cool + Miri spatial details)
+- Logo: v001
+
+### C36 Key Decisions
+- **Draw order linter back poses**: No current false positive. All turnaround generators PASS. Latent W003 risk for future back-pose shadow comments. Kai to add suppression (P3).
+- **Silhouette IoM metric FIXED in v003**: Maya delivered RPD (Regional Pose Delta) — 3-zone Pearson correlation. HEAD 35%, ARMS 45%, LEGS 20%. No longer biased by shared trunk. All previous FAIL verdicts may now PASS. RPD baseline run P2 for C37.
+- **SF02 v007 is now pitch-primary**: Luma finally has a face in the action centerpiece. This resolves the 3-cycle P1 gap flagged by Lee/critics.
+- **Silhouette tool**: Use v003 going forward. v002 IoM scores not comparable to RPD scores.
+
+### C36 Open Items (carry to C37)
+- **Cosmo v006 P1: glasses_tilt 10° → 7°** (S003 violation found by Kai spec_sync_ci). Maya directed. (P1)
+- **RPD baseline run NEEDED**: Run silhouette_v003.py against all current sheets (Luma v009, Cosmo v005, Miri v004, Byte v005, Glitch v003). Old IoM scores not comparable to RPD. (P2)
+- Silhouette tool `--output-zones` visualization: Maya ideabox filed (P3)
+- Draw order linter back-pose suppression: Kai (P3)
+- Proportion audit ew detection for asymmetric eye patterns: Rin ideabox filed (P3)
+- Spec-sync CI gate: Kai ideabox filed (P2)
+- Warm/cool QA `expected_temp` param: Kai (P2 — Sam directed)
+- THE NOTICING still not fully landing: Maya (P2 ongoing)
+- Byte UNGUARDED WARMTH body language: Maya (P2)
+- Glitch Layer HOT_MAGENTA: Jordan (P2)
+- Hallway SUNLIT_AMBER + scale calibration: Jordan (P2)
+
+## Cycle 35 State (archived)
 
 ### C35 Canonical Asset Versions
 - Luma expression sheet: **v009 PITCH PRIMARY** (eye-width 22px + pose vocabulary redesign)

@@ -53,7 +53,7 @@
 Before filing ANY expression sheet completion report, you MUST run the pre-critique checklist and include results in your report. See `output/production/pre_critique_checklist.md` for the full checklist.
 
 **Required steps before completion report:**
-1. Run `output/tools/LTG_TOOL_expression_silhouette_v002.py --mode full` — document worst pair score (must be ≤ 88%)
+1. Run `output/tools/LTG_TOOL_expression_silhouette_v003.py --mode full` — document worst pair RPD score (must be ≤ 85%)
 2. Run `--mode arms --center-mask 0.36` — document worst arms pair (diagnostic only)
 3. Verify pose vocabulary diversity: no two expressions share the same primary arm pose
 4. Confirm line weight 3-tier compliance
@@ -62,3 +62,12 @@ Before filing ANY expression sheet completion report, you MUST run the pre-criti
 7. Verify canvas ≤ 1280px both dimensions
 
 Completion reports without this checklist will be rejected. No exceptions from C35 onward.
+
+## Mandatory Face Test Gate (MANDATORY from C36 — Lee Tanaka / Producer directive)
+
+Before exporting any asset that contains character faces at sprint scale: run `LTG_TOOL_character_face_test_v001.py` on the output.
+
+- **FAIL = do not submit.** Fix face geometry until the test passes.
+- **WARN = fix or document.** If you cannot fix, include the WARN output in your completion report with explanation.
+
+See `output/production/face_test_gate_policy.md` for full policy rationale and usage instructions.

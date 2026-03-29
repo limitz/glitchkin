@@ -1,0 +1,24 @@
+{
+  "_description": "LTG Warmth Guarantees — canonical list of character palette prefixes whose entries must remain unambiguously warm (R >= G and R >= B, within soft_tolerance). Used by LTG_TOOL_palette_warmth_lint_v004.py and the CI warmth gate. Supersedes warmth_lint_config.json warm_prefixes for production use.",
+  "_note_char_l": "Only CHAR-L hoodie entries appear in the palette table format (CHAR-L-04, CHAR-L-08, CHAR-L-11). Other CHAR-L entries (skin, jeans, shoes) are in prose format only and are intentionally excluded from machine warmth checking — jeans are blue (B>R), shoes are near-white. The warmth lint tool's table-row regex ensures only table-format entries are checked.",
+  "warm_prefixes": ["CHAR-M", "CHAR-L"],
+  "soft_tolerance": {
+    "G": 0,
+    "B": 0
+  },
+  "world_presets": {
+    "REAL": {
+      "warm_cool_threshold": 12,
+      "description": "Real World interior — lamp-lit warm scene with cyan monitor accent. SF01 archetype. Warm/cool separation of at least 12 PIL units (0-255 hue scale) is expected."
+    },
+    "GLITCH": {
+      "warm_cool_threshold": 3,
+      "description": "Glitch World / night storm — cold dominant, warm building-window accents only. SF02 archetype. Near-zero warm/cool separation is CORRECT. Warm presence (excess) is a flag."
+    },
+    "OTHER_SIDE": {
+      "warm_cool_threshold": 0,
+      "description": "Other Side (CRT world) — zero warm tones allowed. SF03/SF04 archetype. Any warm presence in the frame is a production error. warm_cool_threshold=0 means the check passes only when warm is absent."
+    }
+  },
+  "_world_presets_note": "Thresholds are used by render_qa._check_warm_cool() when --world-type is passed. warmth_lint_v004 --world-type outputs the threshold for Kai Nakamura's CI gate integration. Coordinate: Kai Nakamura to add --world-type to LTG_TOOL_render_qa_v001.py."
+}

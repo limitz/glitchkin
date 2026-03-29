@@ -1,5 +1,26 @@
 # Maya Santos — Memory
 
+## Cycle 36 Lessons — SILHOUETTE TOOL v003 (RPD Metric Fix)
+
+- **LTG_TOOL_expression_silhouette_v003.py COMPLETE.**
+  - Location: `output/tools/LTG_TOOL_expression_silhouette_v003.py`
+  - Root fix: replaced IoM (Intersection over Minimum) with **Regional Pose Delta (RPD)**.
+  - IoM was broken because: if silhouette A is a subset of B, IoM=100% regardless of arm differences.
+  - RPD algorithm: divide silhouette by bounding-box height into 3 zones → per-zone column-projection histogram → Pearson correlation per zone → weighted sum.
+  - Zones: HEAD (top 25%, weight 35%), ARMS (middle 50%, weight 45%), LEGS (bottom 25%, weight 20%).
+  - Key insight: ARMS zone weighted highest — arm extension/position is the primary silhouette differentiator. Column-projection histogram encodes left/right mass extension, which directly represents arm reach.
+  - `--mode full`: 3-zone RPD (default). Report shows zone scores for failing pairs.
+  - `--mode arms`: arm band only (top=0.25..bot=0.75 of panel height), center-mask=0.30 applied before column projection. Single-zone correlation.
+  - Thresholds: WARN ≥ 70%, FAIL ≥ 85%.
+  - Backward compat: JSON key "iom" preserved (= RPD score). Adds "rpd" alias.
+  - ROLE.md pre-critique checklist updated: step 1 now uses v003.
+  - README.md updated: v002 marked superseded, v003 entry added.
+
+- **Ideabox C36 submitted.** `ideabox/20260330_maya_santos_rpd_zone_visualization.md`
+  - Idea: `--output-zones` visualization mode for v003 — colored zone overlays on contact sheet.
+
+- **Inbox archived.** C36 directive → `inbox/archived/20260330_0900_c36_silhouette_fix.md`.
+
 ## Cycle 35 Lessons — COSMO v005 + MIRI v004 (Silhouette Differentiation Pass)
 
 - **Cosmo expression sheet v005 COMPLETE.**

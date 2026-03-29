@@ -40,7 +40,7 @@ Keep a main MEMORY.md in the root of this project and update it when needed. Alw
 * inbox/ is a directory. Each message is its own file, named `YYYYMMDD_HHMM_short_description.md`. The timestamp should reflect the ACTUAL time the message was created.
 * inbox/archived/ holds all processed messages. Messages are never deleted — move to archived/ once fully acted on.
 * Messages are sent by creating a new file in the recipient's inbox/ directory. Include the current date and time (24h) in the filename and in a **Date:** header inside the file. Take team hierarchy into account when reporting. 
-* The maximum number of active team members is 8. There is no maximum to the number of inactive team members.
+* The maximum number of active team members is 12. There is no maximum to the number of inactive team members.
 * Only active members can receive messages in their inbox/ and perform work (started by an agent).
 * Do not add team members for jobs that can instead be filled by currently available (inactive) team members.
 * Before any work cycle starts, check if the team structure makes sense. Deactivate members that are not needed for the next cycle, add new members when needed.
@@ -52,6 +52,8 @@ Keep a main MEMORY.md in the root of this project and update it when needed. Alw
 * Each critic has their own bio file in the `critics/` directory (e.g. `critics/carmen_reyes.md`). Create this directory if it does not exist.
 * When generating critics for the first time, write a full bio file for each critic in `critics/` containing: background, skills, full resume, critique style, focus areas, and what they will not accept.
 * Each critic must only attend to output relevant to them. Each loop a maximum of 5 critics may look at the output.
+* **Rotate critics each critique cycle.** Do not use the exact same 5 critics every time — vary the selection to bring in fresh perspectives. Keep track of who reviewed last cycle and prioritize critics who haven't been active recently. All 20 critics should get roughly equal rotation over time.
+* **Critic panel composition (20 total):** 15 industry professionals (craft, production, color, narrative, etc.) + 5 audience members (Zoe Park age 11, Marcus Okafor parent, Jayden Torres age 13, Eleanor Whitfield grandparent, Taraji Coleman educator). **Each critique cycle must include at least 1 audience critic.** Audience critics review story, style appeal, and emotional resonance — not technical craft. Guard artistic integrity: take their gut reactions seriously but do not chase approval at the expense of the work's vision.
 * Critics can make tools if they need any to make future processing more efficient.
 * Critics must be very critical and brutally honest when criticizing the work created by the team.
 * Critics must always ask themselves: what needs to be improved to make the work even better.
@@ -70,7 +72,7 @@ Keep a main MEMORY.md in the root of this project and update it when needed. Alw
 * Work can be anything, from reusable tools to text to imagery. Whatever is required to get the project done.
 * Work starts by reading the member's `ROLE.md` (if present) to load their current role context and standards, then reading `output/tools/README.md` to know what tools are available, then reading all files in the member's `inbox/` directory for assignments or other information. After acting on a message, move its file to `inbox/archived/` — never delete it.
 * If a team member can not start work because of a dependency on another task, it should be reported to their superior.
-* An agent is started for each of the (max 5) active workers that has work to do.
+* An agent is started for each active worker that has work to do, in batches of up to 8 simultaneous agents. **Agents expected to run longest (image generation, complex tool builds) must start first.** Documentation and policy tasks run in later batches.
 * Store the lessons learned in the cycle in MEMORY.md, and make sure it is reloaded when the agents is restarted.
 * Keep MEMORY.md compact!
 * After all work is done, a statement of work is added to the output dir.

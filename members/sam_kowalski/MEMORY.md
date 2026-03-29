@@ -249,6 +249,14 @@
 - **LTG_TOOL_palette_warmth_lint_v003.py deployed.** Soft-tolerance mode: `soft_tolerance: {"G": int, "B": int}` in warmth_lint_config.json. `--strict` CLI flag forces tolerance=0 (for CI). Default is strict (G±0, B±0). Violation dict gains `margin` field.
 - **SF02 v007 (Rin):** PENDING. Run color_verify when delivered.
 
+## Cycle 36 Lessons
+- **CHAR-L hoodie warmth guarantee implemented.** Added compact table to master_palette.md (between CHAR-L-08 and Section 7) with CHAR-L-04, CHAR-L-08, CHAR-L-11 in machine-readable `| CODE | Name | \`#hex\` | (R,G,B) |` format. The table-row regex in warmth_lint only matches this format — prose-format CHAR-L entries (skin, jeans, shoes) are intentionally excluded.
+- **ltg_warmth_guarantees.json is now primary config.** `load_config()` in v004 checks this file first, then warmth_lint_config.json, then built-in. Contains warm_prefixes + world_presets + soft_tolerance.
+- **warmth_lint_v004 expanded:** Built-in warm_prefixes = ["CHAR-M", "CHAR-L"]. C36 baseline: 14 entries checked (11 CHAR-M + 3 CHAR-L hoodie), 0 violations. All hoodie values confirmed warm (R>G>B).
+- **--world-threshold-only CI flag:** Prints integer threshold to stdout. Shell usage: `THRESH=$(python warmth_lint_v004.py --world-type GLITCH --world-threshold-only)` → outputs 3. Kai Nakamura to integrate into render_qa.
+- **C36 QA baseline: 0 new FAILs.** SF01/SF02/SF03/SF04 all WARN on warm/cool = documented false positives. SF03/SF04 color fidelity FAIL = documented pre-existing FPs. Byte color model PASS. Full report: output/production/color_qa_c36_baseline.md.
+- **Warmth lint v004 already existed** (Kai Nakamura built the --world-type flag stub). Sam's task was to expand it (CHAR-L hoodie, ltg_warmth_guarantees.json, --world-threshold-only, update built-in config). Always check if a v4 stub exists before starting from scratch.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001. Low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan to add inline comment. Low priority.
@@ -256,3 +264,4 @@
 - Tech Den generator WALL_WARM slightly off from TD-01 — Jordan to add citing comment.
 - TD-10/TD-11 monitor glow alignment — Jordan to compare bg_tech_den_v002.py values vs canonical Section 8 entries. Medium priority.
 - **SF02 v007 color audit PENDING.** Rin Yamamoto delivering v007 this cycle. Run color_verify when arrives.
+- **Kai Nakamura: integrate --world-type into render_qa.** Use `warmth_lint_v004 --world-type X --world-threshold-only` to get threshold; apply to `_check_warm_cool()` call. This would eliminate 4 recurring false WARNs on SF01-SF04.

@@ -1,0 +1,5 @@
+**Author:** Alex Chen
+**Cycle:** 36
+**Date:** 2026-03-30
+**Idea:** Add back-pose W003 suppression to the draw order linter. Currently, W003 (shadow after element) fires if a draw line containing "shadow" appears after a body/head draw call. In back-pose sections of turnaround generators, depth-layering elements (e.g., a shadowed back leg drawn before the body for correct painter's order) may use the word "shadow" in inline comments. A `# LINT: back_pose` block comment could suppress W003 within the section, or the linter could recognize "back_leg" and "back_arm" as suppression triggers. This prevents future false positives as back-pose generators grow more sophisticated.
+**Benefits:** Kai Nakamura (linter maintainer) benefits from cleaner false-positive rate. Future turnaround generators can use descriptive depth-indicator comments without triggering spurious W003 warnings. Investigated in draw_order_lint_back_pose_diagnostic_c36.md — no current false positive, but latent risk is real.

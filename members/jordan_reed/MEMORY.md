@@ -1,5 +1,24 @@
 # Jordan Reed — Memory
 
+## Cycle 36 Deliverables
+- `LTG_TOOL_warmth_inject_v001.py` — warm/cool post-process inject utility
+  - Modes: `warm` (SUNLIT_AMBER top half), `cool` (COOL_FILL bottom half), `auto`
+  - Iterates alpha in steps of 10 (base 40, max 80) until QA passes or cap
+  - Applied to Tech Den v004: separation 7.9 → 23.2 (PASS via cool bottom pass)
+  - Output: `LTG_ENV_tech_den_v004_warminjected.png`
+  - School Hallway v002 (76.2) and Millbrook Street v002 (45.5) already passing
+- Registered in `output/tools/README.md` (Script Index + Last updated header)
+- Ideabox: `20260330_jordan_reed_warmth_inject_generator_hook.md`
+- Inbox archived ✓ | Completion report sent to Alex Chen ✓
+
+## Cycle 36 Status: COMPLETE
+
+## Cycle 36 Lessons
+- **Warm overlay doesn't always separate warm/cool**: Tech Den top half is already amber-warm (PIL hue ~31.5). Adding more SUNLIT_AMBER keeps both zones near same hue → separation stays low (~4). Must use complementary mode: cool the bottom half instead.
+- **`auto` mode logic**: try warm first (most common Real World case — windows are warm), fall back to cool if warm can't push separation up. Never try both simultaneously (compound effect would be harder to control).
+- **COOL_FILL = (160, 195, 215)**: correct monitor/fluorescent floor tint for Real World environments. Distinct from GL palette — safe for real-world use.
+- **QA warm/cool measures top/bottom halves**: always split overlay by top/bottom (not left/right). Already learned C35 but now it informed tool design: inject must target the correct half.
+
 ## Cycle 35 Deliverables
 - `LTG_TOOL_bg_grandma_kitchen_v004.py` → `LTG_ENV_grandma_kitchen_v004.png` (1280×720) GENERATED ✓
   - Fix 1: Deep shadow pass (LAST in pipeline) — DEEP_COCOA + NEAR_BLACK_WARM. QA value floor: 62→20 (PASS)

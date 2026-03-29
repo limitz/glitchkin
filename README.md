@@ -25,9 +25,9 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 *Luma at the CRT — warm lamp from upper-left, cool CRT rim from the right. Procedural wobble outlines, variable stroke, face lighting.*
 ![SF01 Discovery](output/color/style_frames/LTG_COLOR_styleframe_discovery_v005.png)
 
-### SF02 — Glitch Storm (v007)
-*Luma sprinting through a cascade of Glitchkin. C35: FOCUSED DETERMINATION face added, 10° torso lean, steeper hair stream, bbox fix.*
-![SF02 Glitch Storm](output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v007.png)
+### SF02 — Glitch Storm (v008)
+*C36: Fill light direction corrected (upper-right, matching storm crack position), per-character silhouette mask applied — no background bleed.*
+![SF02 Glitch Storm](output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v008.png)
 
 ### SF03 — The Other Side (v005)
 *The Glitch Layer. UV_PURPLE_DARK saturation corrected. Zero warm light — UV ambient only.*
@@ -87,8 +87,9 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 *C35: Value floor 62→20, warm/cool separation 1.7→32.95, Miri-specific spatial identity added.*
 ![Kitchen](output/backgrounds/environments/LTG_ENV_grandma_kitchen_v004.png)
 
-### Tech Den — Cosmo's Workspace (v004)
-![Tech Den](output/backgrounds/environments/LTG_ENV_tech_den_v004.png)
+### Tech Den — Cosmo's Workspace (v004 warminjected)
+*C36: Warm/cool separation fixed 7.9→23.2 PASS via new warmth inject utility.*
+![Tech Den](output/backgrounds/environments/LTG_ENV_tech_den_v004_warminjected.png)
 
 ### The Other Side — Glitch Layer (v003)
 ![Other Side BG](output/backgrounds/environments/LTG_ENV_glitchlayer_frame_v003.png)
@@ -125,7 +126,7 @@ Three-world palette system:
 
 ---
 
-## Team (Cycle 35)
+## Team (Cycle 36)
 
 | Member | Role | Status |
 |--------|------|--------|
@@ -137,43 +138,50 @@ Three-world palette system:
 | Jordan Reed | Style Frame Art Specialist | Active (reactivated C34) |
 | Lee Tanaka | Character Staging & Visual Acting Specialist | Active (reactivated C34) |
 | Morgan Walsh | Pipeline Automation Specialist | Active (joined C34) |
+| Diego Vargas | Storyboard Artist | Active (joined C37) |
+| Priya Shah | Story & Script Developer | Active (joined C37) |
+| Hana Okonkwo | Environment & Background Artist | Active (joined C37) |
+| Ryo Hasegawa | Motion & Animation Concept Artist | Active (joined C37) |
 
 ---
 
 ## Progress
 
-- **Work cycles:** 35 | **Critique cycles:** 14
-- **Next:** Cycle 36
-- **Ideabox:** 8 ideas actioned C35 (all queued C36)
+- **Work cycles:** 36 | **Critique cycles:** 14
+- **Next:** Cycle 37 (critique cycle at C37)
+- **Ideabox:** 8 ideas actioned C36 (all queued C37)
+- **Critics panel:** 20 total (15 professionals + 5 audience members added C36)
+- **Team:** 12 active (4 new members joined C37: Diego Vargas, Priya Shah, Hana Okonkwo, Ryo Hasegawa)
+- **QA baseline:** 321 PASS / 37 WARN / 0 FAIL
 
 ### Pitch Package Status
 | Asset | Latest | Notes |
 |-------|--------|-------|
 | SF01 Discovery | v005 | unchanged |
-| SF02 Glitch Storm | **v007** | C35: Luma face (FOCUSED DETERMINATION), torso lean, hair stream, bbox fix |
+| SF02 Glitch Storm | **v008** | C36: fill light direction fix (upper-right), per-char silhouette mask |
 | SF03 The Other Side | v005 | unchanged |
 | SF04 Luma + Byte | v004 | unchanged |
 | Luma expressions | v009 | unchanged |
 | Luma turnaround | v004 | unchanged |
 | Byte expressions | v005 | unchanged |
-| Cosmo expressions | **v005** | C35: AWKWARD + WORRIED per Lee's brief |
-| Miri expressions | **v004** | C35: WELCOMING + SURPRISED/DELIGHTED per Lee's brief |
+| Cosmo expressions | v005 | **P1 FAIL: glasses tilt 10° vs spec 7°±2 — v006 fix queued C37** |
+| Miri expressions | v004 | unchanged |
 | Character lineup | v007 | unchanged |
 | Logo | v001 | Canonical |
-| Kitchen | **v004** | C35: deep shadows, CRT warm/cool split, Miri spatial identity |
-| Tech Den | v004 | unchanged |
+| Kitchen | v004 | unchanged |
+| Tech Den | **v004_warminjected** | C36: warm/cool separation fixed 7.9→23.2 |
 | Glitch Layer | v003 | unchanged |
-| School Hallway | v002 | C35: perspective exponent t**1.5 (was t**0.6→t**2) |
+| School Hallway | v002 | unchanged |
 | Millbrook Street | v002 | unchanged |
 
 ---
 
 ## How It Works
 
-One `CLAUDE.md` starts a producer agent. The producer builds a team of 5 AI agents, assigns work via inbox message files, runs critique cycles with 15 external critics, and iterates. No human drew these images.
+One `CLAUDE.md` starts a producer agent. The producer builds a team of AI agents, assigns work via inbox message files, runs critique cycles with 20 critics (15 professionals + 5 audience members), and iterates. No human drew these images.
 
 All output generated with Python + PIL (open source only). Generators in `output/tools/` — 150+ tools, compounding each cycle.
 
 ---
 
-*Cycle 34 — 2026-03-29*
+*Cycle 36 — 2026-03-30*

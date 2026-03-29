@@ -331,6 +331,50 @@ Import: `from LTG_TOOL_render_lib_v001 import ...`
 - `alpha_composite` false positives in v001 were the largest source: most files use
   `tmp = Image.alpha_composite(...)` (not img reassignment) — v002 correctly skips these
 
+## Cycle 36 — C36 Spec Sync CI + Warmth Lint v004
+
+**Status:** COMPLETE
+
+**Tasks completed:**
+- Built `LTG_TOOL_spec_sync_ci_v001.py` — CI gate for all 5 characters
+  - Luma/Cosmo/Miri: delegates to char_spec_lint_v001 via importlib
+  - Glitch: delegates to glitch_spec_lint_v001; P1 = G001/G002 only
+  - Byte: inline B001 (body color GL-01b) + B002 (5×5 pixel eye) checks
+  - P1 = FAIL-grade only; WARNs are advisory
+  - CLI: `--chars all|luma|cosmo|miri|byte|glitch`, `--json`, `--save-report`
+  - Exit: 0=pass, 1=P1 fail, 2=usage error
+  - API: `run_ci(chars, tools_dir)`, `format_ci_report(ci_result)`
+  - C36 baseline: Cosmo S003 glasses tilt FAIL (10° vs spec 7°±2) — real issue
+- Built `LTG_TOOL_palette_warmth_lint_v004.py` — warmth lint + world-type
+  - `infer_world_type(filename)` — regex-based auto-inference (6 tests pass)
+  - `--world-type REAL|OTHER_SIDE|GLITCH` CLI flag
+  - `--infer-world-type PATH` CLI flag
+  - World analysis = advisory (WARN only, no FAIL change to result)
+  - All v003 features intact (soft_tolerance, --strict, config, CHAR-M checks)
+  - Reads world_presets from warmth_lint_config.json if present
+- README.md updated: both tools registered, header updated to C36
+- Inbox archived, ideabox submitted
+
+## LTG_TOOL_spec_sync_ci_v001.py (C36 NEW)
+- `run_ci(chars, tools_dir) → dict` — runs all linters, returns exit_code + per-char results
+- `format_ci_report(ci_result) → str` — human-readable
+- `--chars all` is default; can pass specific chars
+- KEY: glitch_spec_lint issues is list[str] not list[dict]; status key = "status" not "result"
+- Cosmo S003 (glasses tilt 10° ≠ spec 7°±2) is a real P1 FAIL in C36 baseline
+
+## LTG_TOOL_palette_warmth_lint_v004.py (C36 NEW)
+- `infer_world_type(path)` — inference rules: OTHER_SIDE first, then GLITCH, then REAL, then None
+- `lint_palette_file(path, config, world_type)` — adds world_analysis dict to result
+- World analysis: warm/cool entry ratio vs threshold from world_presets config
+- REAL threshold: 12% warm entries; OTHER_SIDE/GLITCH: 0 warm
+
+## Lessons Learned (C36)
+- glitch_spec_lint_v001: issues is list[str] (not list[dict]); key "status" not "result"
+  → always read the source before assuming result structure matches char_spec_lint schema
+- Inference rule order matters: OTHER_SIDE check must precede GLITCH to avoid
+  "glitch_storm" being caught by a GLITCH rule (it's REAL)
+- Cosmo S003 is a real ongoing issue: glasses tilt = 10° in cosmo_expression_sheet_v005 (spec: 7°±2)
+
 ## Cycle 35 — G002 Fix + Spec Extractor
 
 **Status:** COMPLETE

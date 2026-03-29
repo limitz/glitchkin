@@ -5,7 +5,7 @@ LTG_TOOL_precritique_qa_v001.py
 Pre-Critique QA Pipeline for "Luma & the Glitchkin."
 
 Single entry-point script that chains all existing QA tools and produces a
-consolidated Markdown report at output/production/precritique_qa_c35.md.
+consolidated Markdown report at output/production/precritique_qa_cNN.md.
 
 Tools chained (in order):
   1. LTG_TOOL_render_qa_v001.py       — size/resolution/quality checks on pitch PNGs
@@ -16,9 +16,11 @@ Tools chained (in order):
   5. LTG_TOOL_palette_warmth_lint_v001.py — CHAR-M warmth compliance on master_palette.md
   6. LTG_TOOL_glitch_spec_lint_v001.py    — Glitchkin generator spec validation
   7. LTG_TOOL_readme_sync_v001.py     — README Script Index completeness audit
+  8. Delta Report                     — compare current run vs last run (qa_baseline_last.json)
 
 Output:
-    output/production/precritique_qa_c35.md
+    output/production/precritique_qa_c<NN>.md
+    output/tools/qa_baseline_last.json  (updated each run)
 
 Exit codes:
     0 — All checks PASS
@@ -27,11 +29,12 @@ Exit codes:
 
 Author: Morgan Walsh (Pipeline Automation Specialist)
 Created: Cycle 34 — 2026-03-29
-Version: 2.0.0 (Cycle 35: Section 7 README sync added; render_qa v1.3.0 value ceiling guard)
+Version: 2.1.0 (Cycle 36: delta report section; README sync WARNs surfaced prominently)
 """
 
 import os
 import sys
+import json
 import datetime
 from pathlib import Path
 
@@ -43,6 +46,10 @@ TOOLS_DIR   = REPO_ROOT / "output" / "tools"
 OUTPUT_DIR  = REPO_ROOT / "output"
 PROD_DIR    = REPO_ROOT / "output" / "production"
 PALETTE_MD  = REPO_ROOT / "output" / "color" / "palettes" / "master_palette.md"
+BASELINE_JSON = TOOLS_DIR / "qa_baseline_last.json"
+
+# Cycle label — update each cycle
+CYCLE_LABEL = "C36"
 
 if str(TOOLS_DIR) not in sys.path:
     sys.path.insert(0, str(TOOLS_DIR))
@@ -63,7 +70,7 @@ from PIL import Image
 # Target file collections
 # ---------------------------------------------------------------------------
 
-# Pitch PNGs: style frames (current versions as of C35) + brand logo + storyboard export
+# Pitch PNGs: style frames (current versions as of C36) + brand logo + storyboard export
 PITCH_PNGS = [
     OUTPUT_DIR / "color" / "style_frames" / "LTG_COLOR_styleframe_discovery_v005.png",
     OUTPUT_DIR / "color" / "style_frames" / "LTG_COLOR_styleframe_glitch_storm_v006.png",
@@ -117,6 +124,145 @@ def _worst_grade(*grades) -> str:
     order = {"ERROR": 3, "FAIL": 2, "WARN": 1, "PASS": 0, "SKIP": -1}
     worst = max(grades, key=lambda g: order.get(g.upper(), -1))
     return worst.upper()
+
+
+# ---------------------------------------------------------------------------
+# Baseline I/O
+# ---------------------------------------------------------------------------
+
+def load_baseline() -> dict:
+    """Load the previous run's QA baseline from qa_baseline_last.json.
+    Returns an empty dict if no baseline exists."""
+    if not BASELINE_JSON.exists():
+        return {}
+    try:
+        return json.loads(BASELINE_JSON.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def save_baseline(snapshot: dict) -> None:
+    """Write the current run's QA snapshot to qa_baseline_last.json."""
+    TOOLS_DIR.mkdir(parents=True, exist_ok=True)
+    BASELINE_JSON.write_text(json.dumps(snapshot, indent=2), encoding="utf-8")
+
+
+def _make_snapshot(
+    render_qa_res,
+    color_verify_res,
+    proportion_res,
+    stub_lint_res,
+    palette_lint_res,
+    glitch_lint_res,
+    readme_sync_res,
+    run_ts: str,
+    cycle: str,
+) -> dict:
+    """Build a compact snapshot dict from section results for persistence."""
+    def _section(r, name):
+        return {
+            "section": name,
+            "overall": r["overall"],
+            "pass": r["pass"],
+            "warn": r["warn"],
+            "fail": r["fail"],
+            "missing": r.get("missing", []),
+            "flagged": r.get("flagged", []),
+        }
+    return {
+        "cycle": cycle,
+        "run_ts": run_ts,
+        "sections": {
+            "render_qa":      _section(render_qa_res,      "Render QA"),
+            "color_verify":   _section(color_verify_res,   "Color Verify"),
+            "proportion":     _section(proportion_res,      "Proportion Verify"),
+            "stub_linter":    _section(stub_lint_res,       "Stub Linter"),
+            "palette_warmth": _section(palette_lint_res,    "Palette Warmth Lint"),
+            "glitch_spec":    _section(glitch_lint_res,     "Glitch Spec Lint"),
+            "readme_sync":    _section(readme_sync_res,     "README Sync"),
+        },
+        "totals": {
+            "pass":  sum(r["pass"]  for r in [render_qa_res, color_verify_res, proportion_res,
+                                               stub_lint_res, palette_lint_res, glitch_lint_res, readme_sync_res]),
+            "warn":  sum(r["warn"]  for r in [render_qa_res, color_verify_res, proportion_res,
+                                               stub_lint_res, palette_lint_res, glitch_lint_res, readme_sync_res]),
+            "fail":  sum(r["fail"]  for r in [render_qa_res, color_verify_res, proportion_res,
+                                               stub_lint_res, palette_lint_res, glitch_lint_res, readme_sync_res]),
+        },
+    }
+
+
+# ---------------------------------------------------------------------------
+# Delta report
+# ---------------------------------------------------------------------------
+
+def compute_delta(current_snapshot: dict, baseline: dict) -> dict:
+    """
+    Compare current snapshot against baseline.
+    Returns a delta dict with:
+        new_fails   — list of (section, item) newly FAIL since last run
+        new_warns   — list of (section, item) newly WARN since last run
+        resolved    — list of (section, item) that were FAIL/WARN, now cleared
+        count_delta — dict: {fail: +N, warn: +N, resolved: N}
+        has_baseline — bool
+        summary     — formatted summary string
+    """
+    result = {
+        "new_fails": [],
+        "new_warns": [],
+        "resolved": [],
+        "count_delta": {"fail": 0, "warn": 0, "resolved": 0},
+        "has_baseline": bool(baseline),
+        "summary": "",
+        "prev_cycle": baseline.get("cycle", "N/A"),
+        "prev_ts": baseline.get("run_ts", "N/A"),
+    }
+
+    if not baseline:
+        result["summary"] = "No baseline found — this run establishes the new baseline."
+        return result
+
+    prev_totals = baseline.get("totals", {})
+    curr_totals = current_snapshot.get("totals", {})
+
+    delta_fail = curr_totals.get("fail", 0) - prev_totals.get("fail", 0)
+    delta_warn = curr_totals.get("warn", 0) - prev_totals.get("warn", 0)
+
+    # Per-section flagged item delta
+    prev_sections = baseline.get("sections", {})
+    curr_sections = current_snapshot.get("sections", {})
+
+    for sec_key, curr_sec in curr_sections.items():
+        prev_sec = prev_sections.get(sec_key, {})
+        prev_flagged = set(prev_sec.get("flagged", []))
+        curr_flagged = set(curr_sec.get("flagged", []))
+
+        sec_name = curr_sec.get("section", sec_key)
+
+        # New items in current that weren't in previous
+        for item in sorted(curr_flagged - prev_flagged):
+            if "FAIL" in item.upper():
+                result["new_fails"].append((sec_name, item.strip()))
+            else:
+                result["new_warns"].append((sec_name, item.strip()))
+
+        # Items in previous that are gone now (resolved)
+        for item in sorted(prev_flagged - curr_flagged):
+            result["resolved"].append((sec_name, item.strip()))
+
+    result["count_delta"]["fail"] = delta_fail
+    result["count_delta"]["warn"] = delta_warn
+    result["count_delta"]["resolved"] = len(result["resolved"])
+
+    sign_f = "+" if delta_fail >= 0 else ""
+    sign_w = "+" if delta_warn >= 0 else ""
+    result["summary"] = (
+        f"Delta since last run ({result['prev_cycle']} @ {result['prev_ts']}): "
+        f"{sign_f}{delta_fail} FAIL, {sign_w}{delta_warn} WARN, "
+        f"-{result['count_delta']['resolved']} resolved"
+    )
+
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -427,6 +573,7 @@ def run_readme_sync() -> dict:
 
     unlisted_count = len(result.get("unlisted", []))
     ghost_count    = len(result.get("ghost", []))
+    legacy_ghost_count = len(result.get("legacy_ghost", []))
     ok_count       = len(result.get("ok", []))
 
     flagged = []
@@ -438,16 +585,20 @@ def run_readme_sync() -> dict:
         flagged.append(f"  - LEGACY GHOST: `{name}` (marked retired, not in legacy/)")
 
     overall = "PASS" if result.get("result") == "PASS" else "WARN"
+    total_discrepancies = unlisted_count + ghost_count + legacy_ghost_count
 
     return {
         "overall": overall,
         "pass": ok_count,
-        "warn": unlisted_count + ghost_count + len(result.get("legacy_ghost", [])),
+        "warn": total_discrepancies,
         "fail": 0,
         "missing": [],
         "flagged": flagged,
         "disk_total": len(result.get("disk_tools", [])),
         "listed_total": len(result.get("listed", [])),
+        "unlisted_count": unlisted_count,
+        "ghost_count": ghost_count,
+        "legacy_ghost_count": legacy_ghost_count,
     }
 
 
@@ -508,6 +659,7 @@ def build_report(
     palette_lint_res,
     glitch_lint_res,
     readme_sync_res,
+    delta: dict,
     run_ts: str,
 ) -> str:
     """Compose the final Markdown report."""
@@ -555,17 +707,34 @@ def build_report(
                    palette_lint_res["fail"] + glitch_lint_res["fail"]  +
                    readme_sync_res["fail"])
 
+    # README sync prominence flag
+    readme_discrepancies = readme_sync_res.get("unlisted_count", 0) + readme_sync_res.get("ghost_count", 0)
+    readme_warn_line = ""
+    if readme_discrepancies > 0:
+        readme_warn_line = (
+            f"\n> **README SYNC WARNING:** {readme_discrepancies} discrepancy(ies) detected — "
+            f"{readme_sync_res.get('unlisted_count', 0)} UNLISTED, "
+            f"{readme_sync_res.get('ghost_count', 0)} GHOST. "
+            "See Section 7 for details. Update README Script Index before critique.\n"
+        )
+
     lines = [
-        "# Pre-Critique QA Report — Cycle 35",
+        f"# Pre-Critique QA Report — {CYCLE_LABEL}",
         "",
         f"**Run date:** {run_ts}",
-        f"**Script:** LTG_TOOL_precritique_qa_v001.py v2.0.0",
+        f"**Script:** LTG_TOOL_precritique_qa_v001.py v2.1.0",
         "",
         "---",
         "",
         "## Overall Result",
         "",
         f"**{overall}** — PASS: {total_pass}  WARN: {total_warn}  FAIL: {total_fail}",
+    ]
+
+    if readme_warn_line:
+        lines.append(readme_warn_line)
+
+    lines += [
         "",
         "| Section | Result | PASS | WARN | FAIL |",
         "|---|---|---|---|---|",
@@ -580,6 +749,44 @@ def build_report(
         "---",
         "",
     ]
+
+    # Delta report section (prominent, before section details)
+    lines.append("## 0. Delta Report")
+    lines.append("")
+    if delta["has_baseline"]:
+        lines.append(f"**{delta['summary']}**")
+        lines.append("")
+        lines.append(f"_Compared against: {delta['prev_cycle']} run @ {delta['prev_ts']}_")
+        lines.append("")
+
+        if delta["new_fails"]:
+            lines.append("**New FAILs since last run:**")
+            for sec, item in delta["new_fails"]:
+                lines.append(f"  - [{sec}] {item}")
+            lines.append("")
+
+        if delta["new_warns"]:
+            lines.append("**New WARNs since last run:**")
+            for sec, item in delta["new_warns"]:
+                lines.append(f"  - [{sec}] {item}")
+            lines.append("")
+
+        if delta["resolved"]:
+            lines.append("**Resolved since last run (previously WARN/FAIL, now PASS):**")
+            for sec, item in delta["resolved"]:
+                lines.append(f"  - [{sec}] {item}")
+            lines.append("")
+
+        if not delta["new_fails"] and not delta["new_warns"] and not delta["resolved"]:
+            lines.append("_No changes in flagged items since last run._")
+            lines.append("")
+    else:
+        lines.append("_No baseline found — this run establishes the initial baseline._")
+        lines.append(f"_Baseline saved to: `{BASELINE_JSON.name}`_")
+        lines.append("")
+
+    lines.append("---")
+    lines.append("")
 
     # Section 1: Render QA
     lines.append(section_header("1. Render QA — Pitch PNGs", render_qa_res))
@@ -633,12 +840,19 @@ def build_report(
     listed_total = readme_sync_res.get("listed_total", "?")
     lines.append(f"_(Tools on disk: {disk_total}  |  Tools listed in README: {listed_total})_")
     lines.append("")
+    if readme_discrepancies > 0:
+        lines.append(
+            f"> **ACTION REQUIRED:** {readme_sync_res.get('unlisted_count', 0)} tool(s) on disk not listed in README "
+            f"and {readme_sync_res.get('ghost_count', 0)} README entry(ies) with no corresponding file. "
+            "Update `output/tools/README.md` Script Index before next critique cycle."
+        )
+        lines.append("")
     lines.append(flagged_block(readme_sync_res))
     lines.append("")
 
     lines.append("---")
     lines.append("")
-    lines.append("*Generated by LTG_TOOL_precritique_qa_v001.py v2.0.0 — Morgan Walsh, Pipeline Automation*")
+    lines.append("*Generated by LTG_TOOL_precritique_qa_v001.py v2.1.0 — Morgan Walsh, Pipeline Automation*")
 
     return "\n".join(lines)
 
@@ -649,8 +863,15 @@ def build_report(
 
 def main():
     run_ts = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-    print(f"[precritique_qa] Starting C35 QA pipeline — {run_ts}")
+    print(f"[precritique_qa] Starting {CYCLE_LABEL} QA pipeline — {run_ts}")
     print(f"[precritique_qa] Repo root: {REPO_ROOT}")
+
+    # Load previous baseline before running
+    baseline = load_baseline()
+    if baseline:
+        print(f"[precritique_qa] Loaded baseline from {baseline.get('cycle', '?')} run @ {baseline.get('run_ts', '?')}")
+    else:
+        print("[precritique_qa] No baseline found — this run will establish the baseline.")
 
     print("[1/7] Running Render QA on pitch PNGs...")
     render_qa_res = run_render_qa()
@@ -678,7 +899,24 @@ def main():
 
     print("[7/7] Running README Script Index Sync audit...")
     readme_sync_res = run_readme_sync()
-    print(f"      → {readme_sync_res['overall']} (OK={readme_sync_res['pass']}, UNLISTED/GHOST={readme_sync_res['warn']}, disk={readme_sync_res.get('disk_total','?')}, listed={readme_sync_res.get('listed_total','?')})")
+    # Prominently report README WARN to console
+    if readme_sync_res["warn"] > 0:
+        print(f"      → {readme_sync_res['overall']} *** README SYNC WARN: {readme_sync_res.get('unlisted_count',0)} UNLISTED, {readme_sync_res.get('ghost_count',0)} GHOST — update README before critique! ***")
+    else:
+        print(f"      → {readme_sync_res['overall']} (OK={readme_sync_res['pass']}, UNLISTED/GHOST={readme_sync_res['warn']}, disk={readme_sync_res.get('disk_total','?')}, listed={readme_sync_res.get('listed_total','?')})")
+
+    # Build snapshot and compute delta
+    current_snapshot = _make_snapshot(
+        render_qa_res, color_verify_res, proportion_res,
+        stub_lint_res, palette_lint_res, glitch_lint_res, readme_sync_res,
+        run_ts, CYCLE_LABEL,
+    )
+    delta = compute_delta(current_snapshot, baseline)
+    print(f"\n[delta] {delta['summary']}")
+
+    # Save new baseline
+    save_baseline(current_snapshot)
+    print(f"[precritique_qa] Baseline saved to: {BASELINE_JSON}")
 
     report_md = build_report(
         render_qa_res,
@@ -688,11 +926,12 @@ def main():
         palette_lint_res,
         glitch_lint_res,
         readme_sync_res,
+        delta,
         run_ts,
     )
 
     PROD_DIR.mkdir(parents=True, exist_ok=True)
-    report_path = PROD_DIR / "precritique_qa_c35.md"
+    report_path = PROD_DIR / f"precritique_qa_{CYCLE_LABEL.lower()}.md"
     report_path.write_text(report_md, encoding="utf-8")
     print(f"\n[precritique_qa] Report written to: {report_path}")
 

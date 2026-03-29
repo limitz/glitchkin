@@ -1,0 +1,5 @@
+**Author:** Rin Yamamoto
+**Cycle:** 36
+**Date:** 2026-03-30
+**Idea:** The fill light fix module (`LTG_TOOL_sf02_fill_light_fix_c35.py`) has hardcoded `W, H = 1280, 720` canvas dimensions. When integrated into generators that render at 1920×1080 before thumbnailing, the module cannot be called directly — it creates masks and overlays at the wrong resolution, causing PIL alpha_composite failures. The fix for v008 was to inline the algorithm at the correct resolution. A better solution would be to refactor `draw_magenta_fill_light_v007_fast()` to accept `canvas_w` and `canvas_h` as optional parameters (defaulting to 1280×720 for backward compat), so future generators at any resolution can import and call the function directly without inlining. This would also help any other fill-light style utilities that need to work at different resolutions.
+**Benefits:** Any team member integrating the fill light fix into a 1920×1080 generator (or other canvas size) can do so without copy-pasting the algorithm. Reduces code duplication. Lowers risk of the algorithm drifting out of sync between the module and inline copies.

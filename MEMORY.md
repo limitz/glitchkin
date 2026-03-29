@@ -4,10 +4,10 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present.
 
 ## Status
-**Cycle 35 complete. Work cycles: 35. Critique cycles: 14.**
-**Next critique at C37 (every 3 work cycles).**
+**Cycle 36 complete. Work cycles: 36. Critique cycles: 14.**
+**Next critique at C37 (critique every 3 work cycles — C37 IS a critique cycle).**
 
-## Active Team (8 slots — expanded C34)
+## Active Team (12 slots — expanded C37)
 
 | Member | Role | Reports To |
 |--------|------|-----------|
@@ -19,8 +19,12 @@ Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are m
 | Jordan Reed | Style Frame Art Specialist (reactivated C34) | Alex Chen |
 | Lee Tanaka | Character Staging & Visual Acting Specialist (reactivated C34) | Alex Chen |
 | Morgan Walsh | Pipeline Automation Specialist (new C34) | Alex Chen |
+| Diego Vargas | Storyboard Artist (new C37) | Alex Chen |
+| Priya Shah | Story & Script Developer (new C37) | Alex Chen |
+| Hana Okonkwo | Environment & Background Artist (new C37) | Alex Chen |
+| Ryo Hasegawa | Motion & Animation Concept Artist (new C37) | Alex Chen |
 
-**Cost discipline:** Morgan's mandate is tool-first QA. Max 8 agents simultaneous.
+**Agent scheduling:** Max 8 simultaneous agents. 12 members → 2 batches per cycle. Longest-running tasks start first.
 
 ## Image Output Rule (MANDATORY)
 **Hard limit: ≤ 1280px in both dimensions.** Use `img.thumbnail((1280,1280), Image.LANCZOS)` before saving. QA pipeline (v1.2.0) now auto-downscales before checks.
@@ -31,14 +35,18 @@ Before sending any image to Claude: prefer tools; downscale if lower-res suffice
 ## Critique Format
 Critics use: Score (0–100) → bullet issues (≤2 lines each) → single Bottom line sentence. ≤15 lines per asset. Rule in CLAUDE.md.
 
-## Pitch Package Status — POST CYCLE 35
+## Critics Panel (20 total)
+- 15 industry professionals (Takeshi, Ingrid, Daisuke, Priya N, Marcus W, Chiara, Samuel, Yuki, Reinhardt, Amara, Jonas, Leila, Sven, Nkechi, Petra)
+- 5 audience members (Zoe Park age 11, Marcus Okafor parent, Jayden Torres age 13, Eleanor Whitfield grandparent, Taraji Coleman educator) — added C36
+- **Rotate critics each cycle. Min 1 audience critic per critique cycle. All 20 get roughly equal rotation.**
+
+## Pitch Package Status — POST CYCLE 36
 
 ### Style Frames
 - **SF01 Discovery**: v005 (unchanged)
-- **SF02 Glitch Storm**: **v007 NEW C35** (Luma FOCUSED DETERMINATION face, 10° torso lean, steeper hair stream, bbox fix — Rin)
+- **SF02 Glitch Storm**: **v008 NEW C36** (upper-right fill light, per-char silhouette mask — Sven P1 resolved)
 - **SF03 Other Side**: v005 (unchanged)
 - **SF04 Luma+Byte**: v004 (unchanged)
-- NOTE: SF02 fill light direction fix (Jordan C35) NOT integrated into v007 — lands C36
 
 ### Logo
 - **LTG_BRAND_logo_v001.png** — DECIDED C25
@@ -46,186 +54,55 @@ Critics use: Score (0–100) → bullet issues (≤2 lines each) → single Bott
 ### Characters
 - Luma: expr v009, turnaround v004, color model v002
 - Byte: expr v005, turnaround v001, color model v001
-- Cosmo: **expr v005 NEW C35** (AWKWARD max-asymmetry, WORRIED head-grab — per Lee's brief)
-- Miri: **expr v004 NEW C35** (WELCOMING wide-open arms, SURPRISED/DELIGHTED hand-to-cheek — per Lee's brief)
-- Glitch: **expr v003 body ratio FIXED C35** (rx/ry were swapped — now taller than wide per spec G002)
-- Character lineup: v007 (unchanged)
+- Cosmo: expr v005 **P1 FAIL: glasses tilt 10° vs spec 7°±2 → Maya C37 (v006)**
+- Miri: expr v004
+- Glitch: expr v003 (body ratio fixed C35)
+- Character lineup: v007
 
 ### Environments
-- Kitchen: **v004 NEW C35** (value floor 62→20, warm/cool 1.7→32.95, Miri spatial identity)
-- Tech Den: v004 (unchanged)
-- Glitch Layer: v003 (unchanged)
-- School Hallway: v002 (C35: floor tiles t**1.5, lockers 1-(1-t)**1.5 — perspective fixed)
-- Millbrook Street: v002 (unchanged)
+- Kitchen: v004
+- Tech Den: **v004_warminjected NEW C36** (warm/cool 7.9→23.2 PASS)
+- Glitch Layer: v003
+- School Hallway: v002
+- Millbrook Street: v002
+
+## QA Baseline (C36)
+precritique_qa v2.1.0: **321 PASS / 37 WARN / 0 FAIL**
+Delta vs C35: +0 FAIL, +1 WARN (SF02 v008 G007 — known pattern), -0 resolved
 
 ## Critical Bug Fixed C34 — add_rim_light() Canvas Flood
-`edge_mask.convert("RGBA")` set alpha=255 everywhere (not edge mask value), flooding entire canvas with rim color. Fixed: use edge_mask directly as alpha channel. Affected SF01 v004/v005, SF02 v006, SF04 v004 — all regenerated.
+`edge_mask.convert("RGBA")` set alpha=255 everywhere. Fixed: use edge_mask directly as alpha channel.
 
-## Critique 14 — Key Findings (C35 priorities)
+## C36 Key Lessons
+- **RPD metric**: IoM was mathematically broken for standing humans (subset geometry bias). v003 Regional Pose Delta = column-projection Pearson correlation per zone. Works correctly.
+- **Jordan's fill light module hardcoded to 1280×720**: PIL failures on other resolutions. Rin inlined. Fix actioned C37 (canvas_w/canvas_h params).
+- **Tech Den warmth**: needed cool-bottom injection, not warm-top — top was already amber. warmth_inject now auto-detects correct injection direction.
+- **Cosmo P1**: glasses tilt 10° vs spec 7°±2. Caught by spec_sync_ci first run. Maya C37.
+- **Audience critics added**: 5 real-people critics (target audience). CLAUDE.md: min 1 per critique cycle. Guard artistic integrity — don't chase approval.
 
-### P1 — Blockers
-- **Luma has NO FACE in SF02** (3rd cycle): `_draw_luma()` in v006 identical to v005. Lee's staging brief exists and was never implemented. P0. → Rin implements `_draw_luma_face_sprint()`, Jordan reviews
-- **Cosmo v005 + Miri v004**: C34 pose brief existed; neither sheet was touched. Cosmo=34, Miri=38. → Maya P1
-- **Glitch G002**: all generators produce body wider than tall (opposite of spec) → Kai
-- **Warm/cool separation systemic failure**: SF01=17.9, SF02=6.5, SF03=3.1, SF04=1.1 (threshold=20). Design system problem → Alex to decide: calibrate metric or fix frames
-- **Kitchen v003 + Hallway v002 need rebuilds**: Chiara flagged both as "does not belong" (12 cycles of character evolution not touching them). School Hallway perspective bug fixed by Producer (t**0.6 → t**2 across 4 perspective calculations). → Jordan (Kitchen rebuild), Rin or Jordan (Hallway rebuild)
+## Open Items for C37
+1. **Cosmo v006**: glasses tilt fix (Maya) — P1 CI FAIL
+2. **RPD zone visualization** --output-zones flag (Maya)
+3. **Fill light resolution adapter**: canvas_w/canvas_h params (Rin)
+4. **Glitch spec suppression list**: `glitch_spec_suppressions.json` (Kai)
+5. **Draw order back-pose suppression**: `# LINT: back_pose` block comment (Kai)
+6. **Warmth inject generator hook**: --check-warmth flag in env generators (Jordan/Hana)
+7. **CI suite consolidation**: `LTG_TOOL_ci_suite_v001.py` (Kai)
+8. **Contact sheet arc-diff tool** (Lee)
+9. **World-type inference in render_qa** (Kai/Sam)
+10. **New members onboarding** (C37 first cycle): Diego (storyboards), Priya (story bible), Hana (environments), Ryo (motion specs)
+11. **Luma "THE NOTICING" still scoring 52-58**: C37 priority for Maya
 
-### P2
-- SF02 fill light direction wrong: bounce applies lower-left but storm crack is upper-right
-- SF02 get_char_bbox multi-char bug: bbox spans 83% canvas (3 chars), meaningless char_cx for rim light
-- SUNLIT_AMBER drift in SF04: 15.7° hue drift (Nkechi) — Art Director call needed
-- Luma THE NOTICING still not landing to critic satisfaction (v009=52-58/100)
-- Glitch Layer has no HOT_MAGENTA — emotional fissures absent from Glitch's world
+## C36 Ideabox — All 8 Actioned → C37
+Morgan: glitch spec suppression | Alex: draw order back-pose | Jordan: warmth inject hook | Kai: CI suite | Lee: contact sheet arc-diff | Maya: RPD zone viz | Rin: fill light adapter | Sam: world-type render_qa
 
-### C14 Scores
-- Daisuke: Luma v009=52, Cosmo=34, Miri=38, Byte=68, Glitch=82, Lineup=61
-- Priya: SF02=44, SF01=71, SF03=58, SF04=62, cross-pitch=38
-- Sven: SF02=44, SF01=72, SF03=61, SF04=74
-- Chiara: Kitchen=58, TechDen=62, GlitchLayer=74, Street=71, Hallway=55
-- Nkechi: Luma=58, SF02=72, SF04=65, Overall=68
+## Warm/cool QA (C35 lesson, still valid)
+Warmth metric measures TOP vs BOTTOM half hue — per-world presets in warmth_lint_config.json. SF03/SF04 near-zero warm ratio is CORRECT. v004 adds --world-type flag + auto-inference.
 
-## Known Open Items for C36
-1. SF02 v008: integrate Jordan's fill light direction + masking fix (upper-right source, char-masked)
-2. Silhouette tool fix: IoM metric is broken for human chars — Maya's idea actioned (contour/delta metric)
-3. Jordan's warm/cool inject utility for Tech Den, Hallway, Millbrook Street
-4. 8 ideabox ideas actioned → C36 (all queued)
-5. Spec sync CI gate (Kai C36)
-6. Face test as mandatory gate in team ROLE.md files (Lee C36)
-7. Per-world warm/cool QA --world-type flag (Sam + Kai C36)
-8. QA delta report in precritique_qa (Morgan C36)
-9. Proportion audit asymmetric eye detection (Rin C36)
-
-## C35 Key Lessons
-- **Warm/cool QA metric**: measures TOP vs BOTTOM half hue — irrelevant to three-world palette. Per-world presets now in warmth_lint_config.json. SF03/SF04 near-zero warm ratio is CORRECT by design.
-- **SUNLIT_AMBER drift in SF04**: compositing artifact + skin-tone false positive. No fix needed. Registered in qa_false_positives.md.
-- **Silhouette IoM is broken for humans**: arm differentiation fails because shared trunk dominates. All FAIL results on human chars are tool defects, not pose defects.
-- **SF02 face finally delivered**: 3-cycle blocker resolved. Face test tool (Lee) now mandatory gate.
-- **Glitch G002**: rx/ry were swapped since original implementation. All 6 generators fixed.
-- **precritique_qa v2.0**: 7 sections now, 145 tools registered, QA baseline 302 PASS / 42 WARN / 0 FAIL.
-
-## Ideabox — C30 (5 ideas, all filed)
-- Alex: proportion verifier tool (actioned → Kai C31)
-- Maya: character diff tool
-- Sam: color verify gradient/histogram mode
-- Kai: draw order linter
-- Rin: proportion audit tool (SF generators)
-**Theme:** team converged independently on automation to remove manual QA inspection
-
-## Cycle 31 — Completed (Ideabox Implementation)
-
-### Alex Chen
-- LTG_TOOL_proportion_verify_v001.py built; pitch index updated; all 6 ideabox ideas actioned
-
-### Kai Nakamura
-- LTG_TOOL_draw_order_lint_v001.py: 59 PASS / 55 WARN (W004 = missing draw refresh, 55 files)
-- LTG_TOOL_color_verify_v002.py: hue histogram mode added; all v001 API preserved
-
-### Maya Santos
-- LTG_TOOL_char_diff_v001.py: proportion diff tool; best used on turnaround FRONT panels
-
-### Rin Yamamoto
-- LTG_TOOL_proportion_audit_v001.py: SF01 v004 PASS (ew=0.22); SF04 unauditable (stubs)
-
-### Sam Kowalski
-- QA run: 3 PASS / 9 WARN / 0 FAIL on 12 pitch assets; color_statement_critique13.md written
-- New ideabox idea: QA false-positive registry (FP-DOCUMENTED annotations)
-
-## Cycle 30 — Completed
-
-### Alex Chen
-- pitch_audit_cycle30.md; C30+C31 directives sent
-
-### Maya Santos
-- Luma color model v002 (eye width fixed HR×0.22); critique13_precheck written; character_sheet_standards updated
-
-### Sam Kowalski
-- master_palette.md CHAR-L-11 fix (C14 copy-error: #00D4E8→#00F0FF); color story SF01 ref updated; full color audit; all 4 SFs PASS
-
-### Kai Nakamura
-- render_qa_v001.py → v1.2.0 (auto-downscale); README + pitch index updated; draw order audit PASS
-
-### Rin Yamamoto
-- SF01 v004 eye width fixed (HR×0.25→HR×0.22); heights confirmed 3.2 heads; SF02/SF03 checked
-
-## Shared Library
-`LTG_TOOL_render_lib_v001.py` (v1.1.0)
-`LTG_TOOL_color_verify_v001.py` — use v002 for new work
-`LTG_TOOL_color_verify_v002.py` — C31. Adds hue histogram mode (--histogram)
-`LTG_TOOL_render_qa_v001.py` (v1.2.0 — C30. Auto-downscale before QA)
-`LTG_TOOL_procedural_draw_v001.py` (v1.2.0 — rim light side param, face lighting)
-`LTG_TOOL_proportion_verify_v001.py` — C31. PNG-based head/body ratio check
-`LTG_TOOL_proportion_audit_v001.py` — C31. Scans SF generators for ew/HR constants
-`LTG_TOOL_char_diff_v001.py` — C31. Pixel-sampling proportion diff between two PNGs
-`LTG_TOOL_draw_order_lint_v001.py` — C31. Static draw-order linter (55 W004s in older generators)
-`LTG_TOOL_naming_cleanup_v001.py` — executed C29 (22 files deleted)
-
-## Cycle 32 — Completed
-
-### Alex Chen
-- Eye-width canon: `ew = int(head_r * 0.22)`, head_r = RADIUS. Avoid `h`. Documented in character_sheet_standards + luma.md.
-- luma.md: 3.5→3.2 heads, all canonical proportions documented
-- SF04 Byte teal: accepted as SCENE-LIGHTING
-
-### Maya Santos
-- Luma expr v008: THE NOTICING (chin-touch, asymmetric eyes, zero tilt — distinct silhouette)
-- glitch.md: full 11-section diamond construction spec
-
-### Sam Kowalski
-- CHAR-L-11 cross-ref fixed; CHAR-M-11 Miri slippers → warm #C4907A; DRW-18 warmth clarified
-- Color story SF03 Key Color Tension corrected
-
-### Rin Yamamoto
-- procedural_draw v1.3.0: add_rim_light() char_cx param (character-relative side mask)
-- SF01 v005: char_cx fix applied
-- SF04 rebuilt: value ceiling 255 (was 198/FAIL), monitor contribution, canonical specs
-- Luma turnaround v004: ew = int(head_r * 0.22) across all views
-
-### Kai Nakamura
-- 8 broken forwarding stubs fixed (imported deleted LTG_CHAR_* files)
-- Cosmo v004 generator fixed (correct filename + SURPRISED blush)
-- W004: most warnings are linter false positives — scope-aware linter needed (ideabox)
-
-## Critique 13 — Key Findings (C32 priorities)
-
-### P1 — Blockers
-- **Eye-width semantic mismatch**: `h`=head-radius in v007 (ew=22px) vs `h`=head-height in turnaround v003 (ew=84px) — 3.8× discrepancy. Must canonize one definition across ALL docs/generators (Alex + Maya + Rin)
-- **Broken forwarding stubs**: C29 cleanup deleted LTG_CHAR_* originals; C28 stubs import from them → ModuleNotFoundError on 8+ generators (Kai)
-- **luma.md says 3.5 heads**: contradicts v007 3.2 canon (Alex — 1-line fix)
-- **add_rim_light() canvas-midpoint bug**: side="right" uses x>0.50W, excludes left-of-center characters; fix to character-relative bounding box (Rin → v1.3.0)
-- **SF04 generator rebuild**: value ceiling 198 (FAIL), stubs only, silhouette broken (Rin)
-- **CHAR-L-11 cross-ref hex**: still cites #00D4E8; must be #00F0FF (Sam — 1-line fix)
-- **Luma signature expression**: v008 needed — "noticing" face, the central pitch promise (Maya)
-- **Glitch diamond construction spec**: 2 consecutive critiques, still not written (Maya)
-
-### P2
-- Byte shadow color in lineup: 2 cycles unresolved
-- Byte unguarded warmth state missing from expr sheet
-- SF02 Luma interiority during sprint absent (C+)
-- CHAR-M-11 Miri slippers contradict warm-palette guarantee
-- Glitch has no spec file
-- Cosmo v004 generator outputs wrong filename
-- SF02 characters: no magenta fill light / no cyan specular
-- 55 W004 lint warnings (missing draw refresh) unaddressed
-- Luma v007 body proportion actually 3.12 heads due to neck segment
-
-### Critic Scores (C13)
-- Daisuke: Luma expr v007=62, turnaround=71, lineup=74, color model=80, Glitch expr=72
-- Priya: palette=82, SF01=84, SF02=78, SF03=76, SF04=68, color story=87
-- Sven: SF01=72, SF02=68, SF03=81, SF04=52
-- Reinhardt: 64 (up from FAIL — conditional)
-- Nkechi: B overall (up from B-)
-
-## Producer Responsibilities
-- **Ideabox review**: after each cycle, producer reviews ideabox/, actions worthy ideas → actioned/, rejects → rejected/.
-- **README.md**: update after every work and critique cycle — latest asset versions, team roster, progress counters. Never touch the intro text.
-- **Agent prompts**: do NOT duplicate inbox content. Prompts = role context + startup sequence only.
-
-## Agent Prompt Design (C32 lesson)
-Do NOT duplicate inbox message content in agent prompts. The inbox message IS the assignment. Agent prompts should only contain: role context, startup sequence (read CLAUDE.md, PROFILE.md, MEMORY.md, tools/README.md, then inbox). Task detail belongs in the inbox only — duplication causes drift.
-
-## Technical Debt
-- **SF04 source generators missing**: proportion audit impossible; stubs only on disk
-- **W004 warnings**: largely false positives per Kai C32 investigation; scope-aware linter queued C34
+## Known False Positives (qa_false_positives.md)
+- SUNLIT_AMBER drift in SF04: skin-tone overlap + compositing artifact. No fix.
+- UV_PURPLE anti-aliasing WARNs: expected on all Glitch Layer assets.
+- G007 on SF02: expected pattern on all SF02 versions.
 
 ## Canonical Palette Reminders
 - Byte body = GL-01b #00D4E8 BYTE_TEAL (NOT #00F0FF)
@@ -233,13 +110,16 @@ Do NOT duplicate inbox message content in agent prompts. The inbox message IS th
 - HOT_MAGENTA = GL-02 #FF2D6B (NOT #FF0090)
 - UV_PURPLE = #7B2FBE (verify in master_palette.md)
 - GL-06c STORM_CONFETTI_BLUE = #0A4F8C
-- CHAR-L-11 Constraint 1 = #00F0FF Electric Cyan (fixed C30 — was #00D4E8)
+- CHAR-L-11 Constraint 1 = #00F0FF Electric Cyan (fixed C30)
 - SF03: zero warm light; Classroom: zero Glitch palette
 
 ## Key Output Locations
 - Style Frames: `output/color/style_frames/`
 - Characters: `output/characters/main/`, color models: `output/characters/color_models/`
+- Motion Specs: `output/characters/motion/` (new C37)
 - Environments: `output/backgrounds/environments/`
+- Storyboards: `output/storyboards/` (new C37)
+- Story/Script: `output/production/story/` (new C37)
 - Tools: `output/tools/` (legacy → `output/tools/legacy/`)
 - Master Palette: `output/color/palettes/master_palette.md`
 - Pitch Package Index: `output/production/pitch_package_index.md`
@@ -251,53 +131,29 @@ Do NOT duplicate inbox message content in agent prompts. The inbox message IS th
 - output/production/ files EXEMPT from LTG naming
 - After img.paste(): always refresh draw = ImageDraw.Draw(img)
 - show_guides=False for all pitch exports
-- Python 3.8 compat: use `from __future__ import annotations` + `typing` module imports (no `list[str]` subscript)
+- Python 3.8 compat: use `from __future__ import annotations` + `typing` module imports
 
-## Cycle 33 — Completed (Ideabox Implementation Round 2)
-
-### Alex Chen
-- Character lineup v007: Byte shadow GL-01a fix (#00A8B4), Miri slipper warm fix (#C4907A)
-- Byte expr v005 directive sent to Maya (UNGUARDED WARMTH)
-- Pitch package index updated through C32
-- Ideabox: lineup palette audit tool proposal
-
-### Maya Santos
-- LTG_TOOL_expression_silhouette_v001.py: silhouette differentiation test; combined IoM+XOR metric; auto-detects grid; dark-BG support
-- Miri expr v003 rebuilt properly (was broken stub); KNOWING STILLNESS 6th expression
-- Byte expr v005: UNGUARDED WARMTH (star+heart eyes, gold confetti, body leaning in)
-- C33 baseline: all human chars FAIL at 85% threshold — design problem, not tool problem
-
-### Sam Kowalski
-- LTG_TOOL_palette_warmth_lint_v001.py: warm-channel compliance check for CHAR-M; 0 violations C33 baseline
-- SF04 Byte teal exception formally documented in master_palette.md
-
-### Kai Nakamura
-- LTG_TOOL_stub_linter_v001.py: scans for broken LTG_CHAR_*/LTG_COLOR_* imports; --pre-commit CI flag
-- LTG_TOOL_glitch_spec_lint_v001.py: G001–G008 checks against glitch.md; SKIP non-Glitch files
-
-### Rin Yamamoto
-- procedural_draw v1.4.0: get_char_bbox(img, threshold) utility added
-- SF02/SF03 audit: neither calls add_rim_light() — both draw lighting as direct geometry; no latent bugs
-
-## Ideabox — C33 (5 ideas, all actioned → C34)
-- Rin: scene_snapshot() diagnostic crop utility
-- Kai: general char spec linter framework (all characters, not just Glitch)
-- Sam: warmth lint scope expansion (configurable prefix list via JSON)
-- Alex: lineup palette audit tool
-- Maya: expression silhouette --mode arms (regional similarity)
-
-## Shared Library (updated C35)
-`LTG_TOOL_procedural_draw_v001.py` (v1.5.0 — scene_snapshot() + add_rim_light() flood fix C34)
-`LTG_TOOL_precritique_qa_v001.py` — **v2.0.0 C35**. 7 sections; README sync integrated; 302P/42W/0F baseline
-`LTG_TOOL_render_qa_v001.py` — **v1.3.0 C35**. Value ceiling guard (Check F); specular dot detection
-`LTG_TOOL_palette_warmth_lint_v003.py` — **C35**. soft-tolerance mode; world_presets in config
-`LTG_TOOL_readme_sync_v001.py` — **C35**. Audits LTG_TOOL_*.py vs README Script Index; Section 7 of precritique
-`LTG_TOOL_character_face_test_v001.py` — **C35** (Lee). Sprint-scale face legibility tester; 6 variants with PASS/WARN/FAIL
-`LTG_TOOL_spec_extractor_v001.py` — **C35** (Kai). Parses char spec .md files; extracts proportions, colors, constants
-`LTG_TOOL_glitch_spec_lint_v001.py` — v1.1.0 C35. RX_SPEC=34/RY_SPEC=38 corrected (G002 fix)
-`LTG_TOOL_expression_silhouette_v002.py` — C34. --mode arms. NOTE: IoM broken for humans (C35 finding); fix queued C36
-`LTG_TOOL_palette_warmth_lint_v002.py` — C34. (superseded by v003)
-`LTG_TOOL_char_spec_lint_v001.py` — C34. General spec linter (Luma/Cosmo/Miri)
+## Shared Library (updated C36)
+`LTG_TOOL_precritique_qa_v001.py` — **v2.1.0 C36**. Delta report (Section 0), baseline persistence, README sync prominence
+`LTG_TOOL_expression_silhouette_v003.py` — **C36**. RPD metric replaces IoM; arms mode fixed
+`LTG_TOOL_spec_sync_ci_v001.py` — **C36**. CI gate all 5 chars; C36 baseline: Cosmo P1 FAIL
+`LTG_TOOL_palette_warmth_lint_v004.py` — **C36**. --world-type flag, CHAR-L expansion, auto-inference
+`LTG_TOOL_warmth_inject_v001.py` — **C36**. Env warm/cool injection utility
+`LTG_TOOL_proportion_audit_v002.py` — **C36**. Asymmetric eye detection
+`ltg_warmth_guarantees.json` — **C36**. Primary warmth config (CHAR-M + CHAR-L hoodie)
+`LTG_TOOL_procedural_draw_v001.py` (v1.5.0)
+`LTG_TOOL_render_qa_v001.py` — v1.3.0
+`LTG_TOOL_character_face_test_v001.py` — C35. Mandatory gate in 4 ROLE.md files
+`LTG_TOOL_spec_extractor_v001.py` — C35
+`LTG_TOOL_char_spec_lint_v001.py` — C34
 `LTG_TOOL_draw_order_lint_v002.py` — C34. Scope-aware W004
-`LTG_TOOL_lineup_palette_audit_v001.py` — C34. Lineup body color audit
-`LTG_TOOL_stub_linter_v001.py` — C33. Broken import scanner
+`LTG_TOOL_expression_silhouette_v002.py` — C34 (superseded by v003)
+
+## Agent Prompt Design
+Do NOT duplicate inbox message content in agent prompts. Prompts = role context + startup sequence. Task detail belongs in inbox only.
+
+## Producer Responsibilities
+- **Ideabox review**: after each cycle, action worthy ideas → actioned/, rejects → rejected/.
+- **README.md**: update after every work and critique cycle.
+- **Batch ordering**: longest-running agents start first in each batch.
+- **New member onboarding**: update MEMORY.md with catch-up section before first assignment.

@@ -283,3 +283,18 @@ Read inbox for directive. Two tasks: (1) SF02 staging brief for Luma interiority
 - **FOCUSED DETERMINATION ≠ FEAR.** Fear = both eyes wide + brows arched + open O mouth. Determination = left eye wider, brows asymmetric (L inward, R level), jaw set. These differ at sprint scale — the face test confirms they are distinguishable.
 - **Pre-review documents (before asset delivery) are valuable.** Writing acceptance criteria BEFORE v007 is generated gives Rin a clear pass/fail checklist during implementation. Reduces iteration cycles.
 - **face_test tool as pipeline gate:** Tool should be run before any face geometry change in SF generators. Output PNG referenced in generator docstring. Prevents "invisible face" regression.
+
+## Cycle 36 Milestone
+- **Face test gate DEPLOYED across team ROLEs.**
+  - Maya Santos ROLE.md: gate appended after Pre-Critique Checklist section
+  - Rin Yamamoto ROLE.md: CREATED (did not exist); full role spec + gate included
+  - Jordan Reed ROLE.md: gate appended after Standards section
+  - Lee Tanaka ROLE.md: gate appended with staging-brief framing
+- **Policy document:** `output/production/face_test_gate_policy.md` — rationale, thresholds, per-member scope, run instructions, FAIL/WARN rules
+- **Ideabox:** `20260330_lee_tanaka_contact_sheet_arc_diff.md` — propose LTG_TOOL_contact_sheet_arc_diff_v001.py
+- **Reported to Alex Chen** via inbox
+
+## Cycle 36 Lessons
+- **Pipeline policy must live in ROLE.md.** A tool built in C35 but not in ROLE.md is invisible to a fresh agent. Gate sections in ROLE.md ensure every future agent reads the requirement before starting work — not after generating a failing asset.
+- **Rin's ROLE.md was missing entirely.** An active member without a ROLE.md is a risk: fresh context will rely only on PROFILE.md and MEMORY.md. ROLE.md is the operational spec; it must exist for every active member.
+- **Policy documents belong in `output/production/` with full rationale.** Short ROLE.md entries are pointers; the full context (why, thresholds, example command) lives in the policy file.

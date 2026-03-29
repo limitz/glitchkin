@@ -1,5 +1,28 @@
 # Rin Yamamoto — MEMORY
 
+## C36 Completed Work
+- `LTG_TOOL_style_frame_02_glitch_storm_v008.py` — SF02 v008 generator (C36 fill light direction fix)
+- `output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v008.png` — 1280×720px
+  - `draw_magenta_fill_light_c36()`: fill source UPPER-RIGHT (char_cx + char_h*0.5, char_cy - char_h*0.8)
+  - Per-character silhouette mask via `_make_char_silhouette_mask_1080()` + `ImageChops.multiply()`
+  - Alpha max 35 (was 40) — direct source, no background tint
+  - Algorithm inlined at 1920×1080 (fill_light_fix_c35 module is hardcoded 1280×720)
+- `LTG_TOOL_proportion_audit_v002.py` — proportion audit tool (C36 asymmetric eye detection)
+  - `_extract_asymmetric_eyes()`: detects `eye_r_left`/`eye_r_right = max(N, int(head_r * M))` patterns
+  - Per-eye verdict (L/R) + ASYM-WARN if either out of spec or diff > 10%
+  - Intentional asymmetry (sprint face) → ASYM-WARN, not FAIL
+  - Report: `output/production/proportion_audit_c36.md`
+- Audit results C36: PASS=3, ASYM-PASS=0, ASYM-WARN=2 (v007/v008), WARN=1, FAIL=0, N/A=14
+
+## C36 Lessons
+- External fix modules with hardcoded W/H (1280×720) cannot be called on 1920×1080 images.
+  PIL alpha_composite fails with "images do not match" when overlay is wrong size.
+  Inline the algorithm at the correct resolution, OR refactor to accept canvas_w/canvas_h params.
+- When luma_cy/byte_cy/cosmo_cy not passed to fill light: use geometry: luma/cosmo at H*0.65, byte at H*0.60
+- GaussianBlur radius for silhouette dilation should scale with canvas: radius=4 for 1280px, radius=6 for 1920px
+- Proportion audit: asymmetric eye ratios (0.26/0.17) are intentional design — ASYM-WARN not FAIL
+  Report format: ASYM-WARN with both ratios displayed (L:0.2600 / R:0.1700)
+
 ## Role (Updated Cycle 26)
 **Procedural Art Engineer** on "Luma & the Glitchkin."
 Hand-drawn quality is built IN at generation time — no post-processing step.

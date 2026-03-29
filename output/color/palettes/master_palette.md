@@ -1199,6 +1199,20 @@ Formal documentation of inline color values used in `style_frame_01_rendered.py`
 
 ---
 
+### CHAR-L Hoodie Warmth Guarantee Table
+
+**Production rule:** Every palette entry for Luma's hoodie system must remain "unambiguously warm" — R must be the dominant channel (within soft_tolerance). This table is the machine-readable source for `LTG_TOOL_palette_warmth_lint_v004.py` and the CI warmth gate. Entries are listed here in addition to their prose definitions above. If a value changes in the prose section, it must also be updated here.
+
+| Code | Name | Hex | RGB | Notes |
+|---|---|---|---|---|
+| CHAR-L-04 | Luma Hoodie Shadow (Lamp-Lit) | `#B84A20` | (184, 74, 32) | Shadow companion to HOODIE_ORANGE. R>G>B — warm guarantee. See prose entry above. |
+| CHAR-L-08 | Luma Hoodie Underside (Lavender Ambient) | `#B36250` | (179, 98, 80) | Ambient-lit underside. 70/30 blend of HOODIE_SHADOW + DUSTY_LAVENDER. R>G>B — warm guarantee preserved despite lavender influence. |
+| CHAR-L-11 | Luma Hoodie Pixel (Warm-Lit Activation) | `#E8C95A` | (232, 201, 90) | Warm-lit pixel accents only. Alias of RW-02 Soft Gold. R>G>B — warm guarantee. |
+
+*Cycle 36 addition (Sam Kowalski — 2026-03-30): CHAR-L hoodie warmth guarantee table added. These entries are now machine-checked by `LTG_TOOL_palette_warmth_lint_v004.py` with prefix "CHAR-L" when `ltg_warmth_guarantees.json` is active. Only these three hoodie-specific entries appear in table format; all other CHAR-L entries (skin, jeans, shoes) remain in prose format and are intentionally excluded from the warmth lint (jeans = blue, shoes = near-white — not warm-guaranteed).*
+
+---
+
 ---
 
 ## SECTION 7 — SKIN COLOR SYSTEM

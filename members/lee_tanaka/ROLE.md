@@ -46,3 +46,12 @@
 - **Bridging panels are mandatory** when a cut crosses settings with no spatial continuity — a hard cut from an ECU in one room to an ECU in another is a spatial disorientation event
 - **Pixel shapes on CRT screens must be legible** — minimum 15px wide (at 800px canvas). Sub-legible pixel art breaks the narrative.
 - **NEVER overwrite existing panels** — always new versioned file (e.g., v002 → v003)
+
+## Mandatory Face Test Gate (MANDATORY from C36 — Producer directive)
+
+Before submitting any staging brief or reviewing any asset that contains character faces at sprint scale: run `LTG_TOOL_character_face_test_v001.py` on the output.
+
+- **FAIL = do not submit.** Flag to Rin Yamamoto for geometry fix.
+- **WARN = fix or document.** If a staging brief references sprint-scale face requirements, include face test pass criteria explicitly.
+
+See `output/production/face_test_gate_policy.md` for full policy rationale and usage instructions.

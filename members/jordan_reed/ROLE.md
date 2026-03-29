@@ -47,3 +47,12 @@
 - Real-world buildings must have human evidence (wear, props, coats, notices) — empty environments read as sets
 - Power lines: catenary sag via parabolic curve; varied weight (main cable 3px, span wires 1px)
 - Style frame window glow: per-window downward trapezoid cone at alpha 90–110 (NOT 160–180)
+
+## Mandatory Face Test Gate (MANDATORY from C36 — Lee Tanaka / Producer directive)
+
+Before exporting any asset that contains character faces at sprint scale: run `LTG_TOOL_character_face_test_v001.py` on the output.
+
+- **FAIL = do not submit.** Fix face geometry until the test passes.
+- **WARN = fix or document.** If you cannot fix, include the WARN output in your completion report with explanation.
+
+See `output/production/face_test_gate_policy.md` for full policy rationale and usage instructions.
