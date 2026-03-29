@@ -4,8 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present.
 
 ## Status
-**Cycle 31 complete. Work cycles: 31. Critique cycles: 12.**
-**Critique Cycle 13 starts next.**
+**Cycle 31 complete. Work cycles: 31. Critique cycles: 13.**
+**Cycle 32 starts next. Critique 14 after Cycle 34.**
 
 ## Active Team (all 5 slots used)
 
@@ -121,6 +121,36 @@ All complete (Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street)
 `LTG_TOOL_char_diff_v001.py` — C31. Pixel-sampling proportion diff between two PNGs
 `LTG_TOOL_draw_order_lint_v001.py` — C31. Static draw-order linter (55 W004s in older generators)
 `LTG_TOOL_naming_cleanup_v001.py` — executed C29 (22 files deleted)
+
+## Critique 13 — Key Findings (C32 priorities)
+
+### P1 — Blockers
+- **Eye-width semantic mismatch**: `h`=head-radius in v007 (ew=22px) vs `h`=head-height in turnaround v003 (ew=84px) — 3.8× discrepancy. Must canonize one definition across ALL docs/generators (Alex + Maya + Rin)
+- **Broken forwarding stubs**: C29 cleanup deleted LTG_CHAR_* originals; C28 stubs import from them → ModuleNotFoundError on 8+ generators (Kai)
+- **luma.md says 3.5 heads**: contradicts v007 3.2 canon (Alex — 1-line fix)
+- **add_rim_light() canvas-midpoint bug**: side="right" uses x>0.50W, excludes left-of-center characters; fix to character-relative bounding box (Rin → v1.3.0)
+- **SF04 generator rebuild**: value ceiling 198 (FAIL), stubs only, silhouette broken (Rin)
+- **CHAR-L-11 cross-ref hex**: still cites #00D4E8; must be #00F0FF (Sam — 1-line fix)
+- **Luma signature expression**: v008 needed — "noticing" face, the central pitch promise (Maya)
+- **Glitch diamond construction spec**: 2 consecutive critiques, still not written (Maya)
+
+### P2
+- Byte shadow color in lineup: 2 cycles unresolved
+- Byte unguarded warmth state missing from expr sheet
+- SF02 Luma interiority during sprint absent (C+)
+- CHAR-M-11 Miri slippers contradict warm-palette guarantee
+- Glitch has no spec file
+- Cosmo v004 generator outputs wrong filename
+- SF02 characters: no magenta fill light / no cyan specular
+- 55 W004 lint warnings (missing draw refresh) unaddressed
+- Luma v007 body proportion actually 3.12 heads due to neck segment
+
+### Critic Scores (C13)
+- Daisuke: Luma expr v007=62, turnaround=71, lineup=74, color model=80, Glitch expr=72
+- Priya: palette=82, SF01=84, SF02=78, SF03=76, SF04=68, color story=87
+- Sven: SF01=72, SF02=68, SF03=81, SF04=52
+- Reinhardt: 64 (up from FAIL — conditional)
+- Nkechi: B overall (up from B-)
 
 ## Technical Debt (C31)
 - **W004 in 55 generators**: missing draw refresh after paste/composite — latent bug risk, Kai to fix C32

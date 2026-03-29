@@ -88,6 +88,7 @@ WARN   LTG_TOOL_byte_expression_sheet_v003.py  (1 warning(s))
          [W004] line 21: img.paste() / alpha_composite() at line 21 is NOT followed by 'draw = ImageDraw.Draw(img)' refresh within the next 5 substantive lines. Subsequent draw calls will operate on the stale draw object.   >> - After img.paste(), refresh draw = ImageDraw.Draw(img).
 WARN   LTG_TOOL_byte_expression_sheet_v004.py  (1 warning(s))
          [W004] line 35: img.paste() / alpha_composite() at line 35 is NOT followed by 'draw = ImageDraw.Draw(img)' refresh within the next 5 substantive lines. Subsequent draw calls will operate on the stale draw object.   >> - After img.paste(), refresh draw = ImageDraw.Draw(img).
+PASS   LTG_TOOL_char_diff_v001.py
 WARN   LTG_TOOL_character_lineup_v003.py  (1 warning(s))
          [W002] line 182: OUTLINE draw call for 'generic' at line 182 appears before the corresponding FILL call. Fill must be painted before outline.   >> draw.rectangle([cx - lw*2, bb, cx - 4, bb + leg_h], fill=LUMA_PANTS, outline=LIN
 WARN   LTG_TOOL_character_lineup_v004.py  (1 warning(s))
@@ -95,6 +96,7 @@ WARN   LTG_TOOL_character_lineup_v004.py  (1 warning(s))
 PASS   LTG_TOOL_character_lineup_v005.py
 PASS   LTG_TOOL_character_lineup_v006.py
 PASS   LTG_TOOL_color_verify_v001.py
+PASS   LTG_TOOL_color_verify_v002.py
 PASS   LTG_TOOL_colorkey_glitchstorm_gen_v001.py
 PASS   LTG_TOOL_colorkey_otherside_gen_v001.py
 PASS   LTG_TOOL_cosmo_color_model_v001.py
@@ -180,6 +182,8 @@ WARN   LTG_TOOL_procedural_draw_v001.py  (8 warning(s))
          [W004] line 465: img.paste() / alpha_composite() at line 465 is NOT followed by 'draw = ImageDraw.Draw(img)' refresh within the next 5 substantive lines. Subsequent draw calls will operate on the stale draw object.   >> img.paste(base_rgba.convert(img.mode))
          [W004] line 491: img.paste() / alpha_composite() at line 491 is NOT followed by 'draw = ImageDraw.Draw(img)' refresh within the next 5 substantive lines. Subsequent draw calls will operate on the stale draw object.   >> base_rgba = Image.alpha_composite(base_rgba, chin_layer)
          [W004] line 492: img.paste() / alpha_composite() at line 492 is NOT followed by 'draw = ImageDraw.Draw(img)' refresh within the next 5 substantive lines. Subsequent draw calls will operate on the stale draw object.   >> img.paste(base_rgba.convert(img.mode))
+PASS   LTG_TOOL_proportion_audit_v001.py
+PASS   LTG_TOOL_proportion_verify_v001.py
 WARN   LTG_TOOL_render_lib_v001.py  (6 warning(s))
          [W004] line 132: img.paste() / alpha_composite() at line 132 is NOT followed by 'draw = ImageDraw.Draw(img)' refresh within the next 5 substantive lines. Subsequent draw calls will operate on the stale draw object.   >> img.alpha_composite(layer)
          [W004] line 164: img.paste() / alpha_composite() at line 164 is NOT followed by 'draw = ImageDraw.Draw(img)' refresh within the next 5 substantive lines. Subsequent draw calls will operate on the stale draw object.   >> img.alpha_composite(core_layer)
@@ -257,5 +261,7 @@ WARN   LTG_TOOL_styleframe_discovery_v004.py  (4 warning(s))
 PASS   LTG_TOOL_styleframe_luma_byte_v001.py
 PASS   LTG_TOOL_styleframe_luma_byte_v002.py
 PASS   LTG_TOOL_styleframe_luma_byte_v003.py
+PASS   run_c31_qa.py
+PASS   test_face_lighting_v001.py
 
-Summary: 114 file(s) — 59 PASS / 55 WARN / 0 ERROR
+Summary: 120 file(s) — 65 PASS / 55 WARN / 0 ERROR
