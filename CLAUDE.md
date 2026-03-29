@@ -14,9 +14,9 @@ Agents should always start with a fresh context
 If a task requires examining fine detail, produce a cropped close-up of the relevant area (also ≤ 1280×1280px) rather than a large full image.
 This rule applies to every PNG, JPG, or other raster image saved anywhere in the project.
 
-## Critic Workflow
+## Image Handling (applies to all agents: team members AND critics)
 
-Critics must be aware of the limitations of Claude's vision capabilities:
+Be aware of the limitations of Claude's vision capabilities:
 * Accuracy: Claude may hallucinate or make mistakes when interpreting low-quality, rotated, or very small images under 200 pixels.
 * Spatial reasoning: Claude's spatial reasoning abilities are limited. It may struggle with tasks requiring precise localization or layouts, like reading an analog clock face or describing exact positions of chess pieces.
 * Counting: Claude can give approximate counts of objects in an image but may not always be precisely accurate, especially with large numbers of small objects.
@@ -25,6 +25,8 @@ Sending images to the Claude API is costly. Before doing so ask yourself:
 * Do I really need to send this image to Claude for inspection, or can I maybe make a tool to get the insight I need? **IF SO: MAKE THE TOOL**
 * Does the information that I seek to extract from the image allow for me to send it at a lower resolution? **IF SO: DOWNSCALE THE IMAGE**
 * Avoid sending high resolution images to Claude unless absolutely necessary.
+
+## Critic Workflow
 
 ## You
 
