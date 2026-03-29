@@ -13,6 +13,13 @@
 | `LTG_COLOR_styleframe_discovery_v003.png` | realworld | 0.6 | 42 | `LTG_COLOR_styleframe_discovery_v003_styled.png` |
 | `LTG_ENV_grandma_kitchen_v003.png` | realworld | 1.0 | 42 | `LTG_ENV_grandma_kitchen_v003_styled.png` |
 
+## Assets Treated (Cycle 24)
+
+| Asset | Mode | Intensity | Seed | Output | Notes |
+|-------|------|-----------|------|--------|-------|
+| `LTG_ENV_tech_den_v004.png` | realworld | 0.8 | 42 | `LTG_ENV_tech_den_v004_styled.png` | Tech Den is Real World room; intensity 0.8 preserves tech/screen detail |
+| `LTG_CHAR_lineup_v003.png` | realworld | 0.7 | 42 | `LTG_CHAR_lineup_v003_styled.png` | Character sheets need lighter touch; intensity 0.7 preserves line clarity |
+
 ---
 
 ## Mode Descriptions
@@ -64,3 +71,5 @@ All outputs are fully reproducible: identical `input_path + mode + intensity + s
 ## SF01 Flag for Review
 
 SF01 (`discovery_v003_styled.png`) was treated at intensity=0.6 per brief instructions (A+ locked, apply very conservatively). **Flagged for Alex Chen's review** before committing as final. The conservative pass adds subtle paper warmth but should not degrade the locked composition.
+
+**Status (Cycle 24):** No revision request received from Alex Chen. SF01 styled output remains as-is pending Alex's confirmation.

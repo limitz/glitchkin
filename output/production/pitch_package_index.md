@@ -2,8 +2,8 @@
 ## "Luma & the Glitchkin" — Complete Asset Inventory
 
 **Prepared by:** Jordan Reed, Background & Environment Artist / Updated by Alex Chen, Art Director
-**Date:** 2026-03-29 / Updated 2026-03-30 (Cycle 12) / Updated 2026-03-30 (Cycles 13–14–15) / Updated 2026-03-29 (Cycles 16–17–18) / Updated 2026-03-29 (Cycle 19) / Updated 2026-03-29 (Cycles 20–21–22) / Updated 2026-03-29 (Cycle 23)
-**Cycle:** 23
+**Date:** 2026-03-29 / Updated 2026-03-30 (Cycle 12) / Updated 2026-03-30 (Cycles 13–14–15) / Updated 2026-03-29 (Cycles 16–17–18) / Updated 2026-03-29 (Cycle 19) / Updated 2026-03-29 (Cycles 20–21–22) / Updated 2026-03-29 (Cycle 23) / Updated 2026-03-29 (Cycle 24)
+**Cycle:** 24
 **Purpose:** Single-document navigator for all pitch-ready assets. Use this to locate, assess, and present any component of the package. Quality grades are drawn from critic records where available.
 
 ---
@@ -474,6 +474,37 @@ All critical path assets verified on disk. No blocking issues found. The package
 
 ---
 
+### Cycle 24 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| SF01 Discovery v003 styled | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v003_styled.png` | Hand-drawn stylization pass at 0.6× intensity (realworld mode). Paper tooth + chalk highlight treatment. Composition and color narrative intact. APPROVED as pitch primary — supersedes non-styled version for external pitch use. (Cycle 24 — Rin Yamamoto / reviewed Alex Chen) |
+| SF02 Glitch Storm v005 styled | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v005_styled.png` | Zone-blended stylization: realworld chalk in warm zones, glitch scanlines/color separation in Glitch Layer zones. (Cycle 24 — Rin Yamamoto) |
+| SF03 Other Side v003 styled | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_otherside_v003_styled.png` | Full glitch treatment: scanlines + color separation + edge sharpening. No paper grain (Glitch Layer has no paper — per brief). (Cycle 24 — Rin Yamamoto) |
+| Grandma Kitchen v003 styled | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_grandma_kitchen_v003_styled.png` | Secondary test — warm edge bleed. Amber/terracotta tones respond strongly to color bleed pass. (Cycle 24 — Rin Yamamoto) |
+| Stylization tool | `/home/wipkat/team/output/tools/LTG_TOOL_stylize_handdrawn_v001.py` | Reusable hand-drawn stylization generator. Presets: realworld (paper tooth + chalk), glitch (scanlines + color sep + edge sharp), mixed/zone-blended. (Cycle 24 — Rin Yamamoto) |
+| Stylization preset doc | `/home/wipkat/team/output/production/stylization_preset_handdrawn_v001.md` | Preset documentation for the stylization tool. Color preservation rules, intensity guidelines, mode selection decision tree. (Cycle 24 — Rin Yamamoto) |
+| Critique 11 self-assessment | `/home/wipkat/team/output/production/critique11_self_assessment.md` | Director's honest pre-critique assessment. Strong: SF triptych, Miri v002, storyboard arc, Glitch concept. Vulnerable: Glitch sheet scale, missing color model PNGs for leads, logo caveat. Overall: A- (strong enough to pitch, correction list expected). (Cycle 24 — Alex Chen) |
+
+#### Cycle 24 Stylization Status
+
+| Asset | Mode | Intensity | Status |
+|---|---|---|---|
+| SF01 Discovery v003 | realworld | 0.6× | APPROVED — pitch primary |
+| SF02 Glitch Storm v005 | mixed (zone-blended) | — | Delivered — pending director confirmation |
+| SF03 Other Side v003 | glitch | 1.0× | Delivered — Byte body read confirmation pending |
+| Grandma Kitchen v003 | realworld | 1.0× | Secondary — warm tones confirmed responsive |
+
+#### Cycle 24 Open Items (for Maya Santos — revision requests)
+
+| Item | Priority | Target |
+|---|---|---|
+| Glitch expression sheet v002 (1200×900, 3×2, 6 expressions) | CRITICAL before Critique 11 | `LTG_CHAR_glitch_expression_sheet_v002.png` |
+| Glitch turnaround v002 (shadow facet contrast fix) | MODERATE | `LTG_CHAR_glitch_turnaround_v002.png` |
+| Glitch added to character lineup | LOWER — Cycle 25 | `LTG_CHAR_lineup_v004.png` |
+
+---
+
 ### Section 3.5 — Production Standards & Directives
 
 | Asset | File Path | What It Shows | Quality Status | Needs Work |
@@ -496,3 +527,4 @@ All critical path assets verified on disk. No blocking issues found. The package
 *Updated by Alex Chen, Art Director — Cycle 19 — 2026-03-29*
 *Updated by Alex Chen, Art Director — Cycles 20–21–22 — 2026-03-29*
 *Updated by Alex Chen, Art Director — Cycle 23 — 2026-03-29*
+*Updated by Alex Chen, Art Director — Cycle 24 — 2026-03-29*

@@ -81,19 +81,27 @@ expression count, grid layout, turnaround completeness, and color model presence
 
 ---
 
-## Glitch (Antagonist) — NEW Cycle 23
+## Glitch (Antagonist) — Cycle 23/24
 
 | Asset | File | Dimensions | Format | Status |
 |---|---|---|---|---|
-| Expression Sheet | `LTG_CHAR_glitch_expression_sheet_v001.png` | 800×800 | RGB PNG | PITCH-READY |
-| Turnaround | `turnarounds/LTG_CHAR_glitch_turnaround_v001.png` | 1600×700 | RGB PNG | PITCH-READY |
+| Expression Sheet | `LTG_CHAR_glitch_expression_sheet_v002.png` | 1200×900 | RGB PNG | PITCH-READY |
+| Expression Sheet (superseded) | `LTG_CHAR_glitch_expression_sheet_v001.png` | 800×800 | RGB PNG | SUPERSEDED |
+| Turnaround | `turnarounds/LTG_CHAR_glitch_turnaround_v002.png` | 1600×700 | RGB PNG | PITCH-READY |
+| Turnaround (superseded) | `turnarounds/LTG_CHAR_glitch_turnaround_v001.png` | 1600×700 | RGB PNG | SUPERSEDED (shadow contrast issues) |
 | Color Model | `../color_models/LTG_COLOR_glitch_color_model_v001.png` | 800×500 | RGB PNG | PITCH-READY |
 
-**Expressions:** NEUTRAL, MISCHIEVOUS, PANICKED, TRIUMPHANT (4 — 2×2 grid)
+**Expressions:** NEUTRAL, MISCHIEVOUS, PANICKED, TRIUMPHANT, STUNNED, CALCULATING (6 — 3×2 grid)
 **Turnaround views:** FRONT, 3/4, SIDE, BACK (4 views)
 **show_guides:** OFF — pitch export confirmed.
 
-**QC notes:** New character — v001 asset set. Primary color GL-07 CORRUPT_AMBER #FF8C00 confirmed throughout. Secondary: HOT_MAGENTA #FF2D6B crack lines (body exterior scar, consistent with Byte spec conventions). UV_PURPLE #7B2FBE shadow fills. Diamond/rhombus body shape — angular antagonist contrast to protagonist characters. 3×3 pixel dual-eye system (left eye: primary glyph, right eye: destabilized bleed variant). VOID_BLACK #0A0A14 outline (digital entity standard). Hover confetti: HOT_MAG + UV_PURPLE (corrupted, not friendly cyan/acid). 2×2 grid appropriate for 4-expression sheet per show flexibility rules. Canvas 2× internal render, LANCZOS downsample to 1×.
+**QC notes (Cycle 24):**
+- Canvas upgraded: 800×800 2×2 → 1200×900 3×2. Expression panels now properly sized for pitch review. Character fills panels at readable scale (presentation failure in v001 corrected per Alex Chen direction).
+- 2 new expressions added (Alex Chen direction): STUNNED (electric jolt, full HOT_MAG eyes, ELEC_CYAN brows, open scream mouth, wide electro-scatter confetti) and CALCULATING (calm plotting, ACID_GREEN left eye only, right eye dim, one arm raised planning gesture, sparse confetti, tight mouth). Total 6 expressions.
+- MISCHIEVOUS vs TRIUMPHANT: differentiated at silhouette level. MISCHIEVOUS = tilt+20 + diagonal arms (l=-6, r=+14) = scheming lean. TRIUMPHANT = stretch=1.35 + both arms raised (l=-20, r=-22) = victory pose. Different silhouette shapes.
+- PANICKED: tilt=-14, squash=0.55, arm_l_dy=18/arm_r_dy=6 (flailing differential), HOT_MAG brows width=3 steep rake. Confetti spread=38px, count=22.
+- Turnaround v002: SIDE view shadow contrast fixed — CORRUPT_AMB_SH fill (was UV_PURPLE, nearly invisible against dark canvas). Added Void Black divider lines between lit/shadow facets. BACK view: same fix on base fill. FRONT and 3/4 views unchanged.
+- Integration check PASS: VOID_BLACK outline = digital entity standard. Amber/HOT_MAG palette distinct from all protagonists. Diamond body = strong angular contrast to Luma/Cosmo/Miri organic + Byte oval.
 
 ---
 
@@ -105,7 +113,7 @@ expression count, grid layout, turnaround completeness, and color model presence
 | Byte | v004 | 3×3 | 9 | v001 (4-view) | v001 | PITCH-READY |
 | Cosmo | v004 | 3×2 | 6 | v002 (4-view) | v001 | PITCH-READY |
 | Grandma Miri | v002 | 3×2 | 5 | v001 (4-view) | v001 | PITCH-READY |
-| Glitch | v001 | 2×2 | 4 | v001 (4-view) | v001 | PITCH-READY |
+| Glitch | v002 | 3×2 | 6 | **v002** (4-view) | v001 | PITCH-READY |
 
 ---
 
@@ -116,10 +124,25 @@ expression count, grid layout, turnaround completeness, and color model presence
 | `LTG_CHAR_luma_expression_sheet_v004.py` | Luma expr sheet v004 | `output/tools/` |
 | `LTG_CHAR_byte_expression_sheet_v004.py` | Byte expr sheet v004 | `output/tools/` |
 | `LTG_CHAR_cosmo_expression_sheet_v004.py` | Cosmo expr sheet v004 | `output/tools/` |
-| `LTG_CHAR_glitch_expression_sheet_v001.py` | Glitch expr sheet v001 | `output/tools/` |
-| `LTG_CHAR_glitch_turnaround_v001.py` | Glitch turnaround v001 | `output/tools/` |
+| `LTG_CHAR_glitch_expression_sheet_v002.py` | Glitch expr sheet v002 (PITCH EXPORT) | `output/tools/` |
+| `LTG_CHAR_glitch_expression_sheet_v001.py` | Glitch expr sheet v001 (superseded) | `output/tools/` |
+| `LTG_CHAR_glitch_turnaround_v002.py` | Glitch turnaround v002 (PITCH EXPORT — shadow fix) | `output/tools/` |
+| `LTG_CHAR_glitch_turnaround_v001.py` | Glitch turnaround v001 (superseded) | `output/tools/` |
 | `LTG_CHAR_glitch_color_model_v001.py` | Glitch color model v001 | `output/tools/` |
 | `LTG_TOOL_miri_turnaround_v001.py` | Miri turnaround v001 | `output/tools/` |
+| `LTG_TOOL_character_lineup_v004.py` | Full cast lineup v004 (5 chars incl. Glitch) | `output/tools/` |
+
+---
+
+## Character Lineup
+
+| Asset | File | Dimensions | Format | Status |
+|---|---|---|---|---|
+| Full Cast Lineup | `LTG_CHAR_lineup_v004.png` | 1340×498 | RGB PNG | PITCH-READY |
+
+**Cast:** Luma, Byte, Cosmo, Miri, Glitch (all 5 characters at correct relative scale)
+**Reference:** 1 head unit = 80px. Luma=280px, Byte=162px (floating), Cosmo=320px, Miri=256px, Glitch=170px (floating).
+**Notes:** Glitch added in Cycle 24. Engineering dimension arrow (Byte float gap = 0.25 HU) retained from v003. Height reference lines updated with Glitch scale annotation.
 
 ---
 
@@ -127,8 +150,11 @@ expression count, grid layout, turnaround completeness, and color model presence
 
 - `LTG_CHAR_luma_expression_sheet_v004_guides.png` — construction guides visible, production reference only
 - All `_v001`, `_v002`, `_v003` prior-version sheets — superseded, retained for history
+- `LTG_CHAR_glitch_expression_sheet_v001.png` — superseded by v002 (800×800 2×2 — canvas too small, 4 expressions)
+- `turnarounds/LTG_CHAR_glitch_turnaround_v001.png` — superseded by v002 (UV_PURPLE shadow invisible against dark canvas)
 
 ---
 
 *character_export_manifest_v001.md — Maya Santos, Character Designer*
-*Cycle 23 — 2026-03-29*
+*Cycle 24 update — 2026-03-29*
+*Original Cycle 23 — 2026-03-29*

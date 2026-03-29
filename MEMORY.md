@@ -4,8 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: SF01 A+ locked; SF02 v005 + SF03 v003 PITCH READY; all characters documented.
 
 ## Status
-**Cycle 23 complete. Work cycles: 23. Critique cycles: 10.**
-**Cycle 24 starts next. Critique Cycle 11 after Cycle 24.**
+**Cycle 24 + Critique 11 complete. Work cycles: 24. Critique cycles: 11.**
+**Cycle 25 starts next. Critique Cycle 12 after Cycle 27.**
 
 ## Active Team (all 5 slots used)
 
@@ -19,37 +19,47 @@ Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are m
 
 **Inactive:** Jordan Reed (environments complete C22), Lee Tanaka (storyboard complete C21)
 
-## Pitch Package Status — POST CYCLE 23
-- **SF01 Discovery**: `LTG_COLOR_styleframe_discovery_v003.png` — **A+ LOCKED** | `_styled.png` (0.6×) flagged for Alex review
-- **SF02 Glitch Storm**: `LTG_COLOR_styleframe_glitch_storm_v005.png` — **PITCH READY** | `_styled.png` DELIVERED (mixed mode)
-- **SF03 Other Side**: `LTG_COLOR_styleframe_otherside_v003.png` — **PITCH READY** | `_styled.png` DELIVERED (glitch mode)
-- **Pitch brief**: `output/production/ltg_pitch_brief_v001.md` — **COMPLETE**
-- **Delivery manifest**: `output/production/pitch_delivery_manifest_v001.md` — **NEW C23**
-- **Stylization preset**: `output/production/stylization_preset_handdrawn_v001.md` — **NEW C23**
-- **Char sheet standards**: `output/production/character_sheet_standards_v001.md` — **COMPLETE**
-- All 4 characters: expression sheets + turnarounds + color models complete (Glitch polish confirmed C23)
-- All Act 1+2 storyboard panels complete
-- All main environments complete; Kitchen v003 stylized delivered
-- **Character export manifest**: `output/characters/main/character_export_manifest_v001.md` — **NEW C23**
+## Pitch Package Status — POST CYCLE 24 / CRITIQUE 11
+- **SF01 Discovery**: v003 A+ LOCKED | `_styled.png` APPROVED (0.6×)
+- **SF02 Glitch Storm**: v005 PITCH READY | `_styled.png` — DO NOT USE (hue rotation artifact — awaiting v002)
+- **SF03 Other Side**: v003 PITCH READY | `_styled.png` — DO NOT USE (hue rotation artifact — awaiting v002)
+- **SF04 Luma+Byte**: MISSING — central relationship not shown. Commission in C25.
+- **Logo**: NO CANONICAL LOGO — placeholder only. Blocking external delivery. Fix C25.
+- **Pitch brief**: `output/production/ltg_pitch_brief_v001.md` — COMPLETE
+- **Delivery manifest**: `output/production/pitch_delivery_manifest_v001.md` — C23
+- **Characters**: Luma v004, Byte v004, Cosmo v004, Miri v002, Glitch v002 (sheets) — all present
+  - Color model PNGs for Luma/Byte/Cosmo: MISSING (blocking) — Maya C25
+  - Luma body language in expressions: WEAK — Maya C25
+  - Cosmo side view broken — Maya C25
+- **Environments**: All complete + styled (Kitchen, Tech Den)
+- **Character lineup**: v004 (all 5 characters)
 
-## Cycle 23 — Completed
-- **Alex**: pitch_package_index.md updated; rin_c23_creative_brief.md; pitch_delivery_manifest_v001.md; full QC review PITCH READY
-- **Maya**: All 4 chars QC confirmed; Glitch polish (turnaround, expressions, color model); character_export_manifest_v001.md
-- **Sam**: Palette audit PASS; color story confirmed pitch-ready; SF02/SF03 final check PASS; fidelity review plan for stylized outputs
-- **Kai**: ltg_render_lib.py deleted (4 scripts migrated); README updated; Rin integration support
-- **Rin**: LTG_TOOL_stylize_handdrawn_v001.py built; SF02 styled (mixed), SF03 styled (glitch), SF01 styled (realworld 0.6× FLAGGED for review), Kitchen styled; preset doc
+## Cycle 24 — Completed
+- **Alex**: SF01 styled APPROVED; critique11_self_assessment.md (A-); Glitch integration feedback to Maya; index updated
+- **Maya**: Glitch expression sheet v002 (1200×900, 6 expressions); turnaround v002 (shadow fixed); lineup v004 (5 chars)
+- **Sam**: Stylization fidelity report — SF02/SF03 styled FAIL, SF01/Kitchen PASS; color story updated with Glitch
+- **Kai**: batch_stylize tool; paper_texture() in render lib; pipeline audit clean; README complete
+- **Rin**: Tech Den + lineup styled; preset doc updated
 
-## Cycle 24 Plan
-- **Alex**: Review SF01 styled (discovery_v003_styled.png) — approve or give Rin revision notes
-- **Maya**: Standby / additional character work if Alex review surfaces issues
-- **Sam**: Color fidelity review of Rin's stylized outputs
-- **Rin**: Apply revision direction from Alex's SF01 review; optionally treat additional assets
-- **Kai**: Any pipeline support needed
+## Critique 11 — Key Findings (relay sent to all members)
+- **Rin**: Stylization tool v001 BROKEN — color protection only covers amber, destroys Glitch palette. Rebuild as v002.
+  Fixes: extend hue protection to all canonical colors; chalk pass must skip cyan/light sources; warm bleed zone-aware; mixed mode pixel blend not alpha
+- **Maya**: Color model PNGs for Luma/Byte/Cosmo missing (blocking); Luma body language invisible; Cosmo side view broken; Luma turnaround outdated
+- **Sam**: SF02 spec doc has obsolete color values (Cycle 13); GL-04b luminance 0.17 → should be 0.017
+- **Kai**: ~20 legacy scripts unarchived; production docs not LTG-named
+- **Alex**: SF04 Luma+Byte scene needed; logo decision; Luma inconsistency; Miri narrative expression
+
+## Cycle 25 Plan
+- **Rin**: LTG_TOOL_stylize_handdrawn_v002.py (all 4 fixes); regen SF02+SF03 styled v002
+- **Maya**: Color models for Luma/Byte/Cosmo; Luma expression sheet v005 (body language); Cosmo side view fix
+- **Sam**: Fix SF02 spec doc obsolete values; GL-04b luminance fix; Miri color story note
+- **Kai**: Archive ~20 legacy scripts; production naming decision
+- **Alex**: Commission SF04 (Luma+Byte); resolve logo; direct Miri narrative expression
 
 ## Shared Library
-`output/tools/LTG_TOOL_render_lib_v001.py` — 7 functions: perlin_noise_texture, gaussian_glow, light_shaft, dust_motes, catenary_wire, scanline_overlay, vignette.
-`output/tools/LTG_TOOL_stylize_handdrawn_v001.py` — NEW C23. `stylize(input, output, mode, intensity, seed)`. Modes: realworld/glitch/mixed.
-Old `ltg_render_lib.py` DELETED (C23).
+`output/tools/LTG_TOOL_render_lib_v001.py` (v1.1.0) — 8 functions: perlin_noise_texture, gaussian_glow, light_shaft, dust_motes, catenary_wire, scanline_overlay, vignette, paper_texture.
+`output/tools/LTG_TOOL_stylize_handdrawn_v001.py` — C23. BROKEN — hue rotation artifact destroys Glitch palette. DO NOT USE on SF02/SF03. Awaiting v002.
+`output/tools/LTG_TOOL_batch_stylize_v001.py` — NEW C24. Batch runner for stylize().
 Import: `from output.tools.LTG_TOOL_render_lib_v001 import *`
 
 ## Key Output Locations

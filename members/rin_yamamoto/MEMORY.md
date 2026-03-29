@@ -38,9 +38,23 @@ Visual Stylization Artist on "Luma & the Glitchkin." Post-processing specialist:
 ## Cycle 23 Outputs
 - `LTG_COLOR_styleframe_glitch_storm_v005_styled.png` (mixed, 1.0)
 - `LTG_COLOR_styleframe_otherside_v003_styled.png` (glitch, 1.0)
-- `LTG_COLOR_styleframe_discovery_v003_styled.png` (realworld, 0.6) ← FLAGGED for Alex review
+- `LTG_COLOR_styleframe_discovery_v003_styled.png` (realworld, 0.6) ← FLAGGED for Alex review (no response by C24 end)
 - `LTG_ENV_grandma_kitchen_v003_styled.png` (realworld, 1.0)
 - Preset doc: `output/production/stylization_preset_handdrawn_v001.md`
+
+## Cycle 24 Outputs
+- `LTG_ENV_tech_den_v004_styled.png` (realworld, 0.8) — Tech Den Real World environment
+- `LTG_CHAR_lineup_v003_styled.png` (realworld, 0.7) — Character lineup, lighter touch
+- Preset doc updated with C24 asset table
+
+## SF01 Status
+No Alex review/revision note received by Cycle 24 end. SF01 `discovery_v003_styled.png` remains at intensity 0.6, awaiting confirmation.
+
+## Critique 11 Self-Assessment
+- **realworld mode concern:** Paper grain at intensity 1.0 may read as noise on small/intricate areas. Consider reducing grain alpha from 18 to 14 for character sheets specifically.
+- **Line wobble:** At intensity 1.0, the ±2px row shift is visible on clean horizontal lines (e.g. table edges in kitchen). Could add a "soft edges only" guard.
+- **Warm bleed:** 3px bleed radius is fine for large color fields, but bleeds into thin line work on character sheets — the 0.7 intensity mitigates this.
+- **For critics:** SF01 and character lineup are the most delicate. realworld at 0.6–0.7 is the right conservative range for these.
 
 ## Joined
 Cycle 23 (2026-03-29)

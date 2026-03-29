@@ -87,6 +87,8 @@ This production uses **open source tools exclusively**. No proprietary software 
 | `LTG_TOOL_bg_glitch_layer_encounter_v001.py` | Jordan Reed / Cycle 21 | Glitch Layer encounter background generator. Previously misnamed `bg_glitch_layer_encounter.py` in `output/backgrounds/environments/` — relocated and renamed in Cycle 21/22. LTG-compliant copy lives in `output/tools/`. | Pillow |
 | `LTG_TOOL_bg_tech_den_v004.py` | Jordan Reed / Cycle 22 | Tech Den background v004. Resolves Takeshi Murakami Critique C10 P1+P2. Fix 1a: light shaft repositioned to land ON desk surface (DESK_TOP_Y=395) — apex near window top, base at (10,407)+(210,390), max_alpha=150. Fix 1b: single wide-ellipse desk glow removed; replaced with three separate `gaussian_glow()` calls — CRT1 (r=110, alpha 65), CRT2 (r=100, alpha 58), flat panel (r=90, alpha 52) — each hotspots its desk zone. Import updated to `LTG_TOOL_render_lib_v001` (Cycle 23). Canvas 1280×720. Output: `LTG_ENV_tech_den_v004.png`. | Pillow, LTG_TOOL_render_lib_v001 |
 | `LTG_TOOL_bg_grandma_kitchen_v003.py` | Jordan Reed / Cycle 22 | Grandma Miri's Kitchen background v003. Resolves Takeshi Murakami Critique C10 P3. Fix 2a: `draw_upper_wall_texture()` extended to left and right wall polygons via PIL polygon mask — side wall alpha ~35% less (8/10 vs 12/15). Fix 2b: `draw_floor_tiles()` disabled (no-op), `draw_floor_linoleum_overlay()` rewritten with single perspective-correct grid converging to vp_x (non-linear row spacing + converging column lines). One floor system. All v002 improvements retained. Canvas 1920×1080. Output: `LTG_ENV_grandma_kitchen_v003.png`. | Pillow |
+| `LTG_TOOL_stylize_handdrawn_v001.py` | Rin Yamamoto / Cycle 23 | Hand-drawn stylization pass tool. Applies organic stylization to digitally generated PNGs. Three modes: `realworld` (paper grain, line wobble, warm edge bleed, chalk highlights), `glitch` (scanlines, RGB color separation, edge sharpening), `mixed` (zone-blended: glitch upper 2/3, realworld lower 1/3 with 200px gradient seam). Module API: `stylize(input_path, output_path, mode, intensity, seed)`. CLI: `python LTG_TOOL_stylize_handdrawn_v001.py input.png output.png --mode realworld`. CORRUPT_AMBER hue-locked throughout. Optional NumPy fast path. | Pillow, NumPy (optional), LTG_TOOL_render_lib_v001 (optional) |
+| `LTG_TOOL_batch_stylize_v001.py` | Kai Nakamura / Cycle 24 | Batch runner for `LTG_TOOL_stylize_handdrawn_v001.stylize()`. Accepts a list of `(input_path, output_path, mode, intensity)` job tuples and processes each in sequence. Provides both module API (`batch_stylize(jobs, seed, stop_on_error)`) and CLI (`--jobs JSON` or `--glob PATTERN --out-dir DIR`). Writes optional results JSON summary. Runnable from `/home/wipkat/team`. | Pillow, LTG_TOOL_stylize_handdrawn_v001 |
 
 ---
 
@@ -101,3 +103,91 @@ When a new script is created, add a row to the Script Index above with:
 Scripts must follow the standard naming convention: `LTG_TOOL_[descriptor]_v[###].[ext]`
 
 All scripts are stored in this directory (`/home/wipkat/team/output/tools/`) and version-controlled via standard Git.
+
+---
+
+## Render Library — API Reference (LTG_TOOL_render_lib_v001.py)
+
+**Version:** 1.1.0 (C24: `paper_texture()` added)
+**Canonical import pattern (run from any directory):**
+```python
+import sys, os
+sys.path.insert(0, "/home/wipkat/team/output/tools")
+from LTG_TOOL_render_lib_v001 import (
+    perlin_noise_texture, gaussian_glow, light_shaft,
+    dust_motes, catenary_wire, scanline_overlay, vignette, paper_texture
+)
+```
+
+| Function | Signature | Returns | Notes |
+|---|---|---|---|
+| `perlin_noise_texture` | `(width, height, scale=50, seed=42, octaves=3, alpha=60)` | RGBA Image | Layered sin/cos noise. Slow at full canvas — use 960×540 + upscale for perf. |
+| `gaussian_glow` | `(img, center, radius, color, max_alpha=100, steps=10)` | img (RGBA, in-place) | Alpha floored at 1 to prevent dead outer ellipses. |
+| `light_shaft` | `(img, apex, base_left, base_right, color, max_alpha=60)` | img (RGBA, in-place) | Triangle polygon; GaussianBlur feather pass. |
+| `dust_motes` | `(draw, bounds, count=20, seed=42, color, alpha_range)` | None (draws in-place) | draw must be attached to RGBA image. |
+| `catenary_wire` | `(draw, p0, p1, sag=0.05, color, width=2)` | None (draws in-place) | Parabolic 40-segment polyline. |
+| `scanline_overlay` | `(img, spacing=4, alpha=15)` | RGBA Image | Converts to RGBA if needed. |
+| `vignette` | `(img, strength=60)` | RGBA Image | Converts to RGBA if needed. Mach-band ring approximation (intentional). |
+| `paper_texture` | `(img, scale=40, alpha=20, seed=42)` | RGBA Image | **Added C24.** 1/4-res grain tile + NN upscale. Fast in pure Python. |
+
+### `paper_texture()` details
+Composites a procedural paper/canvas grain over the source image. Works at 1/4 resolution internally for speed (O((W/4)×(H/4)) pixel loop — <1s at 1920×1080 in pure Python). Upscales with nearest-neighbour to preserve grain character. Three layered sin/cos octaves. Seed is reproducible.
+
+- `scale`: grain wavelength in pixels. 20 = very fine; 40 = standard paper tooth; 80 = coarse canvas.
+- `alpha`: maximum per-pixel grain opacity. 8–20 = subtle/professional; 30–40 = heavy hand-drawn texture.
+- `seed`: reproducible. Same seed + scale + alpha = identical grain.
+
+---
+
+## Pipeline Health — C24
+
+**Audit date:** 2026-03-29 (Cycle 24)
+**Audited by:** Kai Nakamura
+
+### Summary
+
+The deprecated wrapper `ltg_render_lib.py` was deleted in Cycle 23. All active consumer scripts now import from `LTG_TOOL_render_lib_v001` directly. This audit verifies no live code references the old import path.
+
+### Old-pattern references found
+
+A grep of `output/**/*.py` for `ltg_render_lib` returned the following hits. Each is categorized:
+
+| File | Line | Content | Category | Action Required |
+|---|---|---|---|---|
+| `output/tools/LTG_TOOL_render_lib_v001.py` | 5 | `Renamed from ltg_render_lib.py in Cycle 22...` | Docstring — historical note | None — intentional |
+| `output/tools/LTG_TOOL_bg_tech_den_v003.py` | 7 | `...replaces all inline lighting code with calls to ltg_render_lib.` | Docstring — old module name | None — benign comment |
+| `output/tools/LTG_TOOL_bg_tech_den_v003.py` | 290, 300, 746 | `# ── ... via ltg_render_lib.function()` | Inline comment | None — comment only; actual import is `LTG_TOOL_render_lib_v001` ✓ |
+| `output/tools/LTG_TOOL_bg_tech_den_v004.py` | 301, 315, 769 | `# ── ... via ltg_render_lib.function()` | Inline comment | None — comment only; actual import is `LTG_TOOL_render_lib_v001` ✓ |
+| `output/backgrounds/environments/LTG_ENV_tech_den_v004.py` | 301, 315, 769 | `# ── ... via ltg_render_lib.function()` | Inline comment | None — comment only; actual import is `LTG_TOOL_render_lib_v001` ✓ |
+| `output/tools/LTG_TOOL_bg_glitchlayer_frame_v003.py` | 10, 105, 295 | `scanline_overlay() from ltg_render_lib applied...` | Docstring/comment | None — comment only; actual import is `LTG_TOOL_render_lib_v001` ✓ |
+| `output/tools/LTG_TOOL_bg_grandma_kitchen_v002.py` | 25, 1056 | `ltg_render_lib.py not yet available` | Docstring — historical note | None — this was written before C21; v003 supersedes v002 |
+
+### Live import verification
+
+A separate grep for `from ltg_render_lib` and `import ltg_render_lib` (executable import statements) found **zero matches**. The pipeline is clean.
+
+Files confirmed using the canonical `LTG_TOOL_render_lib_v001` import:
+- `output/tools/LTG_TOOL_bg_tech_den_v003.py` ✓
+- `output/tools/LTG_TOOL_bg_tech_den_v004.py` ✓
+- `output/tools/LTG_TOOL_bg_glitchlayer_frame_v003.py` ✓
+- `output/backgrounds/environments/LTG_ENV_tech_den_v004.py` ✓
+- `output/tools/LTG_TOOL_stylize_handdrawn_v001.py` ✓ (optional try/import with correct name)
+
+### Stale TODO comments
+
+Several files contain `# TODO: update import to LTG_TOOL_render_lib_v001 after Kai's rename` in their docstrings. These files do **not** import the render lib at all — the TODO was written as a precaution and was never needed. The comments are stale but harmless.
+
+| File | Status |
+|---|---|
+| `output/tools/LTG_CHAR_cosmo_expression_sheet_v004.py` | TODO is stale — no render lib import present or needed |
+| `output/tools/LTG_CHAR_byte_expression_sheet_v004.py` | TODO is stale — no render lib import present or needed |
+| `output/tools/LTG_TOOL_byte_expression_sheet_v004.py` | TODO is stale — no render lib import present or needed |
+| `output/tools/LTG_CHAR_luma_expression_sheet_v004.py` | TODO is stale — no render lib import present or needed |
+| `output/characters/main/LTG_CHAR_cosmo_expression_sheet_v004.py` | TODO is stale — no render lib import present or needed |
+| `output/characters/main/LTG_CHAR_byte_expression_sheet_v004.py` | TODO is stale — no render lib import present or needed |
+| `output/characters/main/LTG_CHAR_luma_expression_sheet_v004.py` | TODO is stale — no render lib import present or needed |
+| `output/color/style_frames/LTG_TOOL_style_frame_02_glitch_storm_v005.py` | TODO is stale — no render lib import present or needed |
+
+### Verdict
+
+**Pipeline is healthy.** No live code imports the deleted `ltg_render_lib.py` wrapper. All stale references are in comments and docstrings only — no functional risk. Stale TODO comments noted above may be cleaned up opportunistically in a future cycle but require no immediate action.

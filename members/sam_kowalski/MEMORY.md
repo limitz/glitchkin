@@ -158,6 +158,14 @@
 - **Color story document is current.** All three SFs covered with correct source file versions. GL-07 reconciliation note added. Cycle 23 verification note added.
 - **Stylization fidelity review plan documented.** Rin Yamamoto has not yet delivered stylized assets. Color fidelity review plan is in LTG_COLOR_sf_final_check_c23.md — critical values to check: GL-07 outline, GL-01b body, GL-04 sky purple, DRW-07 storm hoodie saturation. SF01 stylization must be extremely conservative (A+ locked frame).
 
+## Cycle 24 Lessons
+- **Stylization hue rotation is a systemic failure mode.** Rin Yamamoto's styled PNGs for SF02 and SF03 show a ~30-60° hue rotation artifact: amber→olive/yellow, cyan→green, UV_PURPLE→dark teal/green. Real World assets (SF01, Kitchen) are unaffected. Glitch palette colors (GL-07, GL-01b, UV_PURPLE) must be flagged as protected in any stylization pipeline.
+- **GL-07 CORRUPT_AMBER must never be desaturated or hue-shifted.** The exact #FF8C00 value is the narrative signal. Any mutation makes it read as Real World material rather than corrupted energy.
+- **Scan methodology note:** When sampling GL-01b, the tool finds GL-01 (#00F0FF) sky pixels first. The Δcanonical=28 vs GL-01b (#00D4E8) is expected and not a failure — GL-01 sky faithfully reproduced (Δorig=0-18) is a PASS for sky pixels. Always distinguish GL-01 (world emission) from GL-01b (Byte body fill) in pixel sampling.
+- **Tolerance vs. canonical vs. original:** When original scene-derived tones differ from canonical (e.g. SF01 warm wall #E3B877 ≠ RW-02 #E8C95A), flagging against canonical is misleading. Always check Δorig separately — Δorig ≤5 with Δcanonical 27-30 = real PASS.
+- **Glitch color model (Maya Santos, Cycle 23) is correct.** GL-07 #FF8C00 confirmed as primary body fill. No flag to Maya.
+- **Color story updated.** Glitch character color section added to ltg_style_frame_color_story.md — covers CORRUPT_AMBER role against each SF palette, GL-07 as anomaly in GL palette family.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001 (TERRA_CYAN_LIT still old value). v001 likely superseded by v005 — low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan should add inline comment on next revision pass (low priority).
@@ -165,4 +173,4 @@
 - SF03 confetti full-canvas distribution still unresolved (carry from C16). Constrain to within 150px of platform for v004.
 - SF03 v003 UV_PURPLE_MID/DARK — Jordan to add inline comment citing ENV-11/ENV-12 (values confirmed matching).
 - Tech Den generator WALL_WARM slightly off from TD-01 — Jordan to add citing comment.
-- Rin Yamamoto stylization fidelity review: PENDING delivery. Review plan in LTG_COLOR_sf_final_check_c23.md.
+- **Rin Yamamoto SF02 + SF03 styled PNGs: FLAG — rework needed.** Hue rotation artifact. Protect GL-07, GL-01b, UV_PURPLE. SF01 + Kitchen styled: PASS, accepted. Report: LTG_COLOR_stylization_fidelity_report_c24.md.

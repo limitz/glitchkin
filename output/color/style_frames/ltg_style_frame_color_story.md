@@ -112,6 +112,36 @@ That progression — from belonging to contested to lost — is the entire first
 
 ---
 
+## Glitch — Character Color Role
+
+**Primary Color:** GL-07 CORRUPT_AMBER `#FF8C00` (255, 140, 0)
+**Shadow:** CORRUPT_AMBER_SHADOW `#A84C00` (168, 76, 0)
+**Highlight Facet:** CORRUPT_AMBER_HIGHLIGHT `#FFB950` (255, 185, 80)
+**Accent / Crack Lines:** HOT_MAGENTA `#FF2D6B`
+**Deep Shadow / Corruption:** UV_PURPLE `#7B2FBE`
+
+### What Glitch's Color Communicates
+
+Glitch is built from CORRUPT_AMBER — a color that does not belong cleanly to either world. It is too warm to be a native Glitch Layer entity (the Glitch Layer runs on cyan, teal, and purple) and too saturated and electric to be a Real World creature (the Real World palette is amber, ochre, and terracotta, but soft — not this sharp). CORRUPT_AMBER is what happens when Glitch Layer energy takes on a form that wants to be warm but cannot get it right.
+
+The name is exact: the amber is corrupted. Against a Real World interior it reads as an intruder with suspicious intensity. Against the Glitch Layer palette it reads as a warm anomaly — something that shouldn't be here, radiating heat in a cold digital space.
+
+### How CORRUPT_AMBER Reads Against the Three SF Palettes
+
+**Against SF01 (Real World warm):** Glitch's amber is the same hue family as Luma's lamp light (Soft Gold `#E8C95A`) and her hoodie (Burnt Orange `#E8703A`). But at 100% saturation with no softness or lamp-mediation, it reads as an uncanny version of something familiar. It is the warmth of Luma's world turned up until it burns.
+
+**Against SF02 (contested warm/cold storm):** This is Glitch's home frame. The cyan-dominant storm sky makes CORRUPT_AMBER pop as a near-perfect warm complement — hue angle separation is approximately 180° on the wheel. Glitch in a Glitch Storm is paradoxically visible: his amber body against Electric Cyan sky is the highest contrast figure-ground pairing in the show. He belongs to the storm but glows against it. This is the Corrupted Amber outline rationale made flesh — at >35% cyan environment coverage, Glitch's entire body becomes a warm-against-cold contrast event.
+
+**Against SF03 (cold alien Other Side):** CORRUPT_AMBER against UV_PURPLE is a near-complementary pair (yellow-orange vs. blue-purple). On the Other Side, Glitch is visually similar to Luma in one sense — both carry warm colors into a cold space. The difference is that Luma's orange is material pigment (her hoodie exists in both worlds). Glitch's amber is self-generated digital energy. In SF03, Glitch would read as a warm beacon in the void — identical contrast logic to Luma's hoodie, but deliberate rather than incidental. Two warm presences in the cold: one lost, one native.
+
+### Color System Position
+
+Glitch does not sit in either the Real World palette (RW-xx) or the Glitch Layer palette (GL-xx) cleanly. CORRUPT_AMBER is registered as GL-07 — it carries a Glitch Layer code number — but it is the only GL entry with warm hue. All other GL entries are cool (cyan, teal, magenta, purple, void black, acid green). GL-07 is the anomaly in its own palette family. That is intentional: Glitch is the anomaly.
+
+**Production constraint:** GL-07 #FF8C00 must never be desaturated, cooled, or hue-shifted in any asset. A murkier amber reads as Real World weathered material. A cooler amber reads as a Glitch Layer artifact. The exact value — maximum saturation, pure warm orange, no red or yellow drift — is what makes CORRUPT_AMBER legible as corrupted rather than merely warm.
+
+---
+
 **Cross-references:**
 - Master palette: `output/color/palettes/master_palette.md`
 - SF01 spec: `output/color/style_frames/style_frame_01_discovery.md`
@@ -120,7 +150,11 @@ That progression — from belonging to contested to lost — is the entire first
 - Style Guide Color System: `output/production/style_guide.md`
 - Cycle 23 palette audit: `output/color/palettes/LTG_COLOR_palette_audit_c23.md`
 - Cycle 23 SF final check: `output/color/style_frames/LTG_COLOR_sf_final_check_c23.md`
+- Glitch color model: `output/characters/color_models/LTG_COLOR_glitch_color_model_v001.png`
+- Cycle 24 stylization fidelity report: `output/color/LTG_COLOR_stylization_fidelity_report_c24.md`
 
 ---
 
 *Cycle 23 verification (Sam Kowalski, 2026-03-29): All source file references confirmed current. GL-07 `#FF8C00` and GL-01b `#00D4E8` reconciled between generators and master palette. SF02 v005 = PITCH READY. SF03 v003 = PITCH READY. Color arc (warm → contested → cold/alien) intact across all three frames. No corrections needed to this document.*
+
+*Cycle 24 update (Sam Kowalski, 2026-03-29): Glitch character color section added. GL-07 CORRUPT_AMBER #FF8C00 verified as primary body fill in Glitch color model (generator confirmed). Stylization fidelity check complete — see LTG_COLOR_stylization_fidelity_report_c24.md. SF02 and SF03 stylized PNGs flagged for rework (hue rotation artifact). SF01 and Kitchen stylized PNGs: PASS.*

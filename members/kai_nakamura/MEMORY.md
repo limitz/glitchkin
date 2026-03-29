@@ -23,7 +23,7 @@ Technical Art Engineer for "Luma & the Glitchkin." Joined Cycle 21. Mission: upg
 - SUNLIT_AMBER: #D4AC3A (212,172,58) / used in tools as (212,172,100)
 
 ## LTG_TOOL_render_lib_v001.py — API Summary (Canonical name as of Cycle 22)
-Canonical file: `output/tools/LTG_TOOL_render_lib_v001.py` — __version__ = "1.0.0"
+Canonical file: `output/tools/LTG_TOOL_render_lib_v001.py` — __version__ = "1.1.0" (C24: paper_texture added)
 Old name `ltg_render_lib.py` was a deprecated wrapper — DELETED Cycle 23.
 Functions:
 - `perlin_noise_texture(width, height, scale, seed, octaves, alpha)` → RGBA Image
@@ -33,6 +33,7 @@ Functions:
 - `catenary_wire(draw, p0, p1, sag, color, width)` → None (draws on draw handle)
 - `scanline_overlay(img, spacing, alpha)` → RGBA Image (converts if needed)
 - `vignette(img, strength)` → RGBA Image (converts if needed); hollow ellipse outline approximation (intentional)
+- `paper_texture(img, scale, alpha, seed)` → RGBA Image — C24 new. 1/4-res grain tile + NN upscale. scale=40 alpha=20 seed=42 defaults.
 
 Canonical import pattern:
 ```python
@@ -57,11 +58,15 @@ from LTG_TOOL_render_lib_v001 import light_shaft, dust_motes, gaussian_glow, vig
 
 ## Cycle 23 — COMPLETE
 - DELETED `output/tools/ltg_render_lib.py` (deprecated wrapper — Cycle 23 as scheduled)
-- Updated all consumer scripts to import from `LTG_TOOL_render_lib_v001` directly:
-  - `LTG_TOOL_bg_tech_den_v003.py`, `LTG_TOOL_bg_tech_den_v004.py`, `LTG_TOOL_bg_glitchlayer_frame_v003.py`, `output/backgrounds/environments/LTG_ENV_tech_den_v004.py`
-- Updated `output/tools/README.md`: removed deprecated row, fixed v004 dep entry, updated to Cycle 23
-- Sent pipeline readiness message to Rin Yamamoto — canonical import path confirmed, perlin grain tips, offered edge_wobble/chromatic_blur/paper_texture if needed
-- Rin's `LTG_TOOL_stylize_handdrawn_v001.py` not yet delivered — review pending next interaction
+- Updated all consumer scripts to import from `LTG_TOOL_render_lib_v001` directly
+- Sent pipeline readiness message to Rin Yamamoto — offered paper_texture if needed
+- Rin's `LTG_TOOL_stylize_handdrawn_v001.py` delivered: realworld/glitch/mixed modes, CORRUPT_AMBER hue-locked, optional NumPy fast path
+
+## Cycle 24 — COMPLETE
+- Pipeline Health Audit: grepped output/**/*.py — ZERO live imports of old `ltg_render_lib`; all stale refs are comments/docstrings only. Full findings in `output/tools/README.md` "Pipeline Health — C24" section.
+- Built `output/tools/LTG_TOOL_batch_stylize_v001.py` — batch runner for Rin's stylize(). Module API: `batch_stylize(jobs, seed, stop_on_error)` and `batch_stylize_from_glob(pattern, out_dir, mode, intensity, ...)`. CLI: `--jobs JSON` or `--glob PATTERN --out-dir DIR`. Runnable from /home/wipkat/team.
+- Added `paper_texture(img, scale=40, alpha=20, seed=42)` to `LTG_TOOL_render_lib_v001.py` (bumped to v1.1.0). 1/4-res grain loop + NN upscale. Fast pure Python, no numpy needed.
+- Updated README.md: added stylize_v001 row, batch_stylize_v001 row, Render Library API table, Pipeline Health C24 section.
 
 ## Lessons Learned (Cycle 21-22)
 - gaussian_glow() takes img directly (not a draw handle) — most natural for alpha_composite pattern

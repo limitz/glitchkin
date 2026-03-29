@@ -1,5 +1,20 @@
 # Maya Santos — Memory
 
+## Cycle 24 Lessons — GLITCH v002 + TURNAROUND v002 + LINEUP v004
+
+- **Glitch Expression Sheet v002 COMPLETE.** 1200×900, 3×2, 6 expressions. Canvas upgraded from 800×800 2×2 (presentation failure — character too small for pitch review). Alex Chen directed: 6 full expressions preferred.
+  - New expressions: STUNNED (electric jolt, full HOT_MAG eyes, ELEC_CYAN brows, wide scream, electro scatter) + CALCULATING (calm plotting, ACID_GREEN left eye only, right dim, one arm raised, sparse confetti).
+  - MISCHIEVOUS vs TRIUMPHANT differentiated at SILHOUETTE: MISCHIEVOUS = tilt+20, diagonal arms (l=-6, r=+14). TRIUMPHANT = stretch=1.35, both arms up (l=-20, r=-22).
+  - PANICKED: tilt=-14, squash=0.55, l=18/r=6, brow width=3 HOT_MAG steep rake, spread=38px.
+  - Generator: `output/tools/LTG_CHAR_glitch_expression_sheet_v002.py`. Output: `output/characters/main/LTG_CHAR_glitch_expression_sheet_v002.png`.
+- **Glitch Turnaround v002 COMPLETE.** Shadow contrast fix: SIDE/BACK view body fills changed UV_PURPLE→CORRUPT_AMB_SH (dark amber — readable against dark canvas). Void Black divider lines added between lit stripe and shadow flanks in SIDE view for facet geometry read. FRONT/3/4 unchanged. Generator: `output/tools/LTG_CHAR_glitch_turnaround_v002.py`. Output: `output/characters/main/turnarounds/LTG_CHAR_glitch_turnaround_v002.png`.
+- **Character Lineup v004 COMPLETE.** All 5 chars: Luma, Byte, Cosmo, Miri, Glitch. 1340×498px. Generator: `output/tools/LTG_TOOL_character_lineup_v004.py`.
+- **Glitch scale reference:** 170px hover height. Reaches Luma's shoulder (280px). Correct — compact digital antagonist, not physically overwhelming.
+- **Dark-background shadow rule:** UV_PURPLE shadow fill reads correctly when there is contrast above/below (expression sheet panels). On pure dark void backgrounds (turnaround), UV_PURPLE disappears. Use CORRUPT_AMB_SH for shadow facets in dark-background contexts.
+- **Canvas sizing rule for antagonist character:** match the protagonist standard (1200×900) — do NOT use a smaller canvas just because the character has fewer expressions. Presentation scale matters.
+- **Inbox archived.** Both messages archived. Reports sent to Alex Chen.
+- **Pitch asset state for Critique 11:** Glitch expr=v002 (6 expr, 1200×900), turnaround=v002 (shadow fix), lineup=v004 (all 5 cast).
+
 ## Cycle 23 Lessons — GLITCH v001 + QC PASS + MANIFEST
 
 - **Glitch character CREATED (NEW).** Antagonist Glitchkin. Diamond/rhombus body. Primary: GL-07 CORRUPT_AMBER #FF8C00. Secondary: HOT_MAG #FF2D6B cracks, UV_PURPLE #7B2FBE shadow. Pixel dual-eye (3×3 grid, left=primary glyph, right=destabilized). No organic eye — full digital entity. Top+bottom spikes, two arm-spikes. Corrupted confetti hover (HOT_MAG+UV_PURPLE — NOT friendly cyan). VOID_BLACK #0A0A14 outline.

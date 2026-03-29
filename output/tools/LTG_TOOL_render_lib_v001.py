@@ -19,7 +19,7 @@ All procedural functions use seeded RNG for reproducibility.
 No circular dependencies — importable standalone.
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"  # C24: added paper_texture()
 
 import math
 import random
@@ -317,4 +317,105 @@ def vignette(img, strength=60):
                    width=max(1, int(cx * 0.03)))
 
     img.alpha_composite(vig_layer)
+    return img
+
+
+def paper_texture(img, scale=40, alpha=20, seed=42):
+    """Composite a procedural paper/canvas grain texture over an image.
+
+    Generates a lightweight noise-based grain texture at 1/4 resolution
+    (then upscaled with nearest-neighbour to preserve grain character) and
+    composites it over the input image.  This simulates felt-tip-on-paper
+    tooth or light canvas roughness — the effect is subtle at full resolution,
+    visible at 50% zoom, and vanishes at thumbnail scale (intentional).
+
+    The function is resolution-agnostic: it works correctly on any canvas size
+    used in the LTG pipeline (1920×1080, 1280×720, 600×600, etc.).
+
+    Performance: 1/4-resolution tile loop is O((W/4)*(H/4)) — fast even
+    without numpy.  At 1920×1080 this is ~122k pixels, completing in <1 second
+    in pure Python.
+
+    Implementation note: noise is built via layered sin/cos octaves (same
+    algorithm as perlin_noise_texture() but at reduced resolution + upscaled).
+    No external dependencies beyond Pillow.
+
+    Args:
+        img   (PIL.Image): Source image (RGBA or RGB). Converted to RGBA
+                           internally; returned as RGBA.
+        scale (int): Base wavelength of the lowest noise octave in pixels
+                     (at full resolution).  Smaller values = finer grain.
+                     Typical range: 20 (very fine) – 80 (coarse canvas).
+                     Default 40 = standard paper tooth.
+        alpha (int): Maximum per-pixel opacity of the grain overlay (0–255).
+                     At alpha=20 the effect is barely perceptible at 100% zoom.
+                     Typical range: 8 (very subtle) – 40 (heavy texture).
+                     Default 20.
+        seed  (int): RNG seed for phase offsets — identical seed + scale +
+                     alpha produces identical texture for reproducibility.
+                     Default 42.
+
+    Returns:
+        PIL.Image (mode="RGBA"): The modified image with grain composited.
+        Same pixel dimensions as input.
+
+    Example:
+        from LTG_TOOL_render_lib_v001 import paper_texture
+        img = Image.open("LTG_ENV_tech_den_v003.png")
+        img = paper_texture(img, scale=40, alpha=18, seed=42)
+        img.save("LTG_ENV_tech_den_v003_paper.png")
+    """
+    if img.mode != "RGBA":
+        img = img.convert("RGBA")
+
+    w, h = img.size
+
+    # Work at 1/4 resolution to keep the pixel loop fast
+    rw = max(1, w // 4)
+    rh = max(1, h // 4)
+
+    # Effective scale at reduced resolution
+    reduced_scale = max(1, scale // 4)
+
+    rng = random.Random(seed)
+    octaves = 3
+    phase_offsets = [
+        (rng.uniform(0, 2 * math.pi), rng.uniform(0, 2 * math.pi))
+        for _ in range(octaves)
+    ]
+
+    small = Image.new("RGBA", (rw, rh), (0, 0, 0, 0))
+    pixels = []
+
+    for y in range(rh):
+        for x in range(rw):
+            value = 0.0
+            amplitude = 1.0
+            freq = 1.0
+            total_amp = 0.0
+
+            for i in range(octaves):
+                px, py = phase_offsets[i]
+                nx = (x / reduced_scale) * freq + px
+                ny = (y / reduced_scale) * freq + py
+                v = (math.sin(nx * 2.1 + py) * math.cos(ny * 1.9 + px) +
+                     math.cos(nx * 1.7 - px) * math.sin(ny * 2.3 - py)) * 0.5
+                value += v * amplitude
+                total_amp += amplitude
+                amplitude *= 0.5
+                freq *= 2.0
+
+            # Normalize to [0, 1]
+            value = (value / total_amp) * 0.5 + 0.5
+            value = max(0.0, min(1.0, value))
+            b = int(value * 255)
+            a = int(value * alpha)
+            pixels.append((b, b, b, a))
+
+    small.putdata(pixels)
+
+    # Upscale to full resolution with nearest-neighbour (preserves grain character)
+    grain = small.resize((w, h), Image.NEAREST)
+
+    img.alpha_composite(grain)
     return img
