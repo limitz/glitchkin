@@ -4,8 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present; Cycle 25 major gap closures complete.
 
 ## Status
-**Cycle 27 complete. Work cycles: 27. Critique cycles: 11.**
-**Critique Cycle 12 starts next. Cycle 28 after.**
+**Critique 12 complete. Work cycles: 27. Critique cycles: 12.**
+**Cycle 28 starts next. Critique Cycle 13 after Cycle 30.**
 
 ## Active Team (all 5 slots used)
 
@@ -53,6 +53,36 @@ All complete (Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street)
 - Pitch brief: `ltg_pitch_brief_v001.md` — COMPLETE
 - Delivery manifest: `pitch_delivery_manifest_v001.md`
 - Pitch package index: updated C25
+
+## Critique 12 — Key Findings (C28 priorities)
+
+### P1 — Blockers
+- **Luma proportions inconsistent**: expr sheet ~2.5 heads, turnaround 3.2, lineup ~3.5. Alex decided: **3.2 canonical** (turnaround is master)
+- **Luma eye spec conflict**: v006 eye width HR×0.28 vs turnaround h×0.22 (21% narrower). Must reconcile.
+- **DATA_BLUE in SF02 unregistered**: #0A4F8C carries 70% of cold confetti — register or correct (Sam)
+- **UV_PURPLE_DARK in SF03 wrong saturation**: 31% vs 72% — going grey-purple (Sam)
+- **add_rim_light() direction-agnostic**: applies to ALL edges, not just correct side — must add `side` param (Rin → v1.2.0)
+- **54+ naming violations**: generators use `LTG_CHAR_/LTG_COLOR_` prefix instead of `LTG_TOOL_` (Kai)
+
+### P2
+- Luma skin base 3-way conflict (#C4A882 / #C8885A / #C8885A) — document both as neutral+lamp-lit (Sam)
+- SF04 blush wrong (reads pain/fever) — fix RGB (Sam + Rin)
+- SF04 Byte body fill (0,190,210) drifts from canonical (0,212,232) (Rin)
+- 24 tools unregistered in README (Kai)
+- SF03 v004, SF04 v002, lineup v005 not in pitch index (Kai)
+- **Pitch brief lacks Luma's interior need** — "sees world differently" is not a motivation (Alex)
+- Glitch emotionally hollow — needs interior desire expression (Maya)
+- Luma turnaround v002 line weight still heavy (Maya — already flagged)
+- Style guide head-to-body ratio conflicts with character sheet standards (Reinhardt)
+
+### Critic Grades
+- Daisuke: Byte B, Glitch B-, Cosmo B, Luma expr C, Luma turnaround C, lineup C+
+- Priya: palette architecture A-, production errors D (P1/P2 issues)
+- Nkechi: overall B- — not yet emotionally pitch-ready
+- Sven: SF03 PASS; SF01/SF02/SF04 WARN; 14 lighting inconsistencies
+- Reinhardt: overall FAIL — solid foundation, systemic maintenance failures
+
+---
 
 ## Cycle 27 — Completed
 
