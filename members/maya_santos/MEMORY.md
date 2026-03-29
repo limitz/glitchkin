@@ -1,5 +1,16 @@
 # Maya Santos — Memory
 
+## Cycle 22 Lessons — BYTE v004 + COSMO v004 + LUMA v004
+- **Byte Expression Sheet v004 COMPLETE.** Same 3×3 grid. Generator: `output/tools/LTG_CHAR_byte_expression_sheet_v004.py`. Output: `LTG_CHAR_byte_expression_sheet_v004.png` (784×1074px). Entry point wrapper: `output/characters/main/LTG_CHAR_byte_expression_sheet_v004.py`.
+- **Section 9B glyph LOCKED (v004 canonical):** CRACK is a void-black overlay line, NOT a pixel state. Glyph uses only: 0=DEAD, 1=ALIVE_NORMAL, 2=ALIVE_BRIGHT, 3=DIM. DIM color = (0,80,100) #005064. Crack overlay = void black LINE #0A0A14. HOT_MAG crack is body/frame EXTERIOR only.
+- **STORM differentiation rule:** RESIGNED = symmetric arms (14,14). STORM = asymmetric arms (6,22) = 20+ unit difference = damaged-asymmetric read at thumbnail.
+- **RELUCTANT JOY v004:** arm_l_dy=-2 (one arm resisting upward), arm_r_dy=12, body_tilt=12. reluctant_joy=True flag triggers perked antenna. Asymmetry = "fighting against it."
+- **POWERED DOWN v004:** body_squash=0.75 (was 0.88), both arms arm_dy=18. Unambiguous vs NEUTRAL.
+- **Cosmo Expression Sheet v004 COMPLETE.** SKEPTICAL redesigned: arms near-neutral (2,2 vs -14,-10). body_squash=0.92. Reads as "contracted inward" not "arms raised." Generator: `output/tools/LTG_CHAR_cosmo_expression_sheet_v004.py`. Output: `LTG_CHAR_cosmo_expression_sheet_v004.png` (912×946px).
+- **Luma Expression Sheet v004 COMPLETE.** show_guides flag added to render_face() and build_sheet(). CURIOUS upgraded: brow_r_dy -0.24→-0.34 HR, wider eyes (1.0/0.94), cy_offset +HR*0.06 (forward lean). Two exports: `_v004_guides.png` (production ref) + `_v004.png` (pitch/clean). Generator: `output/tools/LTG_CHAR_luma_expression_sheet_v004.py`.
+- **show_guides pattern:** render_face(expr, w, h, show_guides=True). build_sheet(show_guides=True). Call draw_construction_guide() only when show_guides=True.
+- **Cycle 22 inbox archived.** Report sent to Alex Chen.
+
 ## Cycle 21 Lessons — BYTE v003 + CLASSROOM POSE v002
 - **Byte Expression Sheet v003 COMPLETE.** 3×3 grid (9 panels). STORM/CRACKED added as panel 9. Generator: `LTG_TOOL_byte_expression_sheet_v003.py`. Output: `LTG_CHAR_byte_expression_sheet_v003.png` (784×1074px).
 - **7×7 dead-pixel glyph (Section 9B):** Upper-right dead zone, lower-left alive. Color map: 0=DEAD(void black), 1=ALIVE_NORMAL(dim cyan), 2=ALIVE_BRIGHT(white-cyan corona), 3=DIM(barely alive). Hot Magenta crack from (col4.5, row0) to (col2, row6). Eye bezel bg: Deep Cyan-Gray #1A3A40 (26,58,64).

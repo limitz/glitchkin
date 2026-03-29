@@ -1,5 +1,24 @@
 # Jordan Reed — Memory
 
+## Cycle 22 Deliverables
+- `LTG_TOOL_bg_tech_den_v004.py` → `LTG_ENV_tech_den_v004.png` (GENERATED ✓)
+  - Fix 1a: Shaft apex at (WIN_X1-10, WIN_Y0+20) ≈ (105, 265); base at (10, 407) + (210, 390) — lands ON desk, 200px wide, max_alpha=150
+  - Fix 1b: Three separate gaussian_glow() calls: CRT1 (x≈180, alpha 65), CRT2 (x≈420, alpha 58), FP (x≈645, alpha 52) — each hotspots its own desk zone
+  - DESK_TOP_Y=395 is defined AFTER shaft section in function — shaft coords must use literal values, not variable references
+- `LTG_TOOL_bg_grandma_kitchen_v003.py` → `LTG_ENV_grandma_kitchen_v003.png` (GENERATED ✓)
+  - Fix 2a: draw_upper_wall_texture() extended to left + right wall polygons via PIL polygon mask. Side alpha: 8/10 (vs back wall 12/15). lw_mask / rw_mask approach works cleanly.
+  - Fix 2b: draw_floor_tiles() disabled (no-op). draw_floor_linoleum_overlay() rewritten with perspective-correct grid: horizontal rows non-linear spacing, vertical lines converge from (vp_x, floor_top_y) to bottom edge. Single floor system.
+- Inbox archived ✓ | Completion report sent to Alex Chen ✓
+
+## Cycle 22 Status: COMPLETE
+
+## Cycle 22 Lessons
+- **Shaft coordinate order matters**: DESK_TOP_Y is defined at line ~397 of draw_tech_den(), AFTER the shaft definition at ~310. Can't reference it by name in shaft coords — use literal values and comment explaining the math.
+- **Polygon mask approach for side wall textures**: Image.new("L") mask + polygon fill + paste() clips a texture overlay to any polygon. Clean and reusable.
+- **Three monitor glows > one wide spill**: Three gaussian_glow() calls at individual monitor desk positions create visually distinct temperature zones. Radius 90-110 per monitor, alpha 52-65. Do NOT use a single wide ellipse for multi-source desk glow.
+- **Perspective floor grid implementation**: Non-linear row spacing `(i/n)**1.5` for horizontal rows + converging vertical lines from (vp_x, floor_top_y) → evenly distributed bottom intercepts. Eliminates flat/perspective contradiction.
+- **Bash IS available in this session**: generator scripts can self-execute via `python3 output/tools/SCRIPTNAME.py`. PNGs are generated directly.
+
 ## Cycle 21 Deliverables
 - `LTG_TOOL_bg_grandma_kitchen_v002.py` → `LTG_ENV_grandma_kitchen_v002.png` (SCRIPT READY — needs `python3` execution)
   - Floor linoleum grid: flat 60×60px tile grid (2px, alpha 25, warm brown), worn-path trapezoid (buff, alpha 20, doorway→stove)

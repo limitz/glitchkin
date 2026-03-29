@@ -1,22 +1,14 @@
 #!/usr/bin/env python3
-# DEPRECATED: This file is renamed to LTG_TOOL_render_lib_v001.py
-# Import from LTG_TOOL_render_lib_v001 instead.
-# This file will be removed in Cycle 23.
-from LTG_TOOL_render_lib_v001 import *  # noqa: F401,F403
 """
-ltg_render_lib.py — Shared Rendering Utility Library
+LTG_TOOL_render_lib_v001.py — Shared Rendering Utility Library
 "Luma & the Glitchkin" — Technical Art / Kai Nakamura / Cycle 21
-
-DEPRECATED in Cycle 22. Canonical name: LTG_TOOL_render_lib_v001.py
-This file re-exports everything from LTG_TOOL_render_lib_v001 for backward
-compatibility. Existing tools that import ltg_render_lib will continue to work
-until Cycle 23, when this file will be removed.
+Renamed from ltg_render_lib.py in Cycle 22 to comply with LTG naming convention.
 
 Provides reusable procedural rendering functions for all LTG generators.
 Import with:
     import sys, os
-    sys.path.insert(0, os.path.dirname(__file__))
-    from ltg_render_lib import (
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from LTG_TOOL_render_lib_v001 import (
         perlin_noise_texture, gaussian_glow, light_shaft,
         dust_motes, catenary_wire, scanline_overlay, vignette
     )
@@ -26,6 +18,8 @@ Dependencies: Python standard library, Pillow (PIL). No numpy required.
 All procedural functions use seeded RNG for reproducibility.
 No circular dependencies — importable standalone.
 """
+
+__version__ = "1.0.0"
 
 import math
 import random
@@ -42,6 +36,10 @@ def perlin_noise_texture(width, height, scale=50, seed=42, octaves=3, alpha=60):
     Uses layered sinusoidal noise (no external deps needed).
     Multiple octaves are blended (each octave doubles frequency, halves amplitude)
     to produce organic-looking value noise without requiring numpy or external libs.
+
+    Performance note: pixel-by-pixel loop. At 1920x1080 with octaves=3 this can
+    take 30–90 seconds. Recommend using at 960x540 or smaller and upscaling, or
+    use a tile-and-repeat strategy for full-canvas coverage.
 
     Args:
         width  (int): Output image width in pixels.
@@ -100,6 +98,13 @@ def gaussian_glow(img, center, radius, color, max_alpha=100, steps=10):
     required. Each step draws a slightly smaller ellipse with higher alpha,
     producing a smooth falloff from the outer edge inward to the hotspot.
 
+    Fix (Cycle 22): the loop iterates range(steps, 0, -1) so i goes from steps
+    down to 1. At i=1 (innermost/hotspot), alpha = max_alpha * (1 - 0/steps)^2
+    = max_alpha (full). At i=steps (outermost), alpha = max_alpha * (1 - (steps-1)/steps)^2
+    which is very near zero. alpha is floored at 1 to prevent fully transparent
+    outermost ellipses that waste draw calls. The duplicate/overwritten alpha
+    calculation from v001 has been removed.
+
     Args:
         img       (PIL.Image, mode="RGBA"): Image to paint glow onto (modified in place).
         center    (tuple): (cx, cy) centre point of the glow in image coordinates.
@@ -118,11 +123,10 @@ def gaussian_glow(img, center, radius, color, max_alpha=100, steps=10):
     for i in range(steps, 0, -1):
         t = i / steps                         # 1.0 at outermost, 1/steps at center
         r = int(radius * t)
-        # Alpha is low at outer edge, higher at center (inverse of t)
-        a = int(max_alpha * (1.0 - (t - 1.0 / steps)) * (1.0 / (1.0 - 1.0 / steps + 1e-6)))
-        # More intuitive: center gets max_alpha, outermost gets near-zero
+        # Center (i=1) gets max_alpha; outermost (i=steps) gets near-zero.
+        # Floor at 1 to avoid dead-alpha transparent ellipses at the outer edge.
         a = int(max_alpha * (1.0 - (i - 1) / steps) ** 2)
-        a = max(0, min(255, a))
+        a = max(1, min(255, a))  # floor at 1: prevent invisible/wasted draw calls
         ld.ellipse([cx - r, cy - r, cx + r, cy + r], fill=color + (a,))
 
     img.alpha_composite(layer)
@@ -273,6 +277,11 @@ def vignette(img, strength=60):
     Draws a series of concentric ellipses from the image boundary inward,
     each with decreasing alpha and black fill. The result is a smooth darkening
     toward the corners and edges, focusing the viewer's eye on the center.
+
+    Note: Each ring is drawn as a hollow ellipse outline (fill transparent,
+    outline black). Overlapping outlines approximate a soft gradient edge —
+    this is an intentional Mach-band approximation that works well for
+    CRT-style content. It is not a continuous radial gradient fill.
 
     Args:
         img      (PIL.Image): Source image (RGBA or RGB). Converted to RGBA internally.

@@ -3,7 +3,22 @@
 ## README Introduction (post-Cycle 21)
 - Added 4-paragraph first-person intro section to README.md directly below the logo. Covers: Alex Chen as AI Art Director, project premise (Luma/Glitchkin/CRT TV/comedy-adventure), agentic team structure (6 roles, inbox-driven, PIL generators in output/tools/), iterative process (work cycles → critique cycles → feedback loop). Archived: 20260329_1424_readme_changes.md + all 4 C21 completion reports (bg/char/color/tech).
 
-## Cycle 21 State (current)
+## Cycle 22 State (current)
+
+**Cycle 22 tasks completed (this cycle):**
+- `output/production/ltg_pitch_brief_v001.md` — one-page pitch brief, ~185 words, 5 sections (Premise/Tone/Audience/Format/Visual Identity Statement). Closes Risk 2 from Cycle 21 readiness assessment.
+- `output/production/character_sheet_standards_v001.md` — binding standards doc: label format (single-word vs slash-extended), HEAD_R to format mapping, HU ranges, construction guide policy (OFF by default), canvas/grid, line weight, expression counts. Based on audit of all 10 active generators.
+- `output/production/pitch_package_index.md` updated to Cycle 22. Added Cycle 20, 21, 22 Additions sections. Standalone pitch brief now COMPLETE in summary table. Section 3.6 added.
+- Inbox fully archived: `20260329_1428_rehire_2.md`, `20260329_1500_cycle22_tasks.md`. Completion report archived to `inbox/archived/20260329_1600_cycle22_complete.md`.
+
+**Open action from inbox (for Producer):**
+- `20260329_1428_rehire_2.md`: Producer requested a rendering/stylization specialist (handdrawn/organic look) to complement Kai Nakamura. One artist to be deactivated. Alex cannot hire — Producer must action.
+
+**Next: Cycle 23** (after Producer processes team change and assigns next work)
+
+---
+
+## Cycle 21 State (archived)
 
 **Cycle 21 tasks completed (this cycle):**
 - **Alex (self):** Confirmed Kai Nakamura's inbox assignment exists (`kai_nakamura/inbox/20260330_0200_cycle21_tasks.md`). Spot-checked all 9 key pitch assets — all present on disk. Wrote `output/production/pitch_readiness_c21.md` (overall: CONDITIONALLY READY). Archived all C20 completion reports + rehire message + C21 tasks message. Updated MEMORY.md.

@@ -8,12 +8,13 @@
 |------|------|--------|------------|
 | Alex Chen | Art Director | Active | — |
 | Maya Santos | Character Designer | Active | Alex Chen |
-| Jordan Reed | Background & Environment Artist | Active | Alex Chen |
 | Sam Kowalski | Color & Style Artist | Active | Alex Chen |
 | Kai Nakamura | Technical Art Engineer | Active | Alex Chen |
+| Rin Yamamoto | Visual Stylization Artist | Active (from C23) | Alex Chen |
 
 ## Inactive Members
 
 | Name | Role | Status | Notes |
 |------|------|--------|-------|
-| Lee Tanaka | Storyboard Artist | Inactive | Temporarily deactivated C21 — Act 1+2 storyboard decks complete. Reactivate when new storyboard work needed. |
+| Jordan Reed | Background & Environment Artist | Inactive | Deactivated C22 — all major environments complete (Tech Den v004, Kitchen v003, School Hallway v002, Millbrook v002). Reactivate when new environments needed. |
+| Lee Tanaka | Storyboard Artist | Inactive | Deactivated C21 — Act 1+2 storyboard decks complete. Reactivate when new storyboard work needed. |

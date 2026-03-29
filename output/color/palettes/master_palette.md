@@ -1103,6 +1103,7 @@ Formal documentation of inline color values used in `style_frame_01_rendered.py`
 - **Shadow companion:** `#263D5A` (deep blue-grey; see Luma character spec JEANS table)
 - **Highlight companion:** `#5A80B4` (lighter blue for lit areas; see Luma character spec JEANS table)
 - **Note:** This value appears in both the Luma character spec JEANS table and both generator scripts. The value is now formally registered here as a GL/DRW-adjacent production color to prevent drift between scripts.
+- **SF03 UV-ambient note:** In SF03 ("The Other Side"), Luma's jeans are rendered as `JEANS_BASE = (38, 61, 90)` = `#263D5A`. This matches the existing CHAR-L-05 shadow companion — the jeans appear at their shadow value under UV Purple ambient light. This is an environment-specific rendering, not a character color change. **Do not use `#263D5A` as the canonical jeans base in neutral or warm-lit scenes.** Future Glitch Layer scenes: use `#263D5A` only when UV Purple ambient is the dominant light source. All other scenes: use canonical `#3A5A8C`.
 
 ---
 
@@ -1431,7 +1432,7 @@ These are the show's foundational colors. Every generator, color key, and painte
 
 2. **`CIRCUIT_TRACE_DIM (0,192,204)` in SF03 v003** — A dim circuit-trace color between GL-01a Deep Cyan and GL-01 Electric Cyan. Not registered. **Disposition:** Scene-specific construction value acceptable without registration if commented in the script (already is). Low priority.
 
-3. **`JEANS_BASE (38,61,90)` in SF03 v003** — Darker than CHAR-L-05 `#3A5A8C` (58,90,140). Significant departure (R −20, G −29, B −50). **Disposition:** The jeans read darker in Glitch Layer ambient, which is plausible. Should be registered as CHAR-L-05a (Luma Jeans — Glitch Layer ambient, approx. `#263D5A`) or confirmed as the existing jeans shadow CHAR-L-05 shadow entry `#263D5A`. Cross-check and add a comment to the script.
+3. **`JEANS_BASE (38,61,90)` in SF03 v003** — **RESOLVED (Cycle 22).** Confirmed as CHAR-L-05 shadow companion `#263D5A` rendered under UV Purple ambient. SF03 jeans at shadow value = correct environment-specific rendering. Documented under CHAR-L-05 entry with explicit UV-ambient use note. Canonical jeans base `#3A5A8C` unchanged. Future Glitch Layer scenes must use `#263D5A` only when UV Purple ambient is the dominant light source.
 
 4. **`LUMA_SHOE (220,215,200)` in SF03 v003** — Slightly lighter/cooler than CHAR-L-09 Warm Cream `#FAF0DC` (250,240,220). Under UV ambient the shoe canvas shifts slightly. Not registered. **Disposition:** Low priority; construction value. Add inline comment in script citing CHAR-L-09 parent and UV ambient modification.
 

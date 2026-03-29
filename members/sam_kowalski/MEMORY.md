@@ -143,12 +143,17 @@
 - **Color Story document is a critical-critique asset.** ltg_style_frame_color_story.md explains all three style frames as a single intentional color arc (warm → contested → cold/alien). Pre-answers the most likely critic questions about SF03 palette coldness and SF01/SF02 warm/cool tension. This type of intentionality document should accompany every major deliverable set.
 - **Audit methodology for generators:** Pattern match all module-level constants against palette entries by RGB value, not just name. Name drift (JEANS_BASE vs CHAR-L-05) obscures cross-reference. Always verify numeric match.
 
+## Cycle 22 Lessons
+- **CORRUPT_AMBER in SF02 was wrong for 4 versions.** The generator had (200,122,32)=#C87A20 while master_palette and color story both cited GL-07 #FF8C00. Always do a numeric RGB cross-check between the generator and the master palette — name matches are not enough. Fixed in v005.
+- **Window pane vs. glow cone are two separate alpha systems.** Pane rectangles (character-warmth hierarchy) and glow cones (atmospheric projection) must be evaluated independently. Panes at 160-180 inverted character-warmth hierarchy; reduced to 115/110. Glow cones at ~105 max were correct throughout.
+- **JEANS_BASE SF03 = CHAR-L-05 shadow companion (#263D5A) — fully documented.** UV Purple ambient causes jeans to render at their shadow value, not a new construction value. Documented under CHAR-L-05 with explicit UV-ambient use rule. Named Gap 3 closed.
+- **Color story doc references must track the rendered version.** Updated source file to v005 and added confirmation note that GL-07 is now reconciled between generator and palette.
+- **Three-sentence pitch-deck callout is now prominent.** Victoria's "pitch-deck quality" sentence added as a standalone header section near the top of ltg_style_frame_color_story.md.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001 (TERRA_CYAN_LIT still old value). v002 is correct. Coordinate with Jordan Reed on v001 if it is still used.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan should add inline comment on next revision pass (low priority).
 - BYTE_GLOW (0,168,180) vs GL-01a (0,168,192): CLOSED as acceptable. Jordan may add inline comment on next pass (low priority, not a production fix).
 - SF03 confetti full-canvas distribution still unresolved (carry from C16). Constrain to within 150px of platform.
-- SF02 v004 window pane alpha (160/180) still above target 90-110. Not blocking. Flag for v005 if Critique 10 raises it.
-- SF03 v003 JEANS_BASE (38,61,90) not registered — probable Glitch Layer jeans derivation. Jordan to register as CHAR-L-05a or confirm matches existing shadow #263D5A.
 - SF03 v003 UV_PURPLE_MID/DARK — Jordan to confirm these map to ENV-11/ENV-12 and add inline comment.
 - Tech Den generator WALL_WARM slightly off from TD-01 — Jordan to add citing comment.

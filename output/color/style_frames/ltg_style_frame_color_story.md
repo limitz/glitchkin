@@ -8,6 +8,14 @@
 
 ---
 
+## The Color Arc in Three Sentences
+
+> **"SF01: This is Luma's world. SF02: Neither world owns this frame. SF03: This is not Luma's world."**
+
+These three sentences are the complete pitch for the show's visual grammar. Everything below is the argument behind them.
+
+---
+
 ## SF01 — Discovery
 
 **Source file:** `LTG_COLOR_styleframe_discovery_v003.png`
@@ -33,7 +41,7 @@ The tension is not danger. It is wonder. The cyan does not feel wrong here — i
 
 ## SF02 — Glitch Storm
 
-**Source file:** `LTG_COLOR_styleframe_glitch_storm_v004.png`
+**Source file:** `LTG_COLOR_styleframe_glitch_storm_v005.png`
 **Palette:** DATA_BLUE dominant key, warm amber window glow fighting from below
 
 ### What It Communicates
@@ -50,7 +58,7 @@ Luma's hoodie in this frame (DRW-07, #C8695A) is storm-modified — the cyan sto
 
 **Cold storm above / Warm street life below.** The lower third of the frame is the contested zone. Cyan storm light from above. Warm amber window glow from within the buildings. These two light sources fight for the same surfaces — the road (ENV-02 cyan-lit vs. ENV-03 warm-spill), the building facades (ENV-06 cyan-lit upper story vs. warm window glow at street level). The tension is explicit: the cold is winning the sky, but the warmth holds the ground.
 
-The Corrupted Amber outline on Byte (GL-07, #FF8C00) in this frame is also load-bearing. Byte is caught in a cyan-dominant environment (threshold exceeded: >35% cyan coverage). The amber outline is the visual marker that he is a Real World citizen navigating a glitch event — his warm roots showing in cold territory.
+The Corrupted Amber outline on Byte (GL-07, `#FF8C00` = 255, 140, 0) in this frame is also load-bearing. Byte is caught in a cyan-dominant environment (threshold exceeded: >35% cyan coverage). The amber outline is the visual marker that he is a Real World citizen navigating a glitch event — his warm roots showing in cold territory. Against the cyan-dominant storm, `#FF8C00` delivers genuine warm-cold complement contrast; this is why the canonical GL-07 value — not a darker or murkier amber — is required here. *[Note: GL-07 canonical value confirmed in generator v005 — generator and master palette are now fully reconciled.]*
 
 ---
 

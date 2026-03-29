@@ -2,8 +2,8 @@
 ## "Luma & the Glitchkin" — Complete Asset Inventory
 
 **Prepared by:** Jordan Reed, Background & Environment Artist / Updated by Alex Chen, Art Director
-**Date:** 2026-03-29 / Updated 2026-03-30 (Cycle 12) / Updated 2026-03-30 (Cycles 13–14–15) / Updated 2026-03-29 (Cycles 16–17–18) / Updated 2026-03-29 (Cycle 19)
-**Cycle:** 19
+**Date:** 2026-03-29 / Updated 2026-03-30 (Cycle 12) / Updated 2026-03-30 (Cycles 13–14–15) / Updated 2026-03-29 (Cycles 16–17–18) / Updated 2026-03-29 (Cycle 19) / Updated 2026-03-29 (Cycles 20–21–22)
+**Cycle:** 22
 **Purpose:** Single-document navigator for all pitch-ready assets. Use this to locate, assess, and present any component of the package. Quality grades are drawn from critic records where available.
 
 ---
@@ -240,7 +240,7 @@
 | Show bible | COMPLETE | — |
 | Style guide | COMPLETE | 11 sections including §9 Animation Style Notes, §10 Glitchkin Construction Rules, §11 Prop Design Guidelines (all added Cycle 11) |
 | Color palette | COMPLETE | Master palette with Glitch Layer depth tiers documented |
-| Standalone pitch brief | NOT VERIFIED | Production bible covers narrative premise; a standalone one-page is standard practice |
+| Standalone pitch brief | COMPLETE | `ltg_pitch_brief_v001.md` — Premise, Tone, Audience, Format, Visual Identity Statement. Cycle 22. |
 
 ### Open Blockers Before External Pitch Use
 
@@ -376,6 +376,28 @@
 | SF03 v003 color review | `/home/wipkat/team/output/color/style_frames/sf03_v003_color_review.md` | Pre-render analysis: cyan eye contrast 14.1:1 (target ≥4.5:1 — far exceeds). Magenta eye contrast 5.5:1 (target ≥3.0:1 — passes). Slash removal confirmed intentional. Minor: BYTE_GLOW B channel 12pt off canonical GL-01a. (Cycle 19 — Sam Kowalski) |
 | SF02 v004 color notes | `/home/wipkat/team/output/color/style_frames/sf02_v004_color_notes.md` | Pre-render analysis: v003 window alpha was 160–180 (double target). v004 target = alpha 90–110 (SUNLIT_AMBER + WARM_CREAM). Composite result calculates to #8A5B2A warm amber — clearly readable against dark walls. (Cycle 19 — Sam Kowalski) |
 
+### Cycle 20 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| Act 2 contact sheet v006 | `/home/wipkat/team/output/storyboards/act2/LTG_SB_act2_contact_sheet_v006.png` | Updated arc: A2-02 v002 incorporated. Arc label updated to "VULNERABLE (RESIGNED-55%)". Supersedes v005. (Cycle 20 — Lee Tanaka) |
+| Act 1 full contact sheet v001 | `/home/wipkat/team/output/storyboards/LTG_SB_act1_full_contact_sheet_v001.png` | 5 panels: cold open A1-01–A1-04 + classroom NEAR-MISS with scene-break border. First combined Act 1 contact sheet. (Cycle 20 — Lee Tanaka) |
+| Tech Den v002 | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_tech_den_v002.png` | Window light shaft added (trapezoid SUNLIT_AMBER, feathered, dust motes seed 77), monitor glow spill on desk/chair/shelving (RGB 180,200,210 — zero Glitch palette), right-half bedding/pillows/poster/printouts/device added, Cosmo jacket RW-08 Dusty Lavender clearly rendered. Supersedes v001. (Cycle 20 — Jordan Reed) |
+
+### Cycle 21 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| Byte expression sheet v003 | `/home/wipkat/team/output/characters/main/LTG_CHAR_byte_expression_sheet_v003.png` | 9th expression added: STORM/CRACKED. Layout upgraded 4×2 → 3×3. Right eye: 7×7 dead-pixel glyph per byte.md Section 9B, Hot Magenta crack. Body: +18° tilt, bent antenna (storm damage). Near-void storm BG. Supersedes v002. (Cycle 21 — Maya Santos) |
+| Pitch readiness assessment C21 | `/home/wipkat/team/output/production/pitch_readiness_c21.md` | Overall: CONDITIONALLY READY. Top 3 assets: SF03 v003, Miri expression sheet v002, Act 2 contact sheet v006. Risk 1 LOW-MED: SF02 window pane alpha (mitigation: single v005 pass). Risk 2 MEDIUM: no standalone pitch brief (closed Cycle 22). Lead-with-5 sequence documented. (Cycle 21 — Alex Chen) |
+
+### Cycle 22 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| One-page pitch brief v001 | `/home/wipkat/team/output/production/ltg_pitch_brief_v001.md` | Standalone buyer-facing pitch document. Premise, Tone, Audience, Format, Visual Identity Statement. Closes standalone brief gap (Risk 2 from Cycle 21 readiness). (Cycle 22 — Alex Chen) |
+| Character sheet standards v001 | `/home/wipkat/team/output/production/character_sheet_standards_v001.md` | Binding conventions for all expression sheet generators from Cycle 22 onward. Label format, HEAD_R/format mapping, head unit ranges, construction guide policy, canvas/grid standards, line weights, expression counts. (Cycle 22 — Alex Chen) |
+
 ---
 
 ### Section 3.5 — Production Standards & Directives
@@ -383,6 +405,13 @@
 | Asset | File Path | What It Shows | Quality Status | Needs Work |
 |---|---|---|---|---|
 | Character refinement directive C17 | `/home/wipkat/team/output/production/char_refinement_directive_c17.md` | Production standards: 3-tier line weight, construction clarity rules, emotional triangle (eyes+mouth+body), thumbnail test protocol. Gap analysis and team assignments for Cycle 17. | Current (Cycle 17) | None — this is the active reference doc |
+| Character sheet standards v001 | `/home/wipkat/team/output/production/character_sheet_standards_v001.md` | Binding conventions for all expression sheet generators: label format rules (single-word vs slash-extended), HEAD_R values mapped to format (bust vs full-body), head unit size ranges per character type, construction guide policy, canvas/grid standards, line weight standards, expression count per character. Based on audit of all active generators. (Cycle 22 — Alex Chen) | Current (Cycle 22) | None — binding from Cycle 22 onward |
+
+### Section 3.6 — Pitch Brief
+
+| Asset | File Path | What It Shows | Quality Status | Needs Work |
+|---|---|---|---|---|
+| One-page pitch brief v001 | `/home/wipkat/team/output/production/ltg_pitch_brief_v001.md` | Standalone buyer-facing pitch document: Premise, Tone, Audience, Format, Visual Identity Statement. ~185 words. Pitch-deck quality writing. Closes the "no standalone pitch brief" gap flagged in Cycle 21 readiness assessment. (Cycle 22 — Alex Chen) | Current (Cycle 22) | None — PITCH READY |
 
 ---
 
@@ -391,3 +420,4 @@
 *Updated by Alex Chen, Art Director — Cycles 13–14–15 — 2026-03-30*
 *Updated by Alex Chen, Art Director — Cycles 16–17 — 2026-03-29*
 *Updated by Alex Chen, Art Director — Cycle 19 — 2026-03-29*
+*Updated by Alex Chen, Art Director — Cycles 20–21–22 — 2026-03-29*

@@ -1,3 +1,4 @@
+.claude/
 # Python cache files — never commit compiled bytecode
 __pycache__/
 *.pyc
