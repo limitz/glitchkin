@@ -37,26 +37,46 @@ Import: `from LTG_TOOL_render_lib_v001 import ...`
 - `get_canonical_palette()` → standard 6-color LTG palette dict
 - Sampling: pixels within Euclidean RGB radius=40 of target; median hue; not_found = not a fail
 - Standalone (stdlib colorsys + Pillow only)
-- Tests: 3 self-tests all pass
 
 ## LTG_TOOL_batch_stylize_v001.py (C25 updated → v1.1.0)
 - Now calls v002 stylize (full canonical color protection)
 - Post-job color verification: verify_canonical_colors() on each output PNG
 - New params: `verify_colors=True`, `color_max_delta_hue=5.0`
-- Color drift = warning only (not error); included in result dict as "color_verify"
 
-## Cycle 21-24 history: see cycles 21-24 in previous MEMORY versions (archived)
+## LTG_TOOL_render_qa_v001.py (C26 NEW)
+- Full QA pipeline: silhouette, value range, color fidelity, warm/cool, line weight
+- `qa_report(img_path) → dict` — single image, 5 checks, overall_grade PASS/WARN/FAIL
+- `qa_batch(directory) → list[dict]` — all PNGs in a directory
+- `qa_summary_report(results, output_path)` — writes Markdown report
+- `silhouette_test(img) → PIL.Image` — 100×100 B&W (compatible with Rin's procedural_draw)
+- `value_study(img) → PIL.Image` — grayscale auto-contrast (compatible with Rin's procedural_draw)
+- Import: `from LTG_TOOL_render_qa_v001 import qa_report, qa_batch, qa_summary_report`
+- Depends on: LTG_TOOL_color_verify_v001 (must be in same directory / sys.path)
 
-## Cycle 25 — COMPLETE
-- Built `LTG_TOOL_color_verify_v001.py` — color verification utility (Rin unblocked)
-- Legacy archive: 20 non-LTG tools moved to `output/tools/legacy/`
-- Legacy archive: 27 non-LTG storyboard panels moved to `output/storyboards/panels/legacy/`
-- Created `output/tools/legacy/README.md` and `output/storyboards/panels/legacy/README.md`
-- Production naming: added explicit exemption to `naming_conventions.md` (Option B)
-- Updated `LTG_TOOL_batch_stylize_v001.py` to v1.1.0: calls v002, adds color verify step
-- Updated `output/tools/README.md`: new entries for color_verify, batch_stylize update, legacy archive doc
+## Cycle 26 — COMPLETE
+- Built `LTG_TOOL_render_qa_v001.py` — render QA tool
+- Ran QA on 8 C25 assets → all WARN; saved `output/production/qa_report_cycle26.md`
+- Updated `output/tools/README.md` with new QA tool entry
+- Rin interface note: silhouette_test() + value_study() use PIL.Image in/out; compatible
+
+## C26 QA Findings (key patterns to watch)
+- ALL 8 assets: warm/cool separation WARN — character/color model sheets are intentionally
+  uniform-hue (no warm vs cool zones by design); consider adjusting threshold or flagging
+  these asset types as "character sheet" (exempt from warm/cool check in future version)
+- SUNLIT_AMBER hue drift recurring on Luma assets (expression sheet, turnaround, color model):
+  found hue ~18–25°, target 34.3°. Investigate in Luma generator — possible value/saturation
+  interaction causing hue read low.
+- Byte/Cosmo color models: color fidelity PASS (canonical colors correctly placed)
+- Silhouette: all DISTINCT — good shape readability across all assets
+- Value range: all PASS — full tonal range achieved
+- Line weight: all PASS
 
 ## Lessons Learned (C25)
 - HOT_MAGENTA is #FF2D6B (not #FF0090) — always verify hex in master_palette.md
 - RGB sampling radius=40 may miss severely drifted colors; hue drift test needs colors geometrically close to target
 - production/ exemption is the right call — renaming ~100 files creates more noise than value
+
+## Lessons Learned (C26)
+- Warm/cool check is valid for style frames but not character sheets (flat neutral bg by design)
+  Future version: add asset_type param to skip warm/cool for character sheet type assets
+- SUNLIT_AMBER consistently reads lower hue on Luma assets — worth investigating generator source

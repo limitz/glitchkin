@@ -6,7 +6,35 @@
 ## Image Output Rule
 **Prefer smallest resolution appropriate for the task. Hard limit: ≤ 1280px in both width and height.** Use `img.thumbnail((1280, 1280), Image.LANCZOS)` before saving any PNG. Preserve aspect ratio. Only use large sizes when fine detail inspection requires it. Detail crops also ≤ 1280×1280px. Note: SF04 and logo generated at 1920×1080 this cycle — resize agent corrected these in-place.
 
-## Cycle 25 State (current)
+## Cycle 26 State (current)
+
+**C26 key decisions:**
+- **New critics panel**: 15 all-new brutal critics replace the old panel. Critics: Takeshi Mori, Ingrid Solberg, Daisuke Kobayashi, Priya Nair, Marcus Webb, Chiara Ferrara, Dr. Samuel Osei, Yuki Tanaka, Reinhardt Böhm, Amara Diallo, Jonas Feld, Dr. Leila Asgari, Sven Halvorsen, Nkechi Adeyemi, Petra Volkov. All bio files in `critics/`. All old critic files deleted. New critics review ALL output, not just latest cycle. Standing rule added: no comments on resolution/pixel dimensions.
+- **Luma style investigation**: Expression sheet v005 vs classroom pose v002 — root cause identified: head construction (missing cheek nubs), hair (3 mass ellipses vs 8 organic curl ellipses), canvas BG (void black vs warm parchment), eye proportions (manga-wide vs naturalistic). Maya received directive for v006 rebuild. Maya then delivered C26 style fix (v005 overwritten in-place with classroom-aligned head/hair/eye construction, warm BG). Style aligned — no separate v006 needed.
+- **README**: Rewritten to be proud and confident. Removed apologetic language. Cycle count updated to "26 work cycles and counting."
+- **Rin role**: Changed from "Visual Stylization Artist" to "Procedural Art Engineer" in TEAM.md and PROFILE.md. Role shift: style now baked into generation pipeline at draw time, not post-process. Directive sent. Rin delivered `LTG_TOOL_procedural_draw_v001.py` (wobble_line, wobble_polygon, variable_stroke, add_rim_light, silhouette_test, value_study). Artistry folder `/home/wipkat/artistry` inaccessible to agents (permission denied) — escalate to producer if needed.
+- **Kai QA tool**: `LTG_TOOL_render_qa_v001.py` delivered. 5 checks: silhouette readability, value range, color fidelity, warm/cool separation, line weight. All C25 assets graded WARN (none FAIL). Warm/cool WARN on character sheets is by design (neutral BG). SUNLIT_AMBER hue drift found on Luma assets (~18-25° vs target 34.3°) — open item.
+- **UV_PURPLE fix**: Sam's QC found UV_PURPLE hue-rotating ~13-14° in stylization pipeline. Root cause: CANONICAL_PALETTE had wrong RGB for UV_PURPLE (#6A0DAD not #7B2FBE). Rin corrected in v002. SF02/SF03 regen runner was `run_sf02_sf03_regen.py` — now removed (post-processing pipeline retired C26).
+- **Post-processing pipeline retired (C26)**: Producer removed all 8 `*_styled*.png` files and moved `LTG_TOOL_stylize_handdrawn_v001.py`, `v002.py`, `LTG_TOOL_batch_stylize_v001.py` to `output/tools/legacy/`. Style is now baked at draw time. All references cleaned from pitch_package_index.md, pitch_delivery_manifest_v001.md, and output/tools/README.md.
+- **SF04 Byte teal (Sam QC)**: CONFIRMED INTENTIONAL. `BYTE_FILL=(0,190,210)` and `BYTE_SH=(0,110,140)` alpha-180 on shadow half. Sam's sampled range ~(0,138-160) is a blend of lit + shadow — correct scene lighting under warm window key. No regen needed.
+- **Stale assets**: Producer directive — archive/delete stale assets after each cycle to control cost. Apply from C27 onward.
+- **QA 3-cycle focus (C26–C28)**: Aesthetics and rendering pipeline. C26 = QA tool built (Kai). C27 = integrate artistry techniques + run QA on all assets. C28 = refinement pass.
+
+**C26 team completions:**
+- Maya: Luma expression sheet v005 style-aligned (classroom head/hair/eye construction, warm BG). Turnaround v002 FRONT view fixed. Both overwritten in-place.
+- Kai: `LTG_TOOL_render_qa_v001.py` built. All C25 assets assessed — 0 FAIL / 8 WARN.
+- Rin: `LTG_TOOL_procedural_draw_v001.py` built. Role = Procedural Art Engineer. Stylize tools retired.
+- Sam: Color QC report (`output/production/color_qc_c25_assets.md`). 7/10 assets cleared. SF04 Byte teal confirmed intentional.
+
+**C26 open items (resolved):**
+- SF04 Byte teal: RESOLVED — intentional scene lighting (see above).
+- Post-processing cleanup: RESOLVED — pitch_package_index.md, delivery manifest, tools README all updated.
+
+**C26 open items (carry to C27):**
+- SUNLIT_AMBER hue drift on Luma assets: investigate Luma generators (C27)
+- Artistry folder access: needs producer to grant agent access or copy files to workspace
+
+## Cycle 25 State (archived — C25 summary)
 
 **Cycle 25 tasks completed:**
 - SF04 — Luma + Byte interaction style frame created: `output/color/style_frames/LTG_COLOR_styleframe_luma_byte_v001.png`. Scene: Luma CURIOUS (looking right at monitor), Byte on her right shoulder looking UP at her with WORRIED expression. Dual warm/cool lighting. 1920×1080 → resized to ≤1280px (see image output rule above). Generator: `output/tools/LTG_COLOR_styleframe_luma_byte_v001.py`. Closes Critique 11 P1 gap (Valentina).

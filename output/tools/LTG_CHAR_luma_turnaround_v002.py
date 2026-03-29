@@ -93,45 +93,48 @@ def render_front(draw, cx, base_y):
     top_y   = base_y - int(CHAR_DRAW_H * S)
     head_cy = top_y + h
 
-    # --- HEAD ---
+    # --- HEAD (classroom-style: circle + cheek nubs, no jaw bump) ---
     head_r = int(h * 0.50)
     draw.ellipse([cx - head_r, head_cy - head_r,
-                  cx + head_r, head_cy + head_r], fill=SKIN)
-    # Jaw
-    jaw_r = int(h * 0.28)
-    draw.ellipse([cx - jaw_r, head_cy + int(h * 0.42),
-                  cx + jaw_r, head_cy + int(h * 0.60)], fill=SKIN)
-    # Ears
-    ear_r = int(h * 0.13)
-    ear_y = head_cy + int(h * 0.12)
+                  cx + head_r, head_cy + head_r + int(h * 0.08)],
+                 fill=SKIN)
+    # Lower chin fill (classroom-style)
+    chin_rx = int(h * 0.47)
+    draw.ellipse([cx - chin_rx, head_cy - int(h * 0.10),
+                  cx + chin_rx, head_cy + head_r + int(h * 0.12)], fill=SKIN)
+    draw.arc([cx - chin_rx, head_cy - int(h * 0.10),
+              cx + chin_rx, head_cy + head_r + int(h * 0.12)],
+             start=0, end=180, fill=LINE, width=6)
+    # Cheek nubs (classroom-style)
+    nub_w = int(h * 0.09)
+    nub_h = int(h * 0.12)
+    nub_y = head_cy - int(h * 0.06)
     for side in [-1, 1]:
-        draw.ellipse([cx + side * head_r - ear_r + side * (-4),
-                      ear_y - ear_r,
-                      cx + side * head_r + ear_r + side * (-4),
-                      ear_y + ear_r], fill=SKIN, outline=LINE, width=4)
+        draw.ellipse([cx + side * head_r - nub_w + side * int(h * 0.03),
+                      nub_y - nub_h,
+                      cx + side * head_r + nub_w + side * int(h * 0.03),
+                      nub_y + nub_h],
+                     fill=SKIN, outline=LINE, width=4)
 
-    # Hair mass
-    hair_top = head_cy - int(h * 0.68)
-    hair_mid = head_cy - int(h * 0.43)
-    draw.ellipse([cx - int(h * 0.55), hair_top,
-                  cx + int(h * 0.52), hair_mid + int(h * 0.12)], fill=HAIR)
-    draw.ellipse([cx - int(h * 0.52), hair_top + int(h * 0.05),
-                  cx - int(h * 0.05), hair_mid + int(h * 0.20)], fill=HAIR)
-    draw.ellipse([cx + int(h * 0.03), hair_top + int(h * 0.09),
-                  cx + int(h * 0.46), hair_mid + int(h * 0.15)], fill=HAIR)
-    fringe_top = head_cy - int(h * 0.34)
-    fringe_bot = head_cy - int(h * 0.15)
-    draw.ellipse([cx - int(h * 0.42), fringe_top,
-                  cx + int(h * 0.14), fringe_bot + int(h * 0.06)], fill=HAIR)
-    draw.ellipse([cx - int(h * 0.15), fringe_top - int(h * 0.03),
-                  cx + int(h * 0.38), fringe_bot], fill=HAIR)
+    # Hair mass — 8 overlapping ellipses (classroom cloud method)
+    # Scale factor: classroom head_r=100, turnaround FRONT head_r = h*0.50
+    hs = h / 200.0   # h at 2x; classroom coord at 1x used head_r=100 → scale=h/200
+    hair_top = head_cy - int(h * 0.95)   # top of hair cloud
+    draw.ellipse([cx - int(hs*155), hair_top, cx + int(hs*145), head_cy - int(h*0.20)], fill=HAIR)
+    draw.ellipse([cx - int(hs*175), hair_top + int(hs*25), cx - int(hs*80), head_cy - int(h*0.30)], fill=HAIR)
+    draw.ellipse([cx - int(hs*165), hair_top + int(hs*55), cx - int(hs*95), head_cy - int(h*0.15)], fill=HAIR)
+    draw.ellipse([cx + int(hs*80),  hair_top + int(hs*35), cx + int(hs*155), head_cy - int(h*0.30)], fill=HAIR)
+    draw.ellipse([cx + int(hs*90),  hair_top + int(hs*65), cx + int(hs*145), head_cy - int(h*0.20)], fill=HAIR)
+    draw.ellipse([cx - int(hs*60),  hair_top - int(hs*15), cx + int(hs*20),  head_cy - int(h*0.67)], fill=HAIR)
+    draw.ellipse([cx - int(hs*20),  hair_top - int(hs*25), cx + int(hs*70),  head_cy - int(h*0.70)], fill=HAIR)
+    draw.ellipse([cx - int(hs*100), hair_top,              cx - int(hs*30),  head_cy - int(h*0.63)], fill=HAIR)
     # Hair highlight
-    draw.arc([cx - int(h * 0.28), hair_top + int(h * 0.06),
-              cx + int(h * 0.28), hair_top + int(h * 0.20)],
+    draw.arc([cx - int(hs*60), hair_top - int(hs*10),
+              cx + int(hs*60), hair_top + int(hs*45)],
              start=200, end=340, fill=HAIR_HL, width=3)
     # Head outline
     draw.ellipse([cx - head_r, head_cy - head_r,
-                  cx + head_r, head_cy + head_r],
+                  cx + head_r, head_cy + head_r + int(h * 0.08)],
                  outline=LINE, width=6)
 
     # Face features

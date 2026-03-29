@@ -13,6 +13,14 @@ v005 changes:
   - Body pose, arm position, AND weight shift per expression
   - Canvas: 1200×900, 3×2, 6 expressions
 
+Cycle 26 STYLE FIX: Aligned to classroom pose visual language (producer preference).
+  - Head: circle + cheek nubs (no jaw bump) — matches classroom pose
+  - Hair: 8-ellipse cloud mass (organic, puffy) — matches classroom pose
+  - Eyes: circular proportions, eyelid arc — matches classroom pose
+  - Line weights: silhouette=6px@2x(→3px@1x), interior=4px@2x(→2px@1x)
+  - Background: warm light per-panel tones — matches classroom warm aesthetic
+  - CANVAS_BG: warm parchment instead of dark void
+
 Expression silhouette differentiation:
   CURIOUS:    Forward lean, one arm reaching/pointing, weight shifted forward
   DETERMINED: Upright, fists at hips, forward weight, wide stance
@@ -53,7 +61,7 @@ SHOE_SOLE  = (199,  91, 57)
 LACES      = (  0, 240, 255)
 PX_CYAN    = (  0, 240, 255)
 PX_MAG     = (255,  45, 107)
-CANVAS_BG  = ( 28,  20, 14)
+CANVAS_BG  = (235, 224, 206)   # warm parchment — matches classroom pose aesthetic
 
 # Hoodie color tint per expression (panel atmosphere)
 HOODIE_MAP = {
@@ -66,12 +74,12 @@ HOODIE_MAP = {
 }
 
 BG = {
-    "CURIOUS":    (200, 225, 215),
-    "DETERMINED": (215, 205, 190),
-    "SURPRISED":  (240, 218, 175),
-    "WORRIED":    (198, 215, 235),
-    "DELIGHTED":  (250, 222, 192),
-    "FRUSTRATED": (215, 198, 208),
+    "CURIOUS":    (230, 240, 235),   # soft warm mint — classroom warmth
+    "DETERMINED": (238, 228, 210),   # warm parchment — grounded
+    "SURPRISED":  (245, 234, 210),   # warm cream
+    "WORRIED":    (225, 230, 242),   # pale blue-gray
+    "DELIGHTED":  (250, 238, 215),   # warm golden cream
+    "FRUSTRATED": (235, 220, 220),   # pale rose — muted heat
 }
 
 # ── Layout ────────────────────────────────────────────────────────────────────
@@ -132,150 +140,194 @@ def draw_hoodie_pixel_accent(draw, x0, y0, pw, ph, hoodie_col):
 
 
 def draw_head(draw, cx, cy):
-    draw.ellipse([cx - HR, cy - HR, cx + HR, cy + HR], fill=SKIN)
-    jaw_r = int(HR * 0.52)
-    jaw_y = cy + int(HR * 0.82)
-    draw.ellipse([cx - jaw_r, jaw_y - int(HR * 0.20),
-                  cx + jaw_r, jaw_y + int(HR * 0.20)], fill=SKIN)
-    draw.ellipse([cx - HR, cy - HR, cx + HR, cy + HR],
-                 outline=LINE, width=8)
+    """Classroom-style head: main circle + lower-half fill + cheek nubs."""
+    # Main head circle
+    draw.ellipse([cx - HR, cy - HR, cx + HR, cy + HR + int(HR * 0.15)],
+                 fill=SKIN, outline=LINE, width=6)
+    # Lower chin fill (repeat lower half to soften chin)
+    chin_rx = int(HR * 0.95)
+    draw.ellipse([cx - chin_rx, cy - int(HR * 0.20),
+                  cx + chin_rx, cy + HR + int(HR * 0.25)], fill=SKIN)
+    draw.arc([cx - chin_rx, cy - int(HR * 0.20),
+              cx + chin_rx, cy + HR + int(HR * 0.25)],
+             start=0, end=180, fill=LINE, width=6)
+    # Cheek nubs — classroom pose characteristic
+    nub_w = int(HR * 0.18)
+    nub_h = int(HR * 0.24)
+    nub_y = cy - int(HR * 0.12)
+    draw.ellipse([cx - HR - nub_w + int(HR * 0.06), nub_y - nub_h // 2,
+                  cx - HR + nub_w + int(HR * 0.06), nub_y + nub_h // 2],
+                 fill=SKIN, outline=LINE, width=4)
+    draw.ellipse([cx + HR - nub_w - int(HR * 0.06), nub_y - nub_h // 2,
+                  cx + HR + nub_w - int(HR * 0.06), nub_y + nub_h // 2],
+                 fill=SKIN, outline=LINE, width=4)
 
 
 def draw_ears(draw, cx, cy):
-    er = int(HR * 0.13)
-    ey = cy + int(HR * 0.12)
-    draw.ellipse([cx - HR - er + 4, ey - er, cx - HR + er + 4, ey + er],
-                 fill=SKIN, outline=LINE, width=5)
-    draw.ellipse([cx + HR - er - 4, ey - er, cx + HR + er - 4, ey + er],
-                 fill=SKIN, outline=LINE, width=5)
+    """Ears are absorbed into cheek nubs for classroom-style look."""
+    pass   # cheek nubs in draw_head() serve as ear/cheek indicators
 
 
 def draw_hair(draw, cx, cy, variant="default"):
+    """Classroom-style cloud hair: 8+ overlapping ellipses for organic puff.
+    Scaled to 2x render coords (HR = HEAD_R * RENDER_SCALE).
+    """
+    # Scale classroom hair values (originally at head_r=100) to current HR
+    s = HR / 100.0   # scale factor
+
     if variant == "excited":
-        top_lift = int(HR * 1.40)
-        spread_l = int(HR * 1.12)
-        spread_r = int(HR * 1.08)
+        v_off = -int(s * 15)   # hair floats higher
+        spread = int(s * 10)
     elif variant == "drooped":
-        top_lift = int(HR * 1.22)
-        spread_l = int(HR * 0.98)
-        spread_r = int(HR * 0.94)
+        v_off = int(s * 8)     # hair droops slightly
+        spread = -int(s * 5)
     elif variant == "tight":
-        top_lift = int(HR * 1.28)
-        spread_l = int(HR * 1.02)
-        spread_r = int(HR * 0.96)
+        v_off = int(s * 4)     # hair hugs head tighter
+        spread = -int(s * 8)
     else:
-        top_lift = int(HR * 1.34)
-        spread_l = int(HR * 1.06)
-        spread_r = int(HR * 1.00)
+        v_off = 0
+        spread = 0
 
-    hair_top_y = cy - top_lift
-    hair_mid_y = cy - int(HR * 0.84)
+    # Main cloud mass — 8 overlapping ellipses (classroom pose method)
+    # Ellipse coords scaled from classroom pose (cx-relative, cy-relative)
+    hair_ellipses = [
+        # (x1_off, y1_off, x2_off, y2_off) — from classroom pose _draw_luma_hair_seated
+        (-int(s*155), -int(s*195)+v_off, int(s*145)+spread, int(s*40)),
+        (-int(s*175)+spread//2, -int(s*170)+v_off, -int(s*80), -int(s*60)),
+        (-int(s*165), -int(s*140)+v_off, -int(s*95), -int(s*30)),
+        ( int(s*80), -int(s*160)+v_off,  int(s*155)+spread, -int(s*60)),
+        ( int(s*90), -int(s*130)+v_off,  int(s*145)+spread, -int(s*40)),
+        (-int(s*60), -int(s*215)+v_off,  int(s*20),   -int(s*140)),
+        (-int(s*20), -int(s*225)+v_off,  int(s*70),   -int(s*145)),
+        (-int(s*100),-int(s*200)+v_off,  -int(s*30),  -int(s*130)),
+    ]
+    for (x1, y1, x2, y2) in hair_ellipses:
+        draw.ellipse([cx + x1, cy + y1, cx + x2, cy + y2], fill=HAIR)
 
-    draw.ellipse([cx - spread_l, hair_top_y,
-                  cx + spread_r, hair_mid_y + int(HR * 0.24)], fill=HAIR)
-    draw.ellipse([cx - int(spread_l * 0.94), hair_top_y + int(HR * 0.10),
-                  cx - int(HR * 0.10), hair_mid_y + int(HR * 0.38)], fill=HAIR)
-    draw.ellipse([cx + int(HR * 0.06), hair_top_y + int(HR * 0.18),
-                  cx + int(spread_r * 0.90), hair_mid_y + int(HR * 0.30)], fill=HAIR)
-    fringe_top = cy - int(HR * 0.66)
-    fringe_bot = cy - int(HR * 0.30)
-    draw.ellipse([cx - int(HR * 0.82), fringe_top,
-                  cx + int(HR * 0.26), fringe_bot + int(HR * 0.12)], fill=HAIR)
-    draw.ellipse([cx - int(HR * 0.30), fringe_top - int(HR * 0.06),
-                  cx + int(HR * 0.74), fringe_bot], fill=HAIR)
-    hl = bezier3((cx - int(HR * 0.30), hair_top_y + int(HR * 0.22)),
-                 (cx + int(HR * 0.02), hair_top_y + int(HR * 0.06)),
-                 (cx + int(HR * 0.36), hair_top_y + int(HR * 0.26)))
-    polyline(draw, hl, HAIR_HL, width=4)
-    # Hair outline
-    draw.ellipse([cx - spread_l, hair_top_y,
-                  cx + spread_r, hair_mid_y + int(HR * 0.24)],
-                 outline=LINE, width=7)
+    # Hair highlight strands (foreground arcs — classroom _draw_hair_overlay)
+    draw.arc([cx - int(s*60), cy - int(s*195) + v_off,
+              cx - int(s*10), cy - int(s*140)],
+             start=30, end=200, fill=HAIR, width=6)
+    draw.arc([cx - int(s*20), cy - int(s*190) + v_off,
+              cx + int(s*40), cy - int(s*130)],
+             start=10, end=190, fill=HAIR, width=6)
 
 
 def draw_eyes_full(draw, cx, cy, params):
-    eye_y   = cy + int(HR * 0.08)
-    sep     = int(HR * 0.70)
-    lx      = cx - sep // 2
-    rx      = cx + sep // 2
-    ew      = int(HR * 0.44)
-    eh_full = int(HR * 0.30)
-    p       = params
+    """Classroom-style eyes: near-circular proportions, explicit eyelid arc.
+    Scaled to 2x render coords (classroom used head_r=100, ew=28).
+    """
+    s = HR / 100.0   # scale from classroom reference
+    eye_y  = cy - int(s * 18)   # classroom: cy - 18
+    lex    = cx - int(s * 38)   # classroom: cx - 38
+    rex    = cx + int(s * 38)   # classroom: cx + 38
+    ew     = int(s * 28)        # classroom: ew=28 (near-circular)
+    p      = params
 
-    for (ex, open_f, is_right) in [(lx, p["l_open"], False), (rx, p["r_open"], True)]:
-        if p.get("half_lid"):
-            actual_h = int(eh_full * 0.52)
-        else:
-            actual_h = max(3, int(eh_full * open_f))
-        draw.ellipse([ex - ew, eye_y - actual_h, ex + ew, eye_y + actual_h], fill=EYE_W)
-        ir  = int(ew * 0.68)
-        iry = min(ir, actual_h - 2)
+    # Determine openness per eye — classroom style: leh and reh
+    leh_base = int(s * 28)   # classroom: leh=28 (full open)
+    reh_base = int(s * 22)   # classroom: reh=22 (slightly less)
+    l_open   = p.get("l_open", 1.0)
+    r_open   = p.get("r_open", 1.0)
+
+    if p.get("half_lid"):
+        leh = max(4, int(leh_base * 0.50))
+        reh = max(4, int(reh_base * 0.50))
+    else:
+        leh = max(4, int(leh_base * l_open))
+        reh = max(4, int(reh_base * r_open))
+
+    pdx = int(p.get("gaze_dx", 0) * s * 5)
+    pdy = int(p.get("gaze_dy", 0) * s * 4)
+
+    for (ex, eh, is_right) in [(lex, leh, False), (rex, reh, True)]:
+        # Eye white — oval, near-circular
+        draw.ellipse([ex - ew, eye_y - eh, ex + ew, eye_y + eh], fill=EYE_W,
+                     outline=LINE, width=4)
+        # Iris
+        iris_r = int(ew * 0.54)
+        iry    = min(iris_r, eh - 2)
         if iry < 2:
             iry = 2
-        pdx = int(p.get("gaze_dx", 0) * HR * 0.10)
-        pdy = int(p.get("gaze_dy", 0) * HR * 0.08)
-        draw.ellipse([ex + pdx - ir, eye_y + pdy - iry,
-                      ex + pdx + ir, eye_y + pdy + iry], fill=EYE_IRIS)
-        pr  = int(ir * 0.68) if p.get("pupils_wide") else int(ir * 0.50)
-        draw.ellipse([ex + pdx - pr, eye_y + pdy - pr,
-                      ex + pdx + pr, eye_y + pdy + pr], fill=EYE_PUP)
-        hr_s = max(int(pr * 0.38), 5)
-        hlx  = ex + pdx - int(ir * 0.28)
-        hly  = eye_y + pdy - int(iry * 0.36)
-        draw.ellipse([hlx - hr_s, hly - hr_s, hlx + hr_s, hly + hr_s], fill=EYE_HL)
-        draw.arc([ex - ew, eye_y - actual_h, ex + ew, eye_y + actual_h],
+        draw.chord([ex + pdx - iris_r, eye_y + pdy - iry,
+                    ex + pdx + iris_r, eye_y + pdy + iry],
+                   start=15, end=345, fill=EYE_IRIS)
+        # Pupil
+        pr = int(iris_r * 0.64) if p.get("pupils_wide") else int(iris_r * 0.50)
+        pup_x = ex + pdx
+        draw.ellipse([pup_x - pr, eye_y + pdy - pr,
+                      pup_x + pr, eye_y + pdy + pr], fill=EYE_PUP)
+        # Highlight
+        hl_x = pup_x + int(iris_r * 0.42)
+        hl_y = eye_y + pdy - int(iry * 0.48)
+        hl_s = max(int(pr * 0.38), 4)
+        draw.ellipse([hl_x - hl_s, hl_y - hl_s, hl_x + hl_s, hl_y + hl_s],
+                     fill=EYE_HL)
+        # Eyelid arc (classroom style: arc at bottom of eye oval)
+        draw.arc([ex - ew, eye_y - eh, ex + ew, eye_y + eh],
                  start=200, end=340, fill=LINE, width=4)
+        # Crinkle lines for DELIGHTED
         if p.get("crinkle"):
             dsign   = 1 if is_right else -1
             outer_x = ex + ew * dsign
             for k in range(3):
-                dy_k = int(HR * 0.04) * k
+                dy_k = int(s * 4) * k
                 draw.line([(outer_x, eye_y + dy_k),
-                           (outer_x + dsign * int(HR * 0.11),
-                            eye_y + dy_k - int(HR * 0.07))],
+                           (outer_x + dsign * int(s * 11),
+                            eye_y + dy_k - int(s * 7))],
                           fill=LINE, width=3)
-        draw.ellipse([ex - ew, eye_y - actual_h, ex + ew, eye_y + actual_h],
-                     outline=LINE, width=6)
 
-    # Brows (interior weight — 4px at 2x)
-    brow_base_y = eye_y - int(eh_full * 1.42)
+    # Brows — interior weight (4px at 2x = 2px at 1x, matches classroom)
+    brow_base_y = eye_y - int(leh_base * 1.42)
     for (bx, b_dy, b_furrow) in [
-        (lx, p.get("brow_l_dy", 0), p.get("brow_furrow_l", False)),
-        (rx, p.get("brow_r_dy", 0), p.get("brow_furrow_r", False)),
+        (lex, p.get("brow_l_dy", 0), p.get("brow_furrow_l", False)),
+        (rex, p.get("brow_r_dy", 0), p.get("brow_furrow_r", False)),
     ]:
         by         = brow_base_y + b_dy
-        is_right_b = (bx == rx)
-        inner_x    = bx + int(HR * 0.10) if is_right_b else bx - int(HR * 0.10)
-        outer_x    = bx - int(HR * 0.38) if is_right_b else bx + int(HR * 0.38)
-        inner_y    = by + (int(HR * 0.16) if b_furrow else 0)
-        outer_y    = by
-        pts        = bezier3((outer_x, outer_y), (bx, by - int(HR * 0.04)),
-                              (inner_x, inner_y))
-        polyline(draw, pts, LINE, width=4)
+        is_right_b = (bx == rex)
+        # Classroom brow shape: 3-point polyline with gentle arch
+        inner_x = bx + int(s * 22) if is_right_b else bx - int(s * 22)
+        outer_x = bx - int(s * 26) if is_right_b else bx + int(s * 26)
+        inner_y = by + (int(s * 8) if b_furrow else int(s * 2))
+        outer_y = by + (0 if b_furrow else int(s * 2))
+        brow_pts = [(outer_x, outer_y), (bx, by - int(s * 6)), (inner_x, inner_y)]
+        draw.line(brow_pts, fill=HAIR, width=4)
 
 
 def draw_nose(draw, cx, cy):
-    arc_draw(draw, cx, cy + int(HR * 0.32), int(HR * 0.09), int(HR * 0.07),
-             135, 305, LINE, width=4)
+    """Classroom-style nose: two small nostril dots + bridge arc."""
+    s = HR / 100.0
+    # Nostril dots (classroom: two small ellipses at cy+8/14)
+    draw.ellipse([cx - int(s*8), cy + int(s*8),  cx - int(s*2), cy + int(s*14)],
+                 fill=SKIN_SH)
+    draw.ellipse([cx + int(s*2), cy + int(s*8),  cx + int(s*8), cy + int(s*14)],
+                 fill=SKIN_SH)
+    draw.arc([cx - int(s*6), cy - int(s*10), cx + int(s*6), cy + int(s*12)],
+             start=200, end=340, fill=SKIN_SH, width=4)
 
 
 def draw_mouth(draw, cx, cy, style="neutral"):
-    my = cy + int(HR * 0.58)
-    mw = int(HR * 0.42)
+    """Classroom-style mouth: scaled from classroom head_r=100 reference."""
+    s  = HR / 100.0
+    my = cy + int(s * 30)    # classroom: cy + 30
+    mw = int(s * 36)         # classroom: mouth_r=36
     lx, rx = cx - mw, cx + mw
 
     if style == "neutral":
-        pts = bezier3((lx, my + 6), (cx, my - 14), (rx, my + 6))
-        polyline(draw, pts, LINE, width=5)
-    elif style == "smile_closed":
-        pts = bezier3((lx, my + 4), (cx, my - 30), (rx, my + 4))
+        # Classroom asymmetric-ish gentle curve
+        pts = bezier3((lx, my + int(s*4)), (cx, my - int(s*8)), (rx, my + int(s*4)))
         polyline(draw, pts, LINE, width=6)
-        draw.line([(lx, my + 4), (lx - 6, my + 16)], fill=LINE, width=4)
-        draw.line([(rx, my + 4), (rx + 6, my + 16)], fill=LINE, width=4)
+    elif style == "smile_closed":
+        pts = bezier3((lx, my + int(s*4)), (cx, my - int(s*20)), (rx, my + int(s*4)))
+        polyline(draw, pts, LINE, width=6)
+        draw.line([(lx, my + int(s*4)), (lx - int(s*5), my + int(s*14))],
+                  fill=LINE, width=4)
+        draw.line([(rx, my + int(s*4)), (rx + int(s*5), my + int(s*14))],
+                  fill=LINE, width=4)
     elif style == "smile_big":
-        sh    = int(HR * 0.22)
-        top_p = bezier3((lx, my), (cx, my - 34), (rx, my))
-        bot_p = bezier3((lx, my + sh), (cx, my + sh + 12), (rx, my + sh))
+        sh    = int(s * 22)
+        top_p = bezier3((lx, my), (cx, my - int(s*28)), (rx, my))
+        bot_p = bezier3((lx, my + sh), (cx, my + sh + int(s*10)), (rx, my + sh))
         fill_pts = top_p + bot_p[::-1]
         draw.polygon(fill_pts, fill=(210, 70, 50))
         tw_m = int(mw * 0.82)
@@ -287,29 +339,33 @@ def draw_mouth(draw, cx, cy, style="neutral"):
         draw.line([(rx, my), (rx, my + sh)], fill=LINE, width=5)
     elif style == "open_oval":
         ow = int(mw * 0.54)
-        oh = int(HR * 0.28)
+        oh = int(s * 28)
         draw.ellipse([cx - ow, my - int(oh * 0.38), cx + ow, my + int(oh * 0.62)],
                      fill=(210, 65, 48))
         draw.ellipse([cx - ow, my - int(oh * 0.38), cx + ow, my + int(oh * 0.62)],
                      outline=LINE, width=5)
     elif style == "pressed_flat":
-        pts = bezier3((lx, my + 4), (cx, my + 10), (rx, my + 4))
+        pts = bezier3((lx, my + int(s*4)), (cx, my + int(s*8)), (rx, my + int(s*4)))
         polyline(draw, pts, LINE, width=6)
     elif style == "corners_down":
-        pts = bezier3((lx, my - 14), (cx, my + 18), (rx, my - 14))
+        pts = bezier3((lx, my - int(s*12)), (cx, my + int(s*16)), (rx, my - int(s*12)))
         polyline(draw, pts, LINE, width=5)
     elif style == "frown_slight":
-        pts = bezier3((lx, my - 8), (cx, my + 18), (rx, my - 8))
+        pts = bezier3((lx, my - int(s*6)), (cx, my + int(s*14)), (rx, my - int(s*6)))
         polyline(draw, pts, LINE, width=5)
 
 
 def draw_blush(draw, cx, cy, alpha=0):
+    """Classroom-style blush: ovals beside face at cheek level."""
     if alpha <= 0:
         return
-    bw = int(HR * 0.26)
-    bh = int(HR * 0.11)
-    by = cy + int(HR * 0.38)
-    for bx in [cx - int(HR * 0.56), cx + int(HR * 0.56)]:
+    s  = HR / 100.0
+    bw = int(s * 28)   # classroom: width ~58px total = 29 half
+    bh = int(s * 14)
+    by = cy + int(s * 20)   # classroom: cy+5 to cy+35 = center cy+20
+    # Blush positions at cheek level (near cheek nubs)
+    for bx in [cx - int(s * 80), cx + int(s * 80)]:
+        # Use RGBA-capable fill if available
         draw.ellipse([bx - bw, by - bh, bx + bw, by + bh], fill=BLUSH_C)
 
 
@@ -675,10 +731,10 @@ def build_sheet(show_guides=False):
         font_sub   = font_title
 
     title = "LUMA — Expression Sheet v005  |  Luma & the Glitchkin"
-    sub   = ("Designer: Maya Santos  |  Cycle 25  |  "
-             "FULL BODY — every expression unique at silhouette  |  6/6 squint pass")
-    draw.text((PAD, 10), title, fill=(235, 218, 196), font=font_title)
-    draw.text((PAD, 36), sub,   fill=(165, 150, 130), font=font_sub)
+    sub   = ("Designer: Maya Santos  |  Cycle 26 STYLE FIX: aligned to classroom pose  |  "
+             "FULL BODY — 6/6 squint pass  |  classroom-style head/hair/eyes")
+    draw.text((PAD, 10), title, fill=(59, 40, 32), font=font_title)
+    draw.text((PAD, 36), sub,   fill=(110, 88, 68), font=font_sub)
 
     for idx, expr in enumerate(EXPRESSIONS):
         col = idx % COLS
@@ -724,12 +780,10 @@ if __name__ == "__main__":
     sheet.save(out_path)
     print(f"Saved: {os.path.abspath(out_path)}")
     print(f"Canvas: {sheet.size[0]}x{sheet.size[1]}")
-    print("v005 changes:")
-    print("  - FULL BODY visible in every panel (head to feet)")
-    print("  - Every expression has unique body posture at silhouette level")
-    print("  - CURIOUS: forward lean + reaching arm")
-    print("  - DETERMINED: upright + fists at hips + wide stance")
-    print("  - SURPRISED: backward lean + arms fly out wide")
-    print("  - WORRIED: arms crossed + legs together (contracted)")
-    print("  - DELIGHTED: arms up high + feet off ground (bounce)")
-    print("  - FRUSTRATED: arms crossed + legs apart + backward lean + head drops")
+    print("v005 Cycle 26 STYLE FIX changes:")
+    print("  - HEAD: classroom-style circle + cheek nubs (no jaw bump)")
+    print("  - HAIR: 8-ellipse organic cloud mass (classroom pose method)")
+    print("  - EYES: near-circular proportions + eyelid arc (classroom style)")
+    print("  - LINE WEIGHTS: silhouette=6px@2x, interior=4px@2x, brows=4px@2x")
+    print("  - BACKGROUND: warm parchment canvas + light per-panel tones")
+    print("  - FULL BODY: 6 expressions, all unique at silhouette level")

@@ -1,7 +1,7 @@
 # Tools Index — "Luma & the Glitchkin"
 
 **Maintained by:** Alex Chen, Art Director
-**Last updated:** 2026-03-29 (Cycle 23)
+**Last updated:** 2026-03-29 (Cycle 26)
 
 ---
 
@@ -97,10 +97,27 @@ This production uses **open source tools exclusively**. No proprietary software 
 | `LTG_TOOL_bg_glitch_layer_encounter_v001.py` | Jordan Reed / Cycle 21 | Glitch Layer encounter background generator. Previously misnamed `bg_glitch_layer_encounter.py` in `output/backgrounds/environments/` — relocated and renamed in Cycle 21/22. LTG-compliant copy lives in `output/tools/`. | Pillow |
 | `LTG_TOOL_bg_tech_den_v004.py` | Jordan Reed / Cycle 22 | Tech Den background v004. Resolves Takeshi Murakami Critique C10 P1+P2. Fix 1a: light shaft repositioned to land ON desk surface (DESK_TOP_Y=395) — apex near window top, base at (10,407)+(210,390), max_alpha=150. Fix 1b: single wide-ellipse desk glow removed; replaced with three separate `gaussian_glow()` calls — CRT1 (r=110, alpha 65), CRT2 (r=100, alpha 58), flat panel (r=90, alpha 52) — each hotspots its desk zone. Import updated to `LTG_TOOL_render_lib_v001` (Cycle 23). Canvas 1280×720. Output: `LTG_ENV_tech_den_v004.png`. | Pillow, LTG_TOOL_render_lib_v001 |
 | `LTG_TOOL_bg_grandma_kitchen_v003.py` | Jordan Reed / Cycle 22 | Grandma Miri's Kitchen background v003. Resolves Takeshi Murakami Critique C10 P3. Fix 2a: `draw_upper_wall_texture()` extended to left and right wall polygons via PIL polygon mask — side wall alpha ~35% less (8/10 vs 12/15). Fix 2b: `draw_floor_tiles()` disabled (no-op), `draw_floor_linoleum_overlay()` rewritten with single perspective-correct grid converging to vp_x (non-linear row spacing + converging column lines). One floor system. All v002 improvements retained. Canvas 1920×1080. Output: `LTG_ENV_grandma_kitchen_v003.png`. | Pillow |
-| `LTG_TOOL_stylize_handdrawn_v001.py` | Rin Yamamoto / Cycle 23 | Hand-drawn stylization pass tool. Applies organic stylization to digitally generated PNGs. Three modes: `realworld` (paper grain, line wobble, warm edge bleed, chalk highlights), `glitch` (scanlines, RGB color separation, edge sharpening), `mixed` (zone-blended: glitch upper 2/3, realworld lower 1/3 with 200px gradient seam). Module API: `stylize(input_path, output_path, mode, intensity, seed)`. CLI: `python LTG_TOOL_stylize_handdrawn_v001.py input.png output.png --mode realworld`. CORRUPT_AMBER hue-locked throughout. Optional NumPy fast path. | Pillow, NumPy (optional), LTG_TOOL_render_lib_v001 (optional) |
-| `LTG_TOOL_batch_stylize_v001.py` | Kai Nakamura / Cycle 24 (updated C25 → v1.1.0) | Batch runner. C24: called v001 stylize. **C25 update:** now calls `LTG_TOOL_stylize_handdrawn_v002.stylize()` (full canonical color protection). Adds per-job color verification step: `verify_canonical_colors()` run on each output PNG; result included in report as `color_verify` dict. Color drift is a warning (not an error). Provides module API (`batch_stylize(jobs, seed, stop_on_error, verify_colors, color_max_delta_hue)`) and CLI. | Pillow, LTG_TOOL_stylize_handdrawn_v002, LTG_TOOL_color_verify_v001 |
-| `LTG_TOOL_stylize_handdrawn_v002.py` | Rin Yamamoto / Cycle 25 | Hand-drawn stylization pass v002. Rebuilds v001 with four fixes: (1) Full canonical color protection on ALL passes (not just CORRUPT_AMBER); (2) Chalk pass excludes cyan-family pixels + high-V light-source pixels; (3) Warm bleed zone gate prevents SUNLIT_AMBER bleeding into cyan-lit regions; (4) Mixed mode uses per-pixel weighted-average cross-dissolve (no ghost artifacts). All six canonical palette hues protected. Drift >5° on any color prints warning (batch-safe). | Pillow, NumPy (optional) |
+| ~~`LTG_TOOL_stylize_handdrawn_v001.py`~~ | Rin Yamamoto / Cycle 23 | **RETIRED Cycle 26 — moved to `output/tools/legacy/`.** Hand-drawn stylization pass tool (realworld, glitch, mixed modes). Post-processing pipeline retired as of Cycle 26. | Pillow, NumPy (optional) |
+| ~~`LTG_TOOL_batch_stylize_v001.py`~~ | Kai Nakamura / Cycle 24–25 | **RETIRED Cycle 26 — moved to `output/tools/legacy/`.** Batch runner for the stylize pipeline. Post-processing pipeline retired as of Cycle 26. | Pillow, LTG_TOOL_stylize_handdrawn_v002 |
+| ~~`LTG_TOOL_stylize_handdrawn_v002.py`~~ | Rin Yamamoto / Cycle 25 | **RETIRED Cycle 26 — moved to `output/tools/legacy/`.** Hand-drawn stylization pass v002 (4 canonical color protection fixes). Post-processing pipeline retired as of Cycle 26. | Pillow, NumPy (optional) |
 | `LTG_TOOL_color_verify_v001.py` | Kai Nakamura / Cycle 25 | Canonical color verification utility. Samples canonical palette colors from a PIL Image and returns per-color hue drift analysis. `verify_canonical_colors(img, palette_dict, max_delta_hue=5)` — returns per-color `{target_hue, found_hue, delta, pass}` + `overall_pass`. `get_canonical_palette()` — returns standard LTG 6-color palette dict. Colors not present in the image are marked `not_found` (not a failure). Designed as a gating function: call after stylize() or any processing pass that could shift hues. Standalone; no imports beyond `colorsys` + Pillow. All six canonical colors verified from `master_palette.md`. | Pillow (colorsys stdlib) |
+| `LTG_TOOL_render_qa_v001.py` | Kai Nakamura / Cycle 26 | **Render Quality Assessment tool.** Evaluates any LTG PNG against rendering standards across 5 checks: (A) silhouette readability at 100×100 (score: distinct/ambiguous/blob), (B) value range (darkest ≤ 30, brightest ≥ 225, range ≥ 150), (C) color fidelity via `verify_canonical_colors()`, (D) warm/cool separation ≥ 20 PIL hue units (top/bottom zone sampling), (E) line weight consistency (20 random edge samples, outlier detection). API: `qa_report(img_path) → dict`, `qa_batch(directory) → list[dict]`, `qa_summary_report(results, output_path)` (writes Markdown). Also exports `silhouette_test(img) → PIL.Image` and `value_study(img) → PIL.Image` — interfaces compatible with Rin Inoue's `LTG_TOOL_procedural_draw_v001.py`. Overall grade: PASS / WARN / FAIL. Cycle 26 baseline QA run on 8 C25 assets: all WARN (main issue: warm/cool separation — character sheets are intentionally neutral-dominant). | Pillow, LTG_TOOL_color_verify_v001 |
+
+---
+
+## Legacy Archive — Cycle 26 Cleanup
+
+**Producer directive — 2026-03-29 (Cycle 26)**
+
+The post-processing stylization pipeline is **retired as of Cycle 26**. Style is now baked into generation at draw time (Rin Inoue's procedural draw approach). The following scripts have been moved to `output/tools/legacy/`:
+
+- `LTG_TOOL_stylize_handdrawn_v001.py`
+- `LTG_TOOL_stylize_handdrawn_v002.py`
+- `LTG_TOOL_batch_stylize_v001.py`
+
+Also removed: `run_sf02_sf03_regen.py` (no longer needed; SF02/SF03 regen superseded).
+
+All `*_styled*.png` output images have been deleted from the project.
 
 ---
 

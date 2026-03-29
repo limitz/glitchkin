@@ -10,7 +10,7 @@
 | Maya Santos | Character Designer | Active | Alex Chen |
 | Sam Kowalski | Color & Style Artist | Active | Alex Chen |
 | Kai Nakamura | Technical Art Engineer | Active | Alex Chen |
-| Rin Yamamoto | Visual Stylization Artist | Active (from C23) | Alex Chen |
+| Rin Yamamoto | Procedural Art Engineer | Active (from C23) | Alex Chen |
 
 ## Inactive Members
 

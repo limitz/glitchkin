@@ -174,6 +174,22 @@
 - **GL-04b luminance corrected.** Was "approximately 0.17" — corrected to "approximately 0.017". Order-of-magnitude error in master_palette.md Section 2 (GL-04b entry). Verify: (74/255)^2.2 + (24/255)^2.2 × 0.7152 + (128/255)^2.2 × 0.0722 ≈ 0.017.
 - **Miri color story note added.** ltg_style_frame_color_story.md now has a full Grandma Miri section documenting her bridge-character narrative role. Her warm palette is intentional: it encodes prior Glitch Layer knowledge. Production note added: CHAR-M values must not drift toward GL hues in her environment scenes.
 
+## Cycle 26 Lessons
+- **verify_canonical_colors() radius=40 produces false positives for SUNLIT_AMBER in character sheets.** Luma/Miri skin tones (hue ~18-25°) fall within the sampling radius of SUNLIT_AMBER (212,146,58). Any SUNLIT_AMBER failure in a character sheet with 100+ samples at hue ~18-27° is a false positive — skin tone, not lamp amber. Always check which actual pixels were sampled before ruling fail.
+- **UV_PURPLE (GL-04) is still not protected in Rin's stylization pipeline.** SF02 and SF03 styled_v002 still show Δ13-14° UV_PURPLE hue rotation. GL-07 and GL-01b appear fixed. GL-04 must be added to protected list.
+- **SF04 (luma_byte): Byte body teal present but below canonical saturation.** Dominant teal values ~(0,138–160) vs canonical BYTE_TEAL (0,212,232). Tool finds 0 pixels at canonical radius. Cool zone IS present (29K px at hue 183-185°). Director must confirm: intentional shadow lighting or generation error.
+- **Single-sample tool results are unreliable.** BYTE_TEAL Δ6.6° in luma turnaround from 1 sample = anti-aliasing edge pixel, not real drift. Flag to director but treat as low-risk.
+- **LTG_COLOR_byte_color_model_v001.png is the cleanest C25 asset.** All 4 GL colors exact (Δ0-1.6°). Reference for canonical Glitch color rendering.
+- **QC report written:** `output/production/color_qc_c25_assets.md`. 7/10 assets cleared. 2 styled frames NOT CLEARED (UV_PURPLE). 1 conditional (SF04 Byte teal).
+
+## Cycle 26 Housekeeping (2026-03-29)
+- **Post-processing pipeline RETIRED.** `LTG_TOOL_batch_stylize_v001.py` and stylize_handdrawn v001/v002 moved to `output/tools/legacy/`. All `*_styled*.png` files deleted. No styled output PNGs exist. Do not reference batch_stylize as an active tool.
+- **Rin Yamamoto SF02+SF03 styled_v002 QC flag CLOSED.** Issue was UV_PURPLE Δ13-14° hue rotation. No styled outputs exist — moot. No further action.
+- **SF04 Byte teal: PENDING Alex Chen decision.** Teal hue 183-185° correct but luminance at ~60-70% of canonical (0,212,232). Alex investigating.
+- **LTG_TOOL_color_verify_v001.py remains ACTIVE.** Used to verify canonical colors in generated assets (not post-processed).
+- **SUNLIT_AMBER false positive in QC tool — known limitation.** `verify_canonical_colors()` radius=40 samples skin tone pixels (hue ~18-25°) on Luma character sheets, causing false SUNLIT_AMBER fails. To document for Kai when next collaborating. Actual SUNLIT_AMBER placement in Luma assets should be verified from generator source, not QC tool alone.
+- **GL-04b luminance VERIFIED.** master_palette.md Section 2 GL-04b entry reads "approximately 0.017" — correct. C25 order-of-magnitude fix is intact.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001 (TERRA_CYAN_LIT still old value). v001 likely superseded by v005 — low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan should add inline comment on next revision pass (low priority).
@@ -181,4 +197,5 @@
 - SF03 confetti full-canvas distribution still unresolved (carry from C16). Constrain to within 150px of platform for v004.
 - SF03 v003 UV_PURPLE_MID/DARK — Jordan to add inline comment citing ENV-11/ENV-12 (values confirmed matching).
 - Tech Den generator WALL_WARM slightly off from TD-01 — Jordan to add citing comment.
-- **Rin Yamamoto SF02 + SF03 styled PNGs: FLAG — rework needed.** Hue rotation artifact. Protect GL-07, GL-01b, UV_PURPLE. SF01 + Kitchen styled: PASS, accepted. Report: LTG_COLOR_stylization_fidelity_report_c24.md.
+- ~~**Rin Yamamoto SF02 + SF03 styled_v002: STILL FAILING.** UV_PURPLE Δ13-14° hue rotation.~~ **CLOSED (C26).** Post-processing pipeline retired. No styled outputs exist. Issue moot.
+- **SF04 (luma_byte): Byte teal below canonical — PENDING Alex Chen decision.** Teal hue correct (183-185°) but luminance at ~60-70% of canonical (0,212,232). May be intentional scene lighting. Alex investigating.

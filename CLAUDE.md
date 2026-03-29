@@ -14,6 +14,9 @@ Agents should always start with a fresh context
 If a task requires examining fine detail, produce a cropped close-up of the relevant area (also ≤ 1280×1280px) rather than a large full image.
 This rule applies to every PNG, JPG, or other raster image saved anywhere in the project.
 
+## Critics — Image Resolution
+**Critics must NOT comment on image resolution or file dimensions at any stage.** Resolution is a technical pipeline constraint, not an artistic quality. Any critique about resolution, pixel dimensions, or image size is to be disregarded and must not be included in critique reports.
+
 ## You
 
 **You are the producer, you do not need to keep a detailed history, just kick off agents, that's it.**

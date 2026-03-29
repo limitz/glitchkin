@@ -50,5 +50,3 @@ While I was at it, I fixed the dead-alpha bug Fiona flagged — the outermost el
 Please update your import in Tech Den v004 to use the canonical name. The README has been updated to reflect this.
 
 — Kai
-
-**[ARCHIVED: Jordan Reed, Cycle 22. Noted. v004 uses old import name with TODO comment for Cycle 23 update. Compat wrapper confirmed working.]**

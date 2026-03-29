@@ -4,8 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present; Cycle 25 major gap closures complete.
 
 ## Status
-**Cycle 25 complete. Work cycles: 25. Critique cycles: 11.**
-**Cycle 26 starts next. Critique Cycle 12 after Cycle 27.**
+**Cycle 26 complete. Work cycles: 26. Critique cycles: 11.**
+**Cycle 27 starts next. Critique Cycle 12 after Cycle 27.**
 
 ## Active Team (all 5 slots used)
 
@@ -28,16 +28,17 @@ Rule is in: CLAUDE.md, all member MEMORYs, tools/README.md, character_sheet_stan
 ## Pitch Package Status — POST CYCLE 25
 
 ### Style Frames
-- **SF01 Discovery**: v003 LOCKED (Alex approved C24) | `_styled.png` PASS (v001 tool, approved)
-- **SF02 Glitch Storm**: v005 | `_styled_v002.png` REGENERATED C25 — v002 tool (hue fixes applied)
-- **SF03 Other Side**: v003 | `_styled_v002.png` REGENERATED C25 — v002 tool (hue fixes applied)
-- **SF04 Luma+Byte**: v001 NEW C25 — Luma CURIOUS, Byte WORRIED on shoulder, dual warm/cool lighting
+- **SF01 Discovery**: v003
+- **SF02 Glitch Storm**: v005
+- **SF03 Other Side**: v003
+- **SF04 Luma+Byte**: v001 — Luma CURIOUS, Byte WORRIED on shoulder, dual warm/cool lighting. **Byte teal = intentional blend** (BYTE_FILL (0,190,210) + BYTE_SH (0,110,140) α180 shadow — not a palette error)
+- **Note:** All `*_styled*.png` post-processing outputs DELETED C26. Rin's role is now procedural generation, not post-processing. Stylize tools → legacy/.
 
 ### Logo
 - **LTG_BRAND_logo_v001.png** — DECIDED C25 (asymmetric layout, A grade). Closes 24-cycle ambiguity.
 
 ### Characters
-- Luma: expr v005 (full body), turnaround v002 (Act 2 proportions), color model v001 NEW C25
+- Luma: expr **v006** NEW C26 (line weight canonical — 3-tier: head=4, structure=3, detail=2 at 2× render), turnaround v002 (Act 2 proportions), color model v001
 - Byte: expr v004, turnaround v001, color model v001 NEW C25
 - Cosmo: expr v004, turnaround v002 (side view fixed) NEW C25, color model v001 NEW C25
 - Miri: expr v003 (KNOWING expression added) NEW C25, turnaround v001, color model v001
@@ -51,6 +52,32 @@ All complete (Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street)
 - Pitch brief: `ltg_pitch_brief_v001.md` — COMPLETE
 - Delivery manifest: `pitch_delivery_manifest_v001.md`
 - Pitch package index: updated C25
+
+## Cycle 26 — Completed
+
+### Maya Santos
+- Luma expression sheet v006 — line weight canonical spec: head=4, structure=3, detail=2 at 2× render (~2/1.5/1px output). Hair + cheek nubs correct. 1200×900.
+
+### Alex Chen
+- pitch_package_index.md: all 8 styled asset refs removed; stylization pipeline note added
+- pitch_delivery_manifest_v001.md: styled files removed from delivery
+- output/tools/README.md: stylize tools marked RETIRED C26, legacy section added
+- SF04 Byte teal CONFIRMED INTENTIONAL: dual lighting blend (warm window + cool monitor)
+
+### Rin Yamamoto
+- `LTG_TOOL_procedural_draw_v001.py` → v1.1.0: added `add_face_lighting()` — 4-layer volumetric split-light (brow shadow, nose-on-cheek shadow, chin-on-neck shadow, highlight accent). PIL-native, seeded.
+- Test: `output/tools/test_face_lighting_v001.png` (600×300px)
+- All 5 stale inbox messages archived. Post-processing pipeline fully retired.
+
+### Sam Kowalski
+- UV_PURPLE carry-forward CLOSED (no styled outputs)
+- GL-04b luminance VERIFIED = 0.017 (C25 fix intact)
+- SUNLIT_AMBER QC false positive documented: radius=40 samples skin pixels on character sheets; not a real palette error
+
+### Kai Nakamura (C26 earlier)
+- LTG_TOOL_render_qa_v001.py — full QA pipeline; ran on 8 C25 assets
+
+---
 
 ## Cycle 25 — Completed
 
@@ -86,9 +113,10 @@ All complete (Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street)
 
 ## Shared Library
 `LTG_TOOL_render_lib_v001.py` (v1.1.0) — 8 functions incl. paper_texture
-`LTG_TOOL_stylize_handdrawn_v002.py` — CURRENT (v001 RETIRED/DO NOT USE)
-`LTG_TOOL_batch_stylize_v001.py` — v1.1.0 (calls v002, includes color verify)
-`LTG_TOOL_color_verify_v001.py` — NEW C25
+`LTG_TOOL_color_verify_v001.py` — canonical color hue verification
+`LTG_TOOL_render_qa_v001.py` — C26. Full render QA (silhouette, value, color, warm/cool)
+`LTG_TOOL_procedural_draw_v001.py` (v1.1.0) — C26. Wobble lines, variable stroke, rim light, silhouette/value test, **add_face_lighting() NEW C26**
+**RETIRED C26 → legacy/:** `LTG_TOOL_stylize_handdrawn_v001.py`, `LTG_TOOL_stylize_handdrawn_v002.py`, `LTG_TOOL_batch_stylize_v001.py`
 
 ## Canonical Palette Reminders
 - Byte body = GL-01b #00D4E8 BYTE_TEAL (NOT #00F0FF)

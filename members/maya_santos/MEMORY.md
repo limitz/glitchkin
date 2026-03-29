@@ -1,5 +1,31 @@
 # Maya Santos — Memory
 
+## Cycle 26 Lessons — LUMA STYLE FIX v2: LINE WEIGHT (v006)
+
+- **v006 = line weight fix on top of v005 style alignment.** v005 had correct head/hair/eyes construction but still used heavy line weights (width=6-8 at 2x render).
+- **Three-tier line weight at 2x render (CANONICAL for classroom-style Luma):**
+  - Head outline only: width=4 (≈2px at 1x)
+  - Structure (torso, arms, legs, cheek nubs, eye ovals, eyelid arcs, brows, mouth): width=3 (≈1.5px)
+  - Detail (nose arc, laces, crinkles): width=2 (≈1px)
+- **Hair strand arcs:** Must use width=3, NOT width=6. Large arc weights dominate the hair cloud mass read.
+- **Mouth polylines:** Must use width=3. width=6 mouths look like rubber stamps.
+- **Key rule: at 2x render, width=3 = classroom pose weight. width=6 = manga/overworked weight.**
+- **Generator:** `output/tools/LTG_CHAR_luma_expression_sheet_v006.py` (new file, v005 preserved).
+- **PNG:** `output/characters/main/LTG_CHAR_luma_expression_sheet_v006.png` (1200×900).
+
+## Cycle 26 Lessons — LUMA STYLE FIX (expression sheet + turnaround)
+
+- **Root problem:** v005 expression sheet used "manga/pitch" aesthetic — void black canvas, jaw ellipse head, 5-ellipse hair, wide manga eyes. Classroom pose uses naturalistic cartoon style — warm parchment bg, cheek nubs, 8-ellipse cloud hair, near-circular eyes.
+- **Canonical Luma head:** circle + lower-chin fill + CHEEK NUBS at sides (NOT jaw ellipse at bottom). This is the classroom pose look the producer prefers.
+- **Canonical Luma hair:** 8 overlapping ellipses of varying sizes = organic cloud mass. NOT 5 engineered ellipses. Scale using `s = HR / 100.0` factor.
+- **Canonical Luma eyes:** near-circular proportions — ew ≈ HR*0.27 (≈28px@1x), eh_full ≈ HR*0.28 (≈28px@1x left, 22px right). NOT wide manga eyes (ew=HR*0.44).
+- **Canonical Luma canvas:** warm parchment background (235,224,206) per panel, NOT dark void. Panel BGs should be light warm tones.
+- **Scale formula for classroom → 2x render:** `s = HR / 100.0` where HR = HEAD_R * RENDER_SCALE. Classroom coords used head_r=100.
+- **Expression Sheet v005 REBUILT.** Generator updated in place. PNG overwritten. Aligns to classroom pose style. 1200×900, show_guides=False.
+- **Turnaround v002 FIXED.** FRONT view head: jaw → cheek nubs. Hair: 5→8 ellipses. PNG overwritten. 1600×700.
+- **No direction message arrived from Alex Chen.** Used own judgment (aligned to classroom pose per fallback).
+- **Completion report sent to Alex Chen inbox.**
+
 ## Cycle 25 Lessons — COLOR MODELS + FULL BODY SHEETS + TURNAROUNDS + MIRI NARRATIVE
 
 - **Color Models COMPLETE (Priority 1 — blocking).** All 3 missing color models generated:

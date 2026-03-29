@@ -479,22 +479,10 @@ All critical path assets verified on disk. No blocking issues found. The package
 
 | Asset | File Path | Notes |
 |---|---|---|
-| SF01 Discovery v003 styled | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v003_styled.png` | Hand-drawn stylization pass at 0.6× intensity (realworld mode). Paper tooth + chalk highlight treatment. Composition and color narrative intact. APPROVED as pitch primary — supersedes non-styled version for external pitch use. (Cycle 24 — Rin Yamamoto / reviewed Alex Chen) |
-| SF02 Glitch Storm v005 styled | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v005_styled.png` | Zone-blended stylization: realworld chalk in warm zones, glitch scanlines/color separation in Glitch Layer zones. (Cycle 24 — Rin Yamamoto) |
-| SF03 Other Side v003 styled | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_otherside_v003_styled.png` | Full glitch treatment: scanlines + color separation + edge sharpening. No paper grain (Glitch Layer has no paper — per brief). (Cycle 24 — Rin Yamamoto) |
-| Grandma Kitchen v003 styled | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_grandma_kitchen_v003_styled.png` | Secondary test — warm edge bleed. Amber/terracotta tones respond strongly to color bleed pass. (Cycle 24 — Rin Yamamoto) |
-| Stylization tool | `/home/wipkat/team/output/tools/LTG_TOOL_stylize_handdrawn_v001.py` | Reusable hand-drawn stylization generator. Presets: realworld (paper tooth + chalk), glitch (scanlines + color sep + edge sharp), mixed/zone-blended. (Cycle 24 — Rin Yamamoto) |
 | Stylization preset doc | `/home/wipkat/team/output/production/stylization_preset_handdrawn_v001.md` | Preset documentation for the stylization tool. Color preservation rules, intensity guidelines, mode selection decision tree. (Cycle 24 — Rin Yamamoto) |
 | Critique 11 self-assessment | `/home/wipkat/team/output/production/critique11_self_assessment.md` | Director's honest pre-critique assessment. Strong: SF triptych, Miri v002, storyboard arc, Glitch concept. Vulnerable: Glitch sheet scale, missing color model PNGs for leads, logo caveat. Overall: A- (strong enough to pitch, correction list expected). (Cycle 24 — Alex Chen) |
 
-#### Cycle 24 Stylization Status
-
-| Asset | Mode | Intensity | Status |
-|---|---|---|---|
-| SF01 Discovery v003 | realworld | 0.6× | APPROVED — pitch primary |
-| SF02 Glitch Storm v005 | mixed (zone-blended) | — | Delivered — pending director confirmation |
-| SF03 Other Side v003 | glitch | 1.0× | Delivered — Byte body read confirmation pending |
-| Grandma Kitchen v003 | realworld | 1.0× | Secondary — warm tones confirmed responsive |
+> **Note (Cycle 26):** All `*_styled*.png` post-processing deliverables from Rin Yamamoto's previous role have been removed from the project by producer directive. The stylization post-processing pipeline is retired as of Cycle 26. Style frames ship as clean generated PNGs. Stylization tools moved to `output/tools/legacy/`.
 
 #### Cycle 24 Open Items (for Maya Santos — revision requests)
 
@@ -568,11 +556,8 @@ All critical path assets verified on disk. No blocking issues found. The package
 
 | Asset | File Path | Notes |
 |---|---|---|
-| Stylization tool v002 | `/home/wipkat/team/output/tools/LTG_TOOL_stylize_handdrawn_v002.py` | Full rebuild. 4 critical fixes: canonical color protection (all 6 GL colors), chalk pass cyan exclusions, warm bleed zone gate, mixed mode cross-dissolve. v001 retired. (Cycle 25 — Rin Yamamoto) |
-| SF02 styled v002 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v005_styled_v002.png` | Regenerated with stylize v002. Mixed mode, boundary cross-dissolve fixes ghost artifact. HOT_MAG crack geometry protected. (Cycle 25 — Rin Yamamoto) |
-| SF03 styled v002 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_otherside_v003_styled_v002.png` | Regenerated with stylize v002. Byte GL-01b body protected by hue guard. No warm contamination. (Cycle 25 — Rin Yamamoto) |
-| Color verification tool | `/home/wipkat/team/output/tools/LTG_TOOL_color_verify_v001.py` | Canonical 6-color hue verification. `verify_canonical_colors()` + `get_canonical_palette()`. Integrated into batch stylize v1.1.0. (Cycle 25 — Kai Nakamura) |
-| Batch stylize v1.1.0 | `/home/wipkat/team/output/tools/LTG_TOOL_batch_stylize_v001.py` | Updated to call stylize v002 + post-job color verification. WARNING on drift, no abort. (Cycle 25 — Kai Nakamura) |
+| Color verification tool | `/home/wipkat/team/output/tools/LTG_TOOL_color_verify_v001.py` | Canonical 6-color hue verification. `verify_canonical_colors()` + `get_canonical_palette()`. Standalone utility. (Cycle 25 — Kai Nakamura) |
+| Batch stylize v1.1.0 | `output/tools/legacy/LTG_TOOL_batch_stylize_v001.py` | **RETIRED Cycle 26.** Moved to legacy/. Post-processing pipeline retired. (Cycle 25 — Kai Nakamura) |
 | Tools legacy archive | `/home/wipkat/team/output/tools/legacy/` | 20 non-LTG-named scripts archived. `output/tools/` now LTG-names only. (Cycle 25 — Kai Nakamura) |
 | SF02 spec doc correction | `/home/wipkat/team/output/color/style_frames/style_frame_02_glitch_storm.md` | ENV-06 #9A8C8A→#96ACA2 and DRW-07 #C07A70→#C8695A corrected. Spec now matches generators. (Cycle 25 — Sam Kowalski) |
 | Master palette GL-04b fix | `/home/wipkat/team/output/color/palettes/master_palette.md` | GL-04b relative luminance 0.17→0.017 (order of magnitude error corrected). (Cycle 25 — Sam Kowalski) |

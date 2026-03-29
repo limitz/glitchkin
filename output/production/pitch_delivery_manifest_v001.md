@@ -140,9 +140,11 @@
 
 ### Outstanding Before External Delivery
 1. **Logo check** — verify `show_logo.png` does not contain placeholder tagline text. If present, either use `LTG_BRAND_logo_asymmetric_v002.png` as primary, or strip the tagline.
-2. **Stylized style frames** — once Rin Yamamoto's stylization pass is complete (Cycle 23), replace style frame PNGs in this manifest with their `_styled` versions.
-3. **Color model PNGs for Luma/Byte/Cosmo** — these do not yet have standalone visual PNG exports (only `.md` specs). Flag for a future cycle if the studio requests visual color reference sheets.
+2. **Color model PNGs for Luma/Byte/Cosmo** — these do not yet have standalone visual PNG exports (only `.md` specs). Flag for a future cycle if the studio requests visual color reference sheets.
+
+> **Note (Cycle 26):** The stylization post-processing pipeline has been retired by producer directive. All `*_styled*.png` files have been removed. Style frames ship as clean generated PNGs. Stylization tools (`LTG_TOOL_stylize_handdrawn_v001.py`, `v002.py`, `LTG_TOOL_batch_stylize_v001.py`) moved to `output/tools/legacy/`.
 
 ---
 
 *Alex Chen, Art Director — Cycle 23 — 2026-03-29*
+*Updated: Cycle 26 — 2026-03-29 — Styled asset entries removed; post-processing pipeline retired.*
