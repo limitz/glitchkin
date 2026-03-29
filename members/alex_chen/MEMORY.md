@@ -12,7 +12,61 @@
 - Never send high-res images to Claude unless absolutely necessary.
 - Vision limitations: hallucination risk on low-quality/rotated/tiny (<200px) images; limited spatial reasoning; approximate counting only.
 
-## Cycle 33 State (current)
+## Cycle 34 State (current)
+
+**C34 tasks complete (Alex Chen's portion).**
+
+### C34 Work Done
+1. **Archived** all C33 inbox reports (6 messages).
+2. **Lineup palette audit tool built**: `output/tools/LTG_TOOL_lineup_palette_audit_v001.py` — scans lineup PNG column-by-column, verifies body colors vs master_palette.md. PASS/FAIL/WRONG_PRESENT per color. Catches Byte shadow and Miri slipper class of errors.
+3. **Eye-width resolution**: v008 eye-width (45px) is WRONG — applied 0.22 to head diameter, not radius. Correct: `ew = int(head_r_rendered × 0.22) = int(104 × 0.22) = 22px` for expression sheet generator. Updated luma.md + character_sheet_standards_v001.md. **Maya directive sent for v009.**
+4. **Pitch package index updated**: C33 Additions + C34 Additions sections added. C34 status table current.
+5. **Ideabox**: `20260329_alex_chen_expression_sheet_silhouette_regression.md` — mandate silhouette test as pre-critique gate for all expression sheet promotions.
+
+### C34 Canonical Asset Versions
+- Luma expression sheet: **v009 in progress** (v008 KNOWN WRONG: eye 45px = diameter×0.22; v009 corrects to 22px = radius×0.22)
+- Luma color model: v002 (unchanged)
+- Luma turnaround: v004 (PITCH PRIMARY — eye-width CONFIRMED CORRECT at 42px)
+- Character lineup: v007 (PITCH PRIMARY — unchanged)
+- Byte expression sheet: **v005** (PITCH PRIMARY — UNGUARDED WARMTH)
+- Miri expression sheet: **v003** (PITCH PRIMARY — KNOWING STILLNESS)
+- Cosmo expression sheet: v004 (PITCH PRIMARY; silhouette P2 open)
+- Glitch expression sheet: v003 (PITCH PRIMARY)
+- SF01: v005 / SF02: v005 / SF03: v005 / SF04: v004 (all PITCH PRIMARY)
+- Logo: v001
+
+### C34 Other Team Work
+- Jordan: SF02 v006 delivered (HOT_MAG fill-light + CYAN specular, max=246 PASS)
+- Rin: procedural_draw v1.5.0 scene_snapshot(). Standing by for SF02 proportion audit (unblocked).
+- Kai: char_spec_lint_v001 + draw_order_lint_v002 (53% W004 reduction)
+- Sam: warmth_lint_v002 + warmth_lint_config.json. SF02 v006 color audit pending.
+- Lee: SF02 staging brief + expression pose vocabulary brief (forwarded to Maya)
+- Maya: v009 directive sent + Lee pose brief forwarded. Cosmo v005 + Miri v004 in scope.
+
+### C34 Morgan Walsh QA (pre-critique pipeline)
+- Morgan built `LTG_TOOL_precritique_qa_v001.py` — C34 baseline WARN (0 FAIL).
+- **Real issue found**: Glitch G002 — ry=34 not > rx=40 in expression sheets. Kai notified.
+- SF03/SF04 color drift = documented false positives.
+- 35 unlisted tools in tools README — P3 (not blocking).
+
+### C34 Open Items
+- Luma expression sheet v009 (eye-width 22px + pose vocabulary): Maya P1
+- SF02 v006 proportion audit: Rin (unblocked)
+- SF02 v006 color audit: Sam (message sent)
+- Glitch G002 rx/ry violation: Kai investigating
+- Cosmo expression sheet v005 (silhouette differentiation): Maya P2
+- Miri expression sheet v004 (Lee brief gestures): Maya P2
+- Pre-critique silhouette checklist doc: Alex C35 P3
+
+### C34 Eye-Width Resolution (canonical)
+`ew = int(head_r_rendered × 0.22)` — head_r_rendered = rendered radius in drawing coordinate space.
+- Expression sheet generator (HEAD_R=52, SCALE=2): head_r=104 → **ew=22px**
+- Turnaround v004: head_r≈191 → **ew=42px**
+- NEVER apply 0.22 to head diameter or head height (gives 2× error — that was v008's bug)
+
+---
+
+## Cycle 33 State (archived)
 
 **C33 tasks complete (Alex Chen's portion).**
 

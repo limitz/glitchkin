@@ -776,7 +776,7 @@ All critical path assets verified on disk. No blocking issues found. The package
 | Color verify C32 spot check | `/home/wipkat/team/output/production/color_verify_c32_spot_check.md` | 7-asset color fidelity run. SF01/SF02 PASS. All FAILs documented false positives. Histogram mode confirmed efficient for false-positive diagnosis. (Cycle 32 — Sam Kowalski) |
 | Color statement C13 | `/home/wipkat/team/output/production/color_statement_critique13.md` | Post-Critique 13 color statement and decisions record. (Cycle 32 — Sam Kowalski) |
 
-#### Cycle 32 Pitch Package Status (CURRENT)
+#### Cycle 32 Pitch Package Status
 
 | Requirement | C32 Status |
 |---|---|
@@ -792,4 +792,52 @@ All critical path assets verified on disk. No blocking issues found. The package
 | All environments | Present — unchanged since C22 |
 | Canonical proportions | **Locked spec:** head_r×0.22 eye-width, 3.2-head ratio. Written into luma.md + character_sheet_standards_v001.md |
 
-*Updated by Alex Chen, Art Director — Cycle 33 — 2026-03-29*
+---
+
+### Cycle 33 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| Character lineup v007 | `/home/wipkat/team/output/characters/main/LTG_CHAR_character_lineup_v007.png` | **PITCH PRIMARY for lineup.** Byte shadow color fixed: (0,144,176)→(0,168,180) GL-01a #00A8B4 Deep Cyan. Miri slipper color fixed: (90,122,90)→(196,144,122) CHAR-M-11 #C4907A Dusty Warm Apricot. Generator: `output/tools/LTG_TOOL_character_lineup_v007.py`. (Cycle 33 — Alex Chen) |
+| Miri expression sheet v003 | `/home/wipkat/team/output/characters/main/LTG_CHAR_grandma_miri_expression_sheet_v003.png` | Full rebuild from scratch (was broken forwarding stub). Adds KNOWING STILLNESS as 6th expression (narrative secret: Miri knew about the Glitch Layer). New "knowing_oblique" mouth style. Per-eye oblique_dy parameter. Grid upgraded to full 3×2. All 5 v002 expressions retained. (Cycle 33 — Maya Santos) |
+| Byte expression sheet v005 | `/home/wipkat/team/output/characters/main/LTG_CHAR_byte_expression_sheet_v005.png` | **Current Byte expression sheet.** UNGUARDED WARMTH added as 10th expression. Grid: 4×3 (12 slots, 10 filled). Star glyph (SOFT_GOLD, right/organic eye), Heart glyph (UV_PURPLE, left/cracked eye), gold confetti (ONLY this expression), body tilts toward Luma. Distinct from ACCIDENTAL AFFECTION and SECRETLY PLEASED. (Cycle 33 — Maya Santos) |
+| Expression silhouette test tool | `/home/wipkat/team/output/tools/LTG_TOOL_expression_silhouette_v001.py` | Per-panel silhouette extraction + pairwise similarity scoring (0.6×IoM + 0.4×XOR). FAIL ≥ 85%, WARN ≥ 72%. C33 baseline: Glitch PASS, all human sheets FAIL. Reveals design differentiation gaps. (Cycle 33 — Maya Santos) |
+| Stub integrity linter | `/home/wipkat/team/output/tools/LTG_TOOL_stub_linter_v001.py` | Scans tools/ for broken imports referencing deleted originals. PASS/WARN/ERROR per file. `--pre-commit` mode for CI gate. (Cycle 33 — Kai Nakamura) |
+| Glitch spec linter | `/home/wipkat/team/output/tools/LTG_TOOL_glitch_spec_lint_v001.py` | 8 checks against glitch.md spec. Only lints files with Glitch draw markers. Run before any Glitch asset goes to critique. (Cycle 33 — Kai Nakamura) |
+| Procedural draw library v1.4.0 | `/home/wipkat/team/output/tools/LTG_TOOL_procedural_draw_v001.py` | `get_char_bbox(img, threshold=128)` added — auto-detects character bounding box from bright pixels. Eliminates manual char_cx bookkeeping. (Cycle 33 — Rin Yamamoto) |
+| CHAR-M warmth linter | `/home/wipkat/team/output/tools/LTG_TOOL_palette_warmth_lint_v001.py` | Parses master_palette.md CHAR-M-xx entries, flags R<G or R<B violations. C33 baseline: 11 entries, 0 violations. (Cycle 33 — Sam Kowalski) |
+| SF04 scene-lighting exception | `/home/wipkat/team/output/color/palettes/master_palette.md` | Art Director decision (C32) formally documented. Byte teal at ~60-70% luminance in SF04 = SCENE-LIGHTING ACCEPTED. Future QA runs will not require investigation. (Cycle 33 — Sam Kowalski) |
+| Ideabox submitted | `ideabox/20260329_alex_chen_character_lineup_palette_audit.md` | Lineup palette audit tool concept (actioned this cycle as Task 1 C34). (Cycle 33 — Alex Chen) |
+
+---
+
+### Cycle 34 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| Lineup palette audit tool | `/home/wipkat/team/output/tools/LTG_TOOL_lineup_palette_audit_v001.py` | **New QA tool.** Scans lineup PNG column-by-column (5 chars), verifies body colors against master_palette.md. Per-color PASS/FAIL/WRONG_PRESENT. Catches Byte shadow and Miri slipper class of errors. Exit 1 on any FAIL or legacy value detected. (Cycle 34 — Alex Chen) |
+| SF02 Glitch Storm v006 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v006.png` | HOT_MAGENTA fill-light radial gradient on all 3 characters. ELEC_CYAN specular on Luma via `add_rim_light()` + `get_char_bbox()`. Post-thumbnail specular dots restore value ceiling (max=246, PASS). All v005 fixes carried. Generator: `output/tools/LTG_TOOL_style_frame_02_glitch_storm_v006.py`. (Cycle 34 — Jordan Reed) |
+| Procedural draw library v1.5.0 | `/home/wipkat/team/output/tools/LTG_TOOL_procedural_draw_v001.py` | `scene_snapshot(img, region, label, out_dir)` added — crops named region, enforces ≤1280px, saves labeled PNG for diagnostic review. Enables targeted close-ups without full-res image API calls. (Cycle 34 — Rin Yamamoto) |
+| Character spec linter | `/home/wipkat/team/output/tools/LTG_TOOL_char_spec_lint_v001.py` | Validates Luma/Cosmo/Miri generator source against canonical spec. 5 checks per character. C34 baseline: 12/15 PASS, 3 WARN, 0 FAIL. (Cycle 34 — Kai Nakamura) |
+| Draw order linter v002 | `/home/wipkat/team/output/tools/LTG_TOOL_draw_order_lint_v002.py` | Scope-aware W004 false-positive elimination. 53% reduction (147→69 warnings). 97/134 files now PASS. (Cycle 34 — Kai Nakamura) |
+| Warmth lint v002 + config | `/home/wipkat/team/output/tools/LTG_TOOL_palette_warmth_lint_v002.py` | Configurable prefix list via `warmth_lint_config.json`. Default: CHAR-M only. Extend to other warm-guaranteed characters by editing config. (Cycle 34 — Sam Kowalski) |
+| Luma expression sheet v009 | (in progress — Maya Santos C34) | Eye-width fix: ew=int(HR×0.22)=22px where HR=104 (rendered radius at 2×). v008 incorrectly used head_diameter×0.22=45px. Plus pose vocabulary updates from Lee Tanaka brief (DELIGHTED Y-shape, FRUSTRATED arm fling, SURPRISED backward lean). |
+| Eye-width canonical definition updated | `output/characters/main/luma.md`, `output/production/character_sheet_standards_v001.md` | C34 clarification: 0.22 applies to RENDERED head-radius, NOT diameter. Per-generator canonical values table added. v008 error documented. v009 corrects. (Cycle 34 — Alex Chen) |
+
+#### Cycle 34 Pitch Package Status (CURRENT)
+
+| Requirement | C34 Status |
+|---|---|
+| All 4 style frames | SF01 v005, SF02 **v006** (Jordan Reed — HOT_MAGENTA fill light + ELEC_CYAN specular), SF03 v005, SF04 v004 |
+| Luma expression sheet | **v009 in progress** — v008 eye-width bug found (45px=diameter×0.22, should be 22px=radius×0.22). Maya building v009 with pose vocabulary updates (Lee Tanaka brief). |
+| Byte expression sheet | **v005 PITCH PRIMARY** (UNGUARDED WARMTH added C33) |
+| Cosmo expression sheet | v004 PITCH PRIMARY; **v005 in progress** (Maya — silhouette differentiation per Lee brief) |
+| Miri expression sheet | **v003 PITCH PRIMARY** (KNOWING STILLNESS added C33); v004 queued (Maya P2) |
+| Glitch expression sheet | v003 PITCH PRIMARY (unchanged) |
+| All 5 turnarounds | Luma v004 PITCH PRIMARY (turnaround eye-width CONFIRMED CORRECT at 42px) |
+| Character lineup | v007 PITCH PRIMARY (unchanged) |
+| Canonical logo | `LTG_BRAND_logo_v001.png` (unchanged) |
+| All environments | Present — SF02 background updated to v006 |
+| QA tools | lineup_palette_audit_v001 (C34 Alex), char_spec_lint_v001 (C34 Kai), draw_order_lint_v002 (C34 Kai), scene_snapshot in procedural_draw v1.5.0 (C34 Rin) |
+
+*Updated by Alex Chen, Art Director — Cycle 34 — 2026-03-29*

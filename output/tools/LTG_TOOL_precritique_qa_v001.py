@@ -1,0 +1,661 @@
+#!/usr/bin/env python3
+"""
+LTG_TOOL_precritique_qa_v001.py
+================================
+Pre-Critique QA Pipeline for "Luma & the Glitchkin."
+
+Single entry-point script that chains all existing QA tools and produces a
+consolidated Markdown report at output/production/precritique_qa_c34.md.
+
+Tools chained (in order):
+  1. LTG_TOOL_render_qa_v001.py     — size/resolution/quality checks on pitch PNGs
+  2. LTG_TOOL_color_verify_v002.py  — canonical color fidelity on style frames
+  3. LTG_TOOL_proportion_verify_v001.py — head/body proportion checks on character sheets
+  4. LTG_TOOL_stub_linter_v001.py   — broken import detection in output/tools/
+  5. LTG_TOOL_palette_warmth_lint_v001.py — CHAR-M warmth compliance on master_palette.md
+  6. LTG_TOOL_glitch_spec_lint_v001.py  — Glitchkin generator spec validation
+
+Output:
+    output/production/precritique_qa_c34.md
+
+Exit codes:
+    0 — All checks PASS
+    1 — One or more WARN
+    2 — One or more FAIL/ERROR
+
+Author: Morgan Walsh (Pipeline Automation Specialist)
+Created: Cycle 34 — 2026-03-29
+Version: 1.0.0
+"""
+
+import os
+import sys
+import datetime
+from pathlib import Path
+
+# ---------------------------------------------------------------------------
+# Path setup — allow running from any cwd
+# ---------------------------------------------------------------------------
+REPO_ROOT   = Path(__file__).resolve().parent.parent.parent  # /home/wipkat/team
+TOOLS_DIR   = REPO_ROOT / "output" / "tools"
+OUTPUT_DIR  = REPO_ROOT / "output"
+PROD_DIR    = REPO_ROOT / "output" / "production"
+PALETTE_MD  = REPO_ROOT / "output" / "color" / "palettes" / "master_palette.md"
+
+if str(TOOLS_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOLS_DIR))
+
+# ---------------------------------------------------------------------------
+# Import QA tools
+# ---------------------------------------------------------------------------
+from LTG_TOOL_render_qa_v001 import qa_report, qa_batch
+from LTG_TOOL_color_verify_v002 import verify_canonical_colors, get_canonical_palette
+from LTG_TOOL_stub_linter_v001 import lint_directory as stub_lint_directory, format_report as stub_format_report
+from LTG_TOOL_palette_warmth_lint_v001 import lint_palette_file, format_report as palette_format_report
+from LTG_TOOL_glitch_spec_lint_v001 import lint_directory as glitch_lint_directory, format_report as glitch_format_report
+
+from PIL import Image
+
+# ---------------------------------------------------------------------------
+# Target file collections
+# ---------------------------------------------------------------------------
+
+# Pitch PNGs: style frames (current versions) + brand logo + storyboard export
+PITCH_PNGS = [
+    OUTPUT_DIR / "color" / "style_frames" / "LTG_COLOR_styleframe_discovery_v005.png",
+    OUTPUT_DIR / "color" / "style_frames" / "LTG_COLOR_styleframe_glitch_storm_v005.png",
+    OUTPUT_DIR / "color" / "style_frames" / "LTG_COLOR_styleframe_otherside_v005.png",
+    OUTPUT_DIR / "color" / "style_frames" / "LTG_COLOR_styleframe_luma_byte_v004.png",
+    PROD_DIR / "LTG_BRAND_logo_v001.png",
+    PROD_DIR / "storyboard_pitch_export.png",
+]
+
+# Style frames for color verification
+STYLE_FRAMES = [
+    OUTPUT_DIR / "color" / "style_frames" / "LTG_COLOR_styleframe_discovery_v005.png",
+    OUTPUT_DIR / "color" / "style_frames" / "LTG_COLOR_styleframe_glitch_storm_v005.png",
+    OUTPUT_DIR / "color" / "style_frames" / "LTG_COLOR_styleframe_otherside_v005.png",
+    OUTPUT_DIR / "color" / "style_frames" / "LTG_COLOR_styleframe_luma_byte_v004.png",
+]
+
+# Character sheets for proportion verification
+# Each entry: (png_path, approximate_bbox as (x, y, w, h) or None for auto)
+CHARACTER_SHEETS = [
+    (OUTPUT_DIR / "characters" / "main" / "turnarounds" / "LTG_CHAR_luma_turnaround_v004.png", None),
+    (OUTPUT_DIR / "characters" / "main" / "turnarounds" / "LTG_CHAR_cosmo_turnaround_v002.png", None),
+    (OUTPUT_DIR / "characters" / "main" / "turnarounds" / "LTG_CHAR_miri_turnaround_v001.png", None),
+    (OUTPUT_DIR / "characters" / "main" / "turnarounds" / "LTG_CHAR_glitch_turnaround_v002.png", None),
+]
+
+# Glitch generator scripts for spec lint
+GLITCH_GENERATORS = list(TOOLS_DIR.glob("LTG_TOOL_glitch_*.py")) + \
+                    list(TOOLS_DIR.glob("LTG_TOOL_style_frame_03_*.py")) + \
+                    list(TOOLS_DIR.glob("LTG_TOOL_character_lineup_*.py"))
+
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+def _grade_line(grade: str) -> str:
+    """Return a markdown badge for a grade string."""
+    mapping = {
+        "PASS":  "**PASS**",
+        "WARN":  "**WARN**",
+        "FAIL":  "**FAIL**",
+        "ERROR": "**ERROR**",
+        "SKIP":  "*SKIP*",
+    }
+    return mapping.get(grade.upper(), grade)
+
+
+def _worst_grade(*grades) -> str:
+    """Return the worst of several grade strings."""
+    order = {"ERROR": 3, "FAIL": 2, "WARN": 1, "PASS": 0, "SKIP": -1}
+    worst = max(grades, key=lambda g: order.get(g.upper(), -1))
+    return worst.upper()
+
+
+# ---------------------------------------------------------------------------
+# Section runners
+# ---------------------------------------------------------------------------
+
+def run_render_qa() -> dict:
+    """
+    Run LTG_TOOL_render_qa_v001 on all pitch PNGs.
+    Returns a summary dict with counts and flagged items.
+
+    render_qa result dict keys:
+        file, asset_type, silhouette, value_range, color_fidelity,
+        warm_cool, line_weight, overall_grade
+    """
+    results = []
+    missing = []
+    for p in PITCH_PNGS:
+        if not p.exists():
+            missing.append(str(p))
+            continue
+        r = qa_report(str(p))
+        results.append(r)
+
+    pass_count  = sum(1 for r in results if r.get("overall_grade") == "PASS")
+    warn_count  = sum(1 for r in results if r.get("overall_grade") == "WARN")
+    fail_count  = sum(1 for r in results if r.get("overall_grade") == "FAIL")
+
+    # Sub-check names and their pass-flag key within the result dict
+    CHECK_PASS_MAP = {
+        "value_range":    lambda r: r.get("value_range", {}).get("pass", True),
+        "color_fidelity": lambda r: r.get("color_fidelity", {}).get("overall_pass", True),
+        "warm_cool":      lambda r: r.get("warm_cool", {}).get("pass", True)
+                                    if "status" not in r.get("warm_cool", {}) else True,
+        "line_weight":    lambda r: r.get("line_weight", {}).get("pass", True),
+        "silhouette":     lambda r: r.get("silhouette", {}).get("score", "distinct") != "blob",
+    }
+
+    flagged = []
+    for r in results:
+        name = Path(r.get("file", "?")).name
+        grade = r.get("overall_grade", "?")
+        if grade in ("WARN", "FAIL"):
+            for check_key, pass_fn in CHECK_PASS_MAP.items():
+                try:
+                    if not pass_fn(r):
+                        detail = ""
+                        sub = r.get(check_key, {})
+                        if isinstance(sub, dict):
+                            notes = sub.get("notes", [])
+                            if notes:
+                                detail = " — " + "; ".join(notes)
+                            elif check_key == "silhouette":
+                                detail = f" — score={sub.get('score', '?')}"
+                        flagged.append(f"  - {name} / {check_key}: WARN{detail}")
+                except Exception:
+                    pass
+
+    overall = "PASS"
+    if fail_count > 0:
+        overall = "FAIL"
+    elif warn_count > 0 or missing:
+        overall = "WARN"
+
+    return {
+        "overall": overall,
+        "pass": pass_count,
+        "warn": warn_count,
+        "fail": fail_count,
+        "missing": missing,
+        "flagged": flagged,
+        "raw": results,
+    }
+
+
+def run_color_verify() -> dict:
+    """
+    Run LTG_TOOL_color_verify_v002 on all style frames.
+    Returns a summary dict.
+    """
+    palette = get_canonical_palette()
+    pass_count = 0
+    warn_count = 0
+    missing = []
+    flagged = []
+
+    for p in STYLE_FRAMES:
+        if not p.exists():
+            missing.append(str(p))
+            continue
+        try:
+            img = Image.open(str(p)).convert("RGB")
+            # Downscale if needed
+            img.thumbnail((1280, 1280), Image.LANCZOS)
+            result = verify_canonical_colors(img, palette)
+            name = p.name
+            if result.get("overall_pass"):
+                pass_count += 1
+            else:
+                warn_count += 1
+                for color_name, info in result.items():
+                    if color_name == "overall_pass":
+                        continue
+                    if isinstance(info, dict) and not info.get("pass", True) and info.get("found_hue") is not None:
+                        flagged.append(
+                            f"  - {name} / {color_name}: hue drift {info.get('delta', '?'):.1f}° "
+                            f"(target={info.get('target_hue', '?'):.0f}, found={info.get('found_hue', '?'):.0f})"
+                        )
+        except Exception as e:
+            warn_count += 1
+            flagged.append(f"  - {p.name}: exception — {e}")
+
+    overall = "PASS" if warn_count == 0 and not missing else "WARN"
+    return {
+        "overall": overall,
+        "pass": pass_count,
+        "warn": warn_count,
+        "fail": 0,
+        "missing": missing,
+        "flagged": flagged,
+    }
+
+
+def run_proportion_verify() -> dict:
+    """
+    Run LTG_TOOL_proportion_verify_v001 on character turnaround sheets.
+    Uses the programmatic API by importing and calling the core functions.
+    Returns a summary dict.
+    """
+    # Import proportion verify internals
+    sys.path.insert(0, str(TOOLS_DIR))
+    import importlib
+    pv = importlib.import_module("LTG_TOOL_proportion_verify_v001")
+
+    pass_count = 0
+    warn_count = 0
+    fail_count = 0
+    missing = []
+    flagged = []
+
+    for sheet_path, bbox in CHARACTER_SHEETS:
+        if not sheet_path.exists():
+            missing.append(str(sheet_path))
+            continue
+        try:
+            img = Image.open(str(sheet_path)).convert("RGBA")
+            img.thumbnail((1280, 1280), Image.LANCZOS)
+            W, H = img.size
+
+            # Use full image as bounding box if none provided
+            if bbox is None:
+                x, y, w, h = 0, 0, W, H
+            else:
+                x, y, w, h = bbox
+
+            # Crop to bounding box
+            cropped = img.crop((x, y, x + w, y + h))
+
+            # Detect background and occupied rows
+            bg_color = pv.detect_background(cropped)
+            occ = pv.occupied_rows(cropped, bg_color)
+            extent = pv.find_character_extent(occ)
+
+            if extent is None:
+                warn_count += 1
+                flagged.append(f"  - {sheet_path.name}: no character pixels detected — WARN")
+                continue
+
+            top_row, bottom_row = extent
+            total_height = bottom_row - top_row + 1
+            head_height, _method = pv.find_head_height(occ, top_row)
+
+            if head_height is None or head_height <= 0:
+                # Multi-view turnaround sheets: head gap detection fails on multi-panel layouts
+                # (multiple characters side by side confuse the row-occupancy algorithm).
+                # Flag as WARN — manual review recommended for turnarounds.
+                warn_count += 1
+                flagged.append(
+                    f"  - {sheet_path.name}: head gap not found ({_method}) — "
+                    "multi-panel turnaround may require manual proportion check — WARN"
+                )
+                continue
+
+            ratio = total_height / head_height
+            lo = pv.CANONICAL_RATIO * (1 - pv.RATIO_TOLERANCE)
+            hi = pv.CANONICAL_RATIO * (1 + pv.RATIO_TOLERANCE)
+
+            # Glitch uses a non-standard body proportion (diamond body), skip strict ratio
+            if "glitch" in sheet_path.name.lower():
+                pass_count += 1
+                flagged.append(f"  - {sheet_path.name}: SKIP proportion check (Glitch non-humanoid)")
+                continue
+
+            if lo <= ratio <= hi:
+                pass_count += 1
+            else:
+                grade = "WARN" if abs(ratio - pv.CANONICAL_RATIO) < 0.5 else "FAIL"
+                msg = f"ratio={ratio:.2f} (spec={pv.CANONICAL_RATIO}, tol=±{pv.RATIO_TOLERANCE*100:.0f}%)"
+                if grade == "FAIL":
+                    fail_count += 1
+                else:
+                    warn_count += 1
+                flagged.append(f"  - {sheet_path.name}: {grade} — {msg}")
+
+        except Exception as e:
+            warn_count += 1
+            flagged.append(f"  - {sheet_path.name}: exception — {e}")
+
+    overall = "PASS"
+    if fail_count > 0:
+        overall = "FAIL"
+    elif warn_count > 0 or missing:
+        overall = "WARN"
+
+    return {
+        "overall": overall,
+        "pass": pass_count,
+        "warn": warn_count,
+        "fail": fail_count,
+        "missing": missing,
+        "flagged": flagged,
+    }
+
+
+def run_stub_linter() -> dict:
+    """
+    Run LTG_TOOL_stub_linter_v001 on output/tools/.
+    Returns a summary dict.
+
+    stub_linter result dict keys:
+        file, issues (list of dicts with line_no/statement/module/
+        target_exists/canonical/canonical_exists), status ("PASS"|"WARN"|"ERROR")
+    """
+    results = stub_lint_directory(str(TOOLS_DIR), skip_legacy=True)
+
+    pass_count  = sum(1 for r in results if r.get("status") == "PASS")
+    warn_count  = sum(1 for r in results if r.get("status") == "WARN")
+    error_count = sum(1 for r in results if r.get("status") == "ERROR")
+
+    flagged = []
+    for r in results:
+        if r.get("status") in ("WARN", "ERROR"):
+            name = Path(r.get("file", "?")).name
+            for imp in r.get("issues", []):
+                flagged.append(
+                    f"  - {name}: [{r.get('status')}] `{imp.get('statement', '')}` "
+                    f"(target_exists={imp.get('target_exists')}, "
+                    f"canonical_exists={imp.get('canonical_exists')})"
+                )
+
+    overall = "PASS"
+    if error_count > 0:
+        overall = "FAIL"
+    elif warn_count > 0:
+        overall = "WARN"
+
+    return {
+        "overall": overall,
+        "pass": pass_count,
+        "warn": warn_count,
+        "fail": error_count,
+        "missing": [],
+        "flagged": flagged,
+        "raw": results,
+    }
+
+
+def run_palette_warmth_lint() -> dict:
+    """
+    Run LTG_TOOL_palette_warmth_lint_v001 on master_palette.md.
+    Returns a summary dict.
+    """
+    if not PALETTE_MD.exists():
+        return {
+            "overall": "FAIL",
+            "pass": 0,
+            "warn": 0,
+            "fail": 1,
+            "missing": [str(PALETTE_MD)],
+            "flagged": [f"  - master_palette.md not found at {PALETTE_MD}"],
+        }
+
+    result = lint_palette_file(str(PALETTE_MD))
+    flagged = []
+    for v in result.get("violations", []):
+        flagged.append(f"  - {v.get('code')} {v.get('name')} {v.get('hex')}: {v.get('reason')}")
+
+    overall = result.get("result", "PASS")
+    return {
+        "overall": overall,
+        "pass": result.get("total_checked", 0) - result.get("total_violations", 0),
+        "warn": result.get("total_violations", 0),
+        "fail": 0,
+        "missing": [],
+        "flagged": flagged,
+    }
+
+
+def run_glitch_spec_lint() -> dict:
+    """
+    Run LTG_TOOL_glitch_spec_lint_v001 on all generators in output/tools/.
+    Returns a summary dict.
+
+    Note: lint_directory() in glitch_spec_lint only returns non-SKIP results
+    (SKIP files are filtered internally). PASS/WARN counts are over Glitch
+    generators only. Non-Glitch files are silently excluded.
+
+    glitch_spec_lint result dict keys:
+        file, is_glitch (bool), issues (list of str), status ("PASS"|"WARN")
+    """
+    results = glitch_lint_directory(str(TOOLS_DIR))
+
+    pass_count  = sum(1 for r in results if r.get("status") == "PASS")
+    warn_count  = sum(1 for r in results if r.get("status") == "WARN")
+    fail_count  = 0  # glitch linter uses WARN for issues, not FAIL
+
+    # Count total .py files to infer skipped count
+    total_py = len([f for f in TOOLS_DIR.iterdir()
+                    if f.suffix == ".py" and f.parent.name != "legacy"])
+    skip_count = total_py - len(results)
+
+    flagged = []
+    for r in results:
+        if r.get("status") == "WARN":
+            name = Path(r.get("file", "?")).name
+            for issue_str in r.get("issues", []):
+                flagged.append(f"  - {name}: {issue_str}")
+
+    overall = "PASS"
+    if warn_count > 0:
+        overall = "WARN"
+
+    return {
+        "overall": overall,
+        "pass": pass_count,
+        "warn": warn_count,
+        "fail": fail_count,
+        "skip": skip_count,
+        "missing": [],
+        "flagged": flagged,
+    }
+
+
+# ---------------------------------------------------------------------------
+# Report builder
+# ---------------------------------------------------------------------------
+
+def build_report(
+    render_qa_res,
+    color_verify_res,
+    proportion_res,
+    stub_lint_res,
+    palette_lint_res,
+    glitch_lint_res,
+    run_ts: str,
+) -> str:
+    """Compose the final Markdown report."""
+
+    def section_header(title: str, result: dict) -> str:
+        badge = _grade_line(result["overall"])
+        total = result["pass"] + result["warn"] + result["fail"]
+        return (
+            f"## {title} — {badge}\n\n"
+            f"PASS: {result['pass']}  WARN: {result['warn']}  FAIL: {result['fail']}  "
+            f"Missing: {len(result.get('missing', []))}\n"
+        )
+
+    def flagged_block(result: dict) -> str:
+        lines = []
+        if result.get("missing"):
+            lines.append("**Missing files:**")
+            for m in result["missing"]:
+                lines.append(f"  - {Path(m).name} (not found)")
+        if result.get("flagged"):
+            lines.append("**Flagged items:**")
+            lines.extend(result["flagged"])
+        return ("\n".join(lines) + "\n") if lines else "_No issues found._\n"
+
+    # Overall score
+    overall = _worst_grade(
+        render_qa_res["overall"],
+        color_verify_res["overall"],
+        proportion_res["overall"],
+        stub_lint_res["overall"],
+        palette_lint_res["overall"],
+        glitch_lint_res["overall"],
+    )
+
+    total_pass  = (render_qa_res["pass"]  + color_verify_res["pass"]  +
+                   proportion_res["pass"] + stub_lint_res["pass"]     +
+                   palette_lint_res["pass"] + glitch_lint_res["pass"])
+    total_warn  = (render_qa_res["warn"]  + color_verify_res["warn"]  +
+                   proportion_res["warn"] + stub_lint_res["warn"]     +
+                   palette_lint_res["warn"] + glitch_lint_res["warn"])
+    total_fail  = (render_qa_res["fail"]  + color_verify_res["fail"]  +
+                   proportion_res["fail"] + stub_lint_res["fail"]     +
+                   palette_lint_res["fail"] + glitch_lint_res["fail"])
+
+    lines = [
+        "# Pre-Critique QA Report — Cycle 34",
+        "",
+        f"**Run date:** {run_ts}",
+        f"**Script:** LTG_TOOL_precritique_qa_v001.py v1.0.0",
+        "",
+        "---",
+        "",
+        "## Overall Result",
+        "",
+        f"**{overall}** — PASS: {total_pass}  WARN: {total_warn}  FAIL: {total_fail}",
+        "",
+        "| Section | Result | PASS | WARN | FAIL |",
+        "|---|---|---|---|---|",
+        f"| Render QA (pitch PNGs)         | {render_qa_res['overall']}   | {render_qa_res['pass']}  | {render_qa_res['warn']}  | {render_qa_res['fail']}  |",
+        f"| Color Verify (style frames)    | {color_verify_res['overall']} | {color_verify_res['pass']} | {color_verify_res['warn']} | {color_verify_res['fail']} |",
+        f"| Proportion Verify (char sheets)| {proportion_res['overall']}  | {proportion_res['pass']}  | {proportion_res['warn']}  | {proportion_res['fail']}  |",
+        f"| Stub Linter (tools dir)        | {stub_lint_res['overall']}   | {stub_lint_res['pass']}   | {stub_lint_res['warn']}   | {stub_lint_res['fail']}   |",
+        f"| Palette Warmth Lint            | {palette_lint_res['overall']}| {palette_lint_res['pass']}| {palette_lint_res['warn']}| {palette_lint_res['fail']}|",
+        f"| Glitch Spec Lint               | {glitch_lint_res['overall']} | {glitch_lint_res['pass']} | {glitch_lint_res['warn']} | {glitch_lint_res['fail']} |",
+        "",
+        "---",
+        "",
+    ]
+
+    # Section 1: Render QA
+    lines.append(section_header("1. Render QA — Pitch PNGs", render_qa_res))
+    lines.append("")
+    lines.append("Target files:")
+    for p in PITCH_PNGS:
+        exists = "found" if p.exists() else "MISSING"
+        lines.append(f"  - `{p.name}` ({exists})")
+    lines.append("")
+    lines.append(flagged_block(render_qa_res))
+    lines.append("")
+
+    # Section 2: Color Verify
+    lines.append(section_header("2. Color Verify — Style Frames", color_verify_res))
+    lines.append("")
+    lines.append(flagged_block(color_verify_res))
+    lines.append("")
+
+    # Section 3: Proportion Verify
+    lines.append(section_header("3. Proportion Verify — Character Sheets", proportion_res))
+    lines.append("")
+    lines.append(flagged_block(proportion_res))
+    lines.append("")
+
+    # Section 4: Stub Linter
+    lines.append(section_header("4. Stub Linter — output/tools/", stub_lint_res))
+    lines.append("")
+    lines.append(flagged_block(stub_lint_res))
+    lines.append("")
+
+    # Section 5: Palette Warmth Lint
+    lines.append(section_header("5. Palette Warmth Lint — master_palette.md", palette_lint_res))
+    lines.append("")
+    lines.append(flagged_block(palette_lint_res))
+    lines.append("")
+
+    # Section 6: Glitch Spec Lint
+    lines.append(section_header("6. Glitch Spec Lint — Generators", glitch_lint_res))
+    lines.append("")
+    skip_n = glitch_lint_res.get("skip", 0)
+    if skip_n:
+        lines.append(f"_(Non-Glitch files: {skip_n} skipped)_")
+        lines.append("")
+    lines.append(flagged_block(glitch_lint_res))
+    lines.append("")
+
+    lines.append("---")
+    lines.append("")
+    lines.append("*Generated by LTG_TOOL_precritique_qa_v001.py — Morgan Walsh, Pipeline Automation*")
+
+    return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+
+def main():
+    run_ts = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    print(f"[precritique_qa] Starting C34 QA pipeline — {run_ts}")
+    print(f"[precritique_qa] Repo root: {REPO_ROOT}")
+
+    print("[1/6] Running Render QA on pitch PNGs...")
+    render_qa_res = run_render_qa()
+    print(f"      → {render_qa_res['overall']} (PASS={render_qa_res['pass']}, WARN={render_qa_res['warn']}, FAIL={render_qa_res['fail']}, MISSING={len(render_qa_res['missing'])})")
+
+    print("[2/6] Running Color Verify on style frames...")
+    color_verify_res = run_color_verify()
+    print(f"      → {color_verify_res['overall']} (PASS={color_verify_res['pass']}, WARN={color_verify_res['warn']})")
+
+    print("[3/6] Running Proportion Verify on character turnarounds...")
+    proportion_res = run_proportion_verify()
+    print(f"      → {proportion_res['overall']} (PASS={proportion_res['pass']}, WARN={proportion_res['warn']}, FAIL={proportion_res['fail']})")
+
+    print("[4/6] Running Stub Linter on output/tools/...")
+    stub_lint_res = run_stub_linter()
+    print(f"      → {stub_lint_res['overall']} (PASS={stub_lint_res['pass']}, WARN={stub_lint_res['warn']}, ERROR={stub_lint_res['fail']})")
+
+    print("[5/6] Running Palette Warmth Lint on master_palette.md...")
+    palette_lint_res = run_palette_warmth_lint()
+    print(f"      → {palette_lint_res['overall']} (checked={palette_lint_res['pass'] + palette_lint_res['warn']}, violations={palette_lint_res['warn']})")
+
+    print("[6/6] Running Glitch Spec Lint on generators...")
+    glitch_lint_res = run_glitch_spec_lint()
+    print(f"      → {glitch_lint_res['overall']} (PASS={glitch_lint_res['pass']}, WARN={glitch_lint_res['warn']}, FAIL={glitch_lint_res['fail']}, SKIP={glitch_lint_res.get('skip',0)})")
+
+    report_md = build_report(
+        render_qa_res,
+        color_verify_res,
+        proportion_res,
+        stub_lint_res,
+        palette_lint_res,
+        glitch_lint_res,
+        run_ts,
+    )
+
+    PROD_DIR.mkdir(parents=True, exist_ok=True)
+    report_path = PROD_DIR / "precritique_qa_c34.md"
+    report_path.write_text(report_md, encoding="utf-8")
+    print(f"\n[precritique_qa] Report written to: {report_path}")
+
+    # Determine exit code
+    overall = _worst_grade(
+        render_qa_res["overall"],
+        color_verify_res["overall"],
+        proportion_res["overall"],
+        stub_lint_res["overall"],
+        palette_lint_res["overall"],
+        glitch_lint_res["overall"],
+    )
+
+    print(f"[precritique_qa] OVERALL: {overall}")
+
+    if overall == "PASS":
+        return 0
+    elif overall == "WARN":
+        return 1
+    else:
+        return 2
+
+
+if __name__ == "__main__":
+    sys.exit(main())

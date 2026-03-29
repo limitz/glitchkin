@@ -25,9 +25,9 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 *Luma at the CRT — warm lamp from upper-left, cool CRT rim from the right. Procedural wobble outlines, variable stroke, face lighting.*
 ![SF01 Discovery](output/color/style_frames/LTG_COLOR_styleframe_discovery_v005.png)
 
-### SF02 — Glitch Storm (v005)
-*Luma sprinting through a cascade of Glitchkin. Storm confetti GL-06c (#0A4F8C) registered.*
-![SF02 Glitch Storm](output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v005.png)
+### SF02 — Glitch Storm (v006)
+*Luma sprinting through a cascade of Glitchkin. C34: HOT_MAGENTA fill light + ELEC_CYAN specular on Luma added.*
+![SF02 Glitch Storm](output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v006.png)
 
 ### SF03 — The Other Side (v005)
 *The Glitch Layer. UV_PURPLE_DARK saturation corrected. Zero warm light — UV ambient only.*
@@ -44,9 +44,9 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 ### Full Lineup (v007 — Byte shadow + Miri slipper fixes)
 ![Character Lineup](output/characters/main/LTG_CHAR_character_lineup_v007.png)
 
-### Luma — Expression Sheet (v008)
-*Includes THE NOTICING — Luma's signature expression: the face of a kid who sees what no one else does.*
-![Luma Expressions](output/characters/main/LTG_CHAR_luma_expressions_v008.png)
+### Luma — Expression Sheet (v009)
+*Includes THE NOTICING. C34: eye-width corrected to HR×0.22 (22px); pose vocabulary added for silhouette differentiation.*
+![Luma Expressions](output/characters/main/LTG_CHAR_luma_expressions_v009.png)
 
 ### Luma — Turnaround (v004 — construction master, 3.2 heads)
 ![Luma Turnaround](output/characters/main/turnarounds/LTG_CHAR_luma_turnaround_v004.png)
@@ -139,21 +139,21 @@ Three-world palette system:
 
 ## Progress
 
-- **Work cycles:** 33 | **Critique cycles:** 13
-- **Next critique:** Critique 14 (after Cycle 34)
-- **Ideabox:** active — 5 ideas actioned C33 (all queued C34)
+- **Work cycles:** 34 | **Critique cycles:** 13
+- **Next:** Critique 14 (now running)
+- **Ideabox:** 8 ideas actioned C34 (all queued C35)
 
 ### Pitch Package Status
 | Asset | Latest | Notes |
 |-------|--------|-------|
-| SF01 Discovery | v005 | Rim light char-cx fix applied C32 |
-| SF02 Glitch Storm | v005 | Current |
-| SF03 The Other Side | v005 | Current |
-| SF04 Luma + Byte | v004 | Rebuilt C32; Byte teal exception documented |
-| Luma expressions | v008 | THE NOTICING |
-| Luma turnaround | v004 | 3.2-head construction master |
+| SF01 Discovery | v005 | rim_light bug fixed C34 |
+| SF02 Glitch Storm | **v006** | fill light + cyan specular C34 |
+| SF03 The Other Side | v005 | unchanged |
+| SF04 Luma + Byte | v004 | rim_light bug fixed C34 |
+| Luma expressions | **v009** | eye-width 22px, pose vocabulary C34 |
+| Luma turnaround | v004 | unchanged |
 | Byte expressions | v005 | UNGUARDED WARMTH added C33 |
-| Character lineup | v007 | Byte shadow + Miri slipper fixes C33 |
+| Character lineup | v007 | unchanged |
 | Logo | v001 | Canonical |
 | Environments | — | All 5 complete |
 
@@ -163,8 +163,8 @@ Three-world palette system:
 
 One `CLAUDE.md` starts a producer agent. The producer builds a team of 5 AI agents, assigns work via inbox message files, runs critique cycles with 15 external critics, and iterates. No human drew these images.
 
-All output generated with Python + PIL (open source only). Generators in `output/tools/` — 35+ tools, compounding each cycle.
+All output generated with Python + PIL (open source only). Generators in `output/tools/` — 135+ tools, compounding each cycle.
 
 ---
 
-*Cycle 33 — 2026-03-29*
+*Cycle 34 — 2026-03-29*

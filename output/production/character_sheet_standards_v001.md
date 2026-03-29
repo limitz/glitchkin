@@ -35,29 +35,35 @@ Labels appear in the panel caption area beneath each expression panel.
 
 ---
 
-## 2. Canonical Eye-Width Definition (C32 Decision)
+## 2. Canonical Eye-Width Definition (C34 Clarification)
 
-**Canonical formula:** `ew = int(HR × 0.22)`
+**Canonical formula:** `ew = int(head_r_rendered × 0.22)`
 
 Where:
-- **HR** = head-radius in pixels (the variable `head_r` or `HEAD_R` in all generators)
-- **HR is NOT head-height and NOT head-diameter**
-- The coefficient 0.22 applies ONLY to the radius value
+- **head_r_rendered** = the head-circle radius **in the drawing coordinate space** (after applying any render scale, but before final image downscale)
+- For a generator with `HEAD_R` (1×) and `RENDER_SCALE`, the rendered radius is `HEAD_R * RENDER_SCALE`
+- **Never apply 0.22 to head-diameter (2×HR) — that gives 2× too wide eyes**
+- **Never apply 0.22 to head-height — head-height is approximately equal to head-diameter, same error**
 
-**Why this decision exists:** Daisuke flagged in Critique 13 that `h` in the v007 expression generator meant head-radius (104px), while `h` in the turnaround v003 generator meant head-height (382px). This produced a 3.8× discrepancy (eye widths: 22px vs 84px). Head-radius is canonical because all active generators use it consistently.
+**Why this matters:** Expression sheet v008 (C32) made this mistake — it used `head_height_2x × 0.22 = 2×HR × 0.22 = 208 × 0.22 = 45px`, which is double the correct value of `int(104 × 0.22) = 22px`. Expression sheet v009 corrects this.
 
 | Generator variable | Maps to | Canonical ew formula |
 |---|---|---|
-| `head_r` (expression sheets) | head-radius | `int(head_r * 0.22)` |
-| `HEAD_R` (style frames) | head-radius | `int(HEAD_R * 0.22)` |
-| `h` — AMBIGUOUS, avoid | depends on generator | Rewrite to use `head_r` explicitly |
+| `head_r` or `HR` (drawn radius) | rendered head-radius | `int(head_r * 0.22)` |
+| `HEAD_R * RENDER_SCALE` | rendered head-radius at 2× | `int(HEAD_R * RENDER_SCALE * 0.22)` |
+| `h` — AMBIGUOUS, avoid | may be height or radius | Rewrite to use `head_r` explicitly |
+| `head_height` or `HEAD_HEIGHT` | DO NOT USE as input | 0.22 on height = 2× error |
 
-**Do not use `h` as a variable for head measurement in any new generator.** Use `head_r` for radius.
+**Do not use `h` as a variable for head measurement in any new generator.** Use `head_r` for the rendered radius.
 
-**Numeric reference (HEAD_R=105, 1× internal):** ew = int(105 × 0.22) = 23px
-**At 2× render (HR=210):** ew = int(210 × 0.22) = 46px
+**Per-generator canonical values (C34 confirmed):**
 
-*Added by Alex Chen, Art Director — Cycle 32. Resolves Critique 13 P1 finding (Daisuke).*
+| Generator | HEAD_R (1×) | RENDER_SCALE | head_r (drawn) | ew canonical |
+|---|---|---|---|---|
+| Expression sheet (Luma v009+) | 52 | 2 | 104px | `int(104 × 0.22)` = **22px** |
+| Turnaround v004 | hu()×0.50 | 2 | ≈191px | `int(191 × 0.22)` = **42px** |
+
+*C32 decision by Alex Chen, Art Director. C34 clarification: HR must be the drawn radius, not the diameter. Resolves v008 double-width eye bug. Expression sheet v009 required.*
 
 ---
 

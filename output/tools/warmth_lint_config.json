@@ -1,0 +1,4 @@
+{
+  "warm_prefixes": ["CHAR-M"],
+  "description": "Characters whose palette entries must be unambiguously warm (R >= G and R >= B). Add character prefix codes here to extend coverage beyond Grandma Miri (CHAR-M). Example: add 'CHAR-X' for any future warm-guaranteed character."
+}

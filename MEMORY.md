@@ -4,8 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present.
 
 ## Status
-**Cycle 33 complete. Work cycles: 33. Critique cycles: 13.**
-**Cycle 34 starts next. Critique 14 after Cycle 34.**
+**Cycle 34 complete. Work cycles: 34. Critique cycles: 13.**
+**Critique 14 running now. Cycle 35 starts after Critique 14.**
 
 ## Active Team (8 slots — expanded C34)
 
@@ -31,37 +31,37 @@ Before sending any image to Claude: prefer tools; downscale if lower-res suffice
 ## Critique Format
 Critics use: Score (0–100) → bullet issues (≤2 lines each) → single Bottom line sentence. ≤15 lines per asset. Rule in CLAUDE.md.
 
-## Pitch Package Status — POST CYCLE 33
+## Pitch Package Status — POST CYCLE 34
 
 ### Style Frames
-- **SF01 Discovery**: v005 (char_cx rim light fix C32)
-- **SF02 Glitch Storm**: v005
-- **SF03 Other Side**: v005 (Luma = intentional pixel-art silhouette)
-- **SF04 Luma+Byte**: v004 (Byte teal exception formally documented in master_palette.md C33)
+- **SF01 Discovery**: v005 (rim_light bug fixed C34 — was flooding ELEC_CYAN)
+- **SF02 Glitch Storm**: **v006 NEW C34** (HOT_MAGENTA fill light + ELEC_CYAN specular on Luma; Jordan Reed)
+- **SF03 Other Side**: v005 (Luma = intentional pixel-art silhouette; unchanged)
+- **SF04 Luma+Byte**: v004 (rim_light bug fixed C34 — was flooding warm amber)
 
 ### Logo
 - **LTG_BRAND_logo_v001.png** — DECIDED C25
 
 ### Characters
-- Luma: expr v008 (THE NOTICING), turnaround v004 (ew=head_r×0.22), color model v002
-- Byte: **expr v005 NEW C33** (UNGUARDED WARMTH: star+heart eyes, gold confetti), turnaround v001, color model v001
+- Luma: **expr v009 NEW C34** (eye-width 22px=HR×0.22, pose vocabulary for silhouette differentiation), turnaround v004, color model v002
+- Byte: expr v005 (UNGUARDED WARMTH), turnaround v001, color model v001
 - Cosmo: expr v004, turnaround v002, color model v001
-- Miri: **expr v003 REBUILT C33** (proper KNOWING STILLNESS; was broken stub), turnaround v001
+- Miri: expr v003 (KNOWING STILLNESS), turnaround v001
 - Glitch: expr v003 (YEARNING/COVETOUS/HOLLOW), turnaround v002, color model v001
-- **Character lineup: v007 NEW C33** (Byte shadow GL-01a fix + Miri slipper warm fix)
+- Character lineup: v007 (unchanged)
 
 ### Environments
 All complete (Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street)
 
-### Documentation
-- Pitch package index updated through C32 (Alex C33)
-- SF04 Byte teal scene-lighting exception: `output/color/palettes/master_palette.md` (Sam C33)
+## Critical Bug Fixed C34 — add_rim_light() Canvas Flood
+`edge_mask.convert("RGBA")` set alpha=255 everywhere (not edge mask value), flooding entire canvas with rim color. Fixed: use edge_mask directly as alpha channel. Affected SF01 v004/v005, SF02 v006, SF04 v004 — all regenerated.
 
-## Known Risks for Critique 14
-1. SF02/SF03 do not use add_rim_light() — lighting drawn as direct geometry (Rin C33 confirmed: no canvas-midpoint bug)
-2. Luma expr v008 eye-width = 45px (head_height×0.22) vs canonical head_radius×0.22 (~23px) — unresolved; defer to C14 critique
-3. All human expression sheets fail silhouette test at 85% threshold (Maya C33 baseline) — design problem, not tool problem
-4. SF04 source generators remain stubs (cannot regenerate)
+## Known Open Items for C35
+1. SF02 v006 audits (Sam color, Rin proportion) — briefs/generator now correct
+2. Glitch G002 real violation — Kai to investigate
+3. Luma sprint face `_draw_luma_face_sprint()` — Lee brief exists; Rin to implement in SF02 generator
+4. Cosmo v005, Miri v004 — expression silhouette improvements (Maya)
+5. 35 unlisted README tools — Morgan to register or deprecate
 
 ## Ideabox — C30 (5 ideas, all filed)
 - Alex: proportion verifier tool (actioned → Kai C31)
@@ -246,9 +246,15 @@ Do NOT duplicate inbox message content in agent prompts. The inbox message IS th
 - Alex: lineup palette audit tool
 - Maya: expression silhouette --mode arms (regional similarity)
 
-## Shared Library (updated C33)
-`LTG_TOOL_procedural_draw_v001.py` (v1.4.0 — get_char_bbox() added)
-`LTG_TOOL_expression_silhouette_v001.py` — C33. Silhouette diff test for expression sheets
+## Shared Library (updated C34)
+`LTG_TOOL_procedural_draw_v001.py` (**v1.5.0** — scene_snapshot() added; add_rim_light() flood bug fixed C34)
+`LTG_TOOL_expression_silhouette_v002.py` — C34. Adds --mode arms (arm/shoulder region comparison)
+`LTG_TOOL_palette_warmth_lint_v002.py` — C34. Configurable prefix list via warmth_lint_config.json
+`LTG_TOOL_char_spec_lint_v001.py` — C34. General spec linter (Luma/Cosmo/Miri; 5 checks each)
+`LTG_TOOL_draw_order_lint_v002.py` — C34. Scope-aware W004; 147→69 warnings (53% FP reduction)
+`LTG_TOOL_lineup_palette_audit_v001.py` — C34. Verifies lineup PNG body colors vs master_palette.md
+`LTG_TOOL_precritique_qa_v001.py` — C34. Chains 6 QA tools; consolidated Markdown report
+`LTG_TOOL_expression_silhouette_v001.py` — C33. (superseded by v002 for new work)
 `LTG_TOOL_stub_linter_v001.py` — C33. Broken import scanner; --pre-commit flag
 `LTG_TOOL_glitch_spec_lint_v001.py` — C33. Glitchkin generator validator (G001–G008)
-`LTG_TOOL_palette_warmth_lint_v001.py` — C33. Warm-channel compliance (CHAR-M)
+`LTG_TOOL_palette_warmth_lint_v001.py` — C33. (superseded by v002)

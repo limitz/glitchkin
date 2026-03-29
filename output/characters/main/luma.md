@@ -45,9 +45,19 @@ Circles communicate trust, safety, and energy simultaneously — they roll, they
 
 **Shoulder width:** 0.85x head width (narrower than head — this is important, it makes her head dominant)
 
-**Eye size:** Each eye width = **HR × 0.22** (head-radius × 0.22). "HR" means the radius of the head circle — NOT head-height, NOT head-width. At the canonical HEAD_R=105px (1× internal), ew = int(105 × 0.22) = 23px. At 2× render (HR=210px), ew = 46px. This definition is canonical across all generators and documents as of Cycle 32. Eyes account for roughly 40% of the usable face real estate.
+**Eye size:** Each eye width = **HR × 0.22** (head-radius × 0.22). "HR" means the RENDERED head-radius in pixels — the actual radius of the head circle at output scale. NOT head-height, NOT head-diameter. Eyes account for roughly 40% of the usable face real estate.
 
-> **Canonical eye-width formula (C32 decision):** `ew = int(HR × 0.22)` where HR = head-radius in pixels. Do NOT interpret the 0.22 coefficient against head-height or head-diameter. The generator variable `head_r` (or `HEAD_R`) is the authoritative input.
+> **Canonical eye-width formula (C34 clarification):** `ew = int(head_r_rendered × 0.22)` where `head_r_rendered` is the head circle radius **in the coordinate space where the character is drawn**, before any downscaling step. For a generator with HEAD_R=52 (1× internal) and RENDER_SCALE=2, the rendered head_r = 52×2 = 104px, so `ew = int(104 × 0.22) = 22px`. Do NOT apply 0.22 to the head diameter (2×HR) — that gives double-width eyes.
+
+**C32/C33 error history:** The C32 canonical spec accidentally used HEAD_R=105 (a different generator's constant, larger panels) as the reference, producing a 46px example that confused subsequent work. Expression sheet v008 (C32, Maya Santos) incorrectly used `head_height × 0.22 = 208 × 0.22 = 45px` (applying 0.22 to the diameter at 2× render). The correct value for the expression sheet generator (HEAD_R=52, RENDER_SCALE=2) is `int(104 × 0.22) = 22px`. Expression sheet v009 corrects this.
+
+**Per-generator canonical eye widths (Art Director confirmed C34):**
+
+| Generator | HEAD_R (1×) | Render Scale | head_r at render | ew (canonical) |
+|---|---|---|---|---|
+| Expression sheets (v009+) | 52 | 2× | 104px | `int(104 × 0.22)` = **22px** |
+| Turnaround v004 (Rin) | — | 2× | `int(hu()×2×0.50)` ≈ 191px | `int(191 × 0.22)` = **42px** |
+| Style frames (large) | varies | — | varies | apply formula to actual head_r at draw time |
 
 **Hair volume adds approximately 0.4 heads of height above the skull line** — this is not counted in the 3.2 head measurement but must be accounted for in compositions. Total visual height including hair is approximately 3.6 heads.
 

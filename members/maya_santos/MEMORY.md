@@ -1,5 +1,33 @@
 # Maya Santos — Memory
 
+## Cycle 34 Lessons — SILHOUETTE v002 (--mode arms) + LUMA v009
+
+- **LTG_TOOL_expression_silhouette_v002.py COMPLETE.**
+  - Location: `output/tools/LTG_TOOL_expression_silhouette_v002.py`
+  - New `--mode arms` flag: crops arm/shoulder band [--arms-top 0.20 … --arms-bot 0.70], masks body trunk center with --center-mask (default 0.28).
+  - Key finding: arms mode still FAILs for Luma even after v009 redesign. Cause: shared torso column dominates arm-band at panel resolution (~373px wide). Not a design failure — measurement limitation.
+  - Recommended: use `--center-mask 0.36` for tighter torso exclusion; use `--mode full` as primary pass/fail metric.
+  - Ideabox filed: `arms-edge` sub-mode (left/right zone sampling only, skip center entirely).
+
+- **Luma expression sheet v009 COMPLETE.**
+  - Generator: `output/tools/LTG_TOOL_luma_expression_sheet_v009.py`
+  - Output: `output/characters/main/LTG_CHAR_luma_expressions_v009.png` (1200×900)
+  - Key changes (arm silhouette differentiation):
+    - SURPRISED: arms WIDE + HIGH (Y-shape, hands above shoulder) — `arm_l: (-HR*1.50, -HR*0.55)`
+    - FRUSTRATED: new `draw_crossed_arms()` — arms cross at mid-torso horizontally
+    - WORRIED: new `draw_self_hug_arms()` — arms wrap HIGH on chest (self-hug)
+    - DELIGHTED: arms raised in V ABOVE HEAD — only expression with hands above head
+    - CURIOUS: one-arm-reaching (left arm extends forward, right relaxed back)
+    - THE NOTICING: UNCHANGED (one-hand-to-chin already distinctive)
+  - New mouth: "tight_frown" for FRUSTRATED (compressed corners)
+  - Full-mode before/after: worst pair CURIOUS↔DETERMINED 91.0%→87.7% (improved)
+  - Arms-mode (default params) still FAIL — measurement limitation confirmed.
+  - Lee Tanaka's expression_pose_brief_c34.md was NOT available. v009 driven by arms-mode analysis alone.
+
+- **Ideabox C34 submitted.** `ideabox/20260329_maya_santos_arms_mode_metric_improvement.md`
+
+- **Inbox archived.** C34 directive → `inbox/archived/`.
+
 ## Cycle 33 Lessons — SILHOUETTE TOOL + MIRI v003
 
 - **LTG_TOOL_expression_silhouette_v001.py COMPLETE.**

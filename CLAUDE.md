@@ -58,6 +58,7 @@ Keep a main MEMORY.md in the root of this project and update it when needed. Alw
 * Critics must only accept the best of the best!
 * **Critique responses must be compact.** Use a structured format: score (0–100), then a bullet list of issues (max 2 lines each), then a single "Bottom line" sentence. No lengthy prose. Total response per asset: ≤ 15 lines.
 * **QA tools are available** in `output/tools/` — use them instead of visual inspection where possible. Read `output/tools/README.md` for the full list before starting your critique.
+* **Critics review the complete pitch every cycle** — not just new additions. Primary focus is on what changed this cycle, but each critic must also cast a fresh eye over established assets and ask: does this older work still hold up within the current direction of the project? Projects drift. A background that was approved in cycle 5 may no longer match the tone of a character added in cycle 30. Flag any asset where the current project context has outgrown the work, even if that asset was previously praised.
 
 ## Ideabox
 * Every team member must submit **at least 1 idea per cycle** to `/home/wipkat/team/ideabox/`. See `ideabox/README.md` for format.
@@ -92,7 +93,7 @@ Keep a main MEMORY.md in the root of this project and update it when needed. Alw
 * Status labels like "PITCH READY" and "ACCEPTED" are informational only — they do not prevent future revision.
 
 ## Final Note
-Team members and critics can work in parallel, as long as there are no more than 5 agents active at any one time.
+Team members and critics can work in parallel, as long as there are no more than 8 agents active at any one time.
 Prefer the use (and creation) of tools for tasks that repeat, if that is more efficient.
 Make the team work as efficiently as possible. Cooperate, share, try to minimize the use of the LLM
 After each commit, clear your context, and read this file again. Continue running cycles.

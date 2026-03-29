@@ -35,7 +35,7 @@ Do NOT reference, fix, or regenerate any of these.
 
 ## Active Tools
 `output/tools/LTG_TOOL_render_lib_v001.py` (v1.1.0) — 8 render functions incl. paper_texture
-`output/tools/LTG_TOOL_procedural_draw_v001.py` — **v1.4.0** (C33 update). Procedural drawing library:
+`output/tools/LTG_TOOL_procedural_draw_v001.py` — **v1.5.0** (C34 update). Procedural drawing library:
 - `wobble_line(draw, p1, p2, color, width, amplitude, frequency, seed)`
 - `wobble_polygon(draw, points, color, width, amplitude, frequency, seed, fill)`
 - `variable_stroke(img, p1, p2, max_width, min_width, color, seed)` — modifies in-place
@@ -46,9 +46,12 @@ Do NOT reference, fix, or regenerate any of these.
   left-of-center characters (e.g. Luma at ~0.29W in SF01). Default None = canvas center.
 - `silhouette_test(img, threshold) -> PIL.Image` — returns RGB B&W
 - `value_study(img) -> PIL.Image` — returns contrast-stretched RGB grayscale
-- `get_char_bbox(img, threshold=128) -> (cx, cy, left, top, right, bottom)` — C33 NEW
+- `get_char_bbox(img, threshold=128) -> (cx, cy, left, top, right, bottom)` — C33
   Returns silhouette bounding box centre + extents from bright-pixel scan.
   Use: `char_cx=get_char_bbox(img)[0]` for add_rim_light(). Falls back to canvas centre if no bright pixels.
+- `scene_snapshot(img, region, label, out_dir) -> str` — **C34 NEW**
+  Crops named region (bounds-clamped), adds label banner, enforces ≤1280px.
+  Saves `<out_dir>/LTG_SNAP_<label>.png`. Returns abs path. Never modifies source.
 - `add_face_lighting(img, face_center, face_radius, light_dir, shadow_color, highlight_color, seed)` — C27
 - Test images: `output/tools/test_procedural_draw_v001.png`, `output/tools/test_face_lighting_v001.png`
 - Kai interface-compatible: silhouette_test/value_study both PIL.Image in/out
@@ -114,6 +117,16 @@ In generators that use `h = int(hu() * SCALE)` (head HEIGHT at scale):
   - Byte body fill fixed: BYTE_TEAL (0, 212, 232) canonical GL-01b (was (0, 190, 210))
   - Rim light fixed: side="right" — cyan only on monitor-facing side of Luma
 
+## C34 Completed Work
+- `LTG_TOOL_procedural_draw_v001.py` bumped to **v1.5.0**
+  - `scene_snapshot(img, region, label, out_dir) -> str` added
+  - Crops named pixel region, clamps to bounds, adds label banner, saves ≤1280px PNG
+  - Output filename: `<out_dir>/LTG_SNAP_<label>.png`; returns absolute path
+  - Pure inspection — never modifies source image
+- `output/tools/README.md` updated: v1.5.0 entry, C34 last-updated header
+- Ideabox: submitted `batch_snapshot_qa` idea (JSON-driven batch snap producer)
+- Tasks 2+3 (SF02 character lighting + proportion audit): WAITING on Lee/Jordan C34 deliverables
+
 ## C33 Completed Work
 - `LTG_TOOL_procedural_draw_v001.py` bumped to **v1.4.0**
   - `get_char_bbox(img, threshold=128) -> (cx, cy, left, top, right, bottom)` added
@@ -173,6 +186,11 @@ In generators that use `h = int(hu() * SCALE)` (head HEIGHT at scale):
   - add_rim_light(side="right"): CRT teal (0,220,232) from right — discovery source
   - Blush corrected to warm peach (232,168,124) — matching SF04 v003 correction
   - BYTE_TEAL canonical (0,212,232) used throughout
+
+## C34 Lessons
+- scene_snapshot() banner_h uses max(18, int(ch*0.05)) — min 18px ensures text is legible at all crop sizes
+- After thumbnail() the annotated height may grow by banner_h past 1280px — apply a second thumbnail() on annotated before save
+- Coordinate with Jordan/Lee early: if staging brief is blocked, flag immediately rather than waiting silently
 
 ## C33 Lessons
 - get_char_bbox() pixel-scan is O(w×h) — fast enough for 1280×720 at draw time, no caching needed

@@ -287,3 +287,46 @@ Import: `from LTG_TOOL_render_lib_v001 import ...`
   but has false-positive risk on docstrings/comments — document known false-positive cases clearly
 - G008 bilateral check: proxy approach (detect interior state keywords + destabilize function) is
   conservative; may flag files that correctly implement bilateral but use different variable names
+
+## Cycle 34 — C34 Char Spec Linter + Scope-Aware Draw Order Linter
+
+**Status:** COMPLETE
+
+**Tasks completed:**
+- Built `LTG_TOOL_char_spec_lint_v001.py` — general spec linter for Luma/Cosmo/Miri
+  - 5 checks per character (proportions, colors, key design elements)
+  - C34 baseline: 12 PASS / 3 WARN / 0 FAIL across all 3 characters
+  - All 3 WARNs are "constant form mismatch" not value violations
+- Built `LTG_TOOL_draw_order_lint_v002.py` — scope-aware W004 linter
+  - Filters false positives: tmp=alpha_composite, helper fn local draws, docstrings
+  - C34 baseline: 97 PASS / 37 WARN / 0 ERROR (was 55 WARN in v001 at C31)
+  - W004 count: 147→69 (78 fewer warnings, 53% reduction)
+- Archived stale inbox message (C33 ideabox notification)
+- README.md updated: both tools registered, header updated to C34
+- Ideabox: submitted spec_extractor auto-generation idea
+- Completion report sent to Alex Chen
+
+## LTG_TOOL_char_spec_lint_v001.py (C34 NEW)
+- `lint_character(char_name, tools_dir) → dict` — PASS/WARN/FAIL + per-check results
+- `lint_all(tools_dir) → list` — all 3 chars
+- `format_report(results) → str`
+- Characters: "luma" (L001–L005), "cosmo" (S001–S005), "miri" (M001–M005)
+- Lints the most recent generator version (latest by alphabetical sort)
+- Report: `LTG_TOOL_char_spec_lint_v001_report.txt`
+
+## LTG_TOOL_draw_order_lint_v002.py (C34 NEW)
+- Same API as v001: `lint_file(path)`, `lint_directory(directory, pattern)`, `format_report(results)`
+- Additional: `compare_v1_v2(directory) → str` — shows W004 delta
+- `--compare` CLI flag
+- v001 W001/W002/W003 logic unchanged; W004 is scope-aware
+- Report: `LTG_TOOL_draw_order_lint_v002_report.txt`
+
+## Lessons Learned (C34)
+- Char spec lint false WARNs: generators often use raw pixels not ratio constants;
+  the linter correctly WARNs when spec-form not found — it's caller's job to verify or add constant
+- Luma v008 uses 8-ellipse overlapping hair cloud, not range(5) curls — L004 WARN is expected
+  until CURL_COUNT=5 constant is added explicitly
+- Scope-aware W004: indent-based scope detection works well for standard Python generators
+  (single-level function nesting); deeply nested closures/lambdas are out of scope for v002
+- `alpha_composite` false positives in v001 were the largest source: most files use
+  `tmp = Image.alpha_composite(...)` (not img reassignment) — v002 correctly skips these

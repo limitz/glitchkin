@@ -12,6 +12,7 @@ Adapted from artistry project techniques (Zeno Particelli AI artist):
   - Value study / silhouette test: QA diagnostic tools
   - Volumetric face lighting: split-light with brow, nose-on-cheek, and chin shadows (C27)
   - Character bbox: auto-compute character center x from silhouette for rim-light use (C33)
+  - Scene snapshot: crop a named region from a scene image and save as labelled diagnostic PNG (C34)
 
 Library design:
   - All drawing functions accept seeded RNG for reproducibility
@@ -26,7 +27,7 @@ Import:
     from LTG_TOOL_procedural_draw_v001 import (
         wobble_line, wobble_polygon, variable_stroke,
         add_rim_light, silhouette_test, value_study,
-        get_char_bbox
+        get_char_bbox, scene_snapshot
     )
 
 CLI demo:
@@ -35,7 +36,7 @@ CLI demo:
 Dependencies: Python 3.8+, Pillow (PIL). No NumPy required.
 """
 
-__version__ = "1.4.0"
+__version__ = "1.5.0"
 __author__ = "Rin Yamamoto"
 __cycle__ = 26
 
@@ -274,16 +275,15 @@ def add_rim_light(img, threshold=200, light_color=(255, 240, 200), width=3,
         # Multiply edge_mask by spatial_mask (keep only edge pixels in the specified region)
         edge_mask = ImageChops.multiply(edge_mask, spatial_mask)
 
-    # Convert edge mask to RGBA for compositing
-    edge_rgba = edge_mask.convert("RGBA")
-    r, g, b, a = edge_rgba.split()
+    # Build rim layer: use edge_mask directly as alpha.
+    # NOTE: do NOT use edge_mask.convert("RGBA") — converting L→RGBA sets alpha=255 everywhere,
+    # which would flood the entire canvas with the rim color. Use edge_mask as-is for alpha.
+    w_img, h_img = img.size
+    rim_r = Image.new("L", (w_img, h_img), light_color[0])
+    rim_g = Image.new("L", (w_img, h_img), light_color[1])
+    rim_b = Image.new("L", (w_img, h_img), light_color[2])
 
-    # Replace color channels with rim light color, keep mask as alpha
-    rim_r = a.point(lambda p: light_color[0] if p > 0 else 0)
-    rim_g = a.point(lambda p: light_color[1] if p > 0 else 0)
-    rim_b = a.point(lambda p: light_color[2] if p > 0 else 0)
-
-    rim_layer = Image.merge("RGBA", (rim_r, rim_g, rim_b, a))
+    rim_layer = Image.merge("RGBA", (rim_r, rim_g, rim_b, edge_mask))
 
     # Composite rim layer over original
     base_rgba = img.convert("RGBA")
@@ -411,6 +411,91 @@ def value_study(img):
     scale = 255.0 / (max_val - min_val)
     stretched = gray.point(lambda p: int((p - min_val) * scale))
     return stretched.convert("RGB")
+
+
+def scene_snapshot(img, region, label, out_dir):
+    """Crop a named region from a scene image and save as a labelled diagnostic PNG.
+
+    Purpose: lets any team member produce a targeted close-up crop for review
+    without sending a full-resolution image to Claude. Crops are always saved at
+    ≤1280×1280px (image-size rule), labelled with the region name, and grouped
+    in a dedicated diagnostic directory.
+
+    The label is drawn as a banner at the bottom of the crop (dark bar + white
+    text) so the file is self-annotating when opened.
+
+    Args:
+        img     (PIL.Image) : The full scene image to crop from (not modified).
+        region  (tuple)     : Crop box (left, top, right, bottom) in pixels.
+                              Values are clamped to the image bounds automatically.
+        label   (str)       : Short descriptive name, e.g. "luma_face_c34".
+                              Used in the output filename and the annotation banner.
+        out_dir (str)       : Directory path where the crop PNG is saved.
+                              Directory is created if it does not exist.
+
+    Returns:
+        str: Absolute path of the saved PNG.
+
+    Output filename format:
+        <out_dir>/LTG_SNAP_<label>.png
+
+    Usage example:
+        from LTG_TOOL_procedural_draw_v001 import scene_snapshot
+        snap_path = scene_snapshot(
+            img,
+            region=(300, 120, 680, 460),
+            label="luma_face_sf02_v006",
+            out_dir="output/production/snapshots"
+        )
+        # -> saves output/production/snapshots/LTG_SNAP_luma_face_sf02_v006.png
+
+    Notes:
+        - Output PNG is always ≤1280×1280px (thumbnail applied if crop exceeds limit).
+        - The label banner height is approximately 5% of the crop height, min 18px.
+        - The function never modifies the source image — a fresh copy is cropped.
+        - If out_dir is a relative path it is treated relative to the current working
+          directory at call time. Prefer absolute paths for pipeline scripts.
+    """
+    w, h = img.size
+    left, top, right, bottom = region
+
+    # Clamp crop box to image bounds
+    left   = max(0, min(left,   w - 1))
+    top    = max(0, min(top,    h - 1))
+    right  = max(left + 1, min(right,  w))
+    bottom = max(top  + 1, min(bottom, h))
+
+    # Crop (copy — does not modify source)
+    crop = img.crop((left, top, right, bottom))
+
+    # Enforce ≤1280×1280px hard limit
+    crop.thumbnail((1280, 1280), Image.LANCZOS)
+
+    cw, ch = crop.size
+
+    # --- Annotation banner ---
+    banner_h = max(18, int(ch * 0.05))
+    annotated = Image.new("RGB", (cw, ch + banner_h), (0, 0, 0))
+    annotated.paste(crop, (0, 0))
+
+    # Write label text in the banner
+    draw = ImageDraw.Draw(annotated)
+    # Simple small text — no external font needed; PIL default font
+    text_x = 4
+    text_y = ch + (banner_h - 10) // 2
+    draw.text((text_x, text_y), label, fill=(255, 255, 255))
+
+    # Clamp annotated image to ≤1280px (banner may push height over)
+    annotated.thumbnail((1280, 1280), Image.LANCZOS)
+
+    # Save
+    os.makedirs(out_dir, exist_ok=True)
+    # Sanitise label for filename: replace spaces/slashes with underscores
+    safe_label = label.replace(" ", "_").replace("/", "_").replace("\\", "_")
+    out_path = os.path.join(out_dir, f"LTG_SNAP_{safe_label}.png")
+    annotated.save(out_path, "PNG")
+
+    return os.path.abspath(out_path)
 
 
 def add_face_lighting(img, face_center, face_radius, light_dir,
@@ -811,7 +896,7 @@ if __name__ == "__main__":
 
     print("LTG_TOOL_procedural_draw_v001 — Demo")
     print("=" * 50)
-    print("Testing all seven API functions:")
+    print("Testing all eight API functions:")
     print("  1. wobble_line       — organic wobbly line")
     print("  2. wobble_polygon    — wobbly closed shape + fill")
     print("  3. variable_stroke   — tapered brush stroke")
@@ -819,7 +904,19 @@ if __name__ == "__main__":
     print("  5. silhouette_test   — pure B&W shape read")
     print("  6. value_study       — contrast-stretched grayscale")
     print("  7. get_char_bbox     — auto-detect character bbox / char_cx")
+    print("  8. scene_snapshot    — crop labelled region to diagnostic PNG")
     print()
 
     _build_test_image(_out, size=600)
+
+    # Test scene_snapshot: crop the top-left quadrant from the test image and save
+    _snap_out_dir = os.path.join(_here, "snapshots")
+    test_img = Image.open(_out)
+    snap_path = scene_snapshot(
+        test_img,
+        region=(0, 0, test_img.width // 2, test_img.height // 2),
+        label="test_tl_quad_procedural_draw_v001",
+        out_dir=_snap_out_dir,
+    )
+    print(f"Saved snapshot test: {snap_path}")
     print("Done.")

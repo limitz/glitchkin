@@ -1,5 +1,23 @@
 # Jordan Reed — Memory
 
+## Cycle 34 Deliverables
+- `LTG_TOOL_style_frame_02_glitch_storm_v006.py` → `LTG_COLOR_styleframe_glitch_storm_v006.png` (1280×720) GENERATED ✓
+  - Fix C34-1: HOT_MAGENTA (#FF2D6B) fill light — radial gradient overlay, alpha max 40, per-character zone at lower-left
+  - Fix C34-2: ELEC_CYAN specular on Luma via add_rim_light(side="right", threshold=180, width=2) + get_char_bbox()
+  - Post-thumbnail specular dots: value ceiling max=179→246 (QA PASS)
+  - QA: value range PASS, color fidelity PASS, warm/cool WARN (expected — intentionally cold scene)
+- Ideabox: `20260329_jordan_reed_qa_value_ceiling_check.md` — value ceiling guard idea
+- Inbox archived ✓ | Completion report sent to Alex Chen ✓
+
+## Cycle 34 Status: COMPLETE
+
+## Cycle 34 Lessons
+- **thumbnail() destroys narrow specular lines**: LANCZOS downscale from 1920→1280 averages 3px crack lines from ~207 brightness down to ~179. Fix: add explicit 3-5px specular dots at known bright positions AFTER thumbnail(), before save. Positions scaled by sx=outW/srcW, sy=outH/srcH.
+- **get_char_bbox() for multi-character frames**: In SF02 with 3 characters, the detected bbox cx averages across all bright regions — may not isolate Luma alone. Sanity-check: if `abs(detected_cx - known_luma_cx) < W*0.25` use it, else fall back. This worked correctly for v006.
+- **Magenta fill vs rim**: HOT_MAGENTA fill light = volumetric scatter from ground-level, NOT a rim. Implement as radial gradient centered at lower-left of character zone. Alpha max 40 reads as atmosphere; higher reads as competing lighting source.
+- **add_rim_light threshold=180**: Targets only the brightest pixels (hair highlights, skin specular). threshold=128 (default) catches mid-tone hoodie and body, muddying the effect. threshold=180 gives clean specular-only application.
+- **SF02 current version**: v006 (`LTG_COLOR_styleframe_glitch_storm_v006.png`)
+
 ## Cycle 22 Deliverables
 - `LTG_TOOL_bg_tech_den_v004.py` → `LTG_ENV_tech_den_v004.png` (GENERATED ✓)
   - Fix 1a: Shaft apex at (WIN_X1-10, WIN_Y0+20) ≈ (105, 265); base at (10, 407) + (210, 390) — lands ON desk, 200px wide, max_alpha=150

@@ -235,6 +235,12 @@
 - **Python 3.8 compatibility:** Use `from __future__ import annotations` + `from typing import ...` for type hints. `list[str]` syntax requires 3.9+. All new scripts must use typing module imports.
 - **Ideabox idea:** Warmth lint scope expansion — make CHAR-M prefix list configurable via JSON config so future warm-guaranteed characters can be added without code changes.
 
+## Cycle 34 Lessons
+- **LTG_TOOL_palette_warmth_lint_v002.py built.** Config-driven warmth lint. JSON config `warmth_lint_config.json` at `output/tools/`. Default: `["CHAR-M"]`. Falls back gracefully if config absent. API: `load_config(path=None)`, `lint_palette_file(path, config=config)`. CLI: `--config config.json` flag. C34 baseline: 11 CHAR-M entries, 0 violations (PASS). Actioned ideabox item.
+- **C34 Color QA: SF01 PASS, SF02 PASS (prelim v005), SF03/SF04 documented FPs only.** No new regressions. SF02 v006 audit pending Jordan delivery — HOT_MAGENTA and ELECTRIC_CYAN pixel counts expected to increase with fill-light/specular additions.
+- **SF02 v006 delivery blocking Task 2 completion.** When v006 arrives: run `LTG_TOOL_color_verify_v002.py --histogram` and verify HOT_MAGENTA (fill-light, expect n >> 1,103) and ELECTRIC_CYAN (specular, expect n >> 817). Δ ≤ 5° on both.
+- **histogram mode confirms all C34 FPs.** SF03 UV_PURPLE: gradient pixels drag median; canonical bucket (270-275°) still second-largest. SF03 SUNLIT_AMBER: skin/hoodie orange at 20-25°, not warm lamp. SF04 SUNLIT_AMBER: Soft Gold 40-45°, not lamp amber. False-positive registry tool (Kai ideabox) would eliminate this investigation loop.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001. Low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan to add inline comment. Low priority.
@@ -242,4 +248,5 @@
 - Tech Den generator WALL_WARM slightly off from TD-01 — Jordan to add citing comment.
 - **SF04 generator source missing — HIGH.** All luma_byte_v*.py are forwarding stubs; originals gone. Kai must rebuild. SF04 PNG exists but is non-reproducible. (SF04 v004 was rebuilt by Rin in C32 — check if generator now exists.)
 - TD-10/TD-11 monitor glow alignment — Jordan to compare bg_tech_den_v002.py values vs canonical Section 8 entries. Medium priority.
-- **Warmth lint expansion ideabox** — if actioned, add JSON config prefix list to palette_warmth_lint. Low effort.
+- **SF02 v006 color audit PENDING.** Jordan delivering v006 with magenta fill-light + cyan specular. Re-run color_verify when it arrives.
+- **Warmth lint soft-tolerance mode ideabox** — submitted C34. If actioned, add `soft_tolerance` JSON key to warmth_lint_config.json with per-channel tolerance values.

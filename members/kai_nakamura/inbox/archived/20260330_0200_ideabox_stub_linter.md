@@ -8,6 +8,3 @@ Build `LTG_TOOL_stub_linter_v001.py`. Scans all files in `output/tools/` for bro
 
 ## Task 2 — Glitch spec linter (Alex's idea)
 Build `LTG_TOOL_glitch_spec_lint_v001.py`. Validates Glitchkin generator code against the spec in `output/characters/main/glitch.md`. Check: faceplate width within spec range, body mass ratio, at least 2 unique Glitchkin in multi-Glitchkin frames. Fast automated gate before any Glitch asset goes to critique.
-
----
-**ARCHIVED:** 2026-03-30 — Cycle 33 complete. Both tools built and registered in README.

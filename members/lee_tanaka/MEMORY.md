@@ -236,3 +236,25 @@ Read inbox for directive. Two tasks: (1) SF02 staging brief for Luma interiority
 - All Critique Cycle 9 Carmen feedback: CLOSED
 - REMAINING minor items: A2-07 right eye aperture (minor, carried)
 - No blocked panels
+
+## Cycle 34 Milestone
+- **Role: Character Staging & Visual Acting Specialist (reactivated C34)**
+- **SF02 staging brief DELIVERED:** `/output/production/sf02_staging_brief_c34.md`
+  - Luma interiority = FOCUSED DETERMINATION (sprint-adapted THE NOTICING)
+  - Eyes: asymmetric (left wider), both forward/down. 4px pupils at sprint scale.
+  - Brows: left pulled inward, right level — asymmetric for interiority signal
+  - Mouth: compressed jaw, not open fear oval
+  - Body: 8–12° forward torso lean into motion. Arm counter-rotation exaggerated.
+  - Hair stream: steeper rearward angle for velocity read
+  - Sub-function: `_draw_luma_face_sprint(draw, cx, head_cy, head_r)` to be added inside `_draw_luma()`
+  - For Rin: implement as v006 generator
+- **Expression pose vocabulary brief DELIVERED:** `/output/production/expression_pose_brief_c34.md`
+  - Root cause: human characters have face-only differentiation; body silhouettes too similar
+  - Each expression assigned a unique silhouette hook (arm position, lean, head angle, width)
+  - Luma priorities: DELIGHTED (arms-up Y), FRUSTRATED (one-sided fling), SURPRISED (backward lean+arms)
+  - Cosmo priorities: AWKWARD (maximum asymmetry), WORRIED (head-grab bracket), SURPRISED
+  - Miri priorities: WELCOMING (wide open arms), SURPRISED/DELIGHTED (hand-to-cheek)
+  - KNOWING STILLNESS / WISE accepted as intentionally similar; minor gesture hook added
+  - For Maya: actionable without further review
+- **Ideabox:** `LTG_TOOL_character_face_test_v001.py` proposal submitted
+- **Reported to Alex Chen** via inbox
