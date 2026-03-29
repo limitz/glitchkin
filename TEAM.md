@@ -12,9 +12,12 @@
 | Kai Nakamura | Technical Art Engineer | Active | Alex Chen |
 | Rin Yamamoto | Procedural Art Engineer | Active (from C23) | Alex Chen |
 
+| Jordan Reed | Style Frame Art Specialist | Active (reactivated C34) | Environments complete; pivoted to SF refinement (BG lighting, fill light/specular in SF02) |
+| Lee Tanaka | Character Staging & Visual Acting Specialist | Active (reactivated C34) | Storyboards complete; pivoted to SF character acting (SF02 Luma interiority, pose staging) |
+| Morgan Walsh | Pipeline Automation Specialist | Active (joined C34) | Tool-first mandate: automate QA gates, reduce LLM cost, maintain pipeline |
+
 ## Inactive Members
 
 | Name | Role | Status | Notes |
 |------|------|--------|-------|
-| Jordan Reed | Background & Environment Artist | Inactive | Deactivated C22 — all major environments complete (Tech Den v004, Kitchen v003, School Hallway v002, Millbrook v002). Reactivate when new environments needed. |
-| Lee Tanaka | Storyboard Artist | Inactive | Deactivated C21 — Act 1+2 storyboard decks complete. Reactivate when new storyboard work needed. |
+| — | — | — | All former inactive members reactivated C34 |

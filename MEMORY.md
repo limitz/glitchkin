@@ -7,7 +7,7 @@ Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are m
 **Cycle 33 complete. Work cycles: 33. Critique cycles: 13.**
 **Cycle 34 starts next. Critique 14 after Cycle 34.**
 
-## Active Team (all 5 slots used)
+## Active Team (8 slots — expanded C34)
 
 | Member | Role | Reports To |
 |--------|------|-----------|
@@ -16,8 +16,11 @@ Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are m
 | Sam Kowalski | Color & Style Artist | Alex Chen |
 | Kai Nakamura | Tech Art Engineer | Alex Chen |
 | Rin Yamamoto | Visual Stylization Artist (from C23) | Alex Chen |
+| Jordan Reed | Style Frame Art Specialist (reactivated C34) | Alex Chen |
+| Lee Tanaka | Character Staging & Visual Acting Specialist (reactivated C34) | Alex Chen |
+| Morgan Walsh | Pipeline Automation Specialist (new C34) | Alex Chen |
 
-**Inactive:** Jordan Reed (environments complete C22), Lee Tanaka (storyboard complete C21)
+**Cost discipline:** Morgan's mandate is tool-first QA. Max 8 agents simultaneous. If cost rises, reduce slots.
 
 ## Image Output Rule (MANDATORY)
 **Hard limit: ≤ 1280px in both dimensions.** Use `img.thumbnail((1280,1280), Image.LANCZOS)` before saving. QA pipeline (v1.2.0) now auto-downscales before checks.

@@ -1,6 +1,6 @@
 # Jordan Reed — Background & Environment Artist
 
-- **Role:** Background & Environment Artist
+- **Role:** Style Frame Art Specialist (reactivated C34 — environments complete)
 - **Status:** Active
 - **Reports To:** Alex Chen
 

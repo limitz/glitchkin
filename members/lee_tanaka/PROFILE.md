@@ -1,6 +1,6 @@
 # Lee Tanaka — Storyboard Artist
 
-- **Role:** Storyboard Artist
+- **Role:** Character Staging & Visual Acting Specialist (reactivated C34 — storyboards complete)
 - **Status:** Active
 - **Reports To:** Alex Chen
 

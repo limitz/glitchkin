@@ -122,7 +122,7 @@ Three-world palette system:
 
 ---
 
-## Team (Cycle 33)
+## Team (Cycle 34)
 
 | Member | Role | Status |
 |--------|------|--------|
@@ -131,8 +131,9 @@ Three-world palette system:
 | Sam Kowalski | Color & Style Artist | Active |
 | Kai Nakamura | Technical Art Engineer | Active |
 | Rin Yamamoto | Procedural Art Engineer | Active |
-| Jordan Reed | Background & Environment Artist | Inactive — all environments complete |
-| Lee Tanaka | Storyboard Artist | Inactive — Act 1+2 complete |
+| Jordan Reed | Style Frame Art Specialist | Active (reactivated C34) |
+| Lee Tanaka | Character Staging & Visual Acting Specialist | Active (reactivated C34) |
+| Morgan Walsh | Pipeline Automation Specialist | Active (joined C34) |
 
 ---
 
