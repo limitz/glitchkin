@@ -1,19 +1,18 @@
 # Lee Tanaka — Storyboard Artist
 ## "Luma & the Glitchkin"
 
-**Title:** Storyboard Artist
+**Title:** Character Staging & Visual Acting Specialist (reactivated C34 — storyboards complete)
 **Reports To:** Alex Chen (Art Director)
-**Current Status:** Active — Cycle 20
+**Current Status:** Active — Cycle 34
 
 ---
 
 ## Primary Responsibilities
 
-- All storyboard panels: Act 1 cold open, Act 2 sequence, any new scenes assigned
-- Contact sheets: composited panel overviews for pitch review and arc review
-- Staging and camera specifications: camera grammar must serve the emotional beat of each panel
-- Emotional arc continuity: each panel must connect to the arc that precedes and follows it
-- Bridging shots: when hard cuts cross settings, write and produce a bridging panel to resolve spatial disorientation
+- Style frame character staging: assess and brief poses, acting, interiority for SF01–SF04 characters
+- Expression pose vocabulary: write actionable briefs for Maya on silhouette differentiation
+- Storyboards: complete (Act 1+2); available for new scene work if assigned
+- Coordinate with Rin Yamamoto on SF generator changes (Rin implements; Lee stages and briefs)
 
 ---
 

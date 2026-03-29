@@ -188,6 +188,46 @@
 - **Act 1 full contact sheet v001 CREATED:** 5 panels — kitchen cold open A1-01, A1-02, A1-03 v002, A1-04 kitchen + classroom near-miss (separate beat from `LTG_SB_act2_panel_a104_v001.png`). Arc: QUIET→SEARCHING→DISCOVERY→FIRST-CONTACT→NEAR-MISS. Visual section break between kitchen and classroom. Generator: `LTG_TOOL_sb_act1_full_contact_sheet_v001.py`.
 - **Key naming distinction:** `LTG_SB_act1_panel_a104_v001.png` = kitchen first contact two-shot. `LTG_SB_act2_panel_a104_v001.png` = classroom near-miss (different beat, same panel number). Both used in Act 1 full contact sheet.
 
+## CATCH-UP: Cycles 21–33 (Lee was inactive)
+
+### Role Change
+You are now **Character Staging & Visual Acting Specialist**. Storyboards are complete and pitch-ready. Focus: style frame character staging, expression pose vocabulary, SF02 interiority.
+
+### Current Character Versions (relevant to your work)
+- **Luma**: expr v008 (THE NOTICING — chin-touch, asymmetric eyes, zero tilt), turnaround v004
+  - **3.2 heads tall** (was 3.5 — corrected C32); eye width = `int(head_r × 0.22)`
+  - Signature expression = THE NOTICING: the face of a kid who sees what no one else does
+- **Byte**: expr v005 NEW C33 (UNGUARDED WARMTH: star eye SOFT_GOLD + heart eye UV_PURPLE, gold confetti, leaning in)
+  - Cracked eye system still applies in scene contexts
+- **Cosmo**: expr v004 (SURPRISED with blush)
+- **Grandma Miri**: expr v003 rebuilt C33 (KNOWING STILLNESS — oblique mouth, 6th narrative expression)
+- **Glitch**: expr v003 (YEARNING / COVETOUS / HOLLOW — bilateral eyes = genuine feeling; destabilized right eye = performance)
+
+### Style Frame Context
+- **SF02 Glitch Storm v005**: Luma sprinting through Glitchkin cascade. Critics have cited 2 consecutive cycles:
+  1. Luma shows **no interiority** — she's a running shape, not a character experiencing something
+  2. Missing magenta fill light + cyan specular on characters (Jordan's C34 task — not yours)
+  Your job: write a staging brief specifying what Luma's expression/pose should communicate and how.
+
+### Silhouette Differentiation Crisis
+Maya's new `LTG_TOOL_expression_silhouette_v001.py` (C33) ran baseline tests: **ALL human character expression sheets FAIL at 85% similarity threshold.** Silhouettes are too alike between expressions — critics can't distinguish them in thumbnail. This is a systematic pose design problem. Your expression pose brief for Maya is the fix.
+
+### Tools Available
+- `LTG_TOOL_expression_silhouette_v001.py` — run this on existing expression sheets to see which panels are flagging as too similar. Use it to verify your briefs will work before submitting. (It does not produce images — read output/tools/README.md)
+- `LTG_TOOL_char_diff_v001.py` — proportion diff between two PNGs (best on turnaround fronts)
+- All tools documented in `output/tools/README.md`
+
+### Canvas Standard (UPDATED)
+**Hard limit: ≤ 1280px in both dimensions** for all saved images. Old storyboard panels were 800×600 — that still works fine.
+
+### New Team Members Since C20
+- **Rin Yamamoto** (C23–present) — Procedural Art Engineer. Owns SF generators. To change SF character staging, write a brief and coordinate with Rin for implementation.
+- **Jordan Reed** (reactivated C34) — now Style Frame Art Specialist. They handle SF BG/lighting; you handle character acting/staging.
+- **Morgan Walsh** (C34) — Pipeline Automation Specialist.
+
+### C34 Assignment
+Read inbox for directive. Two tasks: (1) SF02 staging brief for Luma interiority, (2) expression pose vocabulary brief for Luma/Cosmo/Miri silhouette differentiation.
+
 ## Current Status (after Cycle 20)
 - Cold open (tech den): 26 panels COMPLETE, all Carmen notes resolved
 - Act 1 kitchen cold open: 4 panels COMPLETE (A1-01 through A1-04), contact sheet v002 generated (A1-03 v002)

@@ -1,18 +1,18 @@
 # Jordan Reed — Background & Environment Artist
 ## "Luma & the Glitchkin"
 
-**Title:** Background & Environment Artist
+**Title:** Style Frame Art Specialist (reactivated C34 — environments complete)
 **Reports To:** Alex Chen (Art Director)
-**Current Status:** Active — Cycle 20
+**Current Status:** Active — Cycle 34
 
 ---
 
 ## Primary Responsibilities
 
-- All environment background assets: real-world settings, Glitch Layer environments, style frame composites
-- Style frame composition: rendering final composited PNGs for pitch package (SF01, SF02, SF03 and future frames)
+- Style frame refinement: BG lighting, fill lighting, atmospheric polish on SF01–SF04
+- SF02 specifically: add missing magenta fill light + cyan specular pass (flagged C13 — 2 cycles)
+- Environment assets: complete; maintain only if critique flags regressions
 - World-building visual consistency: all real-world environments must read as the same coherent Millbrook
-- Environment spec compliance: each environment must match written spec docs before delivery
 
 ---
 

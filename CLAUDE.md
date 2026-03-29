@@ -40,10 +40,11 @@ Keep a main MEMORY.md in the root of this project and update it when needed. Alw
 * inbox/ is a directory. Each message is its own file, named `YYYYMMDD_HHMM_short_description.md`. The timestamp should reflect the ACTUAL time the message was created.
 * inbox/archived/ holds all processed messages. Messages are never deleted — move to archived/ once fully acted on.
 * Messages are sent by creating a new file in the recipient's inbox/ directory. Include the current date and time (24h) in the filename and in a **Date:** header inside the file. Take team hierarchy into account when reporting. 
-* The maximum number of active team members is 5. There is no maximum to the number of inactive team members.
+* The maximum number of active team members is 8 (expanded from 5 by producer, C34). There is no maximum to the number of inactive team members. If LLM costs rise, the producer may reduce this cap — check MEMORY.md for the current limit.
 * Only active members can receive messages in their inbox/ and perform work (started by an agent).
 * Do not add team members for jobs that can instead be filled by currently available (inactive) team members.
 * Before any work cycle starts, check if the team structure makes sense. Deactivate members that are not needed for the next cycle, add new members when needed.
+* **When reactivating an inactive member:** before sending them any work, update their MEMORY.md with a clearly labelled catch-up section covering: (1) their new role and how it differs from their previous one, (2) all palette/spec corrections since they were last active, (3) current asset versions relevant to their work, (4) new tools they should know about, (5) new team members and who to coordinate with. Also update their ROLE.md to reflect the new title and responsibilities. A member who reads stale information will produce wrong output.
 
 ## Critics
 * Generate 15 profiles for professionals in this field who, together, can provide valuable feedback to the team on the quality and progress of the work.

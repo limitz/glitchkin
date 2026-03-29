@@ -81,6 +81,48 @@
   - Far-end atmospheric haze, warm afternoon blue sky with light cloud
   - Canvas 1280×720, Real World palette only
 
+## CATCH-UP: Cycles 23–33 (Jordan was inactive)
+
+### Role Change
+You are now **Style Frame Art Specialist**. Environments are done. Focus: SF01–SF04 refinement, especially SF02 lighting.
+
+### Current Style Frame Versions
+- SF01 Discovery: **v005** (`LTG_COLOR_styleframe_discovery_v005.png`) — rim light char_cx fix applied C32
+- SF02 Glitch Storm: **v005** (`LTG_COLOR_styleframe_glitch_storm_v005.png`) — **P2: missing magenta fill light + cyan specular on characters (flagged 2 cycles by critics)**
+- SF03 Other Side: **v005** (`LTG_COLOR_styleframe_otherside_v005.png`) — zero warm light; UV ambient only; Luma = intentional pixel-art silhouette
+- SF04 Luma + Byte: **v004** (`LTG_COLOR_styleframe_luma_byte_v004.png`) — rebuilt C32; Byte teal at reduced luminance = intentional dual-lighting
+
+### Canvas Standard (UPDATED)
+**Hard limit: ≤ 1280px in both width and height.** This applies to ALL saved images including style frames. Use `img.thumbnail((1280,1280), Image.LANCZOS)` before saving. Old ROLE.md said 1920×1080 — that is superseded.
+
+### New Tools Available (read output/tools/README.md for full list)
+- `LTG_TOOL_procedural_draw_v001.py` **v1.4.0** — CRITICAL for your work:
+  - `add_rim_light(img, side, char_cx)` — character-relative rim light. Pass `char_cx` explicitly (NOT canvas midpoint, which was the C13 bug). Use `get_char_bbox()` to compute it.
+  - `get_char_bbox(img, threshold=128)` — returns `(cx, cy, left, top, right, bottom)` from silhouette
+- `LTG_TOOL_render_lib_v001.py` v1.1.0 — shared render utilities (gaussian_glow etc.)
+- `LTG_TOOL_render_qa_v001.py` v1.2.0 — auto-downscales + QA check; run on all outputs
+- `LTG_TOOL_color_verify_v002.py` — color compliance check with hue histogram mode
+
+### Palette Corrections Since C22
+- **CHAR-L-11 Constraint 1 = #00F0FF Electric Cyan** (was cited as #00D4E8 — copy error fixed C30)
+- **Byte body = GL-01b #00D4E8 BYTE_TEAL** (distinct from Electric Cyan #00F0FF)
+- **Byte shadow = GL-01a #00A8B4 Deep Cyan** (fixed C33 — was wrong 2 cycles)
+- **HOT_MAGENTA = GL-02 #FF2D6B** (NOT #FF0090)
+- **CORRUPT_AMBER = GL-07 #FF8C00** (255,140,0)
+- **GL-06c STORM_CONFETTI_BLUE = #0A4F8C** (for SF02 confetti depth)
+- SF03 + Glitch Layer: **zero warm light** — UV ambient only
+
+### Character Spec (current)
+- Luma: **3.2 heads tall** (not 3.5 — corrected C32); eye width = `int(head_r × 0.22)`
+- Byte: pixel-art eyes. In SF scenes: teal body, cracked eye at reduced luminance = intentional
+
+### New Team Members Since C22
+- **Rin Yamamoto** (C23–present) — Procedural Art Engineer. Owns SF generators and procedural_draw. Coordinate with Rin for SF generator changes.
+- **Morgan Walsh** (C34) — Pipeline Automation Specialist. Runs QA pipeline, maintains tools README.
+
+### C34 Assignment
+Read inbox for directive. Your primary task: add magenta fill + cyan specular lighting passes to SF02 v005 → produce v006. Use `add_rim_light()` with `get_char_bbox()`. Coordinate with Rin on generator structure before writing new code.
+
 ## Key Color Notes
 - **BYTE_BODY = (0, 212, 232) GL-01b Byte Teal — NEVER (10,10,20) Void Black**
   - Critical error found in SF03 v002 — body was invisible against UV Purple ambient
