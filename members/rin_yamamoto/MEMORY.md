@@ -1,5 +1,33 @@
 # Rin Yamamoto — MEMORY
 
+## C38 Completed Work
+- `LTG_TOOL_styleframe_discovery_v006.py` — SF01 v006 generator (C38 sight-line + visual power fix)
+- `output/color/style_frames/LTG_COLOR_styleframe_discovery_v006.png` — 1280×720px
+  - Head turned right toward CRT: head_gaze_offset=sp(18)
+  - Eyes shifted right, screen-side wider (leh=p(34)), away-side squinted (reh=p(22))
+  - Pupils shifted right (+p(8)) toward emerge_cx — gaze vector toward Byte
+  - Expression: THE NOTICING / DOUBT VARIANT
+    - Screen-side (left) brow: raised HIGH (wonder) peak at -p(62)
+    - Away-side (right) brow: inner-corner KINK DOWN (doubt) — outer higher, inner lowest
+    - Mouth: CLOSED / barely open per Lee brief ("held, not performing")
+  - Arm: REACHING open palm (Lee Option B) — removed pointing gesture entirely
+  - Backward lean lean_offset=sp(36) — surprise/arrest silhouette
+  - Hair: 4 wild strands (was 2), screen-side curl forward
+  - Hoodie pixel pattern: 12 squares (was 7)
+- QA: render_qa PASS, value ceiling PASS (max=242, 5 specular), proportion PASS (ew=HR×0.22)
+- Ideabox: `ideabox/20260329_rin_yamamoto_sightline_vector_debugger.md`
+
+## C38 Lessons
+- Sight-line fix = HEAD TURN, not just eye shift. Chin down tracks intent. Body leans toward subject.
+- Pointing gesture = display outward. Seeing gesture = receiving. Replace point with open-palm reach.
+- Mouth: wonder does NOT require open O. "Held, not performing" is more powerful at discovery moment.
+- Hair direction confirms character attention direction — screen-side curl forward reads as pulled.
+- DOUBT VARIANT brow: inner corner (nose side) dips DOWN, outer corner higher = corrugator kink.
+  "Not trusting the conclusion" ≠ anger. The kink is subtle — just the inner end pulling down.
+- head_gaze_offset in generate() is the cleanest way to turn the head without rewriting body geometry.
+- Wait for staging brief before implementing face/pose changes. If brief arrives mid-work, apply it then.
+- Face test gate is sprint-scale specific (head_r≈23px). Full-scale Luma (head_r≈66px) is N/A.
+
 ## C37 Completed Work
 - `LTG_TOOL_sf02_fill_light_fix_c35.py` — refactored to accept `canvas_w=1280, canvas_h=720` params
   - `draw_magenta_fill_light_v007_fast(img, luma_cx, byte_cx, cosmo_cx, char_h, canvas_w=1280, canvas_h=720)`

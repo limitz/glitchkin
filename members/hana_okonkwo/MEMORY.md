@@ -6,13 +6,13 @@ Comedy-adventure cartoon. Three worlds: Real World (warm/domestic), Glitch World
 ## Joined
 Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style frames).
 
-## Existing Environments (as of C37)
+## Existing Environments (as of C38)
 - Kitchen (Grandma's): v004 — `output/backgrounds/environments/LTG_ENV_grandma_kitchen_v004.png`
 - Tech Den: v004 + warminjected — `LTG_ENV_tech_den_v004_warminjected.png`
 - Glitch Layer: v003
-- School Hallway: v002 (perspective fixed C35)
+- School Hallway: **v003** (C38 figure-ground pass) — `LTG_ENV_school_hallway_v003.png` — QA WARN (pre-existing color fidelity WARN, value range PASS)
 - Millbrook Street: v002
-- **Living Room (NEW C37)**: v001 — `LTG_ENV_grandma_living_room_v001.png` — QA PASS
+- **Living Room (C37)**: v001 — `LTG_ENV_grandma_living_room_v001.png` — CLEAR for critique (Sam Kowalski review)
 
 ## Key Palette References
 - Master palette: `output/color/palettes/master_palette.md`
@@ -25,6 +25,30 @@ Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style fr
   - Value floor ≤30, value ceiling ≥225, range ≥150
 - `LTG_TOOL_warmth_inject_v001.py` — fixes warm/cool failures (auto mode)
 - `LTG_TOOL_palette_warmth_lint_v004.py --world-type [REAL|GLITCH|OTHER_SIDE]`
+
+## Lessons Learned (C38)
+
+### Figure-Ground Separation
+- Always check costume colors against background fills before generating. Identical or near-identical values cause character merge.
+- LOCKER_LAV in v002 was identical to Cosmo's cardigan RW-08 (168,155,191). Zero value separation = invisible character.
+- Fix: push background fills LIGHTER than character costume values (≥20 value unit separation minimum).
+- `LTG_TOOL_bg_school_hallway_v003.py`: LOCKER_LAV → (216,208,190), LOCKER_SAGE → (154,178,148)
+- Character-ground value band: Shadow Plum (RW-09) at alpha 22 on near-wall character zone provides secondary backing.
+
+### Value Floor Fix (Deep Shadows)
+- `LINE_DARK = (59,40,32)` → grayscale ≈ 45. NOT dark enough for QA value floor (need ≤30).
+- Must add NEAR_BLACK_WARM (20,12,8) explicitly in floor/wall junctions, locker base crevices, far corners.
+- These crevice shadows are production-correct — real hallways have them. Not artifical.
+
+### Color Fidelity WARN (Pre-existing)
+- SUNLIT_AMBER hue drift is a known issue across all environments (flagged Critique 14, Chiara).
+- Warm floor pixels composited with window shaft color drift the detected amber hue from 34° to 44°.
+- Correcting SUNLIGHT_SHAFT to canonical (212,146,58) helps but composited floor tiles are the main source.
+- This is not introduced by environment work — pre-exists in v002. Document but do not block on it.
+
+### Cosmo Silhouette Context
+- Cosmo SKEPTICAL arms collapse (3+ cycles unresolved per Takeshi C15). Background must compensate.
+- School hallway is key location for Cosmo. Figure-ground must be solved at the background level.
 
 ## Lessons Learned (C37)
 

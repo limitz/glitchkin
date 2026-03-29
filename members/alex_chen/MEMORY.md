@@ -12,7 +12,63 @@
 - Never send high-res images to Claude unless absolutely necessary.
 - Vision limitations: hallucination risk on low-quality/rotated/tiny (<200px) images; limited spatial reasoning; approximate counting only.
 
-## Cycle 37 State (current)
+## Cycle 38 State (current)
+
+**C38 tasks complete (Alex Chen's portion).**
+
+### C38 Work Done
+1. **Archived** all 14 inbox messages (13 C37 completions + 2 C38 directives + parallel C38 completions).
+2. **Cold Open Canon Decision RESOLVED**: Night/Grandma's den (Diego's storyboard) is authoritative. School/daytime scene = pre-credits Act 1 tag. Sent to Priya (inbox) + Diego (inbox). Diego's v002 already delivered.
+3. **Pitch package index updated**: C37 late deliveries registered (Cosmo v006, Luma v010, Luma/Byte motion specs, Living Room v001, CI suite, QA tools). C37 Final Status table + C38 open items table.
+4. **Production bible Byte shape fix**: Section 8 line 202 cleaned — oval canonical, generic Glitchkin = triangles/jagged.
+5. **Glitch narrative role decided**: Glitch = Corruption's avatar (named Glitchkin consumed by Corruption, gives Corruption a face, personal history with Byte). Sent to Priya.
+6. **Dual-Miri visual plant commission**: Jordan to deliver Kitchen v004→v005 with handwritten "MIRI" fridge label.
+7. **Luma power balance briefs**: Sent to Maya (reckless physicality + line weight hierarchy) + Rin (SF01 v005 sight-line + protagonist weight).
+8. **Tool generalization analysis**: Sent to Kai. Top targets: proportion tools (4→1), per-cycle runner elimination, warmth lint shims.
+9. **Ideabox**: `20260329_alex_chen_per_cycle_runner_elimination.md`.
+10. **C38 completion report**: `output/production/alex_c38_completion.md`.
+
+### C38 Canonical Asset Versions (current)
+- Luma expression sheet: **v010 PITCH PRIMARY** (THE NOTICING rework — center slot, 35% eye asymmetry, finger-to-lip)
+- Luma motion spec: v001 / v002 (v002 = CG fix + shoulder mass + crack scar side)
+- Luma color model: v002 (PITCH PRIMARY — unchanged)
+- Luma turnaround: v004 (PITCH PRIMARY — unchanged)
+- Character lineup: v007 (PITCH PRIMARY — unchanged)
+- Byte expression sheet: v005 (PITCH PRIMARY — unchanged)
+- Byte motion spec: v001 / v002 (v002 = crack scar side + glow radius annotation)
+- Miri expression sheet: v004 (PITCH PRIMARY — unchanged)
+- Cosmo expression sheet: **v006 PITCH PRIMARY** (S003 glasses_tilt RESOLVED)
+- Glitch expression sheet: v003 GEOMETRY CORRECTED (unchanged)
+- SF01: v005 / **SF02: v008 PITCH PRIMARY** / SF03: v005 / SF04: v004
+- Kitchen: v004 (→v005 in progress: Miri fridge label)
+- Living Room: v001 NEW (cold open setting)
+- School Hallway: **v003 NEW** (figure-ground fix — locker colors were identical to Cosmo's costume)
+- Logo: v001
+
+### C38 Key Decisions
+- **Cold open canon = night/Grandma's den** (Diego's board). School scene = pre-credits tag.
+- **Glitch narrative role = Corruption's avatar** (named Glitchkin consumed; personal Byte history).
+- **Dual-Miri plant = Kitchen fridge "MIRI" label** (Jordan kitchen v005).
+- **Luma power balance briefed** to Maya + Rin.
+- **Story bible v002 delivered** by Priya (social world, Luma doubt-certainty, Byte non-verbal). v003 pending cold open + Glitch decisions (both now sent).
+
+### C38 Open Items (carry to C39)
+- **Luma v011 P1**: right-eye lid (top-drop not bottom-rise) + power balance (Maya)
+- **SF01 v005 P1**: sight-line fix (Luma seeing Byte — Rin)
+- **Cold open v002 P01/P12/P13 staging**: Diego (unblocked by canon decision)
+- **Story bible v003**: cold open + Glitch antagonist (Priya — unblocked by both decisions)
+- **Byte motion v002 naming compliance**: still in output/tools/ as LTG_CHAR_ prefix (Kai P1)
+- **CI suite spec_sync_ci suppression**: Kai P1
+- **Naming violations**: LTG_CHAR_*/LTG_SB_* in tools/ (Kai P1)
+- **render_qa REAL_INTERIOR threshold**: 20→12 (Kai P2)
+- **Cosmo SKEPTICAL silhouette**: Maya P2
+- **Byte v005 silhouette**: Maya P2
+- **Kitchen v005 Miri plant**: Jordan P2
+- **Tool generalization**: Kai P3
+
+---
+
+## Cycle 37 State (archived)
 
 **C37 tasks complete (Alex Chen's portion).**
 

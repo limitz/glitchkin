@@ -307,5 +307,18 @@ Read inbox for directive. Two tasks: (1) SF02 staging brief for Luma interiority
 
 ## Cycle 37 Lessons
 - **Python 3.8 compat: avoid `list[...]` / `tuple[...]` type hints in function signatures.** These require Python 3.9+. Use untyped or `List`/`Tuple` from `typing` module for 3.8 compatibility.
+
+## Cycle 38 Milestone
+- **Three staging briefs DELIVERED (C38):**
+  1. **Luma — Doubt in the Moment of Certainty** → Maya Santos: New expression THE NOTICING — SELF-DOUBT EDITION. Left eye certain/wide, right eye hedging (3–4px narrower) — eyes disagree. Left brow high, right brow 8–10px lower w/ corrugator kink. Closed mouth w/ corner deflect. 0–1° head tilt. Backward micro-lean. Test: RPD ≤ 82% vs current THE NOTICING, face test gate.
+  2. **Byte — Non-Verbal Commitment** → Ryo Hasegawa + Diego Vargas: Full-frontal toward Luma, float at eye-level, arms out (arm_x_scale 0.65–0.70), -3–4° lean, ELEC_CYAN glow directional toward Luma (alpha 70–85), cracked eye lid level (not droopy), WARMTH mouth quiet. NOT UNGUARDED WARMTH. 4-beat motion arc: avoidance → HOLD. P13 mirror composition: Luma organic-left eye / Byte organic-left eye both face frame center.
+  3. **SF01 — Seeing Not Pointing** → Rin Yamamoto + Jordan Reed (cc): Head rotated +20–30° toward CRT (3/4 profile), left eye sight-line to Byte ghost at screen_x+60%/screen_y+40%, replace pointing gesture w/ stillness/reach/self-touch, 4–6° forward lean, catch-light confirms sight-line. Acceptance: sight-line readable without caption annotation.
+- **Production summary:** `output/production/staging_briefs_c38.md`
+- **Ideabox:** `20260330_lee_tanaka_sight_line_diagnostic.md` — `LTG_TOOL_sight_line_check_v001.py` proposal (eye-line ray trace from character head to target, shows intersection + body axis)
+
+## Cycle 38 Lessons
+- **Pointing gesture = display; turning toward = discovery.** These are fundamentally different body languages. A pointing arm communicates TO an audience. Turning the head and body toward a thing is what seeing actually looks like. If the character is performing the discovery outward, they're not experiencing it.
+- **Glow direction IS emotional direction.** Byte's ELEC_CYAN glow precedes and exceeds the body's commitment. The glow has already decided. Specifying the glow directionality gives animators a staging shorthand that carries emotional content without extra annotation.
+- **Two eyes can disagree in a single frame.** The wide/certain left eye + narrower/hedging right eye is achievable and produces a richer emotional read than symmetric bilateral expressions. The asymmetry IS the emotional content.
 - **Arc-diff grid detection: aspect ratio heuristic works well for LTG contact sheets** (all use 16:9 panel cells). Try col counts 2–8, score by aspect ratio deviation, pick minimum. Robust enough for all project contact sheets tested.
 - **A staging review is more useful than a score.** Diego's storyboard had no structural problems — the value was in identifying the two specific fixes (P4 directionality, P6 brow differential) that a critic would flag, so they can be addressed before critique.

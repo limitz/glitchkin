@@ -110,8 +110,8 @@ The QA tool samples at canonical saturation and misses the shadowed version.
 
 **Assets:** All 4 pitch style frames (SF01, SF02, SF03, SF04)
 **Tool:** `LTG_TOOL_render_qa_v001.py` (check D — `_check_warm_cool()`)
-**Reported separation:** SF01=17.9, SF02=6.5, SF03=3.1, SF04=1.1 (all below threshold 20.0)
-**Status:** PARTIALLY RESOLVED in C37 — SF03 now PASS. SF01/SF02/SF04 still WARN.
+**Reported separation:** SF01=17.9, SF02=6.5, SF03=3.0, SF04=1.1
+**Status:** PARTIALLY RESOLVED C38 — SF01 and SF03 now PASS. SF02 and SF04 still WARN.
 
 **Root cause:** `_check_warm_cool()` splits the image into top/bottom halves and compares
 median hue. This tests vertical atmospheric separation — appropriate for naturalistic scenes.
@@ -119,19 +119,26 @@ LTG frames apply temperature as a uniform world signal (warm room, cold glitch w
 a vertical split. The metric cannot distinguish "intentionally warm frame" from "flat palette".
 
 **Correct per-world thresholds:**
-- real_world_interior (SF01): threshold=12 (PASS at 17.9)
-- real_world_night_storm (SF02): threshold=3 (PASS at 6.5)
-- glitch_world (SF03): threshold=0 (PASS at any reading — warm absence is correct) — **RESOLVED C37**
-- SF04 (soft-key, world_type=None): threshold=0 desired — still WARN (no filename match)
+- SF01 (REAL interior): threshold=12.0 → sep=17.9 → **PASS** (resolved C38)
+- SF02 (REAL contested): threshold=12.0 → sep=6.5 → WARN (storm scene, warm is suppressed — correct)
+- SF03 (OTHER_SIDE): threshold=0.0 → sep=3.0 → **PASS** (resolved C37)
+- SF04 (world_type=None — luma_byte pattern not in warmth_lint_v004): threshold=12.0 → WARN
 
-**C37 update (render_qa v1.4.0):** SF03 (`otherside` in filename → OTHER_SIDE → threshold=0) is
-now PASS. SF01/SF02/SF04 remain WARN because render_qa uses REAL→20 for all REAL filenames —
-higher than the FP-006 spec thresholds of 12 (interior) and 3 (storm). See ideabox idea
-`20260330_sam_kowalski_render_qa_real_threshold_split.md` for the proposed fix.
+**C38 update (render_qa v1.5.0):** REAL threshold corrected 20.0→12.0 (Sam Kowalski).
+SF01 warm/cool now PASS (sep=17.9 > 12.0). SF03 remains PASS (OTHER_SIDE, threshold=0).
 
-**Remaining Kai Nakamura action:** Add REAL_INTERIOR (threshold=12) and REAL_STORM (threshold=3)
-sub-types to render_qa world-type inference. This would eliminate the SF01 and SF02 warm/cool WARNs.
+**Remaining items:**
+1. SF02 warm/cool WARN is a **known false positive** — sep=6.5 is correct for a contested storm
+   scene. True storm threshold should be ≈3. To eliminate: add REAL_STORM sub-type to
+   render_qa (threshold=3). Carry forward to next cycle.
+2. SF04 world_type=None because `warmth_lint_v004.infer_world_type()` does not match "luma_byte"
+   filename. `LTG_TOOL_world_type_infer_v001.py` (C38) adds "luma_byte" to its rules.
+   To fix: update warmth_lint_v004 REAL rule with `|luma[_-]?byte` pattern, OR update
+   render_qa to import infer_world_type from world_type_infer_v001 instead.
+
+**New tool (C38):** `LTG_TOOL_world_type_infer_v001.py` — standalone world-type inference
+helper. Has "luma_byte" → REAL rule, CLI batch mode, and `--threshold` flag for shell capture.
 
 ---
 
-*Sam Kowalski — Color & Style Artist — Cycle 35 (updated C37)*
+*Sam Kowalski — Color & Style Artist — Cycle 35 (updated C37, C38)*

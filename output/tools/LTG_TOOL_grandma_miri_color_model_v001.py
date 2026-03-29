@@ -77,7 +77,7 @@ PANTS_SHADOW = (160, 138, 106)      # #A08A6A  Warm Medium Tan
 PANTS_HIGHLIGHT = (222, 201, 168)   # #DEC9A8  Light Linen
 
 # --- SLIPPERS ---
-SLIPPER_UPPER = (90, 122, 90)       # #5A7A5A  Deep Sage
+SLIPPER_UPPER = (196, 144, 122)     # C38 FIX: #C4907A  Dusty Warm Apricot (was #5A7A5A Deep Sage — G>R violated Miri warm-palette guarantee; per master_palette.md CHAR-M-11 C32)
 SLIPPER_LINING = (250, 240, 220)    # #FAF0DC  Warm Cream
 SLIPPER_SOLE = (90, 56, 32)         # #5A3820  Warm Dark Brown
 
@@ -120,7 +120,7 @@ SWATCHES = [
     ("Pants Highlight",  "#DEC9A8", PANTS_HIGHLIGHT,  "PANTS"),
 
     # GROUP: SLIPPERS
-    ("Slipper Upper",    "#5A7A5A", SLIPPER_UPPER,    "SLIPPERS"),
+    ("Slipper Upper",    "#C4907A", SLIPPER_UPPER,    "SLIPPERS"),
     ("Slipper Lining",   "#FAF0DC", SLIPPER_LINING,   "SLIPPERS"),
     ("Slipper Sole",     "#5A3820", SLIPPER_SOLE,     "SLIPPERS"),
 

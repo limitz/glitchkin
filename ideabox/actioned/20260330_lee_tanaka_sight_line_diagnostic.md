@@ -1,0 +1,5 @@
+**Author:** Lee Tanaka
+**Cycle:** 38
+**Date:** 2026-03-30
+**Idea:** Build a sight-line diagnostic tool (`LTG_TOOL_sight_line_check_v001.py`) that takes a style frame PNG, a character head center (cx, cy), an eye-line angle (degrees), and a target point (tx, ty), and draws a visualization overlay showing: (1) the eye-line ray from character to target, (2) whether the ray intersects the target element's bounding box, (3) whether the character's body axis (shoulder line) is approximately perpendicular to or aligned with the eye-line. Output: the style frame PNG with the overlay drawn as a thin cyan line, target box in magenta, body axis in amber. Saves as `LTG_SNAP_sightline_<label>.png`. This would have caught the SF01 pointing-vs-seeing problem in a single automated check instead of requiring a critic to flag it.
+**Benefits:** Rin Yamamoto (SF01/SF02/SF03 character placement); Lee Tanaka (brief validation before submission); Diego Vargas (storyboard sight-line verification). Reduces the iteration cycle from "critic flags after submission" to "tool catches before submission."

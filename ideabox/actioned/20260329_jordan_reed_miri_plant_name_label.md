@@ -1,0 +1,5 @@
+**Author:** Jordan Reed
+**Cycle:** 38
+**Date:** 2026-03-29
+**Idea:** The Dual-Miri visual plant (season 1 finale seed) is most powerful when it uses a real-world object that naturally displays a name — specifically a piece of mail, a fridge note, or a labeled personal item. Instead of adding a portrait or a symbolic color echo (both require design decisions and risk being too visible), a handwritten name "MIRI" on a domestic object is invisible on first viewing, rereadable in hindsight, and requires only a text element addition to an existing generator. The kitchen fridge (Grandma Kitchen v004) already has travel magnets and personal detail — a sticky note reading "MIRI" fits naturally in that cluster. This approach could be formalized as a "passive plant technique" for future finale seeds: plant names or mundane labels on domestic objects rather than visual motifs.
+**Benefits:** Directly addresses Ingrid Solberg's C15 critique (Dual-Miri seed entirely absent from visual assets). Low execution risk — no structural change to the generator, no palette risk, no character art involvement. Produces the most subtle and most durable visual seed in the pitch package.

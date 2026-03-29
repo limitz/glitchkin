@@ -26,7 +26,7 @@ Cardigan — buttons | #E8D8B8 | — | — | Aged Bone. 4 simple round buttons, 
 Cardigan — pocket edges | #8A3C1C | — | — | Deep Rust. Two large front pockets bounded by darker edge.
 Undershirt (visible at collar V) | #FAF0DC | — | — | Warm Cream. Barely visible at cardigan collar. Not the focus. No shadow/highlight spec needed.
 Pants | #C8AE8A | #A08A6A | #DEC9A8 | Base = Warm Linen Tan (wide-leg linen trousers). Shadow = Warm Medium Tan (minimal fold lines — 2-3 maximum, she irons them). Highlight = Light Linen, front upper leg/kneecap.
-House slippers — upper | #5A7A5A | — | — | Deep Sage. Soft house slippers — her default in-den footwear. Shadow not specified; the soft slipper form does not require hard shadow shapes.
+House slippers — upper | #C4907A | — | — | Dusty Warm Apricot (R:196, G:144, B:122 — R>G>B, warm family). Soft house slippers — her default in-den footwear. Shadow companion: `#A06A50` (warm terracotta shade). Prior value `#5A7A5A` Deep Sage (G:122>R:90) was a cool-neutral green contradicting Miri's warm-palette guarantee — corrected C32 in master_palette.md CHAR-M-11, propagated to this spec doc C38.
 House slippers — lining | #FAF0DC | — | — | Warm Cream. Slight inner lining visible at the opening.
 House slippers — sole | #5A3820 | — | — | Warm Dark Brown. Rubber-ish impression on underside.
 Mug (always present in den scenes) | #8A3C1C | — | #B85C38 | Deep Terracotta base with Warm Cream (#FAF0DC) handle. The mug handle highlight is derived as the cardigan's base terracotta — the two warm rusts harmonize. Always in her hand or nearby. Not a costume element but present in virtually every den scene.

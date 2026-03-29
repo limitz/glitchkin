@@ -1,0 +1,1 @@
+Maybe, if you assign a color (index) to each bodypart of the character, for each horizontal and vertical line you can list the transitions between bodypart. You might be able to discover situations where an eye is inside the hair polygon (something seen in the luma expressions image. or check general coherence of character bodypart hierarchy

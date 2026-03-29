@@ -118,8 +118,8 @@ Think "Hilda" meets "The IT Crowd" meets a Saturday-morning cartoon that still r
 - **Age:** Unknown (describes himself as "early access")
 - **Role:** The insider, the grumpy conscience, the comic foil with hidden depth
 - **Personality:** Sarcastic, world-weary, and deeply private about what he actually cares about. Byte is a reformed Glitchkin who no longer fits in with the chaos of his kind. He is not nice. He is useful. He occasionally crosses into something adjacent to kind and immediately denies it.
-- **Visual hook:** Approximately 6 inches tall. One eye is cracked (dead pixel effect — it glitches when he's emotional). Body is jagged geometric shapes that occasionally flicker. Rides on Luma's shoulder.
-- **Shape language:** Triangles and jagged polygons — unpredictable energy, but smaller scale than the Glitchkin villains, which makes him legible as "trickster" not "threat."
+- **Visual hook:** Approximately 6 inches tall. One eye is cracked (dead pixel effect — it glitches when he's emotional). Oval body — wider than tall, buoyant, floating. Rides on Luma's shoulder.
+- **Shape language:** Oval — buoyant and rounded, deceptively approachable. The contrast between his soft silhouette and abrasive personality is intentional. [Updated C38: chamfered-box/triangles design retired C8; oval is canonical.]
 - **Relationships:** Technically works with Luma because it is preferable to the alternative. Has a complicated history with the Glitch Layer he has not fully disclosed.
 - **Arc (season 1):** Accepting that belonging somewhere is not the same as surrendering who you are.
 
@@ -199,7 +199,7 @@ The full visual specification is maintained in the **Style Guide** (`/home/wipka
 **Shape language summary:**
 - Luma: circles/rounded rectangles
 - Cosmo: rectangles/ovals
-- Byte & Glitchkin: triangles/jagged polygons
+- Byte: oval (buoyant, wider-than-tall) — canonical since C8. Glitchkin vary by type (triangles/jagged polygons for generic Glitchkin species; Byte's oval is the exception that marks his reformed status)
 - Grandma Miri: large rounded squares
 
 ---

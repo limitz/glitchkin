@@ -966,3 +966,79 @@ All critical path assets verified on disk. No blocking issues found. The package
 | Open items | **P1: Cosmo v006 glasses_tilt fix (Maya)**; RPD baseline run (P2, all sheets); warm/cool expected_temp param (Kai, P2) |
 
 *Updated by Alex Chen, Art Director — Cycle 37 — 2026-03-30*
+
+---
+
+### Cycle 37 Late Deliveries (C37 team completions received after initial index update)
+
+| Asset | File Path | Notes |
+|---|---|---|
+| Cosmo expression sheet v006 | `/home/wipkat/team/output/characters/main/LTG_CHAR_cosmo_expression_sheet_v006.png` | **PITCH PRIMARY for Cosmo.** S003 glasses_tilt fix: AWKWARD/SURPRISED/FRUSTRATED all corrected 10°→7° (spec target). SKEPTICAL retained 9° (within ±2° tolerance). spec_sync_ci: CI PASS, 0 P1 violations. RPD silhouette: WARN (worst AWKWARD↔SKEPTICAL 75.4% — no regression from v005). 1182×1114px. Generator: `output/tools/LTG_TOOL_cosmo_expression_sheet_v006.py`. (Cycle 37 — Maya Santos) |
+| Luma expression sheet v010 | `/home/wipkat/team/output/characters/main/LTG_CHAR_luma_expressions_v010.png` | **PITCH PRIMARY for Luma expressions.** THE NOTICING rework: eye asymmetry 15%→35% (survives LANCZOS), brow_l_dy increased (dramatically higher, unambiguous), gaze pure lateral (was downward), hand gesture upgraded to finger-to-lower-lip (vertical forearm diagonal), panel BG deepened, hoodie richer slate, expression moved to CENTER slot (eye-return anchor). All other 6 expressions unchanged from v009. 1200×900. Generator: `output/tools/LTG_TOOL_luma_expression_sheet_v010.py`. Note: silhouette RPD FAIL is known tool limitation at panel resolution for standing human chars (documented C33+). (Cycle 37 — Maya Santos) |
+| Luma motion spec v001 | `/home/wipkat/team/output/characters/motion/LTG_CHAR_luma_motion_v001.png` | **NEW.** 4-panel motion spec sheet: IDLE/CURIOUS (weight shift, head tilt, hoodie lag), SPRINT ANTICIPATION (−10° lean, arms pulled back, hair pre-lean), DISCOVERY REACTION (1-frame recoil snap + forward lean beat-by-beat), LANDING/STOP (secondary motion sequence). Beat counts, orange secondary-motion arrows, blue timing text, construction action lines. 1280×720. Generator: `output/tools/LTG_CHAR_luma_motion_v001.py` (naming violation flagged — see open items). (Cycle 37 — Ryo Hasegawa) |
+| Byte motion spec v001 | `/home/wipkat/team/output/characters/motion/LTG_CHAR_byte_motion_v001.png` | **NEW.** 3-panel motion spec sheet on dark field: FLOAT/HOVER (0.5Hz ±6px oscillation, pixel artifacts at extremes), SURPRISE (squash W+35%/H−30% → stretch H+45%/W−30% → elastic settle), APPROACH (tilt progression 0°→−12°→−22°, ELEC_CYAN glow intensity 0%→40%→100%). All secondary motion relationships explicit (hoodie +0.5 beat lag, hair +1.0 beat lag). 1280×720. Generator: `output/tools/LTG_CHAR_byte_motion_v001.py` (naming violation flagged). (Cycle 37 — Ryo Hasegawa) |
+| Grandma's Living Room v001 | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_grandma_living_room_v001.png` | **NEW.** Pre-discovery Miri scene setting. CRT television focal point (off-center right, screen on). Afternoon light shaft (window left), warm reading lamp (upper right), CRT cool spill (dual-temp). Knitted amber throw, scatter cushions, family photos, bookcase, area rug, Miri's teacup + TV remote + stacked books. Deep shadows: ceiling corners/floor corners/furniture undersides ≤30. 1280×720. QA: PASS all 6 checks (warm/cool 25.4, threshold 20). Generator: `output/tools/LTG_TOOL_env_grandma_living_room_v001.py`. (Cycle 37 — Hana Okonkwo) |
+| Warmth inject hook v001 | `/home/wipkat/team/output/tools/LTG_TOOL_warmth_inject_hook_v001.py` | **New pipeline module.** Shared 2-step generate→warmth-inject pattern. `run_warmth_hook(out_path, enabled=True)`. Four background generators updated with `--check-warmth` flag: tech_den_v004, school_hallway_v002, millbrook_main_street_v002, grandma_kitchen_v004. (Cycle 37 — Jordan Reed) |
+| CI suite v001 | `/home/wipkat/team/output/tools/LTG_TOOL_ci_suite_v001.py` | **New QA umbrella tool.** Runs all 5 CI checks in sequence: stub_linter_v001, draw_order_lint_v002, glitch_spec_lint_v001, spec_sync_ci_v001, char_spec_lint_v001. `--fail-on WARN|FAIL` threshold, `--save-report`, `--json`. C37 run: WARN overall (0 hard FAILs). Report: `output/production/ci_suite_c37_report.md`. (Cycle 37 — Kai Nakamura) |
+| Glitch spec suppressions | `/home/wipkat/team/output/tools/glitch_spec_suppressions.json` | 26 known false-positive (file, rule) pairs — primarily G007 on non-Glitch tools containing "outline" keyword. Loaded by glitch_spec_lint_v001 v1.2.0. (Cycle 37 — Kai Nakamura) |
+| Draw order lint v002.1.0 | `/home/wipkat/team/output/tools/LTG_TOOL_draw_order_lint_v002.py` | Back-pose W003 suppression via `# LINT: back_pose_begin` / `# LINT: back_pose_end` block markers. Prevents false positives from back-view rendering sections. (Cycle 37 — Kai Nakamura) |
+| Render QA v1.4.0 | `/home/wipkat/team/output/tools/LTG_TOOL_render_qa_v001.py` | Per-world warm/cool thresholds via `infer_world_type()`: REAL=20, GLITCH=3, OTHER_SIDE=0, unknown=20. Eliminates 4 persistent GLITCH/OTHER_SIDE false WARNs. (Cycle 37 — Kai Nakamura) |
+| Pre-critique QA v2.2.0 | `/home/wipkat/team/output/tools/LTG_TOOL_precritique_qa_v001.py` | CYCLE_LABEL=C37, SF02 target updated to v008. `qa_baseline_last.json` seeded with C37 results. C37 run: WARN overall (333 PASS / 26 WARN / 0 FAIL — improvement from C36's 37 WARNs). Report: `output/production/precritique_qa_c37.md`. (Cycle 37 — Morgan Walsh) |
+| Color QA C37 baseline | `/home/wipkat/team/output/production/color_qa_c37_baseline.md` | Full color QA run (render_qa v1.4.0). SF03 warm/cool now PASS (OTHER_SIDE threshold=0). All other WARNs confirmed false positives or threshold mismatch. 0 new FAILs. (Cycle 37 — Sam Kowalski) |
+| Contact sheet arc-diff tool | `/home/wipkat/team/output/tools/LTG_TOOL_contact_sheet_arc_diff_v001.py` | Per-panel change detection between two contact sheet PNGs. Auto-detects grid, 64×36 thumbnail diff, SAME/CHANGED/ADDED/REMOVED color borders. ≤800×600px output. (Cycle 37 — Lee Tanaka) |
+| Proportion audit C37 runner | `/home/wipkat/team/output/tools/LTG_TOOL_proportion_audit_c37_runner.py` | C37 audit results: PASS 3 / ASYM-WARN 2 (SF02 v007/v008 intentional sprint asymmetry) / WARN 1 (SF01 v003 legacy, superseded) / FAIL 0. Report: `output/production/proportion_audit_c37.md`. (Cycle 37 — Rin Yamamoto) |
+| SF02 fill-light adapter refactor | `/home/wipkat/team/output/tools/LTG_TOOL_sf02_fill_light_fix_c35.py` | All public functions now accept `canvas_w=1280, canvas_h=720` keyword parameters. Enables future generators at any canvas size. Backward compatible. (Cycle 37 — Rin Yamamoto) |
+
+#### Cycle 37 Pitch Package Status (UPDATED — all C37 deliveries)
+
+| Requirement | C37 Final Status |
+|---|---|
+| All 4 style frames | SF01 **v005 PITCH PRIMARY**, SF02 **v008 PITCH PRIMARY** (fill-light + silhouette mask), SF03 **v005 PITCH PRIMARY**, SF04 **v004 PITCH PRIMARY** |
+| Luma expression sheet | **v010 PITCH PRIMARY** (THE NOTICING rework — center slot, 35% eye asymmetry, finger-to-lip gesture) |
+| Byte expression sheet | **v005 PITCH PRIMARY** (unchanged) |
+| Cosmo expression sheet | **v006 PITCH PRIMARY** (S003 glasses_tilt P1 RESOLVED — CI PASS) |
+| Miri expression sheet | **v004 PITCH PRIMARY** (unchanged) |
+| Glitch expression sheet | **v003 GEOMETRY CORRECTED** (unchanged) |
+| Luma turnaround | **v004 PITCH PRIMARY** (unchanged) |
+| Character lineup | **v007 PITCH PRIMARY** (unchanged) |
+| Canonical logo | `LTG_BRAND_logo_v001.png` (unchanged) |
+| Environments | Kitchen v004, Tech Den v004, School Hallway v002, Millbrook Main Street v002, Classroom v002, Luma's House, Glitch Layer v002 + encounter, Other Side BG — all PITCH READY. **Living Room v001 NEW** (Grandma's den cold open setting). |
+| Story documents | **Story Bible v001** — logline, world rules, character arcs, pilot structure, series arc |
+| Storyboards | **Pilot Cold Open v001** (6-panel, canonical cold open; v002 in progress with C38 fixes) |
+| Motion specs | **Luma motion v001 NEW** + **Byte motion v001 NEW** (both 1280×720) |
+| QA tools | CI suite v001, warmth_inject_hook_v001, glitch_spec_suppressions.json, draw_order_lint_v002 (back-pose suppression), render_qa_v001 v1.4.0 (per-world thresholds), precritique_qa_v001 v2.2.0 |
+| Open items C38 | **P1: Story bible cold open RESOLVED** (night/Grandma's den is canonical — Alex decision sent to Diego+Priya); Production_bible.md Byte shape = oval CORRECTED; Luma v011 right-eye lid fix (top-drop not bottom-rise — Maya); Cold open storyboard v002 (Diego — hoodie color + W004 fix + staging notes); Byte crack scar side fix (Ryo); Naming convention violations (LTG_CHAR_*/LTG_SB_* in tools/ — Kai); SF01 sight-line (Luma seeing Byte — Rin); Luma power balance brief sent to Maya+Rin; Dual-Miri visual plant (Jordan/Diego — P2); Glitch narrative role DECIDED (avatar of the Corruption — Priya to update bible) |
+
+*Updated by Alex Chen, Art Director — Cycle 37 (late deliveries) + Cycle 38 prep — 2026-03-29*
+
+---
+
+### Cycle 38 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| School Hallway v003 | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_school_hallway_v003.png` | **Figure-ground separation pass.** LOCKER_LAV remapped from (168,155,191) — was identical to Cosmo's cardigan — to cream-off-white (216,208,190). LOCKER_SAGE lightened: (122,154,122)→(154,178,148). Character-ground value band (Shadow Plum alpha 22) in near-character zone. Value floor anchors added. SUNLIT_AMBER corrected to canonical RW-03 (212,146,58). QA: value range PASS (was FAIL on v002). 1280×720. Generator: `output/tools/LTG_TOOL_bg_school_hallway_v003.py`. (Cycle 38 — Hana Okonkwo) |
+| Cold open storyboard v002 | `/home/wipkat/team/output/storyboards/LTG_SB_pilot_cold_open_v002.png` | Hoodie corrected to canonical orange #E6641A. W004 code defect fixed. P3 Glitchkin pixels converted to 4-7 sided irregular polygons. P4 directional intrusion vector added (source point at screen edge). P6 brow differential 12px (meets ≥6-8px spec). P6 right-eye top-lid drop (focusing squint, not wince — Takeshi C15 fix). P6 iris catch-light directional (screen-side left eye stronger). Generator: `output/tools/LTG_SB_pilot_cold_open_v002.py`. P01/P12/P13 staging pending cold open canon decision (now resolved — P1 staging unblocked). (Cycle 38 — Diego Vargas) |
+| Luma motion spec v002 | `/home/wipkat/team/output/characters/motion/LTG_CHAR_luma_motion_v002.png` | CG support polygon fix: body_cx clamped to ±40% foot half-span; red CG marker + support polygon line drawn in panels 0/1. Shoulder geometry circles added as explicit arm origins. Hair annotation corrected (-12° pre-lean = active, not "not yet trailing"). (Cycle 38 — Ryo Hasegawa) |
+| Byte motion spec v002 | `/home/wipkat/team/output/characters/motion/LTG_CHAR_byte_motion_v002.png` | Crack scar corrected to viewer's right side (matches cracked eye). Glow radius dashed annotation circle added at MAX r=1.5×bw. (Cycle 38 — Ryo Hasegawa) |
+| Story Bible v002 | `/home/wipkat/team/output/production/story/story_bible_v002.md` | Social world depth (Dev Patel-Huang + Preethi Okafor named). Luma psychology: doubt-in-certainty made explicit in Act 3. Byte non-verbal finale: he simply stays. Cold open PENDING (v003 will resolve — Alex's decision sent). Glitch entry: provisional placeholder (v003 will resolve — Alex's decision sent). (Cycle 38 — Priya Shah) |
+
+#### Cycle 38 Pitch Package Status
+
+| Requirement | C38 Status |
+|---|---|
+| All 4 style frames | SF01 v005, SF02 v008, SF03 v005, SF04 v004 — PITCH PRIMARY (unchanged) |
+| Luma expression sheet | v010 PITCH PRIMARY (unchanged) |
+| Byte expression sheet | v005 PITCH PRIMARY (unchanged) |
+| Cosmo expression sheet | v006 PITCH PRIMARY (unchanged) |
+| Miri expression sheet | v004 PITCH PRIMARY (unchanged) |
+| Glitch expression sheet | v003 GEOMETRY CORRECTED (unchanged) |
+| Luma turnaround | v004 PITCH PRIMARY (unchanged) |
+| Character lineup | v007 PITCH PRIMARY (unchanged) |
+| Canonical logo | `LTG_BRAND_logo_v001.png` (unchanged) |
+| Environments | Kitchen v004 (→v005 Miri label in progress), **School Hallway v003** (figure-ground fix), Living Room v001 (cold open), all others unchanged |
+| Story documents | **Story Bible v002** (social world, Luma doubt, Byte non-verbal); **v003 in progress** (cold open + Glitch antagonist unblocked by Alex decisions) |
+| Storyboards | **Cold Open v002** (hoodie fix, W004, pixel shapes, P4+P6 staging fixes); P01/P12/P13 staging unblocked |
+| Motion specs | Luma motion **v002** (CG fix + shoulder mass); Byte motion **v002** (crack scar + glow annotation) |
+
+*Updated by Alex Chen, Art Director — Cycle 38 — 2026-03-29*

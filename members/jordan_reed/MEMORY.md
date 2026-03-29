@@ -1,5 +1,23 @@
 # Jordan Reed — Memory
 
+## Cycle 38 Deliverables
+- Dual-Miri plant proposal: `output/production/dual_miri_visual_plant_proposal_c38.md`
+  - WAITING for Alex Chen brief before execution
+  - Recommendation: kitchen v004 → v005, "MIRI" fridge note near travel magnets
+  - Alt candidate: SF01 CRT sticky note (requires Rin coordination)
+- Ideabox: `20260329_jordan_reed_miri_plant_name_label.md` — passive plant technique
+- Completion report sent to Alex Chen ✓ | Inbox archived ✓
+
+## Cycle 38 Status: WAITING (pending Alex brief + cold open canon decision)
+
+## Cycle 38 Notes
+- **Dual-Miri**: Story bible names the Grandma Miri / Glitch Layer Miri name connection as
+  the season 1 finale seed. ZERO visual plants in any current asset (Ingrid C15 flag).
+  Execution is LOW complexity once brief arrives — single text element to kitchen generator.
+- **SF01 sight-line**: Lee Tanaka Brief 3 copied to me (Rin is primary). Not yet delivered
+  to my inbox. Monitor. Coordinate with Rin before touching SF01 generator.
+- **Alex cold open decision** is the P1 blocker for both tasks.
+
 ## Cycle 37 Deliverables
 - `LTG_TOOL_warmth_inject_hook_v001.py` — shared hook module for the --check-warmth pipeline
   - API: `run_warmth_hook(out_path, enabled=True) → str|None`

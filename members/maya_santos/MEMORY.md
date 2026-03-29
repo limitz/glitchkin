@@ -1,5 +1,74 @@
 # Maya Santos — Memory
 
+## Cycle 38 Lessons — LUMA v011 + COSMO v007 + BYTE v006 (Silhouette + Eye Lid Fix)
+
+- **Luma expression sheet v011 COMPLETE (THE NOTICING right eye lid fix).**
+  - Generator: `output/tools/LTG_TOOL_luma_expression_sheet_v011.py`
+  - Output: `output/characters/main/LTG_CHAR_luma_expressions_v011.png` (1200×900px)
+  - Fix: `squint_top_r=True` parameter added to `draw_eyes_full()`.
+    - v010 used r_open=0.65 → symmetric shrink (WINCE). Wrong lid.
+    - v011: full eye height, top ~22% masked out with BG overdraw + thick lid line.
+    - Bottom lid stays neutral. This is a focusing squint (upper lid drops).
+    - pass `panel_bg` to `render_character()` → `draw_eyes_full()` for correct overdraw color.
+  - Silhouette (RPD full): worst pair 97.9% (WORRIED↔FRUSTRATED) — KNOWN tool limitation.
+  - Arms mode worst pair: 100.0% (WORRIED↔FRUSTRATED) — KNOWN.
+
+- **Cosmo expression sheet v007 COMPLETE (SKEPTICAL arm fix).**
+  - Generator: `output/tools/LTG_TOOL_cosmo_expression_sheet_v007.py`
+  - Output: `output/characters/main/LTG_CHAR_cosmo_expression_sheet_v007.png` (1182×1114px)
+  - Fix: `arm_mode="skeptical_crossed"` replaces "standard" for SKEPTICAL.
+    - Left arm: angles inward, notebook arm, hand at left-of-center.
+    - Right arm: from shoulder inward, hand crossing to left-center (folded).
+    - Both arms now visible outside torso silhouette.
+  - Silhouette (RPD full): worst pair 88.5% (AWKWARD↔SKEPTICAL) — HEAD zone 100% artifact.
+  - S003 compliance preserved (all glasses_tilt ≤ 9°).
+
+- **Byte expression sheet v006 COMPLETE (silhouette differentiation).**
+  - Generator: `output/tools/LTG_TOOL_byte_expression_sheet_v006.py`
+  - Output: `output/characters/main/LTG_CHAR_byte_expression_sheet_v006.png` (712×1280px)
+  - Fixes: ALARMED arm_x_scale 1.5→2.0, RELUCTANT JOY arm asymmetry increased,
+    POWERED DOWN arm_x_scale 0.7→0.20 (limp), RESIGNED arm_x_scale 0.50→0.25 (defeated).
+  - Silhouette (RPD full): worst pair still 90.2% (RELUCTANT JOY↔RESIGNED).
+    Root cause: Byte's oval body at 88px dominates column projection at 240px panel width.
+    Arm changes register visually but not in RPD measurement. Known tool limitation for
+    small oval characters.
+
+- **Luma v011 DOUBT VARIANT added (Lee Tanaka C38 brief + Alex Chen power-balance).**
+  - Slot 7: "THE NOTICING — DOUBT" — same scene, reduced conviction.
+  - Eyes disagree: l_open=1.0 (certain), r_open=0.88 + brow_furrow_r (hedging).
+  - Mouth: `doubt_corner` style — right corner slightly down, lower lip present.
+  - Body: backward lean (-HR*0.03), no cx_offset (doubt pulls back vs chin-forward certainty).
+  - Chin-touch (`noticing_hand_v010=True`) preserved per brief.
+  - DETERMINED updated: body_tilt -HR*0.08 (forward lean, weight on front foot).
+  - THE NOTICING updated: cx_offset +HR*0.02 (chin-forward thrust per Alex Chen note).
+  - DOUBT VARIANT silhouette gate: panel 7 appears in NO WARN/FAIL pairs → RPD vs THE NOTICING
+    well below 70% (below WARN threshold). Lee Tanaka brief required ≤82% — strong PASS.
+  - Face test gate: PASS (FOCUSED DET., DETERMINED+, EYES ONLY).
+  - Final v011 output: 1200×900px, 8 expressions, 1 blank slot.
+
+- **Ideabox C38 submitted.** `ideabox/20260329_maya_santos_squint_vs_wince_eye_test_tool.md`
+  - Idea: lid geometry diagnostic for face test tool (distinguish wince/squint/neutral lid).
+
+- **Inbox archived.** All 3 C38 messages → `inbox/archived/`.
+- **Completion report sent** to Alex Chen's inbox (20260329_2300_maya_c38_completion.md).
+  Note: report sent before DOUBT VARIANT was added. Alex has the full list of deliverables.
+
+## KEY LESSON C38: squint_top_r implementation
+- For "focusing squint" (top lid drops): DO NOT use r_open to scale eye height.
+  r_open scales symmetrically → wince (not squint).
+  Instead: draw full eye, overdraw top portion with BG color, draw lid line at cutoff.
+  Pass `panel_bg` as parameter through render_character → draw_eyes_full.
+- Parameter added: `squint_top_r: True` in eye spec, `bg_color` param in draw_eyes_full().
+
+## ACTIVE TOOL STATUS (C38 — COMPLETE)
+- Silhouette tool: `LTG_TOOL_expression_silhouette_v003.py` — RPD metric, `--output-zones` available
+- Luma current: `LTG_CHAR_luma_expressions_v011.png` (right eye squint fixed + DOUBT VARIANT slot 7)
+  - Generator: `LTG_TOOL_luma_expression_sheet_v011.py` — all C38 changes complete, run confirmed
+- Cosmo current: `LTG_CHAR_cosmo_expression_sheet_v007.png` (SKEPTICAL arms visible)
+- Byte current: `LTG_CHAR_byte_expression_sheet_v006.png` (arm differentiation improved)
+
+---
+
 ## Cycle 37 Lessons — COSMO v006 + SILHOUETTE --output-zones + LUMA v010
 
 - **Cosmo expression sheet v006 COMPLETE (S003 compliance fix).**

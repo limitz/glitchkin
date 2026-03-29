@@ -1,6 +1,6 @@
 {
-  "cycle": "C37",
-  "run_ts": "2026-03-29 22:04",
+  "cycle": "C38",
+  "run_ts": "2026-03-29 22:25",
   "sections": {
     "render_qa": {
       "section": "Render QA",
@@ -49,7 +49,7 @@
     "stub_linter": {
       "section": "Stub Linter",
       "overall": "PASS",
-      "pass": 164,
+      "pass": 166,
       "warn": 0,
       "fail": 0,
       "missing": [],
@@ -142,19 +142,17 @@
     },
     "readme_sync": {
       "section": "README Sync",
-      "overall": "WARN",
-      "pass": 158,
-      "warn": 1,
+      "overall": "PASS",
+      "pass": 160,
+      "warn": 0,
       "fail": 0,
       "missing": [],
-      "flagged": [
-        "  - UNLISTED: `LTG_TOOL_color_qa_c37_runner.py` (on disk, not in README Script Index)"
-      ]
+      "flagged": []
     }
   },
   "totals": {
-    "pass": 339,
-    "warn": 39,
+    "pass": 343,
+    "warn": 38,
     "fail": 0
   }
 }

@@ -20,6 +20,7 @@ Cycle 37. No prior history on this project.
 - VOID_BLACK = (10, 10, 20) — deep digital space
 - SUNLIT_AMB = (212, 146, 58) — Real World warm midtone
 - WARM_CREAM = (250, 240, 220) — Real World primary light
+- **LUMA_HOODIE = (230, 100, 26) = #E6641A — CANONICAL ORANGE** (was wrongly slate blue in C37)
 
 ## Key Assets Relevant to Boarding
 - Style Frames: output/color/style_frames/ (SF01–SF04)
@@ -27,11 +28,18 @@ Cycle 37. No prior history on this project.
 - Environments: output/backgrounds/environments/
 - Story context: check output/production/ for any story bible or pitch notes
 
-## My Work — Cycle 37
-- **LTG_SB_pilot_cold_open_v001.py** — 6-panel key-beat board for pilot cold open
-  - Output: output/storyboards/LTG_SB_pilot_cold_open_v001.png (1136×630px)
-  - 3×2 contact sheet, arc-color borders
-  - P1 WIDE ESTABLISHING / P2 OTS CRT-spotting / P3 INSERT ECU glitch / P4 MCU push-in / P5 ECU two-world touch / P6 MCU THE NOTICING
+## My Work
+- **LTG_SB_pilot_cold_open_v001.py** — C37 original (6-panel contact sheet, had hoodie/W004 bugs)
+- **LTG_SB_pilot_cold_open_v002.py** — C38 fixed version
+  - Output: output/storyboards/LTG_SB_pilot_cold_open_v002.png (1136×630px)
+  - All P1 critic/staging fixes applied (see below)
+
+## C38 Panel State
+- **v002 done**: hoodie orange, W004 fixed, P3 polys, P4 direction, P6 brow/lid/catch fixed
+- **P01/P12/P13 BLOCKED**: waiting on Alex Chen cold open canon decision (bible=school/day vs my board=night/den)
+  - P01: add neighborhood context (reads as isolated house)
+  - P12: reframe to intimate two-shot (not wide — loses comedy weight)
+  - P13: symmetrical Luma/Byte mirror composition (thematic fulcrum of pitch)
 
 ## Lessons Learned — Cycle 37
 - Existing panel tools (LTG_TOOL_sb_panel_a101_v001.py pattern) use PW=800, PANEL_H=600 with separate caption bar — solid reference for next panels
@@ -43,13 +51,21 @@ Cycle 37. No prior history on this project.
 - ARC color border system: warm amber=QUIET, curious cyan=CURIOUS/DISCOVERY, magenta=TENSE, bright cyan=CORE/PITCH-BEAT
 - Image size rule enforced: use img.thumbnail((1280, 1280), Image.LANCZOS) before save
 
+## Lessons Learned — Cycle 38
+- **Always verify character color spec before submitting** — LUMA_HOODIE must be (230,100,26) canonical orange. Never guess; check production_bible.md or character sheets.
+- **W004 rule**: after ANY img.paste() or sheet.paste() call, immediately add `draw = ImageDraw.Draw(img)` — stale draw object is a code defect even if output appears correct
+- **Glitchkin pixel shapes**: ALL formation pixels must be 4-7 sided irregular polygons via draw_irregular_poly() — no rectangles. Applies to pixel clusters AND pixel trails (Cycle 11 standard).
+- **P4 intrusion directionality**: "cyan bleeds in" requires a visible SOURCE POINT (where on the screen) + a directional VECTOR (which way it travels toward character). Ambient glow alone is insufficient.
+- **P6 brow differential**: left brow apex must be ≥8px (target 10-12px) above right brow line at MCU scale. Measure in pixel coords: le_cy-36 vs re_cy-22 gap should be ≥8.
+- **P6 eye lid grammar**: top lid drops = focusing squint (correct for this beat). Bottom lid rises = wince (wrong). Check Takeshi Mori's note in critique_15.
+- **P6 iris catch directionality**: screen-side eye (left, in our P6) should have stronger/larger cyan catch than the far eye.
+- **Blocked items must be reported clearly**: when P2 work is dependency-blocked, send a clear message to the relevant decision-maker (Alex Chen) with exactly what you're waiting for.
+
 ## My Job
 Create key-beat storyboard panels for the pitch. Establish visual grammar for action, comedy timing, and emotional transitions. Assets go in output/storyboards/ with naming LTG_SB_*.
 
 ## Startup Sequence
-1. Read CLAUDE.md
-2. Read PROFILE.md (this is me)
-3. Read this MEMORY.md
-4. Read output/tools/README.md
-5. Read inbox/
-6. Read ROLE.md if present
+1. Read ROLE.md if present
+2. Read this MEMORY.md
+3. Read output/tools/README.md
+4. Read inbox/

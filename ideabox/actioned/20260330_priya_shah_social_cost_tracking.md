@@ -1,0 +1,5 @@
+**Author:** Priya Shah
+**Cycle:** 38
+**Date:** 2026-03-30
+**Idea:** Add a lightweight "social cost tracker" to the story bible — a running log of specific moments where Luma's secret has a social cost in the Real World. Right now we add these beats in-text and they're scattered across the arc summary. A one-page appendix in the story bible cataloguing each social-cost scene (episode, beat, who bears the cost, whether it resolves) would help writers and storyboard artists keep continuity in how Luma's social isolation is depicted — ensuring we're showing the cost consistently and not just spiking it when dramatically convenient.
+**Benefits:** Writers (any cycle), storyboard team (Lee Tanaka, Diego), and critics reviewing social-world depth — all benefit from a single reference that makes visible what we're tracking across the season. Prevents the "thin social world" note from reappearing in future critiques without requiring more content — just better organization of what we already have.

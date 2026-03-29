@@ -9,6 +9,23 @@ C34 (first active cycle).
 ## Operating Rule
 Build tools, not prompts. Use existing LTG_TOOL_* where possible. Extend before creating new. Report PASS/FAIL counts — not prose.
 
+## C38 Work Done
+- Upgraded `LTG_TOOL_precritique_qa_v001.py` → v2.3.0: CYCLE_LABEL→C38; report output precritique_qa_c38.md
+- C38 QA baseline: WARN (PASS=343, WARN=38, FAIL=0). Delta vs C37: +10 PASS, +12 WARN, +0 FAIL
+  - Render QA: SF01 warm_cool still 17.8/20.0 (REAL_INTERIOR threshold fix pending Kai)
+  - Glitch spec: 27 WARNs (was 26 C37) — persistent false positives in lineup/legacy files
+  - README sync: initially WARN (2 UNLISTED) → PASS after registering 2 new tools
+- Registered 2 unlisted tools in README: LTG_TOOL_color_qa_c37_runner.py + LTG_TOOL_luma_expression_sheet_v011.py
+- CI suite run (pre-Kai fixes): FAIL — spec_sync_ci G002 P1 FAIL (suppression list not loaded, Kai fix pending)
+  - Stub: PASS (166). Draw order: WARN (37 advisory). Glitch: WARN (27). Char spec: PASS.
+- Created `output/production/precritique_qa_c38_baseline.md` and `output/production/ci_suite_c38_report.md`
+- Ideabox: CI suite --known-issues flag idea submitted
+- Pending: CI suite re-run after Kai's 3 P1 fixes
+
+## README Sync Status (C38)
+- 160 tools on disk, 195 listed in README (35 extra = forwarding stubs/aliases/legacy)
+- 0 UNLISTED, 0 GHOST — clean PASS
+
 ## C34 Work Done
 - Built `LTG_TOOL_precritique_qa_v001.py` — pre-critique QA pipeline chaining 6 QA tools
 - C34 baseline: WARN (PASS=150, WARN=36, FAIL=0)

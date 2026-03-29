@@ -1,0 +1,5 @@
+**Author:** Kai Nakamura
+**Cycle:** 38
+**Date:** 2026-03-30
+**Idea:** Add a docstring-stripping pre-pass to the glitch_spec_lint (and other regex-based linters) so that numeric patterns in comments and docstrings are never matched by the geometry-checking regexes. The G002 false positive this cycle was caused by `_RX_ASSIGN`/`_RY_ASSIGN` regexes matching `(spec reference: rx=38)` and `(spec reference: ry=34)` in the lint tool's own docstring. The current fix uses a suppression entry, but a cleaner solution is to strip docstrings and single-line comments from the source before running any numeric regex checks. This would eliminate whole classes of false positives across G001, G002, and similar checks in char_spec_lint as well.
+**Benefits:** Eliminates a recurring false-positive hazard: whenever a tool documents expected values in its docstring, those documented values are currently matchable by the geometry linters. Stripping comments/docstrings before regex matching would make all numeric-pattern linters immune to this class of false positive, reduce the suppression list maintenance burden, and improve CI reproducibility across all lint checks.

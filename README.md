@@ -21,9 +21,9 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 
 ## Style Frames
 
-### SF01 — Discovery (v005)
-*Luma at the CRT — warm lamp from upper-left, cool CRT rim from the right. Procedural wobble outlines, variable stroke, face lighting.*
-![SF01 Discovery](output/color/style_frames/LTG_COLOR_styleframe_discovery_v005.png)
+### SF01 — Discovery (v006)
+*C38: Sight-line fixed — Luma's gaze now locked on Byte, open-palm reach replaces pointing, forward lean. Right brow DOUBT VARIANT kink corrected.*
+![SF01 Discovery](output/color/style_frames/LTG_COLOR_styleframe_discovery_v006.png)
 
 ### SF02 — Glitch Storm (v008)
 *C36: Fill light direction corrected (upper-right, matching storm crack position), per-character silhouette mask applied — no background bleed.*
@@ -44,9 +44,9 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 ### Full Lineup (v007 — Byte shadow + Miri slipper fixes)
 ![Character Lineup](output/characters/main/LTG_CHAR_character_lineup_v007.png)
 
-### Luma — Expression Sheet (v010)
-*C37: THE NOTICING moved to center slot, stronger brow asymmetry, finger-to-lower-lip gesture, lateral gaze.*
-![Luma Expressions](output/characters/main/LTG_CHAR_luma_expressions_v010.png)
+### Luma — Expression Sheet (v011)
+*C38: Right eye squint fixed (top lid drops). DOUBT VARIANT added — disagreeing eyes, corrugator kink, backward lean. Chin-forward thrust for visual power.*
+![Luma Expressions](output/characters/main/LTG_CHAR_luma_expressions_v011.png)
 
 ### Luma — Turnaround (v004 — construction master, 3.2 heads)
 ![Luma Turnaround](output/characters/main/turnarounds/LTG_CHAR_luma_turnaround_v004.png)
@@ -54,16 +54,16 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 ### Luma — Color Model (v002)
 ![Luma Color Model](output/characters/color_models/LTG_COLOR_luma_color_model_v002.png)
 
-### Byte — Expression Sheet (v005 — UNGUARDED WARMTH)
-*Star+Heart eye pairing (SOFT_GOLD + UV_PURPLE), gold confetti — Byte's softest state.*
-![Byte Expressions](output/characters/main/LTG_CHAR_byte_expression_sheet_v005.png)
+### Byte — Expression Sheet (v006)
+*C38: Silhouette gate run, worst-pair RPD fixed.*
+![Byte Expressions](output/characters/main/LTG_CHAR_byte_expression_sheet_v006.png)
 
 ### Byte — Turnaround (v001)
 ![Byte Turnaround](output/characters/main/turnarounds/LTG_CHAR_byte_turnaround_v001.png)
 
-### Cosmo — Expression Sheet (v006)
-*C37: Glasses tilt corrected 10°→7° per spec. CI PASS.*
-![Cosmo Expressions](output/characters/main/LTG_CHAR_cosmo_expression_sheet_v006.png)
+### Cosmo — Expression Sheet (v007)
+*C38: SKEPTICAL arm geometry fixed — both arms now read outside body silhouette.*
+![Cosmo Expressions](output/characters/main/LTG_CHAR_cosmo_expression_sheet_v007.png)
 
 ### Cosmo — Turnaround (v002)
 ![Cosmo Turnaround](output/characters/main/turnarounds/LTG_CHAR_cosmo_turnaround_v002.png)
@@ -97,8 +97,9 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 ### Millbrook Street (v002)
 ![Millbrook Street](output/backgrounds/environments/LTG_ENV_millbrook_main_street_v002.png)
 
-### School Hallway (v002)
-![School Hallway](output/backgrounds/environments/LTG_ENV_school_hallway_v002.png)
+### School Hallway (v003)
+*C38: Figure-ground fix — locker lavender was identical to Cosmo's cardigan. Remapped for ~34-unit value separation.*
+![School Hallway](output/backgrounds/environments/LTG_ENV_school_hallway_v003.png)
 
 ---
 
@@ -126,7 +127,7 @@ Three-world palette system:
 
 ---
 
-## Team (Cycle 36)
+## Team (Cycle 38)
 
 | Member | Role | Status |
 |--------|------|--------|
@@ -147,37 +148,37 @@ Three-world palette system:
 
 ## Progress
 
-- **Work cycles:** 37 | **Critique cycles:** 15
-- **Next:** Cycle 38
-- **Ideabox:** 12 ideas actioned C37 (all queued C38)
+- **Work cycles:** 38 | **Critique cycles:** 15
+- **Next:** Cycle 39 (critique at C39)
+- **Ideabox:** 13 ideas actioned C38, 1 rejected
 - **Critics panel:** 20 total (15 professionals + 5 audience)
 - **Team:** 12 active
-- **QA baseline:** 333 PASS / 26 WARN / 0 FAIL
+- **QA baseline:** 343 PASS / 38 WARN / 0 FAIL
 
 ### Pitch Package Status
 | Asset | Latest | Notes |
 |-------|--------|-------|
-| SF01 Discovery | v005 | unchanged |
+| **SF01 Discovery** | **v006** | C38: sight-line fixed, visual power boost |
 | SF02 Glitch Storm | v008 | unchanged |
 | SF03 The Other Side | v005 | unchanged |
 | SF04 Luma + Byte | v004 | unchanged |
-| Luma expressions | **v010** | C37: THE NOTICING center slot, stronger asymmetry, lip-touch gesture |
+| **Luma expressions** | **v011** | C38: right eye squint fixed, DOUBT VARIANT added |
 | Luma turnaround | v004 | unchanged |
-| Byte expressions | v005 | unchanged |
-| Cosmo expressions | **v006** | C37: glasses tilt fixed 10°→7°, CI PASS |
-| Miri expressions | v004 | unchanged |
+| **Byte expressions** | **v006** | C38: silhouette gate, RPD fixed |
+| **Cosmo expressions** | **v007** | C38: SKEPTICAL arm geometry fixed |
+| **Miri expressions** | **v004** | C38: slipper color CHAR-M-11 corrected, regenerated |
 | Character lineup | v007 | unchanged |
 | Logo | v001 | Canonical |
-| Kitchen | v004 | unchanged |
+| Kitchen | v004 | unchanged (v005 Dual-Miri plant: C39) |
 | Tech Den | v004_warminjected | unchanged |
-| **Living Room** | **v001** | C37: NEW — CRT focal point, QA PASS |
+| Living Room | v001 | unchanged |
 | Glitch Layer | v003 | unchanged |
-| School Hallway | v002 | unchanged |
+| **School Hallway** | **v003** | C38: figure-ground fix (locker vs Cosmo cardigan) |
 | Millbrook Street | v002 | unchanged |
-| **Storyboard** | **cold open v001** | C37: NEW — 6-panel pilot cold open |
-| **Story Bible** | **v001** | C37: NEW — "Dead Pixels" pilot, world rules, character voices |
-| **Motion — Luma** | **v001** | C37: NEW — 4-panel motion spec sheet |
-| **Motion — Byte** | **v001** | C37: NEW — 3-panel motion spec sheet |
+| **Storyboard** | **cold open v002** | C38: hoodie fix, W004 fix, P4/P6 staging |
+| **Story Bible** | **v002** | C38: social world depth, Luma doubt arc, Byte non-verbal |
+| **Motion — Luma** | **v002** | C38: CG polygon fix, shoulder mass, annotation fix |
+| **Motion — Byte** | **v002** | C38: crack scar side, glow radius annotated |
 
 ---
 
@@ -189,4 +190,4 @@ All output generated with Python + PIL (open source only). Generators in `output
 
 ---
 
-*Cycle 37 — 2026-03-30*
+*Cycle 38 — 2026-03-29*

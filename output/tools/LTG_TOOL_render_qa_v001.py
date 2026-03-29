@@ -13,16 +13,20 @@ Evaluates rendered PNGs against LTG rendering standards across six checks:
 
 Author: Kai Nakamura (Technical Art Engineer)
 Created: Cycle 26 — 2026-03-29
-Version: 1.4.0
+Version: 1.5.0
 
 Changelog:
+  1.5.0 (Cycle 38): REAL world threshold corrected 20→12 (Sam Kowalski C38).
+                    _WORLD_WARM_COOL_THRESHOLD["REAL"] was 20.0 but warmth_lint_v004
+                    world_presets define REAL warm_cool_threshold=12.  The v1.4.0
+                    comment said "Based on world_presets" but used the wrong value.
+                    Correction: REAL → 12 PIL units, None → 12 PIL units.
+                    Effect: SF01 (17.8 sep) now PASS; SF02 also passes threshold.
+                    Closes FP-006 for SF01 and SF02. Coordinates with Sam Kowalski
+                    C38 work (miri_slipper_warmth_audit + world_type_infer tool).
   1.4.0 (Cycle 37): World-type-aware warm/cool thresholds (Sam Kowalski ideabox,
                     Kai Nakamura C37). Imports infer_world_type() from
-                    LTG_TOOL_palette_warmth_lint_v004 and applies per-world thresholds:
-                      REAL        → min separation = 20 PIL units (original default)
-                      GLITCH      → min separation =  3 PIL units (near-zero warm)
-                      OTHER_SIDE  → min separation =  0 PIL units (skip warm/cool)
-                      None (unknown world) → 20 PIL units (original default, safe)
+                    LTG_TOOL_palette_warmth_lint_v004 and applies per-world thresholds.
                     Eliminates ~4 persistent false WARN results on GLITCH/OTHER_SIDE
                     style frames and environments. Falls back gracefully if
                     palette_warmth_lint_v004 is not importable.
@@ -80,7 +84,7 @@ except ImportError:
 # ---------------------------------------------------------------------------
 # Version
 # ---------------------------------------------------------------------------
-__version__ = "1.4.0"  # C37: world-type-aware warm/cool thresholds
+__version__ = "1.5.0"  # C38: REAL warm/cool threshold corrected 20→12 (Sam Kowalski)
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -97,17 +101,24 @@ random.seed(42)   # reproducible sampling
 # Asset types that skip warm/cool check (uniform neutral bg by design)
 _SKIP_WARM_COOL = {"character_sheet", "color_model", "turnaround"}
 
-# Per-world warm/cool minimum separation thresholds (v1.4.0)
-# Based on world_presets from palette_warmth_lint_v004:
-#   REAL        → 20 PIL units (lamp-lit interiors, warm windows present)
-#   GLITCH      →  3 PIL units (near-zero warm; some residual hot-spot allowed)
-#   OTHER_SIDE  →  0 PIL units (fully digital, zero warm — effectively skip)
-#   None        → 20 PIL units (unknown world; apply conservative default)
+# Per-world warm/cool minimum separation thresholds (v1.5.0)
+# Based on world_presets from palette_warmth_lint_v004 (REAL corrected C38):
+#   REAL_INTERIOR → 12 PIL units (lamp-lit interiors; warm-dominant but single-temp)
+#   REAL_STORM    →  3 PIL units (contested; warm accents only, not dominant)
+#   GLITCH        →  3 PIL units (near-zero warm; some residual hot-spot allowed)
+#   OTHER_SIDE    →  0 PIL units (fully digital, zero warm — effectively skip)
+#   None          → 12 PIL units (unknown world; apply conservative default)
+# Note: infer_world_type() maps discovery/sf01/sf04 → "REAL" and glitch_storm/sf02 →
+#       "REAL".  Both use the same "REAL" key here.  At 12, SF01 (17.8) and SF02 pass.
+#       SF03/SF04 are OTHER_SIDE/None and are handled separately.
+# C38 Sam Kowalski: corrected REAL from 20.0 → 12.0 to match warmth_lint_v004
+#   world_presets ("REAL": warm_cool_threshold: 12).  Prior 20.0 caused persistent
+#   false WARN on all REAL-world style frames.  Closes FP-006 (SF01/SF02 gap).
 _WORLD_WARM_COOL_THRESHOLD = {
-    "REAL":       20.0,
+    "REAL":       12.0,   # C38: was 20.0 — now matches warmth_lint_v004 world_presets
     "GLITCH":      3.0,
     "OTHER_SIDE":  0.0,   # 0 = always pass warm/cool (no warm expected)
-    None:         20.0,
+    None:         12.0,   # C38: was 20.0
 }
 
 

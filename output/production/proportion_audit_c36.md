@@ -28,6 +28,7 @@
 | `LTG_TOOL_style_frame_03_other_side_v005.py` | Luma: pixel-art style (organic spec N/A) | `—` | `eye_w = max(4, head_w // 4)` | — | **N/A** |
 | `LTG_TOOL_styleframe_discovery_v004.py` | Luma: organic style | `head_r = p(72)` | `ew  = int(head_r * 0.22)` | 0.2200 | **PASS** |
 | `LTG_TOOL_styleframe_discovery_v005.py` | Luma: organic style | `head_r = p(72)` | `ew = int(head_r * 0.22)` | 0.2200 | **PASS** |
+| `LTG_TOOL_styleframe_discovery_v006.py` | Luma: organic style | `head_r = p(72)` | `ew = int(head_r * 0.22)` | 0.2200 | **PASS** |
 | `LTG_TOOL_styleframe_luma_byte_v001.py` | Luma: organic style | `—` | `—` | — | **N/A (no ew found)** |
 | `LTG_TOOL_styleframe_luma_byte_v002.py` | Luma: organic style | `—` | `—` | — | **N/A (no ew found)** |
 | `LTG_TOOL_styleframe_luma_byte_v003.py` | Luma: organic style | `—` | `—` | — | **N/A (no ew found)** |
@@ -37,13 +38,13 @@
 
 ## Summary
 
-- **PASS:** 3
+- **PASS:** 4
 - **ASYM-PASS:** 0 (asymmetric eyes, both within spec)
 - **ASYM-WARN:** 2 (asymmetric eyes, L/R differ by > 10%)
 - **WARN:** 1
 - **FAIL:** 0
 - **N/A:** 14
-- **Total files scanned:** 20
+- **Total files scanned:** 21
 
 ---
 

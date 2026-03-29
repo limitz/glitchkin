@@ -29,7 +29,7 @@ Exit codes:
 
 Author: Morgan Walsh (Pipeline Automation Specialist)
 Created: Cycle 34 — 2026-03-29
-Version: 2.2.0 (Cycle 37: CYCLE_LABEL→C37; SF02 updated to v008; report renamed precritique_qa_c37.md)
+Version: 2.3.0 (Cycle 38: CYCLE_LABEL→C38; report renamed precritique_qa_c38_baseline.md)
 """
 
 import os
@@ -49,7 +49,7 @@ PALETTE_MD  = REPO_ROOT / "output" / "color" / "palettes" / "master_palette.md"
 BASELINE_JSON = TOOLS_DIR / "qa_baseline_last.json"
 
 # Cycle label — update each cycle
-CYCLE_LABEL = "C37"
+CYCLE_LABEL = "C38"
 
 if str(TOOLS_DIR) not in sys.path:
     sys.path.insert(0, str(TOOLS_DIR))

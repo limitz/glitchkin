@@ -4,8 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present.
 
 ## Status
-**Cycle 37 complete. Critique 15 complete. Work cycles: 37. Critique cycles: 15.**
-**Next critique at C40 (every 3 work cycles).**
+**Cycle 38 complete. Critique 15 complete. Work cycles: 38. Critique cycles: 15.**
+**Next critique at C39 (every 3 work cycles — C39 is the cycle).**
 
 ## Active Team (12 slots)
 
@@ -19,12 +19,12 @@ Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are m
 | Jordan Reed | Style Frame Art Specialist | Alex Chen |
 | Lee Tanaka | Character Staging & Visual Acting Specialist | Alex Chen |
 | Morgan Walsh | Pipeline Automation Specialist | Alex Chen |
-| Diego Vargas | Storyboard Artist (joined C37) | Alex Chen |
-| Priya Shah | Story & Script Developer (joined C37) | Alex Chen |
-| Hana Okonkwo | Environment & Background Artist (joined C37) | Alex Chen |
-| Ryo Hasegawa | Motion & Animation Concept Artist (joined C37) | Alex Chen |
+| Diego Vargas | Storyboard Artist | Alex Chen |
+| Priya Shah | Story & Script Developer | Alex Chen |
+| Hana Okonkwo | Environment & Background Artist | Alex Chen |
+| Ryo Hasegawa | Motion & Animation Concept Artist | Alex Chen |
 
-**Agent scheduling:** Max 8 simultaneous. Launch next agent immediately when a slot opens. Dependency-blockers go first regardless of task size.
+**Agent scheduling:** Max 8 simultaneous. Launch next agent immediately when a slot opens. Dependency-blockers go first. NEVER exceed 8 — do not launch agent 9 until one of the first 8 completes.
 
 ## Image Output Rule (MANDATORY)
 **Hard limit: ≤ 1280px in both dimensions.** Use `img.thumbnail((1280,1280), Image.LANCZOS)` before saving.
@@ -35,14 +35,14 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 ## Critics Panel (20 total)
 - 15 industry professionals + 5 audience (Zoe Park age 11, Marcus Okafor parent, Jayden Torres age 13, Eleanor Whitfield grandparent, Taraji Coleman educator)
 - **Rotate each cycle. Min 1 audience critic per critique cycle.**
-- C14 critics: Daisuke, Priya N, Sven, Chiara, Nkechi
-- C15 critics (just ran): Takeshi Mori, Ingrid Solberg, Reinhardt Böhm, Zoe Park, Taraji Coleman
+- C15 critics (last ran): Takeshi Mori, Ingrid Solberg, Reinhardt Böhm, Zoe Park, Taraji Coleman
+- C16 candidates: Daisuke, Priya N, Sven, Chiara, Nkechi (+ 1 audience not from C15)
 
-## Pitch Package Status — POST CYCLE 37
+## Pitch Package Status — POST CYCLE 38
 
 ### Style Frames
-- **SF01 Discovery**: v005
-- **SF02 Glitch Storm**: v008 (fill light fixed C36)
+- **SF01 Discovery**: v006 (sight-line fixed, gaze on Byte, reaching palm, DOUBT VARIANT brow)
+- **SF02 Glitch Storm**: v008
 - **SF03 Other Side**: v005
 - **SF04 Luma+Byte**: v004
 
@@ -50,86 +50,52 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 - **LTG_BRAND_logo_v001.png** — DECIDED C25
 
 ### Characters
-- Luma: **expr v010 NEW C37** (THE NOTICING: center slot, stronger asymmetry, lip-touch gesture), turnaround v004, color model v002
-- Byte: expr v005, turnaround v001, color model v001
-- Cosmo: **expr v006 NEW C37** (glasses tilt fixed 10°→7°, CI PASS)
-- Miri: expr v004
+- Luma: **expr v011 NEW C38** (right eye squint fixed top-lid-drops, DOUBT VARIANT slot 7, chin-forward thrust), turnaround v004, color model v002
+- Byte: **expr v006 NEW C38** (silhouette gate run, RPD fixed), turnaround v001, color model v001
+- Cosmo: **expr v007 NEW C38** (SKEPTICAL arm geometry fixed)
+- Miri: **expr v004 regenerated C38** (CHAR-M-11 slipper color corrected #5A7A5A→#C4907A)
 - Glitch: expr v003
 - Character lineup: v007
 
 ### Environments
-- Kitchen: v004
+- Kitchen: v004 (v005 Dual-Miri plant queued C39)
 - Tech Den: v004_warminjected
 - Glitch Layer: v003
-- School Hallway: v002
+- **School Hallway: v003 NEW C38** (figure-ground fix — locker vs Cosmo cardigan)
 - Millbrook Street: v002
-- **Living Room: v001 NEW C37** (CRT focal point, QA PASS)
+- Living Room: v001
 
-### New Asset Categories (C37)
-- **Storyboards**: `output/storyboards/LTG_SB_pilot_cold_open_v001.png` (6-panel cold open)
-- **Story**: `output/production/story/story_bible_v001.md` — pilot "Dead Pixels", full world rules, character voices
-- **Motion**: `output/characters/motion/LTG_CHAR_luma_motion_v001.png`, `LTG_CHAR_byte_motion_v001.png`
+### Storyboards
+- **Cold Open: v002 NEW C38** (hoodie orange, W004 fixed, P4/P6 staging improved)
+- Canon: Night/Grandma's den. School/daytime = pre-credits Act 1 tag.
 
-## QA Baseline (C37)
-precritique_qa v2.2.0: **333 PASS / 26 WARN / 0 FAIL**
-CI suite: WARN (0 hard FAILs). SF03 warm/cool: PASS (render_qa v1.4.0).
+### Story
+- **Story Bible: v002 NEW C38** (social world: Dev Patel-Huang + Preethi Okafor, Luma doubt arc, Byte non-verbal finale)
+- Cold open pending v003 (canon now decided — night/den)
+- Glitch role: Corruption's avatar (decided C38)
 
-## Critique 15 — Key Findings (C38 priorities)
+### Motion
+- **Luma motion: v002 NEW C38** (CG polygon fix, shoulder mass, hair annotation)
+- **Byte motion: v002 NEW C38** (crack scar side, glow radius annotated)
 
-### P1 Blockers
-- **Story bible cold open contradicts storyboard** — bible=school/daytime, board=night/Grandma's den. Alex must decide canon before any work proceeds. → Alex + Priya + Diego
-- **Pitch package index frozen at C24** — 13 cycles absent. → Alex
-- **CI suite report non-reproducible** — spec_sync_ci doesn't load suppression list, G002 surfaces as P1 FAIL. → Kai
-- **Luma motion spec: CG outside support polygon** — character would fall. → Ryo
-- **Storyboard hoodie wrong color** — slate blue vs canonical orange. Spec violation in pitch board. → Diego
-- **Naming convention violations** — CHAR/SB prefixed generators in output/tools/. → Kai
-- **Luma v010 silhouette FAIL** — 8 FAIL pairs at 97.9% RPD. Not tested before submission. → Maya
-- **W004 in storyboard generator** — stale draw object after img.paste(). → Diego
+## QA Baseline (C38)
+precritique_qa v2.3.0: **343 PASS / 38 WARN / 0 FAIL**
+CI suite: PASS (suppression fix resolved G002 false positive).
+SF01 warm/cool: PASS (17.8 > REAL_INTERIOR threshold 12.0).
 
-### P2
-- Dual-Miri visual seed absent from all images (Zoe + Ingrid both flagged)
-- Luma psychology too resolved — must doubt in the moment of being right (Taraji)
-- Byte verbal finale wrong for character — show don't tell (Taraji)
-- THE NOTICING right-eye lid: bottom-lid rise (wince) not top-lid drop (squint) (Takeshi)
-- SF01 no sight-line: Luma pointing not seeing (Ingrid)
-- Luma visually outperformed by Byte — protagonist losing to supporting cast (Zoe)
-- Glitch reads as Tamagotchi not a threat (Zoe)
-- Cosmo SKEPTICAL silhouette collapse — 3+ cycles unresolved (Takeshi)
+## C38 Key Decisions
+- **Cold open canon**: night/Grandma's den (Diego's storyboard). School/daytime = Act 1 pre-credits tag.
+- **Glitch character**: Corruption's avatar — named Glitchkin consumed by the Corruption. Personal Byte backstory.
+- **Dual-Miri plant**: handwritten "MIRI" fridge label in Kitchen v004→v005 (Jordan to execute C39).
 
-### C15 Scores
-- Zoe Park: 78 overall
-- Taraji Coleman: 70 overall
-- Takeshi: storyboard=54, Luma v010=67, Cosmo v006=72, Luma motion=61, Byte motion=70
-- Ingrid: story bible=78, storyboard=71, style frames=66
-- Reinhardt: multiple P1 FAILs (tool-verified)
-
-### Positives
-- SF04 strongest narrative frame (Ingrid)
-- Byte: "best thing in this pitch" (Zoe)
-- Grandma Miri doorway: best-staged emotional moment (Ingrid)
-- Dual-Miri seed: compelling when found — Zoe clocked it independently
-- Cold open escalation arc reads without words (Ingrid)
-- Byte motion timing values: production-usable (Takeshi)
-
-## C37 Key Lessons
-- **Story bible revealed**: Grandma Miri and Glitch Layer Miri share a name intentionally — season 1 finale seed. No visual plant yet. Alex flag pending.
-- **Byte shape spec inconsistency**: production_bible.md still says triangles/jagged polygons. Canonical = oval. 1-line fix queued.
-- **Glitch character narrative status**: The diamond-body "Glitch" in glitch.md has no narrative role in the story bible. Priya flagged to Alex.
-- **THE NOTICING v010**: moved to center slot, stronger. Untested by critics — remains highest risk.
-- **Motion secondary standards now canonical**: hoodie lag +0.5 beats, hair lag +1.0 beat, Byte hover 0.5Hz ±6px.
-- **Hana's dual-temp split pass**: warm/cool QA for REAL interiors requires top-half warm overlay + bottom-half cool overlay BEFORE deep shadows. 5 iterations to tune.
-
-## Open Items for C38
-1. P4/P6 storyboard refinements (Diego, per Lee)
-2. Grandma Miri / Glitch Layer Miri visual plant (Alex + Diego)
-3. production_bible.md Byte shape fix (Priya or Alex — 1 line)
-4. Glitch character narrative role clarification (Priya + Alex)
-5. SF01 warm/cool near-miss 17.8/20.0 → REAL_INTERIOR threshold fix (Sam + Kai)
-6. All 12 C37 ideabox ideas queued C38
-
-## Known Open Items (Carry-Forward)
-- Luma THE NOTICING: critics have scored 52-58 for 4+ cycles. v010 is the strongest attempt yet.
-- SF01 warm/cool: 17.8/20.0 — near-miss, REAL_INTERIOR threshold (12) would clear it.
+## Open Items for C39
+1. Diego: P01 neighborhood context, P12 two-shot reframe, P13 Luma/Byte mirror composition (unblocked)
+2. Priya: story_bible v003 (cold open night/den + Glitch = Corruption's avatar)
+3. Jordan: Kitchen v004→v005 Dual-Miri fridge label
+4. Morgan: Re-run CI suite post-Kai fixes to confirm clean result
+5. SF02 warm/cool still WARN (sep=6.5, storm scene, threshold ~3 needed)
+6. All 13 C38 ideabox ideas queued C39 (costume-bg clash lint, sight-line check, CG polygon lint, brow-diff QA, docstring stripping, CI --known-issues, palette drift hook, etc.)
+7. `my_idea_1.md` (unattributed): body-part color-index hierarchy tool for eye-inside-hair detection
 
 ## Canonical Palette
 - Byte body = GL-01b #00D4E8 BYTE_TEAL (NOT #00F0FF)
@@ -140,6 +106,7 @@ CI suite: WARN (0 hard FAILs). SF03 warm/cool: PASS (render_qa v1.4.0).
 - SF03: zero warm light; Classroom: zero Glitch palette
 - Byte shape = OVAL (NOT triangles — retired C8)
 - Cosmo glasses = 7° tilt ±2°
+- CHAR-M-11 slipper = #C4907A (NOT #5A7A5A — corrected C32, propagated C38)
 
 ## Key Output Locations
 - Style Frames: `output/color/style_frames/`
@@ -152,30 +119,29 @@ CI suite: WARN (0 hard FAILs). SF03 warm/cool: PASS (render_qa v1.4.0).
 - Pitch Package Index: `output/production/pitch_package_index.md`
 
 ## Pipeline Standards
-- Open source only: Python PIL
-- Naming: `LTG_[CATEGORY]_[descriptor]_v[###].[ext]`
+- Open source only: Python PIL (no numpy in active tools)
+- Naming: `LTG_[CATEGORY]_[descriptor]_v[###].[ext]` — everything in output/tools/ uses LTG_TOOL_* prefix
 - output/production/ files EXEMPT from LTG naming
 - After img.paste(): always refresh draw = ImageDraw.Draw(img)
 - show_guides=False for all pitch exports
 - Python 3.8 compat: `from __future__ import annotations`
+- REAL_INTERIOR warm/cool threshold = 12.0 (render_qa v1.5.0)
 
-## Shared Library (updated C37)
-`LTG_TOOL_render_qa_v001.py` — **v1.4.0 C37**. World-type-aware thresholds
-`LTG_TOOL_ci_suite_v001.py` — **C37**. All 5 CI checks in one command
-`LTG_TOOL_contact_sheet_arc_diff_v001.py` — **C37**. Panel-level diff for expression sheets
-`LTG_TOOL_warmth_inject_hook_v001.py` — **C37**. Shared hook module for env generators
-`LTG_TOOL_draw_order_lint_v002.py` — **v2.1.0 C37**. Back-pose suppression
-`LTG_TOOL_glitch_spec_lint_v001.py` — **v1.2.0 C37**. 26 FPs suppressed
-`glitch_spec_suppressions.json` — **C37**
-`LTG_TOOL_expression_silhouette_v003.py` — **C37**. --output-zones flag added
-`LTG_TOOL_sf02_fill_light_fix_c35.py` — **C37**. Resolution-independent (canvas_w/canvas_h)
-`LTG_TOOL_precritique_qa_v001.py` — **v2.2.0 C37**
-`LTG_TOOL_spec_sync_ci_v001.py` — C36
-`LTG_TOOL_palette_warmth_lint_v004.py` — C36
-`LTG_TOOL_warmth_inject_v001.py` — C36
+## Shared Library (updated C38)
+`LTG_TOOL_render_qa_v001.py` — **v1.5.0 C38**. REAL_INTERIOR threshold 12.0
+`LTG_TOOL_precritique_qa_v001.py` — **v2.3.0 C38**
+`LTG_TOOL_world_type_infer_v001.py` — **NEW C38**. Standalone world-type inference
+`LTG_TOOL_ci_suite_v001.py` — C37 (suppression fix C38 via json)
+`LTG_TOOL_spec_sync_ci_v001.py` — C38 (G002 suppression added)
+`glitch_spec_suppressions.json` — **C38** (G002 docstring FP added)
+`LTG_TOOL_luma_motion_v001.py` / `LTG_TOOL_byte_motion_v001.py` / `LTG_TOOL_pilot_cold_open_v001.py` — renamed from CHAR/SB prefixes C38
+`LTG_TOOL_contact_sheet_arc_diff_v001.py` — C37
+`LTG_TOOL_warmth_inject_hook_v001.py` — C37
+`LTG_TOOL_draw_order_lint_v002.py` — v2.1.0 C37
+`LTG_TOOL_glitch_spec_lint_v001.py` — v1.2.0 C37
+`LTG_TOOL_expression_silhouette_v003.py` — C37
+`LTG_TOOL_sf02_fill_light_fix_c35.py` — C37
 `LTG_TOOL_proportion_audit_v002.py` — C36
-`LTG_TOOL_procedural_draw_v001.py` — v1.5.0
-`LTG_TOOL_character_face_test_v001.py` — C35
 
 ## Agent Prompt Design
 Do NOT duplicate inbox content in agent prompts. Prompts = role context + startup sequence only.
@@ -183,5 +149,5 @@ Do NOT duplicate inbox content in agent prompts. Prompts = role context + startu
 ## Producer Responsibilities
 - Ideabox: action worthy ideas → actioned/, rejects → rejected/ after each cycle.
 - README.md: update after every work and critique cycle.
-- Slot filling: launch next agent immediately on completion. Dependency-blockers queue first.
+- Slot filling: launch next agent immediately on completion. Never exceed 8 simultaneous.
 - New member onboarding: update MEMORY.md with catch-up section before first assignment.

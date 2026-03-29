@@ -265,11 +265,17 @@
 - **QA runner script created:** `LTG_TOOL_color_qa_c37_runner.py` — runs full baseline + living room env. Call with `python3 output/tools/LTG_TOOL_color_qa_c37_runner.py`.
 - **FP registry updated.** FP-006 entry now shows SF03 resolved, SF01/SF02/SF04 threshold-mismatch gap documented.
 
+## Cycle 38 Lessons
+- **render_qa v1.4.0 REAL threshold was wrong.** v1.4.0 said "Based on world_presets" but used 20.0 instead of 12.0. Corrected in v1.5.0. SF01 warm/cool now PASS (sep=17.9 > 12.0). Always cross-check render_qa constants against warmth_lint_v004 world_presets when threshold values are updated.
+- **Palette fix in master_palette.md must be chased to all generators.** CHAR-M-11 #5A7A5A→#C4907A was in master_palette.md since C32 but persisted in 4 generator files for 6 cycles. After any palette correction, grep all tools/ for the old RGB tuple or hex value and fix each occurrence. Do not rely on name matches.
+- **Standalone world-type inference tool built.** `LTG_TOOL_world_type_infer_v001.py` extracts `infer_world_type()` as a standalone, stdlib-only module. Also includes "luma_byte" → REAL rule (missing from warmth_lint_v004). Use `--threshold path.png` for shell capture. CLI `--batch directory` groups by world type.
+- **SF02 storm WARN is a known false positive.** Sep=6.5 is correct for a contested storm scene. True threshold should be ~3 (REAL_STORM). Carry to next cycle — add REAL_STORM sub-type.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001. Low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan to add inline comment. Low priority.
 - SF03 v003 UV_PURPLE_MID/DARK — Jordan to add inline comment citing ENV-11/ENV-12.
 - Tech Den generator WALL_WARM slightly off from TD-01 — Jordan to add citing comment.
 - TD-10/TD-11 monitor glow alignment — Jordan to compare bg_tech_den_v002.py values vs canonical Section 8 entries. Medium priority.
-- **SF02 v007 color audit CLOSED.** SF02 v008 is current (C36 confirmed clean).
-- **Kai Nakamura: split render_qa REAL threshold** into REAL_INTERIOR=12 + REAL_STORM=3 to eliminate SF01/SF02 warm/cool WARNs. Ideabox: 20260330_sam_kowalski_render_qa_real_threshold_split.md.
+- **SF02 REAL_STORM threshold (≈3) — carry to Kai Nakamura next cycle.** Add REAL_STORM sub-type to render_qa + warmth_lint_v004.
+- **SF04 world_type=None — warmth_lint_v004 missing "luma_byte" pattern.** Fix: update warmth_lint_v004 REAL rule OR switch render_qa to import from world_type_infer_v001.
