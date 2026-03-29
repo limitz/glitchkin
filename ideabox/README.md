@@ -18,5 +18,5 @@ Create a file named `YYYYMMDD_[your_name]_[short_title].md` in this directory.
 ```
 
 ## Review
-At the end of each cycle, Alex Chen reviews all ideas and decides which ones to follow up on.
+At the end of each cycle, the **producer** reviews all ideas and decides which ones to follow up on.
 Ideas that get actioned are moved to `ideabox/actioned/`.

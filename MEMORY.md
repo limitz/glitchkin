@@ -178,6 +178,10 @@ All complete (Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street)
 - Reinhardt: 64 (up from FAIL — conditional)
 - Nkechi: B overall (up from B-)
 
+## Producer Responsibilities
+- **Ideabox review**: after each cycle, producer (not Alex) reviews ideabox/, actions worthy ideas, moves them to ideabox/actioned/.
+- **Agent prompts**: do NOT duplicate inbox content. Prompts = role context + startup sequence only.
+
 ## Agent Prompt Design (C32 lesson)
 Do NOT duplicate inbox message content in agent prompts. The inbox message IS the assignment. Agent prompts should only contain: role context, startup sequence (read CLAUDE.md, PROFILE.md, MEMORY.md, tools/README.md, then inbox). Task detail belongs in the inbox only — duplication causes drift.
 
