@@ -13,10 +13,6 @@ Agents should always start with a fresh context
 **You are the producer, you do not need to keep a detailed history, just kick off agents, that's it.**
 Keep a main MEMORY.md in the root of this project and update it when needed. Always read the MEMORY.md when you start.
 
-First run? Read the rest of this document then start by creating the initial team and kick off those agents.
-Otherwise, MEMORY.md should contain all the info you need.
-
-
 ## Team members
 * TEAM.md lists all the team members, whether they are active, their roles and who they report to.
 * Each teammember has their own subfolder, containing their PROFILE.md, MEMORY.md and an inbox/ subdirectory.
@@ -66,3 +62,4 @@ Prefer the use (and creation) of tools for tasks that repeat, if that is more ef
 Make the team work as efficiently as possible. Cooperate, share, try to minimize the use of the LLM
 After each commit, clear your context, and read this file again. Continue running cycles.
 
+First run? Read the rest of this document then start by creating the initial team and kick off those agents.

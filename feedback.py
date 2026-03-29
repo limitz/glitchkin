@@ -1,0 +1,41 @@
+#!/usr/bin/env python3
+"""Send a message to Alex Chen's inbox."""
+
+import os
+from datetime import datetime
+
+inbox = os.path.join(os.path.dirname(__file__), "alex_chen", "inbox")
+os.makedirs(inbox, exist_ok=True)
+
+print("Message to Alex Chen (end with a single '.' on its own line):")
+lines = []
+while True:
+    line = input()
+    if line == ".":
+        break
+    lines.append(line)
+
+body = "\n".join(lines).strip()
+if not body:
+    print("Empty message — aborted.")
+    exit(1)
+
+now = datetime.now()
+timestamp = now.strftime("%Y%m%d_%H%M")
+subject_slug = input("Short description for filename (e.g. fix_sf02_warmglow): ").strip()
+subject_slug = subject_slug.replace(" ", "_").lower() or "message"
+
+filename = f"{timestamp}_{subject_slug}.md"
+filepath = os.path.join(inbox, filename)
+
+content = f"""**Date:** {now.strftime("%Y-%m-%d %H:%M")}
+**From:** Producer
+**To:** Alex Chen
+
+{body}
+"""
+
+with open(filepath, "w") as f:
+    f.write(content)
+
+print(f"Message written to alex_chen/inbox/{filename}")
