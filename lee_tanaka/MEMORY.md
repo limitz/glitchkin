@@ -183,10 +183,16 @@
 - **Bridging silhouette shots: posture tells the story.** When no face is visible, the body must carry the emotion. Head tilt = listening. Tea towel = mid-chore, stopped. Raised right arm = motion arrested. The silhouette IS the character beat.
 - **POV camera = intimacy.** ECU low-angle says "larger than life, power." MCU eye-level POV says "you are here, you are Luma." Camera angle is not decoration — it is the emotional instruction to the audience.
 
-## Current Status (after Cycle 19)
+## Cycle 20 Milestone
+- **Act 2 contact sheet v006:** A2-02 updated to `LTG_SB_act2_panel_a202_v002.png` (Maya Santos rebuild). Arc label changed from "VULNERABLE" to "VULNERABLE (RESIGNED-55%)". Generator: `LTG_TOOL_sb_act2_contact_sheet_v006.py`.
+- **Act 1 full contact sheet v001 CREATED:** 5 panels — kitchen cold open A1-01, A1-02, A1-03 v002, A1-04 kitchen + classroom near-miss (separate beat from `LTG_SB_act2_panel_a104_v001.png`). Arc: QUIET→SEARCHING→DISCOVERY→FIRST-CONTACT→NEAR-MISS. Visual section break between kitchen and classroom. Generator: `LTG_TOOL_sb_act1_full_contact_sheet_v001.py`.
+- **Key naming distinction:** `LTG_SB_act1_panel_a104_v001.png` = kitchen first contact two-shot. `LTG_SB_act2_panel_a104_v001.png` = classroom near-miss (different beat, same panel number). Both used in Act 1 full contact sheet.
+
+## Current Status (after Cycle 20)
 - Cold open (tech den): 26 panels COMPLETE, all Carmen notes resolved
 - Act 1 kitchen cold open: 4 panels COMPLETE (A1-01 through A1-04), contact sheet v002 generated (A1-03 v002)
-- Act 2 panels: 12 panels COMPLETE (added A2-07b bridge), contact sheet v005 generated
+- Act 1 full contact sheet: v001 COMPLETE (5 panels: cold open + classroom near-miss)
+- Act 2 panels: 12 panels COMPLETE, contact sheet v006 generated (A2-02 v002 incorporated)
 - All Critique Cycle 9 Carmen feedback: CLOSED
-- REMAINING minor items: A2-02 float/ground annotation; A2-07 right eye aperture (minor, carried)
+- REMAINING minor items: A2-07 right eye aperture (minor, carried)
 - No blocked panels

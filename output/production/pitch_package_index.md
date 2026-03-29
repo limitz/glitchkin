@@ -2,8 +2,8 @@
 ## "Luma & the Glitchkin" — Complete Asset Inventory
 
 **Prepared by:** Jordan Reed, Background & Environment Artist / Updated by Alex Chen, Art Director
-**Date:** 2026-03-29 / Updated 2026-03-30 (Cycle 12) / Updated 2026-03-30 (Cycles 13–14–15)
-**Cycle:** 15
+**Date:** 2026-03-29 / Updated 2026-03-30 (Cycle 12) / Updated 2026-03-30 (Cycles 13–14–15) / Updated 2026-03-29 (Cycles 16–17–18) / Updated 2026-03-29 (Cycle 19)
+**Cycle:** 19
 **Purpose:** Single-document navigator for all pitch-ready assets. Use this to locate, assess, and present any component of the package. Quality grades are drawn from critic records where available.
 
 ---
@@ -53,8 +53,10 @@
 | Byte expression sheet (full) v001 | `/home/wipkat/team/output/characters/main/LTG_CHAR_byte_expression_sheet_v001.png` | Full 4×2 expression sheet: NEUTRAL/DEFAULT, GRUMPY, SEARCHING, ALARMED, RELUCTANT JOY, CONFUSED, POWERED DOWN (Cycle 13 — NEUTRAL/DEFAULT added per Dmitri P1) | Accepted (Cycle 13 — new) | 8th slot was reserved |
 | Byte expression sheet (full) v002 | `/home/wipkat/team/output/characters/main/LTG_CHAR_byte_expression_sheet_v002.png` | Full 4×2 expression sheet: all 7 v001 expressions + RESIGNED/RELUCTANT DISCLOSURE (Cycle 15 — Maya Santos A2-02 request). ↓ pixel symbol distinct from flat-line NEUTRAL. | Accepted (Cycle 15 — new) | None |
 | Byte cracked-eye glyph | `/home/wipkat/team/output/characters/main/LTG_CHAR_byte_cracked_eye_glyph_v001.png` | Dead-pixel cracked-eye glyph reference: 7×7 grid, diagonal crack fracture, dead zone upper-right, Hot Magenta crack line. 4 scales + in-eye mockups. Required for A2-07. | Accepted (Cycle 13 — new) | None |
-| Luma expression sheet v002 (refined) | `/home/wipkat/team/output/characters/main/LTG_CHAR_luma_expression_sheet_v002.png` | Refined 6-expression sheet with visible construction guides, 3-tier line weight (Cycle 17 — Maya Santos). 6 expressions: CURIOUS, DETERMINED, SURPRISED, WORRIED, DELIGHTED, FRUSTRATED. | Accepted (Cycle 17 — new) | None |
-| Grandma Miri expression sheet v001 | `/home/wipkat/team/output/characters/main/LTG_CHAR_grandma_miri_expression_sheet_v001.png` | First-ever Miri expression sheet — 5 expressions, full design elements (glasses, crow's feet, silver bun, cardigan). Closes C17 pitch gap. (Cycle 17 — Maya Santos) | Accepted (Cycle 17 — new) | None |
+| Luma expression sheet v002 (refined) | `/home/wipkat/team/output/characters/main/LTG_CHAR_luma_expression_sheet_v002.png` | Refined 6-expression sheet with visible construction guides, 3-tier line weight (Cycle 17 — Maya Santos). 6 expressions: CURIOUS, DETERMINED, SURPRISED, WORRIED, DELIGHTED, FRUSTRATED. | Superseded by v003 | Use v003 |
+| Luma expression sheet v003 | `/home/wipkat/team/output/characters/main/LTG_CHAR_luma_expression_sheet_v003.png` | DELIGHTED fix: arms raised outward to above-head level (arms-up = celebration read, distinct from SURPRISED which has no raised arms). Brow weight fix: polyline width corrected from 10→4 at 2x (~5px → ~2px output — was silhouette weight, now interior structure weight). All 6 expressions corrected. 6/6 squint test pass. 1200×900. (Cycle 19 — Maya Santos) | Accepted (Cycle 19 — new) | None |
+| Grandma Miri expression sheet v001 | `/home/wipkat/team/output/characters/main/LTG_CHAR_grandma_miri_expression_sheet_v001.png` | First-ever Miri expression sheet — 5 expressions, full design elements (glasses, crow's feet, silver bun, cardigan). Closes C17 pitch gap. (Cycle 17 — Maya Santos) | Superseded by v002 | Use v002 |
+| Grandma Miri expression sheet v002 | `/home/wipkat/team/output/characters/main/LTG_CHAR_grandma_miri_expression_sheet_v002.png` | Ground-up rebuild. 5 full-body expressions with distinct posture silhouettes: WARM/WELCOMING (A-frame arms), SKEPTICAL/AMUSED (arms crossed, hip-tilt), CONCERNED (asymmetric arm heights, forward lean), SURPRISED/DELIGHTED (max wingspan, backward stagger), WISE/KNOWING (compact closed arms, upright). NOSTALGIC replaced with SKEPTICAL/AMUSED per C9 direction. Dmitri's C-grade root cause closed. 3-tier line weight enforced. 1200×900. (Cycle 19 — Maya Santos) | Accepted (Cycle 19 — new) | None |
 
 ### 1.4 Color Models
 
@@ -93,7 +95,9 @@
 | Classroom BG v002 | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_classroom_bg_v002.png` | Takeshi critique fixes applied: unified dual-source lighting (warm left / cool right, clean crossover), inhabitant evidence added (wear marks, worksheets, backpack). (Cycle 16 — Jordan Reed) | Accepted (Cycle 16 — new) | None — use this version |
 | Grandma Miri's Kitchen | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_grandma_kitchen_v001.png` | Act 1 opening setting. Cozy morning kitchen with pre-digital appliances, morning light shafts, lived-in details (crossword, tea mug, toast), CRT TV through doorway. Zero Glitch palette. (Cycle 16 — Jordan Reed) | Accepted (Cycle 16 — new) | None |
 | Tech Den — Cosmo's workspace | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_tech_den_v001.png` | Act 2 key interior. Small bedroom repurposed as tech workspace. Dual CRT monitors, oscilloscope, breadboards, vintage PC shelving, circuit diagrams, cosmo's jacket on chair. Warm daylight + monitor glow dual-source lighting. 1280×720. (Cycle 17 — Jordan Reed) | Accepted (Cycle 17 — new) | None |
-| Millbrook School Hallway | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_school_hallway_v001.png` | Millbrook Middle interior. 3-point perspective, low camera angle. Sage/lavender alternating lockers, linoleum checkerboard, fluorescent grid ceiling, bulletin boards, "MILLBROOK MIDDLE" banner, daylit T-intersection. Atmospheric haze on distant end. 1280×720. (Cycle 17 — Jordan Reed) | Accepted (Cycle 17 — new) | None |
+| Millbrook School Hallway v001 | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_school_hallway_v001.png` | Millbrook Middle interior. 3-point perspective, low camera angle. Sage/lavender alternating lockers, linoleum checkerboard, fluorescent grid ceiling, bulletin boards, "MILLBROOK MIDDLE" banner, daylit T-intersection. Atmospheric haze on distant end. 1280×720. (Cycle 17 — Jordan Reed) | Superseded by v002 | Use v002 |
+| Millbrook School Hallway v002 | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_school_hallway_v002.png` | Artifact fix (top black band eliminated — ceiling now starts at y=0). Human evidence added: deep-blue backpack + shoulder strap on nearest right-wall locker, metal coat hooks with hanging warm-brown jacket, left-wall notice board with 8 colored paper rectangles. Camera VP_CY lowered from H×0.40 → H×0.22 — hallway reads taller/more institutional. 1280×720. (Cycle 19 — Jordan Reed) | Accepted (Cycle 19 — new) | None |
+| Millbrook Main Street v002 | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_millbrook_main_street_v002.png` | Power lines added: main cross-street cables 3px perspective-scaled, span wires 1px, catenary sag via parabolic curve. Road plane: full ROAD_ASPHALT solid trapezoid, sun-side lighter lane, double-yellow center dashed line (perspective-correct), crosswalk stripes, curb edges. (Cycle 19 — Jordan Reed) | Accepted (Cycle 19 — new) | None |
 | Key props doc | `/home/wipkat/team/output/backgrounds/props/key_props.md` | Prop design reference: CRT monitor, pixel face objects, key hand props | Reference | No visual prop sheets yet — medium priority gap |
 | Pixel face continuity doc | `/home/wipkat/team/output/backgrounds/props/pixel_face_continuity.md` | Continuity rules for pixel-face prop across environments | Reference | None |
 
@@ -107,14 +111,16 @@
 | Style Frame 01 — composition | `/home/wipkat/team/output/color/style_frames/compositions/frame01_discovery_composition.png` | Composition layout card for Frame 01 | Reference | None |
 | Style Frame 01 — spec doc | `/home/wipkat/team/output/color/style_frames/style_frame_01_discovery.md` | Written spec: composition, lighting, color zones | Reference | None |
 | Style Frame 02 — BG render | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v001.png` | Compositing-ready BG: night sky, UV storm masses, main crack, town silhouette, street, characters (Luma+Cosmo+Byte), storefront, 4° Dutch angle | Delivered Cycle 12 (Jordan Reed) | None |
-| Style Frame 02 — v002 composited | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v002.png` | Full character composite (Cycle 13 — Alex Chen). Byte LEFT (~28%), Luma CENTER (~45%), Cosmo RIGHT (~62%). Byte = VOID_BLACK storm variant. CORRUPT_AMBER outlines. TERRACOTTA_CYAN_LIT color fix applied. | Accepted (Cycle 13 — new) | None |
+| Style Frame 02 — v002 composited | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v002.png` | Full character composite (Cycle 13 — Alex Chen). Byte LEFT (~28%), Luma CENTER (~45%), Cosmo RIGHT (~62%). Byte = VOID_BLACK storm variant. CORRUPT_AMBER outlines. TERRACOTTA_CYAN_LIT color fix applied. | Superseded by v004 | Use v004 |
+| Style Frame 02 — v004 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v004.png` | Real shattered storefront window: structural frame with 6 panes (3 missing, 3 dirty glass), crack lines radiating from 2 impact points, glass shard debris + rubble scatter, HOT_MAGENTA highlights on frame edges. Window glow geometry: per-window downward trapezoid cone (200,160,80) at alpha 90–110 on ground below — domestic warmth vs cold storm sky. All Cycle 16 carries retained: cold confetti, Dutch angle, Byte outline, storm rims. (Cycle 19 — Jordan Reed) | Accepted (Cycle 19 — new) | None — PITCH READY |
 | Style Frame 02 — composition | `/home/wipkat/team/output/color/style_frames/compositions/frame02_glitch_storm_composition.png` | Composition layout card for Frame 02 (Glitch Storm) | Reference | BG delivered Cycle 12 |
 | Style Frame 02 — spec doc | `/home/wipkat/team/output/color/style_frames/style_frame_02_glitch_storm.md` | Written spec: composition, sky color architecture, confetti rules, Byte visibility fix | Approved for illustration (Sam Kowalski Cycle 2) | BG delivered — compositing can proceed |
 | Style Frame 03 — composition | `/home/wipkat/team/output/color/style_frames/compositions/frame03_other_side_composition.png` | Composition layout card for Frame 03 (Other Side) | Reference | None |
 | Style Frame 03 — spec doc | `/home/wipkat/team/output/color/style_frames/style_frame_03_other_side.md` | Written spec for the "Other Side" frame | Approved | None |
 | Style Frame 03 — generator spec | `/home/wipkat/team/output/production/sf03_other_side_spec.md` | Technical generator spec written by Alex Chen (Cycle 14): all RGB values, layer draw order, character placement guide, validation checklist. | Reference | None |
 | Style Frame 03 — BG ENV | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_other_side_bg_v001.png` | SF03 environment background: pure digital void space, ELEC_CYAN + VOID_BLACK, perspective pixel grid, platform depth system, aurora bands, floating geometry (Cycle 14 — Jordan Reed). | Accepted (Cycle 14 — new) | None |
-| Style Frame 03 — full render v001 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_otherside_v001.png` | Full SF03 render with characters: Luma (H*0.20) at platform edge, Byte (H*0.10) on shoulder. UV purple ambient, no warm light. Inverted atmos perspective. (Cycle 15 — Jordan Reed). | Accepted (Cycle 15 — new) | None — PITCH READY |
+| Style Frame 03 — full render v001 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_otherside_v001.png` | Full SF03 render with characters: Luma (H*0.20) at platform edge, Byte (H*0.10) on shoulder. UV purple ambient, no warm light. Inverted atmos perspective. (Cycle 15 — Jordan Reed). | Superseded by v003 | Use v003 |
+| Style Frame 03 — full render v003 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_otherside_v003.png` | CRITICAL fix: Byte body = GL-01b (0,212,232) Byte Teal (was (10,10,20) VOID BLACK — invisible against UV Purple). Eye radius corrected to min 15px. Void Black slash removed from magenta eye. All Cycle 16 carries retained. (Cycle 19 — Jordan Reed) | Accepted (Cycle 19 — new) | None — PITCH READY |
 
 ### 1.7 Color Development
 
@@ -228,9 +234,9 @@
 | Character design sheets (all 4) | COMPLETE | Byte v3.1 header inconsistency: minor 1-line fix |
 | Character turnarounds (all 4) | COMPLETE | Delivered Cycle 10 |
 | Color model sheets | COMPLETE | All 4 characters |
-| Style frames (3 frames) | COMPLETE | SF01 v003 LOCKED A+ (Cycle 13); SF02 v002 composited (Cycle 13); SF03 full render v001 (Cycle 15) — all 3 pitch-ready |
-| Environment designs | COMPLETE | All 3 environments documented + rendered. Cycle 11: encounter frame, Glitch Layer v2. Cycle 13: Glitch Storm BG (color fix). Cycle 14: Classroom BG, Other Side BG. Cycle 16: Classroom v002 (lighting fix), Miri's Kitchen. Cycle 17: Tech Den, School Hallway. |
-| Storyboard / cold open | COMPLETE | 25 panels + contact sheet + storyboard pitch export (Cycle 11) |
+| Style frames (3 frames) | COMPLETE | SF01 v003 LOCKED A+ (Cycle 13); SF02 v004 (Cycle 19 — storefront + window glow); SF03 v003 (Cycle 19 — Byte body GL-01b fix) — all 3 pitch-ready |
+| Environment designs | COMPLETE | All 3 environments documented + rendered. Cycle 11: encounter frame, Glitch Layer v2. Cycle 13: Glitch Storm BG (color fix). Cycle 14: Classroom BG, Other Side BG. Cycle 16: Classroom v002 (lighting fix), Miri's Kitchen. Cycle 17: Tech Den, School Hallway. Cycle 19: School Hallway v002 (artifact+human evidence+camera), Millbrook Main Street v002 (power lines+road). |
+| Storyboard / cold open | COMPLETE | 25 panels + contact sheet + storyboard pitch export (Cycle 11). Act 1 contact sheet v002 (Cycle 19 — A1-03 MCU rebuild). Act 2: 12 panels + contact sheet v005 (Cycle 19 — adds A2-07b bridge). |
 | Show bible | COMPLETE | — |
 | Style guide | COMPLETE | 11 sections including §9 Animation Style Notes, §10 Glitchkin Construction Rules, §11 Prop Design Guidelines (all added Cycle 11) |
 | Color palette | COMPLETE | Master palette with Glitch Layer depth tiers documented |
@@ -243,7 +249,7 @@
 3. ~~Style Frame 03 BG outstanding~~ — **RESOLVED Cycle 14/15.** `LTG_ENV_other_side_bg_v001.png` + `LTG_COLOR_styleframe_otherside_v001.png` delivered.
 4. ~~Logo tagline~~ — **RESOLVED Cycle 11.** Show title only.
 5. ~~byte.md version header~~ — **RESOLVED Cycle 13.** byte.md now v3.2 (Sections 9B + 13A added).
-6. Luma color model cold overlay arithmetic: recalculate per Naomi C10 flag (LOW — still open)
+6. ~~Luma color model cold overlay arithmetic~~ — **RESOLVED Cycle 19.** Sam Kowalski corrected hoodie base to #E8703A and shadow to #B84A20. Both luma_color_model.md and master_palette.md now agree.
 7. ~~Character lineup float-gap annotation~~ — **RESOLVED Cycle 14.** `LTG_CHAR_lineup_v003.png` with engineering dimension arrow.
 8. ~~Cosmo turnaround glasses~~ — **RESOLVED Cycle 12.** `LTG_CHAR_cosmo_turnaround_v002.png` delivered.
 9. **Byte RESIGNED expression** — **RESOLVED Cycle 15.** `LTG_CHAR_byte_expression_sheet_v002.png` delivered. A2-02 beat no longer blocked.
@@ -302,7 +308,8 @@
 | Asset | File Path | Notes |
 |---|---|---|
 | Byte expression sheet v002 (re-regen) | `/home/wipkat/team/output/characters/main/LTG_CHAR_byte_expression_sheet_v002.png` | RESIGNED right eye corrected: 45% aperture, +10px downcast pupil, parabolic lid droop. Body tilt +14°. Shadow fixed to GL-01a (#00A8C0). ALARMED BG corrected to cold (#121C2C). Pixel faceplate now proportional across all expressions. |
-| Cosmo expression sheet v002 | `/home/wipkat/team/output/characters/main/LTG_CHAR_cosmo_expression_sheet_v002.png` | SKEPTICAL lean corrected to +6° backward. Two new expressions added: WORRIED (A2-02 coverage) and SURPRISED (A2-04c). Sheet now 6/6 populated. |
+| Cosmo expression sheet v002 | `/home/wipkat/team/output/characters/main/LTG_CHAR_cosmo_expression_sheet_v002.png` | SKEPTICAL lean corrected to +6° backward. Two new expressions added: WORRIED (A2-02 coverage) and SURPRISED (A2-04c). Sheet now 6/6 populated. | Superseded by v003 | Use v003 |
+| Cosmo expression sheet v003 | `/home/wipkat/team/output/characters/main/LTG_CHAR_cosmo_expression_sheet_v003.png` | SKEPTICAL lean formula fix: tilt_off multiplier 0.4 → 2.5 (was producing 2.4px invisible lean, now 15px — clearly legible). SKEPTICAL reinforced: arm_l_dy -14, arm_r_dy -10 (notebook hugged to chest). Positive side effects: DETERMINED forward lean now 12.5px, FRUSTRATED 10px (more distinct from NEUTRAL). 6/6 squint test pass. 912×946. (Cycle 19 — Maya Santos) |
 | Luma Act 2 standing pose v002 | `/home/wipkat/team/output/characters/main/LTG_CHAR_luma_act2_standing_pose_v002.png` | Right arm mitten-hand fixed (no finger differentiation). Production reference now compliant. |
 | SF02 Glitch Storm v003 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v003.png` | Takeshi C8 fixes: Dutch angle confirmed at 4.0°, storm lighting on buildings (ELEC_CYAN rim + UV_PURPLE bounce), Byte CORRUPT_AMBER outline 3px with glow rings, cold confetti dominant (DATA_BLUE 70%). |
 | SF03 Other Side v002 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_otherside_v002.png` | Takeshi + Naomi C8 fixes: waterfall luminance reduced (alpha 110, was ~255), mid-distance bridging element added, right-side void irregularity (seeded slab variation), DRW-18 UV Purple hair rim on Luma's crown. |
@@ -331,11 +338,43 @@
 | A2-05 — Millbrook street exterior | `/home/wipkat/team/output/storyboards/act2/panels/LTG_SB_act2_panel_a205_v001.png` | MEDIUM / eye-level / tracking. Single-point perspective walk-and-talk. Luma FG ENTHUSIASTIC (arm extended, mid-word). Cosmo BG SKEPTICAL (arms crossed, backward lean). Afternoon sun upper right. |
 | A2-08 — Grandma Miri returns | `/home/wipkat/team/output/storyboards/act2/panels/LTG_SB_act2_panel_a208_v001.png` | ECU / low angle. Emotional climax. Face fills upper 2/3. SURPRISED→KNOWING transition. CRT catch light on left cheek/brow. Dual catch-lights in irises (amber + green). Deep dark BG with circuit-trace texture. |
 
-### Cycle 18 Additions (partial — in progress)
+### Cycle 18 Additions
 
 | Asset | File Path | Notes |
 |---|---|---|
 | A2-02 Byte RESIGNED MCU v002 | `/home/wipkat/team/output/storyboards/act2/panels/LTG_SB_act2_panel_a202_v002.png` | Byte pre-resignation MCU. 55% aperture (transitional — last flicker). Parabolic droopy lower lid. Downcast pupil +7px. Transitional arm posture (left extended, right beginning to fold). Left eye: ↓ pixel glyph. Circuit-trace background. (Cycle 18 — Maya Santos) |
+
+### Cycle 19 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| SF03 Other Side v003 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_otherside_v003.png` | CRITICAL Byte body fix: GL-01b (0,212,232). Eye radius min 15px. Void Black slash removed from magenta eye. Supersedes v002. (Cycle 19 — Jordan Reed) |
+| SF02 Glitch Storm v004 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v004.png` | Real shattered storefront window + per-window downward trapezoid warm glow at alpha 90–110. Supersedes v003. (Cycle 19 — Jordan Reed) |
+| SF03 generator v003 | `/home/wipkat/team/output/tools/LTG_TOOL_style_frame_03_other_side_v003.py` | Byte body GL-01b fix + eye radius + slash removal. (Cycle 19 — Jordan Reed) |
+| SF02 generator v004 | `/home/wipkat/team/output/tools/LTG_TOOL_style_frame_02_glitch_storm_v004.py` | Storefront shattered window + per-window glow geometry. (Cycle 19 — Jordan Reed) |
+| Grandma Miri expression sheet v002 | `/home/wipkat/team/output/characters/main/LTG_CHAR_grandma_miri_expression_sheet_v002.png` | Full-body posture rebuild — 5 expressions with distinct silhouettes. Dmitri C9 C-grade closed. Supersedes v001. (Cycle 19 — Maya Santos) |
+| Luma expression sheet v003 | `/home/wipkat/team/output/characters/main/LTG_CHAR_luma_expression_sheet_v003.png` | DELIGHTED arms-up fix + brow weight corrected to interior weight (~2px). Supersedes v002. (Cycle 19 — Maya Santos) |
+| Cosmo expression sheet v003 | `/home/wipkat/team/output/characters/main/LTG_CHAR_cosmo_expression_sheet_v003.png` | SKEPTICAL lean tilt_off multiplier fixed 0.4 → 2.5 (15px visible lean). Supersedes v002. (Cycle 19 — Maya Santos) |
+| Miri expression sheet generator v002 | `/home/wipkat/team/output/tools/LTG_TOOL_grandma_miri_expression_sheet_v002.py` | Full-body posture rebuild generator. (Cycle 19 — Maya Santos) |
+| Luma expression sheet generator v003 | `/home/wipkat/team/output/tools/LTG_TOOL_luma_expression_sheet_v003.py` | DELIGHTED + brow weight fix generator. (Cycle 19 — Maya Santos) |
+| Cosmo expression sheet generator v003 | `/home/wipkat/team/output/tools/LTG_TOOL_cosmo_expression_sheet_v003.py` | SKEPTICAL lean formula fix generator. (Cycle 19 — Maya Santos) |
+| School Hallway v002 | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_school_hallway_v002.png` | Artifact fix, human evidence added (backpack, coat hooks, jacket, notice board), camera lowered for institutional read. Supersedes v001. (Cycle 19 — Jordan Reed) |
+| Millbrook Main Street v002 | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_millbrook_main_street_v002.png` | Power lines with catenary sag + road plane with center lines + crosswalk. (Cycle 19 — Jordan Reed) |
+| School Hallway generator v002 | `/home/wipkat/team/output/tools/LTG_TOOL_bg_school_hallway_v002.py` | Artifact + human evidence + camera fix generator. (Cycle 19 — Jordan Reed) |
+| Millbrook Main Street generator v002 | `/home/wipkat/team/output/tools/LTG_TOOL_bg_millbrook_main_street_v002.py` | Power lines + road plane generator. (Cycle 19 — Jordan Reed) |
+| A1-03 MCU Discovery panel v002 | `/home/wipkat/team/output/storyboards/panels/LTG_SB_act1_panel_a103_v002.png` | Camera: MCU / slightly low. Luma face fills ~55% frame. CRT screen off-frame lower-left with amber-green glow on cheek. Two legible Glitchkin pixel shapes (40×56px). Caption: "Discovery — she SEES them." Supersedes v001. (Cycle 19 — Lee Tanaka) |
+| A2-07b Kitchen Doorway Bridge panel | `/home/wipkat/team/output/storyboards/act2/panels/LTG_SB_act2_panel_a207b_v001.png` | NEW bridging shot. MEDIUM / eye-level / hallway POV. Miri silhouette backlit in kitchen doorway, warm amber glow bleeding into hallway, head cocked (knowing). Tea towel in left hand. Caption: "Something is different tonight." (Cycle 19 — Lee Tanaka) |
+| A2-08 Grandma Miri Luma POV v002 | `/home/wipkat/team/output/storyboards/act2/panels/LTG_SB_act2_panel_a208_v002.png` | Camera fix: MCU / eye-level from Luma's height (was ECU / low angle — power declaration). Miri fills upper 2/3. Warm kitchen backlight rim. Audience shares Luma's POV. Supersedes v001. (Cycle 19 — Lee Tanaka) |
+| Act 2 contact sheet v005 | `/home/wipkat/team/output/storyboards/act2/LTG_SB_act2_contact_sheet_v005.png` | 12 panels / 3-row layout (4/4/4). Adds A2-07b (BRIDGE). Updated to A2-08 v002. Full arc: NEAR-MISS → ESTABLISHED → VULNERABLE → SKEPTICAL → INVESTIGATING → WALK+TALK → DETERMINED → HOPEFUL → FAILURE → RESIGNED → BRIDGE → RECOGNITION. Supersedes v004. (Cycle 19 — Lee Tanaka) |
+| Act 1 cold open contact sheet v002 | `/home/wipkat/team/output/storyboards/LTG_SB_act1_coldopen_contact_sheet_v002.png` | Updated to A1-03 v002 (MCU rebuild). 4 panels. (Cycle 19 — Lee Tanaka) |
+| A1-03 panel generator v002 | `/home/wipkat/team/output/tools/LTG_TOOL_sb_panel_a103_v002.py` | MCU Discovery rebuild generator. (Cycle 19 — Lee Tanaka) |
+| A2-07b panel generator v001 | `/home/wipkat/team/output/tools/LTG_TOOL_sb_panel_a207b_v001.py` | Kitchen doorway bridging panel generator. (Cycle 19 — Lee Tanaka) |
+| A2-08 panel generator v002 | `/home/wipkat/team/output/tools/LTG_TOOL_sb_panel_a208_v002.py` | Luma POV camera fix generator. (Cycle 19 — Lee Tanaka) |
+| Act 2 contact sheet generator v005 | `/home/wipkat/team/output/tools/LTG_TOOL_sb_act2_contact_sheet_v005.py` | 12-panel arc-coded contact sheet. (Cycle 19 — Lee Tanaka) |
+| Act 1 contact sheet generator v002 | `/home/wipkat/team/output/tools/LTG_TOOL_sb_act1_contact_sheet_v002.py` | Act 1 cold open contact sheet with A1-03 v002. (Cycle 19 — Lee Tanaka) |
+| Luma color model C19 correction | `/home/wipkat/team/output/characters/color_models/luma_color_model.md` | Hoodie base corrected to canonical #E8703A (was #E8722A in Cycle 18 cold overlay section). Shadow corrected to #B84A20 (was #B85520). Both tables and threshold values updated. Both luma_color_model.md and master_palette.md now agree. (Cycle 19 — Sam Kowalski) |
+| SF03 v003 color review | `/home/wipkat/team/output/color/style_frames/sf03_v003_color_review.md` | Pre-render analysis: cyan eye contrast 14.1:1 (target ≥4.5:1 — far exceeds). Magenta eye contrast 5.5:1 (target ≥3.0:1 — passes). Slash removal confirmed intentional. Minor: BYTE_GLOW B channel 12pt off canonical GL-01a. (Cycle 19 — Sam Kowalski) |
+| SF02 v004 color notes | `/home/wipkat/team/output/color/style_frames/sf02_v004_color_notes.md` | Pre-render analysis: v003 window alpha was 160–180 (double target). v004 target = alpha 90–110 (SUNLIT_AMBER + WARM_CREAM). Composite result calculates to #8A5B2A warm amber — clearly readable against dark walls. (Cycle 19 — Sam Kowalski) |
 
 ---
 
@@ -351,3 +390,4 @@
 *Updated by Alex Chen, Art Director — Cycle 12 — 2026-03-30*
 *Updated by Alex Chen, Art Director — Cycles 13–14–15 — 2026-03-30*
 *Updated by Alex Chen, Art Director — Cycles 16–17 — 2026-03-29*
+*Updated by Alex Chen, Art Director — Cycle 19 — 2026-03-29*

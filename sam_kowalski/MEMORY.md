@@ -132,9 +132,14 @@
 - **Jordan removing Void Black slash from magenta eye in SF03 v003** — confirm this is intentional. It changes the corrupted-eye expression read.
 - **BYTE_GLOW minor discrepancy:** (0,168,180) vs canonical GL-01a (0,168,192). B channel 12pt off. Low priority carry-forward.
 
+## Cycle 20 Lessons
+- **SF03 v003 FINAL VERIFIED.** BYTE_BODY = (0,212,232) confirmed line 80. BYTE_GLOW (0,168,180) vs GL-01a (0,168,192): closed as acceptable — 12pt B-channel difference in an inner-body construction tone is below production fix threshold. Eyes (ELEC_CYAN + HOT_MAGENTA) unchanged — contrasts 14.1:1 and 5.5:1 pass. Void Black slash removed from magenta eye (intentional C9 fix by Jordan). Color narrative passes: UV Purple + Teal + Magenta = correct "other side" register.
+- **SF02 v004 CONDITIONALLY READY for Critique 10.** Jordan implemented two-system window glow: pane rectangles (SOFT_GOLD α180/WARM_CREAM α160, unchanged from v003) + glow cones (WIN_GLOW_WARM (200,160,80) at max α105, within 90-110 target). Warm/cold balance passes — contested lower third achieved. Storefront is genuine facade+crack geometry, not HUD symbol. Outstanding note: window pane alpha still 160-180 (not blocking; v005 can fix if critique flags it).
+- **Split implementation pattern:** When a fix has two systems (window pane = near-field lit rectangle, glow cone = projected atmospheric light), the two systems can legitimately use different alpha values. Verify each system's function before flagging as non-compliant.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001 (TERRA_CYAN_LIT still old value). v002 is correct. Coordinate with Jordan Reed on v001 if it is still used.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan should add inline comment on next revision pass (low priority).
-- SF03 v003 and SF02 v004 color reviews are PENDING — Jordan's files not delivered in Cycle 19. Pre-render analyses filed. Full review pending delivery.
-- BYTE_GLOW (0,168,180) vs GL-01a (0,168,192) — B channel 12pt off. Low priority fix for Jordan in next pass.
+- BYTE_GLOW (0,168,180) vs GL-01a (0,168,192): CLOSED as acceptable. Jordan may add inline comment on next pass (low priority, not a production fix).
 - SF03 confetti full-canvas distribution still unresolved (carry from C16). Constrain to within 150px of platform.
+- SF02 v004 window pane alpha (160/180) still above target 90-110. Not blocking. Flag for v005 if Critique 10 raises it.

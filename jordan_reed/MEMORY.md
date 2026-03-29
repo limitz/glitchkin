@@ -1,5 +1,22 @@
 # Jordan Reed — Memory
 
+## Cycle 20 Deliverables
+- `LTG_TOOL_bg_tech_den_v002.py` → `LTG_ENV_tech_den_v002.png`
+  - Window light shaft: SUNLIT_AMBER (212,172,100) trapezoid, feathered edges (GaussianBlur r=18), 15 dust motes (alpha 60–80)
+  - Monitor glow spill: RGB(180,200,210) alpha 38–50 on desk, chair, shelves
+  - Right half: duvet polygon, 2 pillows, blanket fold, device on mattress, poster + 2 printouts above bed
+  - Jacket: RW-08 (160,150,175) prominent polygon on chair, wider than chair back, shadow side + collar
+- README.md updated ✓ | Inbox archived ✓ | Completion report sent to Alex Chen ✓
+
+## Cycle 20 Status: COMPLETE
+
+## Cycle 20 Lessons
+- **Light shaft feathering**: draw_light_shaft() — draw solid core at 0.60 alpha, then composite GaussianBlur(r=18) pass at 0.45 alpha. Creates near-edge / far-edge visible shaft geometry.
+- **Dust motes in beam**: point-in-polygon _point_in_quad() for convex trapezoid. Scatter with seeded rng, radius 2–5px, alpha 60–80.
+- **Monitor glow spill geometry**: use layered alpha_composite ellipses/rectangles targeting specific surfaces (desk zone, chair back ellipse, shelf face rectangle). R channel must stay ≥150 (Sam's color brief rule).
+- **Jacket readability**: polygon wider than underlying chair geometry. Shadow side = separate alpha_composite layer. Outline drawn after all fills.
+- **Bedding polygon**: use polygon() not rectangle() for duvet — gives organic "crumpled" silhouette. Add 2–3 crease lines via lerp_color(DUVET, LINE_DARK, 0.2–0.3).
+
 ## Cycle 19 Deliverables
 - `LTG_TOOL_style_frame_03_other_side_v003.py` → `LTG_COLOR_styleframe_otherside_v003.png`
   - CRITICAL fix: BYTE_BODY = (0,212,232) GL-01b Byte Teal (was (10,10,20) Void Black — invisible)

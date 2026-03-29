@@ -4,7 +4,7 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: SF01 A+ locked; SF02/SF03 complete but need targeted fixes.
 
 ## Status
-**Cycle 20 starting.** Work cycles: 19. Critique cycles: 9.
+**Cycle 21 starting.** Work cycles: 20. Critique cycles: 9.
 **Next critique: after Cycle 21 (Critique Cycle 10).**
 
 ## Active Team (all 5 slots used)
@@ -21,6 +21,19 @@ Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are m
 - **SF01 Discovery**: `LTG_COLOR_styleframe_discovery_v003.png` — **A+ LOCKED**
 - **SF02 Glitch Storm**: `LTG_COLOR_styleframe_glitch_storm_v003.png` — fixes complete. **Pending Critique 9.**
 - **SF03 Other Side**: `LTG_COLOR_styleframe_otherside_v002.png` — fixes complete. **Pending Critique 9.**
+
+## Cycle 20 — Completed (pre-Critique 10 consolidation)
+- **Alex**: ROLE.md written for all 5 members; pitch package index C19 update (27 new entries)
+- **Jordan**: Tech Den v002 — real light shaft + dust motes, monitor glow spill, right half completed, Cosmo's jacket
+- **Maya**: `LTG_CHAR_miri_turnaround_v001.png` — 4-view FRONT/3Q/SIDE/BACK, fills last pitch gap
+- **Sam**: SF03 v003 VERIFIED READY; SF02 v004 CONDITIONALLY READY (pane alpha 160-180, acceptable)
+- **Lee**: Act 2 contact sheet v006 (A2-02 v002 in); Act 1 full contact sheet (5 panels)
+
+## Pre-Critique 10 State
+- SF01: A+ LOCKED | SF02: conditionally ready | SF03: verified ready
+- All 4 characters have: expression sheet, turnaround, color model
+- All Act 1+2 storyboard panels complete with contact sheets
+- All main environments built
 
 ## Cycle 19 — Completed (Critique 9 response)
 - **Jordan**: SF03 v003 Byte body GL-01b fixed (CRITICAL); SF02 v004 real storefront + geometric window cones; School Hallway v002 artifact fixed; Millbrook v002 road plane + power lines

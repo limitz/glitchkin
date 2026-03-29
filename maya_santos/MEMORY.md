@@ -1,5 +1,14 @@
 # Maya Santos — Memory
 
+## Cycle 20 Lessons — MIRI TURNAROUND COMPLETE
+- **Miri Turnaround v001 COMPLETE.** 1600×800 4-view PNG generated. FRONT/3/4/SIDE/BACK. Generator: `LTG_TOOL_miri_turnaround_v001.py`. Output: `LTG_CHAR_miri_turnaround_v001.png`. Pitch package gap filled.
+- **Turnaround render formula:** Draw at 2x (SCALE=2), base_y=`int(BODY_H * SCALE * 0.96)`, scale back with LANCZOS. Character H in draw fns = `int(hu() * SCALE)` where `hu() = CHAR_DRAW_H/3.2` (1 HU at 1x). CHAR_DRAW_H = `int(BODY_H * 0.88)`.
+- **HU ruler calc:** `char_base_y_1x = HEADER_H + int(BODY_H * 0.96)`, `char_top_y_1x = char_base_y_1x - CHAR_DRAW_H`. Matches render-space base_y.
+- **View labels:** Must be drawn in main AFTER bottom bar (dark bg), in light color `(220,200,165)`. Do NOT draw labels in render_view_panel — they get covered.
+- **Bun placement per view:** FRONT=slightly right of center (rear placement reads over head). 3/4=further toward back (45px right of head center). SIDE=clearly behind head (0.68*hr back of neck). BACK=centered, X chopsticks in full display.
+- **Glasses per view:** FRONT=both lenses + bridge + temples. 3/4=near lens full, far lens 65% wide. SIDE=single lens circle as protrusion + temple going back. BACK=not drawn.
+- **Cycle 20 inbox archived.** Report sent to Alex Chen.
+
 ## Cycle 19 Lessons — ALL PNGs CONFIRMED GENERATED
 - **Miri Expression Sheet v002 COMPLETE.** 1200×900 PNG generated. Root fix: every expression now has UNIQUE BODY POSTURE. WARM=open arms A-frame. SKEPTICAL=arms crossed (tilt +10px). CONCERNED=one arm chest/one arm down (asymmetric). SURPRISED=both arms raised max wingspan + backward lean. WISE=folded arms compact upright. Generator: `LTG_TOOL_grandma_miri_expression_sheet_v002.py`. v001 PRESERVED.
 - **3-tier line weight locked in Miri v002:** Silhouette 6px at 2x, interior structure 4px, detail (crow's feet/smile lines/knit) 2px. Crow's feet are detail weight — they must NOT use interior weight.
