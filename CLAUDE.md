@@ -40,7 +40,7 @@ Keep a main MEMORY.md in the root of this project and update it when needed. Alw
 * inbox/ is a directory. Each message is its own file, named `YYYYMMDD_HHMM_short_description.md`. The timestamp should reflect the ACTUAL time the message was created.
 * inbox/archived/ holds all processed messages. Messages are never deleted — move to archived/ once fully acted on.
 * Messages are sent by creating a new file in the recipient's inbox/ directory. Include the current date and time (24h) in the filename and in a **Date:** header inside the file. Take team hierarchy into account when reporting. 
-* The maximum number of active team members is 8 (expanded from 5 by the human, C34). There is no maximum to the number of inactive team members. Only the human can change this cap.
+* The maximum number of active team members is 8. There is no maximum to the number of inactive team members.
 * Only active members can receive messages in their inbox/ and perform work (started by an agent).
 * Do not add team members for jobs that can instead be filled by currently available (inactive) team members.
 * Before any work cycle starts, check if the team structure makes sense. Deactivate members that are not needed for the next cycle, add new members when needed.

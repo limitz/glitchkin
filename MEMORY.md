@@ -20,7 +20,7 @@ Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are m
 | Lee Tanaka | Character Staging & Visual Acting Specialist (reactivated C34) | Alex Chen |
 | Morgan Walsh | Pipeline Automation Specialist (new C34) | Alex Chen |
 
-**Cost discipline:** Morgan's mandate is tool-first QA. Max 8 agents simultaneous. Only the human can change the active member cap.
+**Cost discipline:** Morgan's mandate is tool-first QA. Max 8 agents simultaneous.
 
 ## Image Output Rule (MANDATORY)
 **Hard limit: ≤ 1280px in both dimensions.** Use `img.thumbnail((1280,1280), Image.LANCZOS)` before saving. QA pipeline (v1.2.0) now auto-downscales before checks.
