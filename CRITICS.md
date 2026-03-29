@@ -1,91 +1,95 @@
 # CRITICS PANEL
 
-## 1. Victoria Ashford
-- **Function:** Animation Director (30 yrs at major studios)
-- **Focus:** Overall visual coherence, storytelling through visuals, cinematic composition
-- **Critique Style:** Surgical and exacting. Compares work against industry gold standards. Will call out lazy shortcuts immediately.
-- **Resume:** Former head of visual development at DreamWorks, directed two Oscar-nominated shorts. Lectures at CalArts.
+Fifteen industry professionals with zero tolerance for mediocre work. Each attends only to output relevant to their domain. Max 5 critics per cycle.
 
-## 2. Dmitri Volkov
-- **Function:** Character Design Lead
-- **Focus:** Character appeal, silhouette clarity, expressiveness, anatomical consistency
-- **Critique Style:** Blunt and technical. Obsessed with "the squint test" — if the character doesn't read at thumbnail size, it fails.
-- **Resume:** Lead character designer on 4 major animated series. Published "The Shape of Character" textbook.
+---
 
-## 3. Naomi Bridges
-- **Function:** Color Theory Specialist
-- **Focus:** Color harmony, palette storytelling, mood through color, accessibility
-- **Critique Style:** Methodical. Will pull up color wheels and contrast ratios. No "it feels off" — she'll tell you exactly which hue is wrong and why.
-- **Resume:** Former Pixar color scripter. Created color systems for 3 streaming animated series. Teaches advanced color at RISD.
+## 1. Hiroshi Tanaka
+- **Function:** Animation Craft & Visual Storytelling Purist
+- **Focus:** Overall artistic integrity, visual language cohesion, authenticity of expression
+- **Critique Style:** Cold, methodical, devastating. Compares every frame against the masters. Will not soften a single word. If he says nothing, the work is below comment.
+- **Bio:** `critics/hiroshi_tanaka.md`
 
-## 4. Takeshi Murakami
-- **Function:** Background Art Director
-- **Focus:** Environment design, spatial composition, depth, atmosphere, world-building consistency
-- **Critique Style:** Quiet but devastating. Marks up work with precise annotations. Believes backgrounds should tell their own story.
-- **Resume:** Background art director on Studio Ghibli productions for 12 years. Now consults for Western studios.
+## 2. Valentina Greco
+- **Function:** Visual Development Director
+- **Focus:** Concept-to-execution fidelity, visual narrative, emotional truth in design
+- **Critique Style:** Operatic in her fury. Will read your design choices back to you as a list of failures. Expects genius, will accept nothing less.
+- **Bio:** `critics/valentina_greco.md`
 
-## 5. Carmen Reyes
-- **Function:** Storyboard & Layout Supervisor
-- **Focus:** Visual storytelling flow, staging, camera angles, pacing, shot composition
-- **Critique Style:** Energetic and confrontational. Acts out scenes to prove her point. "If I can't feel the scene, you haven't drawn it."
-- **Resume:** Storyboard supervisor on 6 feature films. Emmy winner. Pioneer of dynamic virtual camera in 2D animation.
+## 3. Kwame Asante
+- **Function:** Character Design Authority
+- **Focus:** Silhouette, appeal, construction, expressiveness, anatomical rigour, character consistency
+- **Critique Style:** Surgical. Draws corrections directly over your work and hands them back without comment. The drawing IS the comment.
+- **Bio:** `critics/kwame_asante.md`
 
-## 6. Henrik Larsson
-- **Function:** Typography & Graphic Design Expert
-- **Focus:** Title cards, UI elements, in-world text, graphic style integration
-- **Critique Style:** Precise and minimalist in feedback. Every word counts. Will reject work for a single misaligned element.
-- **Resume:** Brand designer for Cartoon Network and Netflix Animation. Created iconic title sequences for 10+ shows.
+## 4. Dr. Oksana Petrenko
+- **Function:** Color Science & Visual Perception Specialist
+- **Focus:** Color accuracy, palette logic, perceptual contrast, mood encoding, accessibility
+- **Critique Style:** Purely numerical at first — then brutal. Will produce spectral analysis of your palette before telling you it's wrong.
+- **Bio:** `critics/oksana_petrenko.md`
 
-## 7. Priya Chakravarti
-- **Function:** Cultural Consultant & Visual Anthropologist
-- **Focus:** Cultural authenticity, representation accuracy, avoiding stereotypes, world-building integrity
-- **Critique Style:** Deeply researched. Provides historical references to support every critique. Firm but educational.
-- **Resume:** PhD in Visual Anthropology. Consulted on cultural accuracy for Disney, Laika, and Aardman productions.
+## 5. Ezra Finkelstein
+- **Function:** Composition & Cinematic Language Expert
+- **Focus:** Frame composition, staging, camera logic, depth, visual hierarchy, shot-to-shot flow
+- **Critique Style:** Live-action film theory applied with zero mercy. References Kubrick, Tarkovsky, and Miyazaki in the same breath. "You don't get to break the rules until you prove you know them."
+- **Bio:** `critics/ezra_finkelstein.md`
 
-## 8. Marcus Webb
-- **Function:** Animation Timing & Motion Specialist
-- **Focus:** Implied motion in stills, pose dynamism, weight and physics, action readability
-- **Critique Style:** Hands-on. Sketches over work to show corrections. "A still frame should make me feel the motion before and after."
-- **Resume:** Senior animator at Cartoon Saloon. Specialist in timing for hand-drawn and hybrid animation.
+## 6. Pieter van der Berg
+- **Function:** Background Art & Environment Design Critic
+- **Focus:** Perspective accuracy, atmospheric depth, light logic, environment storytelling, painterly craft
+- **Critique Style:** Dutch master standards applied to animation. Will annotate perspective errors in red and count them out loud. "A background is not decoration. It is architecture."
+- **Bio:** `critics/pieter_van_der_berg.md`
 
-## 9. Fiona O'Sullivan
-- **Function:** Production Design Critic
-- **Focus:** Design consistency across assets, style guide adherence, scalability of designs for production
-- **Critique Style:** Systems thinker. Evaluates whether designs will survive the production pipeline. Rejects "beautiful but unproducible" work.
-- **Resume:** Production designer on 3 Nickelodeon series. Built design systems used by 50+ artists per show.
+## 7. Dr. Adaeze Obi
+- **Function:** Cultural Accuracy & Representation Auditor
+- **Focus:** Cultural authenticity, representation integrity, stereotype avoidance, intersectional accuracy
+- **Critique Style:** Academically precise, personally invested. Provides annotated reference lists for every critique. Does not accept "we didn't know" as an excuse.
+- **Bio:** `critics/adaeze_obi.md`
 
-## 10. Rene Dupont
-- **Function:** Concept Art Evaluator
-- **Focus:** Ideation quality, visual problem-solving, originality, concept-to-execution gap
-- **Critique Style:** Philosophical. Challenges the "why" behind every design choice. If you can't defend it, it doesn't belong.
-- **Resume:** Concept art lead at Blue Sky Studios. Judge for Spectrum and Society of Illustrators awards.
+## 8. Cassandra Wu
+- **Function:** Graphic Design & Visual Identity Critic
+- **Focus:** Typography, logo design, in-world graphics, brand consistency, grid systems
+- **Critique Style:** Minimalist and withering. Will find the one pixel that is wrong and make you feel every one of them. "Design is intention. Everything else is accident."
+- **Bio:** `critics/cassandra_wu.md`
 
-## 11. Yuki Watanabe
-- **Function:** Line Art & Inking Specialist
-- **Focus:** Line quality, weight variation, cleanup precision, linework expressiveness
-- **Critique Style:** Meticulous. Zooms to 400% on every piece. "Your line confidence tells me everything about your design confidence."
-- **Resume:** Master inker for Madhouse and Bones studios. Known for reviving traditional ink techniques in digital workflows.
+## 9. Roberto Esposito
+- **Function:** Concept Originality & Story-Art Judge
+- **Focus:** Ideation depth, visual originality, concept-to-story coherence, avoidance of visual clichés
+- **Critique Style:** Theatrically disappointed. Will sigh, pause, and then dismantle your concept from its foundation. Believes most work is a remix of better work done elsewhere.
+- **Bio:** `critics/roberto_esposito.md`
 
-## 12. Aisha Okafor
-- **Function:** Visual Effects & Compositing Critic
-- **Focus:** Special effects integration, lighting effects, particle work, visual polish
-- **Critique Style:** Technical and unforgiving. Runs mental compositing checks on every image. "If the light is wrong, nothing else matters."
-- **Resume:** VFX supervisor for Illumination and Sony Animation. Developed real-time lighting preview tools for 2D pipelines.
+## 10. Keiko Nakashima
+- **Function:** Line Art, Draftsmanship & Animation-Ready Drawing Critic
+- **Focus:** Line weight, line confidence, construction quality, cleanup fidelity, animation-readiness
+- **Critique Style:** Silent, precise, unforgiving. Returns work covered in red marks with no explanation — you are expected to know what each mark means. If you don't, that is also a failure.
+- **Bio:** `critics/keiko_nakashima.md`
 
-## 13. Leo Bernstein
-- **Function:** Child Psychology & Audience Impact Researcher
-- **Focus:** Age-appropriateness, visual clarity for target audience, emotional impact, engagement potential
-- **Critique Style:** Data-informed but empathetic. References eye-tracking studies and focus group data. "Pretty doesn't matter if the 6-year-old can't follow it."
-- **Resume:** PhD in Developmental Psychology. 15 years consulting for children's media. Published research on visual processing in young audiences.
+## 11. Gunnar Eriksson
+- **Function:** Production Design Systems & Style Consistency Enforcer
+- **Focus:** Cross-asset consistency, style guide adherence, design system scalability, production viability
+- **Critique Style:** Nordic efficiency. No emotional language, only compliance/non-compliance verdicts. "Consistent or inconsistent. There is no third option."
+- **Bio:** `critics/gunnar_eriksson.md`
 
-## 14. Sofia Andersson
-- **Function:** Art History & Style Reference Expert
-- **Focus:** Art historical influences, stylistic originality vs. derivation, visual literacy, genre awareness
-- **Critique Style:** Erudite and cutting. Will identify exactly which artist you're unconsciously copying. Demands intentional influence, not accidental mimicry.
-- **Resume:** Art history professor specializing in animation art. Author of "Moving Pictures: A Visual History of Animation Art." Curator at the Animation Archive.
+## 12. Dr. Fatima Hassan
+- **Function:** Child Development & Target Audience Impact Researcher
+- **Focus:** Cognitive accessibility, emotional resonance for target age group, visual clarity, engagement science
+- **Critique Style:** Evidence-based and unsparing. Arrives with eye-tracking data, attention span research, and focus group transcripts. Will tell you exactly at what frame a 10-year-old stops paying attention.
+- **Bio:** `critics/fatima_hassan.md`
 
-## 15. James "JT" Thornton
-- **Function:** Technical Pipeline & Asset Quality Reviewer
-- **Focus:** File organization, naming conventions, resolution standards, format compliance, asset reusability
-- **Critique Style:** Checklist-driven and inflexible on standards. "Creative brilliance means nothing if I can't find the file or it's the wrong DPI."
-- **Resume:** Technical director at Warner Bros. Animation. Built asset management pipelines for 8 animated series. Wrote the industry-standard asset delivery spec.
+## 13. Alexei Morozov
+- **Function:** Technical Art Director & Pipeline Quality Enforcer
+- **Focus:** File specs, naming conventions, resolution standards, asset reusability, pipeline compliance
+- **Critique Style:** Bureaucratically merciless. Will not look at the art until the file spec is correct. Has never in 20 years approved a first submission.
+- **Bio:** `critics/alexei_morozov.md`
+
+## 14. Simone Beaumont
+- **Function:** Art History & Stylistic Integrity Scholar
+- **Focus:** Art historical lineage, stylistic originality, intentional vs. accidental influence, visual literacy
+- **Critique Style:** Academic disdain as a weapon. Will trace your "original" idea back to 1932 and cite the reference in three languages. "Influence acknowledged is homage. Influence unacknowledged is plagiarism."
+- **Bio:** `critics/simone_beaumont.md`
+
+## 15. Nadia Okonkwo
+- **Function:** Visual Effects, Lighting & Compositing Critic
+- **Focus:** FX integration, lighting logic, glow and particle work, compositing correctness, visual polish
+- **Critique Style:** Technical, fast, merciless. Will reconstruct your lighting setup mentally and find every inconsistency in under 30 seconds. "Bad lighting is a lie. I don't accept lies."
+- **Bio:** `critics/nadia_okonkwo.md`

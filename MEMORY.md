@@ -33,7 +33,7 @@ Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are m
 Alex Chen (Art Director), Maya Santos (Character), Jordan Reed (Backgrounds), Sam Kowalski (Color), **Kai Nakamura (Tech Art Engineer)** — Lee Tanaka inactive (storyboard complete)
 
 ## Shared Library
-`output/tools/ltg_render_lib.py` — 7 functions: perlin_noise_texture, gaussian_glow, light_shaft, dust_motes, catenary_wire, scanline_overlay, vignette. Import pattern in MEMORY.md of kai_nakamura.
+`output/tools/ltg_render_lib.py` — 7 functions: perlin_noise_texture, gaussian_glow, light_shaft, dust_motes, catenary_wire, scanline_overlay, vignette. Import pattern in MEMORY.md of members/kai_nakamura.
 
 ## Cycle 21 — Completed (pre-Critique 10)
 - **Kai**: `ltg_render_lib.py` built; Tech Den v003 + Glitch Layer v003 using library

@@ -1,5 +1,7 @@
 # THE DREAM TEAM
 
+> **Member folders** are located in `members/<name>/` (e.g. `members/alex_chen/`).
+
 ## Active Members
 
 | Name | Role | Status | Reports To |
