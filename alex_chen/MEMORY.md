@@ -1,5 +1,13 @@
 # Alex Chen — Memory
 
+## Cycle 14 Lessons
+- **Byte float-gap dimension arrow (Dmitri P1 — RESOLVED):** Replaced Cycle 12 "ground floor." caption with a proper engineering dimension arrow in `LTG_TOOL_character_lineup_v003.py`. Two-headed vertical arrow (GROUNDFLOOR_COL), horizontal serif ticks at each tip, "0.25 HU" label beside shaft. Arrow positioned at `byte_cx + body_rx + 10`. Output: `LTG_CHAR_lineup_v003.png`.
+- **Misnamed tools corrected:** `LTG_CHAR_luma_expression_sheet_v002.py` → `LTG_TOOL_luma_expression_sheet_v002.py` (note added in header). `bg_glitch_layer_encounter.py` → `LTG_TOOL_bg_glitch_layer_encounter_v001.py` (moved to tools/). Both originals retained per version preservation policy.
+- **Glitch Layer frame canonical:** `LTG_ENV_glitchlayer_frame_v001.png` = CANONICAL (81,483 bytes, Cycle 11 regen). `v002` = archive copy (80,664 bytes, older render). Documented in compliance checklist.
+- **SF03 spec written:** `/output/production/sf03_other_side_spec.md` — full generator spec for Jordan Reed. Five depth layers, all RGB values, lighting setup, draw order, validation checklist. Jordan notified via inbox. Key rule: NO warm light (inverted atmospheric perspective — purple gets darker with distance, not lighter).
+- **SF01 v003 assessment:** Ghost Bytes at alpha 90/105 — A+, pitch-ready. Top-left monitor relocation confirmed correct (warm lamp bleed zone clean). SF01 v003 LOCKED as canonical Discovery style frame.
+- **Compliance checklist updated:** Cycle 14 pass documented — all tool renames, glitch layer frame canonicalization, and lineup generator correction noted.
+
 ## Cycle 13 Lessons
 - **Ghost Byte alpha fix (SF01 v003):** Body alpha 55→90, eye glints 65–70→105. Top-left monitor removed (warm lamp bleed kills contrast). Two ghosts (top-right + mid-left) instead of three. Victoria B+→A+ calibrated. Output: `LTG_COLOR_styleframe_discovery_v003.png`.
 - **Asymmetric logo v002:** "&" now warm-to-cold gradient (SUNLIT_AMBER left → ELEC_CYAN right) via per-column alpha composite. "the/Glitchkin" gap reduced 30% (int(H*0.04)→int(H*0.028)). Output: `LTG_BRAND_logo_asymmetric_v002.png`.

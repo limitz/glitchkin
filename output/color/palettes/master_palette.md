@@ -1126,6 +1126,22 @@ Formal documentation of inline color values used in `style_frame_01_rendered.py`
 
 ---
 
+### CHAR-L-11 — Luma Hoodie Pixel (Warm-Lit Activation)
+- **Constant (code):** `SOFT_GOLD` (RW-02 alias — `#E8C95A`)
+- **Hex:** `#E8C95A`
+- **RGB:** 232, 201, 90
+- **Role:** Hoodie pixel grid accents on the lamp-lit (left) side of Luma's torso — warm-side discrete pixel activation
+- **Narrative:** Warm world touching digital identity pattern; bridge between real-world Luma and Byte's domain. The pixel pattern on Luma's hoodie carries both her Real World warmth (Soft Gold, lamp-lit) and her connection to the Glitch Layer (Electric Cyan, neutral/cold).
+- **Scene use:** SF01 — lamp-lit (left-side) hoodie pixel accents only
+- **Constraint 1:** Use ONLY when a warm lamp source is present AND dominant on that face/side. Neutral-lit and cold-lit scenes use GL-01 Electric Cyan (`#00D4E8`) for all hoodie pixel accents.
+- **Constraint 2:** Warm-dominant scenes only. If the scene key is cyan, UV, or neutral, all hoodie pixel accents revert to GL-01.
+- **Constraint 3:** Lamp-lit hoodie pixel accents only — this is not a fill color, a shadow color, or a large-area tone. It is strictly the small discrete pixel-grid accent elements on the hoodie surface under warm lamp key.
+- **Production note:** The SF01 v003 Pillow script uses a continuous gradient (HOODIE_ORANGE → HOODIE_CYAN_LIT) rather than a discrete pixel grid. CHAR-L-11 defines the production spec (OpenToonz pixel-grid activation) — the Pillow approximation is noted as a limitation of the raster preview.
+- **Cross-reference:** CHAR-L-09 (shoe canvas, unrelated), GL-01 (`#00D4E8`) for pixel accents in neutral/cold lighting, RW-02 (`#E8C95A`) for the canonical Soft Gold entry
+- **Added:** Sam Kowalski — Cycle 14 (2026-03-30), per Alex Chen Art Director confirmation (2026-03-30)
+
+---
+
 ### CHAR-L-08 — Luma Hoodie Underside (Lavender Ambient)
 - **Constant (code):** `HOODIE_AMBIENT`
 - **Hex:** `#B36250`
@@ -1251,4 +1267,5 @@ When any human character is in a cool-ambient or Glitch Layer environment, warm 
 *Cycle 9 revision: Section 7 added (Skin Color System — two-tier system, CHAR-C-01 for Cosmo, warm/cool skin tables, Fiona critique resolution); PROP-07 finalized (CABLE_NEUTRAL_PLUM, #504064); CHAR-L-08 finalized (#B06040, HOODIE_AMBIENT); CHAR-L-09/10 added (Luma shoe canvas/sole per Naomi Bridges Cycle 8 feedback).*
 *Cycle 10 revision: CHAR-L-08 hex corrected from #B06040 (176,96,64) to #B36250 (179,98,80) — blue channel arithmetic error resolved (Naomi Bridges C9-5). Glitch Layer depth-tier construction values documented in comment block (Naomi C9-1). luma_color_model.md cross-reference confirmed present in both documents.*
 *Cycle 13 revision (Sam Kowalski — 2026-03-30): C10-1 RESOLVED — cold overlay boundary arithmetic for SF01 documented in Section 1B (prior comment was wrong: alpha at 80px boundary is 30/11.8%, not near-zero). DRW-16 RESOLVED — painter warning for shoulder-under-Data-Stream-Blue-waterfall expanded and cross-referenced to luma_color_model.md. DRW-07 saturation corrected: #C07A70 → #C8695A (RGB 200,105,90), HSL saturation raised from ~39% to ~50% (Naomi C12-3). ENV-06 corrected: #9A8C8A (warm-dominant grey, wrong) → #96ACA2 (G>R, B>R, correctly cyan-lit) per Jordan Reed / Naomi C12-1. ENV-03 warm spill canonical alpha documented: 40/255 (~16%) — aligned LTG_TOOL_colorkey_glitchstorm_gen_v001.py from prior 150 to 40 (Naomi C12-2). CHAR-L-09 warm pixel activation: pending Alex Chen confirmation (message sent 2026-03-30 14:00).*
+*Cycle 14 revision (Sam Kowalski — 2026-03-30): CHAR-L-11 added — Luma Hoodie Pixel (Warm-Lit Activation), hex #E8C95A (Soft Gold, alias RW-02). Registered per Alex Chen Art Director confirmation. Constraints: lamp-lit hoodie pixel accents only, warm-dominant scenes only; neutral/cold scenes use GL-01 (#00D4E8). CHAR-L-09 warm pixel activation thread CLOSED — correctly occupied by shoe canvas; CHAR-L-11 is the warm pixel entry.*
 *Review cycle: Update after each critic feedback pass.*

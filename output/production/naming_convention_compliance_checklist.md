@@ -202,6 +202,23 @@ Do not use `COL` as a category code until Alex Chen ratifies it.
 **Tools created Cycle 13 (TOOL):**
 - `LTG_TOOL_bg_glitch_storm_colorfix_v001.py` — BG-only Glitch Storm with corrected TERRACOTTA_CYAN_LIT=(150,172,162); outputs `LTG_ENV_glitch_storm_bg_v001.png` (Jordan Reed)
 
+**Cycle 14 Compliance Pass (Alex Chen, Art Director, 2026-03-29):**
+
+**Glitch Layer Frame Version Clarification — CANONICAL:**
+- `LTG_ENV_glitchlayer_frame_v001.png` — **CANONICAL** (81,483 bytes). Regenerated in Cycle 11 by Jordan Reed. Higher byte count = richer render content. This is the reference frame for all production use.
+- `LTG_ENV_glitchlayer_frame_v002.png` — **ARCHIVE COPY ONLY** (80,664 bytes). Copied from legacy `glitch_layer_frame.png`. Smaller file size confirms it is the older render. Do NOT use v002 as the canonical source — use v001 only.
+- Rule: If both files are present, v001 is canonical. Do not delete v002 (version preservation policy), but mark it in any file browser or handoff with "ARCHIVE — see v001."
+
+**Misnamed tools corrected (Cycle 14):**
+- `LTG_CHAR_luma_expression_sheet_v002.py` → compliant copy created: `LTG_TOOL_luma_expression_sheet_v002.py` ✓
+  (Original CHAR-named file retained for backward compatibility; do not create new CHAR-named scripts)
+- `bg_glitch_layer_encounter.py` (in environments/) → compliant copy created: `LTG_TOOL_bg_glitch_layer_encounter_v001.py` in tools/ ✓
+  (Original in environments/ retained unchanged per version preservation policy)
+
+**Lineup generator corrected (Cycle 14):**
+- `character_lineup_generator.py` → LTG-compliant generator: `LTG_TOOL_character_lineup_v003.py` ✓
+  Output: `LTG_CHAR_lineup_v003.png` — replaces Cycle 12 "ground floor." caption with proper engineering dimension arrow for Byte's float gap (0.25 HU).
+
 ---
 
 ## One-Sentence Summary

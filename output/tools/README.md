@@ -1,7 +1,7 @@
 # Tools Index — "Luma & the Glitchkin"
 
 **Maintained by:** Alex Chen, Art Director
-**Last updated:** 2026-03-30 (Cycle 13)
+**Last updated:** 2026-03-29 (Cycle 14)
 
 ---
 
@@ -48,6 +48,8 @@ This production uses **open source tools exclusively**. No proprietary software 
 | `LTG_TOOL_logo_asymmetric_v002.py` | Alex Chen / Cycle 13 | Asymmetric logo v002. "&" connector gets warm-to-cold gradient treatment (SUNLIT_AMBER left → ELEC_CYAN right) via per-column alpha composite. "the/Glitchkin" inter-line gap reduced ~30%. Output: `LTG_BRAND_logo_asymmetric_v002.png`. | Pillow |
 | `LTG_TOOL_style_frame_02_glitch_storm_v002.py` | Alex Chen / Cycle 13 | SF02 character composite pass. Repositions characters: Byte hovering LEFT (~28%), Luma CENTER (~45%), Cosmo RIGHT (~62%). Byte = VOID_BLACK body (storm variant, intentional). CORRUPT_AMBER outlines. char_h 18%. Dutch angle preserved. TERRACOTTA_CYAN_LIT=(150,172,162) applied (Jordan Reed ENV-06 fix). Output: `LTG_COLOR_styleframe_glitch_storm_v002.png`. | Pillow |
 | `LTG_TOOL_byte_cracked_eye_glyph_v001.py` | Alex Chen / Cycle 13 | Generates Byte's canonical dead-pixel cracked-eye glyph reference sheet. 7×7 grid with diagonal crack fracture, dead zone upper-right, alive zone lower-left, Hot Magenta crack line. Shows 4 scales + in-eye mockups. Required for Lee Tanaka panel A2-07. Output: `LTG_CHAR_byte_cracked_eye_glyph_v001.png`. | Pillow |
+| `LTG_TOOL_bg_other_side_v001.py` | Jordan Reed / Cycle 14 | Generates the SF03 "Other Side" CRT-world environment background (1920×1080). Pure digital space: ELEC_CYAN + VOID_BLACK dominant, zero warm tones. Perspective pixel grid floor, 3-tier platform depth system (NEAR/MID/FAR), aurora bands, floating geometry, pixel trails, data streams, horizon vanishing-point glow, CRT frame vignette. Contrasts SF01 (warm room) and SF02 (contested street). Output: `LTG_ENV_other_side_bg_v001.png`. | Pillow |
+| `LTG_TOOL_bg_classroom_v001.py` | Jordan Reed / Cycle 14 | Generates Millbrook Middle School classroom background (1920×1080) for Act 2 panels including A1-04. 3/4 camera from back-right. 3-tier depth: FG coat rack + desk corner / MG diagonal desk rows / BG front wall with board/teacher desk. Dual-temperature lighting: warm gold window shafts (left) vs cool fluorescent (right). Binary/math board content. Foreground depth anchor (mandatory). Scanline hint. Output: `LTG_ENV_classroom_bg_v001.png`. | Pillow |
 | `character_lineup_generator.py` | Maya Santos / Production (legacy) | Generates character lineup PNG with all main cast side-by-side for size comparison. Legacy filename — LTG-compliant output: `LTG_CHAR_character_lineup_v001.png`. | Pillow |
 | `character_turnaround_generator.py` | Maya Santos / Production (legacy) | Generates 3-view turnaround sheets (front/side/back) for each character. Legacy filename. | Pillow |
 | `contact_sheet_generator.py` | Lee Tanaka / Production (legacy) | Generates contact sheet layouts combining multiple panels into a single reference image. Legacy filename. | Pillow |

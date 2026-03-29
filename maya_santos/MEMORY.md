@@ -1,5 +1,11 @@
 # Maya Santos — Memory
 
+## Cycle 14 Lessons
+- **Cosmo expression sheet is now LIVE.** `LTG_TOOL_cosmo_expression_sheet_v001.py` generates 3×2 grid (912×946px). 4 expressions: NEUTRAL/OBSERVING, FRUSTRATED/DEFEATED (A2-06), DETERMINED (A2-05b), SKEPTICAL (A2-03). Notebook open/tucked state carries emotional weight per cosmo.md.
+- **Cosmo body variation rule applied.** arm_l_dy/arm_r_dy per expression; notebook_open=True for DEFEATED (notebook closing = emotional action). Glasses tilt increases at high emotion: 7° neutral → 9° skeptical → 10° frustrated.
+- **Luma classroom pose generated.** `LTG_TOOL_luma_classroom_pose_v001.py` — 900×560px single pose sheet. AT-REST CURIOSITY expression (Cycle 13 three-differentiator spec), head tilt 8° right, elbow-on-desk lean, pen tapping right hand. Beat A1-04 near-miss.
+- **Byte A2-02 gap flagged.** Storyboard requires 'resigned/vulnerable' for A2-02 Byte MCU. Existing sheet has NEUTRAL (default-grumpy), RELUCTANT JOY (suppressed happiness), POWERED DOWN — but no dedicated RESIGNED. Flag to Lee Tanaka: use NEUTRAL as approximation for now, or request Byte expression sheet v002 with RESIGNED added. Report to Alex Chen.
+
 ## Cycle 1-3 Lessons
 - Silhouette test must be documented. Lock variable specs. Simplified production variants mandatory.
 - Glasses thickness is a silhouette element. Cosmo needs a readable hook.

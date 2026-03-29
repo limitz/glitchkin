@@ -1,5 +1,12 @@
 # Jordan Reed — Memory
 
+## Cycle 14 Deliverables
+- `LTG_TOOL_bg_other_side_v001.py` → `LTG_ENV_other_side_bg_v001.png` (275KB, 1920×1080)
+  - SF03 "Other Side" CRT-world: pure digital void, ELEC_CYAN + VOID_BLACK dominant, perspective pixel grid floor, 3-tier platforms (NEAR/MID/FAR), aurora bands, floating geometry, CRT vignette. Zero warm tones. No SF03 spec existed — built from style guide + best judgment.
+- `LTG_TOOL_bg_classroom_v001.py` → `LTG_ENV_classroom_bg_v001.png` (50KB, 1920×1080)
+  - Millbrook classroom for Act 2 / panel A1-04: 3/4 back-right camera, dual-temp lighting (warm window left / cool fluorescent right), binary/math board, teacher desk, 6×5 diagonal desk rows, coat rack FG anchor. Per millbrook_school.md v2.0.
+- Both tools registered in `/home/wipkat/team/output/tools/README.md`.
+
 ## Cycle 13 Lessons
 - **Cyan-lit surface rule: G > R AND B > R individually.** Not just G+B > R. Old TERRA_CYAN_LIT=(154,140,138) failed both. Correct TERRACOTTA_CYAN_LIT=(150,172,162) passes both. Start from unlit base and apply key: R-30, G+52, B+72 for electric cyan key.
 - **Background-only exports go to `output/backgrounds/environments/` with ENV category.** Character compositing scripts go to `output/tools/` with TOOL category. These are different files for a reason.

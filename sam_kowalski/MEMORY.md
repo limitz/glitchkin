@@ -82,6 +82,15 @@
 - **ENV-06 corrected by Jordan Reed.** Old #9A8C8A (R dominant — reads warm, wrong for cyan key). New #96ACA2 (G>R, B>R — correctly cool). Applied in color key generator; SF02 bg generator still needs updating (note added to master_palette.md for Jordan).
 - **CHAR-L-09 warm pixel activation still pending.** Message sent to Alex Chen inbox 2026-03-30 14:00. If Alex confirms, register as CHAR-L-09b or CHAR-L-11 in master_palette.md Section 5 (hex #E8C95A). Current CHAR-L-09 = shoe canvas (Cycle 9).
 
+## Cycle 14 Lessons
+- **CHAR-L-11 REGISTERED.** Alex Chen confirmed (2026-03-30): Luma Hoodie Pixel (Warm-Lit Activation), hex #E8C95A (Soft Gold, alias RW-02). Added to master_palette.md Section 5. Constraints: lamp-lit hoodie pixel accents only, warm-dominant scenes only; neutral/cold scenes use GL-01 (#00F0FF). CHAR-L-09 thread closed — correctly occupied by shoe canvas.
+- **SF03 Other Side color key complete.** Planning doc at `/output/color/LTG_COLOR_colorkey_otherside_v001.md`. PNG at thumbnails/LTG_COLOR_colorkey_otherside_v001.png. Generator at tools/LTG_TOOL_colorkey_otherside_gen_v001.py. Zero warm light sources — Electric Cyan dominant key, Void Black base, UV Purple atmosphere. Maximally distinct from SF01/SF02.
+- **GL-01 vs GL-01b clarification re task brief.** Task brief cited #00D4E8 as "Electric Cyan" — that is actually GL-01b (Byte Teal). True GL-01 is #00F0FF. SF03 color key uses #00F0FF for ambient key; noted in planning doc. Byte uses #00D4E8 as fill per production spec.
+- **SF03 colorkey generator pattern.** All inline tuples named. Dutch angle NOT applied (level — stillness is the mood). No warm light sources anywhere in generated image. Five depth zones: Void Sky / Far Distance / Mid Distance / Platform / Abyss.
+- **Colorkey_glitchstorm ENV-06 VERIFIED.** LTG_TOOL_colorkey_glitchstorm_gen_v001.py has TERRACOTTA_CYAN_LIT = (150, 172, 162) — correct, matches SF02 v002. No regeneration needed.
+- **Classroom color key notes complete.** `LTG_COLOR_colorkey_classroom_v001.md` — warm neutral daylight (Soft Gold key) + cool fluorescent (Dusty Lavender secondary). Zero Glitch contamination. Hoodie pixels = Warm Cream (dormant) in this pre-discovery scene — the Cyan activation IS the story beat.
+- **Hoodie pixel dormancy rule.** Pre-discovery scenes: hoodie pixels = Warm Cream #FAF0DC (dormant). Discovery/Glitch scenes: Soft Gold #E8C95A (warm-lit) or Cyan #00F0FF (Glitch-lit). This color shift IS the visual narrative beat for the activation moment.
+
 ## Carry Forward
-- CHAR-L-09 warm pixel activation: awaiting Alex Chen confirmation. Check next cycle.
-- ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py (TERRA_CYAN_LIT still old value). Coordinate with Jordan Reed.
+- ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001 (TERRA_CYAN_LIT still old value). v002 is correct. Coordinate with Jordan Reed on v001 if it is still used.
+- Classroom scene: Jordan Reed building Act 2 classroom background. Color brief delivered.

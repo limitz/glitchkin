@@ -5,6 +5,7 @@ We are putting together a team that can design visual assets for cartoons.
 ## Important
 The project can only use open source tools that claude can use. 
 If a required tool doesn't exist it needs to be implemented by the team.
+If it makes sense to convert tools into "_claude skills_", do so.
 Agents should always start with a fresh context
 
 ## You

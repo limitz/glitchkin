@@ -93,8 +93,23 @@
 - Never overwrite LTG versioned files — new version numbers
 - Pixel confetti required near ALL active Glitch Layer intrusion events
 
-## Current Status (after Cycle 13)
-- Cold open: 26 panels COMPLETE, all Carmen notes resolved through Cycle 13
-- Act 2 plan: v002 complete with all Carmen Cycle 12 notes
-- BLOCKED: A2-02 MCU and A2-07 ECU panels await Byte glyph design from Alex Chen
-- Ready for: Act 2 panel generation (A2-01, A2-03, A2-04 series, A2-05/05b, A2-06, A2-08) once glyph arrives
+## Cycle 14 Milestone
+- **Byte cracked-eye glyph unblocked:** Alex Chen delivered glyph design (Section 9B, byte.md v3.2). Full 7×7 dead-pixel grid in code: DEAD=#0A0A18, DIM=#005064, MID=#00A8B4, CRACK=Hot Magenta #FF2D6B, BRIGHT=#C8FFFF. Crack overlay = Void Black diagonal on top of everything.
+- **4 Act 2 panels GENERATED:** Generator: `LTG_TOOL_act2_panels_cycle14_v001.py`
+  - A1-04: Classroom near-miss — board text readable, Luma eyes up toward "BINARY SYSTEMS," Byte napping in eraser tray, dotted cyan sight-line shows gaze path, "almost..." annotation
+  - A2-02: Byte MCU — 150×120px body fills frame, cracked eye 42×32px (full glyph rendered), Luma ~20% background weight, warm amber bg, cyan glow corona, desaturation ring at feet
+  - A2-05b: Cosmo street MCU — phone screen with GLITCH FREQ app (waveform + freq readout), pixel confetti + GLITCH SIGNAL near streetlight, confident pre-failure pose
+  - A2-06: Phone screen INSERT — full-frame static crash, horizontal scan bars, displacement artifacts, X crash symbol, APP TERMINATED, pixel confetti, no Cosmo visible
+- **Act 2 contact sheet generated:** `LTG_SB_act2_contactsheet_v001.png` — 2×2 layout, arc reads classroom→vulnerability→setup→crash
+
+## Cycle 14 Lessons
+- **Cracked eye glyph at MCU scale (42×32px): full 7×7 grid is legible and emotionally potent.** CRACK color (Hot Magenta) reads even before audience recognizes the grid. The chip in the upper-right corner of the bezel adds physicality at large size.
+- **INSERT framing = FILL THE FRAME.** A2-06 works because the phone screen IS the entire panel. Bezel margin of 20px max. Any more empty space contradicts the punch-cut intent.
+- **Waveform seed consistency across panels** (A2-05b and A2-06 use same seed=42): the ghost waveform in the crash frame subliminally connects to the live app in the prior panel.
+- **Background Luma at 20% weight**: desaturate the skin toward warm neutral (200→190), reduce outline contrast, avoid dark frame lines. She reads as present without competing with Byte's cracked eye.
+
+## Current Status (after Cycle 14)
+- Cold open: 26 panels COMPLETE, all Carmen notes resolved
+- Act 2 panels GENERATED: A1-04, A2-02, A2-05b, A2-06 complete
+- STILL BLOCKED: A2-07 ECU (Byte partial confession) — glyph is now available, panel can be drawn next cycle
+- NEXT: A2-01, A2-03, A2-04 (a/b/c series), A2-05, A2-07, A2-08 remaining
