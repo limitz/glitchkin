@@ -324,6 +324,15 @@ These are not freestanding palette colors — they are the documented results of
 - **Source:** `#3B2820` hair under Hot Magenta fill light from storm (style frame 02)
 - **Scene use:** Style Frame 02 motion arcs, hair rim highlights.
 
+### DRW-18 — Luma Hair Base (Glitch Layer)
+- **Hex:** `#1A0F0A`
+- **RGB:** 26, 15, 10
+- **Source:** `#3B2820` (Deep Cocoa) modified by UV Purple ambient in the Glitch Layer. The hair's warm brown identity is suppressed toward near-void-dark; the UV Purple catches only the crown as a rim sheen (GL-04 `#7B2FBE`).
+- **Scene use:** Style Frame 03 — Luma's hair base fill in the Glitch Layer. Pair with GL-04 (`#7B2FBE`) UV Purple rim sheen on hair crown.
+- **Shadow companion:** GL-08a `#050508` (Below-Void-Black — deepest crevice in near-void dark hair).
+- **Avoid using:** As a line color or large-area fill. This is hair-base only in Glitch Layer scenes. Do not use in Real World scenes — use `#3B2820` (Deep Cocoa, RW-11) there.
+- **Added:** Sam Kowalski — Cycle 15 (2026-03-29), from Style Frame 03 spec `(26, 15, 10)` hair base value.
+
 ---
 
 ### C10-1 RESOLVED — Cold Overlay Boundary Arithmetic (Style Frame 01)
@@ -374,6 +383,17 @@ Flat hex values for environment surfaces under specific lighting conditions. Est
 | ENV-10 | `#0A1420` | Near-void slab face | Glitch Layer vertical structure faces | Frame 03 |
 | ENV-11 | `#2A1A40` | Deep atmospheric purple | Far-distance Glitch Layer structures | Frame 03 |
 | ENV-12 | `#2B2050` | Layer 4-5 transition sky | Glitch Layer sky near-void transition | Frame 03 |
+| ENV-13 | `#211136` | Far structure edge (void-scale) | Megastructure silhouettes at void-scale distance | Frame 03 |
+
+### ENV-13 — Far Structure Edge (Void-Scale)
+- **Hex:** `#211136`
+- **RGB:** 33, 17, 54
+- **Derivation:** 20% UV Purple `#7B2FBE` over Void Black `#0A0A14` background. Formula: R: 10×0.8+123×0.2=33, G: 10×0.8+47×0.2=17, B: 20×0.8+190×0.2=54. Result: RGB(33,17,54) = `#211136`.
+- **Role:** The edge/silhouette color for the largest far-void megastructures in the Glitch Layer — continent-scale planes barely distinguishable from the void. Used exclusively for structure outlines/edges at maximum depth (Layer 4 / far distance, Style Frame 03).
+- **Distinction from Depth Tier `FAR_EDGE` (0,40,55) `#002837`:** The depth-tier FAR_EDGE is a cyan-derived procedural construction value for `bg_glitch_layer_frame.py`. ENV-13 is a purple-over-void derivation for SF03 megastructure silhouettes. Different scenes, different derivation, different family. Do not substitute one for the other.
+- **Shadow companion:** GL-08 `#0A0A14` (Void Black — the structure fills are void-dark; the edge is this barely-visible purple lift).
+- **Use-case notes:** Draw as thin polygon outlines (1-2px) on far-distance slab polygons in Glitch Layer scenes. Never use as a fill color on large areas — these structures are barely visible at void scale. Their bodies use ENV-11 `#2A1A40` or FAR_EDGE fills; this value is their edge stroke only.
+- **Added:** Sam Kowalski — Cycle 15 (2026-03-29), from Style Frame 03 spec far-distance structure edge derivation.
 
 ### ENV-06 — Terracotta Under Cyan Key (Corrected Cycle 13)
 - **Hex:** `#96ACA2`
@@ -1268,4 +1288,5 @@ When any human character is in a cool-ambient or Glitch Layer environment, warm 
 *Cycle 10 revision: CHAR-L-08 hex corrected from #B06040 (176,96,64) to #B36250 (179,98,80) — blue channel arithmetic error resolved (Naomi Bridges C9-5). Glitch Layer depth-tier construction values documented in comment block (Naomi C9-1). luma_color_model.md cross-reference confirmed present in both documents.*
 *Cycle 13 revision (Sam Kowalski — 2026-03-30): C10-1 RESOLVED — cold overlay boundary arithmetic for SF01 documented in Section 1B (prior comment was wrong: alpha at 80px boundary is 30/11.8%, not near-zero). DRW-16 RESOLVED — painter warning for shoulder-under-Data-Stream-Blue-waterfall expanded and cross-referenced to luma_color_model.md. DRW-07 saturation corrected: #C07A70 → #C8695A (RGB 200,105,90), HSL saturation raised from ~39% to ~50% (Naomi C12-3). ENV-06 corrected: #9A8C8A (warm-dominant grey, wrong) → #96ACA2 (G>R, B>R, correctly cyan-lit) per Jordan Reed / Naomi C12-1. ENV-03 warm spill canonical alpha documented: 40/255 (~16%) — aligned LTG_TOOL_colorkey_glitchstorm_gen_v001.py from prior 150 to 40 (Naomi C12-2). CHAR-L-09 warm pixel activation: pending Alex Chen confirmation (message sent 2026-03-30 14:00).*
 *Cycle 14 revision (Sam Kowalski — 2026-03-30): CHAR-L-11 added — Luma Hoodie Pixel (Warm-Lit Activation), hex #E8C95A (Soft Gold, alias RW-02). Registered per Alex Chen Art Director confirmation. Constraints: lamp-lit hoodie pixel accents only, warm-dominant scenes only; neutral/cold scenes use GL-01 (#00D4E8). CHAR-L-09 warm pixel activation thread CLOSED — correctly occupied by shoe canvas; CHAR-L-11 is the warm pixel entry.*
+*Cycle 15 revision (Sam Kowalski — 2026-03-29): DRW-18 added — Luma Hair Base (Glitch Layer), hex #1A0F0A (26,15,10); derived from Deep Cocoa #3B2820 under UV Purple ambient. ENV-13 added — Far Structure Edge (Void-Scale), hex #211136 (33,17,54); derived as 20% UV Purple over Void Black; used for SF03 megastructure silhouettes at far-void distance. Source: SF03 Other Side spec color audit (sf03_other_side_color_notes.md).*
 *Review cycle: Update after each critic feedback pass.*

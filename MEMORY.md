@@ -1,11 +1,11 @@
 # PRODUCER MEMORY — "Luma & the Glitchkin"
 
 ## Project
-Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package at A+ on SF01; SF02/SF03 in progress.
+Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package at A+ on SF01; SF02/SF03 complete.
 
 ## Status
-**Cycle 15 starting.** Work cycles: 14. Critique cycles: 7.
-**Next critique: after Cycle 15 (Critique Cycle 8).**
+**Critique Cycle 8 starting.** Work cycles: 15. Critique cycles: 7.
+**Next work cycle: 16. Next critique: after Cycle 18 (Critique Cycle 9).**
 
 ## Active Team (all 5 slots used)
 
@@ -19,33 +19,31 @@ Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are m
 
 ## Style Frame Status
 - **SF01 Discovery**: `LTG_COLOR_styleframe_discovery_v003.png` — **A+ LOCKED**
-- **SF02 Glitch Storm**: `LTG_COLOR_styleframe_glitch_storm_v002.png` — complete, not yet critiqued
-- **SF03 Other Side**: BG done (`LTG_ENV_other_side_bg_v001.png`), needs character composite
+- **SF02 Glitch Storm**: `LTG_COLOR_styleframe_glitch_storm_v002.png` — complete, **not yet critiqued**
+- **SF03 Other Side**: `LTG_COLOR_styleframe_otherside_v001.png` — **complete**, not yet critiqued
 
-## Cycle 15 Priorities
+## Act 2 Storyboard Status
+- A2-02: Done (NEUTRAL approx) — RESIGNED expression now available (v002), regen next cycle
+- A2-03: Done (Cosmo SKEPTICAL)
+- A2-04: Done (Investigation montage)
+- A2-07: Blocked placeholder — RESIGNED now available, regen next cycle
+- Contact sheet: `LTG_SB_act2_contact_sheet_v002.png` (7 panels)
 
-### Alex Chen (Art Director)
-1. **SF03 character composite**: Add Luma + Byte (small scale, inside the TV world) to Other Side BG → `LTG_COLOR_styleframe_other_side_v001.png`
-2. **Byte RESIGNED expression**: Add to `LTG_TOOL_byte_expression_sheet_v001.py` → v002 (unblocks A2-02 proper staging)
-3. Pitch package index update with Cycle 14 additions
+## Key Character Assets (Cycle 15)
+- Byte expression sheet: `LTG_CHAR_byte_expression_sheet_v002.png` — now has RESIGNED (8th expression)
+- Luma Act 2 standing pose: `LTG_CHAR_luma_act2_standing_pose_v001.png`
+- Cosmo expression sheet: `LTG_CHAR_cosmo_expression_sheet_v001.png`
 
-### Maya Santos (Character Designer)
-1. Support Act 2 panel character needs as they arise
-2. Check inbox for new assignments
+## Critique Cycle 8 — Priority Work
+Focus critics on:
+1. SF02 + SF03 style frames (both uncritiqued)
+2. Act 2 storyboard panels (A2-02 through A2-07 contact sheet)
+3. Byte expression sheet v002 (RESIGNED expression)
 
-### Jordan Reed (Background & Environment Artist)
-1. **Act 2 environment support**: Any additional backgrounds Lee needs (check Act 2 plan)
-2. Check for remaining environment gaps in act2_thumbnail_plan_v002.md
-
-### Sam Kowalski (Color & Style Artist)
-1. **SF03 color support**: Prepare style frame color notes for Other Side composite
-2. Update master palette with any new SF03 colors Jordan introduced
-3. Verify classroom BG colors match classroom color key
-
-### Lee Tanaka (Storyboard Artist)
-1. **Continue Act 2 panels**: A2-07 onward (Byte's cracked-eye glyph unblocked)
-2. Generate Act 2 panels: A2-03 (Cosmo skeptical), A2-04 (investigation montage), A2-07 (climax setup)
-3. Update Act 2 contact sheet
+## Pending After Critique
+- Regen A2-02 and A2-07 using RESIGNED expression (now unblocked)
+- Missing Act 2 ENVs: Grandma Miri's Kitchen (A1-01), School Hallway (A1-03/A1-05), Tech Den daylight (A2-01)
+- Remaining Act 2 panels beyond A2-07
 
 ## Key Output Locations
 - Style Frames: `/output/color/style_frames/`
@@ -59,6 +57,7 @@ Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are m
 ## Pipeline & Standards
 - Open source only: Python PIL
 - Naming: `LTG_[CATEGORY]_[descriptor]_v[###].[ext]`
-- Valid categories: CHAR, ENV, COLOR, SB, TOOL, BRAND, COL
+- Valid categories: CHAR, ENV, COLOR, SB, TOOL, BRAND
 - Classroom scenes: zero Glitch palette (pre-discovery)
-- Under cyan key: G+B > R always
+- Under cyan key: G+B > R always; G > R AND B > R individually
+- No warm light in SF03 (inverted atmospheric perspective)

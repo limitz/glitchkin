@@ -1,5 +1,16 @@
 # Maya Santos — Memory
 
+## Cycle 15 Lessons
+- **Luma Act 2 standing pose is LIVE.** `LTG_TOOL_luma_act2_standing_pose_v001.py` generates 900×600px pose sheet. WORRIED/DETERMINED expression, right arm raised/reaching, left arm at waist, wide stance, forward lean. Covers beats A2-01/A2-03/A2-05/A2-08. Squint-test blob embedded in annotation panel. Tool registered in README.md.
+- **Byte glyph flag CLEARED.** `LTG_CHAR_byte_cracked_eye_glyph_v001.png` EXISTS (Cycle 13, Alex Chen). Storyboard v002 still says "BLOCKED" — notified Lee Tanaka that design blocker is resolved on art side. A2-07 can proceed to thumbnail stage.
+- **Byte RESIGNED still missing.** `LTG_CHAR_byte_expression_sheet_v002.png` does NOT exist. Sent detailed visual spec to Alex Chen (20260329_1224): arm_dy=8, arm_x_scale=0.70, body_tilt=2, new 'resigned' right-eye style (55% aperture, downcast, heavy lid), downward-V pixel left eye. Lee is using NEUTRAL as staging approx — not blocking thumbnail work.
+- **Continuity check PASSED.** All Act 2 character tools checked against canonical specs. Luma palette, Cosmo glasses tilt (7°/9°/10°), Byte oval body, Byte 10×10px hover particles — all consistent. No corrections needed.
+- **Act 2 character asset inventory (Cycle 15 state):**
+  - Cosmo: FULL — NEUTRAL, SKEPTICAL (A2-03), DETERMINED (A2-05b), FRUSTRATED (A2-06) all in v001 sheet.
+  - Luma: STANDING pose v001 (NEW), classroom pose v001, expression sheet v003.
+  - Byte: Expression sheet v001 (7 expressions, NO RESIGNED). Glyph v001 (A2-07 reference).
+  - Luma has NO CROUCHING pose (A2-04 couch hide). Low priority — WIDE shot, character is small in frame.
+
 ## Cycle 14 Lessons
 - **Cosmo expression sheet is now LIVE.** `LTG_TOOL_cosmo_expression_sheet_v001.py` generates 3×2 grid (912×946px). 4 expressions: NEUTRAL/OBSERVING, FRUSTRATED/DEFEATED (A2-06), DETERMINED (A2-05b), SKEPTICAL (A2-03). Notebook open/tucked state carries emotional weight per cosmo.md.
 - **Cosmo body variation rule applied.** arm_l_dy/arm_r_dy per expression; notebook_open=True for DEFEATED (notebook closing = emotional action). Glasses tilt increases at high emotion: 7° neutral → 9° skeptical → 10° frustrated.

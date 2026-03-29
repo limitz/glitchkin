@@ -108,8 +108,26 @@
 - **Waveform seed consistency across panels** (A2-05b and A2-06 use same seed=42): the ghost waveform in the crash frame subliminally connects to the live app in the prior panel.
 - **Background Luma at 20% weight**: desaturate the skin toward warm neutral (200→190), reduce outline contrast, avoid dark frame lines. She reads as present without competing with Byte's cracked eye.
 
-## Current Status (after Cycle 14)
+## Cycle 15 Milestone
+- **3 Act 2 panels generated:** Generator: `LTG_TOOL_sb_a2_cycle15_v001.py`
+  - A2-03: Cosmo SKEPTICAL — arms crossed, one brow raised (viewer right = his left), flat deadpan mouth, glasses 9°, full body wide/medium shot, annotation callouts
+  - A2-04: Investigation montage — 2×2 grid of vignettes (TV search, under furniture, desk examine, clue found). Glowing cyan clue in BR vignette. Pixel confetti on TV glitch and clue discovery.
+  - A2-07: BLOCKED placeholder — production block panel with ghost Byte silhouette, dependency listed clearly
+- **Act 2 contact sheet v002 generated:** `LTG_SB_act2_contact_sheet_v002.png` — 7 panels, 2-row layout, arc labels NEAR-MISS→VULNERABLE→SKEPTICAL→INVESTIGATING→DETERMINED→FAILURE→BLOCKED
+- **act2/panels/ directory created** with LTG naming: LTG_SB_a2_02_v001.png through _a2_07_v001.png
+- **STILL BLOCKED: A2-07** — needs `LTG_CHAR_byte_expression_sheet_v002.png` with RESIGNED expression
+- **Reported to Alex Chen** via inbox message
+
+## Cycle 15 Lessons
+- **Cosmo SKEPTICAL = asymmetric brow geometry.** One brow arc raised high (his left, viewer's right), other brow flat line. Deadpan mouth = single horizontal line, slight downturn at left corner. Arms crossed = torso-width filled rectangle at arm-crossing zone plus individual arm lines for clarity.
+- **Montage panels need a still center per vignette.** Each 2×2 cell must be readable in isolation AND contribute to the arc. The discovery (BR) must be the highest visual energy cell — glowing element + pixel confetti + excited pose = clear climax of the montage.
+- **Glow in sub-panels (vignettes):** `add_glow()` takes absolute image coordinates. When drawing inside a cell, compute the absolute position (cell_origin + local_offset) before calling. Minor inaccuracy in BR vignette glow placement — note for future revision.
+- **BLOCKED panels must earn their slot.** A2-07 placeholder carries ghost Byte silhouette, X'd-out eyes, dependency filename, description of what the real panel requires. Communicates block status without being dead space.
+
+## Current Status (after Cycle 15)
 - Cold open: 26 panels COMPLETE, all Carmen notes resolved
-- Act 2 panels GENERATED: A1-04, A2-02, A2-05b, A2-06 complete
-- STILL BLOCKED: A2-07 ECU (Byte partial confession) — glyph is now available, panel can be drawn next cycle
-- NEXT: A2-01, A2-03, A2-04 (a/b/c series), A2-05, A2-07, A2-08 remaining
+- Act 2 panels GENERATED: A1-04, A2-02, A2-03, A2-04, A2-05b, A2-06 complete
+- BLOCKED: A2-07 ECU (Byte partial confession) — needs byte_expression_sheet_v002 RESIGNED expression. NOTE: glyph design IS resolved (7×7 grid exists). Only the RESIGNED mouth/body expression state is missing from the character sheet.
+- REMAINING: A2-01, A2-05 (exterior wide), A2-08 (Miri returns)
+- Contact sheet: v002 (7 panels including placeholder)
+- New Luma Act2 standing pose available: `LTG_CHAR_luma_act2_standing_pose_v001.png` — use for A2-01, A2-05, A2-08

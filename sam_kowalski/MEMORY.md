@@ -91,6 +91,14 @@
 - **Classroom color key notes complete.** `LTG_COLOR_colorkey_classroom_v001.md` — warm neutral daylight (Soft Gold key) + cool fluorescent (Dusty Lavender secondary). Zero Glitch contamination. Hoodie pixels = Warm Cream (dormant) in this pre-discovery scene — the Cyan activation IS the story beat.
 - **Hoodie pixel dormancy rule.** Pre-discovery scenes: hoodie pixels = Warm Cream #FAF0DC (dormant). Discovery/Glitch scenes: Soft Gold #E8C95A (warm-lit) or Cyan #00F0FF (Glitch-lit). This color shift IS the visual narrative beat for the activation moment.
 
+## Cycle 15 Lessons
+- **SF03 palette audit is complete.** All colors in the spec are mapped to master palette entries. Two new entries added: DRW-18 (Luma Hair Glitch Layer, #1A0F0A) and ENV-13 (Far Structure Edge Void-Scale, #211136). No other undocumented values found.
+- **Figure-ground: SF03 PASSES.** Luma's orange hoodie (#C07038) against UV Purple (#7B2FBE) is near-complementary. Strong contrast. No intervention needed. Byte reads as dark form with cyan glow against UV Purple — no amber outline (UV-dominant, not cyan-dominant).
+- **Warm-light prohibition: SATISFIED.** All warm colors in SF03 are material/pigment. Corrupt Amber must be crack-line strokes only on fragments — NOT soft radial glow. Radial amber glow would read as a warm light source, violating the rule.
+- **Classroom BG generator palette is clean.** WALL_SAGE #8A9E8A (muted sage) is correct per millbrook_school.md — overrides my Warm Cream approximation. SHADOW_COOL #7A9080 is an unlisted construction value but is warm-safe (G>R). Zero Glitch contamination.
+- **millbrook_school.md is the color authority for classroom walls.** My color key was an approximation. Always check scene-specific reference docs before writing color keys.
+- **ENV-13 distinction from depth-tier FAR_EDGE:** They share the same name but are different derivations. ENV-13 = purple-over-void (#211136). Depth-tier FAR_EDGE = cyan-derived (#002837). Document the distinction explicitly every time.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001 (TERRA_CYAN_LIT still old value). v002 is correct. Coordinate with Jordan Reed on v001 if it is still used.
-- Classroom scene: Jordan Reed building Act 2 classroom background. Color brief delivered.
+- SHADOW_COOL #7A9080 in classroom generator: Jordan should add inline comment on next revision pass (low priority).

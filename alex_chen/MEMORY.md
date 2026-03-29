@@ -1,5 +1,13 @@
 # Alex Chen — Memory
 
+## Cycle 15 Lessons
+- **RESIGNED expression delivered:** `LTG_TOOL_byte_expression_sheet_v002.py` adds 8th expression. Key distinctions: `↓` pixel symbol (distinct from flat-line NEUTRAL), `droopy_resigned` right eye (NO suppressed smile, downcast pupil — distinct from RELUCTANT JOY's `droopy`), arms arm_x_scale=0.50 (tighter than NEUTRAL 0.75), body_tilt=+8 (backward avoidance lean). A2-02 no longer blocked. Lee Tanaka notified.
+- **SF03 already complete:** Jordan Reed's `LTG_TOOL_style_frame_03_other_side_v001.py` was built this cycle (Cycle 15 per README) — full generator including characters and lighting overlay. `LTG_COLOR_styleframe_otherside_v001.png` exists. All 3 style frames now pitch-ready. Task was to "check if BG ready and composite" — BG existed AND Jordan's full tool already handled the composite. My role: verify, register, update index.
+- **Pitch package index updated through Cycle 15:** All Cycle 13/14/15 additions documented. Style frames now COMPLETE (was PARTIAL). Byte.md now v3.2 (was incorrectly listed as v3.1 with header note). Open blockers revised.
+- **Tools README:** `LTG_TOOL_byte_expression_sheet_v002.py` registered. Jordan's SF03 tools were already registered.
+- **droopy vs droopy_resigned:** `droopy` = RELUCTANT JOY (lower-lid smile crinkle present). `droopy_resigned` = RESIGNED (no crinkle, pupil fully downcast, heavier lid 50% vs 55%, shorter highlight). Must never be confused — one suppresses joy, the other has surrendered.
+- **Sam Kowalski SF03 color notes:** Requested for Cycle 16 review. Five questions: UV purple ambient read, inverted atmos perspective, Byte eye pair legibility, confetti density, abyss below platform.
+
 ## Cycle 14 Lessons
 - **Byte float-gap dimension arrow (Dmitri P1 — RESOLVED):** Replaced Cycle 12 "ground floor." caption with a proper engineering dimension arrow in `LTG_TOOL_character_lineup_v003.py`. Two-headed vertical arrow (GROUNDFLOOR_COL), horizontal serif ticks at each tip, "0.25 HU" label beside shaft. Arrow positioned at `byte_cx + body_rx + 10`. Output: `LTG_CHAR_lineup_v003.png`.
 - **Misnamed tools corrected:** `LTG_CHAR_luma_expression_sheet_v002.py` → `LTG_TOOL_luma_expression_sheet_v002.py` (note added in header). `bg_glitch_layer_encounter.py` → `LTG_TOOL_bg_glitch_layer_encounter_v001.py` (moved to tools/). Both originals retained per version preservation policy.

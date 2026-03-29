@@ -2,8 +2,8 @@
 ## "Luma & the Glitchkin" — Complete Asset Inventory
 
 **Prepared by:** Jordan Reed, Background & Environment Artist / Updated by Alex Chen, Art Director
-**Date:** 2026-03-29 / Updated 2026-03-30 (Cycle 12)
-**Cycle:** 12
+**Date:** 2026-03-29 / Updated 2026-03-30 (Cycle 12) / Updated 2026-03-30 (Cycles 13–14–15)
+**Cycle:** 15
 **Purpose:** Single-document navigator for all pitch-ready assets. Use this to locate, assess, and present any component of the package. Quality grades are drawn from critic records where available.
 
 ---
@@ -24,7 +24,7 @@
 | Asset | File Path | What It Shows | Quality Status | Needs Work |
 |---|---|---|---|---|
 | Luma design sheet | `/home/wipkat/team/output/characters/main/luma.md` | Full character spec: proportions, color, expressions, wardrobe, design rules | Accepted (Fiona C10 B-) | None blocking pitch |
-| Byte design sheet | `/home/wipkat/team/output/characters/main/byte.md` | Full character spec v3.1: oval body confirmed, all cube refs purged | Accepted (Fiona C10 PASS with minor defect) | Version header reads "3.0" — should be "3.1". One-line fix. |
+| Byte design sheet | `/home/wipkat/team/output/characters/main/byte.md` | Full character spec v3.2: oval body, Sections 9B (cracked-eye glyph) and 13A (storm-scene variant) added. Version header corrected to v3.2. | Accepted (Cycle 11 — header fixed; Cycle 13 — 9B + 13A added) | None blocking pitch |
 | Cosmo design sheet | `/home/wipkat/team/output/characters/main/cosmo.md` | Full character spec: proportions, glasses defining feature, color | Accepted (Fiona C10 B-) | None blocking pitch |
 | Grandma Miri design sheet | `/home/wipkat/team/output/characters/supporting/grandma_miri.md` | Full character spec: MIRI-A canonical design, bun/chopsticks/cardigan/soldering iron | Accepted (Fiona C10 B-) | None blocking pitch |
 
@@ -42,6 +42,7 @@
 | Asset | File Path | What It Shows | Quality Status | Needs Work |
 |---|---|---|---|---|
 | Character lineup | `/home/wipkat/team/output/characters/main/character_lineup.png` | All 4 characters in color at correct relative heights, labelled | Accepted (Fiona C10 PASS — 5-cycle overdue, now delivered) | LTG rename outstanding |
+| Character lineup v003 | `/home/wipkat/team/output/characters/main/LTG_CHAR_lineup_v003.png` | Character lineup with corrected Byte float-gap dimension arrow (Dmitri P1 — RESOLVED Cycle 14). Two-headed vertical arrow with serif ticks, "0.25 HU" label. | Accepted (Cycle 14 — new) | None |
 | Character lineup doc | `/home/wipkat/team/output/characters/main/character_lineup.md` | Written spec for the lineup: height references, scale rationale | Supporting reference | None |
 | Silhouettes | `/home/wipkat/team/output/characters/main/silhouettes/character_silhouettes.png` | All 4 characters as readable silhouettes — distinctiveness test | Accepted | None |
 | Proportion diagram | `/home/wipkat/team/output/characters/main/proportion_diagram.png` | Head-unit proportions for all characters | Accepted | None |
@@ -49,6 +50,9 @@
 | Luma expression sheet (full) | `/home/wipkat/team/output/characters/main/luma_expression_sheet.png` | Full expression sheet — 6 expressions, full-body panels, coherent emotional arc (Cycle 11, matches Byte sheet format) | Accepted (Dmitri C11 A) | None |
 | Luma face closeup | `/home/wipkat/team/output/characters/main/luma_face_closeup.png` | ECU face render — style detail and linework quality | Accepted | None |
 | Byte expressions | `/home/wipkat/team/output/characters/main/byte_expressions.png` | Expression range for Byte, oval body, hover particles (Cycle 10 fix: 10×10px) | Accepted (Naomi C10 review indirect) | None |
+| Byte expression sheet (full) v001 | `/home/wipkat/team/output/characters/main/LTG_CHAR_byte_expression_sheet_v001.png` | Full 4×2 expression sheet: NEUTRAL/DEFAULT, GRUMPY, SEARCHING, ALARMED, RELUCTANT JOY, CONFUSED, POWERED DOWN (Cycle 13 — NEUTRAL/DEFAULT added per Dmitri P1) | Accepted (Cycle 13 — new) | 8th slot was reserved |
+| Byte expression sheet (full) v002 | `/home/wipkat/team/output/characters/main/LTG_CHAR_byte_expression_sheet_v002.png` | Full 4×2 expression sheet: all 7 v001 expressions + RESIGNED/RELUCTANT DISCLOSURE (Cycle 15 — Maya Santos A2-02 request). ↓ pixel symbol distinct from flat-line NEUTRAL. | Accepted (Cycle 15 — new) | None |
+| Byte cracked-eye glyph | `/home/wipkat/team/output/characters/main/LTG_CHAR_byte_cracked_eye_glyph_v001.png` | Dead-pixel cracked-eye glyph reference: 7×7 grid, diagonal crack fracture, dead zone upper-right, Hot Magenta crack line. 4 scales + in-eye mockups. Required for A2-07. | Accepted (Cycle 13 — new) | None |
 
 ### 1.4 Color Models
 
@@ -81,6 +85,8 @@
 | Millbrook main street layout | `/home/wipkat/team/output/backgrounds/environments/layouts/millbrook_main_street_layout.png` | Street layout: buildings, clock tower, power lines (thin catenary), pavement depth anchor | Accepted (Cycle 6/7 revisions) | LTG rename → see `LTG_ENV_millbrook_mainstreet_v001.png` (Cycle 11) |
 | Millbrook environment doc | `/home/wipkat/team/output/backgrounds/environments/millbrook_main_street.md` | Written spec: street proportions, building roster, signage, time-of-day notes | Reference | None |
 | Millbrook school doc | `/home/wipkat/team/output/backgrounds/environments/millbrook_school.md` | Written spec for the school environment | Reference | None |
+| Glitch Storm BG (corrected) | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_glitch_storm_bg_v001.png` | Background-only Glitch Storm frame with ENV-06 TERRACOTTA_CYAN_LIT color fix (Cycle 13 — Jordan Reed). No characters. Compositing reference. | Accepted (Cycle 13 — new) | None |
+| Classroom BG | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_classroom_bg_v001.png` | Millbrook Middle School classroom (1920×1080). 3/4 camera from back-right, 3-tier depth, dual-temperature lighting (warm window shafts / cool fluorescent). Binary/math board content. (Cycle 14 — Jordan Reed). | Accepted (Cycle 14 — new) | None |
 | Key props doc | `/home/wipkat/team/output/backgrounds/props/key_props.md` | Prop design reference: CRT monitor, pixel face objects, key hand props | Reference | No visual prop sheets yet — medium priority gap |
 | Pixel face continuity doc | `/home/wipkat/team/output/backgrounds/props/pixel_face_continuity.md` | Continuity rules for pixel-face prop across environments | Reference | None |
 
@@ -90,13 +96,18 @@
 |---|---|---|---|---|
 | Style Frame 01 — rendered PNG | `/home/wipkat/team/output/color/style_frames/style_frame_01_rendered.png` | Composited style frame: Luma at desk, Byte emerging from monitor — discovery moment. Cycle 11: mid-air transition element + 15px screen pixel figures added. | Accepted (Victoria C11 A) | Visual surprise element (A+ gap) — Cycle 12 work |
 | Style Frame 01 — LTG export | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v001.png` | LTG-named canonical copy of Style Frame 01 | Accepted (Cycle 11 — LTG-compliant) | None |
+| Style Frame 01 — v003 LOCKED | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v003.png` | Ghost Byte alpha calibration fix (Cycle 13 — Alex Chen). Body alpha 55→90, eye glints 65→105. Top-left ghost removed. Two ghosts (top-right + mid-left). LOCKED as canonical discovery style frame. | A+ (Victoria C13) | None — PITCH READY |
 | Style Frame 01 — composition | `/home/wipkat/team/output/color/style_frames/compositions/frame01_discovery_composition.png` | Composition layout card for Frame 01 | Reference | None |
 | Style Frame 01 — spec doc | `/home/wipkat/team/output/color/style_frames/style_frame_01_discovery.md` | Written spec: composition, lighting, color zones | Reference | None |
-| Style Frame 02 — BG render | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v001.png` | Compositing-ready BG: night sky, UV storm masses, main crack, town silhouette, street, characters (Luma+Cosmo+Byte), storefront, 4° Dutch angle | Delivered Cycle 12 (Jordan Reed) | Ready for compositing pass by Sam Kowalski |
+| Style Frame 02 — BG render | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v001.png` | Compositing-ready BG: night sky, UV storm masses, main crack, town silhouette, street, characters (Luma+Cosmo+Byte), storefront, 4° Dutch angle | Delivered Cycle 12 (Jordan Reed) | None |
+| Style Frame 02 — v002 composited | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v002.png` | Full character composite (Cycle 13 — Alex Chen). Byte LEFT (~28%), Luma CENTER (~45%), Cosmo RIGHT (~62%). Byte = VOID_BLACK storm variant. CORRUPT_AMBER outlines. TERRACOTTA_CYAN_LIT color fix applied. | Accepted (Cycle 13 — new) | None |
 | Style Frame 02 — composition | `/home/wipkat/team/output/color/style_frames/compositions/frame02_glitch_storm_composition.png` | Composition layout card for Frame 02 (Glitch Storm) | Reference | BG delivered Cycle 12 |
 | Style Frame 02 — spec doc | `/home/wipkat/team/output/color/style_frames/style_frame_02_glitch_storm.md` | Written spec: composition, sky color architecture, confetti rules, Byte visibility fix | Approved for illustration (Sam Kowalski Cycle 2) | BG delivered — compositing can proceed |
-| Style Frame 03 — composition | `/home/wipkat/team/output/color/style_frames/compositions/frame03_other_side_composition.png` | Composition layout card for Frame 03 (Other Side) | Reference — no composited PNG yet | No compositing-ready BG for Frame 03. Medium priority. |
-| Style Frame 03 — spec doc | `/home/wipkat/team/output/color/style_frames/style_frame_03_other_side.md` | Written spec for the "Other Side" frame | Approved for illustration | BG needed before compositing can proceed |
+| Style Frame 03 — composition | `/home/wipkat/team/output/color/style_frames/compositions/frame03_other_side_composition.png` | Composition layout card for Frame 03 (Other Side) | Reference | None |
+| Style Frame 03 — spec doc | `/home/wipkat/team/output/color/style_frames/style_frame_03_other_side.md` | Written spec for the "Other Side" frame | Approved | None |
+| Style Frame 03 — generator spec | `/home/wipkat/team/output/production/sf03_other_side_spec.md` | Technical generator spec written by Alex Chen (Cycle 14): all RGB values, layer draw order, character placement guide, validation checklist. | Reference | None |
+| Style Frame 03 — BG ENV | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_other_side_bg_v001.png` | SF03 environment background: pure digital void space, ELEC_CYAN + VOID_BLACK, perspective pixel grid, platform depth system, aurora bands, floating geometry (Cycle 14 — Jordan Reed). | Accepted (Cycle 14 — new) | None |
+| Style Frame 03 — full render v001 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_otherside_v001.png` | Full SF03 render with characters: Luma (H*0.20) at platform edge, Byte (H*0.10) on shoulder. UV purple ambient, no warm light. Inverted atmos perspective. (Cycle 15 — Jordan Reed). | Accepted (Cycle 15 — new) | None — PITCH READY |
 
 ### 1.7 Color Development
 
@@ -210,8 +221,8 @@
 | Character design sheets (all 4) | COMPLETE | Byte v3.1 header inconsistency: minor 1-line fix |
 | Character turnarounds (all 4) | COMPLETE | Delivered Cycle 10 |
 | Color model sheets | COMPLETE | All 4 characters |
-| Style frames (3 frames) | PARTIAL | Frame 01 composited + LTG export (v001 + v002); Frame 02 BG delivered Cycle 12 (pending Sam compositing); Frame 03 BG pending |
-| Environment designs | COMPLETE | All 3 environments documented; Cycle 11 additions: encounter frame, Glitch Layer v2 |
+| Style frames (3 frames) | COMPLETE | SF01 v003 LOCKED A+ (Cycle 13); SF02 v002 composited (Cycle 13); SF03 full render v001 (Cycle 15) — all 3 pitch-ready |
+| Environment designs | COMPLETE | All 3 environments documented + rendered. Cycle 11: encounter frame, Glitch Layer v2. Cycle 13: Glitch Storm BG (color fix). Cycle 14: Classroom BG, Other Side BG. |
 | Storyboard / cold open | COMPLETE | 25 panels + contact sheet + storyboard pitch export (Cycle 11) |
 | Show bible | COMPLETE | — |
 | Style guide | COMPLETE | 11 sections including §9 Animation Style Notes, §10 Glitchkin Construction Rules, §11 Prop Design Guidelines (all added Cycle 11) |
@@ -221,12 +232,15 @@
 ### Open Blockers Before External Pitch Use
 
 1. ~~Style guide: missing sections~~ — **RESOLVED Cycle 11.** All 11 sections present.
-2. Style Frame 02 BG: **DELIVERED Cycle 12** (`LTG_COLOR_styleframe_glitch_storm_v001.png`). Compositing pass (character layer overlay) still pending (Sam Kowalski). Frame 03 BG still outstanding.
-3. Logo tagline: removed Cycle 11 (Victoria Ashford / Fiona O'Sullivan). Show title only. **RESOLVED.**
-4. byte.md version header: corrected to v3.1 **RESOLVED Cycle 11.**
-5. Luma color model cold overlay arithmetic: recalculate per Naomi C10 flag (LOW — open)
-6. Character lineup: Byte float-height ground-floor annotation — **RESOLVED Cycle 12.** New file: `LTG_CHAR_lineup_v002.png`
-7. Cosmo turnaround: side-view glasses now use shared `_draw_cosmo_glasses()` — **RESOLVED Cycle 12.** New file: `LTG_CHAR_cosmo_turnaround_v002.png`
+2. ~~Style Frame 02 compositing pass~~ — **RESOLVED Cycle 13.** `LTG_COLOR_styleframe_glitch_storm_v002.png` delivered.
+3. ~~Style Frame 03 BG outstanding~~ — **RESOLVED Cycle 14/15.** `LTG_ENV_other_side_bg_v001.png` + `LTG_COLOR_styleframe_otherside_v001.png` delivered.
+4. ~~Logo tagline~~ — **RESOLVED Cycle 11.** Show title only.
+5. ~~byte.md version header~~ — **RESOLVED Cycle 13.** byte.md now v3.2 (Sections 9B + 13A added).
+6. Luma color model cold overlay arithmetic: recalculate per Naomi C10 flag (LOW — still open)
+7. ~~Character lineup float-gap annotation~~ — **RESOLVED Cycle 14.** `LTG_CHAR_lineup_v003.png` with engineering dimension arrow.
+8. ~~Cosmo turnaround glasses~~ — **RESOLVED Cycle 12.** `LTG_CHAR_cosmo_turnaround_v002.png` delivered.
+9. **Byte RESIGNED expression** — **RESOLVED Cycle 15.** `LTG_CHAR_byte_expression_sheet_v002.png` delivered. A2-02 beat no longer blocked.
+10. **Act 2 panels (A2-07, Byte cracked-eye ECU)** — partially resolved. Glyph ref delivered Cycle 13. Full animatic panel still pending Lee Tanaka.
 
 ### Cycle 12 Additions
 
@@ -244,7 +258,37 @@
 | LTG compliance copies — ENV encounter | `backgrounds/environments/LTG_ENV_glitchlayer_encounter_v001.png` | Cycle 12: LTG copy of bg_glitch_layer_encounter.png. |
 | Naming compliance tool | `/home/wipkat/team/output/tools/LTG_TOOL_naming_compliance_copier_v001.py` | Reusable tool for creating LTG-compliant copies from legacy assets. |
 
+### Cycle 13 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| Style Frame 01 v003 (LOCKED) | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v003.png` | Ghost Byte alpha calibration. Victoria A+. CANONICAL SF01. |
+| Style Frame 02 v002 (composite) | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v002.png` | Character composite: Byte L / Luma C / Cosmo R. Storm variant intentional. |
+| Show logo asymmetric v002 | `/home/wipkat/team/output/production/LTG_BRAND_logo_asymmetric_v002.png` | "&" warm-to-cold gradient. "the/Glitchkin" gap reduced 30%. |
+| Glitch Storm BG (color fix) | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_glitch_storm_bg_v001.png` | TERRACOTTA_CYAN_LIT corrected (150,172,162). BG-only compositing reference. |
+| Byte cracked-eye glyph | `/home/wipkat/team/output/characters/main/LTG_CHAR_byte_cracked_eye_glyph_v001.png` | 7×7 dead-pixel grid, diagonal crack, Hot Magenta line. Required for A2-07. |
+| byte.md v3.2 | `/home/wipkat/team/output/characters/main/byte.md` | Sections 9B (cracked-eye glyph) and 13A (storm-scene variant) added. |
+
+### Cycle 14 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| Character lineup v003 | `/home/wipkat/team/output/characters/main/LTG_CHAR_lineup_v003.png` | Byte float-gap dimension arrow corrected (Dmitri P1 — RESOLVED). Engineering arrow with "0.25 HU" label. |
+| Other Side BG ENV | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_other_side_bg_v001.png` | SF03 environment BG: digital void space, ELEC_CYAN + VOID_BLACK, perspective grid, platform depth. |
+| Classroom BG ENV | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_classroom_bg_v001.png` | Millbrook school classroom. 3-tier depth, dual-temperature lighting. |
+| SF03 Other Side generator spec | `/home/wipkat/team/output/production/sf03_other_side_spec.md` | Technical generator spec (Alex Chen). Unblocked Jordan Reed for Cycle 15 BG build. |
+| Act 2 panels (Cycle 14) | `/home/wipkat/team/output/tools/LTG_TOOL_act2_panels_cycle14_v001.py` | Act 2 animatic panel tool. |
+
+### Cycle 15 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| Byte expression sheet v002 | `/home/wipkat/team/output/characters/main/LTG_CHAR_byte_expression_sheet_v002.png` | 8th expression added: RESIGNED / RELUCTANT DISCLOSURE. ↓ pixel symbol. Closes A2-02 block. |
+| SF03 Other Side render v001 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_otherside_v001.png` | Full SF03 render with characters (Jordan Reed generator). All 3 style frames now pitch-ready. |
+| SF03 character composite tool | `/home/wipkat/team/output/tools/LTG_TOOL_style_frame_03_other_side_v001.py` | Full SF03 generator (Jordan Reed, Cycle 15): all 5 depth layers + character draw + lighting overlay. |
+
 ---
 
 *Jordan Reed — Cycle 11 — 2026-03-29*
 *Updated by Alex Chen, Art Director — Cycle 12 — 2026-03-30*
+*Updated by Alex Chen, Art Director — Cycles 13–14–15 — 2026-03-30*

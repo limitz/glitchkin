@@ -1,5 +1,30 @@
 # Jordan Reed — Memory
 
+## Cycle 15 Deliverables
+- `LTG_TOOL_style_frame_03_other_side_v001.py` → `LTG_COLOR_styleframe_otherside_v001.png` (35KB, 1920×1080)
+  - Full SF03 style frame per spec: 5 depth layers, UV purple + cyan bounce + blue waterfall lighting, Luma + Byte at small scale, inverted atmospheric perspective, seed=77 confetti, no warm light, no Dutch angle.
+- `LTG_TOOL_bg_other_side_v002.py` → `LTG_ENV_other_side_bg_v002.png` (28KB, 1920×1080)
+  - Spec-compliant ENV compositing export (no characters). Replaces pre-spec Cycle 14 v001 (grid floor approach). v001 preserved per no-overwrite rule.
+- Both registered in tools/README.md.
+- Alex Chen inbox: completion message sent to `alex_chen/inbox/20260329_1500_other_side_bg_complete.md`
+
+## Act 2 Background Gaps (noted for next cycle)
+Review `act2_thumbnail_plan_v002.md` — panels needing ENV bgs not yet built:
+- A1-01: Grandma Miri's Kitchen (warm morning daylight) — new interior needed
+- A1-03: Millbrook School Hallway (lockers) — new interior needed
+- A1-05: School Hallway vending machine scene — may reuse A1-03
+- A2-01: Tech Den daylight version — nighttime version exists (lumashome_study_interior_v001.png) but daylight version needed
+- A2-05: Millbrook Street streetlight exterior — existing millbrook_mainstreet may cover it
+
+## Cycle 15 Lessons
+- **SF03 style frame spec arrived Cycle 15 (after Cycle 14 ENV bg was built without spec).** Correct flow: build the COLOR style frame (with characters) as the primary deliverable, then strip-version for ENV bg. Both files needed.
+- **`LTG_COLOR_styleframe_otherside_v001.png` is the style frame (Alex composites character + BG separately; Jordan embeds chars in the style frame pass for presentation). ENV bg = compositing reference only.**
+- **Cycle 14 pre-spec ENV bg (v001) used grid floor approach — different composition from spec's floating platforms in void.** Created v002 as spec-compliant replacement. v001 kept per no-overwrite rule; v002 is canonical going forward.
+- **Inverted atmospheric perspective rule: FAR_EDGE (33,17,54) for far structures, UV_PURPLE_MID (42,26,64) for haze. Never use lighter/desaturated values for distant Glitch Layer elements — they must be darker and more purple.**
+- **UV Purple lighting overlay: gradient from alpha 20 at top to alpha 50 at bottom (stronger from below = under-lit world).** This is different from Real World ambient which is warm and from above.
+- **draw_lighting_overlay() must run BEFORE characters** — the overlay modifies all surfaces including where characters will be placed. Characters are then drawn on top of the lit background.
+- **Byte eye color positions are non-negotiable:** Cyan = left = Luma's direction. Magenta = right = void direction. This is the show's key character color detail in this frame.
+
 ## Cycle 14 Deliverables
 - `LTG_TOOL_bg_other_side_v001.py` → `LTG_ENV_other_side_bg_v001.png` (275KB, 1920×1080)
   - SF03 "Other Side" CRT-world: pure digital void, ELEC_CYAN + VOID_BLACK dominant, perspective pixel grid floor, 3-tier platforms (NEAR/MID/FAR), aurora bands, floating geometry, CRT vignette. Zero warm tones. No SF03 spec existed — built from style guide + best judgment.
