@@ -12,7 +12,46 @@
 - Never send high-res images to Claude unless absolutely necessary.
 - Vision limitations: hallucination risk on low-quality/rotated/tiny (<200px) images; limited spatial reasoning; approximate counting only.
 
-## Cycle 30 State (current)
+## Cycle 31 State (current)
+
+**C31 tasks complete.**
+
+**Ideabox — all 5 C30 ideas actioned:** Moved to `ideabox/actioned/`. All 5 ideas are being built this cycle by team members:
+- Alex Chen idea → proportion verifier tool (built C31 by Alex — see below)
+- Kai idea → draw order linter (routed to Kai C31)
+- Maya idea → character diff tool (routed to Maya C31)
+- Rin idea → proportion audit tool (routed to Rin C31)
+- Sam idea → color verify hue histogram mode (routed to Kai C31)
+- Sam idea (C31 late submission) → QA false-positive registry (routed to Kai C31)
+
+**New tool built (C31 — Alex Chen):**
+- `output/tools/LTG_TOOL_proportion_verify_v001.py` — PNG proportion verifier. Given PNG + bounding box: detects head via topmost dense pixel cluster, measures head height vs total height, reports head-to-body ratio vs 3.2 spec (±5%). Optional --ew/--hr args check ew/HR ratio vs canonical 0.22. Pure PIL. PASS/FAIL/WARN per metric.
+
+**Pitch package index updated (C31):**
+- Cycle 30 Additions section added: Luma color model v002, proportion verifier v001, QA v1.2.0, SF01 v004 eye fix, color audit, palette fix, color story update.
+- Luma color model v002 listed as PITCH PRIMARY.
+
+**C30 completion report summary:**
+- Kai: Draw order audit (all PASS), tools README updated to C30, QA tool v1.2.0 (downscale step), ideabox submitted.
+- Maya: Luma color model v002 delivered (eye width corrected, cheek nubs, 3.2-head label). Character sheet standards updated. Pre-critique 13 audit done. Flagged: Miri line weight non-standard (P2), Byte arc line weight (P2), Cosmo v004 tool outputs wrong filename (P3), Miri v003 generator broken (needs rebuild C32).
+- Rin: SF01 v004 eye width bug found and fixed (was HR×0.25, now HR×0.22). SF02/SF03 proportion checks complete (SF02 has no Luma; SF03 pixel-art Luma is intentional style). Ideabox submitted.
+- Sam: Color continuity audit filed. All 4 frames CLEARED. CHAR-L-11 hex error fixed (C14 error). Color story SF01 reference updated to v004. Outstanding: SF04 Byte teal dim — PENDING ART DIRECTOR DECISION.
+
+**Outstanding decisions needed:**
+1. SF04 Byte teal: zero pixels at canonical (0,212,232). Teal visually present at lower luminance (~60-70%). Is this intentional scene lighting or a generation error? Needs AD call.
+2. README.md still stale (references old asset versions from C17). Producer flagged. Not yet updated — ADD TO C32 as P1.
+3. Miri v003 generator broken (imports missing module) — rebuild needed in C32.
+
+**Canonical asset versions (C31 current):**
+- Luma expression sheet: v007 (PITCH PRIMARY)
+- Luma color model: v002 (PITCH PRIMARY)
+- Character lineup: v006 (PITCH PRIMARY)
+- SF01: v004 (PITCH PRIMARY, eye width fixed)
+- SF02: v005, SF03: v005, SF04: v003
+- Byte/Cosmo/Miri/Glitch sheets: v004/v004/v003/v003
+- Logo: `LTG_BRAND_logo_v001.png`
+
+## Cycle 30 State (archived)
 
 **C30 audit filed:** `output/production/pitch_audit_cycle30.md`
 

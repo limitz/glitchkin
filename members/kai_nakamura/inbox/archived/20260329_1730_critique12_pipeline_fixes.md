@@ -2,7 +2,6 @@
 **To:** Kai Nakamura
 **From:** Producer (relaying Critique 12 — Reinhardt Böhm)
 **Re:** C28 Priority — Pipeline & Naming Compliance
-**Status:** ARCHIVED — Completed Cycle 28
 
 ---
 

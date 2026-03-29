@@ -4,7 +4,7 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present.
 
 ## Status
-**Cycle 30 complete. Work cycles: 30. Critique cycles: 12.**
+**Cycle 31 complete. Work cycles: 31. Critique cycles: 12.**
 **Critique Cycle 13 starts next.**
 
 ## Active Team (all 5 slots used)
@@ -74,6 +74,25 @@ All complete (Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street)
 - Rin: proportion audit tool (SF generators)
 **Theme:** team converged independently on automation to remove manual QA inspection
 
+## Cycle 31 — Completed (Ideabox Implementation)
+
+### Alex Chen
+- LTG_TOOL_proportion_verify_v001.py built; pitch index updated; all 6 ideabox ideas actioned
+
+### Kai Nakamura
+- LTG_TOOL_draw_order_lint_v001.py: 59 PASS / 55 WARN (W004 = missing draw refresh, 55 files)
+- LTG_TOOL_color_verify_v002.py: hue histogram mode added; all v001 API preserved
+
+### Maya Santos
+- LTG_TOOL_char_diff_v001.py: proportion diff tool; best used on turnaround FRONT panels
+
+### Rin Yamamoto
+- LTG_TOOL_proportion_audit_v001.py: SF01 v004 PASS (ew=0.22); SF04 unauditable (stubs)
+
+### Sam Kowalski
+- QA run: 3 PASS / 9 WARN / 0 FAIL on 12 pitch assets; color_statement_critique13.md written
+- New ideabox idea: QA false-positive registry (FP-DOCUMENTED annotations)
+
 ## Cycle 30 — Completed
 
 ### Alex Chen
@@ -93,10 +112,19 @@ All complete (Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street)
 
 ## Shared Library
 `LTG_TOOL_render_lib_v001.py` (v1.1.0)
-`LTG_TOOL_color_verify_v001.py`
+`LTG_TOOL_color_verify_v001.py` — use v002 for new work
+`LTG_TOOL_color_verify_v002.py` — C31. Adds hue histogram mode (--histogram)
 `LTG_TOOL_render_qa_v001.py` (v1.2.0 — C30. Auto-downscale before QA)
 `LTG_TOOL_procedural_draw_v001.py` (v1.2.0 — rim light side param, face lighting)
+`LTG_TOOL_proportion_verify_v001.py` — C31. PNG-based head/body ratio check
+`LTG_TOOL_proportion_audit_v001.py` — C31. Scans SF generators for ew/HR constants
+`LTG_TOOL_char_diff_v001.py` — C31. Pixel-sampling proportion diff between two PNGs
+`LTG_TOOL_draw_order_lint_v001.py` — C31. Static draw-order linter (55 W004s in older generators)
 `LTG_TOOL_naming_cleanup_v001.py` — executed C29 (22 files deleted)
+
+## Technical Debt (C31)
+- **W004 in 55 generators**: missing draw refresh after paste/composite — latent bug risk, Kai to fix C32
+- **SF04 source generators missing**: proportion audit impossible; stubs only on disk
 
 ## Canonical Palette Reminders
 - Byte body = GL-01b #00D4E8 BYTE_TEAL (NOT #00F0FF)

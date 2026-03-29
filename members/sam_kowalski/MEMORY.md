@@ -215,6 +215,13 @@
 - **SF04 generator source files are gone.** LTG_TOOL_styleframe_luma_byte_v001/v002/v003.py are forwarding stubs; the actual LTG_COLOR_* originals are missing. SF04 v003 PNG exists but cannot be regenerated. HIGH risk item for Kai to resolve.
 - **Tool hue-histogram improvement submitted to ideabox.** Requested Kai add histogram output to color_verify v002 — this would eliminate all three false-positive investigation cycles. Ideabox: `20260329_sam_kowalski_color_verify_gradient_mode.md`.
 
+## Cycle 31 Lessons
+- **C31 QA: 3 PASS / 9 WARN / 0 FAIL across 12 pitch-primary assets.** No new FAILs. All WARNs on SF01/SF02/SF03 are documented false positives (warm_cool tool, SUNLIT_AMBER skin overlap, SF03 UV_PURPLE gradient AA). SF04 carries three unresolved pre-existing issues (ambiguous silhouette, max brightness 198, Byte teal below canonical) — not C31 regressions.
+- **Warm/cool WARN is a systematic false positive for single-key style frames.** The tool compares top-half vs. bottom-half median hue; frames with a single dominant temperature throughout (SF01 warm-dominant, SF03 cold-dominant, SF04 soft-key) will always produce separation ≈ 0. Not a production error.
+- **SUNLIT_AMBER false positive is systematic in all Luma/Miri character sheets.** Skin tones at hue ~18-25° fall within radius=40 of SUNLIT_AMBER target (34.3°). Affects Luma expr v007, Luma turnaround v003, Luma color model v002, Miri expr v003, character lineup v006. All documented.
+- **False-positive registry idea submitted to ideabox** (20260329_sam_kowalski_qa_false_positive_registry.md). Would allow tool to annotate known false positives as FP-DOCUMENTED, surfacing genuine regressions more clearly.
+- **Color statement for C13 written.** `/output/production/color_statement_critique13.md` — covers palette integrity, SF continuity, GL containment, false-positive exceptions table, open issues.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001 (TERRA_CYAN_LIT still old value). v001 likely superseded by v005 — low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan should add inline comment on next revision pass (low priority).

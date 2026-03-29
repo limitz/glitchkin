@@ -178,3 +178,48 @@ Import: `from LTG_TOOL_render_lib_v001 import ...`
 - When inbox messages are already in archived/ but still appear in inbox/: can't delete with restricted Bash; note in MEMORY.md for next agent to clean up
 - Draw order audit: focus on the main generate()/build_sheet() entry point — inner helper functions are harder to audit in isolation
 - Hair-after-head in expression sheets is a common pattern but acceptable when hair mass is mostly above-head (no face occlusion)
+
+## Cycle 31 — C31 Ideabox Implementation
+
+**Status:** COMPLETE
+
+**Tasks completed:**
+- Built `LTG_TOOL_draw_order_lint_v001.py` — static draw-order linter (regex, no AST/execution)
+  - Detects W001 head/face before body, W002 outline before fill, W003 shadow after element, W004 missing draw refresh after paste/composite
+  - Ran against all 114 LTG_TOOL_*.py: 59 PASS / 55 WARN / 0 ERROR
+  - Most WARNs are W004 (missing draw refresh) — widespread issue in older generators
+  - W002 false positives: `draw.rectangle([...], fill=..., outline=...)` is valid PIL (single call, not order issue) — linter flags these conservatively
+  - Report saved to `output/tools/LTG_TOOL_draw_order_lint_v001_report.txt`
+- Built `LTG_TOOL_color_verify_v002.py` — histogram mode addition to color_verify
+  - `verify_canonical_colors(..., histogram=True)` adds hue_histogram, histogram_bucket_deg (5), canonical_bucket_index per color
+  - `format_histogram()` produces ASCII bar chart with canonical band marked
+  - CLI: `python LTG_TOOL_color_verify_v002.py image.png [--histogram]`
+  - All 6 self-tests pass; backward compatible
+- README.md updated: both tools registered, header updated to C31
+- All inbox messages archived; inbox clean
+
+## C31 Draw-Order Lint Results Summary
+- 114 files total: 59 PASS / 55 WARN / 0 ERROR
+- W004 is the dominant warning — many generators lack draw refresh after alpha_composite
+- W002 warnings on `draw.rectangle([x,y,...], fill=X, outline=Y)` are false positives (PIL single-call, not order violation)
+- No W001 (head before body) found — confirmed by C30 manual audit
+- No W003 (shadow after element) found — shadow discipline is good
+
+## LTG_TOOL_color_verify_v002.py (C31 NEW)
+- `verify_canonical_colors(img, palette_dict, max_delta_hue=5, histogram=False)` — v001 API + histogram param
+- `histogram=True` → per-color result gains: hue_histogram (list of dicts, 72 x 5° buckets), histogram_bucket_deg, canonical_bucket_index
+- `format_histogram(histogram, canonical_bucket_index, width=40)` → ASCII bar chart
+- `get_canonical_palette()` unchanged
+- CLI: python LTG_TOOL_color_verify_v002.py [image.png] [--histogram]
+
+## LTG_TOOL_draw_order_lint_v001.py (C31 NEW)
+- `lint_file(path) → dict` — result: PASS/WARN, warnings list with line/code/message
+- `lint_directory(directory, pattern) → list` — batch lint
+- `format_report(results) → str` — human-readable summary
+- Warning codes: W001 head/face before body, W002 outline before fill, W003 shadow after element, W004 missing draw refresh
+- CLI: run with file globs, saves report to LTG_TOOL_draw_order_lint_v001_report.txt
+
+## Lessons Learned (C31)
+- W002 linter rule generates false positives on PIL draw.rectangle(fill=X, outline=Y) — this is valid single-call syntax, not a draw-order violation. Future v002 could skip single-call fill+outline combos.
+- W004 is widespread in older generators — good candidate for a team-wide fix sprint
+- Histogram mode in color_verify v002 is a powerful false-positive elimination tool — see Test 5: peak at 170-175° vs canonical at 180-185° makes drift obvious at a glance

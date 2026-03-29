@@ -579,6 +579,38 @@ All critical path assets verified on disk. No blocking issues found. The package
 
 *Updated by Kai Nakamura, Technical Art Engineer — Cycle 29 — 2026-03-29*
 
+---
+
+### Cycle 30 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| Luma color model v002 (visual) | `/home/wipkat/team/output/characters/color_models/LTG_COLOR_luma_color_model_v002.png` | **PITCH PRIMARY for Luma color model.** Eye width corrected to head_r×0.22 (was head_r×0.30 in v001). Cheek nubs added to silhouette. Label updated to "3.2 heads". Generator: `output/tools/LTG_TOOL_luma_color_model_v002.py`. 800×500px. Supersedes v001. (Cycle 30 — Maya Santos) |
+| Proportion verifier tool | `/home/wipkat/team/output/tools/LTG_TOOL_proportion_verify_v001.py` | New QA utility. Given a PNG + character bounding box, detects head height via top-cluster scan, measures total character height, reports head-to-body ratio vs canonical 3.2 spec (±5%). Optional --ew/--hr args check eye-width/HR ratio vs canonical 0.22. Pure PIL — no vision API. (Cycle 31 — Alex Chen) |
+| Render QA tool v1.2.0 | `/home/wipkat/team/output/tools/LTG_TOOL_render_qa_v001.py` | Auto-downscale step added to qa_report() — images clamped to ≤1280px before any check runs. (Cycle 30 — Kai Nakamura) |
+| Draw order audit C30 | N/A (report in Kai C30 completion) | All C29 generators reviewed. No critical order violations. Hair-after-head pattern in v007 noted (cosmetic — hair mass above face, not occluding). (Cycle 30 — Kai Nakamura) |
+| Color continuity audit C30 | `/home/wipkat/team/output/production/color_continuity_c30.md` | All 4 pitch frames audited. Color arc intact. SUNLIT_AMBER, GL-07, GL-03, warm/cool contrast: all PASS. Outstanding: SF04 Byte teal dim — pending Art Director decision. (Cycle 30 — Sam Kowalski) |
+| master_palette.md CHAR-L-11 fix | `/home/wipkat/team/output/color/palettes/master_palette.md` | Constraint 1 for CHAR-L-11 cold scene hex corrected from #00D4E8 (Byte body fill — WRONG) to #00F0FF (GL-01 Electric Cyan — CORRECT). Error present since C14. (Cycle 30 — Sam Kowalski) |
+| Color story SF01 source update | `/home/wipkat/team/output/color/style_frames/ltg_style_frame_color_story.md` | SF01 source reference updated from v003.png to v004.png (Rin's C29 procedural lift is now pitch primary). (Cycle 30 — Sam Kowalski) |
+| Color audit C30 pre-Critique 13 | `/home/wipkat/team/output/color/LTG_COLOR_audit_c30_preCritique13.md` | Full pixel-breakdown audit of all 4 style frames. Three SF03/SF04 FAIL results confirmed as false positives (gradient edges, Euclidean neighborhood overlap). (Cycle 30 — Sam Kowalski) |
+| SF01 v004 eye width fix | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v004.png` | ew corrected from p(18) (HR×0.25) to int(head_r×0.22). Regenerated. Previously undetected — caught by Rin Yamamoto proportion check. (Cycle 30 — Rin Yamamoto) |
+
+#### Cycle 30 Pitch Package Status
+
+| Requirement | C30 Status |
+|---|---|
+| Luma color model | **UPDATED** — v002 (correct eye width, cheek nubs, 3.2-head label) |
+| SF01 Discovery | **UPDATED** — v004 regenerated (eye width bug fixed: ew now HR×0.22) |
+| All 4 style frames | SF01 v004, SF02 v005, SF03 v005, SF04 v003 — all CLEARED for Critique 13 |
+| Character sheets | Luma v007, Byte v004, Cosmo v004, Miri v003, Glitch v003 — UNCHANGED |
+| Character lineup | v006 PITCH PRIMARY — UNCHANGED |
+| Canonical logo | `LTG_BRAND_logo_v001.png` — UNCHANGED |
+| Proportion QA | New tool available: `LTG_TOOL_proportion_verify_v001.py` |
+
+**Outstanding: SF04 Byte teal** — zero pixels detected near canonical (0,212,232). Teal visually present at lower luminance (~60-70%). Pending Art Director decision: intentional scene lighting or generation error.
+
+*Updated by Alex Chen, Art Director — Cycle 31 — 2026-03-29*
+
 *Updated by Alex Chen, Art Director — Cycle 25 — 2026-03-29*
 
 ### Cycle 25 Additional Team Deliverables

@@ -1,7 +1,7 @@
 # Tools Index — "Luma & the Glitchkin"
 
 **Maintained by:** Alex Chen, Art Director
-**Last updated:** 2026-03-29 (Cycle 30 — C29 generators registered, render_qa v1.2.0, draw order audit, Kai Nakamura)
+**Last updated:** 2026-03-29 (Cycle 31 — draw_order_lint_v001 + color_verify_v002 registered, Kai Nakamura)
 
 ---
 
@@ -143,6 +143,8 @@ This production uses **open source tools exclusively**. No proprietary software 
 | `LTG_TOOL_luma_expression_sheet_v007.py` | Maya Santos / Cycle 29 | Luma expression sheet v007 — PROPORTION FIX. HEAD-TO-BODY ratio corrected to 3.2 heads (torso_h HR×2.10, was HR×1.80). Eye width corrected to HR×0.22 (canonical spec from turnaround v003, was HR×0.28). All v006 features retained: classroom-style head/hair/eyes, 6-expression 3×2 layout, per-expression hoodie color map, 2× LANCZOS AA, full-body silhouette differentiation. Output: `LTG_CHAR_luma_expressions_v007.png` (1200×900). | Pillow |
 | `LTG_TOOL_character_lineup_v006.py` | Maya Santos / Cycle 29 | Character lineup v006. Luma updated to v007 canonical proportions: 3.2 heads (was 3.5), eye width r×0.22 (was r×0.28). All 5 characters present. Other characters (Byte, Cosmo, Miri, Glitch) unchanged from v005. Output: `LTG_CHAR_luma_lineup_v006.png`. | Pillow |
 | `LTG_TOOL_styleframe_discovery_v004.py` | Rin Yamamoto / Cycle 29 | SF01 "The Discovery" procedural quality pass. Brings SF01 to same quality level as SF04 v003: wobble_polygon() on Luma head, CRT frame and couch; variable_stroke() on head perimeter arcs (8-arc); add_face_lighting() warm lamp from upper-left; add_rim_light() cool CRT from right. Canvas 1280×720 (≤1280px direct). All v003 fixes retained (ghost Byte alpha, specs[2]+specs[3] placement). Output: `LTG_COLOR_styleframe_discovery_v004.png`. | Pillow, LTG_TOOL_procedural_draw_v001 |
+| `LTG_TOOL_draw_order_lint_v001.py` | Kai Nakamura / Cycle 31 | **Draw-order static linter.** Parses generator .py files via regex (no execution, no AST) and flags painter's-algorithm violations: W001 head/face drawn before body; W002 outline drawn before fill for same element; W003 shadow drawn after the element it should darken; W004 img.paste()/alpha_composite() not followed by draw = ImageDraw.Draw(img) refresh within 5 lines. API: `lint_file(path) → dict` (result: PASS/WARN, warnings list with line/code/message), `lint_directory(directory, pattern) → list`, `format_report(results) → str`. CLI: run against glob of .py files, saves report to `LTG_TOOL_draw_order_lint_v001_report.txt`. C31 run: 114 files — 59 PASS / 55 WARN / 0 ERROR (most WARNs are W004 missing draw refresh). | stdlib only |
+| `LTG_TOOL_color_verify_v002.py` | Kai Nakamura / Cycle 31 | **Color verification utility v002 — adds histogram mode.** Full v001 API preserved. New optional `histogram=True` parameter on `verify_canonical_colors()`: per-color result gains `hue_histogram` (list of dicts, 5° buckets, 72 total), `histogram_bucket_deg` (5), `canonical_bucket_index` (int marking canonical hue's bucket). `format_histogram(histogram, canonical_bucket_index)` helper produces ASCII bar chart. CLI: `python LTG_TOOL_color_verify_v002.py image.png [--histogram]`. Eliminates false-positive investigation by showing full hue distribution with canonical band highlighted. Backward compatible: histogram keys absent when histogram=False (default). | stdlib colorsys + Pillow |
 
 ---
 

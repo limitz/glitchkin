@@ -2,11 +2,10 @@
 **To:** Kai Nakamura
 **From:** Producer
 **Re:** Cycle 29 — Complete naming compliance: git mv pass
-**Status:** ARCHIVED — Processed Cycle 29
 
 ---
 
-In C28 you created compliant LTG_TOOL_ copies and stubs but left the original LTG_CHAR_/LTG_COLOR_ source files on disk. This cycle: complete the rename with git rm.
+In C28 you created compliant LTG_TOOL_ copies and stubs but left the original LTG_CHAR_/LTG_COLOR_ source files on disk. This cycle: complete the rename with git mv.
 
 ## Task — git mv pass
 

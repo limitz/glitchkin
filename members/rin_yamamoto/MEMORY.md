@@ -101,6 +101,16 @@ All key techniques have been extracted to MEMORY and implemented. No further rea
   - Byte body fill fixed: BYTE_TEAL (0, 212, 232) canonical GL-01b (was (0, 190, 210))
   - Rim light fixed: side="right" — cyan only on monitor-facing side of Luma
 
+## C31 Completed Work
+- Built `output/tools/LTG_TOOL_proportion_audit_v001.py` — scans all SF generators, extracts head_r/ew, computes ew/HR ratio, reports PASS/WARN/FAIL
+- Report: `output/production/proportion_audit_c31.md`
+- Audit results (15 files scanned):
+  - PASS: SF01 v004 — `ew = int(head_r * 0.22)` = 0.2200 ✓
+  - WARN: SF01 v003 — `ew = p(18)` = 0.2500 (pre-C30, superseded)
+  - N/A: SF02 (sprint, no eyes), SF03 (pixel-art), SF04 stubs (sources missing)
+  - NO FAIL verdicts
+- SF04 action item: `LTG_COLOR_styleframe_luma_byte_v*.py` source files missing from disk — cannot audit until sources recovered
+
 ## C30 Completed Work
 - SF01 v004 proportion verified and fixed:
   - Height: correct (3.2 heads, 6.4×HR) — no change needed
@@ -120,6 +130,11 @@ All key techniques have been extracted to MEMORY and implemented. No further rea
   - add_rim_light(side="right"): CRT teal (0,220,232) from right — discovery source
   - Blush corrected to warm peach (232,168,124) — matching SF04 v003 correction
   - BYTE_TEAL canonical (0,212,232) used throughout
+
+## C31 Lessons
+- Proportion audit tool: use regex to scan for `ew = int(head_r * N)` to detect ratio directly; `p(N)/p(M)` requires extracting both N values
+- Stubs that redirect to missing source files cannot be audited — flag as "source not found" with action required
+- SF02 sprint pose and SF03 pixel-art are permanently N/A for organic eye spec; document as intentional
 
 ## C30 Lessons
 - SF proportion bugs are easy to introduce when eye width uses a `p(n)` shorthand instead of `int(head_r * ratio)` — always derive from head_r directly

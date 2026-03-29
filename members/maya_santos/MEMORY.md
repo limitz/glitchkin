@@ -1,5 +1,22 @@
 # Maya Santos — Memory
 
+## Cycle 31 Lessons — CHARACTER PROPORTION DIFF TOOL
+
+- **LTG_TOOL_char_diff_v001.py COMPLETE.** Ideabox idea implemented.
+  - Location: `output/tools/LTG_TOOL_char_diff_v001.py`
+  - Uses only Python PIL — no Claude vision API calls.
+  - Metrics: figure_height_px, head_height_px, head_body_ratio, eye_width_px, eye_head_ratio.
+  - WARN at ±10%, FAIL at ±20% from reference.
+  - Outputs JSON report + human-readable PASS/WARN/FAIL summary.
+  - Exit codes: 0=PASS, 1=WARN, 2=FAIL.
+- **Test results:** `output/tools/LTG_TOOL_char_diff_v001_test_output.md`
+  - Test 1 (expr v007 vs v006, full image): PASS — identical layout, no drift.
+  - Test 2 (expr v007 vs v006, panel bbox): PASS — eye detection at 2px floor (LANCZOS shrinks features).
+  - Test 3 (turnaround v003 vs v002, FRONT panel 0,0,320,560): FAIL on eye_width (72 vs 0) — correctly detected v002 used different eye construction. Figure/head height 2% diff (PASS).
+- **Key finding:** Eye detection works best on full-scale single-character PNGs (turnarounds). On 400px-wide expression sheet panels after LANCZOS downsampling, eye pixels are too few for reliable detection. Use bbox for panel isolation; turnarounds are the ideal input.
+- **Usage:** `python3 output/tools/LTG_TOOL_char_diff_v001.py ref.png cand.png [x y w h]`
+- **C30 directive archived.** `20260329_2200_c30_directives.md` → inbox/archived/.
+
 ## Cycle 30 Lessons — CRITIQUE 13 PREP + COLOR MODEL v002
 
 - **Luma color model v002 COMPLETE.** Eye proportions corrected to `ew = head_r * 0.22` (was 0.30 in v001). Cheek nubs added to head silhouette (classroom-style). Label updated to "3.2 heads". Generator: `output/tools/LTG_TOOL_luma_color_model_v002.py`. Output: `output/characters/color_models/LTG_COLOR_luma_color_model_v002.png` (800×500).
