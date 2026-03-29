@@ -327,7 +327,9 @@ These are not freestanding palette colors — they are the documented results of
 ### DRW-18 — Luma Hair Base (Glitch Layer)
 - **Hex:** `#1A0F0A`
 - **RGB:** 26, 15, 10
+- **HSL:** hue ~18°, saturation ~44%, **lightness ~7%**
 - **Source:** `#3B2820` (Deep Cocoa) modified by UV Purple ambient in the Glitch Layer. The hair's warm brown identity is suppressed toward near-void-dark; the UV Purple catches only the crown as a rim sheen (GL-04 `#7B2FBE`).
+- **Warmth note (C32):** R:26 nominally exceeds G:15, B:10, giving a theoretical hue of ~18°. However, at 7% lightness this hue is **functionally imperceptible** — the value reads as near-void dark, indistinguishable from void black to the eye. DRW-18 does NOT contribute visual warmth to SF03. It is a near-neutral presence whose only visible color quality is the UV Purple rim sheen (GL-04) painted over it on the crown. Warm values in SF03 are hoodie orange and skin only. *(Per Priya Nair C13 P2 — "visually unsupported" warmth claim corrected.)*
 - **Scene use:** Style Frame 03 — Luma's hair base fill in the Glitch Layer. Pair with GL-04 (`#7B2FBE`) UV Purple rim sheen on hair crown.
 - **Shadow companion:** GL-08a `#050508` (Below-Void-Black — deepest crevice in near-void dark hair).
 - **Avoid using:** As a line color or large-area fill. This is hair-base only in Glitch Layer scenes. Do not use in Real World scenes — use `#3B2820` (Deep Cocoa, RW-11) there.
@@ -1171,7 +1173,7 @@ Formal documentation of inline color values used in `style_frame_01_rendered.py`
 - **Constraint 2:** Warm-dominant scenes only. If the scene key is cyan, UV, or neutral, all hoodie pixel accents revert to GL-01.
 - **Constraint 3:** Lamp-lit hoodie pixel accents only — this is not a fill color, a shadow color, or a large-area tone. It is strictly the small discrete pixel-grid accent elements on the hoodie surface under warm lamp key.
 - **Production note:** The SF01 v003 Pillow script uses a continuous gradient (HOODIE_ORANGE → HOODIE_CYAN_LIT) rather than a discrete pixel grid. CHAR-L-11 defines the production spec (OpenToonz pixel-grid activation) — the Pillow approximation is noted as a limitation of the raster preview.
-- **Cross-reference:** CHAR-L-09 (shoe canvas, unrelated), GL-01 (`#00D4E8`) for pixel accents in neutral/cold lighting, RW-02 (`#E8C95A`) for the canonical Soft Gold entry
+- **Cross-reference:** CHAR-L-09 (shoe canvas, unrelated), GL-01 (`#00F0FF`) for pixel accents in neutral/cold lighting, RW-02 (`#E8C95A`) for the canonical Soft Gold entry
 - **Added:** Sam Kowalski — Cycle 14 (2026-03-30), per Alex Chen Art Director confirmation (2026-03-30)
 
 ---
@@ -1327,7 +1329,7 @@ These colors govern the Tech Den (Grandma Miri's home workspace) and the School 
 | CHAR-M-08 | Miri Cardigan Shadow | `#8A3C1C` | (138, 60, 28) | Deep Rust — folds, cable-knit grooves, pocket edges. |
 | CHAR-M-09 | Miri Glasses Frame | `#8A7A70` | (138, 122, 112) | Warm Gray — same as eyebrows; recedes so face reads first. |
 | CHAR-M-10 | Miri Pants (Linen) | `#C8AE8A` | (200, 174, 138) | Warm Linen Tan. Shadow: `#A08A6A`. Highlight: `#DEC9A8`. |
-| CHAR-M-11 | Miri House Slippers | `#5A7A5A` | (90, 122, 90) | Deep Sage — soft in-den footwear. |
+| CHAR-M-11 | Miri House Slippers | `#C4907A` | (196, 144, 122) | Dusty Warm Apricot — soft in-den footwear. Warm family: R>G>B. Prior value `#5A7A5A` (Deep Sage) was a cool-neutral green that contradicted Miri's warm-palette guarantee (color story doc: "unambiguously warm"). Corrected C32 to a warm dusty apricot consistent with her domestic warmth. Shadow companion: `#A06A50` (warm terracotta shade). |
 
 **Cross-reference:** Full Miri character spec in `output/characters/color_models/grandma_miri_color_model.md`. Miri skin base CHAR-M-01 also appears in skin system reference table at Section 7.2.
 
@@ -1401,6 +1403,7 @@ Lighting key: Overhead fluorescent — cool, flat, even, slightly greenish. No d
 *Cycle 15 revision (Sam Kowalski — 2026-03-29): DRW-18 added — Luma Hair Base (Glitch Layer), hex #1A0F0A (26,15,10); derived from Deep Cocoa #3B2820 under UV Purple ambient. ENV-13 added — Far Structure Edge (Void-Scale), hex #211136 (33,17,54); derived as 20% UV Purple over Void Black; used for SF03 megastructure silhouettes at far-void distance. Source: SF03 Other Side spec color audit (sf03_other_side_color_notes.md).*
 *Cycle 21 revision (Sam Kowalski — 2026-03-30): Palette Status section added (final Critique 10 audit).*
 *Cycle 30 revision (Sam Kowalski — 2026-03-29): CHAR-L-11 Constraint 1 hex error corrected — prior text cited `#00D4E8` (GL-01b Byte Teal) for neutral/cold-scene hoodie pixel accents; correct value is GL-01 Electric Cyan `#00F0FF`. Byte Teal is Byte's body fill only and must never appear as a hoodie pixel color.*
+*Cycle 32 revision (Sam Kowalski — 2026-03-30): CHAR-L-11 cross-reference corrected — cross-ref line cited `#00D4E8` (GL-01b Byte Teal) for cold-scene hoodie pixels; correct is GL-01 `#00F0FF` Electric Cyan (Priya Nair C13 P1). CHAR-M-11 Miri House Slippers corrected — `#5A7A5A` Deep Sage (cool-neutral green, G>R) replaced with `#C4907A` Dusty Warm Apricot (R>G>B, warm family) per Priya Nair C13 P2; Deep Sage contradicted Miri warm-palette guarantee in color story. DRW-18 warmth clarification — added HSL lightness note (7%); warmth of R:26>G:15>B:10 is theoretically present but functionally imperceptible at this luminance; DRW-18 does NOT contribute visual warmth to SF03; warm values in SF03 are hoodie orange and skin only. Color story doc updated with same clarification.*
 *Review cycle: Update after each critic feedback pass.*
 
 ---

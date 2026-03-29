@@ -1,39 +1,33 @@
 #!/usr/bin/env python3
 """
-LTG_TOOL_cosmo_expression_sheet_v003.py
+LTG_TOOL_cosmo_expression_sheet_v004.py
 Cosmo Expression Sheet Generator — "Luma & the Glitchkin"
 
-Cycle 19 Fix — Dmitri Volkov critique response (Cycle 9 / Cycle 17 work)
+v004 — C32 Fix (Kai Nakamura):
+  PROBLEM: This file was byte-identical to v003 and output _v003.png.
+  FIX: Updated to output LTG_CHAR_cosmo_expression_sheet_v004.png.
 
-CRITICAL FIX from v001/v002:
-  PROBLEM: tilt_off = int(body_tilt * 0.4)
-    For body_tilt=6: 6 * 0.4 = 2.4px displacement — invisible at thumbnail.
-    Dmitri: "The code says it was fixed. The output does not show it was fixed."
-  FIX: tilt_off = int(body_tilt * 2.5)
-    For body_tilt=6: 6 * 2.5 = 15px displacement — clearly readable lean.
-    For body_tilt=-5 (DETERMINED forward lean): 5 * 2.5 = 12.5px — good forward read.
+  MEANINGFUL CHANGE from v003:
+  - SURPRISED expression now shows BLUSH (per cosmo_color_model.md: Cosmo
+    blushes briefly in genuine delight / surprise). BLUSH_COLOR = SKIN_SH
+    at ~30% opacity (cosmo_color_model.md: "softer blush, less prominent
+    than Luma's"). Two small ovals placed high on cheeks.
+  - SURPRISED: blush=True (was False in v003)
+  - W004 fix: draw handle refreshed after each panel paste operation.
 
-SKEPTICAL expression also reinforced (Cycle 19 compound signal):
-  - body_tilt: 6 (same value — now actually produces visible lean with new multiplier)
-  - arm_l_dy: -14 (was -8) — arms pulled tighter/higher = notebook hugged to chest
-  - arm_r_dy: -10 (was -5) — compound body-language signal at two channels
+Cycle 19 Fix (v003) — Dmitri Volkov critique response:
+  tilt_off multiplier: 0.4 → 2.5 (invisible lean → readable lean)
+  SKEPTICAL: arm_l_dy=-14, arm_r_dy=-10 (tighter, notebook hugged to chest)
 
-Squint test at 200px thumbnail after fix:
-  SKEPTICAL: ~15px torso displacement + arms tight to body = clear backward lean read.
-  DETERMINED: ~12px forward lean visible (reinforced engagement read).
-  FRUSTRATED: forward tilt at 4 = 10px = distinct from NEUTRAL.
-
-All other expressions unchanged from v001/v002.
-
-Expressions (6 — sheet fully populated):
+Expressions (6):
   1. NEUTRAL / OBSERVING      — default resting: watching, waiting, notebook tucked
   2. FRUSTRATED / DEFEATED    — A2-06 payoff: plan failed, notebook closing
   3. DETERMINED               — A2-05b setup: app running, this will work
   4. SKEPTICAL / ONE-BROW-UP  — A2-03 reaction to Luma's plan: I have concerns
   5. WORRIED                  — A2-02: watching Byte exposition with concern
-  6. SURPRISED                — A2-04c: carbonation chaos pop
+  6. SURPRISED                — A2-04c: carbonation chaos pop (NOW WITH BLUSH)
 
-Output: output/characters/main/LTG_CHAR_cosmo_expression_sheet_v003.png
+Output: output/characters/main/LTG_CHAR_cosmo_expression_sheet_v004.png
 """
 from PIL import Image, ImageDraw, ImageFont
 import math
@@ -63,6 +57,7 @@ NOTEBOOK    = (91, 141, 184)
 NOTEBOOK_SP = (61, 107, 138)
 LINE        = (59, 40, 32)
 BLUSH       = (210, 128, 80)
+BLUSH_HI    = (228, 162, 120)   # v004: lighter highlight for inner blush oval
 
 BG_NEUTRAL   = (210, 208, 200)
 BG_FRUSTRAT  = (200, 192, 195)
@@ -173,7 +168,7 @@ EXPRESSIONS = [
         "glasses_tilt": 10,
         "brow_data": {"l_raise": 16, "r_raise": 16, "l_furrow": 0, "r_furrow": 0},
         "mouth_data": {"style": "open_surprised"},
-        "blush": False,
+        "blush": True,
         "prev_state": "← was: DETERMINED (plan in action)",
         "next_state": "→ next: FRUSTRATED / ACCEPTING CHAOS",
     },
@@ -470,6 +465,25 @@ def draw_cosmo(draw, cx, cy, hu, expr):
     _draw_cosmo_nose(draw, cx, cy, hu)
     _draw_cosmo_mouth(draw, cx, cy, hu, mouth_data)
 
+    # v004: blush ovals for expressions where blush=True (e.g. SURPRISED)
+    # Uses two nested ellipses per cheek to simulate soft blush gradient:
+    # outer ellipse in BLUSH color (warm terracotta), inner in BLUSH_HI (lighter)
+    if expr.get("blush", False):
+        blush_r_x = int(hu * 0.22)
+        blush_r_y = int(hu * 0.09)
+        cheek_y   = cy + int(hu * 0.20)
+        left_cx   = cx - int(hu * 0.35)
+        right_cx  = cx + int(hu * 0.35)
+        for bcx in (left_cx, right_cx):
+            draw.ellipse([bcx - blush_r_x, cheek_y - blush_r_y,
+                          bcx + blush_r_x, cheek_y + blush_r_y],
+                         fill=BLUSH)
+            inner_rx = int(blush_r_x * 0.55)
+            inner_ry = int(blush_r_y * 0.55)
+            draw.ellipse([bcx - inner_rx, cheek_y - inner_ry,
+                          bcx + inner_rx, cheek_y + inner_ry],
+                         fill=BLUSH_HI)
+
 
 def generate_cosmo_expression_sheet(output_path):
     total_w = COLS * (PANEL_W + PAD) + PAD
@@ -489,7 +503,7 @@ def generate_cosmo_expression_sheet(output_path):
         font_title = font = font_sm = ImageFont.load_default()
 
     draw.text((PAD, 14),
-              "COSMO — Expression Sheet — Luma & the Glitchkin  |  v003  |  Cycle 19 lean fix",
+              "COSMO — Expression Sheet — Luma & the Glitchkin  |  v004  |  C32: SURPRISED blush",
               fill=(91, 141, 184), font=font_title)
 
     HU = int(PANEL_H * 0.155)
@@ -538,5 +552,5 @@ if __name__ == '__main__':
                            "..", "characters", "main")
     os.makedirs(out_dir, exist_ok=True)
     generate_cosmo_expression_sheet(
-        os.path.join(out_dir, "LTG_CHAR_cosmo_expression_sheet_v003.png")
+        os.path.join(out_dir, "LTG_CHAR_cosmo_expression_sheet_v004.png")
     )

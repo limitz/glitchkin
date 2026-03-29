@@ -32,22 +32,34 @@ Circles communicate trust, safety, and energy simultaneously — they roll, they
 
 ## 3. PROPORTIONS (Head Units)
 
-**Total height: 3.5 heads**
+**Total height: 3.2 heads**
 
 | Body Section | Measurement | Notes |
 |---|---|---|
 | Head | 1.0 head | Baseline unit — circular, width ≈ 0.95 of height |
 | Neck | Minimal — 0.05 heads | Nearly absent. Head sits close to body. |
 | Torso | 1.0 head | Slightly wider than the head (1.1x head width) |
-| Upper legs | 0.75 heads | Short and stubby |
-| Lower legs + feet | 0.7 heads | Feet are included in this measurement |
-| **Total** | **3.5 heads** | |
+| Upper legs | 0.65 heads | Short and stubby |
+| Lower legs + feet | 0.5 heads | Feet are included in this measurement |
+| **Total** | **3.2 heads** | |
 
 **Shoulder width:** 0.85x head width (narrower than head — this is important, it makes her head dominant)
 
-**Eye size:** Each eye is approximately 0.22x head width. They are large, accounting for roughly 40% of the usable face real estate.
+**Eye size:** Each eye width = **HR × 0.22** (head-radius × 0.22). "HR" means the radius of the head circle — NOT head-height, NOT head-width. At the canonical HEAD_R=105px (1× internal), ew = int(105 × 0.22) = 23px. At 2× render (HR=210px), ew = 46px. This definition is canonical across all generators and documents as of Cycle 32. Eyes account for roughly 40% of the usable face real estate.
 
-**Hair volume adds approximately 0.4 heads of height above the skull line** — this is not counted in the 3.5 head measurement but must be accounted for in compositions. Total visual height including hair is approximately 3.9 heads.
+> **Canonical eye-width formula (C32 decision):** `ew = int(HR × 0.22)` where HR = head-radius in pixels. Do NOT interpret the 0.22 coefficient against head-height or head-diameter. The generator variable `head_r` (or `HEAD_R`) is the authoritative input.
+
+**Hair volume adds approximately 0.4 heads of height above the skull line** — this is not counted in the 3.2 head measurement but must be accounted for in compositions. Total visual height including hair is approximately 3.6 heads.
+
+### Canonical Proportion Values (C32 — All Generators Must Conform)
+
+| Metric | Canonical Value | Formula | Notes |
+|---|---|---|---|
+| Head-to-body ratio | **3.2 heads** | figure_height / head_height = 3.2 | ±5% tolerance in pixel output |
+| Eye width | **HR × 0.22** | `ew = int(head_r * 0.22)` | HR = head-radius; NOT head-height |
+| Line weight — head outline | **width=4** at 2× render | ~2px output | Head, hair mass, body perimeter |
+| Line weight — structure | **width=3** at 2× render | ~1.5px output | Eyelid arcs, brows, costume seams |
+| Line weight — detail | **width=2** at 2× render | ~1px output | Crinkle lines, nose arc, decorative stitching |
 
 ---
 

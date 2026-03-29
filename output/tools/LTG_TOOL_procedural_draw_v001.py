@@ -33,7 +33,7 @@ CLI demo:
 Dependencies: Python 3.8+, Pillow (PIL). No NumPy required.
 """
 
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 __author__ = "Rin Yamamoto"
 __cycle__ = 26
 
@@ -206,7 +206,7 @@ def variable_stroke(img, p1, p2, max_width=6, min_width=1,
 
 
 def add_rim_light(img, threshold=200, light_color=(255, 240, 200), width=3,
-                  side="all"):
+                  side="all", char_cx=None):
     """Add a rim light edge on the bright / character areas of the image.
 
     Finds the edges of bright regions (where pixel luminance > threshold) and
@@ -223,12 +223,19 @@ def add_rim_light(img, threshold=200, light_color=(255, 240, 200), width=3,
         width       (int)      : Rim light width in pixels (via edge dilation).
         side        (str)      : Spatial filter for rim light direction:
                                    "all"    — apply to all bright edges (backward compat default)
-                                   "right"  — right half of canvas only (x > width*0.5)
-                                   "left"   — left half of canvas only  (x < width*0.5)
+                                   "right"  — right side of character center only
+                                   "left"   — left side of character center only
                                    "top"    — top half of canvas only   (y < height*0.5)
                                    "bottom" — bottom half of canvas only (y > height*0.5)
                                  This is a practical spatial approximation that correctly prevents
                                  the rim appearing on the wrong side without full normal-map analysis.
+        char_cx     (int|None) : Character center x in pixels. When provided, "right"/"left"
+                                 side masks are character-relative (x > char_cx or x < char_cx)
+                                 rather than canvas-relative. This is essential for characters
+                                 positioned left-of-center (e.g. Luma at ~x=0.35W in SF01) whose
+                                 right torso/arm would otherwise be excluded by the 0.50W cutoff.
+                                 Default None: falls back to canvas center (0.50W) for backwards
+                                 compatibility.
 
     Returns:
         PIL.Image: The modified image (same object as img).
@@ -249,11 +256,13 @@ def add_rim_light(img, threshold=200, light_color=(255, 240, 200), width=3,
         w, h = img.size
         spatial_mask = Image.new("L", (w, h), 0)
         if side == "right":
-            # Only pixels in the right half
-            spatial_mask.paste(255, (w // 2, 0, w, h))
+            # Use char_cx if provided; otherwise fall back to canvas center
+            cx_split = char_cx if char_cx is not None else w // 2
+            spatial_mask.paste(255, (cx_split, 0, w, h))
         elif side == "left":
-            # Only pixels in the left half
-            spatial_mask.paste(255, (0, 0, w // 2, h))
+            # Use char_cx if provided; otherwise fall back to canvas center
+            cx_split = char_cx if char_cx is not None else w // 2
+            spatial_mask.paste(255, (0, 0, cx_split, h))
         elif side == "top":
             # Only pixels in the top half
             spatial_mask.paste(255, (0, 0, w, h // 2))

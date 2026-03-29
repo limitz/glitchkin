@@ -1,5 +1,52 @@
 # Maya Santos — Memory
 
+## Cycle 32 Lessons — LUMA v008 + GLITCH SPEC + EYE-WIDTH FIX
+
+- **Luma expression sheet v008 COMPLETE.**
+  - Generator: `output/tools/LTG_TOOL_luma_expression_sheet_v008.py`
+  - Output: `output/characters/main/LTG_CHAR_luma_expressions_v008.png` (1200×900)
+  - NEW ANCHOR EXPRESSION: "THE NOTICING" — the kid who notices what no one else sees.
+    - Ultra-still upright body (zero tilt), head tilts right toward noticed thing
+    - RIGHT ARM: bent to chin level (thinking hand gesture) — unique silhouette hook
+    - LEFT ARM: hanging loose at side
+    - Wide-planted feet — grounded
+    - Asymmetric gaze: left eye more open (l_open=1.0, r_open=0.85), directed left+down
+    - Mouth style "noticing": barely parted, soft — mid-breath of recognition
+    - Panel BG: pale blue-grey (cool, interior, contemplative)
+  - EYE-WIDTH FIX (C14 P1 — Daisuke): turnaround v003 definition applied
+    - ew = HEAD_HEIGHT_2X × 0.22 = 208 × 0.22 = 45px at 2x render
+    - PREVIOUS (v007): ew = HR × 0.22 = 23px (head-radius-based, not head-height)
+    - HEAD_HEIGHT_2X = 2 * HR = 2 * 104 = 208px
+  - LAYOUT: 3×3 grid (9 slots), 7 filled (THE NOTICING + 6 v007 exprs), 2 blank
+  - All 6 v007 expressions retained (eye-width updated to canonical)
+
+- **Glitch diamond construction spec COMPLETE.**
+  - Output: `output/characters/main/glitch.md`
+  - Covers: diamond geometry (primitives + formulas), rotation/tilt/squash/stretch rules,
+    pixel eye system (8 states), bilateral eye rule (interior states = bilateral),
+    destabilized right-eye signature, performance vs interior state panel grouping,
+    hover confetti rules, 4-view turnaround rules, step-by-step reproduction guide.
+
+- **Ideabox C32 submitted.**
+  - `ideabox/20260330_maya_santos_expression_silhouette_test.md`
+  - Idea: automated silhouette-differentiation test for expression sheets (flood-fill + overlap ratio).
+
+- **Inbox archived.** `20260329_2359_critique13_p1.md` → `inbox/archived/`.
+
+## KEY FORMULA UPDATES (C32)
+
+### Eye Width — Canonical (turnaround-aligned)
+- **Definition:** `ew = head_height_at_render_scale × 0.22`
+- At 2x render with HR=104: `HEAD_HEIGHT_2X = 2 * HR = 208`, `EW_CANON = int(208*0.22) = 45`
+- NOTE: if Alex Chen circulates a different canonical definition, USE THAT instead.
+  Until then, use turnaround v003 definition.
+
+### THE NOTICING — silhouette rules
+- One-hand-to-chin gesture is the ONLY such gesture in Luma's expression vocabulary.
+- Ultra-still body + wide-planted feet = distinctly NOT DETERMINED (fists at hips),
+  NOT WORRIED (arms crossed), NOT CALCULATING (it's a Glitch expression).
+- Contemplative cool BG palette distinguishes it from warm excitement panels.
+
 ## Cycle 31 Lessons — CHARACTER PROPORTION DIFF TOOL
 
 - **LTG_TOOL_char_diff_v001.py COMPLETE.** Ideabox idea implemented.

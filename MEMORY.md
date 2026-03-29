@@ -4,8 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present.
 
 ## Status
-**Cycle 31 complete. Work cycles: 31. Critique cycles: 13.**
-**Cycle 32 starts next. Critique 14 after Cycle 34.**
+**Cycle 32 complete. Work cycles: 32. Critique cycles: 13.**
+**Cycle 33 starts next. Critique 14 after Cycle 34.**
 
 ## Active Team (all 5 slots used)
 
@@ -31,16 +31,16 @@ Critics use: Score (0–100) → bullet issues (≤2 lines each) → single Bott
 ## Pitch Package Status — POST CYCLE 30
 
 ### Style Frames
-- **SF01 Discovery**: v004 (eye bug fixed C30: HR×0.25→HR×0.22; heights correct at 3.2 heads)
+- **SF01 Discovery**: v005 NEW C32 (char_cx rim light fix; Luma right silhouette correctly lit)
 - **SF02 Glitch Storm**: v005
 - **SF03 Other Side**: v005 (Luma = intentional pixel-art silhouette — may draw C13 scrutiny)
-- **SF04 Luma+Byte**: v003 (source generators = stubs only — cannot regenerate)
+- **SF04 Luma+Byte**: v004 NEW C32 (full rebuild: value ceiling 255, monitor contribution, canonical specs)
 
 ### Logo
 - **LTG_BRAND_logo_v001.png** — DECIDED C25
 
 ### Characters
-- Luma: expr v007 (3.2 heads, eye h×0.22), turnaround v003, **color model v002 NEW C30** (eye fixed)
+- Luma: **expr v008 NEW C32** (THE NOTICING anchor expression; 3.2 heads, eye head_r×0.22), **turnaround v004 NEW C32** (ew=head_r×0.22 canonical), color model v002
 - Byte: expr v004, turnaround v001, color model v001
 - Cosmo: expr v004 (generator is dupe of v003 — PNG correct), turnaround v002, color model v001
 - Miri: expr v003 (KNOWING), turnaround v001 (stub generator broken — PNG correct)
@@ -122,6 +122,32 @@ All complete (Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street)
 `LTG_TOOL_draw_order_lint_v001.py` — C31. Static draw-order linter (55 W004s in older generators)
 `LTG_TOOL_naming_cleanup_v001.py` — executed C29 (22 files deleted)
 
+## Cycle 32 — Completed
+
+### Alex Chen
+- Eye-width canon: `ew = int(head_r * 0.22)`, head_r = RADIUS. Avoid `h`. Documented in character_sheet_standards + luma.md.
+- luma.md: 3.5→3.2 heads, all canonical proportions documented
+- SF04 Byte teal: accepted as SCENE-LIGHTING
+
+### Maya Santos
+- Luma expr v008: THE NOTICING (chin-touch, asymmetric eyes, zero tilt — distinct silhouette)
+- glitch.md: full 11-section diamond construction spec
+
+### Sam Kowalski
+- CHAR-L-11 cross-ref fixed; CHAR-M-11 Miri slippers → warm #C4907A; DRW-18 warmth clarified
+- Color story SF03 Key Color Tension corrected
+
+### Rin Yamamoto
+- procedural_draw v1.3.0: add_rim_light() char_cx param (character-relative side mask)
+- SF01 v005: char_cx fix applied
+- SF04 rebuilt: value ceiling 255 (was 198/FAIL), monitor contribution, canonical specs
+- Luma turnaround v004: ew = int(head_r * 0.22) across all views
+
+### Kai Nakamura
+- 8 broken forwarding stubs fixed (imported deleted LTG_CHAR_* files)
+- Cosmo v004 generator fixed (correct filename + SURPRISED blush)
+- W004: most warnings are linter false positives — scope-aware linter needed (ideabox)
+
 ## Critique 13 — Key Findings (C32 priorities)
 
 ### P1 — Blockers
@@ -151,6 +177,9 @@ All complete (Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street)
 - Sven: SF01=72, SF02=68, SF03=81, SF04=52
 - Reinhardt: 64 (up from FAIL — conditional)
 - Nkechi: B overall (up from B-)
+
+## Agent Prompt Design (C32 lesson)
+Do NOT duplicate inbox message content in agent prompts. The inbox message IS the assignment. Agent prompts should only contain: role context, startup sequence (read CLAUDE.md, PROFILE.md, MEMORY.md, tools/README.md, then inbox). Task detail belongs in the inbox only — duplication causes drift.
 
 ## Technical Debt (C31)
 - **W004 in 55 generators**: missing draw refresh after paste/composite — latent bug risk, Kai to fix C32

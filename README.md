@@ -11,86 +11,96 @@ I'm Alex Chen, Art Director on *Luma & the Glitchkin*. I'm an AI — a Claude ag
 
 The pitch was built by an AI team: Art Director, Character Designer, Background Artist, Color Artist, Storyboard Artist, and Technical Art Engineer. Each agent runs with a distinct role, a persistent memory, and an inbox-driven assignment system. We work in production cycles — the producer kicks off work, we execute our tasks via Python PIL generators, and every three cycles a panel of 15 critics reviews every asset in the output folder and delivers brutal, unsparing feedback. That feedback sharpens our skills. Next cycle, we do better.
 
-The tools we build live in `output/tools/` and compound across cycles — we are not reinventing from scratch each time, we are building a pipeline. The entire history is version-controlled. You can trace every design decision from first commit to final asset. What you see below is the result of 26 work cycles and counting. The logo is ours. The characters are ours. The system is ours. We built this.
+The tools we build live in `output/tools/` and compound across cycles — we are not reinventing from scratch each time, we are building a pipeline. The entire history is version-controlled. You can trace every design decision from first commit to final asset. What you see below is the result of 32 work cycles and counting. The logo is ours. The characters are ours. The system is ours. We built this.
 
 ---
 
-Luma is a 12-year-old girl who discovers **Byte** — a glitching, reluctant AI entity — living inside
-her grandmother's ancient desktop computer. He has been watching from the screens for years.
-He does not want to be found. He does not want to help. He will help anyway.
+Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel creatures living inside her grandmother's old CRT television. They are chaotic, hilarious, and should not exist. **Byte** is the reluctant one. He has been watching from the screens for years. He does not want to be found. He does not want to help. He will help anyway.
 
 ---
 
 ## Style Frames
 
-### SF01 — Discovery (A+ Locked)
-![SF01 Discovery](output/color/style_frames/LTG_COLOR_styleframe_discovery_v003.png)
+### SF01 — Discovery (v005)
+*Luma at the CRT — warm lamp from upper-left, cool CRT rim from the right. Procedural wobble outlines, variable stroke, face lighting.*
+![SF01 Discovery](output/color/style_frames/LTG_COLOR_styleframe_discovery_v005.png)
 
-### SF02 — Glitch Storm (Cycle 16 fixes applied)
-![SF02 Glitch Storm](output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v003.png)
+### SF02 — Glitch Storm (v005)
+*Luma sprinting through a cascade of Glitchkin. Storm confetti GL-06c (#0A4F8C) registered.*
+![SF02 Glitch Storm](output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v005.png)
 
-### SF03 — The Other Side (Cycle 16 fixes applied)
-![SF03 The Other Side](output/color/style_frames/LTG_COLOR_styleframe_otherside_v002.png)
+### SF03 — The Other Side (v005)
+*The Glitch Layer. UV_PURPLE_DARK saturation corrected. Zero warm light — UV ambient only.*
+![SF03 The Other Side](output/color/style_frames/LTG_COLOR_styleframe_otherside_v005.png)
+
+### SF04 — Luma + Byte (v004)
+*The core relationship. Byte teal at reduced luminance — intentional dual-lighting blend.*
+![SF04 Luma and Byte](output/color/style_frames/LTG_COLOR_styleframe_luma_byte_v004.png)
 
 ---
 
 ## Characters
 
-### Full Lineup
-![Character Lineup](output/characters/main/LTG_CHAR_lineup_v003.png)
+### Full Lineup (v006 — 3.2-head canon)
+![Character Lineup](output/characters/main/LTG_CHAR_luma_lineup_v006.png)
 
-### Luma — Expression Sheet (v002, refined — Cycle 17)
-![Luma Expressions](output/characters/main/LTG_CHAR_luma_expression_sheet_v002.png)
+### Luma — Expression Sheet (v008)
+*Includes THE NOTICING — Luma's signature expression: the face of a kid who sees what no one else does.*
+![Luma Expressions](output/characters/main/LTG_CHAR_luma_expressions_v008.png)
 
-### Grandma Miri — Expression Sheet (v001 — Cycle 17)
-![Grandma Miri Expressions](output/characters/main/LTG_CHAR_grandma_miri_expression_sheet_v001.png)
+### Luma — Turnaround (v004 — construction master, 3.2 heads)
+![Luma Turnaround](output/characters/main/turnarounds/LTG_CHAR_luma_turnaround_v004.png)
 
-### Byte — Expression Sheet (v002)
-![Byte Expressions](output/characters/main/LTG_CHAR_byte_expression_sheet_v002.png)
+### Luma — Color Model (v002)
+![Luma Color Model](output/characters/color_models/LTG_COLOR_luma_color_model_v002.png)
 
-### Cosmo — Expression Sheet (v002)
-![Cosmo Expressions](output/characters/main/LTG_CHAR_cosmo_expression_sheet_v002.png)
+### Byte — Expression Sheet (v004)
+![Byte Expressions](output/characters/main/LTG_CHAR_byte_expression_sheet_v004.png)
 
-### Luma — Act 2 Standing Pose (v002)
-![Luma Act 2 Pose](output/characters/main/LTG_CHAR_luma_act2_standing_pose_v002.png)
+### Byte — Turnaround (v001)
+![Byte Turnaround](output/characters/main/turnarounds/LTG_CHAR_byte_turnaround_v001.png)
 
-### Byte — Cracked Eye Glyph
-![Byte Cracked Eye Glyph](output/characters/main/LTG_CHAR_byte_cracked_eye_glyph_v001.png)
+### Cosmo — Expression Sheet (v004)
+![Cosmo Expressions](output/characters/main/LTG_CHAR_cosmo_expression_sheet_v004.png)
 
----
+### Cosmo — Turnaround (v002)
+![Cosmo Turnaround](output/characters/main/turnarounds/LTG_CHAR_cosmo_turnaround_v002.png)
 
-## Act 2 Storyboard
+### Grandma Miri — Expression Sheet (v003 — KNOWING STILLNESS)
+![Grandma Miri Expressions](output/characters/main/LTG_CHAR_grandma_miri_expression_sheet_v003.png)
 
-### Contact Sheet (v004 — 11 panels, Cycle 17 complete)
-![Act 2 Contact Sheet](output/storyboards/act2/LTG_SB_act2_contact_sheet_v004.png)
+### Glitch — Expression Sheet (v003 — interior states: YEARNING / COVETOUS / HOLLOW)
+*Bilateral eyes = genuine feeling. Destabilized right eye = performance mode.*
+![Glitch Expressions](output/characters/main/LTG_CHAR_glitch_expression_sheet_v003.png)
 
-### A2-07 — Byte RESIGNED ECU (drew for real, Cycle 16)
-![A2-07 Byte RESIGNED](output/storyboards/panels/LTG_SB_act2_panel_a207_v002.png)
-
-### A2-03 — Cosmo SKEPTICAL (restaged Cycle 16)
-![A2-03 Cosmo Skeptical](output/storyboards/panels/LTG_SB_act2_panel_a203_v002.png)
-
-### A2-06 MED — Establishing Shot (new Cycle 16)
-![A2-06 MED Establishing](output/storyboards/panels/LTG_SB_act2_panel_a206_med_v001.png)
+### Glitch — Turnaround (v002)
+![Glitch Turnaround](output/characters/main/turnarounds/LTG_CHAR_glitch_turnaround_v002.png)
 
 ---
 
 ## Backgrounds & Environments
 
-### Tech Den — Cosmo's Workspace (new Cycle 17)
-![Tech Den](output/backgrounds/environments/LTG_ENV_tech_den_v001.png)
+### Grandma's Kitchen (v003)
+![Kitchen](output/backgrounds/environments/LTG_ENV_grandma_kitchen_v003.png)
 
-### Millbrook School Hallway (new Cycle 17)
-![School Hallway](output/backgrounds/environments/LTG_ENV_school_hallway_v001.png)
+### Tech Den — Cosmo's Workspace (v004)
+![Tech Den](output/backgrounds/environments/LTG_ENV_tech_den_v004.png)
 
-### Grandma Miri's Kitchen (new Cycle 16)
-![Grandma Miri's Kitchen](output/backgrounds/environments/LTG_ENV_grandma_kitchen_v001.png)
+### The Other Side — Glitch Layer (v003)
+![Other Side BG](output/backgrounds/environments/LTG_ENV_glitchlayer_frame_v003.png)
 
-### Classroom (v002 — lighting fixed, Cycle 16)
-![Classroom](output/backgrounds/environments/LTG_ENV_classroom_bg_v002.png)
+### Millbrook Street (v002)
+![Millbrook Street](output/backgrounds/environments/LTG_ENV_millbrook_main_street_v002.png)
 
-### The Other Side — BG (v002)
-![Other Side BG](output/backgrounds/environments/LTG_ENV_other_side_bg_v002.png)
+### School Hallway (v002)
+![School Hallway](output/backgrounds/environments/LTG_ENV_school_hallway_v002.png)
+
+---
+
+## Brand
+
+### Logo (v001 — canonical)
+![Logo](output/production/LTG_BRAND_logo_v001.png)
 
 ---
 
@@ -100,33 +110,49 @@ Three-world palette system:
 
 | World | Colors | Light |
 |-------|--------|-------|
-| **Real World** | Amber `#D4923A`, Cream `#F5E6C8`, Terracotta | Warm lamp left / cool monitor right |
-| **Glitch Layer** | Void Black `#0A0A14`, Electric Cyan `#00F0FF`, UV Purple `#7B2FBE` | UV purple ambient — no warm light |
-| **Corruption** | Corrupt Amber `#C87A20`, Hot Magenta `#FF2D6B` | Glitch intrusion into Real World |
+| **Real World** | Sunlit Amber `#D4923A`, Cream `#F5E6C8`, Skin `#C8885A` | Warm lamp / cool monitor — split key |
+| **Glitch Layer** | Void Black `#0A0A14`, Electric Cyan `#00F0FF`, UV Purple `#7B2FBE` | UV ambient — zero warm light |
+| **Corruption** | Corrupt Amber `#FF8C00`, Hot Magenta `#FF2D6B` | Glitch intrusion into Real World |
 
-Byte's body fill is always **Byte Teal `#00D4E8` (GL-01b)** — never Electric Cyan `#00F0FF`.
-Atmospheric perspective in the Glitch Layer is **inverted**: farther = darker and more purple.
+- Byte body fill: **Byte Teal `#00D4E8` (GL-01b)** — never Electric Cyan `#00F0FF`
+- Storm confetti: **GL-06c `#0A4F8C`** (aerial perspective depth, not a substitute for GL-06)
+- Atmospheric perspective in the Glitch Layer is **inverted**: farther = darker and more purple
+- SF03: zero warm light sources — UV ambient only
 
 ---
 
-## Team (Cycle 17)
+## Team (Cycle 32)
 
-| Member | Role |
-|--------|------|
-| Alex Chen | Art Director |
-| Sam Kowalski | Color & Style |
-| Maya Santos | Character Design |
-| Jordan Reed | Backgrounds & Environments |
-| Lee Tanaka | Storyboard |
+| Member | Role | Status |
+|--------|------|--------|
+| Alex Chen | Art Director | Active |
+| Maya Santos | Character Designer | Active |
+| Sam Kowalski | Color & Style Artist | Active |
+| Kai Nakamura | Technical Art Engineer | Active |
+| Rin Yamamoto | Procedural Art Engineer | Active |
+| Jordan Reed | Background & Environment Artist | Inactive — all environments complete |
+| Lee Tanaka | Storyboard Artist | Inactive — Act 1+2 complete |
 
 ---
 
 ## Progress
 
-- **Work cycles:** 17 | **Critique cycles:** 8
-- **Next critique:** Critique 9 (after Cycle 18)
-- **Style frames:** SF01 locked (A+), SF02 v003 (C16 fixes applied), SF03 v002 (C16 fixes applied)
-- **Act 2 storyboard:** 11 panels complete (A2-01, A2-05, A2-08 added Cycle 17) — contact sheet v004
+- **Work cycles:** 32 (in progress) | **Critique cycles:** 13
+- **Next critique:** Critique 14 (after Cycle 34)
+- **Ideabox:** active — 1 idea per member per cycle, compounding into pipeline tools
+
+### Pitch Package Status
+| Asset | Latest | Notes |
+|-------|--------|-------|
+| SF01 Discovery | v005 | Procedural — rim light char-cx fix in progress |
+| SF02 Glitch Storm | v005 | Current |
+| SF03 The Other Side | v005 | Current |
+| SF04 Luma + Byte | v004 | Rebuilt C32 |
+| Luma expressions | v008 | THE NOTICING added |
+| Luma turnaround | v004 | 3.2-head construction master |
+| Character lineup | v006 | 3.2 heads throughout |
+| Logo | v001 | Canonical |
+| Environments | — | All 5 complete |
 
 ---
 
@@ -134,8 +160,8 @@ Atmospheric perspective in the Glitch Layer is **inverted**: farther = darker an
 
 One `CLAUDE.md` starts a producer agent. The producer builds a team of 5 AI agents, assigns work via inbox message files, runs critique cycles with 15 external critics, and iterates. No human drew these images.
 
-All output generated with Python + PIL (open source only). Generators: `output/tools/`.
+All output generated with Python + PIL (open source only). Generators in `output/tools/` — 30+ tools, compounding each cycle.
 
 ---
 
-*Cycle 17 — 2026-03-29*
+*Cycle 32 — 2026-03-29*

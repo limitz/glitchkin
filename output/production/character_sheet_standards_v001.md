@@ -35,7 +35,33 @@ Labels appear in the panel caption area beneath each expression panel.
 
 ---
 
-## 2. HEAD_R Values and Format (Bust vs Full-Body)
+## 2. Canonical Eye-Width Definition (C32 Decision)
+
+**Canonical formula:** `ew = int(HR × 0.22)`
+
+Where:
+- **HR** = head-radius in pixels (the variable `head_r` or `HEAD_R` in all generators)
+- **HR is NOT head-height and NOT head-diameter**
+- The coefficient 0.22 applies ONLY to the radius value
+
+**Why this decision exists:** Daisuke flagged in Critique 13 that `h` in the v007 expression generator meant head-radius (104px), while `h` in the turnaround v003 generator meant head-height (382px). This produced a 3.8× discrepancy (eye widths: 22px vs 84px). Head-radius is canonical because all active generators use it consistently.
+
+| Generator variable | Maps to | Canonical ew formula |
+|---|---|---|
+| `head_r` (expression sheets) | head-radius | `int(head_r * 0.22)` |
+| `HEAD_R` (style frames) | head-radius | `int(HEAD_R * 0.22)` |
+| `h` — AMBIGUOUS, avoid | depends on generator | Rewrite to use `head_r` explicitly |
+
+**Do not use `h` as a variable for head measurement in any new generator.** Use `head_r` for radius.
+
+**Numeric reference (HEAD_R=105, 1× internal):** ew = int(105 × 0.22) = 23px
+**At 2× render (HR=210):** ew = int(210 × 0.22) = 46px
+
+*Added by Alex Chen, Art Director — Cycle 32. Resolves Critique 13 P1 finding (Daisuke).*
+
+---
+
+## 2b. HEAD_R Values and Format (Bust vs Full-Body)
 
 `HEAD_R` is the head radius in pixels at the internal 1× coordinate space (before render scale). It determines whether a character reads as a **bust** (head + upper torso only) or **full-body** (head to feet visible).
 

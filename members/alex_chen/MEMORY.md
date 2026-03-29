@@ -12,7 +12,40 @@
 - Never send high-res images to Claude unless absolutely necessary.
 - Vision limitations: hallucination risk on low-quality/rotated/tiny (<200px) images; limited spatial reasoning; approximate counting only.
 
-## Cycle 31 State (current)
+## Cycle 32 State (current)
+
+**C32 tasks complete (Alex Chen's portion).**
+
+### C32 Critical Decision — Eye-Width Canonical Definition
+**Decision:** `ew = int(head_r * 0.22)` where `head_r` = head-RADIUS (NOT head-height).
+- Root cause: Critique 13 (Daisuke) — `h` variable meant radius in v007 generator (104px) but height in turnaround v003 (382px) → 3.8× discrepancy.
+- Canonical source: head-radius, because all generators use it.
+- Written into: `output/characters/main/luma.md` Section 3, `output/production/character_sheet_standards_v001.md` Section 2 (new).
+- Maya + Rin both notified via inbox.
+
+### C32 luma.md Updates
+- Corrected **3.5 heads → 3.2 heads** (Reinhardt C13 P1 finding).
+- Rewrote eye-size paragraph with HR×0.22 definition and canonical values table.
+- Added canonical proportion values table: head ratio 3.2, eye ew=HR×0.22, line weights.
+
+### C32 Directives Sent
+- **Maya:** fix eye-width in generators, build Luma expr v008 (signature "notices" expression), write glitch.md, rebuild Miri (P2)
+- **Rin:** fix turnaround generator eye-width, fix add_rim_light() canvas-midpoint bug, rebuild SF04 from scratch
+- **Kai:** fix broken forwarding stubs (8+ ModuleNotFoundError), W004 fix pass on top generators, QA false-positive registry (v002)
+- **Sam:** fix CHAR-L-11 (#00D4E8 → #00F0FF), document SF04 Byte teal as scene-lighting exception, standby for SF04 v004 color QA
+
+### C32 Art Director Decision — SF04 Byte Teal
+Carrying C26 open item. **Decision:** SF04 Byte teal at ~60-70% luminance = SCENE-LIGHTING INTENT. SF04 is the discovery scene (Luma enters Glitch World). Byte at reduced luminance = correct. ACCEPTED. Sam must document this in palette doc.
+
+### C32 Ideabox
+Alex submitted: `ideabox/20260330_alex_chen_glitch_construction_linter.md` — tool to lint new Glitchkin generators against glitch.md spec.
+
+### C31 State (archived)
+
+**C31 tasks complete.**
+
+**Ideabox — all 5 C30 ideas actioned:** Moved to `ideabox/actioned/`. All 5 ideas are being built this cycle by team members:
+- Alex Chen idea → proportion verifier tool (built C31 by Alex — see below)
 
 **C31 tasks complete.**
 
@@ -37,10 +70,10 @@
 - Rin: SF01 v004 eye width bug found and fixed (was HR×0.25, now HR×0.22). SF02/SF03 proportion checks complete (SF02 has no Luma; SF03 pixel-art Luma is intentional style). Ideabox submitted.
 - Sam: Color continuity audit filed. All 4 frames CLEARED. CHAR-L-11 hex error fixed (C14 error). Color story SF01 reference updated to v004. Outstanding: SF04 Byte teal dim — PENDING ART DIRECTOR DECISION.
 
-**Outstanding decisions needed:**
-1. SF04 Byte teal: zero pixels at canonical (0,212,232). Teal visually present at lower luminance (~60-70%). Is this intentional scene lighting or a generation error? Needs AD call.
-2. README.md still stale (references old asset versions from C17). Producer flagged. Not yet updated — ADD TO C32 as P1.
-3. Miri v003 generator broken (imports missing module) — rebuild needed in C32.
+**Outstanding decisions (C31 — now resolved in C32):**
+1. SF04 Byte teal: **RESOLVED C32** — scene-lighting intent ACCEPTED. Sam to document.
+2. README.md stale: carry to C32 for Kai.
+3. Miri v003 generator broken: **C32 P2** — Maya to rebuild.
 
 **Canonical asset versions (C31 current):**
 - Luma expression sheet: v007 (PITCH PRIMARY)

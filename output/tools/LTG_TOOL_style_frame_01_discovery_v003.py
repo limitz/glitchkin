@@ -608,6 +608,7 @@ def draw_luma_head(draw, cx, cy, scale=1.0):
     base_rgba = base_img.convert("RGBA")
     base_rgba = Image.alpha_composite(base_rgba, blush_layer)
     base_img.paste(base_rgba.convert("RGB"))
+    draw = ImageDraw.Draw(base_img)  # W004 fix (C32): refresh after paste
 
     draw.arc([cx - p(60), cy - p(195), cx - p(10), cy - p(140)], start=30, end=200, fill=HAIR_COLOR, width=8)
     draw.arc([cx - p(20), cy - p(190), cx + p(40), cy - p(130)], start=10, end=190, fill=HAIR_COLOR, width=7)
@@ -764,6 +765,8 @@ def draw_lighting_overlay(img, W, H, lamp_x, lamp_y, monitor_cx, monitor_cy):
     base_right = img.crop((W // 2 - 80, 0, W, H)).convert("RGBA")
     composited_right = Image.alpha_composite(base_right, cold_np)
     img.paste(composited_right.convert("RGB"), (W // 2 - 80, 0))
+    # W004 fix (C32): no draw variable in scope here (uses local warm_draw/cold_draw only).
+    # Caller must refresh draw = ImageDraw.Draw(img) after this call.
     return img
 
 

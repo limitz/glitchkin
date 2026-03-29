@@ -1,35 +1,31 @@
 #!/usr/bin/env python3
 """
-LTG_TOOL_styleframe_discovery_v004.py
-Style Frame 01 — The Discovery (Procedural Quality Pass)
-"Luma & the Glitchkin" — Cycle 29 / C30 proportion fix
+LTG_TOOL_styleframe_discovery_v005.py
+Style Frame 01 — The Discovery (C32 rim-light char_cx fix)
+"Luma & the Glitchkin" — Cycle 32
 
 Art Director: Alex Chen
 Procedural Art Engineer: Rin Yamamoto
-Cycle: 29
+Cycle: 32
 
-C29 changes (Rin Yamamoto):
-  Procedural quality pass bringing SF01 up to the same standard as SF04 v003:
-  - wobble_polygon() on Luma head silhouette outline
-  - wobble_polygon() on CRT monitor frame
-  - wobble_polygon() on couch silhouette
-  - variable_stroke() on Luma head perimeter arcs (8-arc technique)
-  - add_face_lighting() — warm lamp light from upper-left (domestic real-world scene)
-  - add_rim_light(side="right") — cool CRT teal glow from right (the discovery source)
-  Naming conventions: LTG_TOOL_gen_* (procedural generator, integrated style)
-  Canvas: 1280x720 (≤ 1280px rule, scaled from 1920x1080 coords via SX/SY factors)
+C32 changes (Rin Yamamoto):
+  Fix add_rim_light() canvas-midpoint bug (Sven / Critique 13 P1).
+  Luma sits at ~x=0.29W (luma_cx) — well left of canvas center (0.50W).
+  The v004 call used side="right" without char_cx, so the spatial mask
+  was x > 0.50W — this excluded Luma's right shoulder/arm which sits
+  between luma_cx and 0.50W.
+  Fix: pass char_cx=head_cx to add_rim_light() so the mask becomes
+  x > head_cx (character-relative split), correctly illuminating Luma's
+  full right silhouette edge.
+  Requires: LTG_TOOL_procedural_draw_v001.py v1.3.0+ (char_cx parameter).
 
-C30 fix (Rin Yamamoto):
-  - eye width ew corrected: p(18) → int(head_r * 0.22) per canonical spec
-    (turnaround v003 and expr v007: ew = int(HR * 0.22))
-  - Height proportions verified correct: ~3.2 heads tall (6.4×HR at 2× render)
+C30 fix: eye width ew = int(head_r * 0.22) per canonical spec.
+C29: Procedural quality pass — wobble_polygon, variable_stroke, face_lighting,
+     rim light, canvas 1280x720.
+Prior SF01 v003 history: ghost Byte alpha 55→90, repositioned to specs[2]+[3].
 
-Prior history (SF01 v003, Cycle 13):
-  - Ghost Byte alpha calibrated 55→90 (Victoria Ashford B+→A+)
-  - Ghost Byte relocated to specs[2] (top-right) and specs[3] (mid-left)
-
-Output: /home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v004.png
-Usage: python3 LTG_TOOL_styleframe_discovery_v004.py
+Output: /home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v005.png
+Usage: python3 LTG_TOOL_styleframe_discovery_v005.py
 """
 
 import os
@@ -46,7 +42,7 @@ from LTG_TOOL_procedural_draw_v001 import (
     add_rim_light, add_face_lighting
 )
 
-OUTPUT_PATH = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v004.png"
+OUTPUT_PATH = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v005.png"
 
 # Working at 1280x720 — fits <= 1280px rule directly
 W, H = 1280, 720
@@ -804,7 +800,6 @@ def draw_lighting_overlay(img, lamp_x, lamp_y, monitor_cx, monitor_cy):
     base_left  = img.crop((0, 0, W // 2, H)).convert("RGBA")
     composited_left = Image.alpha_composite(base_left, warm_np)
     img.paste(composited_left.convert("RGB"), (0, 0))
-    # W004 note: no draw variable in scope here; using local warm_draw/cold_draw only.
 
     cold_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     cold_draw  = ImageDraw.Draw(cold_layer)
@@ -821,8 +816,6 @@ def draw_lighting_overlay(img, lamp_x, lamp_y, monitor_cx, monitor_cy):
     base_right = img.crop((split_x, 0, W, H)).convert("RGBA")
     composited_right = Image.alpha_composite(base_right, cold_np)
     img.paste(composited_right.convert("RGB"), (split_x, 0))
-    # W004 fix (C32): no draw variable in scope here; caller must refresh draw after this call.
-    # Caller (generate()) does: draw = ImageDraw.Draw(img) at line 896 — correct.
     return img
 
 
@@ -923,12 +916,16 @@ def generate():
 
     # STEP 5c: Rim light — cool CRT teal from right (the discovery source)
     # The CRT/monitor wall is on the right; rim light restricted to right side
+    # C32 FIX: pass char_cx=head_cx so the "right" mask is character-relative.
+    # Without this, side="right" used x > 0.50W (canvas center), which excluded
+    # Luma's right torso/arm sitting between head_cx (~0.29W) and canvas center.
     add_rim_light(
         img,
         threshold=185,
         light_color=(0, 220, 232),             # CRT teal glow (BYTE_TEAL range)
         width=sp(3),
         side="right",
+        char_cx=head_cx,                       # C32: character-relative split
     )
     draw = ImageDraw.Draw(img)  # Refresh after rim light
 
@@ -953,7 +950,7 @@ def generate():
     font_xs = load_font(11)
     draw.rectangle([0, H - 30, W, H], fill=(20, 12, 8))
     draw.text((10, H - 22),
-              "LUMA & THE GLITCHKIN — Frame 01: The Discovery  |  C29 — Procedural Quality Pass v004",
+              "LUMA & THE GLITCHKIN — Frame 01: The Discovery  |  C32 — rim-light char_cx fix v005",
               fill=(180, 150, 100), font=font_xs)
 
     # STEP 9: Size rule enforcement (≤ 1280px — already at 1280x720, no resize needed)

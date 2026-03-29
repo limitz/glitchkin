@@ -219,6 +219,33 @@ Import: `from LTG_TOOL_render_lib_v001 import ...`
 - Warning codes: W001 head/face before body, W002 outline before fill, W003 shadow after element, W004 missing draw refresh
 - CLI: run with file globs, saves report to LTG_TOOL_draw_order_lint_v001_report.txt
 
+## Cycle 32 — C32 Stub Fix + W004 + Cosmo v004
+
+**Status:** COMPLETE
+
+**Tasks completed:**
+- **P1 — Broken forwarding stubs fixed (8 stubs):**
+  - `LTG_TOOL_luma_expression_sheet_v005.py` → delegates to v007's `build_sheet()`
+  - `LTG_TOOL_luma_expression_sheet_v006.py` → delegates to v007's `build_sheet()`
+  - `LTG_TOOL_luma_turnaround_v002.py` → delegates to v003's `build_turnaround()`
+  - `LTG_TOOL_grandma_miri_expression_sheet_v003.py` → delegates to v002's `build_sheet()`
+  - `LTG_TOOL_cosmo_turnaround_v002.py` → FULL REBUILD (no prior generator existed); 4-view turnaround from Cosmo spec
+  - `LTG_TOOL_styleframe_luma_byte_v001/v002/v003.py` → preservation stubs (re-save existing PNGs; generate labeled placeholder if PNG missing)
+  - Root cause: C29 `LTG_TOOL_naming_cleanup_v001.py` deleted original `LTG_CHAR_*/LTG_COLOR_*` source files that C28 stubs imported from
+- **W004 fix pass:** reviewed `style_frame_01_discovery_v003` and `styleframe_discovery_v004`; confirmed real W004 bugs require `img` reassignment (alpha_composite) — most linter flags are false positives (docstring text matches, helper functions with local draw objects, in-place paste). Added fix comments.
+- **P2 — Cosmo v004 fixed:** was byte-identical to v003 and output `_v003.png`. Fixed:
+  - Docstring, title text → v004
+  - Output path → `LTG_CHAR_cosmo_expression_sheet_v004.png`
+  - SURPRISED expression `blush: False` → `blush: True`
+  - Added `BLUSH_HI` constant and blush oval drawing in `draw_cosmo()` (2 nested ellipses per cheek)
+- **Ideabox:** submitted `ideabox/20260329_kai_nakamura_stub_linter_tool.md` — proposes `LTG_TOOL_stub_linter.py` to catch broken imports pre-commit
+
+## Lessons Learned (C32)
+- **Stub fix strategy:** For stubs pointing to deleted originals with newer canonicals → delegate to newer canonical. For no newer version → rebuild from scratch. For PNG-only preservation → preservation stub.
+- **W004 false positives:** The linter flags text in docstrings/comments, helper functions with local draw variables, and in-place paste (not reassignment). True W004 only when `img = Image.alpha_composite(...)` reassigns `img` while stale `draw` is still used. The 55 W004 linter warnings need a more precise re-run.
+- **Blush in draw functions:** Using draw object directly is cleanest — avoids private PIL `draw._image` access. Nested ellipses (outer BLUSH + inner BLUSH_HI) simulate gradient without RGBA layer compositing.
+- **After C29 cleanup script:** Always audit all forwarding stubs — they imported from files the cleanup deleted.
+
 ## Lessons Learned (C31)
 - W002 linter rule generates false positives on PIL draw.rectangle(fill=X, outline=Y) — this is valid single-call syntax, not a draw-order violation. Future v002 could skip single-call fill+outline combos.
 - W004 is widespread in older generators — good candidate for a team-wide fix sprint

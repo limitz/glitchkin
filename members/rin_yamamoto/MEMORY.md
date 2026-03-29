@@ -35,15 +35,18 @@ Do NOT reference, fix, or regenerate any of these.
 
 ## Active Tools
 `output/tools/LTG_TOOL_render_lib_v001.py` (v1.1.0) — 8 render functions incl. paper_texture
-`output/tools/LTG_TOOL_procedural_draw_v001.py` — v1.2.0 (C28 update). Procedural drawing library:
+`output/tools/LTG_TOOL_procedural_draw_v001.py` — **v1.3.0** (C32 update). Procedural drawing library:
 - `wobble_line(draw, p1, p2, color, width, amplitude, frequency, seed)`
 - `wobble_polygon(draw, points, color, width, amplitude, frequency, seed, fill)`
 - `variable_stroke(img, p1, p2, max_width, min_width, color, seed)` — modifies in-place
-- `add_rim_light(img, threshold, light_color, width, side="all")` — modifies in-place
+- `add_rim_light(img, threshold, light_color, width, side="all", char_cx=None)` — modifies in-place
   side: "all"|"right"|"left"|"top"|"bottom" — spatial filter, prevents wrong-side rim
+  **C32 NEW: char_cx** — optional character center x (pixels). When provided, right/left mask
+  is character-relative (x > char_cx) instead of canvas-center. ALWAYS pass char_cx for
+  left-of-center characters (e.g. Luma at ~0.29W in SF01). Default None = canvas center.
 - `silhouette_test(img, threshold) -> PIL.Image` — returns RGB B&W
 - `value_study(img) -> PIL.Image` — returns contrast-stretched RGB grayscale
-- `add_face_lighting(img, face_center, face_radius, light_dir, shadow_color, highlight_color, seed)` — NEW C27
+- `add_face_lighting(img, face_center, face_radius, light_dir, shadow_color, highlight_color, seed)` — C27
 - Test images: `output/tools/test_procedural_draw_v001.png`, `output/tools/test_face_lighting_v001.png`
 - Kai interface-compatible: silhouette_test/value_study both PIL.Image in/out
 
@@ -82,6 +85,13 @@ All key techniques have been extracted to MEMORY and implemented. No further rea
 ### Rim Lights (implemented)
 - Edge dilation: dilate bright mask, subtract original, composite as RGBA
 
+## Canonical Eye Width (Alex Chen directive C32)
+`ew = int(head_r * 0.22)` where head_r = head RADIUS (NOT head height, NOT diameter)
+- HEAD_R=105 → ew=23px (1× internal)
+- HEAD_R=210 → ew=46px (2× render)
+In generators that use `h = int(hu() * SCALE)` (head HEIGHT at scale):
+  head_r = int(h * 0.50) → ew = int(int(h*0.50) * 0.22) — DO NOT use int(h * 0.22)
+
 ## Coordination
 - Kai Nakamura: `LTG_TOOL_render_qa_v001.py` — silhouette_test/value_study interfaces matched
 - Reports to Alex Chen
@@ -100,6 +110,27 @@ All key techniques have been extracted to MEMORY and implemented. No further rea
   - Blush fixed: RGB (232, 168, 124) alpha 65 — warm peach (was orange-red)
   - Byte body fill fixed: BYTE_TEAL (0, 212, 232) canonical GL-01b (was (0, 190, 210))
   - Rim light fixed: side="right" — cyan only on monitor-facing side of Luma
+
+## C32 Completed Work
+- `LTG_TOOL_procedural_draw_v001.py` bumped to **v1.3.0**
+  - add_rim_light() now takes optional `char_cx` parameter
+  - When char_cx provided: right/left mask is character-relative (x > char_cx or x < char_cx)
+  - Default None: falls back to canvas center (backward compatible)
+  - Fixes canvas-midpoint bug: Luma at x=0.29W was losing right-side rim without char_cx
+- `LTG_TOOL_styleframe_discovery_v005.py` — SF01 v005 generator
+  - `output/color/style_frames/LTG_COLOR_styleframe_discovery_v005.png` — 1280×720
+  - add_rim_light() now passes char_cx=head_cx — correct right-side rim on Luma
+- `LTG_TOOL_styleframe_luma_byte_v004.py` — SF04 full rebuild from scratch
+  - `output/color/style_frames/LTG_COLOR_styleframe_luma_byte_v004.png` — 1280×720
+  - Value ceiling: 255 (PASS — > 225 required). Byte body = GL-01b #00D4E8 canonical.
+  - Luma blush = #E8A87C, warm upper-left face lighting, rim lights with char_cx.
+  - Byte monitor contribution: BYTE_TEAL glow on right side of Byte body.
+  - Specular highlights: SPECULAR_WHITE (255,252,240) on eye glints, antenna ball.
+- `LTG_TOOL_luma_turnaround_v004.py` — turnaround eye-width canonical fix
+  - `output/characters/main/turnarounds/LTG_CHAR_luma_turnaround_v004.png` — 1280×560
+  - ew = int(head_r * 0.22) — head_r = radius. Was int(h * 0.22) where h = height (2× too wide).
+  - All three views fixed: FRONT, 3/4, SIDE
+- Ideabox: submitted `get_char_bbox()` utility idea for automatic char_cx detection
 
 ## C31 Completed Work
 - Built `output/tools/LTG_TOOL_proportion_audit_v001.py` — scans all SF generators, extracts head_r/ew, computes ew/HR ratio, reports PASS/WARN/FAIL
@@ -130,6 +161,15 @@ All key techniques have been extracted to MEMORY and implemented. No further rea
   - add_rim_light(side="right"): CRT teal (0,220,232) from right — discovery source
   - Blush corrected to warm peach (232,168,124) — matching SF04 v003 correction
   - BYTE_TEAL canonical (0,212,232) used throughout
+
+## C32 Lessons
+- add_rim_light() MUST receive char_cx for any left-of-center character — without it, the
+  right-side rim is cut at x=0.50W, missing the character's right torso entirely
+- When h = one head unit at scale (head HEIGHT), head_r = int(h * 0.50) is head RADIUS
+  ew = int(head_r * 0.22) NOT int(h * 0.22) — the latter is 2× too wide
+- For SF04 rebuild: always add specular highlights at guaranteed >= 225 value
+  Use SPECULAR_WHITE=(255,252,240) and SPECULAR_CYAN=(180,248,255)
+- Monitor contribution: Byte's body right flank should receive BYTE_TEAL glow from CRT screen
 
 ## C31 Lessons
 - Proportion audit tool: use regex to scan for `ew = int(head_r * N)` to detect ratio directly; `p(N)/p(M)` requires extracting both N values

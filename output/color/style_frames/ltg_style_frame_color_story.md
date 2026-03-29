@@ -84,7 +84,7 @@ Her skin under UV ambient (DRW-11, #A87890) has shifted toward a haunted lavende
 
 ### Key Color Tension
 
-**Organic warmth (Luma) vs. inorganic cold (everything else).** This is not a split-light tension like SF01 — there is no warm light source here to fight. The tension is entirely material. Luma's pigments — hoodie orange, warm skin, dark hair — are the only warm values in the frame. They survive because they are intrinsic to her, not because any light source is supporting them.
+**Organic warmth (Luma) vs. inorganic cold (everything else).** This is not a split-light tension like SF01 — there is no warm light source here to fight. The tension is entirely material. Luma's warm pigments — hoodie orange and warm skin — are the only perceptible warm values in the frame. Her hair (DRW-18, `#1A0F0A`, 7% lightness) is near-void dark: its R channel nominally exceeds G and B (R:26, G:15, B:10) but at this luminance level the hue is functionally imperceptible — it reads as void-dark, not warm. The hair does NOT contribute visual warmth; its only visible color quality is the UV Purple rim sheen (GL-04) on the crown. **The visually warm values in SF03 are: hoodie orange (DRW-14 / UV-modified #C07038) and skin (DRW-11, #A87890).** Dark hair is a near-neutral near-void presence. *(C32 clarification: prior text listed "dark hair" as a warm value — this was imprecise. Corrected per Priya Nair C13 P2.)*
 
 In SF01, warmth was the dominant; cyan was the intrusion.
 In SF02, warm and cold contested the frame as near-equals.
