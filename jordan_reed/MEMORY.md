@@ -1,5 +1,19 @@
 # Jordan Reed — Memory
 
+## Cycle 18 Deliverables
+- `LTG_TOOL_bg_millbrook_main_street_v001.py` → `LTG_ENV_millbrook_main_street_v001.png`
+  - Millbrook Main Street daytime exterior for A2-05 (walk-and-talk)
+  - Afternoon sun upper-right, long left shadows, local storefronts with hand-painted signs and awnings
+  - Sidewalk: cracked concrete, tree root bumps, street trees (autumn coloring)
+  - Road: asphalt, faded center line, parked car silhouettes
+  - Far-end atmospheric haze, warm afternoon blue sky with light cloud
+  - Canvas 1280×720, Real World palette only
+- Registered in `output/tools/README.md` ✓
+- Inbox message archived ✓
+- Completion report sent to Alex Chen ✓
+
+## Cycle 18 Status: COMPLETE
+
 ## Cycle 17 Deliverables
 - `LTG_TOOL_bg_tech_den_v001.py` → `LTG_ENV_tech_den_v001.png`
   - Cosmo's bedroom/tech workspace daylight version (A2-01, A2-03, A2-04, A2-05)

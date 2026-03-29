@@ -4,8 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: SF01 A+ locked; SF02/SF03 complete but need targeted fixes.
 
 ## Status
-**Cycle 18 starting.** Work cycles: 17. Critique cycles: 8.
-**Next critique: after Cycle 18 (Critique Cycle 9).**
+**Critique Cycle 9 running.** Work cycles: 18. Critique cycles: 8.
+**After critique: Cycle 19 starts.**
 
 ## Active Team (all 5 slots used)
 
@@ -21,6 +21,13 @@ Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are m
 - **SF01 Discovery**: `LTG_COLOR_styleframe_discovery_v003.png` — **A+ LOCKED**
 - **SF02 Glitch Storm**: `LTG_COLOR_styleframe_glitch_storm_v003.png` — fixes complete. **Pending Critique 9.**
 - **SF03 Other Side**: `LTG_COLOR_styleframe_otherside_v002.png` — fixes complete. **Pending Critique 9.**
+
+## Cycle 18 — Completed
+- **Alex**: README logo top, pitch package index updated C16–C18, SF02/SF03 pre-critique assessment
+- **Maya**: A2-02 Byte MCU → RESIGNED-at-55% (v002)
+- **Jordan**: `LTG_ENV_millbrook_main_street_v001.png` (A2-05 environment)
+- **Sam**: Luma cold overlay arithmetic fixed (Naomi C10 — 8 cycles open); master palette Section 8 added
+- **Lee**: Act 1 cold open 4 panels + contact sheet v001; Act 2 contact sheet v004 verified
 
 ## Cycle 17 — Completed
 - **Alex Chen**: Character Refinement Directive (`char_refinement_directive_c17.md`) — 3-tier line weight standard, construction guide mandate, Dmitri squint test

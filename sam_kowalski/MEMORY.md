@@ -116,6 +116,13 @@
 - **New ENV entries not yet in master_palette.md:** Tech Den monitor glow values and school hallway institutional tones are scene-specific construction values. Register as ENV-xx only if they recur in a third environment.
 - **Message sent to Maya Santos inbox** at maya_santos/inbox/20260329_2130_miri_color_values.md — all Miri expression sheet hex values + key production notes.
 
+## Cycle 18 Lessons
+- **Cold overlay section did not exist in luma_color_model.md.** pitch_package_index.md item #6 (Naomi C10 flag) was "recalculate cold overlay per Naomi flag — still open" — the section was never added. Always check pitch_package_index.md for outstanding doc items.
+- **SF01 cold overlay is correctly NOT cyan-dominant at production alpha levels.** SF01 uses cold_alpha_max=60 (23.5% at center, 11.8% at boundary). Skin (#C8885A) only reaches G>R AND B>R at α≥31%. SF01 is a split-light cross-light effect, not Glitch Layer immersion. Both facts must be documented together to prevent confusion.
+- **Cyan-dominance thresholds (G>R AND B>R individually):** Skin lamp-lit min 31%, Skin neutral min 21%, Hoodie orange min 43%, Hoodie shadow min 38%. These are the floor for any "Glitch Layer lit" label.
+- **Master palette was missing Act 2 environment section entirely.** Grandma Miri character colors (CHAR-M-01 to -11), Tech Den (TD-01 to -13), School Hallway (SH-01 to -12) all added as Section 8.
+- **After img.paste(), always refresh draw = ImageDraw.Draw(img).** Rule followed in LTG_TOOL_luma_cold_overlay_swatches_v001.py.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001 (TERRA_CYAN_LIT still old value). v002 is correct. Coordinate with Jordan Reed on v001 if it is still used.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan should add inline comment on next revision pass (low priority).

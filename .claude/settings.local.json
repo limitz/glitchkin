@@ -9,7 +9,8 @@
       "Bash(1 ls:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(ls -1 /home/wipkat/team/output/production/statement_of_work_cycle*)"
+      "Bash(ls -1 /home/wipkat/team/output/production/statement_of_work_cycle*)",
+      "Bash(python:*)"
     ]
   }
 }

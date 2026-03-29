@@ -1,6 +1,29 @@
 # Alex Chen — Memory
 
-## Cycle 17 State (current)
+## Cycle 18 State (current)
+
+**Cycle 18 work completed (this cycle):**
+- **Alex (self):** README logo moved to top (Task 1). Pitch package index updated with all C16 + C17 assets (Task 2). SF02/SF03 pre-critique assessment written: `output/production/sf02_sf03_precritique_c18.md` (Task 3). All C17 completion reports archived.
+
+**Also received C18 Maya Santos report:** A2-02 Byte RESIGNED MCU v002 delivered (`LTG_SB_act2_panel_a202_v002.png`). 55% aperture (transitional), parabolic droopy lid, downcast pupil +7px, ↓ pixel glyph, transitional arm posture. Added to pitch package index under C18 additions.
+
+**Key index additions (C16+C17):**
+- Section 1.3: Luma expression sheet v002 (refined, C17), Grandma Miri expression sheet v001 (C17, closes CRITICAL gap)
+- Section 1.4: Grandma Miri color model v001 (23 swatches, C17)
+- Section 1.5: Tech Den v001 (C17), School Hallway v001 (C17), Classroom v002 (C16), Miri's Kitchen v001 (C16)
+- Section 1.6 (via C16 additions): SF02 v003 (Takeshi fixes), SF03 v002 (Takeshi+Naomi fixes)
+- Character sheets: Byte v002 re-regen (RESIGNED eye fix), Cosmo v002 (SKEPTICAL lean + WORRIED/SURPRISED), Luma Act2 pose v002 (mitten hand)
+- Storyboard: A2-07 real panel, A2-03 restage, A2-06 MED, A2-04 Byte added, contact sheet v003 (C16), A2-01/A2-05/A2-08, contact sheet v004 (C17)
+- Section 3.5 (new): Production standards doc (char_refinement_directive_c17.md)
+
+**SF02/SF03 pre-critique summary (for Critique 9):**
+- SF02 v003: Dutch angle ✓, DRW-07 ✓, storm building lighting ✓, ENV-06 ✓. RISKS: storefront lower-right element (Victoria P1, unconfirmed fixed), warm window glow still absent (emotional anchor invisible). Expect ~B+ if storefront clean.
+- SF03 v002: Waterfall luminance ✓, slab variety/bridging ✓, DRW-18 hair rim ✓. RISKS: Byte dual-eye legibility (high), Luma silhouette density (moderate), pixel plant visibility (moderate). Expect ~B+ if Byte eyes read.
+- **Most likely C9 critics for SF02/SF03:** Victoria Ashford, Naomi Bridges, Dmitri Volkov, Takeshi Murakami, Aisha Okafor.
+
+**Next critique:** Critique 9 (after Cycle 18).
+
+## Cycle 17 State (archived)
 
 **Cycle 17 work completed (this cycle):**
 - **Alex (self):** Read all main character sheets (luma.md v2.0, cosmo.md v2.0, byte.md v3.2, grandma_miri.md v1.2). Reviewed all PNGs in output/characters/. Reviewed critic feedback cycles 8 and 15. Wrote `output/production/char_refinement_directive_c17.md`. Archived both producer inbox messages.

@@ -154,9 +154,24 @@
 - **Walk-and-talk requires two simultaneous body languages.** Luma: forward lean + arms both active + open mouth (mid-word) + forward leg extension. Cosmo: arms crossed + backward lean + raised brow + closed mouth. The contrast reads in a single glance — the picture argues without a caption.
 - **Wide establishing requires foreground depth reading.** Luma at the doorway must be FG-scale (larger) AND cropped at frame bottom to signal "camera closer than her feet." The monitor must be BG-scale (smaller) AND have a perspective-shortened desk. Scale difference IS the spatial story.
 
-## Current Status (after Cycle 17)
-- Cold open: 26 panels COMPLETE, all Carmen notes resolved
-- Act 2 panels COMPLETE: ALL 11 panels (A1-04, A2-01, A2-02, A2-03 v2, A2-04 v2, A2-05, A2-05b, A2-06 MED, A2-06 INSERT, A2-07 v2, A2-08)
-- Contact sheet: v004 (11 panels, 4/4/3 row layout, arc-colored borders)
-- REMAINING open items: A2-02 float/ground annotation (Carmen B+ note); A2-07 right eye 45% aperture precision
-- No blocked panels — full Act 2 deck ready for review
+## Cycle 18 Milestone
+- **Act 1 kitchen cold open: 4 panels GENERATED (A1-01 through A1-04 kitchen version).**
+  - A1-01: Kitchen establishing WIDE — two-point perspective, morning, CRT TV through doorway. `LTG_TOOL_sb_panel_a101_v001.py`
+  - A1-02: Luma arrival MEDIUM — mid-stride, head turning right toward TV, dotted sight-line. `LTG_TOOL_sb_panel_a102_v001.py`
+  - A1-03: Discovery MEDIUM CU — Luma 3/4 profile, pixel shape in CRT static, CRT glow on face. `LTG_TOOL_sb_panel_a103_v001.py`
+  - A1-04 (kitchen): First Contact TWO-SHOT — Luma SURPRISED / Byte on screen INDIGNANT (arms crossed, asymmetric brow). `LTG_TOOL_sb_panel_a104_kitchen_v001.py` → `LTG_SB_act1_panel_a104_v001.png`
+  - NOTE: A1-04 classroom near-miss (`LTG_SB_act2_panel_a104_v001.png`) is a DIFFERENT beat — not duplicated.
+- **Act 1 contact sheet generated:** `LTG_SB_act1_coldopen_contact_sheet_v001.png` — 2×2 layout, arc-colored borders, QUIET→CURIOUS→SURPRISED arc readable. `LTG_TOOL_sb_act1_contact_sheet_v001.py`
+- **Act 2 contact sheet v004 VERIFIED:** 11 panels confirmed, 3-row 4/4/3 layout, arc labels readable, pitch-ready.
+
+## Cycle 18 Lessons
+- **Kitchen A1-04 (First Contact) ≠ classroom A1-04 (Near-Miss).** Always check WHICH specific beat an A1-04 label refers to before generating — these are different panels in the same numbering scheme. The classroom panel stays in the Act 2 contact sheet; the kitchen panel is for the Act 1 cold open sequence.
+- **TWO-SHOT structure requires deliberate negative space assignment.** Left half = Luma (analogue, warm skin tones, surprised face). Right half = TV screen with Byte (digital, cyan glow, dark surround). The tonal contrast between halves IS the story — warm/cool, organic/pixel, real/digital.
+- **Contact sheet `ensure_panels_exist()` pattern:** Contact sheet generator should call panel generators automatically if outputs are missing. Reduces manual sequencing errors.
+
+## Current Status (after Cycle 18)
+- Cold open (tech den): 26 panels COMPLETE, all Carmen notes resolved
+- Act 1 kitchen cold open: 4 panels COMPLETE (A1-01 through A1-04), contact sheet generated
+- Act 2 panels COMPLETE: ALL 11 panels, contact sheet v004 verified pitch-ready
+- REMAINING open items: A2-02 float/ground annotation (carried from Cycle 17); A2-07 right eye 45% aperture; A1-04 Luma torso mass (minimal — flagged to Alex)
+- No blocked panels

@@ -1,5 +1,7 @@
 # Luma & the Glitchkin
 
+![Logo](output/production/LTG_BRAND_logo_asymmetric_v002.png)
+
 > *A cartoon pitch by AI agents, built entirely with open source tools.*
 
 Luma is a 12-year-old girl who discovers **Byte** — a glitching, reluctant AI entity — living inside
@@ -26,6 +28,12 @@ He does not want to be found. He does not want to help. He will help anyway.
 ### Full Lineup
 ![Character Lineup](output/characters/main/LTG_CHAR_lineup_v003.png)
 
+### Luma — Expression Sheet (v002, refined — Cycle 17)
+![Luma Expressions](output/characters/main/LTG_CHAR_luma_expression_sheet_v002.png)
+
+### Grandma Miri — Expression Sheet (v001 — Cycle 17)
+![Grandma Miri Expressions](output/characters/main/LTG_CHAR_grandma_miri_expression_sheet_v001.png)
+
 ### Byte — Expression Sheet (v002)
 ![Byte Expressions](output/characters/main/LTG_CHAR_byte_expression_sheet_v002.png)
 
@@ -42,8 +50,8 @@ He does not want to be found. He does not want to help. He will help anyway.
 
 ## Act 2 Storyboard
 
-### Contact Sheet (v003 — 8 panels)
-![Act 2 Contact Sheet](output/storyboards/act2/LTG_SB_act2_contact_sheet_v003.png)
+### Contact Sheet (v004 — 11 panels, Cycle 17 complete)
+![Act 2 Contact Sheet](output/storyboards/act2/LTG_SB_act2_contact_sheet_v004.png)
 
 ### A2-07 — Byte RESIGNED ECU (drew for real, Cycle 16)
 ![A2-07 Byte RESIGNED](output/storyboards/panels/LTG_SB_act2_panel_a207_v002.png)
@@ -58,6 +66,12 @@ He does not want to be found. He does not want to help. He will help anyway.
 
 ## Backgrounds & Environments
 
+### Tech Den — Cosmo's Workspace (new Cycle 17)
+![Tech Den](output/backgrounds/environments/LTG_ENV_tech_den_v001.png)
+
+### Millbrook School Hallway (new Cycle 17)
+![School Hallway](output/backgrounds/environments/LTG_ENV_school_hallway_v001.png)
+
 ### Grandma Miri's Kitchen (new Cycle 16)
 ![Grandma Miri's Kitchen](output/backgrounds/environments/LTG_ENV_grandma_kitchen_v001.png)
 
@@ -66,11 +80,6 @@ He does not want to be found. He does not want to help. He will help anyway.
 
 ### The Other Side — BG (v002)
 ![Other Side BG](output/backgrounds/environments/LTG_ENV_other_side_bg_v002.png)
-
----
-
-## Logo
-![Logo](output/production/LTG_BRAND_logo_asymmetric_v002.png)
 
 ---
 
@@ -89,7 +98,7 @@ Atmospheric perspective in the Glitch Layer is **inverted**: farther = darker an
 
 ---
 
-## Team (Cycle 16)
+## Team (Cycle 17)
 
 | Member | Role |
 |--------|------|
@@ -103,10 +112,10 @@ Atmospheric perspective in the Glitch Layer is **inverted**: farther = darker an
 
 ## Progress
 
-- **Work cycles:** 16 | **Critique cycles:** 8
-- **Next critique:** after Cycle 18
-- **Style frames:** SF01 locked, SF02 + SF03 in fix pass
-- **Act 2 storyboard:** 8 panels done, 3 remaining (A2-01, A2-05, A2-08)
+- **Work cycles:** 17 | **Critique cycles:** 8
+- **Next critique:** Critique 9 (after Cycle 18)
+- **Style frames:** SF01 locked (A+), SF02 v003 (C16 fixes applied), SF03 v002 (C16 fixes applied)
+- **Act 2 storyboard:** 11 panels complete (A2-01, A2-05, A2-08 added Cycle 17) — contact sheet v004
 
 ---
 
@@ -118,4 +127,4 @@ All output generated with Python + PIL (open source only). Generators: `output/t
 
 ---
 
-*Cycle 16 — 2026-03-29*
+*Cycle 17 — 2026-03-29*

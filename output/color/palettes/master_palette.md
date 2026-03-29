@@ -1280,6 +1280,89 @@ When any human character is in a cool-ambient or Glitch Layer environment, warm 
 
 ---
 
+## SECTION 8 — ACT 2 REAL-WORLD ENVIRONMENTS
+
+These colors govern the Tech Den (Grandma Miri's home workspace) and the School Hallway (Millbrook Middle School). Both are fully Real World environments — no Glitch Layer palette colors appear here under any circumstances. All values sourced from `output/color/palettes/act2_environments_color_brief.md` (Sam Kowalski, Cycle 17) and `output/characters/color_models/grandma_miri_color_model.md`.
+
+---
+
+### 8.1 — Grandma Miri Character Colors
+
+| Code | Name | Hex | RGB | Notes |
+|---|---|---|---|---|
+| CHAR-M-01 | Miri Skin Base | `#8C5430` | (140, 84, 48) | Deep Warm Brown. Shadow: `#6A3A1E` (Dark Sienna). Highlight: `#A86A40` (Warm Chestnut). |
+| CHAR-M-02 | Miri Skin Shadow | `#6A3A1E` | (106, 58, 30) | Dark Sienna — under chin, inner arm, side of face in 3/4. |
+| CHAR-M-03 | Miri Skin Highlight | `#A86A40` | (168, 106, 64) | Warm Chestnut — forehead, nose tip, cheekbone. |
+| CHAR-M-04 | Miri Permanent Blush | `#D4956B` | (212, 149, 107) | Always present at 25% opacity feel. See Dual-Blush Rule in grandma_miri_color_model.md. |
+| CHAR-M-05 | Miri Hair Silver | `#D8D0C8` | (216, 208, 200) | Warm silver base — NOT cool blue-gray. Shadow: `#A8988C`. Highlight: `#F0ECE8`. |
+| CHAR-M-06 | Miri Hair Shadow | `#A8988C` | (168, 152, 140) | Warm Gray within bun and between hair masses. |
+| CHAR-M-07 | Miri Cardigan Base | `#B85C38` | (184, 92, 56) | Warm Terracotta Rust. Shadow: `#8A3C1C` (Deep Rust). Highlight: `#D4825A` (Dusty Apricot). |
+| CHAR-M-08 | Miri Cardigan Shadow | `#8A3C1C` | (138, 60, 28) | Deep Rust — folds, cable-knit grooves, pocket edges. |
+| CHAR-M-09 | Miri Glasses Frame | `#8A7A70` | (138, 122, 112) | Warm Gray — same as eyebrows; recedes so face reads first. |
+| CHAR-M-10 | Miri Pants (Linen) | `#C8AE8A` | (200, 174, 138) | Warm Linen Tan. Shadow: `#A08A6A`. Highlight: `#DEC9A8`. |
+| CHAR-M-11 | Miri House Slippers | `#5A7A5A` | (90, 122, 90) | Deep Sage — soft in-den footwear. |
+
+**Cross-reference:** Full Miri character spec in `output/characters/color_models/grandma_miri_color_model.md`. Miri skin base CHAR-M-01 also appears in skin system reference table at Section 7.2.
+
+---
+
+### 8.2 — Tech Den Environment (Grandma Miri's Home)
+
+Lighting key: Daylight from LEFT window (warm amber-neutral); secondary: Ochre Brick lamp `#B8944A`. Monitor glow must NOT read as GL-01/GL-01b — see monitor safety rules below.
+
+| Code | Name | Hex | RGB | Notes |
+|---|---|---|---|---|
+| TD-01 | Warm Linen Wall | `#E8D8B8` | (232, 216, 184) | Main wall. Aged bone — slightly darker than RW-01 Warm Cream. |
+| TD-02 | Warm Wall Shadow | `#C4A882` | (196, 168, 130) | Shadow side of wall. = RW-10 (Warm Tan). |
+| TD-03 | Ochre Plank Floor | `#B8944A` | (184, 148, 74) | Worn wooden floor. = RW-13 (Ochre Brick). |
+| TD-04 | Floor Deep Shadow | `#8C5A38` | (140, 90, 56) | Under furniture, corners. = RW-10b (Skin Shadow). |
+| TD-05 | Aged Dark Wood Desk | `#8C3A22` | (140, 58, 34) | Desk surface. = RW-05 (Rust Shadow). |
+| TD-06 | Worn Wood Sheen | `#C4A882` | (196, 168, 130) | Specular hint on desk from window key. = RW-10. |
+| TD-07 | Deep Cocoa Shelves | `#3B2820` | (59, 40, 32) | Bookshelves — recede into background. = RW-11. |
+| TD-08 | CRT Monitor Casing | `#5B8C8A` | (91, 140, 138) | Analog aged plastic. = RW-12 (Muted Teal). |
+| TD-09 | CRT Shadow Side | `#3A5A58` | (58, 90, 88) | Shadow companion to Muted Teal casing. = RW-12a. |
+| TD-10 | Monitor Screen Fill | `#C8D4E0` | (200, 212, 224) | Desaturated blue-white. R:200 prevents Glitch Layer misread. |
+| TD-11 | Monitor Glow Ambient | `#B8C8D4` | (184, 200, 212) | Aged phosphor glow on desk/face. R:184 — warm enough to not read digital. |
+| TD-12 | Monitor Screen Dark | `#3A4A5A` | (58, 74, 90) | Inactive screen areas. Blue-shifted dark, not Void Black. |
+| TD-13 | Window Key Light | `#D4B896` | (212, 184, 150) | Warmed Tan daylight through curtains. Gentler version of RW-03. |
+
+**Monitor Glow Safety Rule:** Monitor glow values MUST maintain R ≥ 150 in the Tech Den at all times. GL-01 Electric Cyan has R:0; GL-01b Byte Teal has R:0. Any monitor glow with R < 150 risks reading as Glitch Layer emission and destroys the safe domestic read of this space.
+
+**Forbidden in Tech Den:** GL-01 through GL-07, Void Black (#0A0A14) except under furniture against baseboard, cool blue ambient as fill.
+
+---
+
+### 8.3 — School Hallway (Millbrook Middle School)
+
+Lighting key: Overhead fluorescent — cool, flat, even, slightly greenish. No directional key light. Shadow depth comes from geometry (locker recesses, under benches), not light direction.
+
+| Code | Name | Hex | RGB | Notes |
+|---|---|---|---|---|
+| SH-01 | Institutional White (ceiling) | `#DDE8DF` | (221, 232, 223) | Fluorescent tube-shifted warm-white. Not pure white — slightly dingy. G>R ensures cool-green read. |
+| SH-02 | Cool Plaster (upper wall) | `#C4CECC` | (196, 206, 204) | Desaturated blue-green neutral above lockers. Was Warm Cream (#FAF0DC) 20 years ago. |
+| SH-03 | Scuff Gray (lower wall) | `#B0BABC` | (176, 186, 188) | Slightly cooler than upper wall. Collects scuffs and locker shadows. |
+| SH-04 | Institutional Sage (Locker A) | `#8A9E94` | (138, 158, 148) | Primary locker color — muted green-gray. Alternates A/B along wall. |
+| SH-05 | Institutional Blue-Gray (Locker B) | `#8A96A4` | (138, 150, 164) | Second locker color — cool counterpart to SH-04. Near-equal value for subtle variation. |
+| SH-06 | Locker Shadow | `#5A6268` | (90, 98, 104) | Cast shadow inside vent slits, under handles. Dark cool gray. |
+| SH-07 | Aged Metal (handle/detail) | `#A0A8A8` | (160, 168, 168) | Flat worn metal — slightly teal-shifted. Not shiny chrome. |
+| SH-08 | Institutional Linoleum | `#B8B49A` | (184, 180, 154) | Main floor tile. Warm sandy base washed cool by fluorescents. |
+| SH-09 | Floor Grout | `#8A887A` | (138, 136, 122) | Darker warm-gray seams between tiles. |
+| SH-10 | Floor Shadow | `#6A6A60` | (106, 106, 96) | Cast shadow under lockers, benches. Retains faint warm undertone. |
+| SH-11 | Fluorescent Tube White | `#E8EEE8` | (232, 238, 232) | Tube color — very slightly green. Not pure white. |
+| SH-12 | Fluorescent Cast | `#D0DDD8` | (208, 221, 216) | Overall fluorescent color temperature. G>B shift = institutional fluorescent, not generic cool. |
+
+**Color Safety Rule — All grays must have warm or cool lean:** No pure R=G=B grays in the school hallway. All institutional tones use the fluorescent cast as a desaturation influence. A pure gray would read as a production error (accidental neutral), not institutional architecture.
+
+**Luma Hoodie Rule in Hallway:** Orange hoodie (#E8703A) appears slightly desaturated and greenish-cool under fluorescent key. This is intentional — the hoodie recovers full saturation when Luma exits. This color contrast IS the narrative beat about belonging. Do NOT over-desaturate. The hoodie should look washed out, not fully grey.
+
+**Forbidden in School Hallway:** GL-01 through GL-07, Soft Gold (#E8C95A) or Sunlit Amber (#D4923A) as ambient fill, pure neutral grays (R=G=B).
+
+---
+
+*Section 8 added — Sam Kowalski — Cycle 18 (2026-03-29). Source: act2_environments_color_brief.md (Cycle 17) and grandma_miri_color_model.md (Cycles 3, 17). Resolves TASK 2 Cycle 18 master palette gap — C17 Act 2 environment additions.*
+
+---
+
 *Document version 2.0 — Sam Kowalski — 2026-03-29*
 *Cycle 2 revision: Full hex audit, shadow companion system, exception documentation, additional forbidden combinations.*
 *Cycle 7 revision: Section 5 added (Character Rendering Colors — Luma, from style_frame_01_rendered.py); GL-01b usage warning added; GL-07 outline width standard set to canonical 3px.*
