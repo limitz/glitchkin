@@ -3,7 +3,7 @@ LTG Character Spec Linter — v1.0.0
 
 
 ======================================================================
-WARN    Luma  (LTG_TOOL_luma_expression_sheet_v008.py)
+WARN    Luma  (LTG_TOOL_luma_expression_sheet_v009.py)
 ======================================================================
   PASS  [L001]
   PASS  [L002]
@@ -14,26 +14,4 @@ WARN    Luma  (LTG_TOOL_luma_expression_sheet_v008.py)
   Summary: 4 PASS / 1 WARN / 0 FAIL  →  WARN
 
 ======================================================================
-WARN    Cosmo  (LTG_TOOL_cosmo_expression_sheet_v004.py)
-======================================================================
-  PASS  [S001]
-  WARN  [S002] S002: Eye-width coefficient 0.18 not confirmed in source. Check that `ew = int(HR * 0.18)` pattern is present.
-  PASS  [S003]
-  PASS  [S004]
-  PASS  [S005]
-
-  Summary: 4 PASS / 1 WARN / 0 FAIL  →  WARN
-
-======================================================================
-WARN    Grandma Miri  (LTG_TOOL_grandma_miri_expression_sheet_v003.py)
-======================================================================
-  WARN  [M001] M001: Head-to-body ratio 3.2 not confirmed. No ratio-like constant near spec value found.
-  PASS  [M002]
-  PASS  [M003]
-  PASS  [M004]
-  PASS  [M005]
-
-  Summary: 4 PASS / 1 WARN / 0 FAIL  →  WARN
-
-======================================================================
-TOTAL: 12 PASS / 3 WARN / 0 FAIL across 3 character(s)
+TOTAL: 4 PASS / 1 WARN / 0 FAIL across 1 character(s)

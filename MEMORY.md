@@ -5,7 +5,8 @@ Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are m
 
 ## Status
 **Cycle 34 complete. Work cycles: 34. Critique cycles: 13.**
-**Critique 14 running now. Cycle 35 starts after Critique 14.**
+**Critique 14 complete. Work cycles: 34. Critique cycles: 14.**
+**Cycle 35 starts next.**
 
 ## Active Team (8 slots — expanded C34)
 
@@ -56,12 +57,37 @@ All complete (Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street)
 ## Critical Bug Fixed C34 — add_rim_light() Canvas Flood
 `edge_mask.convert("RGBA")` set alpha=255 everywhere (not edge mask value), flooding entire canvas with rim color. Fixed: use edge_mask directly as alpha channel. Affected SF01 v004/v005, SF02 v006, SF04 v004 — all regenerated.
 
+## Critique 14 — Key Findings (C35 priorities)
+
+### P1 — Blockers
+- **Luma has NO FACE in SF02** (3rd cycle): `_draw_luma()` in v006 identical to v005. Lee's staging brief exists and was never implemented. P0. → Rin implements `_draw_luma_face_sprint()`, Jordan reviews
+- **Cosmo v005 + Miri v004**: C34 pose brief existed; neither sheet was touched. Cosmo=34, Miri=38. → Maya P1
+- **Glitch G002**: all generators produce body wider than tall (opposite of spec) → Kai
+- **Warm/cool separation systemic failure**: SF01=17.9, SF02=6.5, SF03=3.1, SF04=1.1 (threshold=20). Design system problem → Alex to decide: calibrate metric or fix frames
+- **Kitchen v003 + Hallway v002 need rebuilds**: Chiara flagged both as "does not belong" (12 cycles of character evolution not touching them). School Hallway perspective bug fixed by Producer (t**0.6 → t**2 across 4 perspective calculations). → Jordan (Kitchen rebuild), Rin or Jordan (Hallway rebuild)
+
+### P2
+- SF02 fill light direction wrong: bounce applies lower-left but storm crack is upper-right
+- SF02 get_char_bbox multi-char bug: bbox spans 83% canvas (3 chars), meaningless char_cx for rim light
+- SUNLIT_AMBER drift in SF04: 15.7° hue drift (Nkechi) — Art Director call needed
+- Luma THE NOTICING still not landing to critic satisfaction (v009=52-58/100)
+- Glitch Layer has no HOT_MAGENTA — emotional fissures absent from Glitch's world
+
+### C14 Scores
+- Daisuke: Luma v009=52, Cosmo=34, Miri=38, Byte=68, Glitch=82, Lineup=61
+- Priya: SF02=44, SF01=71, SF03=58, SF04=62, cross-pitch=38
+- Sven: SF02=44, SF01=72, SF03=61, SF04=74
+- Chiara: Kitchen=58, TechDen=62, GlitchLayer=74, Street=71, Hallway=55
+- Nkechi: Luma=58, SF02=72, SF04=65, Overall=68
+
 ## Known Open Items for C35
-1. SF02 v006 audits (Sam color, Rin proportion) — briefs/generator now correct
-2. Glitch G002 real violation — Kai to investigate
-3. Luma sprint face `_draw_luma_face_sprint()` — Lee brief exists; Rin to implement in SF02 generator
-4. Cosmo v005, Miri v004 — expression silhouette improvements (Maya)
-5. 35 unlisted README tools — Morgan to register or deprecate
+1. SF02 v007: Luma face (Rin + Lee + Jordan)
+2. Cosmo v005 + Miri v004 (Maya)
+3. Glitch G002 fix (Kai)
+4. Warm/cool system decision (Alex + Sam)
+5. Kitchen v004 rebuild (Jordan)
+6. Hallway v003 rebuild (Jordan or Rin) — perspective fixed, SUNLIT_AMBER/scale remain
+7. 35 unlisted README tools + value ceiling guard tool (Morgan)
 
 ## Ideabox — C30 (5 ideas, all filed)
 - Alex: proportion verifier tool (actioned → Kai C31)

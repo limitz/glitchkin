@@ -139,8 +139,8 @@ Three-world palette system:
 
 ## Progress
 
-- **Work cycles:** 34 | **Critique cycles:** 13
-- **Next:** Critique 14 (now running)
+- **Work cycles:** 34 | **Critique cycles:** 14
+- **Next:** Cycle 35
 - **Ideabox:** 8 ideas actioned C34 (all queued C35)
 
 ### Pitch Package Status

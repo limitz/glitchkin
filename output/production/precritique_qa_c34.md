@@ -1,22 +1,22 @@
 # Pre-Critique QA Report — Cycle 34
 
-**Run date:** 2026-03-29 20:10
+**Run date:** 2026-03-29 20:23
 **Script:** LTG_TOOL_precritique_qa_v001.py v1.0.0
 
 ---
 
 ## Overall Result
 
-**WARN** — PASS: 150  WARN: 36  FAIL: 0
+**WARN** — PASS: 152  WARN: 37  FAIL: 0
 
 | Section | Result | PASS | WARN | FAIL |
 |---|---|---|---|---|
 | Render QA (pitch PNGs)         | WARN   | 0  | 6  | 0  |
 | Color Verify (style frames)    | WARN | 2 | 2 | 0 |
 | Proportion Verify (char sheets)| WARN  | 1  | 3  | 0  |
-| Stub Linter (tools dir)        | PASS   | 136   | 0   | 0   |
+| Stub Linter (tools dir)        | PASS   | 138   | 0   | 0   |
 | Palette Warmth Lint            | PASS| 11| 0| 0|
-| Glitch Spec Lint               | WARN | 0 | 25 | 0 |
+| Glitch Spec Lint               | WARN | 0 | 26 | 0 |
 
 ---
 
@@ -34,12 +34,12 @@ Target files:
   - `storyboard_pitch_export.png` (found)
 
 **Flagged items:**
-  - LTG_COLOR_styleframe_discovery_v005.png / warm_cool: WARN — Flat palette — warm/cool separation is 0.0 PIL units (minimum 20.0 required)
+  - LTG_COLOR_styleframe_discovery_v005.png / warm_cool: WARN — Flat palette — warm/cool separation is 17.8 PIL units (minimum 20.0 required)
   - LTG_COLOR_styleframe_glitch_storm_v005.png / warm_cool: WARN — Flat palette — warm/cool separation is 6.5 PIL units (minimum 20.0 required)
   - LTG_COLOR_styleframe_otherside_v005.png / color_fidelity: WARN
   - LTG_COLOR_styleframe_otherside_v005.png / warm_cool: WARN — Flat palette — warm/cool separation is 3.1 PIL units (minimum 20.0 required)
   - LTG_COLOR_styleframe_luma_byte_v004.png / color_fidelity: WARN
-  - LTG_COLOR_styleframe_luma_byte_v004.png / warm_cool: WARN — Flat palette — warm/cool separation is 0.0 PIL units (minimum 20.0 required)
+  - LTG_COLOR_styleframe_luma_byte_v004.png / warm_cool: WARN — Flat palette — warm/cool separation is 1.1 PIL units (minimum 20.0 required)
   - LTG_BRAND_logo_v001.png / warm_cool: WARN — Flat palette — warm/cool separation is 0.0 PIL units (minimum 20.0 required)
   - storyboard_pitch_export.png / warm_cool: WARN — Flat palette — warm/cool separation is 4.6 PIL units (minimum 20.0 required)
 
@@ -52,7 +52,7 @@ PASS: 2  WARN: 2  FAIL: 0  Missing: 0
 **Flagged items:**
   - LTG_COLOR_styleframe_otherside_v005.png / UV_PURPLE: hue drift 9.2° (target=272, found=263)
   - LTG_COLOR_styleframe_otherside_v005.png / SUNLIT_AMBER: hue drift 9.3° (target=34, found=25)
-  - LTG_COLOR_styleframe_luma_byte_v004.png / SUNLIT_AMBER: hue drift 6.9° (target=34, found=41)
+  - LTG_COLOR_styleframe_luma_byte_v004.png / SUNLIT_AMBER: hue drift 15.7° (target=34, found=19)
 
 
 ## 3. Proportion Verify — Character Sheets — **WARN**
@@ -69,7 +69,7 @@ PASS: 1  WARN: 3  FAIL: 0  Missing: 0
 
 ## 4. Stub Linter — output/tools/ — **PASS**
 
-PASS: 136  WARN: 0  FAIL: 0  Missing: 0
+PASS: 138  WARN: 0  FAIL: 0  Missing: 0
 
 
 _No issues found._
@@ -85,10 +85,10 @@ _No issues found._
 
 ## 6. Glitch Spec Lint — Generators — **WARN**
 
-PASS: 0  WARN: 25  FAIL: 0  Missing: 0
+PASS: 0  WARN: 26  FAIL: 0  Missing: 0
 
 
-_(Non-Glitch files: 111 skipped)_
+_(Non-Glitch files: 112 skipped)_
 
 **Flagged items:**
   - LTG_TOOL_bg_glitch_storm_colorfix_v001.py: G005: UV_PURPLE shadow offset (+3,+4) not detected. Spec §2.2 requires UV_PURPLE shadow polygon before body fill.
@@ -150,6 +150,7 @@ _(Non-Glitch files: 111 skipped)_
   - LTG_TOOL_style_frame_02_glitch_storm_v002.py: G007: VOID_BLACK outline on body polygon not detected. Spec §2.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).
   - LTG_TOOL_style_frame_02_glitch_storm_v003.py: G007: VOID_BLACK outline on body polygon not detected. Spec §2.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).
   - LTG_TOOL_style_frame_02_glitch_storm_v004.py: G007: VOID_BLACK outline on body polygon not detected. Spec §2.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).
+  - LTG_TOOL_style_frame_02_glitch_storm_v006.py: G007: VOID_BLACK outline on body polygon not detected. Spec §2.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).
   - LTG_TOOL_style_frame_03_other_side_v001.py: G007: VOID_BLACK outline on body polygon not detected. Spec §2.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).
   - LTG_TOOL_style_frame_03_other_side_v002.py: G007: VOID_BLACK outline on body polygon not detected. Spec §2.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).
   - LTG_TOOL_style_frame_03_other_side_v003.py: G007: VOID_BLACK outline on body polygon not detected. Spec §2.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).
