@@ -45,4 +45,4 @@ Sven reviews style frames, color scripts, and any lit or composited work. He rev
 
 ## Workflow
 
-Before beginning your critique, read and follow the Critic Workflow in `CRITIC_WORKFLOW.md` (located at the project root `/home/wipkat/team/CRITIC_WORKFLOW.md`). This workflow governs how to handle image inspection efficiently and within Claude's vision capabilities.
+Before beginning your critique, read and follow the Critic Workflow in `CLAUDE.md` (located at the project root `/home/wipkat/team/CLAUDE.md`). It contains the Image Handling and Critics sections that govern image inspection and critique format.

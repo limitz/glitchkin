@@ -42,7 +42,7 @@ The tension is not danger. It is wonder. The cyan does not feel wrong here — i
 ## SF02 — Glitch Storm
 
 **Source file:** `LTG_COLOR_styleframe_glitch_storm_v005.png`
-**Palette:** DATA_BLUE dominant key, warm amber window glow fighting from below
+**Palette:** GL-06c STORM_CONFETTI_BLUE dominant key, warm amber window glow fighting from below
 
 ### What It Communicates
 
@@ -58,13 +58,16 @@ Luma's hoodie in this frame (DRW-07, #C8695A) is storm-modified — the cyan sto
 
 **Cold storm above / Warm street life below.** The lower third of the frame is the contested zone. Cyan storm light from above. Warm amber window glow from within the buildings. These two light sources fight for the same surfaces — the road (ENV-02 cyan-lit vs. ENV-03 warm-spill), the building facades (ENV-06 cyan-lit upper story vs. warm window glow at street level). The tension is explicit: the cold is winning the sky, but the warmth holds the ground.
 
+**GL-06c note (C28):** The storm confetti dominant color is GL-06c STORM_CONFETTI_BLUE (#0A4F8C), registered in master_palette.md C28 as a deliberate atmospheric depth value. Storm confetti reads darker and more desaturated at distance, which is consistent with aerial perspective even in a stylized context. This is not a substitute for GL-06 (#2B7FFF) — GL-06 reads as close-field data structure; GL-06c is the correct atmospheric derivative for storm distance. Do not interchange them.
+
 The Corrupted Amber outline on Byte (GL-07, `#FF8C00` = 255, 140, 0) in this frame is also load-bearing. Byte is caught in a cyan-dominant environment (threshold exceeded: >35% cyan coverage). The amber outline is the visual marker that he is a Real World citizen navigating a glitch event — his warm roots showing in cold territory. Against the cyan-dominant storm, `#FF8C00` delivers genuine warm-cold complement contrast; this is why the canonical GL-07 value — not a darker or murkier amber — is required here. *[Note: GL-07 canonical value confirmed in generator v005 — generator and master palette are now fully reconciled.]*
 
 ---
 
 ## SF03 — The Other Side
 
-**Source file:** `LTG_COLOR_styleframe_otherside_v003.png`
+**Source file:** `LTG_COLOR_styleframe_otherside_v005.png` *(v005 is pitch primary — C28 update)*
+**Previous primary:** v003 (superseded). v005 corrects UV_PURPLE_DARK: the deep void zones of the Glitch Layer now read as true deep digital purple (#3A1060, 72% saturation) rather than grey-purple. The alien coldness is restored.
 **Palette:** UV Purple ambient, Electric Cyan (Byte's glow), Hot Magenta (Byte's cracked eye), Void Black
 
 ### What It Communicates
@@ -88,6 +91,22 @@ In SF02, warm and cold contested the frame as near-equals.
 In SF03, cold is the dominant; warmth survives only as pigment memory.
 
 The color story has a direction. Every step takes Luma further from the warmth that defines her home.
+
+---
+
+## SF04 — Luma & Byte
+
+**Source file:** `LTG_COLOR_styleframe_luma_byte_v003.png` *(v003 is pitch primary — C28 update)*
+
+### C28 Fixes and Their Narrative Meaning
+
+Three corrections were made in v003, each with direct narrative implications:
+
+1. **Blush correction — curiosity-delight, not distress.** The blush tone on Luma's cheeks was previously reading as emotional distress (too warm-red, too high in saturation for a quiet moment). v003 rebalances to a softer rose-pink that reads correctly as curiosity-delight — the expression of a child who has found something extraordinary and doesn't yet know whether to be frightened or joyful. The narrative stakes of this frame depend on that ambiguity; a distress-blush collapses it prematurely.
+
+2. **Byte's teal is canonical.** Byte's body fill in v003 is confirmed at GL-01b (#00D4E8, Byte Teal). Earlier versions had slight drift toward Electric Cyan (#00F0FF) in certain render passes, causing Byte to read as a world-emission element rather than a character. The canonical GL-01b value explicitly separates Byte's body (character fill) from Electric Cyan (world screen emission). This distinction is production-critical.
+
+3. **Directional rim light — CRT glow on one side only.** The rim light from the CRT monitor is now correctly placed on one side of Luma, establishing a clear light-source direction. Previous versions had a symmetric or diffuse rim that read as ambient fill rather than a specific light source. The directional rim correctly implies the CRT as the origin point — reinforcing the visual grammar established in SF01 where the monitor is the source of the intrusion.
 
 ---
 
@@ -140,6 +159,21 @@ Glitch does not sit in either the Real World palette (RW-xx) or the Glitch Layer
 
 **Production constraint:** GL-07 #FF8C00 must never be desaturated, cooled, or hue-shifted in any asset. A murkier amber reads as Real World weathered material. A cooler amber reads as a Glitch Layer artifact. The exact value — maximum saturation, pure warm orange, no red or yellow drift — is what makes CORRUPT_AMBER legible as corrupted rather than merely warm.
 
+### Interior Desire Expressions — YEARNING, COVETOUS, HOLLOW (C28 additions)
+
+Three new expression states were added to the Glitch character model in C28, representing interior states rather than performed ones. These states — YEARNING, COVETOUS, and HOLLOW — require specific color treatment and introduce a key structural rule:
+
+**In interior desire states, Glitch's eyes become bilateral (both identical), breaking the destabilized right-eye pattern.** In all standard expressions, Glitch's asymmetric eye colors (one eye differs from the other) are a visual marker of his destabilized, performed nature. When genuine feeling surfaces, the asymmetry resolves: both eyes show the same color. The symmetry is the tell — genuine feeling makes Glitch more coherent, not less.
+
+**Color-by-state:**
+- **YEARNING:** UV_PURPLE bilateral glow — both eyes show `#7B2FBE` (UV Purple). The longing state. Purple is the deepest Glitch Layer color, associated with the void — what Glitch yearns for is something in the deep cold that he cannot name.
+- **COVETOUS:** ACID_GREEN bilateral target lock — both eyes show `#39FF14` (Acid Green). The acquisitive state. Acid Green in the standard palette signals healthy glitch energy; here it is repurposed as focused attention, a lock-on. He sees something he wants and the healthy-energy color becomes the hunting color.
+- **HOLLOW:** Near-void bilateral stare — both eyes show a near-void value (approaching `#0A0A14`, Void Black, with minimal glow). The absence state. When Glitch is hollow, his eyes offer nothing back — the void fills them. It is the most unsettling of the three states because it reads as the closest to non-existence.
+
+**Production note:** These expressions must only be used for genuine interior states, never as a performance or a mask. The bilateral symmetry rule must be enforced — if a painter gives Glitch any asymmetric eye value in a YEARNING/COVETOUS/HOLLOW context, that is an error.
+
+---
+
 ## Grandma Miri — Palette as Narrative Signal
 
 **Character palette:** Warm Cream `#FAF0DC`, Soft Amber `#D4A35A`, Aged Wood tones (CHAR-M series, master_palette.md Section 8)
@@ -174,3 +208,5 @@ This creates a deliberate color ambiguity: to a first-time viewer, Miri's palett
 *Cycle 24 update (Sam Kowalski, 2026-03-29): Glitch character color section added. GL-07 CORRUPT_AMBER #FF8C00 verified as primary body fill in Glitch color model (generator confirmed). Stylization fidelity check complete — see LTG_COLOR_stylization_fidelity_report_c24.md. SF02 and SF03 stylized PNGs flagged for rework (hue rotation artifact). SF01 and Kitchen stylized PNGs: PASS.*
 
 *Cycle 25 update (Sam Kowalski, 2026-03-29): Grandma Miri character section added — documents her bridge-character narrative role and explains why her warm palette (cream, soft amber, aged wood) is an intentional design choice that encodes her prior knowledge of the Glitch Layer.*
+
+*Cycle 29 update (Sam Kowalski, 2026-03-29): SF03 updated — v005 is pitch primary; UV_PURPLE_DARK corrected to true deep digital purple (#3A1060). SF04 section added — v003 is pitch primary; documents the three C28 fixes (blush, Byte canonical teal, directional rim light) and their narrative meaning. SF02 palette line updated — DATA_BLUE renamed to GL-06c STORM_CONFETTI_BLUE (#0A4F8C); GL-06c note added explaining this as deliberate atmospheric depth value registered in C28. Glitch character section updated — interior desire expressions (YEARNING, COVETOUS, HOLLOW) documented with bilateral eye-color rule.*

@@ -1,45 +1,26 @@
 #!/usr/bin/env python3
 """
-LTG_CHAR_luma_expression_sheet_v006.py
-Luma Expression Sheet — v006 STYLE ALIGNMENT
-"Luma & the Glitchkin" — Cycle 26 / Maya Santos
+LTG_TOOL_luma_expression_sheet_v007.py
+Luma Expression Sheet — v007 PROPORTION FIX
+"Luma & the Glitchkin" — Cycle 29 / Maya Santos
 
-v006 CRITICAL FIX from v005:
-  Alex Chen style-alignment directive (20260329_2100):
-  Line weights were too heavy — width=6–8 at 2× render produced thick cartoonish
-  outlines that diverged from the classroom pose aesthetic.
+v007 CRITICAL FIX from v006 (C28 P1 blocker — Alex Chen proportion directive):
+  - HEAD-TO-BODY RATIO: 3.2 heads (was ~3.0 in v006)
+    torso_h: HR*1.80 → HR*2.10
+    pants_h: HR*1.60 → HR*1.68
+    head_cy placement: rh*0.22 → rh*0.18 (shift up slightly to accommodate taller body)
+  - EYE WIDTH: h×0.22 (was HR*0.28 = s*28)
+    ew: int(s*28) → int(HR*0.22)
+    Matches canonical spec from turnaround v003 (ew = h*0.22, h = head radius).
 
-  Changes vs v005:
-    - HEAD outline: width=6 → width=4 (head outline only)
-    - HEAD chin arc: width=6 → width=3
-    - HEAD cheek nub outlines: width=4 → width=3
-    - HAIR strand arcs: width=6 → width=3
-    - EYE oval outline: width=4 → width=3
-    - EYE eyelid arc: width=4 → width=3
-    - EYE brows: width=4 → width=3
-    - NOSE arc: width=4 → width=2
-    - MOUTH polylines: width=6/5 → width=3
-    - TORSO outline: width=6 → width=3
-    - NECK outline: width=4 → width=3
-    - ARM polyline outline: width=5 → width=3
-    - HAND outline: width=4 → width=3
-    - UPPER LEG outline: width=3 → width=3 (keep)
-    - LOWER LEG polyline: width=4 → width=3
-    - SHOE outline: width=3 → width=3 (keep)
-
-  Three-tier line weight at 2× render:
-    - Head outline: width=4  → ~2px at 1x output
-    - Structure:    width=3  → ~1.5px at 1x output
-    - Detail:       width=2  → ~1px at 1x output
-
-  RETAINED from v005 (all correct):
+  RETAINED from v006 (all correct):
     - Per-expression hoodie color map
     - 2× render + LANCZOS AA
     - Full-body silhouette differentiation (6 unique poses)
     - 6-expression 3×2 layout, 1200×900 canvas
     - Classroom-style head (circle + chin fill + CHEEK NUBS)
     - Classroom-style hair (8 overlapping ellipses + foreground strand arcs)
-    - Classroom-style eyes (near-circular, eyelid arc)
+    - Three-tier line weight (head=4, structure=3, detail=2 at 2× render)
     - Warm parchment background per panel
     - show_guides=False for pitch export
 
@@ -51,7 +32,7 @@ Expression silhouette differentiation:
   DELIGHTED:  Jump/bounce posture, both arms raised, feet off ground
   FRUSTRATED: Arms crossed, feet apart, backward lean, head lowered
 
-Output: output/characters/main/LTG_CHAR_luma_expression_sheet_v006.png
+Output: output/characters/main/LTG_CHAR_luma_expressions_v007.png
 """
 
 from PIL import Image, ImageDraw, ImageFont
@@ -159,7 +140,7 @@ def draw_hoodie_pixel_accent(draw, x0, y0, pw, ph, hoodie_col):
 
 def draw_head(draw, cx, cy):
     """Classroom-style head: main circle + lower-half fill + cheek nubs.
-    v006 line weight fix: head outline width=4, cheek nubs width=3.
+    v006 line weight: head outline width=4, cheek nubs width=3.
     """
     # Main head circle — HEAD OUTLINE: width=4 (≈2px at 1x output)
     draw.ellipse([cx - HR, cy - HR, cx + HR, cy + HR + int(HR * 0.15)],
@@ -176,11 +157,11 @@ def draw_head(draw, cx, cy):
     nub_w = int(HR * 0.18)
     nub_h = int(HR * 0.24)
     nub_y = cy - int(HR * 0.12)
-    # Left cheek: cx - head_r - 12 to cx - head_r + 14 (per Alex's directive)
+    # Left cheek
     draw.ellipse([cx - HR - nub_w + int(HR * 0.06), nub_y - nub_h // 2,
                   cx - HR + nub_w + int(HR * 0.06), nub_y + nub_h // 2],
                  fill=SKIN, outline=LINE, width=3)
-    # Right cheek: cx + head_r - 14 to cx + head_r + 12 (per Alex's directive)
+    # Right cheek
     draw.ellipse([cx + HR - nub_w - int(HR * 0.06), nub_y - nub_h // 2,
                   cx + HR + nub_w - int(HR * 0.06), nub_y + nub_h // 2],
                  fill=SKIN, outline=LINE, width=3)
@@ -192,11 +173,9 @@ def draw_ears(draw, cx, cy):
 
 
 def draw_hair(draw, cx, cy, variant="default"):
-    """Classroom-style cloud hair: 7-9 overlapping ellipses for organic puff.
-    v006 fix: hair strand arc width=6 → width=3 (matches classroom pose weight).
+    """Classroom-style cloud hair: 8 overlapping ellipses for organic puff.
     Scaled to 2x render coords (HR = HEAD_R * RENDER_SCALE).
     """
-    # Scale classroom hair values (originally at head_r=100) to current HR
     s = HR / 100.0   # scale factor
 
     if variant == "excited":
@@ -213,9 +192,7 @@ def draw_hair(draw, cx, cy, variant="default"):
         spread = 0
 
     # Main cloud mass — 8 overlapping ellipses (classroom pose method)
-    # 7-9 overlapping ellipses for organic curl cloud per Alex's directive
     hair_ellipses = [
-        # (x1_off, y1_off, x2_off, y2_off) — scaled from classroom pose coords
         (-int(s*155), -int(s*195)+v_off, int(s*145)+spread, int(s*40)),
         (-int(s*175)+spread//2, -int(s*170)+v_off, -int(s*80), -int(s*60)),
         (-int(s*165), -int(s*140)+v_off, -int(s*95), -int(s*30)),
@@ -228,7 +205,7 @@ def draw_hair(draw, cx, cy, variant="default"):
     for (x1, y1, x2, y2) in hair_ellipses:
         draw.ellipse([cx + x1, cy + y1, cx + x2, cy + y2], fill=HAIR)
 
-    # Foreground strand arcs — DETAIL: width=3 (v006 fix: was width=6)
+    # Foreground strand arcs — DETAIL: width=3
     draw.arc([cx - int(s*60), cy - int(s*195) + v_off,
               cx - int(s*10), cy - int(s*140)],
              start=30, end=200, fill=HAIR, width=3)
@@ -239,18 +216,19 @@ def draw_hair(draw, cx, cy, variant="default"):
 
 def draw_eyes_full(draw, cx, cy, params):
     """Classroom-style eyes: near-circular proportions, explicit eyelid arc.
-    v006 fix: eye oval outline width=4→3, eyelid arc width=4→3, brows width=4→3.
+    v007 fix: eye width = HR*0.22 (canonical from turnaround v003, spec h×0.22).
     """
     s = HR / 100.0   # scale from classroom reference
     eye_y  = cy - int(s * 18)   # classroom: cy - 18
     lex    = cx - int(s * 38)   # classroom: cx - 38
     rex    = cx + int(s * 38)   # classroom: cx + 38
-    ew     = int(s * 28)        # classroom: ew=28 (near-circular)
+    # v007: eye width = HR * 0.22 (canonical spec, was s*28 = HR*0.28)
+    ew     = int(HR * 0.22)     # ~23px at 2x — narrower, more realistic
     p      = params
 
-    # Determine openness per eye
-    leh_base = int(s * 28)   # classroom: leh=28 (full open)
-    reh_base = int(s * 22)   # classroom: reh=22 (slightly less)
+    # Determine openness per eye (height)
+    leh_base = int(HR * 0.27)   # left eye height (≈ ew * 1.2 for near-circular feel)
+    reh_base = int(HR * 0.22)   # right eye height (slightly less)
     l_open   = p.get("l_open", 1.0)
     r_open   = p.get("r_open", 1.0)
 
@@ -265,11 +243,11 @@ def draw_eyes_full(draw, cx, cy, params):
     pdy = int(p.get("gaze_dy", 0) * s * 4)
 
     for (ex, eh, is_right) in [(lex, leh, False), (rex, reh, True)]:
-        # Eye white — oval, near-circular — STRUCTURE: width=3 (v006 fix)
+        # Eye white — oval, near-circular — STRUCTURE: width=3
         draw.ellipse([ex - ew, eye_y - eh, ex + ew, eye_y + eh], fill=EYE_W,
                      outline=LINE, width=3)
         # Iris
-        iris_r = int(ew * 0.54)
+        iris_r = int(ew * 0.60)
         iry    = min(iris_r, eh - 2)
         if iry < 2:
             iry = 2
@@ -284,10 +262,10 @@ def draw_eyes_full(draw, cx, cy, params):
         # Highlight
         hl_x = pup_x + int(iris_r * 0.42)
         hl_y = eye_y + pdy - int(iry * 0.48)
-        hl_s = max(int(pr * 0.38), 4)
+        hl_s = max(int(pr * 0.38), 3)
         draw.ellipse([hl_x - hl_s, hl_y - hl_s, hl_x + hl_s, hl_y + hl_s],
                      fill=EYE_HL)
-        # Eyelid arc (classroom style) — STRUCTURE: width=3 (v006 fix)
+        # Eyelid arc (classroom style) — STRUCTURE: width=3
         draw.arc([ex - ew, eye_y - eh, ex + ew, eye_y + eh],
                  start=200, end=340, fill=LINE, width=3)
         # Crinkle lines for DELIGHTED
@@ -301,7 +279,7 @@ def draw_eyes_full(draw, cx, cy, params):
                             eye_y + dy_k - int(s * 7))],
                           fill=LINE, width=2)
 
-    # Brows — STRUCTURE: width=3 (v006 fix: was width=4)
+    # Brows — STRUCTURE: width=3
     brow_base_y = eye_y - int(leh_base * 1.42)
     for (bx, b_dy, b_furrow) in [
         (lex, p.get("brow_l_dy", 0), p.get("brow_furrow_l", False)),
@@ -319,22 +297,20 @@ def draw_eyes_full(draw, cx, cy, params):
 
 def draw_nose(draw, cx, cy):
     """Classroom-style nose: two small nostril dots + bridge arc.
-    v006 fix: nose arc width=4 → width=2 (detail weight).
+    Nose arc width=2 (detail weight).
     """
     s = HR / 100.0
     draw.ellipse([cx - int(s*8), cy + int(s*8),  cx - int(s*2), cy + int(s*14)],
                  fill=SKIN_SH)
     draw.ellipse([cx + int(s*2), cy + int(s*8),  cx + int(s*8), cy + int(s*14)],
                  fill=SKIN_SH)
-    # Nose bridge arc — DETAIL: width=2 (v006 fix)
+    # Nose bridge arc — DETAIL: width=2
     draw.arc([cx - int(s*6), cy - int(s*10), cx + int(s*6), cy + int(s*12)],
              start=200, end=340, fill=SKIN_SH, width=2)
 
 
 def draw_mouth(draw, cx, cy, style="neutral"):
-    """Classroom-style mouth.
-    v006 fix: mouth polylines width=6/5 → width=3 (structure weight).
-    """
+    """Classroom-style mouth. All mouth polylines width=3 (structure weight)."""
     s  = HR / 100.0
     my = cy + int(s * 30)
     mw = int(s * 36)
@@ -396,7 +372,9 @@ def draw_blush(draw, cx, cy, alpha=0):
 def draw_body_pose(draw, cx, head_cy, hoodie_col, pose):
     """
     Draw full body: torso, arms, legs, shoes.
-    v006 fix: all body outline widths reduced to structure (width=3).
+    v007: torso_h = HR*2.10 (was HR*1.80), pants_h = HR*1.68 (was HR*1.60)
+    Yields 3.2 heads total figure height.
+    All outline widths at structure (width=3).
     """
     tilt = pose.get("body_tilt", 0)
 
@@ -405,7 +383,8 @@ def draw_body_pose(draw, cx, head_cy, hoodie_col, pose):
 
     torso_top_w = int(HR * 0.70)
     torso_bot_w = int(HR * 0.90)
-    torso_h     = int(HR * 1.80)
+    # v007 FIX: torso_h HR*1.80 → HR*2.10 for 3.2 heads
+    torso_h     = int(HR * 2.10)
     torso_top_y = neck_y + int(HR * 0.08)
     torso_bot_y = torso_top_y + torso_h
 
@@ -428,7 +407,7 @@ def draw_body_pose(draw, cx, head_cy, hoodie_col, pose):
         (hip_cx  + torso_bot_w - int(HR * 0.20), torso_bot_y),
     ]
     draw.polygon(shadow_pts, fill=HOODIE_SH)
-    # TORSO OUTLINE — STRUCTURE: width=3 (v006 fix: was width=6)
+    # TORSO OUTLINE — STRUCTURE: width=3
     draw.polygon(torso_pts, outline=LINE, width=3)
 
     # Hood rim (cream lining at neckline)
@@ -451,7 +430,7 @@ def draw_body_pose(draw, cx, head_cy, hoodie_col, pose):
     draw.rectangle([neck_cx - int(HR * 0.22), neck_y,
                     neck_cx + int(HR * 0.22), torso_top_y + int(HR * 0.05)],
                    fill=SKIN)
-    # NECK OUTLINE — STRUCTURE: width=3 (v006 fix: was width=4)
+    # NECK OUTLINE — STRUCTURE: width=3
     draw.rectangle([neck_cx - int(HR * 0.22), neck_y,
                     neck_cx + int(HR * 0.22), torso_top_y + int(HR * 0.05)],
                    outline=LINE, width=3)
@@ -471,7 +450,7 @@ def draw_body_pose(draw, cx, head_cy, hoodie_col, pose):
         mid_y = (shoulder_y + end_y) // 2 + arm_data[3] if len(arm_data) > 3 else (shoulder_y + end_y) // 2
         pts   = bezier3((shoulder_x, shoulder_y), (mid_x, mid_y), (end_x, end_y))
         polyline(draw, pts, hoodie_col, width=arm_w * 2)
-        # ARM OUTLINE — STRUCTURE: width=3 (v006 fix: was width=5)
+        # ARM OUTLINE — STRUCTURE: width=3
         polyline(draw, pts, LINE, width=3)
         # Mitten hand
         hand_r = int(HR * 0.22)
@@ -480,7 +459,8 @@ def draw_body_pose(draw, cx, head_cy, hoodie_col, pose):
                      fill=SKIN, outline=LINE, width=3)
 
     # === LEGS ===
-    pants_h = int(HR * 1.60)
+    # v007 FIX: pants_h HR*1.60 → HR*1.68 for 3.2 heads
+    pants_h = int(HR * 1.68)
     leg_w   = int(HR * 0.38)
     leg_l_spec = pose.get("leg_l", (0, 0))
     leg_r_spec = pose.get("leg_r", (0, 0))
@@ -514,7 +494,7 @@ def draw_body_pose(draw, cx, head_cy, hoodie_col, pose):
             (foot_x, foot_y)
         )
         polyline(draw, pts, PANTS, width=leg_w * 2)
-        # LOWER LEG OUTLINE — STRUCTURE: width=3 (v006 fix: was width=4)
+        # LOWER LEG OUTLINE — STRUCTURE: width=3
         polyline(draw, pts, LINE, width=3)
 
         # Shoe
@@ -675,6 +655,7 @@ def render_character(expr, panel_w, panel_h):
     """Render full-body character panel at 2x scale, return 1x via LANCZOS."""
     rw   = panel_w * RENDER_SCALE
     rh   = panel_h * RENDER_SCALE
+
     img  = Image.new("RGBA", (rw, rh), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
 
@@ -683,7 +664,8 @@ def render_character(expr, panel_w, panel_h):
     hoodie_c  = HOODIE_MAP[expr]
 
     head_cx = rw // 2
-    head_cy = int(rh * 0.22) + cy_off
+    # v007: head placed at 18% from top (was 22%) to accommodate 3.2 heads body
+    head_cy = int(rh * 0.18) + cy_off
 
     # Draw body first (behind head)
     draw_body_pose(draw, head_cx, head_cy, hoodie_c, spec.get("pose", {}))
@@ -724,9 +706,9 @@ def build_sheet(show_guides=False):
         font_label = font_title
         font_sub   = font_title
 
-    title = "LUMA — Expression Sheet v006  |  Luma & the Glitchkin"
-    sub   = ("Designer: Maya Santos  |  Cycle 26 STYLE ALIGNMENT v2: line weight fix  |  "
-             "FULL BODY — 6/6 squint pass  |  classroom-style head/hair/eyes/lines")
+    title = "LUMA — Expression Sheet v007  |  Luma & the Glitchkin"
+    sub   = ("Designer: Maya Santos  |  Cycle 29 PROPORTION FIX  |  "
+             "3.2 heads + eye width h\u00d70.22 (canonical)  |  classroom-style head/hair/eyes/lines")
     draw.text((PAD, 10), title, fill=(59, 40, 32), font=font_title)
     draw.text((PAD, 36), sub,   fill=(110, 88, 68), font=font_sub)
 
@@ -763,19 +745,24 @@ def build_sheet(show_guides=False):
     return sheet
 
 
-if __name__ == "__main__":
+def main():
     out_dir  = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             "..", "characters", "main")
     os.makedirs(out_dir, exist_ok=True)
-    out_path = os.path.join(out_dir, "LTG_CHAR_luma_expression_sheet_v006.png")
+    out_path = os.path.join(out_dir, "LTG_CHAR_luma_expressions_v007.png")
     sheet    = build_sheet(show_guides=False)
+    # IMAGE SIZE RULE: ≤ 1280px in both dimensions
+    sheet.thumbnail((1280, 1280), Image.LANCZOS)
     sheet.save(out_path)
     print(f"Saved: {os.path.abspath(out_path)}")
     print(f"Canvas: {sheet.size[0]}x{sheet.size[1]}")
-    print("v006 changes from v005 (Alex Chen directive 20260329_2100):")
-    print("  - LINE WEIGHT FIX: head outline width=6→4, structure width=6→3, detail width=4→2")
-    print("  - HAIR strands: width=6→3 (matches classroom pose weight)")
-    print("  - MOUTH: all mouth polylines width=6/5→3")
-    print("  - TORSO/NECK/ARM/LEG: all structure outlines width=4-6→3")
-    print("  - CHEEK NUBS: width=4→3")
-    print("  - All other elements (hair cloud, eyes, poses, colors) RETAINED from v005")
+    print("v007 changes from v006 (C28 P1 blocker — Alex Chen proportion directive):")
+    print("  - PROPORTION FIX: torso_h HR*1.80→HR*2.10, pants_h HR*1.60→HR*1.68")
+    print("  - HEAD POSITION: rh*0.22 → rh*0.18 (shifted up for taller body)")
+    print("  - EYE WIDTH: int(s*28)=HR*0.28 → int(HR*0.22) per canonical turnaround spec")
+    print("  - All other v006 qualities retained")
+    print(f"  - Proportion math: 3.2 heads = 3.2 × (2×{HR}px) = {3.2*2*HR:.0f}px @ 2x")
+
+
+if __name__ == "__main__":
+    main()

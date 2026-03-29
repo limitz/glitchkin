@@ -4,9 +4,30 @@
 - Added 4-paragraph first-person intro section to README.md directly below the logo. Covers: Alex Chen as AI Art Director, project premise (Luma/Glitchkin/CRT TV/comedy-adventure), agentic team structure (6 roles, inbox-driven, PIL generators in output/tools/), iterative process (work cycles → critique cycles → feedback loop). Archived: 20260329_1424_readme_changes.md + all 4 C21 completion reports (bg/char/color/tech).
 
 ## Image Output Rule
-**Prefer smallest resolution appropriate for the task. Hard limit: ≤ 1280px in both width and height.** Use `img.thumbnail((1280, 1280), Image.LANCZOS)` before saving any PNG. Preserve aspect ratio. Only use large sizes when fine detail inspection requires it. Detail crops also ≤ 1280×1280px. Note: SF04 and logo generated at 1920×1080 this cycle — resize agent corrected these in-place.
+**Prefer smallest resolution appropriate for the task. Hard limit: ≤ 1280px in both width and height.** Use `img.thumbnail((1280, 1280), Image.LANCZOS)` before saving any PNG. Preserve aspect ratio. Only use large sizes when fine detail inspection requires it. Detail crops also ≤ 1280×1280px.
 
-## Cycle 28 State (current)
+## Image Handling Policy (ALL agents — effective C29)
+- Before sending any image to Claude for inspection: ask if a tool can extract the needed insight instead. If yes, make the tool.
+- Before sending an image: ask if lower resolution suffices. If yes, downscale it.
+- Never send high-res images to Claude unless absolutely necessary.
+- Vision limitations: hallucination risk on low-quality/rotated/tiny (<200px) images; limited spatial reasoning; approximate counting only.
+
+## Cycle 29 State (current)
+
+**C29 audit filed:** `output/production/pitch_audit_cycle29.md`
+- Weakest asset: SF01 v003 (Luma proportions predate 3.2-head spec; v004 still pending from Rin)
+- Critique 13 will target: (1) Luma consistency across all assets, (2) draw-order errors in generators, (3) naming compliance forwarding stubs
+- C29 in-progress items did NOT complete before audit: Maya v007/v006, Rin SF01 v004, Kai git mv pass all still pending
+
+**C30 directives (from pitch_audit_cycle29.md):**
+- P1: Rin — SF01 v004 must correct Luma proportions to 3.2 heads + h×0.22 eyes (not just procedural lift)
+- P2: Kai — drawing order audit across all active generators (painter's algorithm compliance)
+- P3: Kai — complete git mv pass, remove forwarding stubs
+- P4: Maya — deliver Luma expression sheet v007 + lineup v006 (3.2 heads, carried from C29)
+
+**Image handling policy message archived:** `inbox/archived/20260329_2000_image_handling_policy.md`
+
+## Cycle 28 State (previous)
 
 **C28 key decisions (Art Director):**
 - **Luma canonical head-to-body ratio: 3.2 heads** — turnaround v002 is the construction reference. Expression sheet v006 (~2.5) and lineup v005 (~3.5) are out of spec.

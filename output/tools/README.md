@@ -1,7 +1,7 @@
 # Tools Index — "Luma & the Glitchkin"
 
 **Maintained by:** Alex Chen, Art Director
-**Last updated:** 2026-03-29 (Cycle 28 — C28 compliance pass, Kai Nakamura)
+**Last updated:** 2026-03-29 (Cycle 29 — C29 naming cleanup tool added, Kai Nakamura)
 
 ---
 
@@ -49,6 +49,7 @@ This production uses **open source tools exclusively**. No proprietary software 
 | `LTG_TOOL_naming_compliance_copier_v001.py` | Jordan Reed / Cycle 12 | Batch-creates LTG-compliant named copies of legacy assets (CHAR turnarounds, COLOR swatches, ENV layouts, COLOR style frames). Uses `shutil.copy2()` — never renames originals. Outputs: `LTG_CHAR_luma_turnaround_v001.png`, `LTG_CHAR_byte_turnaround_v001.png`, `LTG_CHAR_cosmo_turnaround_v001.png`, `LTG_CHAR_miri_turnaround_v001.png`, `LTG_COLOR_styleframe_discovery_v001.png`, `LTG_COLOR_luma_color_model_swatches_v001.png`, `LTG_COLOR_byte_color_model_swatches_v001.png`, `LTG_COLOR_cosmo_color_model_swatches_v001.png`, `LTG_COLOR_grandma_miri_color_model_swatches_v001.png`, `LTG_CHAR_character_lineup_v001.png`. | Pillow, shutil |
 | `LTG_TOOL_naming_compliance_copier_v002.py` | Jordan Reed / Cycle 12 | ENV pass of the compliance copier. Creates LTG-compliant copies of environment assets including `LTG_ENV_glitchlayer_layout_v001.png`, `LTG_ENV_glitchlayer_encounter_v001.png`, and related ENV-category files. | Pillow, shutil |
 | `LTG_TOOL_naming_compliance_copy_v001.py` | Jordan Reed / Cycle 12 | Alternate/earlier naming compliance copy tool (`_copy_` vs `_copier_` suffix variant). Purpose overlaps with `LTG_TOOL_naming_compliance_copier_v001.py`. Flagged for consolidation review — Alex Chen to decide which is canonical. | Pillow, shutil |
+| `LTG_TOOL_naming_cleanup_v001.py` | Kai Nakamura / Cycle 29 | Removes original LTG_CHAR_/LTG_COLOR_/LTG_BRAND_ `.py` source files from `output/tools/` once their canonical LTG_TOOL_ copies are confirmed on disk. 22 files queued. Run with `--dry-run` to preview removals without deleting. After run: forwarding stubs in this dir should also be manually removed. | stdlib only |
 | `LTG_TOOL_style_frame_02_glitch_storm_v001.py` | Jordan Reed / Cycle 12 | Generates full 1920×1080 Style Frame 02 "Glitch Storm" background WITH characters (Luma, Cosmo, Byte sprint poses, townspeople). 4° Dutch angle applied as final step. NOTE: uses old TERRA_CYAN_LIT=(154,140,138) which fails cyan-lit check. See v002 (Alex Chen) and `LTG_TOOL_bg_glitch_storm_colorfix_v001.py` (Jordan Reed) for corrected color. Output: `LTG_COLOR_styleframe_glitch_storm_v001.png`. | Pillow |
 | `LTG_TOOL_colorkey_glitchstorm_gen_v001.py` | Sam Kowalski / Cycle 12 | Generates 640×360 color key thumbnail for Style Frame 02 "Glitch Storm" scenario. Cross-references scene_color_keys.md Key 02. Storm confetti: Cyan/White/Magenta/UVPurple (NO Acid Green). Cycle 13: TERRACOTTA_CYAN_LIT constant added, inline (154,140,138) replaced with corrected (150,172,162). Output: `LTG_COLOR_colorkey_glitchstorm_v001.png`. | Pillow |
 | `LTG_TOOL_logo_asymmetric_v001.py` | Jordan Reed / Cycle 12 | Generates the asymmetric "Luma & the Glitchkin" logo lockup. Produces stylized title treatment with glitch texture effects and asymmetric composition. | Pillow |
@@ -198,7 +199,26 @@ Naming compliance pass (Reinhardt Böhm Critique C12). All generator `.py` files
 
 **Misplaced file:** `output/color/style_frames/LTG_TOOL_style_frame_02_glitch_storm_v005.py` — already correctly named, but placed outside `output/tools/`. Entry point stub added at `output/tools/LTG_TOOL_style_frame_02_glitch_storm_v005.py`.
 
-**TODO (requires `git mv`):** The original LTG_CHAR_ and LTG_COLOR_ source files remain on disk. A future `git mv` pass should rename them to LTG_TOOL_ and remove the forwarding stubs.
+**Cycle 29 — Cleanup Tool Created:** `LTG_TOOL_naming_cleanup_v001.py` (see Script Index) removes all original LTG_CHAR_/LTG_COLOR_/LTG_BRAND_ source files once the canonical LTG_TOOL_ copy is confirmed on disk. No git repo is present; standard `os.remove()` is used. Run with `--dry-run` to preview. After running, forwarding stubs above should also be removed (they reference now-deleted files). The original LTG_CHAR_/LTG_COLOR_/LTG_BRAND_ files remain on disk until the script is executed.
+
+---
+
+## Legacy Archive — Cycle 29 Naming Cleanup
+
+**Kai Nakamura — 2026-03-29 (Cycle 29)**
+
+C29 naming compliance completion pass. 22 non-compliant `.py` files in `output/tools/` (prefixed LTG_CHAR_, LTG_COLOR_, LTG_BRAND_) are queued for removal. All have canonical LTG_TOOL_ copies on disk. Cleanup tool: `LTG_TOOL_naming_cleanup_v001.py`.
+
+Files to be removed (all have LTG_TOOL_ canonical equivalents):
+- `LTG_CHAR_luma_expression_sheet_v002–v006.py` (5 files)
+- `LTG_CHAR_luma_turnaround_v002.py`
+- `LTG_CHAR_byte_expression_sheet_v004.py`
+- `LTG_CHAR_cosmo_expression_sheet_v004.py`, `LTG_CHAR_cosmo_turnaround_v002.py`
+- `LTG_CHAR_grandma_miri_expression_sheet_v003.py`
+- `LTG_CHAR_glitch_expression_sheet_v001–v002.py`, `LTG_CHAR_glitch_turnaround_v001–v002.py`, `LTG_CHAR_glitch_color_model_v001.py` (5 files)
+- `LTG_COLOR_luma_color_model_v001.py`, `LTG_COLOR_byte_color_model_v001.py`, `LTG_COLOR_cosmo_color_model_v001.py`
+- `LTG_COLOR_styleframe_luma_byte_v001–v003.py` (3 files)
+- `LTG_BRAND_logo_v001.py`
 
 ---
 

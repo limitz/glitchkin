@@ -210,7 +210,8 @@ The frame argues: the Glitch takes the sky first, then the buildings, then the s
 ## Technical Spec Notes
 
 - Maximum dominant colors: 7 — Night Sky Deep `#1A1428`, UV Purple `#7B2FBE`, Electric Cyan `#00F0FF`, Hot Magenta `#FF2D6B`, Void Black `#0A0A14`, Warm Gold `#E8C95A`, Warm Cream `#FAF0DC` (building windows). Supporting: Static White `#F0F0F0` for specular/crack core, Corrupted Amber `#FF8C00` for Byte's outline exception.
-- Acid Green NOT in storm confetti — per master palette Forbidden #8. Storm confetti is `#00F0FF`, `#F0F0F0`, `#FF2D6B`, `#7B2FBE` only.
+- **Storm confetti dominant cold:** GL-06c STORM_CONFETTI_BLUE `#0A4F8C` (registered in master_palette.md C28). This is a deliberate atmospheric depth derivative of GL-06 (#2B7FFF) — storm confetti reads darker and more desaturated at distance (aerial perspective). Do not substitute GL-06 for GL-06c in the storm generator.
+- Acid Green NOT in storm confetti — per master palette Forbidden #8. Storm confetti is `#0A4F8C` (GL-06c), `#F0F0F0`, `#FF2D6B`, `#7B2FBE` only.
 - Character check: Luma's orange and Cosmo's lavender remain more saturated than any background element, even under extreme relighting. Characters must pop.
 - Byte: Corrupted Amber outline applied. Positioned on LEFT shoulder. Cracked eye faces right (toward crack). See Byte Visibility section above.
 - Dutch angle: 4 degrees clockwise on the full composition. Apply at the very end — do not tilt individual elements, tilt the camera.

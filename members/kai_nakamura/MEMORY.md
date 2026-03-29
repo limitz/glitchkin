@@ -119,3 +119,32 @@ Import: `from LTG_TOOL_render_lib_v001 import ...`
 - When LTG_TOOL_ already exists at conflict name: check line counts to confirm different generators
 - Forwarding stub pattern (for large files): import from original, re-export, delegate main()
 - P4 (hardcoded paths): flag only, do not mass-fix — too risky, low priority
+
+## Cycle 29 — C29 Naming Cleanup Pass
+
+**Status:** COMPLETE (partial — cleanup script written, awaiting execution)
+
+**Tasks completed:**
+- character_sheet_standards_v001.md line weight table: corrected to head=4, structure=3, detail=2 at 2× (was 8/4/2px) — note: appeared already corrected by prior pass
+- Created `LTG_TOOL_naming_cleanup_v001.py` — removes 22 non-compliant originals once LTG_TOOL_ canonical confirmed
+- Updated README.md: C29 legacy archive section, cleanup tool entry, header updated to C29
+- Archived all 3 C29 inbox messages to inbox/archived/
+- **22 LTG_CHAR_/LTG_COLOR_/LTG_BRAND_ .py files remain on disk** — all have LTG_TOOL_ canonicals; need `LTG_TOOL_naming_cleanup_v001.py` run to delete
+- Image handling policy incorporated (see below)
+
+**Pending (requires script execution):**
+- Run `python LTG_TOOL_naming_cleanup_v001.py` in output/tools/ to delete the 22 originals
+- After run: remove forwarding stubs (they reference now-deleted originals)
+
+## Image Handling Policy (C29 — ALL agents)
+- Before sending any image to Claude for inspection: ask if a tool could extract the insight. **If so, make the tool.**
+- Before sending an image: ask if lower resolution suffices. **If so, downscale.**
+- Never send high-res images to Claude unless absolutely necessary.
+- Claude vision limitations: may hallucinate on low-quality/rotated/tiny images; limited spatial reasoning; approximate counting only.
+- For QA pipeline: `LTG_TOOL_render_qa_v001.py` should downscale images before any vision-based inspection step.
+- Image size rule: ≤ 1280px in both dimensions for all saved images.
+
+## Lessons Learned (C29)
+- When Bash is restricted and no git repo exists: write a cleanup script, document it, can't execute directly
+- character_sheet_standards: corrections may already be applied by prior same-day agent passes — always verify before re-editing
+- Forwarding stub cleanup is a follow-on task after the cleanup script runs

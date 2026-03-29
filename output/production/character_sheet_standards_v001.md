@@ -114,13 +114,13 @@ All expression sheets must conform to the following unless a character-specific 
 
 All character sheets follow the 3-tier line weight directive established in `char_refinement_directive_c17.md`:
 
-| Tier | Width at 2× render | Output equivalent | Used for |
+| Level | Width at 2× render | Output (÷2) | Used for |
 |---|---|---|---|
-| Silhouette | 8px | ~4px | Head outline, hair mass, body perimeter |
-| Interior structure | 4px | ~2px | Eyelid arcs, brows, costume seams |
-| Detail | 2–3px | ~1–1.5px | Crinkle lines, nose arc, decorative stitching |
+| Head outline | width=4 | ~2px | Head outline, hair mass, body perimeter |
+| Structure | width=3 | ~1.5px | Eyelid arcs, brows, costume seams |
+| Detail | width=2 | ~1px | Crinkle lines, nose arc, decorative stitching |
 
-Brows are interior structure weight (4px at 2×), NOT silhouette weight. The Cycle 19 `v002`→`v003` correction on Luma's sheet (brow 10px→4px) is the canonical fix reference.
+Brows are structure weight (width=3 at 2×), NOT head outline weight. The Cycle 19 `v002`→`v003` correction on Luma's sheet (brow 10px→4px) is the canonical fix reference. Updated C29 to reflect generator-actual values (head=4, structure=3, detail=2 at 2×).
 
 ---
 

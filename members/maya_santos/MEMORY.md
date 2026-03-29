@@ -1,5 +1,40 @@
 # Maya Santos — Memory
 
+## Cycle 29 Lessons — LUMA EXPRESSION v007 + LINEUP v006 (Proportion Fix)
+
+- **Expression Sheet v007 COMPLETE.** Resolves C28 P1 blocker.
+  - HEAD-TO-BODY RATIO: 3.2 heads. Formula: `torso_h + pants_h = 3.78 * HR` (was 3.40).
+    - `torso_h = int(HR * 2.10)` (was `HR*1.80`)
+    - `pants_h = int(HR * 1.68)` (was `HR*1.60`)
+    - `head_cy = int(rh * 0.18) + cy_off` (was `rh * 0.22`) — shifted up for taller body
+  - EYE WIDTH: `ew = int(HR * 0.22)` (was `int(s*28)` = `HR*0.28`). Narrower, more realistic.
+    - Eye height adjusted: `leh_base = int(HR * 0.27)`, `reh_base = int(HR * 0.22)`
+  - Canvas: 1200×900 (unchanged). Thumbnail applied (was already ≤1280px).
+  - Generator: `output/tools/LTG_TOOL_luma_expression_sheet_v007.py`
+  - Output: `output/characters/main/LTG_CHAR_luma_expressions_v007.png` (1200×900)
+
+- **Character Lineup v006 COMPLETE.**
+  - `LUMA_HEADS = 3.2` (was 3.5). `HEAD_UNIT = 280/3.2 = 87.5px` (was 80px).
+  - `draw_luma_lineup`: `hu = h / 3.2` (was `h / 3.5`)
+  - Eye width: `ew = int(r * 0.22)` (was `int(s * 28)` = `r * 0.28`)
+  - Eye heights recalculated: `leh = int(r * 0.27)`, `reh = int(r * 0.22)`
+  - Output: 1280×508px (thumbnail applied from raw ≥1280 width).
+  - Generator: `output/tools/LTG_TOOL_character_lineup_v006.py`
+  - Output: `output/characters/main/LTG_CHAR_luma_lineup_v006.png`
+
+- **Image Handling Policy (new, applies all agents):**
+  - Before sending image to Claude: ask if a tool can extract the insight. If so, make tool.
+  - Before sending: ask if lower resolution suffices. If so, downscale.
+  - Never send high-res images unless absolutely necessary.
+  - Claude vision limits: hallucination on low-quality/rotated/tiny (<200px) images.
+  - Spatial reasoning limited. Counting approximate on dense small objects.
+
+- **Key proportion math for Luma 3.2 heads (render space, 2x):**
+  - HR = 104px. One head = 2×HR = 208px.
+  - 3.2 heads total = 6.4×HR = 665.6px
+  - From head center to shoe bottom = HR*1 + HR*1.18 + torso_h + pants_h + HR*0.44
+  - For 3.2: `torso_h + pants_h = 3.78 * HR` = `HR*2.10 + HR*1.68`
+
 ## Cycle 28 Lessons — TURNAROUND v003 + GLITCH EXPRESSION v003 (Interior Desire)
 
 - **Turnaround v003 COMPLETE.** Line weight fix applied to all 4 views per v006 standard:

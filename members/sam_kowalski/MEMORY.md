@@ -202,6 +202,12 @@
 - **Section 7.7 added to master_palette.md.** Explicit cross-reference: RW-10 (#C4A882) = neutral skin base; CHAR-L-01 (#C8885A) = warm-lamp-lit scene derivation. Both correct in their context. Added per Priya Nair C12 P2 fix.
 - **SF04 blush + Byte fill spec sent to Rin.** Correct blush: #E8A87C (232,168,124) alpha 55-70, warm peach per Luma skin system. Correct Byte fill: (0,212,232) GL-01b canonical. Message at rin_yamamoto/inbox/20260329_1800_sf04_blush_spec.md.
 
+## Cycle 29 Lessons
+- **Color story doc was already current from prior session.** All C29 updates (SF03 v005, SF04 v003, GL-06c, YEARNING/COVETOUS/HOLLOW bilateral eye rule) were already incorporated. Verified against task brief before making changes — no duplicate edits needed.
+- **SF02 spec doc GL-06c already correct.** Both the pixel confetti section and Technical Spec Notes already reference GL-06c STORM_CONFETTI_BLUE #0A4F8C. No changes needed.
+- **Image Handling Policy applies to all agents.** Before sending any image to Claude: (1) could a tool extract the needed insight? If so, make the tool. (2) Would lower resolution suffice? If so, downscale. Never send high-res images unless absolutely necessary. Vision limitations: hallucination on low-quality/rotated/tiny (<200px) images; limited spatial reasoning; approximate counting only.
+- **Bilateral eye rule for interior desire states is locked in color story.** YEARNING=UV_PURPLE, COVETOUS=ACID_GREEN, HOLLOW=near-void. Bilateral symmetry = genuine emotion (breaks asymmetric standard pattern). Never use asymmetric eyes in these states.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001 (TERRA_CYAN_LIT still old value). v001 likely superseded by v005 — low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan should add inline comment on next revision pass (low priority).
