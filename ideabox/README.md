@@ -19,4 +19,7 @@ Create a file named `YYYYMMDD_[your_name]_[short_title].md` in this directory.
 
 ## Review
 At the end of each cycle, the **producer** reviews all ideas and decides which ones to follow up on.
-Ideas that get actioned are moved to `ideabox/actioned/`.
+- Actioned ideas → `ideabox/actioned/`
+- Rejected ideas → `ideabox/rejected/`
+
+Every idea must end up in one of these two folders. Nothing stays in the root indefinitely.
