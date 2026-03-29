@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 Contact Sheet Generator — Luma & the Glitchkin
-Cycle 8: Combines ALL rendered panels in chronological order.
-Updated to include P14–P24 (The Chaos Sequence) generated in Cycle 8.
+Cycle 10: Combines ALL rendered panels in chronological order.
+Updated to include P14–P24 (The Chaos Sequence). Version string fixed per Carmen's Cycle 9 critique.
 
 Output: /home/wipkat/team/output/storyboards/panels/contact_sheet.png
 
@@ -41,7 +41,7 @@ PANEL_ORDER = [
     ("P11",  "panel_p11_nose_to_nose.png"),
     ("P12",  "panel_p12_recoil.png"),
     ("P13",  "panel_p13_scream.png"),
-    # Cycle 8: The Chaos Sequence (P14–P24)
+    # Cycle 10: The Chaos Sequence (P14–P24)
     ("P14",  "panel_p14_bookshelf_ricochet.png"),
     ("P15",  "panel_p15_luma_freefall.png"),
     ("P16",  "panel_p16_floor_ecu.png"),
@@ -108,9 +108,9 @@ def generate():
     d.rectangle([0, HEADER_H - 1, cs_w, HEADER_H], fill=(0, 180, 200))  # teal rule
 
     d.text((PAD, 8), "LUMA & THE GLITCHKIN", fill=(0, 240, 255), font=font_hdr)
-    d.text((PAD, 30), "Ep.01 Cold Open — Cycle 8 Contact Sheet (P01–P25 complete)", fill=(200, 190, 165), font=font_sub)
+    d.text((PAD, 30), "Ep.01 Cold Open — Cycle 10 Contact Sheet (P01–P25 complete)", fill=(200, 190, 165), font=font_sub)
     d.text((cs_w - 160, 8),  f"{n} panels rendered", fill=(140, 130, 110), font=font_sub)
-    d.text((cs_w - 160, 24), "2026-03-29 Cycle 8", fill=(120, 110, 90), font=font_foot)
+    d.text((cs_w - 160, 24), "2026-03-29 Cycle 10", fill=(120, 110, 90), font=font_foot)
 
     # ── Place panels in grid ────────────────────────────────────────────────
     for i, (label, img) in enumerate(loaded):

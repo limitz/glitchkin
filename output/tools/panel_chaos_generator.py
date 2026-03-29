@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Panel Chaos Generator — Luma & the Glitchkin
-Cycle 8: Generates panels P14–P24 (The Chaos Sequence).
+Cycle 11: Generates panels P14–P24 (The Chaos Sequence).
 Emotional arc section: CHAOS (escalating from first-contact glitch cascade
 through peak mayhem — Byte ricocheting, Luma falling, mutual discovery,
 other Glitchkin breaching, and the show's promise shot).
@@ -65,7 +65,22 @@ def load_fonts():
     return font, font_bold, font_cap, font_ann
 
 
-def make_panel(panel_num, shot_type, caption, draw_fn, filename):
+def apply_dutch_tilt(img, degrees, bg_color=(8, 4, 14)):
+    """Rotate the drawing area portion of an image by degrees (Dutch tilt).
+    Draws scene content on a temp canvas, rotates entire scene, then pastes back.
+    This delivers TRUE geometric tilt — not just a tilted floor line.
+    Per Carmen's Cycle 8 critique: geometry always wins over annotation text.
+    """
+    # Crop the draw area (not the caption bar)
+    draw_area = img.crop((0, 0, PW, DRAW_H))
+    # Rotate with expand=False so it stays the same size, fill bg_color for margins
+    rotated = draw_area.rotate(degrees, resample=Image.BICUBIC, expand=False,
+                               fillcolor=bg_color)
+    img.paste(rotated, (0, 0))
+
+
+def make_panel(panel_num, shot_type, caption, draw_fn, filename,
+               dutch_tilt_deg=0, dutch_bg=(8, 4, 14)):
     img  = Image.new('RGB', (PW, PH), BG_DRAW)
     draw = ImageDraw.Draw(img)
     font, font_bold, font_cap, font_ann = load_fonts()
@@ -75,6 +90,10 @@ def make_panel(panel_num, shot_type, caption, draw_fn, filename):
 
     # Scene content
     draw_fn(draw, img, font, font_bold, font_ann)
+
+    # Apply Dutch tilt AFTER scene is drawn — rotates ENTIRE scene contents
+    if dutch_tilt_deg != 0:
+        apply_dutch_tilt(img, dutch_tilt_deg, bg_color=dutch_bg)
 
     # Caption bar
     draw.rectangle([0, DRAW_H, PW, PH], fill=BG_CAPTION)
@@ -301,9 +320,12 @@ def draw_luma_face(draw, cx, cy, size=80, expression='curious',
     """
     Draw Luma's face.
     expression: 'panic' | 'curious' | 'excited' | 'floor-impact' | 'reckless'
+              | 'settling' | 'recognition' | 'warmth'
     hair_state: 'normal' | 'glitch-circle' | 'max-volume'
     Face placement carries emotional info (MEMORY.md Cycle 7):
       centered = neutral, lower-center = urgency/discovery
+    CYCLE 9: Added 'settling' (P17), 'recognition' (P18), 'warmth' (P20)
+      per Carmen's critique — three distinct emotional states need distinct faces.
     """
     r = size // 2
     # Face
@@ -436,6 +458,92 @@ def draw_luma_face(draw, cx, cy, size=80, expression='curious',
         draw.arc([cx + r // 8, eye_y - eh - 10, cx + r // 2, eye_y - eh - 2],
                  start=200, end=340, fill=(22, 14, 8), width=3)
 
+    elif expression == 'settling':
+        # P17: After the excitement high — settling into wonder looking at Byte.
+        # Open mouth softly (not screaming, not closed — mid-open wonder).
+        # Wide eyes. Brows raised but not alarmed — genuine wonder/awe.
+        # Carmen: "the comma before the next exclamation" — soft, open, attentive.
+        for ex in [cx - r // 3, cx + r // 3]:
+            draw.ellipse([ex - ew // 2, eye_y - int(eh * 1.0),
+                          ex + ew // 2, eye_y + int(eh * 1.0)], fill=(255, 255, 245))
+            # Pupil — centered, slightly dilated (wonder)
+            draw.ellipse([ex - 4, eye_y - 4, ex + 4, eye_y + 4], fill=(20, 12, 8))
+        # Brows raised gently — not alarmed, not furrowed — open curiosity
+        draw.arc([cx - r // 2, eye_y - eh - 16,
+                  cx - r // 8, eye_y - eh - 5],
+                 start=200, end=340, fill=(22, 14, 8), width=3)
+        draw.arc([cx + r // 8, eye_y - eh - 14,
+                  cx + r // 2, eye_y - eh - 4],
+                 start=200, end=340, fill=(22, 14, 8), width=3)
+        # Mouth: softly open — wonder breath, not scream rectangle
+        mouth_y = eye_y + eh + 6
+        draw.arc([cx - r // 4, mouth_y, cx + r // 4, mouth_y + r // 4],
+                 start=20, end=160, fill=(50, 30, 15), width=2)
+        # Soft open gap — small oval, not a rectangle
+        draw.ellipse([cx - r // 6, mouth_y + 2, cx + r // 6, mouth_y + r // 5],
+                     fill=(30, 15, 8))
+
+    elif expression == 'recognition':
+        # P18: Luma connecting what the notebook says to Byte.
+        # ONE brow raised (asymmetric — the "aha" brow).
+        # Eyes narrowed in CONCENTRATION — not wide, not closed.
+        # Slight head-tilt implied by asymmetric brow position.
+        # Left eye normal aperture, right eye slightly squinted.
+        # Carmen: "recognition, not curiosity" — this is cognitive connection.
+        # Left eye (viewer right) — more open (the raised-brow side)
+        draw.ellipse([cx - r // 3 - ew // 2, eye_y - int(eh * 0.9),
+                      cx - r // 3 + ew // 2, eye_y + int(eh * 0.9)],
+                     fill=(255, 255, 245))
+        draw.ellipse([cx - r // 3 - 3, eye_y - 3,
+                      cx - r // 3 + 3, eye_y + 3], fill=(20, 12, 8))
+        # Right eye (viewer left) — narrowed (concentration squint)
+        draw.ellipse([cx + r // 3 - ew // 2, eye_y - int(eh * 0.55),
+                      cx + r // 3 + ew // 2, eye_y + int(eh * 0.55)],
+                     fill=(255, 255, 245))
+        draw.ellipse([cx + r // 3 - 3, eye_y - 2,
+                      cx + r // 3 + 3, eye_y + 2], fill=(20, 12, 8))
+        # ASYMMETRIC brows: left brow raised high (the "aha!" brow)
+        draw.arc([cx - r // 2, eye_y - eh - 18,
+                  cx - r // 8, eye_y - eh - 6],
+                 start=200, end=340, fill=(22, 14, 8), width=3)
+        # Right brow lower, slightly furrowed inward (concentration)
+        draw.arc([cx + r // 8, eye_y - eh - 10,
+                  cx + r // 2, eye_y - eh - 4],
+                 start=210, end=340, fill=(22, 14, 8), width=3)
+        # Mouth: slight pursed — thinking, not smiling or open
+        draw.arc([cx - r // 4, eye_y + eh + 6,
+                  cx + r // 4, eye_y + eh + 12],
+                 start=15, end=165, fill=(50, 30, 15), width=2)
+
+    elif expression == 'warmth':
+        # P20: First feeling of connection with Byte — choosing warmth deliberately.
+        # Soft smile — genuine, not excited grin. Eyes slightly narrowed in warmth.
+        # Brows gently raised — not alarmed, not furrowed — open and present.
+        # Carmen: "She is choosing warmth deliberately" — this is emotional intent.
+        for ex in [cx - r // 3, cx + r // 3]:
+            # Eyes slightly narrowed (warmth squint — happiness closes eyes a little)
+            draw.ellipse([ex - ew // 2, eye_y - int(eh * 0.7),
+                          ex + ew // 2, eye_y + int(eh * 0.7)], fill=(255, 255, 245))
+            draw.ellipse([ex - 3, eye_y - 3, ex + 3, eye_y + 3], fill=(20, 12, 8))
+        # Brows gently raised — peaceful, not tense
+        draw.arc([cx - r // 2, eye_y - eh - 13,
+                  cx - r // 8, eye_y - eh - 4],
+                 start=200, end=330, fill=(22, 14, 8), width=2)
+        draw.arc([cx + r // 8, eye_y - eh - 12,
+                  cx + r // 2, eye_y - eh - 3],
+                 start=210, end=340, fill=(22, 14, 8), width=2)
+        # Soft smile — NOT a grin. Gentle curve, no teeth, corners lifted.
+        draw.arc([cx - r // 3, eye_y + eh + 6,
+                  cx + r // 3, eye_y + eh + r // 3 + 2],
+                 start=15, end=165, fill=(50, 30, 15), width=3)
+        # Slight cheek lift lines (warmth crinkle)
+        draw.line([(cx - r // 3 - 2, eye_y + eh - 2),
+                   (cx - r // 2 - 4, eye_y + eh + 8)],
+                  fill=(180, 110, 70), width=1)
+        draw.line([(cx + r // 3 + 2, eye_y + eh - 2),
+                   (cx + r // 2 + 4, eye_y + eh + 8)],
+                  fill=(180, 110, 70), width=1)
+
     # Chip crumb on cheek (character detail from script)
     draw.rectangle([cx + int(r * 0.55) - 2, cy + int(r * 0.25) - 2,
                     cx + int(r * 0.55) + 2, cy + int(r * 0.25) + 2],
@@ -447,19 +555,20 @@ def draw_luma_face(draw, cx, cy, size=80, expression='curious',
 def draw_p14(draw, img, font, font_bold, font_ann):
     """P14: Byte ricocheting off bookshelf. Multi-exposure trajectory.
     Fixed camera at 5ft, Dutch 12° CW, bookshelf fills right half.
-    Three ghost positions: approach (cyan), impact (magenta), exit (white-cyan)."""
+    Three ghost positions: approach (cyan), impact (magenta), exit (white-cyan).
+    CYCLE 9 FIX: Dutch tilt now applied as true canvas rotation (12°) via
+    apply_dutch_tilt() in make_panel — not a sloped floor polygon.
+    Per Carmen: geometry must deliver the angle the annotation states."""
     # Room — warm dark, glitch light strobing from off-frame monitors
     draw.rectangle([0, 0, PW, DRAW_H], fill=(20, 14, 8))
 
-    # --- Dutch tilt suggestion via horizon line ---
-    # Floor (slightly tilted — Dutch 12° CW)
-    floor_left_y  = int(DRAW_H * 0.76)
-    floor_right_y = int(DRAW_H * 0.70)
+    # Floor (FLAT — the 12° tilt is applied at canvas level after draw)
+    floor_y = int(DRAW_H * 0.74)
     draw.polygon([
-        (0, floor_left_y), (PW, floor_right_y),
+        (0, floor_y), (PW, floor_y),
         (PW, DRAW_H), (0, DRAW_H)
     ], fill=FLOOR_DARK)
-    draw.line([(0, floor_left_y), (PW, floor_right_y)], fill=(35, 24, 14), width=1)
+    draw.line([(0, floor_y), (PW, floor_y)], fill=(35, 24, 14), width=1)
 
     # Glitch light (off-frame monitors, left side) — warm chaotic strobing
     for i in range(5):
@@ -467,10 +576,10 @@ def draw_p14(draw, img, font, font_bold, font_ann):
         draw.polygon([(0, 0), (i * 22 + 30, 0), (i * 10, DRAW_H), (0, DRAW_H)],
                      fill=(0, intensity, intensity + 15))
 
-    # --- BOOKSHELF (right half, fills right third) ---
-    shelf_x = int(PW * 0.52)
+    # --- BOOKSHELF (right half — starts at 43% to properly fill right half of frame) ---
+    shelf_x = int(PW * 0.43)
     shelf_top = int(DRAW_H * 0.05)
-    shelf_bot = floor_right_y - 2
+    shelf_bot = floor_y - 2
     draw.rectangle([shelf_x, shelf_top, PW - 5, shelf_bot], fill=SHELF_WARM,
                    outline=(60, 42, 24), width=2)
     # Shelf planks (3 levels)
@@ -580,8 +689,8 @@ def draw_p14(draw, img, font, font_bold, font_ann):
                        (impact_by - 30, impact_by + 20), 30, seed=14)
     add_pixel_confetti(draw, (0, PW // 3), (0, int(DRAW_H * 0.6)), 20, seed=141)
 
-    # Camera angle annotation
-    draw.text((4, DRAW_H - 14), "DUTCH 12° CW — fixed camera",
+    # Camera angle annotation (tilt applied via canvas rotation — geometry delivers 12°)
+    draw.text((4, DRAW_H - 14), "DUTCH 12° CW — canvas rotated — fixed camera",
               fill=(120, 110, 90), font=font_ann)
 
 
@@ -615,32 +724,62 @@ def draw_p15(draw, img, font, font_bold, font_ann):
             draw.ellipse([gx - gr * 2, 0, gx + gr * 2, gr * 2],
                          fill=(0, a_col, a_col + 10))
 
-    # Luma in freefall — body center-frame, slightly above mid-height
+    # Luma in freefall — PHYSICAL SURPRISE read before you see the face
+    # CYCLE 10 FIX (Carmen): Body language tells the story.
+    # - Torso SQUASH: compressed height (impact anticipation physics)
+    # - Head tilted BACK (startled — chin up, neck extended)
+    # - LEFT arm raised DEFENSIVELY (high — elbow up, wrist above head level)
+    # - RIGHT arm lower, angled out (asymmetry = uncontrolled reaction)
+    # - RIGHT leg pulled up, KNEE TO CHEST (fetal reflex, physical shock)
+    # - LEFT leg extends downward (asymmetric — one grounded reflex, one tuck)
     luma_cx = PW // 2 - 5
-    luma_cy = int(DRAW_H * 0.34)
+    luma_cy = int(DRAW_H * 0.36)
 
-    # Body (squash anticipation — compressed toward impact)
-    # PJ top (mint/pixel-grid)
-    body_top = luma_cy - 18
-    body_bot = luma_cy + 28
-    draw.ellipse([luma_cx - 28, body_top, luma_cx + 28, body_bot],
+    # Body — SQUASHED: tall compressed to wide. Torso squash = height ~60% of normal.
+    # Wide + short ellipse communicates impact compression instantly.
+    body_top = luma_cy - 12   # compressed — less vertical height than normal
+    body_bot = luma_cy + 26   # compressed bottom — total height ~38px vs normal 46px
+    draw.ellipse([luma_cx - 34, body_top, luma_cx + 34, body_bot],
                  fill=LUMA_PJ, outline=(100, 150, 120), width=2)
+    # Squash annotation
+    draw.line([(luma_cx + 36, body_top), (luma_cx + 46, body_top)],
+              fill=(0, 180, 200), width=1)
+    draw.line([(luma_cx + 36, body_bot), (luma_cx + 46, body_bot)],
+              fill=(0, 180, 200), width=1)
+    draw.line([(luma_cx + 41, body_top), (luma_cx + 41, body_bot)],
+              fill=(0, 180, 200), width=1)
+    draw.text((luma_cx + 48, luma_cy - 6), "SQUASH",
+              fill=(0, 180, 200), font=font_ann)
 
-    # Arms — maximum windmill spread (left flung high-left, right flung right)
-    draw.line([(luma_cx - 8, body_top + 12), (luma_cx - 55, body_top - 10)],
-              fill=LUMA_SKIN, width=6)
-    draw.line([(luma_cx + 8, body_top + 12), (luma_cx + 55, body_top - 8)],
+    # LEFT ARM — raised DEFENSIVELY HIGH (elbow up, wrist above head)
+    # Bent arm: shoulder → elbow goes up-left, elbow → wrist curls toward face
+    draw.line([(luma_cx - 12, body_top + 8), (luma_cx - 42, body_top - 28)],
+              fill=LUMA_SKIN, width=6)   # upper arm: angled up-left steeply
+    draw.line([(luma_cx - 42, body_top - 28), (luma_cx - 28, body_top - 42)],
+              fill=LUMA_SKIN, width=6)   # forearm: curls inward (defensive guard)
+
+    # RIGHT ARM — lower, flung outward (uncontrolled, asymmetric)
+    draw.line([(luma_cx + 10, body_top + 10), (luma_cx + 52, body_top + 18)],
               fill=LUMA_SKIN, width=6)
 
-    # Legs kicked out (spread-eagle)
-    draw.line([(luma_cx - 5, body_bot), (luma_cx - 40, body_bot + 30)],
-              fill=LUMA_SKIN, width=6)
-    draw.line([(luma_cx + 5, body_bot), (luma_cx + 38, body_bot + 28)],
+    # RIGHT LEG — KNEE TO CHEST (fetal/shock reflex — pulled tight)
+    # Thigh goes up-right, shin folds back under
+    draw.line([(luma_cx + 8, body_bot), (luma_cx + 32, body_bot - 18)],
+              fill=LUMA_SKIN, width=6)   # thigh pulled up
+    draw.line([(luma_cx + 32, body_bot - 18), (luma_cx + 18, body_bot + 8)],
+              fill=LUMA_SKIN, width=6)   # shin folded back (knee to chest geometry)
+
+    # LEFT LEG — extends downward (asymmetric — other leg kicks out)
+    draw.line([(luma_cx - 8, body_bot), (luma_cx - 32, body_bot + 36)],
               fill=LUMA_SKIN, width=6)
 
-    # Face — panic expression (but this IS the "WHAT" beat — transitioning to focus)
-    draw_luma_face(draw, luma_cx + 2, body_top - 22, size=46,
+    # Face — head TILTED BACK (startled — chin up, neck visible below face)
+    # Shift face slightly up and back to show head-tilt, neck exposed
+    draw_luma_face(draw, luma_cx - 4, body_top - 30, size=46,
                    expression='panic', hair_state='glitch-circle')
+    # Tilt annotation
+    draw.text((luma_cx - 62, body_top - 38), "HEAD BACK",
+              fill=(0, 200, 220), font=font_ann)
 
     # GLITCH-FORCED HAIR SYMMETRY annotation (storyboard note — the visual gag)
     # The perfect circle is already drawn by draw_luma_face with hair_state='glitch-circle'
@@ -842,15 +981,19 @@ def draw_p17(draw, img, font, font_bold, font_ann):
     draw.text((luma_cx - 26, luma_cy + 4), "HISTORY OF THE INTERNET",
               fill=(80, 70, 50), font=font_ann)
 
-    # Face (curious expression — settling from panic into assessment)
+    # Face — SETTLING expression (not curious — she has settled from panic into wonder)
+    # P17: After the excitement high. She's looking at Byte with open-mouthed wonder.
+    # Carmen: wide eyes, brows raised, mouth softly open — the comma before the exclamation.
     draw_luma_face(draw, luma_cx + 2, luma_cy - 62, size=44,
-                   expression='curious', hair_state='normal')
+                   expression='settling', hair_state='normal')
 
     # BYTE — floating at chest height to Luma, center of room
+    # CYCLE 9 FIX: Expression 'resigned' not 'alarmed' — quiet beat, not alarm beat.
+    # Carmen: 'alarmed' at maximum during chip-landing undercuts the silence.
     byte_cx = int(PW * 0.60)
     byte_cy = int(DRAW_H * 0.44)
     draw_byte_body(draw, byte_cx, byte_cy, size=48,
-                   expression='alarmed', lean_deg=0, trail=False)
+                   expression='resigned', lean_deg=0, trail=False)
     # "Breathing" chest indicator — does he breathe? chest going up/down
     draw.arc([byte_cx - 12, byte_cy - 10, byte_cx + 12, byte_cy + 6],
              start=0, end=180, fill=(0, 180, 200), width=2)
@@ -938,9 +1081,12 @@ def draw_p18(draw, img, font, font_bold, font_ann):
     draw.text((nb_cx - 30, nb_cy + 10), "what if a computer", fill=(80, 65, 45), font=font_nb)
     draw.text((nb_cx - 30, nb_cy + 17), "had FEELINGS???", fill=(80, 65, 45), font=font_nb)
 
-    # Face — curiosity has become deliberate ASSESSMENT (mid-grin of recognition)
+    # Face — RECOGNITION expression (not curious — she is connecting notebook to Byte)
+    # P18: Luma realizes she has been drawing Glitchkin in her margins.
+    # Carmen: "recognition, not curiosity" — cognitive connection. One brow raised,
+    # eyes narrowed in concentration, asymmetric aha-moment expression.
     draw_luma_face(draw, luma_cx + 2, luma_cy - 55, size=48,
-                   expression='curious', hair_state='normal')
+                   expression='recognition', hair_state='normal')
 
     # Byte (off-frame right, just barely visible as sliver — his POV implied)
     draw.rectangle([PW - 8, int(DRAW_H * 0.32), PW - 2, int(DRAW_H * 0.56)],
@@ -1082,9 +1228,12 @@ def draw_p20(draw, img, font, font_bold, font_ann):
     draw.polygon([(luma_cx + 30, luma_cy + 8), (luma_cx - 5, luma_cy + 8),
                   (luma_cx - 10, floor_y - 2), (luma_cx + 38, floor_y - 2)],
                  fill=(95, 62, 40))
-    # Face — looking right at Byte
+    # Face — WARMTH expression (not curious — she is choosing connection with Byte)
+    # P20: The name exchange. First feeling of genuine connection.
+    # Carmen: "She is choosing warmth deliberately." Soft smile, eyes narrowed in warmth,
+    # brows gently raised — emotional intent, not assessment.
     draw_luma_face(draw, luma_cx + 2, luma_cy - 52, size=42,
-                   expression='curious', hair_state='normal')
+                   expression='warmth', hair_state='normal')
     # Notebook (still in lap)
     draw.rectangle([luma_cx - 22, luma_cy + 4, luma_cx + 22, luma_cy + 14],
                    fill=(235, 225, 195), outline=(80, 70, 50), width=1)
@@ -1107,96 +1256,173 @@ def draw_p20(draw, img, font, font_bold, font_ann):
 
 def draw_p21(draw, img, font, font_bold, font_ann):
     """P21: WIDE HIGH ANGLE — Full room chaos resuming. Inverse of opening push-in.
-    Camera retreating overhead: back wall monitors BLAZING, pixel confetti fills room
-    floor-to-ceiling like a snow globe. Multiple Glitchkin shapes pressing monitor insides.
-    Byte URGENT. Luma pointing. They see: Byte is NOT alone."""
+    CYCLE 9 FIX: Camera is 40-45° high angle isometric (NOT straight-down 90°).
+    'Pulling back and up slightly' per script. Characters have PROFILE visible —
+    not just top-of-head circles. Room walls implied. Floor plane at angle.
+    Back wall monitors BLAZING, pixel confetti fills room like snow globe.
+    Multiple Glitchkin pressing monitor insides. Byte URGENT. Luma pointing.
+    They see: Byte is NOT alone."""
     draw.rectangle([0, 0, PW, DRAW_H], fill=(16, 10, 8))
 
-    # HIGH ANGLE from above — room floor fills more of frame
-    # Overhead perspective: we see floor plan
-    floor_start_y = int(DRAW_H * 0.18)
+    # ── ISOMETRIC / 40-45° HIGH ANGLE LAYOUT ──
+    # Back wall occupies upper portion, floor angles down into foreground
+    # Visible perspective: we see both the wall face AND floor receding
+    back_wall_top = 0
+    back_wall_bot = int(DRAW_H * 0.38)   # wall-floor junction line
+    floor_bot = DRAW_H                    # floor extends to bottom of frame
 
-    # Floor (large area — overhead view)
-    draw.rectangle([0, floor_start_y, PW, DRAW_H], fill=(18, 12, 8))
+    # BACK WALL (upper portion, facing camera)
+    draw.rectangle([0, back_wall_top, PW, back_wall_bot], fill=(22, 14, 10))
 
-    # Floor grid (suggests space from above)
-    for gx in range(0, PW, 40):
-        draw.line([(gx, floor_start_y), (gx, DRAW_H)], fill=(22, 15, 10), width=1)
-    for gy in range(floor_start_y, DRAW_H, 30):
-        draw.line([(0, gy), (PW, gy)], fill=(22, 15, 10), width=1)
+    # FLOOR receding away (isometric — floor plane visible)
+    # Perspective lines converging toward horizon at back_wall_bot
+    draw.polygon([
+        (0, back_wall_bot), (PW, back_wall_bot),
+        (PW, floor_bot), (0, floor_bot)
+    ], fill=(18, 12, 8))
 
-    # Back wall at top of frame (foreshortened from above)
-    back_wall_h = int(DRAW_H * 0.18)
-    draw.rectangle([0, 0, PW, back_wall_h], fill=(20, 14, 10))
+    # Floor perspective grid (isometric lines receding to back wall)
+    # Vertical lines (left-right spacing)
+    for gx in range(0, PW + 1, 60):
+        draw.line([(gx, back_wall_bot), (gx, floor_bot)], fill=(24, 16, 10), width=1)
+    # Horizontal lines (depth bands receding)
+    for depth in range(5):
+        gy = back_wall_bot + int((floor_bot - back_wall_bot) * (depth / 5))
+        # Slight perspective narrowing of horizontal bands
+        draw.line([(0, gy), (PW, gy)], fill=(24, 16, 10), width=1)
 
-    # MONITORS (back wall) — ALL BLAZING at maximum intensity
+    # Side walls implied (left and right wall meeting back wall)
+    # Left wall edge
+    draw.line([(0, back_wall_bot), (0, floor_bot)], fill=(30, 20, 12), width=2)
+    # Right wall edge
+    draw.line([(PW, back_wall_bot), (PW, floor_bot)], fill=(30, 20, 12), width=2)
+    # Ceiling implied as dark edge at very top
+    draw.rectangle([0, 0, PW, 6], fill=(12, 8, 6))
+
+    # MONITORS ON BACK WALL — ALL BLAZING at maximum intensity
     # Glitchkin shapes pressing against insides of each monitor
     monitor_cols = [(0, 55, 70), (40, 0, 35), (0, 40, 60), (50, 20, 0)]
-    for mi, (mx, mw, mc) in enumerate(
-        [(20, 85, monitor_cols[0]),
-         (140, 90, monitor_cols[1]),
-         (268, 80, monitor_cols[2]),
-         (374, 88, monitor_cols[3])]
-    ):
-        my, mh = 4, back_wall_h - 10
+    mon_configs = [
+        (15, 8, 88, back_wall_bot - 14, monitor_cols[0]),
+        (130, 5, 92, back_wall_bot - 10, monitor_cols[1]),
+        (255, 7, 84, back_wall_bot - 12, monitor_cols[2]),
+        (368, 6, 90, back_wall_bot - 11, monitor_cols[3]),
+    ]
+    for mi, (mx, my, mw, mh, mc) in enumerate(mon_configs):
         # Monitor casing
         draw.rectangle([mx, my, mx + mw, my + mh], fill=(10, 8, 14),
                        outline=(30, 22, 40), width=2)
         # Screen — overlit, straining
         draw.rectangle([mx + 3, my + 3, mx + mw - 3, my + mh - 3], fill=mc)
-        # GLITCHKIN shapes pressing from inside (the threat)
-        # Each monitor has a cluster pressing against glass
+        # Scan lines (texture)
+        for sl in range(my + 4, my + mh - 4, 4):
+            draw.line([(mx + 3, sl), (mx + mw - 3, sl)],
+                      fill=(0, min(255, mc[1] + 40), min(255, mc[2] + 60)), width=1)
+        # GLITCHKIN pressing from inside
         rng_m = random.Random(mi * 7 + 21)
         for gk in range(3 + mi % 2):
-            gkx = mx + rng_m.randint(8, mw - 16)
+            gkx = mx + rng_m.randint(10, mw - 18)
             gky = my + rng_m.randint(6, mh - 10)
             gks = rng_m.randint(6, 12)
-            # Glitchkin face pressed flat (triangle/jagged)
             draw.rectangle([gkx - gks // 2, gky - gks // 2,
                             gkx + gks // 2, gky + gks // 2],
                            fill=GLITCH_CYAN, outline=(0, 180, 200), width=1)
             draw.ellipse([gkx - 2, gky - 3, gkx + 2, gky + 1], fill=(255, 255, 255))
-            # Screen ripple at contact point
-            draw.ellipse([gkx - gks, gky - gks // 2,
-                          gkx + gks, gky + gks // 2],
-                         outline=(min(255, mc[0] + 60),
-                                  min(255, mc[1] + 80),
-                                  min(255, mc[2] + 100)), width=1)
 
-    # PIXEL CONFETTI filling the room floor-to-ceiling (snow globe)
-    add_pixel_confetti(draw, (0, PW), (floor_start_y, DRAW_H), 80, seed=21,
+    # PIXEL CONFETTI filling room (snow globe — floor-to-ceiling)
+    add_pixel_confetti(draw, (0, PW), (back_wall_bot, floor_bot), 70, seed=21,
                        colors=[GLITCH_CYAN, GLITCH_MAG, (255, 240, 100), (200, 255, 200)])
+    add_pixel_confetti(draw, (0, PW), (back_wall_top, back_wall_bot), 30, seed=212,
+                       colors=[GLITCH_CYAN, GLITCH_MAG])
 
-    # LUMA (overhead) — standing, pointing at monitors
-    luma_cx = int(PW * 0.35)
-    luma_cy = int(DRAW_H * 0.62)
-    # From above: just head top + shoulders visible
-    draw.ellipse([luma_cx - 14, luma_cy - 14, luma_cx + 14, luma_cy + 14],
+    # ── LUMA — 40-45° high angle: PROFILE VISIBLE, not just top-of-head ──
+    # She is standing on the floor plane (midground), pointing at monitors
+    # At 40° angle we see her from above-and-in-front — profile + top
+    luma_cx = int(PW * 0.32)
+    luma_cy = int(DRAW_H * 0.60)   # mid-floor-plane = mid-frame vertically
+
+    # Body from high angle: torso foreshortened, still readable as upright figure
+    # Shoulders as ellipse (high-angle foreshortening)
+    draw.ellipse([luma_cx - 18, luma_cy - 8, luma_cx + 18, luma_cy + 8],
+                 fill=LUMA_PJ, outline=(90, 135, 110), width=2)
+    # Head and partial face (40° angle: we see top + some profile — NOT pure silhouette)
+    draw.ellipse([luma_cx - 14, luma_cy - 28, luma_cx + 14, luma_cy - 4],
                  fill=LUMA_HAIR)
-    draw.ellipse([luma_cx - 8, luma_cy + 10, luma_cx + 8, luma_cy + 20],
-                 fill=LUMA_PJ)  # shoulders
-    # Arm pointing at monitors (overhead foreshortened)
-    draw.line([(luma_cx + 8, luma_cy + 12), (luma_cx + 42, luma_cy - 20)],
-              fill=LUMA_SKIN, width=4)
+    # Partial face profile (visible at 40-45° — not just a hair circle)
+    draw.ellipse([luma_cx - 10, luma_cy - 24, luma_cx + 12, luma_cy - 8],
+                 fill=LUMA_SKIN)
+    # Visible eye (one, partial profile)
+    draw.ellipse([luma_cx + 2, luma_cy - 20, luma_cx + 8, luma_cy - 14],
+                 fill=(255, 245, 230))
+    draw.ellipse([luma_cx + 4, luma_cy - 19, luma_cx + 7, luma_cy - 15],
+                 fill=(20, 12, 8))
 
-    # BYTE (overhead) — urgently gesturing, hovering above floor
+    # Arm pointing at monitors (from high angle — arm foreshortened toward back wall)
+    arm_end_x = luma_cx + int(40 * math.cos(math.radians(-50)))
+    arm_end_y = luma_cy + int(40 * math.sin(math.radians(-50)))
+    draw.line([(luma_cx + 14, luma_cy - 4), (arm_end_x, arm_end_y)],
+              fill=LUMA_SKIN, width=5)
+    # Pointing finger tip
+    draw.ellipse([arm_end_x - 4, arm_end_y - 4, arm_end_x + 4, arm_end_y + 4],
+                 fill=LUMA_SKIN)
+
+    # Legs (foreshortened — just visible below shoulder mass)
+    draw.line([(luma_cx - 8, luma_cy + 6), (luma_cx - 12, luma_cy + 22)],
+              fill=(95, 62, 40), width=6)
+    draw.line([(luma_cx + 8, luma_cy + 6), (luma_cx + 12, luma_cy + 22)],
+              fill=(95, 62, 40), width=6)
+
+    # Shadow on floor (depth cue for floating vs standing)
+    draw.ellipse([luma_cx - 16, luma_cy + 20, luma_cx + 16, luma_cy + 28],
+                 fill=(10, 7, 4))
+
+    # ── BYTE — 40-45° high angle: profile + top visible (NOT pure cube top) ──
     byte_cx = int(PW * 0.60)
-    byte_cy = int(DRAW_H * 0.50)
-    # From above: just his top cube visible
-    draw.rectangle([byte_cx - 14, byte_cy - 14, byte_cx + 14, byte_cy + 14],
-                   fill=BYTE_CYAN, outline=BYTE_DARK, width=2)
-    # Glow pool below him (floating indicator from above)
-    draw.ellipse([byte_cx - 22, byte_cy + 12, byte_cx + 22, byte_cy + 22],
-                 fill=(0, 45, 55))
+    byte_cy = int(DRAW_H * 0.52)
+    byte_sz = 26  # wide-shot scale
 
-    # Pixel trails from both characters (overhead)
+    # Byte body from high-ish angle: we see top + front face of cube
+    # Top face (foreshortened — flat ellipse above)
+    draw.ellipse([byte_cx - byte_sz // 2, byte_cy - byte_sz - 6,
+                  byte_cx + byte_sz // 2, byte_cy - byte_sz + 6],
+                 fill=BYTE_CYAN, outline=BYTE_DARK, width=1)
+    # Front face of cube (profile visible — not just dot)
+    draw.rectangle([byte_cx - byte_sz // 2, byte_cy - byte_sz,
+                    byte_cx + byte_sz // 2, byte_cy + byte_sz // 3],
+                   fill=BYTE_CYAN, outline=BYTE_DARK, width=1)
+    # Spike on top (from above angle — spike visible as a point)
+    draw.polygon([
+        (byte_cx - 4, byte_cy - byte_sz),
+        (byte_cx + 4, byte_cy - byte_sz),
+        (byte_cx, byte_cy - byte_sz - 10),
+    ], fill=BYTE_CYAN, outline=BYTE_DARK, width=1)
+    # Visible eye on front face
+    draw.ellipse([byte_cx - 5, byte_cy - byte_sz + 4,
+                  byte_cx + 5, byte_cy - byte_sz + 12],
+                 fill=(255, 255, 255), outline=BYTE_DARK, width=1)
+    draw.ellipse([byte_cx - 2, byte_cy - byte_sz + 6,
+                  byte_cx + 2, byte_cy - byte_sz + 10],
+                 fill=BYTE_DARK)
+    # Urgency: arms raised / gesturing (visible from high angle)
+    draw.line([(byte_cx - byte_sz // 2, byte_cy - byte_sz // 2),
+               (byte_cx - byte_sz, byte_cy - byte_sz)],
+              fill=BYTE_CYAN, width=3)
+    draw.line([(byte_cx + byte_sz // 2, byte_cy - byte_sz // 2),
+               (byte_cx + byte_sz, byte_cy - byte_sz)],
+              fill=BYTE_CYAN, width=3)
+    # Glow pool on floor beneath him
+    draw.ellipse([byte_cx - 20, byte_cy + byte_sz // 3 - 4,
+                  byte_cx + 20, byte_cy + byte_sz // 3 + 4],
+                 fill=(0, 40, 50))
+
+    # Pixel trails from Byte (urgency)
     add_pixel_confetti(draw, (byte_cx - 30, byte_cx + 60),
-                       (byte_cy - 20, byte_cy + 40), 20, seed=211)
+                       (byte_cy - 20, byte_cy + 40), 18, seed=211)
 
     # Camera direction annotation
-    draw.text((4, 4), "HIGH ANGLE — overhead — retreating from scene",
-              fill=(120, 110, 90), font=font_ann)
-    draw.text((4, DRAW_H - 14), "INVERSE of opening push-in",
+    draw.text((4, 4), "HIGH ANGLE 40-45° — not straight down — profiles visible",
+              fill=(0, 200, 220), font=font_ann)
+    draw.text((4, DRAW_H - 14), "INVERSE of opening push-in — camera retreating UP",
               fill=(120, 110, 90), font=font_ann)
 
 
@@ -1230,23 +1456,35 @@ def draw_p22(draw, img, font, font_bold, font_ann):
                   fill=(0, min(255, brightness + 60), min(255, brightness + 90)), width=1)
 
     # GLITCHKIN pressing from inside — multiple, jostling, chaotic
-    # Each one pressing hard against the glass from behind the static
+    # CYCLE 10 FIX (Carmen): ECU must show MORE detail, not less. Each Glitchkin
+    # uses varied polygon shapes (4-7 sides, different sizes) — same approach as P24.
+    # No two shapes identical — visually distinct, organically menacing.
     rng_22 = random.Random(22)
     for gk in range(8):
         gx = rng_22.randint(screen_x1 + 15, screen_x2 - 15)
         gy = rng_22.randint(screen_y1 + 10, screen_y2 - 10)
-        gs = rng_22.randint(18, 36)
-        # Glitchkin body (jagged, pressing flat — face against glass)
-        draw.rectangle([gx - gs // 2, gy - gs // 2,
-                        gx + gs // 2, gy + gs // 2],
-                       fill=(0, 180, 200), outline=(0, 140, 165), width=2)
-        # Face pressed against glass (distorted — nose smushed)
-        draw.ellipse([gx - gs // 3, gy - gs // 3,
-                      gx + gs // 3, gy + gs // 3],
+        gs = rng_22.randint(18, 42)  # wider size range for variety
+        num_sides = 4 + rng_22.randint(0, 3)  # 4, 5, 6, or 7 sides
+        # Glitchkin body — irregular polygon, each shape unique
+        # Pressing-flat distortion: x-axis squash (wider than tall) at glass surface
+        pts = []
+        for side in range(num_sides):
+            ang = side * (2 * math.pi / num_sides) + rng_22.uniform(-0.3, 0.3)
+            jitter_x = rng_22.randint(-gs // 4, gs // 4)
+            jitter_y = rng_22.randint(-gs // 4, gs // 4)
+            # Slight x-stretch: pressed against glass = wider shape
+            pts.append((gx + int((gs // 2 + jitter_x) * 1.2 * math.cos(ang)),
+                        gy + int((gs // 2 + jitter_y) * 0.8 * math.sin(ang))))
+        if len(pts) >= 3:
+            body_col = rng_22.choice([(0, 180, 200), (0, 160, 185), (0, 195, 215), (20, 200, 210)])
+            draw.polygon(pts, fill=body_col, outline=(0, 120, 150), width=2)
+        # Smushed-face highlight — ellipse showing face pressed against glass
+        draw.ellipse([gx - gs // 3, gy - gs // 4,
+                      gx + gs // 3, gy + gs // 4],
                      fill=(0, 220, 240), outline=(0, 150, 180), width=1)
-        # Eye pixels
-        draw.rectangle([gx - 3, gy - 3, gx - 1, gy - 1], fill=(255, 255, 255))
-        draw.rectangle([gx + 1, gy - 3, gx + 3, gy - 1], fill=(255, 255, 255))
+        # Eye pixels (two white squares — the giveaway that these are faces)
+        draw.rectangle([gx - 4, gy - 3, gx - 1, gy], fill=(255, 255, 255))
+        draw.rectangle([gx + 1, gy - 3, gx + 4, gy], fill=(255, 255, 255))
 
     # THE HAND TOUCHING GLASS — center-frame, low-center compositional anchor
     # (MEMORY.md: lower-center is the anchor. Eye rests here.)
@@ -1465,6 +1703,9 @@ def draw_p23(draw, img, font, font_bold, font_ann):
     draw.rectangle([0, back_wall_y, PW, floor_y], fill=(12, 8, 16))
 
     # MONITOR WALL (filling back of frame, all bowing forward)
+    # CYCLE 10 FIX (Carmen): Increase contrast dramatically. Monitors must read as
+    # "about to break through" — hot white-cyan center, high-contrast dark bezels,
+    # aggressive distortion rings breaking outside the bezel edge, bright outline glow.
     monitors_bowing = [
         (20, back_wall_y + 4, 80, 48),
         (120, back_wall_y + 2, 90, 52),
@@ -1473,31 +1714,61 @@ def draw_p23(draw, img, font, font_bold, font_ann):
         (430, back_wall_y + 4, 45, 44),
     ]
     for mx, my, mw, mh in monitors_bowing:
-        # Each screen bowing (bulge effect at center)
-        draw.rectangle([mx, my, mx + mw, my + mh], fill=(6, 4, 12),
-                       outline=(25, 18, 38), width=2)
-        # Screen content: overloaded glitch light
-        for gr in range(mh // 2, 3, -4):
-            bv = max(0, 120 - gr * 4)
-            draw.ellipse([mx + mw // 2 - gr * 2, my + mh // 2 - gr,
-                          mx + mw // 2 + gr * 2, my + mh // 2 + gr],
-                         fill=(0, min(255, bv + 80), min(255, bv + 110)))
+        cx_m = mx + mw // 2
+        cy_m = my + mh // 2
+        # Screen fill — overloaded, nearly white-hot at center
+        draw.rectangle([mx, my, mx + mw, my + mh], fill=(0, 180, 220))
+        # AGGRESSIVE distortion rings OUTSIDE bezel (breaking through physical boundary)
+        for rr in range(mh // 2 + 20, 3, -5):
+            ring_intensity = max(0, 255 - rr * 7)
+            ring_col = (0, min(255, ring_intensity + 100), min(255, ring_intensity + 130))
+            draw.ellipse([cx_m - rr * 2, cy_m - rr,
+                          cx_m + rr * 2, cy_m + rr],
+                         outline=ring_col, width=2)
+        # Hot-center radial gradient — near-white at bull's-eye
+        for gr in range(mh // 2, 1, -3):
+            heat = min(255, 255 - gr * 5)
+            draw.ellipse([cx_m - gr * 2, cy_m - gr,
+                          cx_m + gr * 2, cy_m + gr],
+                         fill=(heat // 5, min(255, heat + 40), 255))
+        # Hottest point — pure white punch at center
+        hw = max(5, mw // 8)
+        draw.ellipse([cx_m - hw, cy_m - hw // 2,
+                      cx_m + hw, cy_m + hw // 2],
+                     fill=(220, 255, 255))
+        # BEZEL — thick, high-contrast dark frame (threat needs a dark surround)
+        draw.rectangle([mx, my, mx + mw, my + mh], fill=None,
+                       outline=(200, 255, 255), width=3)
+        draw.rectangle([mx - 3, my - 3, mx + mw + 3, my + mh + 3], fill=None,
+                       outline=(5, 3, 10), width=4)
         # Pixel confetti erupting from monitor (breach starting)
         add_pixel_confetti(draw,
                            (mx - 10, mx + mw + 10),
                            (my - 6, my + mh + 6),
-                           12, seed=mx + 23)
+                           16, seed=mx + 23)
 
     # Glitchkin shapes pressing from all monitor insides
+    # CYCLE 11 FIX (Carmen): Use same 4-7 sided polygon approach as P22 and P24.
+    # Rectangles at this scale are generic — polygons with per-vertex jitter create
+    # organic, distinct shapes that read as individual creatures, not uniform blocks.
     rng_23 = random.Random(23)
     for _ in range(14):
         gx = rng_23.randint(20, PW - 20)
         gy = rng_23.randint(back_wall_y + 4, back_wall_y + 48)
         gs = rng_23.randint(8, 18)
-        draw.rectangle([gx - gs // 2, gy - gs // 2,
-                        gx + gs // 2, gy + gs // 2],
-                       fill=(0, rng_23.randint(160, 240), rng_23.randint(180, 255)),
-                       outline=(0, 140, 180), width=1)
+        num_sides = 4 + rng_23.randint(0, 3)  # 4, 5, 6, or 7 sides
+        pts = []
+        for side in range(num_sides):
+            ang = side * (2 * math.pi / num_sides) + rng_23.uniform(-0.3, 0.3)
+            jitter_x = rng_23.randint(-gs // 4, gs // 4)
+            jitter_y = rng_23.randint(-gs // 4, gs // 4)
+            pts.append((gx + int((gs // 2 + jitter_x) * math.cos(ang)),
+                        gy + int((gs // 2 + jitter_y) * math.sin(ang))))
+        if len(pts) >= 3:
+            body_col = (0, rng_23.randint(160, 240), rng_23.randint(180, 255))
+            draw.polygon(pts, fill=body_col, outline=(0, 140, 180), width=1)
+        # Pixel eye — gives each Glitchkin a face even at small scale
+        draw.rectangle([gx - 1, gy - 1, gx + 1, gy + 1], fill=(255, 255, 255))
 
     # PIXEL CONFETTI filling the room (floor to ceiling — snow globe)
     add_pixel_confetti(draw, (0, PW), (back_wall_y, floor_y), 65, seed=23,
@@ -1566,23 +1837,25 @@ def draw_p23(draw, img, font, font_bold, font_ann):
 
 def draw_p24(draw, img, font, font_bold, font_ann):
     """P24: WIDE — Chaos apex: THE BREACH. Multiple Glitchkin POURING out.
-    Dutch tilt 12° LEFT. Maximum energy. Low angle — Luma hero shot.
+    Dutch tilt 12° LEFT — applied as TRUE canvas rotation via make_panel().
+    CYCLE 9 FIX: Luma moved to LOWER-LEFT THIRD. Partially cropped at bottom
+    (foreground figure). Camera reads as looking UP at her.
     Luma foreground: low-angle chin-up, jaw SET, eyes WIDE. Reckless excitement.
     Byte on shoulder: resigned dignity, absolutely furious, absolutely staying.
-    Background: wall-to-wall Glitchkin pouring from breached monitors.
+    Background chaos fills right + upper portions. Glitchkin everywhere except
+    the still point where Luma+Byte stand.
     This is THE HOOK FRAME. Hold 1.5s. Everything at maximum except the two leads."""
     draw.rectangle([0, 0, PW, DRAW_H], fill=(8, 4, 14))
 
-    # DUTCH TILT 12° LEFT via skewed floor/horizon
-    floor_left_y = int(DRAW_H * 0.72)
-    floor_right_y = int(DRAW_H * 0.83)
-    draw.polygon([(0, floor_left_y), (PW, floor_right_y),
+    # Floor — FLAT (12° Dutch tilt applied via canvas rotation after draw)
+    floor_y = int(DRAW_H * 0.76)
+    draw.polygon([(0, floor_y), (PW, floor_y),
                   (PW, DRAW_H), (0, DRAW_H)], fill=(6, 3, 10))
-    draw.line([(0, floor_left_y), (PW, floor_right_y)], fill=(16, 10, 20), width=1)
+    draw.line([(0, floor_y), (PW, floor_y)], fill=(16, 10, 20), width=1)
 
     # Background: monitors ALL BREACHED — Glitchkin pouring out
     # Back wall, total chaos palette — warm world GONE
-    draw.rectangle([0, 0, PW, floor_left_y], fill=(10, 5, 18))
+    draw.rectangle([0, 0, PW, floor_y], fill=(10, 5, 18))
 
     # BREACHED MONITORS across back wall
     breach_monitors = [
@@ -1606,7 +1879,7 @@ def draw_p24(draw, img, font, font_bold, font_ann):
     rng_24 = random.Random(24)
     for gk in range(35):
         gx = rng_24.randint(10, PW - 10)
-        gy = rng_24.randint(8, int(floor_left_y * 0.88))
+        gy = rng_24.randint(8, int(floor_y * 0.88))
         gs = rng_24.randint(10, 32)
         # Each Glitchkin: random jagged body + pixel eye
         pts = []
@@ -1626,69 +1899,76 @@ def draw_p24(draw, img, font, font_bold, font_ann):
         cx_b = mx_b + mw_b // 2
         cy_b = my_b + mh_b // 2
         add_pixel_confetti(draw, (cx_b - 20, cx_b + 20),
-                           (cy_b - 10, floor_left_y),
+                           (cy_b - 10, floor_y),
                            10, seed=mx_b + 241)
 
     # PIXEL CONFETTI — maximum saturation, room full
-    add_pixel_confetti(draw, (0, PW), (0, floor_left_y), 80, seed=24,
+    add_pixel_confetti(draw, (0, PW), (0, floor_y), 80, seed=24,
                        colors=[GLITCH_CYAN, GLITCH_MAG,
                                 (255, 240, 60), (100, 255, 200), (255, 100, 255)])
 
-    # LUMA — FOREGROUND, low angle, hero shot
-    # Lower-center compositional anchor (MEMORY.md: urgency/discovery)
-    luma_cx = int(PW * 0.36)
-    luma_cy = int(DRAW_H * 0.63)
+    # LUMA — FOREGROUND, LOWER-LEFT THIRD — partially cropped at bottom
+    # CYCLE 9 FIX: Camera reads as looking UP at her — she fills lower-left.
+    # Figure is LARGE, cropped at bottom edge (foreground hero placement).
+    # Background chaos + Glitchkin fill right half and upper portions.
+    luma_cx = int(PW * 0.22)    # Left third of frame (not center)
+    luma_cy = int(DRAW_H * 0.72)  # Low — figure extends below frame bottom (cropped)
 
-    # Body (from slightly below — empowered framing)
-    draw.rectangle([luma_cx - 28, luma_cy - 30, luma_cx + 28, floor_left_y - 4],
-                   fill=LUMA_PJ, outline=(90, 135, 110), width=2)
-    # Arms at sides, slightly out (ready-to-move pose)
-    draw.line([(luma_cx - 20, luma_cy - 18), (luma_cx - 48, luma_cy + 10)],
-              fill=LUMA_SKIN, width=7)
-    draw.line([(luma_cx + 20, luma_cy - 18), (luma_cx + 46, luma_cy + 8)],
-              fill=LUMA_SKIN, width=7)
-    # Legs (perspective foreshortened — low angle)
-    draw.rectangle([luma_cx - 22, floor_left_y - 14,
-                    luma_cx - 8, floor_left_y + 4], fill=(95, 62, 40))
-    draw.rectangle([luma_cx + 8, floor_left_y - 12,
-                    luma_cx + 22, floor_left_y + 4], fill=(95, 62, 40))
+    # Body — large foreground figure (low angle = she looms into frame)
+    # Body extends below DRAW_H — partially cropped at bottom (foreground!)
+    body_top = luma_cy - 55
+    body_bot = DRAW_H + 20      # INTENTIONALLY below frame bottom = cropped
+    draw.rectangle([luma_cx - 36, body_top, luma_cx + 36, body_bot],
+                   fill=LUMA_PJ, outline=(90, 135, 110), width=3)
+    # Arms at sides, slightly out — ready-to-move pose (large scale)
+    draw.line([(luma_cx - 28, body_top + 20), (luma_cx - 65, body_top + 55)],
+              fill=LUMA_SKIN, width=9)
+    draw.line([(luma_cx + 28, body_top + 20), (luma_cx + 62, body_top + 52)],
+              fill=LUMA_SKIN, width=9)
+    # Legs (low-angle foreshortening — barely visible, cropped)
+    draw.rectangle([luma_cx - 28, floor_y - 10,
+                    luma_cx - 10, floor_y + 8], fill=(95, 62, 40))
+    draw.rectangle([luma_cx + 10, floor_y - 8,
+                    luma_cx + 28, floor_y + 8], fill=(95, 62, 40))
 
     # Face — MAXIMUM RECKLESS EXCITEMENT (the show's signature Luma expression)
     # Chin up, eyes wide, jaw set — adrenaline overriding sense
-    draw_luma_face(draw, luma_cx + 2, luma_cy - 65, size=52,
+    # Face is at mid-frame vertically (low angle: body goes DOWN below frame)
+    draw_luma_face(draw, luma_cx + 2, luma_cy - 100, size=62,
                    expression='reckless', hair_state='max-volume')
 
-    # BYTE — on her shoulder, resigned dignity
-    byte_cx = luma_cx + 32
-    byte_cy = luma_cy - 48
-    draw_byte_body(draw, byte_cx, byte_cy, size=38,
+    # BYTE — on her shoulder, resigned dignity, upper-left area near Luma
+    byte_cx = luma_cx + 44
+    byte_cy = body_top - 10
+    draw_byte_body(draw, byte_cx, byte_cy, size=40,
                    expression='resigned', lean_deg=-5, trail=False)
 
     # Byte's pixel confetti corona (his presence marks her)
-    for cr in range(12, 3, -3):
+    for cr in range(14, 3, -3):
         draw.ellipse([byte_cx - cr, byte_cy - cr, byte_cx + cr, byte_cy + cr],
-                     outline=(0, max(0, 120 - cr * 10), max(0, 150 - cr * 10)), width=1)
+                     outline=(0, max(0, 120 - cr * 8), max(0, 150 - cr * 8)), width=1)
 
-    # STILL POINT annotation (the two vs the chaos)
-    draw.text((4, 4), "THE HOOK FRAME — still point in the storm",
+    # STILL POINT annotation (lower-left two vs the chaos filling rest of frame)
+    draw.text((PW // 2 + 20, 4), "THE HOOK FRAME — still point in the storm",
               fill=(0, 200, 220), font=font_ann)
-    draw.text((4, 14), "Hold 1.5s — everything max except leads",
+    draw.text((PW // 2 + 20, 14), "Hold 1.5s — Luma lower-left, chaos fills frame",
               fill=(0, 180, 200), font=font_ann)
 
-    # Dutch tilt annotation
-    draw.text((4, DRAW_H - 14), "WIDE — DUTCH 12° LEFT — low angle — maximum energy",
+    # Dutch tilt annotation (canvas rotation delivers true 12° — not polygon tilt)
+    draw.text((4, DRAW_H - 14), "WIDE — DUTCH 12° canvas rotate — low angle hero",
               fill=(120, 110, 90), font=font_ann)
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 PANELS = [
-    # (panel_num, shot_type, caption_text, draw_fn, output_filename)
+    # (panel_num, shot_type, caption_text, draw_fn, output_filename, dutch_tilt_deg, dutch_bg)
     (
         "14", "MED",
         "Byte ricochets off bookshelf — multi-exposure trajectory — pinball physics",
         draw_p14,
-        "panel_p14_bookshelf_ricochet.png"
+        "panel_p14_bookshelf_ricochet.png",
+        12, (20, 14, 8)   # TRUE 12° Dutch tilt CW — canvas rotation
     ),
     (
         "15", "MED",
@@ -1754,22 +2034,27 @@ PANELS = [
         "24", "WIDE",
         "THE BREACH: Glitchkin pouring out — Luma hero shot — Byte on shoulder — HOOK",
         draw_p24,
-        "panel_p24_breach_apex.png"
+        "panel_p24_breach_apex.png",
+        -12, (8, 4, 14)   # TRUE 12° Dutch tilt LEFT (negative = CCW) — canvas rotation
     ),
 ]
 
 
 def main():
     print("=" * 60)
-    print("Panel Chaos Generator — Cycle 8")
+    print("Panel Chaos Generator — Cycle 9")
     print("Generating P14–P24 (The Chaos Sequence)")
     print("=" * 60)
 
     import os
     os.makedirs(PANELS_DIR, exist_ok=True)
 
-    for panel_num, shot_type, caption, draw_fn, filename in PANELS:
-        make_panel(panel_num, shot_type, caption, draw_fn, filename)
+    for entry in PANELS:
+        panel_num, shot_type, caption, draw_fn, filename = entry[:5]
+        dutch_deg = entry[5] if len(entry) > 5 else 0
+        dutch_bg  = entry[6] if len(entry) > 6 else (8, 4, 14)
+        make_panel(panel_num, shot_type, caption, draw_fn, filename,
+                   dutch_tilt_deg=dutch_deg, dutch_bg=dutch_bg)
 
     print(f"\nDone. {len(PANELS)} panels generated.")
     print(f"Output: {PANELS_DIR}/")

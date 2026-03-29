@@ -13,7 +13,7 @@ Line color: #3B2820 (Deep Cocoa) — full weight silhouette; 60% weight internal
 ---
 
 ZONE | BASE FILL | SHADOW | HIGHLIGHT | NOTES
-Skin | #C8885A | #A06840 | #DFA070 | Base = Warm Caramel. Shadow on underside of chin, inner arm, side of face in 3/4. Highlight on forehead, nose tip, cheekbone — one shape each, flat.
+Skin | #C8885A | #A06840 | #DFA070 | Base = Warm Caramel (lamp-lit Frame 01 derivation of neutral base #C4A882 / RW-10 under Soft Gold key). For standard/neutral lighting, use #C4A882 (RW-10) as base. See master_palette.md Section 7 for full two-tier skin system. Shadow on underside of chin, inner arm, side of face in 3/4. Highlight on forehead, nose tip, cheekbone — one shape each, flat.
 Hair | #1A0F0A | #0A0A14 | #3D1F0F | Base = Near-Black Espresso. Shadow = Void Black, used for depth between curl masses. Highlight = Warm Dark Brown, crown only — small shape, restrained.
 Eye white | #FAF0DC | — | — | Warm Cream. Never pure white. Same for all characters in the show.
 Eye iris | #C87D3E | — | — | Warm Amber. Solid fill, no gradient.

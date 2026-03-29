@@ -3,8 +3,17 @@
 
 **Designer:** Maya Santos
 **Date:** 2026-03-29
-**Version:** 1.0
-**Status:** First Pass — Ready for Review
+**Version:** 1.2 (Cycle 9 — MIRI-A Locked)
+**Status:** CANONICAL — MIRI-A selected. MIRI-B variant retired.
+
+**Cycle 9 Lock Note:** After Cycle 8 critic review (Dmitri Volkov, Grade A-), MIRI-A is the
+confirmed canonical Miri design for pitch package and production.
+- **MIRI-A (canonical):** Tall bun + chopstick pair + wide cardigan (inv-trapezoid shoulders) + soldering iron.
+  Bun-chopstick crown passes squint test at thumbnail. Wide settled cardigan anchors ensemble
+  against Luma's kinetic A-line. Three design-language decisions communicate narrative.
+- **MIRI-B (retired):** Rounded curls + tech apron. Strong alternate design but circuit-pocket
+  dots too small to register; MIRI-A selected for silhouette certainty and stronger narrative.
+The silhouette generator has been updated to show only MIRI-A as "MIRI" (canonical).
 
 ---
 

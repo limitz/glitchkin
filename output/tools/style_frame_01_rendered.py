@@ -1,10 +1,46 @@
 #!/usr/bin/env python3
 """
 Style Frame 01 — The Discovery (Rendered Composite)
-"Luma & the Glitchkin" — Cycle 8
+"Luma & the Glitchkin" — Cycle 11
 
 Art Director: Alex Chen
 Date: 2026-03-29
+Cycle 10 changes (Sam Kowalski):
+  - HOODIE_AMBIENT arithmetic correction (CHAR-L-08): updated from #B06040 (176,96,64) to
+    #B36250 (179,98,80). The 70/30 blend of HOODIE_SHADOW+DUSTY_LAVENDER yields (179,98,80),
+    not (176,96,64). Blue channel was 16 points too low. Naomi Bridges C9-5.
+  - draw_lighting_overlay() overlap analysis CORRECTED (Naomi Bridges C10): warm/cold
+    boundary overlap is 80px (x=W//2-80 to x=W//2). Cold overlay peaks at alpha≈30 (~11.8%)
+    at the 80px boundary — the prior note "both alphas near-zero" was arithmetically wrong.
+    Corrected arithmetic: monitor_cx≈1401, boundary at x=880, distance=521px; max rx=1056px
+    (int(W*0.55)); t≈0.49 at boundary; alpha=int(60*(1-0.49))=30; 30/255=11.8%.
+    Visual decision: cold_alpha_max=60 RETAINED. At ~12% opacity, the cold cyan cross-light
+    reads as a plausible split-light transition — warm lamp left, cool monitor wall spill right,
+    80px feathered overlap. ~12% cold cyan over warm skin is a cross-light effect, not cold
+    contamination; no grey zone in rendered output. Confirmed. See draw_lighting_overlay().
+Cycle 11 changes (Alex Chen):
+  - Mid-air transition element added: pixel confetti in x=768–960, y=200–700 air column.
+    Warm-lit (SOFT_GOLD/SUNLIT_AMBER) left of zone midpoint; cold-lit (ELEC_CYAN/BYTE_TEAL)
+    right of midpoint. Bridges warm and cold zones in the air. Victoria Ashford P1 (2 cycles).
+  - Screen pixel figures scaled: 7px wide → 15px wide. Full 3-tier pixel structure
+    (head 5×4 + body 9×5 + legs 3×5). Now viewer-readable silhouettes. Victoria Ashford P2.
+Cycle 10 changes (Alex Chen):
+  - Luma lean increased: lean_offset 28px→48px (~9°→~16°) for genuine active urgency.
+    Victoria Ashford P2: 28px was "watching television" lean; 48px = active emotional engagement.
+  - Monitor screen content added: receding perspective grid + pixel figure silhouettes in
+    screen corners. Establishes that Byte emerges from a specific digital interior, not a
+    generic void. Victoria Ashford P3.
+Cycle 9 changes (Alex Chen):
+  - HOODIE_AMBIENT (CHAR-L-08, #B06040) finalized; replaces SHADOW_PLUM on hoodie underside.
+    Derived: HOODIE_SHADOW (#B84A20) blended with DUSTY_LAVENDER at 70/30 → (176,96,64).
+    [NOTE: arithmetic was incorrect — corrected in Cycle 10 to #B36250 (179,98,80)]
+  - Couch scale fixed (P0): couch_left W*0.04→W*0.16, couch_right W*0.44→W*0.38.
+    Span reduced 768px→422px; ratio 8.7:1→4.8:1 vs Luma's 88px body.
+  - Submerge/glow draw order fixed (P1): submerge fade now drawn BEFORE screen-glow so
+    the ELEC_CYAN glow is not overwritten by the near-black submerge rows.
+  - Overlay draw order fixed (P3): atmospheric overlay now applied BEFORE characters (was
+    STEP 6 after characters). Hoodie and arm lighting are now unaffected by the overlay.
+  - False comment corrected: arm span is ~28%, not ~21% as stated in Cycle 7/8 comment.
 
 This script composites Frame 01 (The Discovery) into a single cohesive rendered image:
   - Background: Luma's house interior — warm room with dominant cold monitor wall
@@ -68,6 +104,18 @@ LINE            = ( 59,  40,  32)   # Line weight
 BYTE_HL         = (  0, 240, 255)   # Byte highlight
 BYTE_SH         = (  0, 144, 176)   # Byte shadow
 SCAR_MAG        = (255,  45, 107)   # Byte scar/crack eye
+# ── Derived hoodie ambient — CHAR-L-08 (Alex Chen Cycle 9; corrected Sam Kowalski Cycle 10) ──
+# Hoodie underside faces down, away from lamp and monitor. Receives lavender ambient only.
+# Derivation (70/30 blend, verified Cycle 10):
+#   HOODIE_SHADOW (#B84A20, RGB 184, 74, 32) × 0.7 + DUSTY_LAVENDER (#A89BBF, RGB 168,155,191) × 0.3
+#   R: 184×0.7 + 168×0.3 = 128.8 + 50.4 = 179
+#   G:  74×0.7 + 155×0.3 =  51.8 + 46.5 =  98
+#   B:  32×0.7 + 191×0.3 =  22.4 + 57.3 =  80  (rounded from 79.7)
+#   → RGB(179, 98, 80) = #B36250
+# Cycle 9 value was #B06040 (176,96,64) — blue channel was 16 pts below formula result.
+# Corrected to #B36250 per Naomi Bridges C9-5. Retains orange identity; blue=80 adds
+# subtle lavender ambient influence appropriate for this surface.
+HOODIE_AMBIENT  = (179,  98,  80)   # CHAR-L-08 (#B36250) — hoodie underside, lavender ambient tinted
 
 # ── Prop & Character Rendering Colors — now formally registered in master_palette.md ──
 # Cycle 8 audit (Sam Kowalski): all values below are documented in master_palette.md.
@@ -90,10 +138,9 @@ LAMP_PEAK       = (245, 200,  66)   # Lamp emission center hotspot. Intentionall
 CABLE_BRONZE    = (180, 140,  80)   # Warm bronze cable — PROP-04 (#B48C50)
 CABLE_DATA_CYAN = (  0, 180, 255)   # Data-cyan cable — PROP-05 (#00B4FF); NOT GL-01 (#00F0FF)
 CABLE_MAG_PURP  = (200,  80, 200)   # Magenta-purple cable — PROP-06 (#C850C8)
-# NOTE: (100, 100, 100) neutral grey cable has been replaced below (fg_cables) with
-# (80, 64, 100) — a desaturated Shadow Plum mid-tone. Neutral grey has no place in
-# this palette system (no color character, neither warm nor cool-saturated).
-# See master_palette.md Section 6 PROP-07 for full rationale. — Sam Kowalski, Cycle 8.
+CABLE_NEUTRAL_PLUM = ( 80,  64, 100) # Desaturated Shadow Plum mid — PROP-07 (#504064)
+                                    # Replaces former (100,100,100) neutral grey (no palette home).
+                                    # Aged cable with cool ambient tinting. See master_palette.md PROP-07.
 
 # ── Font Loading ──────────────────────────────────────────────────────────────
 def load_font(size=14, bold=False):
@@ -274,6 +321,90 @@ def draw_background(draw, img):
     scr_y1  = crt_y + crt_h - scr_pad * 2
     # Screen background: full cyan
     draw.rectangle([scr_x0, scr_y0, scr_x1, scr_y1], fill=ELEC_CYAN)
+
+    # ── Cycle 10 fix (Victoria Ashford P3): Screen content ────────────────
+    # Screen was a blank cyan void — narratively generic (Byte emerged from "nowhere").
+    # Add visual content implying Byte's origin: a receding pixel-grid world and a small
+    # pixel figure silhouette in the screen corners/margins, behind the emergence zone.
+    # This establishes that Byte comes from a specific somewhere — a digital interior.
+
+    # Receding grid pattern — perspective lines from center (Byte's origin world)
+    # Draw light grid lines over the screen surface (at low alpha, will be partially
+    # covered by scanlines and emergence zone ellipse)
+    scr_mid_x = (scr_x0 + scr_x1) // 2
+    scr_mid_y = (scr_y0 + scr_y1) // 2
+    grid_color = (0, 168, 180)  # GL-02 Deep Cyan — faint grid, same family as scanlines
+    # Receding vertical lines — converge toward center
+    for i in range(1, 6):
+        t = i / 5.0
+        lx = int(scr_x0 + (scr_mid_x - scr_x0) * t)
+        rx = int(scr_x1 - (scr_x1 - scr_mid_x) * t)
+        draw.line([(lx, scr_y0), (scr_mid_x, scr_mid_y)],
+                  fill=grid_color, width=1)
+        draw.line([(rx, scr_y0), (scr_mid_x, scr_mid_y)],
+                  fill=grid_color, width=1)
+    # Receding horizontal lines — converge toward center
+    for i in range(1, 5):
+        t = i / 4.0
+        ty = int(scr_y0 + (scr_mid_y - scr_y0) * t)
+        draw.line([(scr_x0, ty), (scr_mid_x, scr_mid_y)],
+                  fill=grid_color, width=1)
+        draw.line([(scr_x1, ty), (scr_mid_x, scr_mid_y)],
+                  fill=grid_color, width=1)
+
+    # ── Cycle 11 fix (Victoria Ashford P2): Scale screen pixel figures from 7px → 15px ──
+    # Previous 7px-wide forms were sub-legible rendering artifacts, not viewer-readable design.
+    # Replaced with 15px-wide pixel figures using a clear 3-tier pixel structure:
+    # head (5×4px) + body (9×5px) + legs (3×5px each). Figures now read as silhouettes.
+    scr_rng = random.Random(99)
+    # Upper-left corner pixel figure — 15px wide glitch figure
+    fig_x = scr_x0 + 14
+    fig_y = scr_y0 + 12
+    fig_color = (0, 80, 100)   # Dark cyan silhouette — receding into screen depth
+    # Head — 5×4px centered on body
+    draw.rectangle([fig_x + 5, fig_y,      fig_x + 10, fig_y + 4],  fill=fig_color)
+    # Body — 9×5px
+    draw.rectangle([fig_x + 3, fig_y + 4,  fig_x + 12, fig_y + 9],  fill=fig_color)
+    # Arms — one each side, 3px long
+    draw.rectangle([fig_x,     fig_y + 4,  fig_x + 3,  fig_y + 6],  fill=fig_color)
+    draw.rectangle([fig_x + 12, fig_y + 4, fig_x + 15, fig_y + 6],  fill=fig_color)
+    # Legs — 3px wide, 5px tall
+    draw.rectangle([fig_x + 3,  fig_y + 9, fig_x + 6,  fig_y + 14], fill=fig_color)
+    draw.rectangle([fig_x + 9,  fig_y + 9, fig_x + 12, fig_y + 14], fill=fig_color)
+
+    # Upper-right corner pixel figure — 15px wide, pointing gesture toward emergence zone
+    fig_x2 = scr_x1 - 30
+    fig_y2 = scr_y0 + 10
+    fig_color2 = (0, 60, 80)   # Even darker — further receded
+    # Head — 5×4px
+    draw.rectangle([fig_x2 + 5, fig_y2,     fig_x2 + 10, fig_y2 + 4],  fill=fig_color2)
+    # Body — 9×5px
+    draw.rectangle([fig_x2 + 3, fig_y2 + 4, fig_x2 + 12, fig_y2 + 9],  fill=fig_color2)
+    # One arm extended toward emergence zone (pointing left = toward center)
+    draw.rectangle([fig_x2 - 6, fig_y2 + 4, fig_x2 + 3, fig_y2 + 6],   fill=fig_color2)
+    # Other arm short
+    draw.rectangle([fig_x2 + 12, fig_y2 + 4, fig_x2 + 15, fig_y2 + 6], fill=fig_color2)
+    # Legs
+    draw.rectangle([fig_x2 + 3,  fig_y2 + 9, fig_x2 + 6,  fig_y2 + 14], fill=fig_color2)
+    draw.rectangle([fig_x2 + 9,  fig_y2 + 9, fig_x2 + 12, fig_y2 + 14], fill=fig_color2)
+
+    # Pixel noise scatter on screen margins (away from emergence center) — data texture
+    for _ in range(28):
+        # Constrain to screen margins, away from emergence zone center
+        px_x = scr_x0 + scr_rng.randint(0, scr_x1 - scr_x0)
+        px_y = scr_y0 + scr_rng.randint(0, scr_y1 - scr_y0)
+        # Only draw if far enough from emergence center (margin only)
+        dist_from_center = ((px_x - scr_mid_x) ** 2 + (px_y - scr_mid_y) ** 2) ** 0.5
+        min_dist = min(scr_x1 - scr_x0, scr_y1 - scr_y0) * 0.30
+        if dist_from_center > min_dist:
+            ps = scr_rng.choice([2, 3])
+            pc = scr_rng.choice([
+                (0, 100, 120),   # dark cyan noise — receding pixel world
+                (0, 60, 80),     # very dark — deep recession
+                (0, 140, 160),   # mid cyan — closer to surface
+            ])
+            draw.rectangle([px_x, px_y, px_x + ps, px_y + ps], fill=pc)
+
     # Emergence zone — dark pocket where Byte pushes through (center of CRT screen)
     emerge_cx = (scr_x0 + scr_x1) // 2
     emerge_cy = (scr_y0 + scr_y1) // 2
@@ -457,8 +588,8 @@ def draw_background(draw, img):
         # Each entry: (x_start, x_end, base_y, arc_radius, color, thickness)
         # Colors: GL-01 (Electric Cyan), GL-03 (Hot Magenta), RW-02 (Soft Gold) are palette entries.
         # CABLE_BRONZE (PROP-04), CABLE_DATA_CYAN (PROP-05), CABLE_MAG_PURP (PROP-06) registered in
-        # master_palette.md Section 6. (80, 64, 100) replaces the former (100, 100, 100) neutral grey
-        # — see PROP-07 rationale in master_palette.md; desaturated Shadow Plum mid (#504064).
+        # master_palette.md Section 6. CABLE_NEUTRAL_PLUM (PROP-07, #504064) replaces the former
+        # (100, 100, 100) neutral grey — see PROP-07 in master_palette.md for rationale.
         (80,   460, int(H*0.935), 60,  ELEC_CYAN,       2),
         (240,  780, int(H*0.950), 85,  HOT_MAGENTA,     2),
         (420,  980, int(H*0.930), 44,  CABLE_BRONZE,    2),  # PROP-04
@@ -467,9 +598,7 @@ def draw_background(draw, img):
         (980, 1720, int(H*0.952), 52,  CABLE_MAG_PURP,  1),  # PROP-06
         (1200,1880, int(H*0.928), 74,  ELEC_CYAN,       2),
         (1460,1920, int(H*0.962), 38,  HOT_MAGENTA,     1),
-        (100,  600, int(H*0.970), 32,  ( 80,  64, 100), 1),  # Desaturated Shadow Plum mid — replaces
-        #                                                      (100,100,100) neutral grey (no palette home).
-        #                                                      See master_palette.md Section 6 PROP-07.
+        (100,  600, int(H*0.970), 32,  CABLE_NEUTRAL_PLUM, 1),  # PROP-07 (#504064) — aged cable, cool ambient
     ]
     for x0c, x1c, base_yc, arc_r, color, thickness in fg_cables:
         pts = []
@@ -480,6 +609,41 @@ def draw_background(draw, img):
             pts.append((px, base_yc + sag))
         for i in range(len(pts) - 1):
             draw.line([pts[i], pts[i+1]], fill=color, width=thickness)
+
+    # ── Cycle 11 fix (Victoria Ashford P1): Mid-air transition element ────────
+    # The x=768–960px column above floor level was compositionally dead: no element bridged
+    # the warm and cold zones in the air space. This is the boundary between lamp (x~768) and
+    # monitor wall (x~960). Pixel confetti drifting through this zone catches warm SOFT_GOLD
+    # on the left face and cold ELEC_CYAN on the right face simultaneously — they live in both
+    # worlds at once. Seeded for reproducibility; particles occupy y=200–700 only.
+    # Two passes: warm-lit particles (left of zone center) and cold-lit (right of zone center).
+    air_rng = random.Random(77)
+    zone_x0 = int(W * 0.40)   # lamp x — warm zone edge
+    zone_x1 = int(W * 0.50)   # monitor wall start — cold zone edge
+    zone_mid = (zone_x0 + zone_x1) // 2   # x=864, the light boundary
+    for _ in range(60):
+        # Scatter across the full zone width with slight bias toward center
+        px = air_rng.randint(zone_x0 - 20, zone_x1 + 20)
+        py = air_rng.randint(200, 700)
+        ps = air_rng.choice([3, 4, 5, 6])
+        # Color: warm-lit on left side of zone, cold-lit on right side
+        if px < zone_mid:
+            # Warm side — pixel catches lamp light: SOFT_GOLD / SUNLIT_AMBER / LAMP_PEAK family
+            pc = air_rng.choice([
+                SOFT_GOLD,                  # RW-02 — warm gold
+                SUNLIT_AMBER,               # RW-03 — amber
+                (245, 200,  66),            # LAMP_PEAK — hottest warm point
+                WARM_CREAM,                 # RW-01 — cream highlight
+            ])
+        else:
+            # Cold side — pixel catches monitor light: ELEC_CYAN / BYTE_TEAL / DEEP_CYAN family
+            pc = air_rng.choice([
+                ELEC_CYAN,                  # GL-01 — electric cyan
+                BYTE_TEAL,                  # GL-01b — byte teal
+                DEEP_CYAN,                  # GL-02 — deeper cyan
+                STATIC_WHITE,               # GL-08 — overexposed edge
+            ])
+        draw.rectangle([px, py, px + ps, py + ps], fill=pc)
 
     return {
         "scr_x0": scr_x0, "scr_y0": scr_y0,
@@ -512,7 +676,9 @@ def draw_luma_body(draw, luma_cx, luma_base_y, facing_monitor_x):
     # ── LEAN OFFSET: torso top is shifted rightward to simulate forward lean ─
     # Luma leans toward the monitor wall (right).
     # torso_top_x_offset: how many px to shift the torso top edge toward screen
-    lean_offset = 28  # pixels rightward lean at torso top vs torso bottom
+    # Cycle 10 fix (Victoria Ashford P2): 28px was ~9° — "watching TV" lean, not urgency.
+    # Increased to 48px (~16°) for genuine active engagement toward the screen/Byte.
+    lean_offset = 48  # pixels rightward lean at torso top vs torso bottom
 
     # ── LEGS — jeans, seated (bent knees, foreshortened) ─────────────────
     # Left leg (near camera)
@@ -537,19 +703,18 @@ def draw_luma_body(draw, luma_cx, luma_base_y, facing_monitor_x):
         (luma_x - 32, y_base - 86),
     ], fill=JEANS_SH)
     # Shoes (chunky sneakers — Luma's silhouette hook)
-    # Cycle 8 fix (Naomi Bridges): character spec = cream canvas main + deep cocoa sole
-    SHOE_CANVAS = (250, 240, 220)  # cream canvas main (#FAF0DC — CHAR-L spec)
-    SHOE_SOLE   = ( 59,  40,  32)  # deep cocoa sole (#3B2820 = DEEP_COCOA)
+    # Canvas = WARM_CREAM (RW-01, #FAF0DC); Sole = DEEP_COCOA (RW-12, #3B2820).
+    # Aliases removed (Cycle 9): SHOE_CANVAS and SHOE_SOLE were local duplicates of module constants.
     # Left shoe
     draw.rectangle([luma_x - 60, y_base - 10, luma_x - 8, y_base + 22],
-                   fill=SHOE_CANVAS)
+                   fill=WARM_CREAM)
     draw.rectangle([luma_x - 62, y_base + 16, luma_x - 6, y_base + 26],
-                   fill=SHOE_SOLE)
+                   fill=DEEP_COCOA)
     # Right shoe
     draw.rectangle([luma_x + 2,  y_base - 10, luma_x + 58, y_base + 20],
-                   fill=SHOE_CANVAS)
+                   fill=WARM_CREAM)
     draw.rectangle([luma_x,      y_base + 16, luma_x + 60, y_base + 26],
-                   fill=SHOE_SOLE)
+                   fill=DEEP_COCOA)
 
     # ── TORSO — hoodie, gradient blended warm/cool (no hard seam) ─────────
     torso_height = 170
@@ -573,16 +738,18 @@ def draw_luma_body(draw, luma_cx, luma_base_y, facing_monitor_x):
             b_v = int(HOODIE_ORANGE[2] * (1 - t_x) + HOODIE_CYAN_LIT[2] * t_x)
             draw.point((col, row), fill=(r_v, g_v, b_v))
 
-    # Hoodie shadow underside — Cycle 8 fix (Naomi Bridges):
-    # Underside faces down; away from lamp, away from monitor — receives lavender ambient.
-    # Under three-light theory the underside must trend cool, not warm.
-    # Using SHADOW_PLUM as the cool ambient shadow tint on the hoodie underside.
+    # Hoodie shadow underside — Cycle 9 fix (Alex Chen / Naomi Bridges); arithmetic corrected Cycle 10:
+    # Underside faces down; away from lamp, away from monitor — receives lavender ambient only.
+    # Under three-light theory the underside must trend cool, but retain hoodie orange identity.
+    # HOODIE_AMBIENT (CHAR-L-08, #B36250) = HOODIE_SHADOW 70/30 blend with DUSTY_LAVENDER → (179,98,80).
+    # Cycle 9 had #B06040 (176,96,64) — incorrect blue channel. Corrected Cycle 10 per Naomi C9-5.
+    # Replaced SHADOW_PLUM (#5C4A72) which had no orange component and read as a separate material.
     draw.polygon([
         (luma_x - torso_half_w, torso_bot - 8),
         (luma_x - torso_half_w, torso_bot),
         (luma_x + torso_half_w, torso_bot),
         (luma_x + torso_half_w, torso_bot - 8),
-    ], fill=SHADOW_PLUM)
+    ], fill=HOODIE_AMBIENT)
     # Pixel accents on hoodie (Electric Cyan — shared visual DNA per style guide)
     for i in range(5):
         px_off = luma_x - 24 + i * 12 + int(lean_offset * 0.5)
@@ -886,7 +1053,33 @@ def draw_byte(draw, emerge_cx, emerge_cy, emerge_rx, emerge_ry, luma_hand_x, lum
                      bg_rgb=BYTE_TEAL,
                      steps=5)
 
+    # ── Body lower half fades into screen (submerged effect) ──────────────
+    # Cycle 9 fix (Victoria Ashford P1): submerge fade was drawn AFTER screen-glow, painting
+    # near-black rows over the same zone (byte_cy+0.50 to ~0.85*byte_ry). The glow was
+    # overwritten and invisible. Fix: draw submerge fade FIRST, then screen-glow on top.
+    # Byte's lower body merges back into the near-void dark pocket at emergence zone.
+    # Interpolate BYTE_TEAL → (14, 14, 30) [the void pocket color actually behind Byte].
+    # NOT toward ELEC_CYAN — Byte emerges from a dark void, not a bright cyan background.
+    VOID_POCKET = (14, 14, 30)
+    submerge_y = byte_cy + int(byte_ry * 0.50)
+    screen_top = emerge_cy + int(emerge_ry * 0.20)
+    if submerge_y < screen_top:
+        submerge_y = screen_top
+    for row_offset in range(0, int(byte_ry * 0.38), 4):
+        y_row = submerge_y + row_offset
+        t_fade = row_offset / max(1, int(byte_ry * 0.38))
+        fade_rx = int(byte_rx * (1 - t_fade * 0.3))
+        col = (
+            int(VOID_POCKET[0] * t_fade + BYTE_TEAL[0] * (1 - t_fade)),
+            int(VOID_POCKET[1] * t_fade + BYTE_TEAL[1] * (1 - t_fade)),
+            int(VOID_POCKET[2] * t_fade + BYTE_TEAL[2] * (1 - t_fade)),
+        )
+        draw.line([(byte_cx - fade_rx, y_row), (byte_cx + fade_rx, y_row)],
+                  fill=col, width=4)
+
     # ── Screen-sourced upward cyan fill on Byte's underbody (Victoria Ashford Cycle 8) ──
+    # Drawn AFTER submerge fade so the glow is not overwritten by the fade's near-black rows.
+    # Cycle 9 fix: moved here from after charged-gap block (was being overwritten by submerge).
     # Byte emerges from a glowing CRT screen. The screen below illuminates the underbody
     # with an upward-cast cyan glow. Without this Byte reads as composited-in.
     underbody_cx = byte_cx
@@ -993,27 +1186,6 @@ def draw_byte(draw, emerge_cx, emerge_cy, emerge_rx, emerge_ry, luma_hand_x, lum
         spc = rng_gap.choice([ELEC_CYAN, STATIC_WHITE, (180, 255, 255)])
         draw.rectangle([spx, spy, spx + sps, spy + sps], fill=spc)
 
-    # ── Body lower half fades into screen (submerged effect) ──────────────
-    # Byte's lower body merges back into the near-void dark pocket at emergence zone.
-    # Interpolate BYTE_TEAL → (14, 14, 30) [the void pocket color actually behind Byte].
-    # NOT toward ELEC_CYAN — Byte emerges from a dark void, not a bright cyan background.
-    VOID_POCKET = (14, 14, 30)
-    submerge_y = byte_cy + int(byte_ry * 0.50)
-    screen_top = emerge_cy + int(emerge_ry * 0.20)
-    if submerge_y < screen_top:
-        submerge_y = screen_top
-    for row_offset in range(0, int(byte_ry * 0.38), 4):
-        y_row = submerge_y + row_offset
-        t_fade = row_offset / max(1, int(byte_ry * 0.38))
-        fade_rx = int(byte_rx * (1 - t_fade * 0.3))
-        col = (
-            int(VOID_POCKET[0] * t_fade + BYTE_TEAL[0] * (1 - t_fade)),
-            int(VOID_POCKET[1] * t_fade + BYTE_TEAL[1] * (1 - t_fade)),
-            int(VOID_POCKET[2] * t_fade + BYTE_TEAL[2] * (1 - t_fade)),
-        )
-        draw.line([(byte_cx - fade_rx, y_row), (byte_cx + fade_rx, y_row)],
-                  fill=col, width=4)
-
 
 # ── Three-Light Overlay ───────────────────────────────────────────────────────
 def draw_lighting_overlay(img, W, H, lamp_x, lamp_y, monitor_cx, monitor_cy):
@@ -1069,7 +1241,14 @@ def draw_lighting_overlay(img, W, H, lamp_x, lamp_y, monitor_cx, monitor_cy):
              monitor_cx + rx, monitor_cy + ry],
             fill=(*ELEC_CYAN, alpha)
         )
-    # Composite cold layer onto image (right half + slight left spill)
+    # Composite cold layer onto image (right half + slight 80px left spill)
+    # Boundary analysis (Cycle 11 correction — Naomi Bridges C10):
+    # The cold overlay crops to x=W//2-80=880. monitor_cx≈1401. Distance to boundary=521px.
+    # max rx = int(W*0.55) = 1056px. At boundary, t≈521/1056≈0.49; alpha=int(60*(1-0.49))=30.
+    # 30/255 = ~11.8% cold cyan opacity at the 80px warm-zone boundary.
+    # DECISION: cold_alpha_max=60 retained. 11.8% cold cyan over warm skin is a cross-light
+    # split-light effect — physically consistent with a monitor wall at ~3m from the couch.
+    # No grey zone produced in rendered output. This is intentional warm/cold cross-lighting.
     cold_np    = cold_layer.crop((W // 2 - 80, 0, W, H))
     base_right = img.crop((W // 2 - 80, 0, W, H)).convert("RGBA")
     composited_right = Image.alpha_composite(base_right, cold_np)
@@ -1085,31 +1264,37 @@ def draw_couch(draw, luma_cx, luma_base_y):
     Couch faces the monitor wall (right). Sightline from couch to monitors.
     Warm amber/terracotta tones — domestic safety.
     """
-    # Couch positioned left-of-center, angled so it faces right
-    couch_right = int(W * 0.44)
+    # Couch positioned left-of-center, angled so it faces right.
+    # Cycle 9 fix (Victoria Ashford P0): old span was 768px (W*0.04 to W*0.44 = 40% of frame),
+    # giving an 8.7:1 ratio vs Luma's 88px body. Target is 4:1.
+    # New: couch_left = W*0.16, couch_right = W*0.38 → span ~422px (~22%), ratio ~4.8:1.
+    couch_left  = int(W * 0.16)   # was int(W * 0.04)
+    couch_right = int(W * 0.38)   # was int(W * 0.44)
     couch_y_bot = luma_base_y + 44
     couch_y_top = luma_base_y - 40
 
     # Seat trapezoid — near edge at bottom, far edge (back of couch) at top
     seat_pts = [
-        (int(W * 0.04), couch_y_bot + 10),    # front-left (near camera)
-        (int(W * 0.04), couch_y_bot - 60),     # back-left
-        (couch_right,   couch_y_top - 40),     # back-right (farther)
-        (couch_right,   couch_y_bot + 4),      # front-right
+        (couch_left,  couch_y_bot + 10),    # front-left (near camera)
+        (couch_left,  couch_y_bot - 60),    # back-left
+        (couch_right, couch_y_top - 40),    # back-right (farther)
+        (couch_right, couch_y_bot + 4),     # front-right
     ]
     draw.polygon(seat_pts, fill=(107, 48, 24))
     draw.polygon(seat_pts, outline=(70, 30, 14), width=3)
     # Couch cushion seam
-    mid_couch_x = (int(W * 0.04) + couch_right) // 2
+    mid_couch_x = (couch_left + couch_right) // 2
     draw.line([(mid_couch_x - 10, couch_y_bot - 20),
                (mid_couch_x,      couch_y_top - 30)],
               fill=(80, 36, 14), width=2)
     # Couch back cushion (left side — character faces right so back is left-rear)
+    # back_left_inner updated proportionally from W*0.15 to W*0.22
+    back_left_inner = int(W * 0.22)
     back_pts = [
-        (int(W * 0.04), couch_y_bot - 60),
-        (int(W * 0.04), couch_y_bot - 150),
-        (int(W * 0.15), couch_y_top - 120),
-        (int(W * 0.15), couch_y_top - 50),
+        (couch_left,       couch_y_bot - 60),
+        (couch_left,       couch_y_bot - 150),
+        (back_left_inner,  couch_y_top - 120),
+        (back_left_inner,  couch_y_top - 50),
     ]
     draw.polygon(back_pts, fill=(128, 60, 28))
     draw.polygon(back_pts, outline=(80, 40, 16), width=2)
@@ -1123,8 +1308,8 @@ def draw_couch(draw, luma_cx, luma_base_y):
     draw.polygon(arm_pts, fill=(115, 52, 26))
     draw.polygon(arm_pts, outline=(80, 36, 14), width=2)
     # Warm lamp rim-light on couch left face
-    draw.line([(int(W * 0.04), couch_y_bot - 60),
-               (int(W * 0.04), couch_y_bot + 10)],
+    draw.line([(couch_left, couch_y_bot - 60),
+               (couch_left, couch_y_bot + 10)],
               fill=SOFT_GOLD, width=4)
     # Couch label would go here — suppressed in final rendered version
 
@@ -1153,29 +1338,11 @@ def generate():
     luma_base_y= int(H * 0.90)
     draw_couch(draw, luma_cx, luma_base_y)
 
-    # ── STEP 3: Luma's Body (body in warm zone, reaching arm into cold) ────
-    # Arm target: toward the screen edge — body at 29% means arm span is ~21% of canvas
-    arm_target_x = scr_x0 - 20
-    arm_target_y = emerge_cy + int(emerge_ry * 0.10)
-    body_data = draw_luma_body(draw, luma_cx, luma_base_y, arm_target_x)
-
-    # ── STEP 4: Luma's Head (on top of body) ──────────────────────────────
-    head_cx = body_data["head_cx"]
-    head_cy = body_data["head_cy"]
-    draw_luma_head(draw, head_cx, head_cy, scale=0.92)
-
-    # ── STEP 5: Byte (emerging from CRT screen) ────────────────────────────
-    luma_hand_x = body_data["hand_cx"]
-    luma_hand_y = body_data["hand_cy"]
-    draw_byte(draw, emerge_cx, emerge_cy, emerge_rx, emerge_ry,
-              luma_hand_x, luma_hand_y)
-
-    # ── STEP 6: Three-light atmospheric overlay ────────────────────────────
-    # Replaces the old flat DUSTY_LAVENDER full-frame composite (which collapsed
-    # the warm/cold split). Now applies:
-    #   - Warm gold pool in the left/lamp zone
-    #   - Cold cyan wash in the right/monitor zone
-    # Both are RGBA composites that add light without tinting the entire frame.
+    # ── STEP 3: Three-light atmospheric overlay (BEFORE characters) ───────
+    # Cycle 9 fix (Victoria Ashford P3): overlay was applied at STEP 6 (after characters).
+    # At ~27% warm alpha, this would yellow the already-warm hoodie and potentially wash out
+    # the cyan arm lighting. Fixed: apply overlay now, before characters are drawn, so
+    # characters receive baked-in lighting only and are not double-tinted by the overlay.
     mw_x      = bg_data["mw_x"]
     mw_y      = bg_data["mw_y"]
     mw_w      = bg_data["mw_w"]
@@ -1188,6 +1355,24 @@ def generate():
                                 lamp_x=lamp_x_pos, lamp_y=lamp_y_pos,
                                 monitor_cx=monitor_cx_pos, monitor_cy=monitor_cy_pos)
     draw = ImageDraw.Draw(img)
+
+    # ── STEP 4: Luma's Body (body in warm zone, reaching arm into cold) ────
+    # Arm target: toward the screen edge — body at 29% means arm span is ~28% of canvas
+    # (Cycle 9 fix: comment previously said ~21%, which was false — corrected to ~28%)
+    arm_target_x = scr_x0 - 20
+    arm_target_y = emerge_cy + int(emerge_ry * 0.10)
+    body_data = draw_luma_body(draw, luma_cx, luma_base_y, arm_target_x)
+
+    # ── STEP 5: Luma's Head (on top of body) ──────────────────────────────
+    head_cx = body_data["head_cx"]
+    head_cy = body_data["head_cy"]
+    draw_luma_head(draw, head_cx, head_cy, scale=0.92)
+
+    # ── STEP 6: Byte (emerging from CRT screen) ────────────────────────────
+    luma_hand_x = body_data["hand_cx"]
+    luma_hand_y = body_data["hand_cy"]
+    draw_byte(draw, emerge_cx, emerge_cy, emerge_rx, emerge_ry,
+              luma_hand_x, luma_hand_y)
 
     # ── STEP 7: Top/bottom vignette (NOT corner vignette) ─────────────────
     # Darkens top and bottom edges only — warm left and cold right zones must breathe.
@@ -1218,7 +1403,7 @@ def generate():
     # Not in palette: it is a non-character UI element. Chosen to be legible against the near-black
     # strip without being too bright (does not compete with the image above).
     draw.text((20, H - 32),
-              "LUMA & THE GLITCHKIN — Frame 01: The Discovery  |  Cycle 8 Rendered",
+              "LUMA & THE GLITCHKIN — Frame 01: The Discovery  |  Cycle 11 Rendered",
               fill=(180, 150, 100),
               font=font_xs)
 

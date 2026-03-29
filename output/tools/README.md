@@ -35,6 +35,7 @@ This production uses **open source tools exclusively**. No proprietary software 
 | `storyboard_panel_generator.py` | Lee Tanaka / Production | Generates 480×270px storyboard panels with caption bars, shot labels, and drawn scene content. Cycle 5: 7 panels (P01, P03, P07-bridge, P11, P12-bridge, P13, P25) + 2-row contact sheet. P03 fixed: pulse visible. P13 redrawn: 3D spatial staging. | Pillow |
 | `luma_face_generator.py` | Maya Santos / Production | Draws Luma's face at 600×600px with asymmetric hair cloud, wide reckless eyes, arched brows, reckless grin, blush, and pixel-pattern hoodie collar. | Pillow |
 | `byte_expressions_generator.py` | Alex Chen / Production | Generates 6-expression sheet for Byte using 5×5 pixel grid eye system. Expressions: GRUMPY, SEARCHING, ALARMED, RELUCTANT JOY, CONFUSED, POWERED DOWN. Body color #00D4E8. | Pillow |
+| `bg_glitch_layer_frame.py` (also `LTG_TOOL_bg_glitch_layer_frame_v001.py`) | Jordan Reed / Cycle 9 | Generates full 1920×1080 Glitch Layer compositing-ready background (no characters, no title bar). Three-tier platform depth system (NEAR=ELEC_CYAN, MID=desaturated DATA_BLUE, FAR=near-void). Aurora bands, pixel trails, pixel flora on platform edges, ghost platforms in lower void. Saves to `/home/wipkat/team/output/backgrounds/environments/glitch_layer_frame.png`. | Pillow |
 
 ---
 

@@ -8,6 +8,13 @@ Cycle 5 fixes implemented:
 - Key 02: Hot Magenta reduced from zone color to accent only; Cyan crack is dominant
 - Key 03: UV Purple and Data Blue aurora bands separated by ≥2 value steps
 
+Cycle 10 updates:
+- Key 01 palette strip: Cyan swatch labeled "Cy*" and Deep Shadow labeled "Dk*"
+  to visually distinguish accent/added swatches from dominant palette colors.
+  Matches the approach used in Key 02 (Mag* = accent only) per Sam Kowalski MEMORY.md.
+- Header labels updated to [Cycle 10] for production tracking.
+- No geometry or color changes — all palette values carry forward from Cycle 5-9.
+
 Usage: python3 color_key_generator.py
 Outputs to: /home/wipkat/team/output/color/color_keys/thumbnails/
 """
@@ -156,16 +163,16 @@ def generate_key01():
         (P["dusty_lavender"], "Lavdr"),
         (P["deep_cocoa"],     "Cocoa"),
         (P["warm_tan"],       "Skin"),
-        (P["elec_cyan"],      "Cyan"),
-        (P["deep_shadow"],    "DkAnch"),  # FIXED — new dark anchor
+        (P["elec_cyan"],      "Cy*"),     # Cycle 10: labeled as accent (*) — trace only, not dominant
+        (P["deep_shadow"],    "Dk*"),     # Cycle 10: labeled as accent (*) — added dark anchor, not dominant
     ]
     palette_strip(draw, swatches, 8, H - 38)
 
     lbl(draw, 8, 8,
-        "Key 01 — Sunny Afternoon  [Cycle 5]",
+        "Key 01 — Sunny Afternoon  [Cycle 10]",
         load_font(14, bold=True), fg=P["deep_cocoa"], bg=P["warm_cream"])
     lbl(draw, 8, 28,
-        "FIX: Deep Shadow #2A1A10 added as dark anchor (bottom corners, under furniture)",
+        "C10: Cyan=Cy* (trace accent), DeepShadow=Dk* (added anchor). * = non-dominant swatch.",
         load_font(10), fg=P["deep_cocoa"], bg=P["warm_cream"])
 
     out = os.path.join(OUTPUT_DIR, "key01_sunny_afternoon.png")
@@ -260,10 +267,10 @@ def generate_key02():
     palette_strip(draw, swatches, 8, H - 38)
 
     lbl(draw, 8, 8,
-        "Key 02 — Nighttime Glitch  [Cycle 5]",
+        "Key 02 — Nighttime Glitch  [Cycle 10]",
         load_font(14, bold=True), fg=P["static_white"], bg=P["night_sky"])
     lbl(draw, 8, 28,
-        "FIX: Hot Magenta = accent only (thin edge, not zone). Cyan crack is dominant.",
+        "Hot Magenta = accent only (Mag* — thin edge, not zone). Cyan crack is dominant.",
         load_font(10), fg=P["hot_magenta"], bg=P["night_sky"])
 
     out = os.path.join(OUTPUT_DIR, "key02_nighttime_glitch.png")
@@ -403,10 +410,10 @@ def generate_key03():
     palette_strip(draw, swatches, 8, H - 38)
 
     lbl(draw, 8, 8,
-        "Key 03 — Glitch Layer Entry  [Cycle 5]",
+        "Key 03 — Glitch Layer Entry  [Cycle 10]",
         load_font(14, bold=True), fg=P["static_white"], bg=P["void_black"])
     lbl(draw, 8, 28,
-        "FIX: UV Purple + Data Blue bands value-separated (deep UV #4A1880 added as mid band)",
+        "UV Purple + Data Blue bands value-separated (deep UV #4A1880 as mid band).",
         load_font(10), fg=P["elec_cyan"], bg=P["void_black"])
 
     out = os.path.join(OUTPUT_DIR, "key03_glitch_layer_entry.png")
@@ -486,10 +493,10 @@ def generate_key04():
     palette_strip(draw, swatches, 8, H - 38)
 
     lbl(draw, 8, 8,
-        "Key 04 — Quiet Moment  [Cycle 5]",
+        "Key 04 — Quiet Moment  [Cycle 10]",
         load_font(14, bold=True), fg=P["deep_cocoa"], bg=P["warm_cream"])
     lbl(draw, 8, 28,
-        "No new fixes. Ambient = Warm Cream (Sunlit Amber removed in Cycle 2).",
+        "No palette changes. Ambient = Warm Cream (Sunlit Amber removed Cycle 2).",
         load_font(10), fg=P["deep_cocoa"], bg=P["warm_cream"])
 
     out = os.path.join(OUTPUT_DIR, "key04_quiet_moment.png")

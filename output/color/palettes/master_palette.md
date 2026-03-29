@@ -614,6 +614,34 @@ Do not use 4px or 5px. These produce a halo rather than a clean outline and comp
 
 ---
 
+### Glitch Layer — Depth Tiers
+
+*Rendering constructs derived from canonical GL swatches. These are NOT standalone palette swatches — they exist only inside `bg_glitch_layer_frame.py` (and related tools) to implement the mandatory 3-value-tier depth system for Glitch Layer platforms. All values derive from canonical entries above. Documented in Cycle 10 per Naomi Bridges C9-1 audit.*
+
+| Constant | RGB | Hex (approx.) | Derivation | Depth Tier |
+|---|---|---|---|---|
+| `NEAR_COLOR` | 0, 240, 255 | #00F0FF | GL-01 ELEC_CYAN — unchanged | NEAR |
+| `NEAR_SHADOW` | 0, 168, 180 | #00A8B4 | GL-01a DEEP_CYAN — unchanged | NEAR |
+| `NEAR_EDGE` | 180, 255, 255 | #B4FFFF | GL-01 ELEC_CYAN brightened +30% toward white | NEAR |
+| `MID_COLOR` | 10, 72, 120 | #0A4878 | GL-06 DATA_BLUE desaturated 60% and darkened 53% | MID |
+| `MID_SHADOW` | 6, 40, 72 | #062848 | MID_COLOR darkened a further ~44% | MID |
+| `MID_EDGE` | 20, 110, 160 | #146EA0 | MID_COLOR lightened ~53% | MID |
+| `FAR_COLOR` | 0, 26, 40 | #001A28 | GL-08 VOID_BLACK shifted +cyan and darkened | FAR |
+| `FAR_SHADOW` | 0, 14, 22 | #000E16 | FAR_COLOR darkened ~46% | FAR |
+| `FAR_EDGE` | 0, 40, 55 | #002837 | FAR_COLOR lightened ~54% | FAR |
+| `GHOST_COLOR` | 0, 28, 38 | #001C26 | GL-08a BELOW_VOID shifted +cyan — ghost platform fill | GHOST (void) |
+| `GHOST_EDGE` | 0, 48, 62 | #00303E | GHOST_COLOR lightened — ghost platform edge | GHOST (void) |
+| `AURORA_CYAN_BLEED` | 0, 160, 220 | #00A0DC | GL-01 ELEC_CYAN desaturated and darkened ~14% — aurora band D | Aurora |
+
+**Usage rules:**
+- NEAR tier uses full-brightness GL-01 family: these platforms must read at maximum value contrast against the void.
+- MID tier desaturates and darkens DATA_BLUE to create a clear middle step. Must never overlap in perceived brightness with NEAR or FAR.
+- FAR tier is near-void: platforms are barely distinguishable from VOID_BLACK. They register only as silhouettes at distance.
+- GHOST and AURORA values are purely procedural — never use as fills on named surfaces.
+- `AURORA_CYAN_BLEED` appears only as a sinusoidal per-row draw.line overlay in the aurora pass — not as a solid color anywhere.
+
+---
+
 ## SECTION 3 — CHARACTER COLOR SPECIFICATIONS
 
 These are the definitive, locked color specifications for the three main characters. Deviation from these values requires sign-off from the Art Director.
@@ -923,11 +951,17 @@ Formally documented inline color values used in rendered scripts for recurring p
 
 ---
 
-### PROP-07 — Cable Neutral (DEPRECATED / REPLACED)
-- **Hex:** N/A — this entry documents the removal of an incorrect value
-- **Flagged by:** Naomi Bridges, Cycle 7 critique
-- **Issue:** A neutral grey `(100, 100, 100)` was used in the foreground cable tangle as a cable color. A neutral mid-grey has no color character and no place in this show's palette — neither warm (Real World) nor cool-saturated (Glitch). It reads as a production omission rather than a design choice.
-- **Resolution (Cycle 8):** The `(100, 100, 100)` cable in `style_frame_01_rendered.py` has been replaced with `(80, 64, 100)` — Shadow Plum Mid (`#504064`), a desaturated plum-grey that reads as an aged cable with cool ambient tinting. This color has the RW-09 Shadow Plum DNA, connects to the lavender ambient light in the scene, and is visually coherent in the palette system. It is treated as a one-off practical value — sufficiently explained here — and does not require its own PROP entry.
+### PROP-07 — Cable Neutral Plum
+- **Constant:** `CABLE_NEUTRAL_PLUM`
+- **Hex:** `#504064`
+- **RGB:** 80, 64, 100
+- **Role:** Aged neutral cable in foreground floor tangle — desaturated plum-grey that reads as an aged cable with cool ambient tinting. Replaces the former `(100, 100, 100)` neutral grey (flagged by Naomi Bridges, Cycle 7).
+- **Deprecation note:** The `(100, 100, 100)` neutral grey it replaces is formally retired. Neutral mid-grey has no color character in this show's palette — neither warm (Real World) nor cool-saturated (Glitch).
+- **Derivation:** RW-09 Shadow Plum DNA (`#5C4A72`) desaturated and darkened; connects to the lavender ambient in the scene. Visually coherent in the show's palette without triggering any narrative signal.
+- **Use-case notes:** Single thin cable in the foreground floor tangle (1px weight). This is a prop support color — it must not compete with the narrative glitch cable colors (ELEC_CYAN, HOT_MAGENTA) or the primary warm cable (PROP-04 Cable Warm Bronze). Its purpose is to add density/visual complexity to the floor clutter without drawing the eye.
+- **Pairs with:** PROP-04, PROP-05, PROP-06 (cable clutter companions)
+- **Avoid using:** As a large-area fill, shadow color, or character color — it has no narrative role outside the cable clutter prop context.
+- **Added/finalized:** Sam Kowalski — Cycle 9 (2026-03-29). Constant `CABLE_NEUTRAL_PLUM` added to `style_frame_01_rendered.py` module level; inline `(80, 64, 100)` tuple at line ~477 replaced with named constant.
 
 ---
 
@@ -1018,21 +1052,150 @@ Formal documentation of inline color values used in `style_frame_01_rendered.py`
 
 ---
 
+### CHAR-L-09 — Luma Shoe Canvas
+- **Constant (code):** `WARM_CREAM` (RW-01, module constant — no alias needed)
+- **Hex:** `#FAF0DC`
+- **RGB:** 250, 240, 220
+- **Role:** Luma's shoe upper/canvas — warm cream off-white. Same value as RW-01. References the RW-01 module constant directly; do not create a separate shoe-specific alias.
+- **Use-case notes:** The cream canvas shoe reads as a slightly grubby off-white sneaker — it has aged warmth, not clinical white. The cream quality also matches the show's no-pure-white rule. Pairs with CHAR-L-10 (Sole) and ELEC_CYAN laces.
+- **Pairs with:** CHAR-L-10 (Deep Cocoa sole), ELEC_CYAN (laces — the deliberate glitch-world intrusion in her warm wardrobe)
+- **Added:** Sam Kowalski — Cycle 9 (per Naomi Bridges Cycle 8 feedback: shoe colors must be findable in Section 5)
+
+---
+
+### CHAR-L-10 — Luma Shoe Sole
+- **Constant (code):** `DEEP_COCOA` (RW-12, module constant — no alias needed)
+- **Hex:** `#3B2820`
+- **RGB:** 59, 40, 32
+- **Role:** Luma's shoe rubber sole — deep cocoa brown. Same value as RW-12 / line color. References the DEEP_COCOA module constant directly; do not create a separate sole-specific alias.
+- **Use-case notes:** The deep cocoa sole visually anchors the shoe to the ground, gives it weight, and echoes the character's universal line color — making the sole read as a solid design element rather than an afterthought. The warm-dark sole against the cream upper is a clean two-tone graphic read at any scale.
+- **Pairs with:** CHAR-L-09 (canvas upper)
+- **Added:** Sam Kowalski — Cycle 9 (per Naomi Bridges Cycle 8 feedback)
+
+---
+
 ### CHAR-L-08 — Luma Hoodie Underside (Lavender Ambient)
-- **Hex:** `[PLACEHOLDER — pending Alex Chen Cycle 8 fix]`
-- **RGB:** `[TBD]`
+- **Constant (code):** `HOODIE_AMBIENT`
+- **Hex:** `#B36250`
+- **RGB:** 179, 98, 80
 - **Role:** Fill color for the underside of Luma's hoodie hem — the surface that faces down, away from both the lamp and the monitor wall. Under the three-light setup in Frame 01, this surface receives ONLY the lavender ambient fill (no direct lamp key, no cyan key).
 - **Lighting context:** Three-light Frame 01 setup: LEFT = Soft Gold lamp (HOODIE_ORANGE side), RIGHT = Electric Cyan monitor (HOODIE_CYAN_LIT side), AMBIENT = Dusty Lavender fill. The hoodie underside faces down toward the floor — it receives the ambient fill only, trending cool (lavender/plum), not warm.
-- **Current code state (Cycle 8 interim):** `style_frame_01_rendered.py` line ~487 currently uses `SHADOW_PLUM` (`#5C4A72`, RGB 92, 74, 114) as a temporary stand-in. This was Alex Chen's Cycle 8 interim fix. Once the correct ambient-tinted orange value is determined (hoodie orange `#E8703A` modified by lavender ambient fill), this entry must be updated with the derived hex.
-- **Derivation guidance:** The hoodie underside should be a cool-tinted desaturated variant of the hoodie orange. Pure `SHADOW_PLUM` is a valid floor for this tone but may be too cool and too far removed from the hoodie orange identity. Alex should test a blend of `HOODIE_SHADOW` (`#B84A20`) with Dusty Lavender ambient tinting — expected result is in the range of `#8A5A6A` to `#6A4A6A` (warm-shadow-orange cooled by lavender ambient).
+- **Derivation:** `HOODIE_SHADOW` (`#B84A20`, RGB 184, 74, 32) blended with `DUSTY_LAVENDER` (`#A89BBF`, RGB 168, 155, 191) at 70/30 ratio. Full arithmetic:
+  - R: 184 × 0.7 + 168 × 0.3 = 128.8 + 50.4 = **179**
+  - G:  74 × 0.7 + 155 × 0.3 =  51.8 + 46.5 =  **98**
+  - B:  32 × 0.7 + 191 × 0.3 =  22.4 + 57.3 =  **80** (rounded from 79.7)
+  - Result: RGB(179, 98, 80) = `#B36250`
+  - Correction note (Cycle 10): The previous value `#B06040` (176, 96, 64) had an incorrect blue channel — 16 points below what 70/30 actually yields (80 vs. 64). The discrepancy made the underside warmer and less lavender-influenced than the formula states. `#B36250` is the arithmetically correct result. Per Naomi Bridges C9-5.
+- **Aesthetic note:** At RGB(179, 98, 80) the hoodie underside reads clearly as orange hoodie fabric. The blue channel of 80 introduces a small but perceptible lavender influence — correct for a surface lit only by DUSTY_LAVENDER ambient fill.
 - **Scene use:** Style Frame 01, `draw_luma_body()` — hoodie hem underside polygon.
-- **Note:** This entry is a PLACEHOLDER. Alex Chen (Art Director) must confirm the final hex value in Cycle 8 and update this entry. Do not use `SHADOW_PLUM` as a permanent solution — Shadow Plum's architecture/cool identity reads as a separate material, not a hoodie surface.
+- **Note:** The interim `SHADOW_PLUM` value used in Cycle 8 has been replaced. Shadow Plum lacked orange component and read as a separate architectural surface rather than a hoodie fabric. `HOODIE_AMBIENT` correctly preserves hoodie material identity under cool light.
 - **Added:** Sam Kowalski — Cycle 8 (2026-03-29), per Cycle 8 task assignment.
+- **Finalized:** Cycle 9 — `HOODIE_AMBIENT` constant added to `style_frame_01_rendered.py`.
+- **Corrected:** Cycle 10 — hex updated from `#B06040` (176,96,64) to `#B36250` (179,98,80); derivation arithmetic verified. Naomi Bridges C9-5.
+
+---
+
+---
+
+## SECTION 7 — SKIN COLOR SYSTEM
+
+This section establishes the canonical skin tone system for all human characters on "Luma & the Glitchkin." It resolves the discrepancy identified by Fiona O'Sullivan (Cycle 8 critique) between `#C8885A` (Luma's lamp-lit skin in rendered scripts) and `#C4A882` (the master palette's universal skin base, RW-10).
+
+---
+
+### 7.1 — The Two-Tier Skin System
+
+Human skin in this show operates on two tiers:
+
+**Tier 1 — Canonical Neutral Base (RW-10):**
+`#C4A882` (Warm Tan) is the canonical neutral-light skin base for all human characters. It is the value a painter uses when no specific lighting condition has been specified, and the value all scene-specific derived colors descend from. It appears in the Section 3 character specs for both Luma and Cosmo (both use `#C4A882` as their base in the character specification tables).
+
+**Tier 2 — Scene/Lighting-Derived Skin (CHAR-L-xx / DRW-xx):**
+When a character is rendered under a specific three-light setup, the base skin shifts. CHAR-L-01 (`#C8885A`) is Luma's skin base **under warm lamp-dominant lighting in Frame 01 specifically.** It is warmer and more saturated than `#C4A882` because the Soft Gold lamp key biases the skin toward amber-orange. It is not a contradiction of RW-10 — it is a derived version of it for that lighting context.
+
+**The rule:** `#C4A882` is the starting point. Scene-specific derived values (CHAR-L-01, DRW-04, DRW-11, etc.) are the results of applying that starting point to a specific lighting setup. A painter using only `#C4A882` is correct for neutral/unspecified lighting. A painter rendering Frame 01 uses `#C8885A` as their base because that is what `#C4A882` looks like under a Soft Gold lamp key.
+
+---
+
+### 7.2 — Character Skin Reference Table
+
+| Character | Neutral Base | Hex | Notes |
+|---|---|---|---|
+| **Luma** | Warm Tan (RW-10) | `#C4A882` | Standard neutral-light base; Section 3 character spec |
+| **Luma** (lamp-lit Frame 01) | Warm Caramel (CHAR-L-01) | `#C8885A` | Derived from RW-10 under Soft Gold key |
+| **Cosmo** | Light Warm Olive (CHAR-C-01) | `#D9C09A` | Lighter, cooler skin than Luma — see 7.3 below |
+| **Grandma Miri** | Deep Brown (CHAR-M-01) | `#8C5430` | Distinct deep brown skin — warm, earthy |
+| **Background humans** | Warm Tan (RW-10) | `#C4A882` | Default for any unnamed human character |
+
+---
+
+### 7.3 — CHAR-C-01 — Cosmo Skin Base
+
+- **Hex:** `#D9C09A`
+- **RGB:** 217, 192, 154
+- **Role:** Cosmo's neutral-light skin base. Lighter and more desaturated than Luma's `#C4A882`. Reads as a lighter warm olive skin tone that matches his more reserved personality palette.
+- **Relationship to RW-10:** Cosmo's skin sits in the same warm family as RW-10 but is notably lighter (R: +21, G: +24, B: +24) and less saturated. The desaturation is intentional — it matches the cooler, more reserved tone of his dusty lavender palette. He is not a different palette system; he is the lighter end of the same warm skin family.
+- **Shadow companion (warm light):** `#B89A78` (Warm Sand — from Cosmo color model)
+- **Highlight (warm light):** `#EED4B0` (Pale Golden — from Cosmo color model)
+- **Cool shadow (night/Glitch Layer):** Derive from RW-10c Cool Skin Shadow logic, adjusted for his lighter base. Expected result: approximately `#8A6A8A` (a lighter, slightly more lavender variant of `#7A5A7A`).
+- **Source:** Cosmo color model sheet (Maya Santos, Cycle 3). This value was not previously registered in the master palette.
+- **Avoid using:** As Luma's skin — the two characters must read as distinct warm tones at distance. CHAR-C-01 is lighter/cooler; CHAR-L base is warmer/more saturated.
+
+---
+
+### 7.4 — Skin Under Warm Light (Real World)
+
+| Zone | Luma (RW-10 base) | Luma (lamp-lit Frame 01) | Cosmo |
+|---|---|---|---|
+| **Neutral base** | `#C4A882` (RW-10) | `#C8885A` (CHAR-L-01) | `#D9C09A` (CHAR-C-01) |
+| **Shadow** | `#8C5A38` (RW-10b) | `#A86838` (CHAR-L-03) | `#B89A78` |
+| **Highlight** | `#E8D4B0` (RW-10a) | `#E8B888` (CHAR-L-02) | `#EED4B0` |
+| **Deep crevice** | `#3B2820` (RW-12) | `#3B2820` (RW-12) | `#3B2820` (RW-12) |
+
+---
+
+### 7.5 — Skin Under Cool Light (Night / Glitch Layer)
+
+When any human character is in a cool-ambient or Glitch Layer environment, warm skin shadows shift to a desaturated violet tone (the skin reads as alive but not warm). The Real World shadow system does not apply in these contexts.
+
+| Zone | Hex | Source | Notes |
+|---|---|---|---|
+| **Skin base under UV ambient** | `#A87890` | DRW-11 | Derived from RW-10 under UV Purple Glitch Layer ambient |
+| **Shadow under UV ambient** | `#5A3A5A` | DRW-12 | Deep lavender-plum shadow |
+| **Skin base under Cyan key** | `#7ABCBA` | DRW-01 | Derived from RW-10 under Electric Cyan screen glow |
+| **Shadow under Cyan key** | `#3A7878` | DRW-02 | Deep cyan-toned shadow |
+| **Cool shadow replacement (all chars)** | `#7A5A7A` | RW-10c | Replaces warm shadow in night/Glitch scenes |
+
+**Rule:** When a scene transitions from warm Real World to cool Glitch Layer or nighttime, the warm shadow (`#8C5A38`, RW-10b) is replaced with the cool shadow (`#7A5A7A`, RW-10c). The base fill shifts per DRW-01 or DRW-11 depending on the dominant light source. Never apply both warm and cool skin shadow in the same scene unless the frame is an explicit split-light setup (as in Frame 01, which uses both a warm lamp and a cyan monitor).
+
+---
+
+### 7.6 — Canonical Skin Color Decision (Resolving the Fiona Critique)
+
+**The discrepancy:** Fiona O'Sullivan (Cycle 8) identified that `luma_color_model.md` uses `#C8885A` while `master_palette.md` RW-10 specifies `#C4A882`, and that `style_frame_01_rendered.py` matches the color model (`#C8885A`), not the master palette base.
+
+**The resolution:**
+
+1. `#C4A882` (RW-10) **remains the canonical neutral-light skin base** for all human characters including Luma. The Section 3 character spec tables are correct and authoritative. This is what painters use for standard lighting.
+
+2. `#C8885A` (CHAR-L-01) is **not a contradiction** — it is the correct derived result of `#C4A882` under a Soft Gold warm lamp key in the Frame 01 interior setup. The color model sheet (`luma_color_model.md`) documents it as "Warm Caramel" which is CHAR-L-01's scene-specific base.
+
+3. **The color model sheet requires a clarification note** to prevent future confusion. The skin entry in `luma_color_model.md` should note that `#C8885A` is the lamp-lit derivation of the neutral base `#C4A882`, not a replacement for it.
+
+4. Cosmo's `#D9C09A` is now registered as CHAR-C-01 (see 7.3 above) and is explicitly named in the palette as a character-specific lighter variant of the warm skin family.
+
+**Action required (one-time):** The skin entry in `luma_color_model.md` should add a cross-reference note: "Base = Warm Caramel under lamp-lit Frame 01 conditions. Neutral-light canonical base = `#C4A882` (RW-10). See master_palette.md Section 7."
+
+---
+
+*Section 7 added — Sam Kowalski — Cycle 9 (2026-03-29). Per Fiona O'Sullivan Cycle 8 critique: skin discrepancy between luma_color_model.md, master_palette.md RW-10, and style_frame_01_rendered.py.*
 
 ---
 
 *Document version 2.0 — Sam Kowalski — 2026-03-29*
 *Cycle 2 revision: Full hex audit, shadow companion system, exception documentation, additional forbidden combinations.*
 *Cycle 7 revision: Section 5 added (Character Rendering Colors — Luma, from style_frame_01_rendered.py); GL-01b usage warning added; GL-07 outline width standard set to canonical 3px.*
-*Cycle 8 revision: Section 6 added (Environment / Props — couch PROP-01/02/03, cable PROP-04/05/06, neutral grey PROP-07 deprecated/replaced); CHAR-L-08 placeholder added (hoodie underside, lavender ambient — pending Alex Chen Cycle 8 final value).*
+*Cycle 8 revision: Section 6 added (Environment / Props — couch PROP-01/02/03, cable PROP-04/05/06, neutral grey PROP-07 deprecated/replaced); CHAR-L-08 placeholder added (hoodie underside, lavender ambient).*
+*Cycle 9 revision: Section 7 added (Skin Color System — two-tier system, CHAR-C-01 for Cosmo, warm/cool skin tables, Fiona critique resolution); PROP-07 finalized (CABLE_NEUTRAL_PLUM, #504064); CHAR-L-08 finalized (#B06040, HOODIE_AMBIENT); CHAR-L-09/10 added (Luma shoe canvas/sole per Naomi Bridges Cycle 8 feedback).*
+*Cycle 10 revision: CHAR-L-08 hex corrected from #B06040 (176,96,64) to #B36250 (179,98,80) — blue channel arithmetic error resolved (Naomi Bridges C9-5). Glitch Layer depth-tier construction values documented in comment block (Naomi C9-1). luma_color_model.md cross-reference confirmed present in both documents.*
 *Review cycle: Update after each critic feedback pass.*

@@ -6,7 +6,9 @@
       "Bash(python3 output/tools/proportion_diagram.py)",
       "Bash(python3 output/tools/silhouette_generator.py)",
       "Bash(python3:*)",
-      "Bash(1 ls:*)"
+      "Bash(1 ls:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   }
 }

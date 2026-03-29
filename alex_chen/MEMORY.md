@@ -39,13 +39,36 @@
 ## Cycle 8 Lessons
 - **Lighting overlay alphas must be visible:** Warm zone alpha raised 28→70 (~27%); cold zone 22→60. Below 15% alpha overlays are invisible in rendered output.
 - **Amber outline width = 3px** at 1920×1080. GL-07 standard. Never 4 or 5.
-- **Hoodie underside = cool ambient** (SHADOW_PLUM). Away from all light sources — three-light logic demands cool lavender ambient, not warm.
+- **Hoodie underside = cool ambient** (SHADOW_PLUM, Cycle 8 interim). Away from all light sources — three-light logic demands cool lavender ambient, not warm.
 - **Shoe spec:** SHOE_CANVAS=(250,240,220) cream main; SHOE_SOLE=DEEP_COCOA=(59,40,32). Previous code had these inverted.
 - **Tendril cp1 must point TOWARD target:** cp1x = start + (target-start)*0.33, not start - offset. The tendril must arc toward Luma, not away.
 - **Byte underbody glow:** draw_filled_glow() at bottom quarter of Byte, glow_rgb=ELEC_CYAN, to simulate CRT screen illuminating from below.
 - **Charged gap:** Add draw_filled_glow() + pixel scatter at midpoint between tendril tip and Luma's hand. This space is the emotional center.
 - **Lamp floor pool:** draw_filled_glow() at (lamp_x+32, H*0.85), rx=120, ry=44, LAMP_PEAK. Required for lamp spatial presence on floor.
-- **Cycle 9 remaining gaps:** Luma full-body turnaround, Miri redesign (flatter head + design language), Cosmo silhouette feet/glasses, Glitch Layer orientation, Millbrook sky color, couch size (too large — 40% of frame width).
+
+## Cycle 11 Lessons
+- **Mid-air transition element:** pixel confetti in x=768–960, y=200–700 (lamp–monitor boundary). Left of zone midpoint x=864: SOFT_GOLD/SUNLIT_AMBER/LAMP_PEAK/WARM_CREAM (warm-lit). Right of x=864: ELEC_CYAN/BYTE_TEAL/DEEP_CYAN/STATIC_WHITE (cold-lit). Seeded rng=77, 60 particles. Closes Victoria P1 (2 cycles).
+- **Screen pixel figures minimum size = 15px wide.** Full 3-tier structure: head 5×4 + body 9×5 + legs 3×5 each. 7px was sub-legible. Rule: no pixel figures narrower than 14px on 1920px canvas.
+- **Logo tagline removed.** "A cartoon series by the Dream Team" deleted from logo_generator.py STEP 11. Show title only on title card. No tagline before pitch.
+- **byte.md version header:** Line 6 must always match colophon. v3.1 header now correctly states "3.1". Rule: whenever colophon is updated, update line 6 header on same edit.
+- **Style guide sections 9/10/11 added:** Animation Style Notes (movement timing, Byte bob=24f, Luma lean rule, glitch effects instant), Glitchkin Construction Rules (pixel body, no fixed shape, corruption marks mandatory, always <Byte size), Prop Design Guidelines (warm material logic, retro-computing, cables always present, Glitch Layer = pure geometry, transition objects = clean-edge boundary).
+
+## Cycle 10 Lessons
+- **byte.md v3.1 complete.** All cube/chamfer/notch references purged from Sections 5, 6, 8, 10, 11, 12, size comparison, rationale. Section 10 (Turnaround) fully rewritten for oval — all five views describe oval arcs, ellipsoid depth, oval silhouettes. Quick Reference table updated. Document is now internally consistent.
+- **Show logo exists:** `output/tools/logo_generator.py` → `output/production/show_logo.png`. "Luma" = SUNLIT_AMBER (#D4923A), "&" = WARM_CREAM neutral, "the Glitchkin" = ELEC_CYAN with pixel corruption. Dark void background with warm/cold zone glows and pixel border accents.
+- **Luma lean = 48px** (was 28px). 48px at 170px torso = ~16°. Victoria's mandate: active urgency, not passive TV-watching. Rule: lean_offset must be ≥40px for any emotionally active Luma pose.
+- **Screen content rule:** CRT screens must have pictorial content implying Byte's world — receding grid lines and pixel figure silhouettes establish origin. A blank cyan screen is "generic." Content is drawn in screen margins around the emergence void (which stays as dark void pocket). Draw order: screen background → grid → pixel figures → emergence void → glow rings.
+- **byte.md DO NOT list — oval-specific rule:** Do not make the oval too smooth/round; keep glitch details (scar, cracked eye frame, pixel confetti) as angular/sharp to counterbalance the soft body shape.
+
+## Cycle 9 Lessons
+- **HOODIE_AMBIENT = #B06040** (RGB 176,96,64) = CHAR-L-08 finalized. Derivation: HOODIE_SHADOW (#B84A20) blended 70% with DUSTY_LAVENDER (#A89BBF) at 30%. Replaces SHADOW_PLUM permanently. Must retain orange component — pure cool shadow reads as separate material.
+- **Couch scale corrected:** couch_left = W*0.16 (was W*0.04), couch_right = W*0.38 (was W*0.44). Span ~422px (~22%), ratio ~4.8:1 vs Luma's 88px. Target is 4:1. This was 4 cycles overdue — never defer couch/prop scale again.
+- **Submerge/glow draw order:** Submerge fade must be drawn BEFORE screen-glow. If submerge paints near-black AFTER the glow, the glow is invisible. Rule: establish dark field first, then paint light on top.
+- **Overlay draw order:** Atmospheric overlay must be applied BEFORE characters, not after. Characters have baked-in three-light values; applying the overlay on top double-tints warm hoodie (+yellow) and cyan arm (+wash). Fixed: overlay at STEP 3, characters at STEP 4+.
+- **False comments propagate:** The "arm span ~21%" comment was false from Cycle 7 and carried forward unchanged. Always verify comment claims match computed geometry.
+- **Byte body = OVAL (canonical from Cycle 8).** byte.md updated to Version 3.0; chamfered-box design retired. Any new artist should draw oval, not cube.
+- **MIRI-A locked** as canonical Grandma Miri design (bun+chopsticks+cardigan+soldering iron). MIRI-B archived. Maya notified.
+- **Cycle 10 remaining gaps:** Luma full-body turnaround, Cosmo silhouette feet/glasses, Glitch Layer background, composite reference image (all 4 characters at scale — Dmitri P0 now 5 cycles overdue), Millbrook sky color, naming convention reconciliation pass.
 
 ## Cycle 7 Lessons
 - **All 11 critic bugs fixed in style_frame_01_rendered.py:**

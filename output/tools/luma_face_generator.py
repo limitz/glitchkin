@@ -22,10 +22,11 @@ HOODIE_O  = (232, 114, 42)
 HOODIE_W  = (52, 38, 24)     # worried/determined hoodie (darker)
 HOODIE_M  = (180, 60, 120)   # mischievous hoodie tint
 # Panel backgrounds — must be distinguishable at pitch/print scale.
-# Excitement: warm amber off-white (original, kept warm).
+# Excitement: committed warm amber mid-tone (240,200,150) — Cycle 9 push from off-white.
+#   Previous (248,238,220) read as off-white at distance; new value reads clearly warm.
 # Worry: genuinely cool desaturated blue-grey (much cooler than before).
 # Mischief: bold warm deep lavender (committed purple, not "light neutral").
-BG        = (248, 238, 220)   # warm amber off-white
+BG        = (240, 200, 150)   # warm amber mid-tone (Cycle 9: pushed from off-white to committed warm amber — reads clearly at distance)
 BG_WORRY  = (195, 212, 228)   # cool desaturated blue-grey
 BG_MISCH  = (220, 205, 242)   # warm deep lavender
 

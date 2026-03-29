@@ -47,8 +47,26 @@
 - **Section 6 (Environment / Props) is the template for recurring prop colors.** Follow the PROP-01/02/03 couch format. Every entry needs: role, shadow companion, use-case notes, pairs-with, avoid.
 - **Color key thumbnails regenerate cleanly from color_key_generator.py.** No regressions found in Cycle 8 run (all 4 keys: key01 through key04).
 
-## Cycle 9 Priorities
-- Add DRW-16 painter warning to Luma character spec (shoulder-under-waterfall-blue = distinct color, not a hoodie variant).
-- Key 01 palette strip: mark Cyan swatch and Deep Shadow swatch as "accent/added" (follow Key 02 Mag* approach).
-- Confirm Alex has resolved CHAR-L-08 hoodie underside and GL-07 width=3 fix.
-- Verify Alex's rendered scripts reference CHAR-L-01 through CHAR-L-08 by name, not by inline tuple.
+## Cycle 9 Lessons
+- **Skin system requires two-tier documentation.** Canonical neutral base (RW-10, #C4A882) and scene-derived values (CHAR-L-01, #C8885A for lamp-lit Frame 01) are not contradictions — they are a system. Both must be documented and cross-referenced. Section 7 of master_palette.md is now the skin system reference.
+- **Every character's unique skin base must be in the master palette.** Cosmo's #D9C09A was in the color model but nowhere in master_palette.md. Added as CHAR-C-01. Any character with a skin tone that differs from RW-10 needs a named entry.
+- **Local aliases for module constants are always wrong.** SHOE_CANVAS and SHOE_SOLE were local duplicates of WARM_CREAM and DEEP_COCOA. Local aliases create traceability gaps — if the module constant changes, the alias stays wrong. Always reference the module constant directly.
+- **Name every module-level constant. No inline tuples at use-sites.** CABLE_NEUTRAL_PLUM was a comment-explained inline tuple; Naomi correctly flagged it as breaking the traceability pattern. Named constant + palette entry = complete registration. Comment alone is not enough.
+- **A compliance checklist for naming conventions is more actionable than the spec doc alone.** The naming_conventions.md is clear and correct. Zero compliance means the team needs a fast pre-save checklist, not a better spec. Checklist created at output/production/naming_convention_compliance_checklist.md.
+- **CHAR-L-08 finalized.** HOODIE_AMBIENT (#B06040) = HOODIE_SHADOW (#B84A20) + DUSTY_LAVENDER (#A89BBF) at 70/30 blend. Shadow Plum interim removed. The hoodie underside must retain orange-material identity even under cool ambient.
+
+## Cycle 10 Lessons
+- **Derivation arithmetic must be verified, not assumed.** CHAR-L-08 (#B06040) had a 16-point blue channel error vs. the stated 70/30 formula. Corrected to #B36250 (179,98,80). Always verify blend arithmetic against the formula result, not just the qualitative look.
+- **Palette strip accent markers are essential for key readability.** Key 01 now marks Cyan as "Cy*" and Deep Shadow as "Dk*" — matching the Key 02 "Mag*" pattern. Viewers of color keys must immediately know which swatches are dominant fills vs. accents.
+- **Cross-references between documents must be in both directions.** luma_color_model.md now cites master_palette.md Section 7. Every documentation link should be traceable both ways to prevent the "one document knows, the other doesn't" failure.
+- **Generator header is the cycle log.** Always update the header comment at the start of each cycle — it is what future agents read first when they restart.
+
+## Cycle 11 Lessons
+- **Arithmetic in comments must be verified against the formula, not assumed.** The "near-zero alpha at boundary" comment in draw_lighting_overlay() was wrong. Actual: alpha=30 (~11.8%) at the 80px overlap zone. When writing an analysis comment, always run the formula for the boundary case explicitly: t≈0.49, alpha=int(60*(1-0.49))=30. Document the arithmetic step-by-step in the comment so reviewers can verify.
+- **11.8% cold overlay over warm skin = valid split-light cross-light effect.** cold_alpha_max=60 is visually correct — the warm-to-cool gradient at the boundary reads as intentional atmospheric separation, not contamination. Decision retained and documented.
+- **Style guide Color System section must be paint-ready, not referential.** The Color System section in style_guide.md must be actionable: tables of what to paint when, a decision flowchart, explicit forbidden lists per world. Painters should not need to read master_palette.md to make a correct color call on a standard scene.
+
+## Cycle 12 Priorities
+- DRW-16 painter warning for Luma character spec still outstanding (shoulder-under-waterfall-blue).
+- Batch naming convention reconciliation pass is overdue — coordinate with Alex Chen.
+- luma_color_model.md version bump may be needed after Cycle 9 skin cross-reference update.

@@ -495,51 +495,108 @@ def draw_cosmo_action(draw, cx, base_y):
 
 
 def draw_byte_action(draw, cx, base_y):
-    """Byte — one arm at full extension pointing, body tilted toward point."""
+    """Byte — MID-FLIGHT LEAP pose (Cycle 9 redesign per Dmitri feedback).
+    Body at a diagonal (tilted ~25° from vertical), both arms extended at
+    DIFFERENT angles (right arm forward-up, left arm back-down), one leg
+    kicked back hard. The silhouette implies velocity, not indication.
+    Rule: asymmetric arm angles + diagonal body + kicked leg = motion read.
+    """
     hu = HEAD_UNIT
     s = int(LUMA_H * 0.20)
-
-    # Body tilted forward (toward right/pointing direction)
-    # Simulate tilt by skewing the polygon
-    tilt = int(s * 0.20)
-    hy = base_y - s
     c = int(s * 0.15)
+    lw = int(s * 0.22)
+
+    # ── Body: tilted diagonally (top-right, bottom-left) ──────────────────
+    # Diagonal tilt: top of body shifts right (+tilt_x, -tilt_y),
+    # bottom shifts left — creates a clear mid-air lean.
+    tilt_x = int(s * 0.30)   # horizontal lean of top vs bottom
+    tilt_y = int(s * 0.18)   # vertical compression (body foreshortened at angle)
+
+    # Ground line raised: Byte is in the air (leap clears base_y by jump_h)
+    jump_h = int(s * 0.45)
+    hy = base_y - s - jump_h   # top of body (body fully off ground)
+
+    # Body polygon: top-right / bottom-left diagonal
     pts = [
-        (cx - s//2 + c + tilt, hy),
-        (cx + s//2 - c + tilt, hy),
-        (cx + s//2 + tilt,     hy + c),
-        (cx + s//2,            hy + s - c),
-        (cx + s//2 - c,        hy + s),
-        (cx - s//2 + c,        hy + s),
-        (cx - s//2,            hy + s - c),
-        (cx - s//2 + tilt,     hy + c),
+        (cx - s//2 + c + tilt_x,  hy),
+        (cx + s//2 - c + tilt_x,  hy),
+        (cx + s//2 + tilt_x,      hy + c),
+        (cx + s//2,                hy + s - tilt_y - c),
+        (cx + s//2 - c,            hy + s - tilt_y),
+        (cx - s//2 + c,            hy + s - tilt_y),
+        (cx - s//2,                hy + s - tilt_y - c),
+        (cx - s//2 + tilt_x,      hy + c),
     ]
     draw.polygon(pts, fill=SILHOUETTE)
 
-    # Right arm — FULLY EXTENDED pointing right
-    lw = int(s * 0.22)
-    arm_point_len = int(s * 0.80)   # much longer — full extension
-    arm_y = hy + s//3
-    draw.rectangle([cx + s//2, arm_y, cx + s//2 + arm_point_len, arm_y + lw], fill=SILHOUETTE)
-    # Arrow-tip "hand" at extension
-    tip_pts = [
-        (cx + s//2 + arm_point_len,          arm_y - int(lw*0.5)),
-        (cx + s//2 + arm_point_len + int(s*0.18), arm_y + lw//2),
-        (cx + s//2 + arm_point_len,          arm_y + lw + int(lw*0.5)),
+    # ── Arms: DIFFERENT ANGLES — velocity asymmetry ────────────────────────
+    arm_root_y = hy + int((s - tilt_y) * 0.35)
+    arm_h = int(s * 0.22)   # arm thickness
+
+    # RIGHT ARM: thrusting FORWARD-UP (leading into the leap)
+    # Extends upper-right at steep angle
+    r_arm_len = int(s * 0.80)
+    r_start_x = cx + s//2 + tilt_x
+    r_start_y = arm_root_y
+    r_ang_x = int(r_arm_len * 0.72)   # strong rightward thrust
+    r_ang_y = -int(r_arm_len * 0.52)  # angled up
+    draw.polygon([
+        (r_start_x,              r_start_y - arm_h//2),
+        (r_start_x + r_ang_x,    r_start_y + r_ang_y - arm_h//2),
+        (r_start_x + r_ang_x,    r_start_y + r_ang_y + arm_h//2),
+        (r_start_x,              r_start_y + arm_h//2),
+    ], fill=SILHOUETTE)
+    # Hand at right arm tip (small blob)
+    draw.ellipse([r_start_x + r_ang_x - int(arm_h*0.6),
+                  r_start_y + r_ang_y - int(arm_h*0.6),
+                  r_start_x + r_ang_x + int(arm_h*0.4),
+                  r_start_y + r_ang_y + int(arm_h*0.4)], fill=SILHOUETTE)
+
+    # LEFT ARM: swinging BACK-DOWN (trailing the leap — momentum counterweight)
+    # Extends lower-left at a shallow angle
+    l_arm_len = int(s * 0.68)
+    l_start_x = cx - s//2 + tilt_x
+    l_start_y = arm_root_y + int(arm_h * 0.5)
+    l_ang_x = -int(l_arm_len * 0.65)  # backward
+    l_ang_y = int(l_arm_len * 0.38)   # angled DOWN (trailing)
+    draw.polygon([
+        (l_start_x,              l_start_y - arm_h//2),
+        (l_start_x + l_ang_x,    l_start_y + l_ang_y - arm_h//2),
+        (l_start_x + l_ang_x,    l_start_y + l_ang_y + arm_h//2),
+        (l_start_x,              l_start_y + arm_h//2),
+    ], fill=SILHOUETTE)
+
+    # ── Legs: one KICKED BACK hard, one tucked forward ─────────────────────
+    leg_w = int(s * 0.20)
+    bot_y = hy + s - tilt_y   # bottom of body
+
+    # Lead leg (right): tucked forward-up under body (crouch position in leap)
+    tuck_x = int(s * 0.20)
+    tuck_y = int(s * 0.28)
+    draw.rectangle([cx + s//4 - leg_w//2,      bot_y,
+                    cx + s//4 + tuck_x + leg_w, bot_y + tuck_y], fill=SILHOUETTE)
+
+    # Trail leg (left): KICKED BACK and down hard — the power stroke
+    # Long diagonal extending lower-left
+    kick_len_x = int(s * 0.52)
+    kick_len_y = int(s * 0.62)
+    kick_pts = [
+        (cx - s//4 - leg_w//2, bot_y),
+        (cx - s//4 + leg_w//2, bot_y),
+        (cx - s//4 + leg_w//2 - kick_len_x, bot_y + kick_len_y),
+        (cx - s//4 - leg_w//2 - kick_len_x, bot_y + kick_len_y - int(leg_w*0.5)),
     ]
-    draw.polygon(tip_pts, fill=SILHOUETTE)
+    draw.polygon(kick_pts, fill=SILHOUETTE)
 
-    # Left arm — pressed flat to body side (no protrusion)
-    draw.rectangle([cx - s//2 - int(lw*0.3), arm_y + int(lw*0.3),
-                    cx - s//2,               arm_y + lw], fill=SILHOUETTE)
-
-    # Legs — spread slightly wider for stability/urgency
-    leg_w = int(s * 0.18)
-    leg_h = int(s * 0.20)
-    draw.rectangle([cx - s//3 - leg_w//2, hy + s,
-                    cx - s//3 + leg_w//2, hy + s + leg_h], fill=SILHOUETTE)
-    draw.rectangle([cx + s//3 - leg_w//2, hy + s,
-                    cx + s//3 + leg_w//2, hy + s + leg_h], fill=SILHOUETTE)
+    # ── Hover particles: scattered — not static, implies motion ───────────
+    # Positioned below the leap trajectory (lower than neutral hover)
+    particle_y = base_y - int(s * 0.08)
+    psz = 10
+    offsets = [(-int(s*0.45), 0), (-int(s*0.22), 8), (0, 3),
+               (int(s*0.18), 0), (int(s*0.38), 6)]
+    for ox, oy in offsets:
+        draw.rectangle([cx + ox, particle_y + oy,
+                        cx + ox + psz, particle_y + oy + psz], fill=SILHOUETTE)
 
 
 def draw_miri_action(draw, cx, base_y):
@@ -735,19 +792,22 @@ def draw_miri_v2_action(draw, cx, base_y):
 
 def generate(output_path):
     # Two rows: neutral (top) + action (bottom)
-    # Characters: Luma, Cosmo, Byte, MIRI-A (bun+chopsticks+iron), MIRI-B (curls+apron)
-    # Miri has TWO columns — silhouette variant test per Cycle 8 brief.
-    N_CHARS = 5
+    # Characters: Luma, Cosmo, Byte, MIRI (canonical = MIRI-A, locked Cycle 9)
+    # MIRI-B variant retired after Cycle 8 critic selection. MIRI-A is the only Miri.
+    N_CHARS = 4
     COL_W   = 186
     W       = COL_W * N_CHARS + 80   # 80px total side margin (40 each side)
 
     # NEUTRAL_BASE is the ground line for neutral row.
     # Tallest character is Cosmo at 4.0 * HEAD_UNIT (~320px).
-    # Miri V2 curls add ~HU*0.5 above head, but chopsticks (V-A) add ~HU*0.58 above bun.
-    # Set headroom = tallest + 50px, well above clip threshold.
+    # Miri chopsticks (MIRI-A) add ~HU*0.58 above bun — set headroom above clip threshold.
     NEUTRAL_BASE = 420
     # ACTION row: characters are roughly same height, allow same headroom.
-    ACTION_BASE  = NEUTRAL_BASE + 260   # 260px row gap for action variant arms
+    # Cycle 9: Byte action pose is a mid-flight leap — body raised jump_h above base.
+    # jump_h = s*0.45 ≈ 25px. The arms go up (r_ang_y=-52px relative to arm root).
+    # Net top of Byte action = base - s - jump_h - arm_up ≈ base - 56 - 25 - arm_up.
+    # Keep 260px gap to accommodate full leap silhouette without clipping.
+    ACTION_BASE  = NEUTRAL_BASE + 260   # 260px row gap for action variant arms + leap
 
     H2 = ACTION_BASE + 70   # 70px below action ground line for labels + title
     img2 = Image.new('RGB', (W, H2), BG)
@@ -761,19 +821,19 @@ def generate(output_path):
     except:
         font = font_title = font_col = font_note = ImageFont.load_default()
 
-    # Miri-A: bun+chopsticks+cardigan+soldering-iron
-    # Miri-B: rounded-curls+apron(circuit-pocket)
-    col_labels    = ["LUMA", "COSMO", "BYTE", "MIRI-A", "MIRI-B"]
-    neutral_drawers = [draw_luma, draw_cosmo, draw_byte, draw_miri,  draw_miri_v2]
-    action_drawers  = [draw_luma_action, draw_cosmo_action, draw_byte_action,
-                       draw_miri_action, draw_miri_v2_action]
+    # MIRI-A is the canonical Miri (Cycle 9 lock: bun+chopsticks+cardigan+soldering-iron).
+    # MIRI-B (curls+apron) is retired — no longer shown on silhouette sheet.
+    col_labels    = ["LUMA", "COSMO", "BYTE", "MIRI"]
+    neutral_drawers = [draw_luma, draw_cosmo, draw_byte, draw_miri]
+    action_drawers  = [draw_luma_action, draw_cosmo_action, draw_byte_action, draw_miri_action]
 
     # Title at bottom so it doesn't interfere with characters
     draw2.text((16, H2 - 40),
-               "LUMA & THE GLITCHKIN — Silhouette Sheet — Neutral + Action — Cycle 8",
+               "LUMA & THE GLITCHKIN — Silhouette Sheet — Neutral + Action — Cycle 9",
                fill=(30, 20, 15), font=font_title)
     draw2.text((16, H2 - 24),
-               "MIRI-A: bun+chopsticks+cardigan+iron  |  MIRI-B: rounded-curls+apron(circuit-pocket)",
+               "MIRI: bun+chopsticks+cardigan+soldering-iron (MIRI-A — CANONICAL, locked Cycle 9)  |  "
+               "BYTE: mid-flight leap pose",
                fill=(80, 70, 60), font=font_note)
 
     # Row divider between neutral and action sections
@@ -783,12 +843,6 @@ def generate(output_path):
     # Row labels
     draw2.text((4, 8), "NEUTRAL", fill=(120, 110, 100), font=font_col)
     draw2.text((4, NEUTRAL_BASE + 38), "ACTION", fill=(120, 110, 100), font=font_col)
-
-    # Miri variant divider — vertical line between cols 3 and 4
-    miri_divider_x = 50 + 3 * COL_W - COL_W // 2 + 20
-    draw2.line([(miri_divider_x, 4), (miri_divider_x, H2 - 50)],
-               fill=(200, 185, 170), width=1)
-    draw2.text((miri_divider_x + 4, 4), "MIRI VARIANTS", fill=(140, 120, 100), font=font_note)
 
     for i, (name, neutral_fn, action_fn) in enumerate(
             zip(col_labels, neutral_drawers, action_drawers)):

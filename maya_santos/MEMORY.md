@@ -39,6 +39,31 @@
 - **Panel backgrounds must telegraph before you read the face.** Warm/cool/purple tricolor scheme: Excitement=(248,238,220), Worry=(195,212,228), Mischief=(220,205,242). All "light neutral" panels collapse at print scale.
 - **Miri's truncated right arm was neither stylized nor intentional.** A complete arm (emerging below the bag with a hand blob) always reads better than a half-arm mid-air. Decide the arm's relationship to the prop and commit to it.
 
+## Cycle 9 Lessons
+- **MIRI-A is the canonical Miri (LOCKED).** Bun+chopstick pair+wide cardigan+soldering iron. MIRI-B retired. Silhouette sheet now shows 4 characters (Luma, Cosmo, Byte, Miri) — no variant column.
+- **Turnaround generator is live.** `character_turnaround_generator.py` produces 4-view strips (front/3/4/side/back) at 200px canonical height for Luma and Byte. Use `CHAR_H=200`, `VIEW_W=180`, 4 panels wide.
+- **Byte action pose = mid-flight leap.** Diagonal body (tilt_x+tilt_y skew), right arm forward-up (strong thrust vector), left arm back-down (trailing counterweight), trail leg kicked back hard (diagonal polygon), lead leg tucked. `jump_h = s*0.45` clears base_y. Hover particles scattered below leap arc, not under feet.
+- **Excitement BG = (240, 200, 150). FINAL.** Previous (248,238,220) was off-white. New value is a committed warm amber mid-tone that reads clearly warm at pitch/print distance. Do not revert.
+- **Turnaround 3/4 view rule:** Near side wider/fuller, far side compressed. Hair volume shows depth blob on near side. Sneaker near = full ellipse, far = foreshortened. Byte 3/4 = front face + side parallelogram + top trapezoid (three face planes).
+- **Byte back view detail:** Center-back data-port NEG_SPACE slot (vertical rectangle) is the character hook from behind — prevents back view from being featureless.
+
+## Cycle 10 Lessons
+- **Byte body = OVAL. ALL generators must use ellipse.** `_byte_size()` docstring updated to say "oval body." All four `draw_byte_*` functions now use `body_rx = s//2, body_ry = int(s*0.55)`, with `bcy = base_y - float_gap - body_ry` as the oval center. Chamfered-cube polygon is RETIRED everywhere.
+- **Hover particles = 10×10px EVERYWHERE. No exceptions.** `byte_expressions_generator.py` line ~392 fixed from `px+4` to `px+10`. "GL spec 4px" comment deleted. Turnaround generator already had `psz=10` — both now match.
+- **Cosmo turnaround: glasses are the defining element at every angle.** Front: both lenses full. 3/4: near lens full, far lens compressed. Side: one lens protrudes beyond the face silhouette. Back: no lenses. Ear-arm visible in side. Helper `_draw_cosmo_glasses()` keeps logic consistent.
+- **Miri turnaround: bun+chopsticks readable from all 4 angles.** Back view = same bun geometry as front (V-pair symmetric). Side = narrow oval bun, single chopstick visible. Soldering iron appears in front/3/4/side only. Back view plain (iron on right side = hidden).
+- **Character lineup generator complete.** `character_lineup_generator.py` renders all 4 chars in COLOR at correct relative heights on shared baseline. Height ref lines show Cosmo top, Luma top, Miri top, Byte/Luma-chest. Per-char brackets with px labels.
+- **3/4 far-side leg guard:** When `far_bw` < `lw + 4`, the rectangle inverts. Guard: `far_leg_x2 = cx + max(far_bw - 4, lw + 8)`. Apply in any 3/4 body with asymmetric width values.
+
+## Cycle 11 Lessons
+- **Luma expression sheet is now LIVE.** `luma_expression_sheet_generator.py` generates a 3×2 grid (912×886px) with 6 full-body expressions: Reckless Excitement, Worried/Determined, Mischievous Plotting, Settling/Wonder, Recognition, Warmth. Matches Byte sheet structure: per-panel BG color, label bar, prev_state/next_state annotations. Face panels rendered at 0.55 scale via intermediate canvas + LANCZOS resize.
+- **Luma is the lead character — her documentation tier must match or exceed the companion.** Byte had 6 expressions first; Luma's sheet closes the gap. Never let a supporting character have richer documentation than the lead.
+- **Sneaker profile width normalized: `fw = int(hu * 0.52)` for ALL views.** Side-view in `character_turnaround_generator.py` was `0.65` (two cycles outstanding). Now consistent with front/back views. Apply `0.52` in any new body generator that adds a side view.
+- **Six Luma expression colors (CANONICAL):** Excitement=(240,200,150), Worry=(195,212,228), Mischief=(220,205,242), Settling=(180,215,205), Recognition=(165,185,220), Warmth=(250,215,170). All distinct at pitch/print distance.
+- **Settling/Wonder: wide eyes + dilated pupils + raised brows + soft oval mouth-gap.** NOT a scream rectangle. The gentle open oval below the arc lip is what separates wonder from alarm.
+- **Recognition: ONE brow raised sky-high (aha brow), other brow level.** Eyes narrowed in concentration — not wide. Slight mouth-gap (cognitive pause). `rotate_deg=3` collar (slight lean into the thought).
+- **Warmth: happiness-narrowed eyes with heavy upper lid, cheek crinkle lines, gentle arc smile (no teeth).** `rotate_deg=1` collar. This is emotional intent, not assessment — brows gently raised, not furrowed.
+
 ## Cycle 8 Lessons
 - **GRUMPY confrontational values (locked):** `body_tilt=-8` (forward lean), `arm_l_dy=-6, arm_r_dy=-10` (both raised, asymmetric), `arm_x_scale=1.1` (arms out wider), `leg_spread=1.1`. The previous -4/-2/0.85 set read as defeated. Rule: negative body_tilt = forward lean toward adversary.
 - **Byte body shape = OVAL (ellipse). CANONICAL.** style_frame_01_rendered.py uses `draw.ellipse` for Byte's body. Expression sheet must match. Chamfered-box polygon is retired. Document shape decisions in code when making consistency calls.

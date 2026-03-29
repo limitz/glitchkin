@@ -3,8 +3,8 @@
 
 **Designer:** Maya Santos
 **Date:** 2026-03-29
-**Version:** 2.0 (Cycle 2 Revision)
-**Status:** Revised — Incorporating Critic Feedback
+**Version:** 3.1 (Cycle 8/9 Revision — Oval Body; Cycle 10 Section 10 rewrite)
+**Status:** Updated — Chamfered-box design retired Cycle 8; oval body is canonical
 
 ---
 
@@ -23,15 +23,19 @@ The design challenge is substantial: Byte needs to be:
 ## 2. SHAPE LANGUAGE
 
 ### Primary Shapes
-- **Body core:** A modified cube — but not a perfect cube. The base shape is a cube where the edges have been chamfered (cut at 45 degrees), so each corner of the cube is actually a small triangular facet. Think of a cube that has been aggressively eroded: some edges are sharp, others have small notched triangles cut into them. The overall silhouette is APPROXIMATELY rectangular but with visual complexity — triangular bites taken from some corners, triangular protrusions added to others.
-- **Head/body distinction:** Unlike human characters, Byte does NOT have a separate head and body. His entire mass is one cube-creature form. The "face" is one face of the cube. But the face is not perfectly flat — the face plane is very slightly angled toward the viewer in default pose, approximately 5 degrees off-perpendicular.
-- **Limbs:** Four stubby limbs sprout from the bottom and sides of the cube. Each limb is a tapered triangular wedge — thick at the root, pointed at the tip. They are too short to be practically useful for locomotion, which is partly why he floats. They are expressive appendages more than functional limbs.
-- **The Floating:** Byte does not walk — he floats approximately 0.25 heads above any surface. The transition from "resting on surface" to "floating" is imperceptible — he always seems to be hovering. Below his feet (the tips of his lower limbs), small pixel confetti squares scatter and cycle — his floating mechanism. This is the show's pixel confetti signature, and Byte is its primary source.
 
-### Rationale
-Triangles convey danger, sharpness, and unpredictability. But at 6 inches tall, danger becomes mischief, and sharp edges become quirky. The chamfered cube construction is a deliberate attempt to make him simultaneously geometric (artificial, digital, non-biological) and organic (no perfect cube ever has notches and protrusions — these come from corruption, from history, from use). He is not a brand-new piece of software. He is ancient, corrupted, experienced data. The shape carries that.
+> **Cycle 8 design revision:** The chamfered-box body described in Version 2.0 has been **retired**. Byte's canonical body shape is now an **oval/ellipse**. See Section 4 for updated construction details. The chamfered-box rationale below is preserved for historical reference only — it no longer reflects Byte's production design.
 
-The triangle/polygon language also DIFFERENTIATES him from the glitch energy in the world — most glitch effects are chaotic and fractured in an abstract way. Byte has specific geometry. He has a body plan. This is what makes him a Glitchkin who has cohered into a personality rather than dissolving back into noise.
+- **Body core:** An oval (ellipse) form — wider than tall, soft-edged, organic despite being digital. The oval reads as buoyant and floating-ready rather than architectural. It is the primary silhouette read for Byte at any scale. At shoulder-ride distance, the oval is immediately distinguishable from Luma's circle-based head and from the rectangular/architectural elements of the Glitch Layer environment.
+- **Head/body distinction:** Like the original cube design, Byte does NOT have a separate head and body. The entire oval mass is one unified form. The face occupies roughly the front-facing surface of the oval. It reads naturally as a face because the eyes, nose-mark and mouth are centered on the widest, most forward-facing aspect.
+- **Limbs:** Four stubby limbs sprout from the perimeter of the oval — two from the lower arc (leg-analogues), two from the upper sides (arm-analogues). Each limb is a short, rounded-tip appendage. They are expressive through angle and energy, not through digit detail. No fingers.
+- **The Floating:** Byte does not walk — he floats approximately 0.25 heads above any surface. Below his lower limb tips, small pixel confetti squares scatter and cycle — his floating mechanism. This is the show's pixel confetti signature, and Byte is its primary source.
+
+### Shape Language Rationale (Updated — Oval)
+The oval form reads as soft, buoyant, and slightly uncertain — which matches Byte's personality (grumpy but secretly protective, not menacing). It also creates immediate figure-ground separation from the rectangular CRT screen from which he emerges, and from the hard-edged Glitch Layer environment. The oval is consistent with the show's character shape language: Luma = circles, Cosmo = rectangles, Byte = oval (intermediate — neither fully human-organic nor fully digital-geometric).
+
+### Retired Design Note (Chamfered-Box — Version 2.0)
+The original chamfered-box design (Version 2.0) used a cube with 45-degree chamfered edges, triangular notches, and a geometric spike cowlick. It was retired in Cycle 8 after `byte_expressions_generator.py` and `style_frame_01_rendered.py` converged on the oval form for production legibility reasons. The chamfered-box rationale (triangles = danger/mischief, corrupted geometry = history) was sound conceptually but produced a body that was too complex to read at Byte's operating scale (shoulder-ride / 40-60px). The oval achieves the same "ancient corrupted digital creature" reading through the face expression system rather than body geometry.
 
 ---
 
@@ -39,17 +43,17 @@ The triangle/polygon language also DIFFERENTIATES him from the glitch energy in 
 
 **Total height: 2.0 "heads" — but for Byte, "head" is defined differently**
 
-For Byte's proportions, one "head unit" = the width of his body cube (which IS his head — they are the same thing). His absolute height is approximately 6 inches (155mm) which corresponds to roughly 0.5% of Luma's total height.
+For Byte's proportions, one "head unit" = the width of his body oval (which IS his head — they are the same thing). His absolute height is approximately 6 inches (155mm) which corresponds to roughly 0.5% of Luma's total height.
 
 | Body Section | Measurement | Notes |
 |---|---|---|
-| Body cube | 1.0 unit | The main body/head mass. Approximately 1.0:1.1:1.0 (W:H:D) — slightly taller than wide. |
-| Lower limb pair | 0.6 units | Each lower limb is 0.6 units long from the body base to the tip. |
-| Upper limb pair | 0.5 units | Slightly shorter arm-limbs, sprouting from the sides. |
+| Body oval | 1.0 unit | The main body/head mass. Oval is approximately 1.0:0.85 (W:H) — wider than tall. |
+| Lower limb pair | 0.6 units | Each lower limb is 0.6 units long from the oval base to the tip. |
+| Upper limb pair | 0.5 units | Slightly shorter arm-limbs, sprouting from the oval sides. |
 | Floating clearance | 0.25 units | Gap between lower limb tips and the surface. |
 | **Total visual height** | **~2.0 units** | Including floating clearance |
 
-**Face occupancy:** The face takes up approximately 70% of the front cube face. Eyes are the dominant elements — each eye occupies 0.35 units width x 0.25 units height. Nose and mouth combined occupy the lower 30% of the face.
+**Face occupancy:** The face takes up approximately 70% of the forward-facing oval surface. Eyes are the dominant elements — each eye occupies 0.35 units width x 0.25 units height. Nose and mouth combined occupy the lower 30% of the face.
 
 **Size in relation to Luma:**
 - Byte fits on Luma's shoulder with approximately 0.15 "Luma heads" of clearance above him before he'd touch her jaw.
@@ -61,27 +65,30 @@ For Byte's proportions, one "head unit" = the width of his body cube (which IS h
 
 ## 4. BODY CONSTRUCTION — DETAILED
 
-### The Cube Form
-The main body cube is NOT symmetrical. Its digital corruption history means:
+### The Oval Form (Canonical — Cycle 8+)
 
-**Left side (viewer's right):** Relatively clean. The edge has minimal chamfering — just the standard corner cuts.
+> **Note:** The chamfered-cube construction described in Version 2.0 has been retired. The following describes the current canonical oval body. See "Retired Design Note" in Section 2 for context.
 
-**Right side (viewer's left):** More damaged. Two triangular notches have been bitten out of the upper-right edge of the cube — like pixels have been deleted from this corner. These notches are approximately 0.08 units each. They expose the **Void Black (#0A0A14)** interior color inside the cube form, as if looking into a very small and very dark hole.
+The main body oval is a rounded ellipse, wider than tall. Unlike the retired cube, it has no hard edges — the form is continuous. Its personality quirks are expressed through the face system and glitch-scar detail rather than body geometry.
 
-**Top surface:** Mostly flat with one small triangular extrusion pointing upward-right — approximately 0.12 units tall, a sharp geometric spike. It sits roughly one-third of the way from the right edge. This is the equivalent of a cowlick — an imperfection in his geometry.
+**Left side (viewer's right):** Standard oval arc. Receives Soft Gold lamp rim light in Frame 01 three-light setup.
 
-**Bottom surface:** Flat and clean. The lower limbs sprout from the corners of the bottom face.
+**Right side (viewer's left):** Standard oval arc. More exposed to monitor wall cyan in Frame 01. The glitch-scar markings (see Color section) are concentrated here — a Hot Magenta diagonal crack that functions as Byte's distinctive mark.
 
-**Back face:** Plain. The glitch-scar markings continue onto the back (see Color section), but there are no notches or extrusions on the back.
+**Top arc:** Smooth oval top. No geometric spike (retired with chamfered-box design).
+
+**Bottom arc:** Smooth oval base. Lower limbs sprout from the lower portion of the oval perimeter.
+
+**Back surface:** The oval form is drawn as a 2D projection; the back is not independently detailed in production assets.
 
 ### The Limbs
-**Lower limbs (2):** Sprout from the front-bottom corners of the cube, angling downward and slightly outward. Each is a triangular wedge tapering to a blunt (not sharp) point. They function like stubby legs — oriented downward in "standing" position, can swing forward and back for rudimentary locomotion. The surfaces of the limbs have the same texture system as the body.
+**Lower limbs (2):** Sprout from the lower arc of the oval, angling downward and slightly outward. Each is a short, rounded-tip appendage. They function like stubby legs — oriented downward in "floating" position, can swing forward and back. No triangular wedge shape (retired with cube design).
 
-**Upper limbs (2):** Sprout from the upper side-corners of the cube (approximately 0.3 units down from the top), angling outward and slightly forward. These are arm-analogues. Slightly shorter and thinner than the lower limbs. They end in a slightly wider tip — not a hand per se, but a flattened triangular surface that can be used to indicate pointing, waving, or pushing. No fingers. They are expressive through their angle and energy, not through digit detail.
+**Upper limbs (2):** Sprout from the upper side-arcs of the oval (approximately 0.3 units down from the top), angling outward and slightly forward. These are arm-analogues. Slightly shorter than the lower limbs. They end in a slightly wider blunt tip — not a hand, but expressive through angle and energy. No fingers.
 
 **Limb expressions — Full Vocabulary (8 specified configurations):**
 
-Because Byte cannot change his posture much (cube body, stubby limbs), the ANGLE and ENERGY of his limbs carry significant expressive weight. All limb positions described from viewer's perspective. Lower limb angles are measured from vertical (0° = pointing straight down).
+Because Byte cannot change his posture much (oval body, stubby limbs), the ANGLE and ENERGY of his limbs carry significant expressive weight. All limb positions described from viewer's perspective. Lower limb angles are measured from vertical (0° = pointing straight down).
 
 **Configuration 1: GRUMPY NEUTRAL**
 - Upper limbs: flat against body sides, angled slightly downward at 10° from horizontal. Tips point toward lower-front corners of the body.
@@ -90,7 +97,7 @@ Because Byte cannot change his posture much (cube body, stubby limbs), the ANGLE
 - Use for: default, observing, waiting, low-energy states.
 
 **Configuration 2: DEFENSIVE / CLOSED**
-- Upper limbs: pressed tight to front face of body, crossing slightly inward over the chest — left over right. Tips overlap at center.
+- Upper limbs: pressed tight to the forward oval surface, crossing slightly inward over the chest — left over right. Tips overlap at center.
 - Lower limbs: angled slightly inward and forward (10° from vertical, toed-in) — closed stance.
 - Reading: "I am not available. Do not ask me for things."
 - Use for: dismissal, avoidance, sulking, smug satisfaction (pairs with star pixel-eye).
@@ -112,12 +119,12 @@ Because Byte cannot change his posture much (cube body, stubby limbs), the ANGLE
 **Configuration 5: RELUCTANT ENGAGEMENT (Arms Forward)**
 - Upper limbs: both extended forward at 0° (horizontal), parallel, aimed at the task. Not excited — functional.
 - Lower limbs: straight down, even (same as neutral).
-- Body: squared directly toward the task. Face perpendicular to goal direction.
+- Body: oriented directly toward the task. Face oval front-surface aimed at goal direction.
 - Reading: "I am doing this. Do not thank me. I will accept no compliments."
 - Use for: Reluctant Effort expression (Expression 7), problem-solving, action sequences.
 
 **Configuration 6: SMUG RECLINE**
-- Upper limbs: crossed over front body face — right over left (opposite of defensive crossing). Tips pointing outward. This is arms-folded-leaning-back energy.
+- Upper limbs: crossed over the forward oval surface — right over left (opposite of defensive crossing). Tips pointing outward. This is arms-folded-leaning-back energy.
 - Lower limbs: crossed at tips (right in front of left) — lower limbs hooked over each other, floating.
 - Body: tilted 10° backward — he is literally leaning away from whatever is happening.
 - Reading: "I am observing this situation from a position of superior experience."
@@ -155,7 +162,7 @@ Below Byte's lower limb tips, a constant stream of tiny pixel squares circulates
 ## 5. FACIAL CONSTRUCTION
 
 ### Face Plane
-Byte's face is the front face of his cube. It is bounded by the cube's front edges. Within that face, the design is organized into two zones:
+Byte's face is the forward-facing oval surface. It occupies the widest, most prominent aspect of the oval form — the natural "front" of an ellipsoid body. Within that face, the design is organized into two zones:
 - **Upper 65%:** Eyes. Dominated by two large, expressive eye structures.
 - **Lower 35%:** Nose indication and mouth.
 
@@ -223,9 +230,9 @@ Byte's mouth is a direct horizontal line segment — hard-edged, rigid. Unlike t
 | Area | Color Name | Hex | Notes |
 |---|---|---|---|
 | Base body | Electric Cyan | #00F0FF | His primary color — the glitch palette's signature. Flat fill, no gradient. |
-| Shadow tone | Deep Cyan | #00A8B5 | Occupies the underside of the cube body and the undersides of limbs. |
-| Highlight tone | White-Cyan | #80F8FF | The top face of the cube and the top surfaces of limbs where light strikes. |
-| Interior void (notches) | Void Black | #0A0A14 | The triangular notches where geometry has been removed — dark holes into his interior. |
+| Shadow tone | Deep Cyan | #00A8B5 | Occupies the underside of the oval body and the undersides of limbs. |
+| Highlight tone | White-Cyan | #80F8FF | The top arc of the oval and the top surfaces of limbs where light strikes. |
+| Scar ground | Void Black | #0A0A14 | Used for crack lines on the glitch-scar markings — dark voids rendered as gaps. |
 
 ### Glitch-Scar Markings
 The Hot Magenta markings on Byte's body are the evidence of his corrupted past — places where his data was damaged and repaired or partially overwritten. They appear as:
@@ -234,7 +241,7 @@ The Hot Magenta markings on Byte's body are the evidence of his corrupted past �
 |---|---|---|---|
 | Primary scar line | Hot Magenta | #FF2D6B | A diagonal scar-stripe running from upper-right to lower-left across the front face — approximately 0.08 units wide. |
 | Secondary scatter marks | Hot Magenta at 70% | #FF2D6B with reduced opacity effect (use #C4235A flat) | Small rectangular patches of 2-4 pixels grouped near the main scar. |
-| Scar continuation | Hot Magenta | #FF2D6B | The main scar line continues onto the side face of the cube at reduced width. |
+| Scar continuation | Hot Magenta | #FF2D6B | The main scar line continues onto the side arc of the oval at reduced width. |
 | Shadow on scar | Dark Magenta | #9E1540 | Shadow tone applied to the scar elements in shadow zones. |
 | Highlight on scar | Light Magenta | #FF6090 | Highlight tone for scar elements on lit faces. |
 
@@ -251,7 +258,7 @@ The Hot Magenta markings on Byte's body are the evidence of his corrupted past �
 | Eye frame color | Deep Cyan-Gray | #1A3A40 | The "bezel" surrounding each eye, framed by a darker border. |
 
 ### Limbs
-Limbs follow the same shadow/highlight/base system as the body. The tapered shape means the highlight appears on the top/front face of each limb, the shadow on the underside/back face.
+Limbs follow the same shadow/highlight/base system as the body. The tapered shape means the highlight appears on the top/front surface of each limb, the shadow on the underside/back surface.
 
 ### Line Work
 - **Silhouette lines:** Void Black (#0A0A14) — as specified in the brief. This distinguishes him from Luma and Cosmo's Deep Cocoa lines.
@@ -342,7 +349,7 @@ Limbs follow the same shadow/highlight/base system as the body. The tapered shap
 - Cracked eye: Star display, held steady. The star feels SELF-SATISFIED.
 - Mouth: closed, with a clear upward curve at the corners — a smirk, the first time his mouth curves upward noticeably. One side curves more than the other — asymmetric smirk.
 - Body: leans back very slightly — he is reclining into his smugness.
-- Limbs: upper limbs crossed over his front face — arms folded analogue.
+- Limbs: upper limbs crossed over his forward oval surface — arms folded analogue.
 
 **The feeling:** He warned them. The warning was ignored. Events have confirmed the warning. He requires no acknowledgment. The data speaks.
 
@@ -374,7 +381,7 @@ Limbs follow the same shadow/highlight/base system as the body. The tapered shap
 - Normal eye: fully open, 85% aperture — the determination is real, even if reluctant. Eye directed forward and slightly upward — toward the task.
 - Cracked eye: flat line, bright. Not displaying emotion — he is not giving you the satisfaction of knowing how he feels about this.
 - Mouth: set — the closed horizontal line from his neutral, but pulled tighter. The mouth is a firm line now. He has committed.
-- Body: squared forward — aligned with the direction of action, cube face fully perpendicular to the goal.
+- Body: squared forward — aligned with the direction of action, oval front surface fully aimed at the goal.
 - Limbs: arms pointing forward — upper limbs angled toward the task.
 - Pixel confetti: steady, even — calm beneath him. He is in control.
 
@@ -397,7 +404,7 @@ Limbs follow the same shadow/highlight/base system as the body. The tapered shap
 
 **The difference between this and Expression 5 (Smug):** Smugness is directed outward — he wants the acknowledgment. This expression is directed inward — he's having a private moment of satisfaction. The dimmed star is key: he hasn't turned it off completely, but he's keeping it private.
 
-**The feeling:** He helped. It worked. Internally, he is doing a small celebration. Externally, he is a cube. Nobody needs to know.
+**The feeling:** He helped. It worked. Internally, he is doing a small celebration. Externally, he is a silent oval. Nobody needs to know.
 
 ---
 
@@ -629,34 +636,37 @@ Each symbol is built on a grid of squares. The grid for the cracked eye is appro
 
 ## 10. TURNAROUND — ALL 5 VIEWS (Complete)
 
-This section fully documents all five turnaround views required for a character with Byte's asymmetric design. His asymmetry (damaged right side, clean left side, different eyes on each side) means each view reveals different information — an incomplete turnaround would cause production inconsistency.
+**Version 3.0 — Oval body. All cube/chamfer geometry retired.**
+
+This section fully documents all five turnaround views required for a character with Byte's asymmetric oval design. His asymmetry (damaged right side, clean left side, different eyes on each side) means each view reveals different information — an incomplete turnaround would cause production inconsistency.
+
+**Canonical body shape reminder:** Byte's body is an OVAL/ELLIPSE — wider than tall, soft-edged, continuous. No flat faces, no chamfered corners, no triangular notches. All geometry is curved arc geometry. Refer to Section 4 for full oval construction specifications.
 
 ### View 1: FRONT (0°)
 
-**Camera position:** Directly facing Byte's face plane.
+**Camera position:** Directly facing Byte's forward-facing oval surface.
 
 **What is visible:**
-- Face plane: both eyes in full. Normal eye (viewer's right), cracked eye (viewer's left). The asymmetry between them is maximally clear here.
-- The facial scar: diagonal hot magenta stripe runs from upper-right to lower-left across the face. Full visibility.
-- The nose bump: central small triangular protrusion, casts small downward shadow.
+- Face surface: both eyes in full. Normal eye (viewer's right), cracked eye (viewer's left). The asymmetry between them is maximally clear here.
+- The facial scar: diagonal hot magenta stripe runs from upper-right to lower-left across the oval face surface. Full visibility.
+- The nose bump: central small triangular protrusion between the eyes, casts small downward shadow.
 - The mouth: horizontal gap, closed in neutral.
-- Body edges: both left and right body edges visible as straight vertical lines with chamfered corners. The right-side notches are partially visible as dark indentations at the upper-right corner of the body.
-- The spike: visible above the body, slightly right of center.
-- Upper limbs: extending from upper side-corners, angled outward. The chamfered corner where they attach is visible.
-- Lower limbs: descending from lower corners, straight down, floating gap at tips.
+- Body silhouette: a clean oval arc on both left and right edges — smooth, continuous, no corners or notches. The oval is approximately 1.0:0.85 (W:H) — wider than tall.
+- Upper limbs: sprouting from the upper side-arcs of the oval at approximately 0.3 units down from the top, angling outward and slightly forward.
+- Lower limbs: sprouting from the lower arc, angling downward and slightly outward, floating gap at tips.
 - Pixel confetti: visible below lower limb tips in loose scatter formation.
 
 **Key measurements confirmed in front view:**
-- Body: approximately 1.0 unit wide × 1.1 units tall (slightly taller than wide).
-- Spike: 0.12 units tall, positioned 1/3 from right edge of body top.
-- Right-side notches: 2 triangular notches, 0.08 units each, at upper-right corner.
+- Body oval: approximately 1.0 unit wide × 0.85 units tall (wider than tall).
 - Floating gap: 0.25 units between lower limb tips and implied surface.
-- Upper limb attachment point: 0.3 units below top of body.
+- Upper limb attachment point: approximately 0.3 units down from the top arc of the oval.
+- Lower limb attachment point: lower arc of the oval, slightly outward from center.
+- Face occupancy: approximately 70% of the forward-facing oval surface.
 
 **What is NOT visible from front:**
-- The depth dimension of the cube (body appears flat)
+- The depth dimension of the oval (body appears as a flat ellipse)
 - The back scar continuation
-- The side face geometry in full
+- The side arc curvature in full
 
 ---
 
@@ -666,13 +676,12 @@ This section fully documents all five turnaround views required for a character 
 
 **What is visible:**
 - Near eye (cracked eye, viewer's left): fully visible. Crack line runs across full face.
-- Far eye (normal eye, viewer's right): approximately 60% visible, foreshortened. Iris partially obscured by nose bump and face edge.
-- The cube's LEFT side face: visible in perspective. Clean surface — no notches on this side. The side face shows minimal scar line continuation (the scar is thinner on the side than the front).
-- The spike: clearly visible from this angle — the triangular protrusion points upward-right and is readable as a 3D form from this angle.
-- Side-face highlight: the left side face receives reflected light — White-Cyan (#80F8FF) tone.
-- Depth of cube: the body reads as a genuine 3D form with visible depth. The side face is approximately 0.9 units deep.
-- Lower limbs: the left/near lower limb is fully visible; the right/far lower limb is partially obscured behind the body.
-- Upper limbs: near upper limb extends toward viewer. Far upper limb is partially occluded.
+- Far eye (normal eye, viewer's right): approximately 60% visible, foreshortened. Iris partially obscured by nose bump and face curvature.
+- The LEFT side arc of the oval: visible in perspective as a smoothly curving surface. Clean surface — no scar markings on the clean left side (minimal scar continuation only at the edge where it meets the front surface).
+- The oval's depth is now apparent: the body reads as a genuine 3D ellipsoid with a soft curved edge. The depth dimension (front-to-back) is approximately 0.9 units.
+- Side-arc highlight: the left side arc receives reflected light — White-Cyan (#80F8FF) tone on the curved edge.
+- Lower limbs: the left/near lower limb is fully visible; the right/far lower limb is partially obscured behind the oval body.
+- Upper limbs: near upper limb extends toward viewer. Far upper limb is partially occluded behind the oval.
 
 **Key visual purpose:** This is the "character introduction" 3/4 angle — his clean side reads as approachable and readable. The cracked eye being the near eye makes his most expressive element prominent.
 
@@ -680,18 +689,18 @@ This section fully documents all five turnaround views required for a character 
 
 ### View 3: SIDE LEFT (90° — looking at his clean/left side)
 
-**Camera position:** Directly at Byte's left side (viewer facing his left face).
+**Camera position:** Directly at Byte's left side (viewer facing the left arc).
 
 **What is visible:**
-- The left side face: a vertical rectangle with chamfered corners. This face is clean — no notches, minimal scar continuation (a thin hot magenta line at the edge where it meets the front face).
-- The spike: at this angle the spike reads as a small right-pointing triangle on the top edge of the body.
-- Upper limb (left/near): this limb is centered in the view, extending outward from the left side. In neutral it points forward-left from the viewer's perspective.
-- Lower limb (left/near): descending from the lower-left corner.
-- The body depth: the full depth of the body (approximately 0.9 units front-to-back) is visible as the width of this view.
-- Neither eye is visible from this angle — pure side view. The face plane is perpendicular to the camera. This view establishes the body's depth dimension.
+- The left side arc: a clean smooth oval profile. This side is the undamaged side — no scar markings reach here (only the thinnest possible scar trace at the far edge where the front scar begins).
+- The oval in profile: from the side, the body reads as a tall oval/ellipse shape (the depth dimension — approximately 0.9 units front-to-back — is now the visible width). Because the oval is wider-than-tall in front view, the side view appears slightly narrower and taller relative to that.
+- Upper limb (left/near): this limb is centered in the view, extending outward from the left arc. In neutral it points forward-left from the viewer's perspective.
+- Lower limb (left/near): descending from the lower-left arc.
+- The body depth: the full depth of the oval body (approximately 0.9 units front-to-back) is visible as the width of this view.
+- Neither eye is visible from this angle — pure side view. The face oval is perpendicular to the camera. This view establishes the body's depth dimension.
 - Floating gap: fully visible from the side — the lower limb tip and the implied ground plane show the clear 0.25 unit gap.
 
-**Key visual purpose:** Establishes the cube's depth dimension and confirms Byte is a genuine 3D form, not a flat design. Shows clean-side geometry.
+**Key visual purpose:** Establishes the oval's depth dimension and confirms Byte is a genuine 3D ellipsoid form, not a flat design. Shows clean-side arc geometry.
 
 ---
 
@@ -702,49 +711,48 @@ This section fully documents all five turnaround views required for a character 
 **What is visible:**
 - Near eye (normal eye, viewer's right from this angle): fully visible. Organic, expressive, glowing cyan iris.
 - Far eye (cracked eye, viewer's left from this angle): approximately 50% visible, foreshortened. The crack line is still visible running diagonally — even partially seen, the crack is identifiable.
-- The cube's RIGHT side face: the main damage zone. The two triangular notches at the upper-right corner of the front face are now visible as dark cavities — Void Black interior visible inside the notches. This is the first view where the damage is fully legible.
-- The right side face: smooth except where the notch geometry has affected the corner. Scar continuation visible on the right side face.
-- The spike: at this angle the spike is partially foreshortened but still readable as a 3D protrusion.
-- Right upper limb: near limb from this angle. Extending outward from the damaged upper-right corner area.
-- Glitch-scar line: visible continuing from the front face onto the right side face, reducing in width as it wraps.
+- The RIGHT side arc of the oval: the main damage zone. The Hot Magenta scar markings are concentrated here — the diagonal scar wraps from the front face surface onto this side arc, visible as a continuous curved stroke that follows the oval's curvature. This is the first view where the full scar path is legible.
+- The right arc in this view: the curved edge is smooth (no corners, no notches — oval geometry). The scar makes the damage legible without requiring structural notches. The scar's weight is sufficient.
+- Upper limbs: near (right) upper limb extends outward from the right side arc. Far (left) upper limb partially occluded behind the oval body.
+- Glitch-scar line: visible continuing from the front face surface onto the right side arc, reducing in width as it curves around the ellipsoid.
 
-**Key visual purpose:** The most dramatically interesting 3/4 angle — the damage is revealed. The contrast between his normal eye (organic, glowing) and the receding cracked eye, combined with the visible notches, tells his history in a single frame. This is the "he has a past" angle.
+**Key visual purpose:** The most dramatically interesting 3/4 angle — the damage is revealed. The contrast between his normal eye (organic, glowing) and the receding cracked eye, combined with the full scar visibility on the right arc, tells his history in a single frame. This is the "he has a past" angle.
 
 ---
 
 ### View 5: BACK (180°)
 
-**Camera position:** Directly behind Byte, looking at his back face.
+**Camera position:** Directly behind Byte, looking at his back arc.
 
 **What is visible:**
-- Back face: a clean, flat rectangle with chamfered corners. **No scar stripe on the back face** — the back is the "unexposed" face, showing Byte's design before damage.
-- The magenta scar continuation: arrives at the right edge of the back face as a thin horizontal line, then stops. The scar did not reach the full back — it is primarily a front/sides wound.
-- The spike: visible from behind as a small upward protrusion at the upper-right back edge. At the same position but visible from the back.
-- Upper limbs: both visible extending outward from the back view. They angle forward from this perspective (they point toward the viewer in front view, so from behind they point away — toward the camera in this back view).
-- Lower limbs: visible descending from the lower-back corners. From behind, both lower limbs are symmetrically visible.
-- Back face color: the flat **Electric Cyan (#00F0FF)** base with **White-Cyan (#80F8FF)** top highlight and minimal detail.
-- Shadow of limbs on back face: small triangular shadow patches where upper limbs attach to the body.
+- Back arc: a clean, smooth oval surface. **No scar stripe on the back arc** — the back is the "unexposed" surface, showing Byte's form before damage. The oval reads as a clean ellipse from behind.
+- The magenta scar continuation: the scar wraps from the front face around the right side arc, arriving at the back arc edge as a thin horizontal termination line. The scar does not cover the back arc — it terminates at the edge where the side arc meets the back.
+- Upper limbs: both visible extending outward from the upper-back arc positions. They angle forward from this perspective (they point toward the viewer in front view, so from behind they point away — toward the camera in this back view).
+- Lower limbs: visible descending from the lower-back arc. From behind, both lower limbs are symmetrically visible.
+- Back arc color: the flat **Electric Cyan (#00F0FF)** base with **White-Cyan (#80F8FF)** top arc highlight and minimal detail — the cleanest, least complex surface of the design.
+- Shadow of limbs on back arc: small curved shadow patches where upper limbs emerge from the oval surface.
 
 **What is NOT visible:**
-- Neither eye (face is pointed away from camera)
-- The scar in full
-- The right-side notches (on the front)
+- Neither eye (face oval is pointed away from camera)
+- The scar in full (only the thin termination line at the right arc edge)
+- The damaged side arc fully (partially visible at the right edge only)
 
-**Key visual purpose:** Establishes the back as relatively simple and unexposed. In episodes where Byte is running away from camera, this is the face the audience sees most. The spike remains identifiable from behind. The lack of the scar on the back provides visual relief and contrast against the damaged front.
+**Key visual purpose:** Establishes the back as relatively simple and unexposed. In episodes where Byte is moving away from camera, this is the surface the audience sees most. The floating gap remains fully visible from behind. The lack of the scar on the back arc provides visual relief and contrast against the damaged front.
 
 ---
 
 ### Turnaround Production Notes
 
 **Critical asymmetry reminders for all views:**
-1. Right side (viewer's left in front view) = DAMAGED. Notches, full scar, cracked eye.
-2. Left side (viewer's right in front view) = CLEANER. Minimal scar continuation, normal eye.
-3. The spike ALWAYS tilts toward the damaged right side — it is at the top, offset from center toward the damaged corner.
+1. Right side (viewer's left in front view) = DAMAGED. Full scar running from face surface onto side arc, cracked eye.
+2. Left side (viewer's right in front view) = CLEANER. Minimal scar continuation on side arc only, normal eye.
+3. The oval body has NO flat faces, NO chamfered corners, NO triangular notches. Every edge is a continuous arc.
 4. Neither eye is visible in pure side views or back view. Animators must track which eye is near-side in every shot.
 
-**Depth specification:**
-- Body cube: approximately W:H:D = 1.0:1.1:0.9 (slightly shallower front-to-back than it is wide)
-- This means in perfect side view, he appears slightly narrower than in front view. This slight reduction confirms the cube depth without making him look flat.
+**Depth specification (oval):**
+- Body oval: approximately W:H:D = 1.0:0.85:0.9 (wider than tall in front view; slightly shallower front-to-back than wide)
+- This means in perfect side view, the visible profile is approximately 0.9 units wide × 0.85 units tall — a tall oval silhouette.
+- The oval reads as a genuine 3D ellipsoid (like a flattened sphere, not a box).
 
 ### Turnaround Quick Reference — Per-View Production Data
 
@@ -752,22 +760,21 @@ The following table provides the definitive per-view data required for consisten
 
 | Data Point | View 1: FRONT (0°) | View 2: 3/4-LEFT (315°) Clean Side | View 3: SIDE-LEFT (90°) | View 4: 3/4-RIGHT (45°) Damaged Side | View 5: BACK (180°) |
 |---|---|---|---|---|---|
-| **Eye: Normal (viewer's right in front)** | Full visibility — electric cyan iris, centered pupil, upper-left highlight | Approx. 60% visible, foreshortened — iris partially obscured by nose bump and face edge | NOT VISIBLE — face perpendicular to camera | Full visibility — near eye from this angle, glowing cyan iris fully readable | NOT VISIBLE — face pointing away |
+| **Eye: Normal (viewer's right in front)** | Full visibility — electric cyan iris, centered pupil, upper-left highlight | Approx. 60% visible, foreshortened — iris partially obscured by nose bump and oval face curvature | NOT VISIBLE — face oval perpendicular to camera | Full visibility — near eye from this angle, glowing cyan iris fully readable | NOT VISIBLE — face oval pointing away |
 | **Eye: Cracked/Pixel (viewer's left in front)** | Full visibility — crack diagonal runs upper-left to lower-right, pixel symbol displayed | Full visibility — near eye from this angle, crack line fully readable across face | NOT VISIBLE | Approx. 50% visible, foreshortened — crack line still readable diagonally even at 50% | NOT VISIBLE |
-| **Body axis angle** | 0° — body square to camera, front face fully perpendicular | Approx. 45° rotated left — left side face visible, approximately equal front-to-side visibility | 90° — side face fully perpendicular to camera, body appears narrower (0.9 depth vs. 1.0 width) | Approx. 45° rotated right — right side face visible, damage side revealed | 180° — back face fully perpendicular to camera |
-| **Upper limbs — neutral position** | Both extending outward from upper side-corners at 10° below horizontal, tips point toward lower-front corners | Near (left) limb extends toward viewer. Far (right) limb partially occluded behind body | Near (left) limb extends outward-forward from this angle. Far limb not visible | Near (right) limb extends from damaged upper-right corner area, outward | Both limbs visible extending from back corners, angling toward camera (pointing away from camera in front view = pointing toward camera in back view) |
-| **Lower limbs — neutral position** | Both descending straight from lower-body corners, pointing straight down (0° from vertical), floating gap 0.25 units at tips | Near (left) lower limb fully visible. Far (right) lower limb partially obscured behind body | Near (left) lower limb visible. Far limb not visible. Full 0.25 unit floating gap visible from side | Near (right) lower limb visible from this angle. Far limb partially occluded | Both lower limbs visible descending symmetrically from lower-back corners |
-| **Spike position** | Visible above body, slightly right of center (1/3 from right edge) | Clearly visible from this angle — reads as 3D triangular protrusion pointing upward-right | Reads as a small right-pointing triangle on top edge of body | Partially foreshortened but still readable as 3D protrusion | Small upward protrusion visible at upper-right back edge — same position from behind |
-| **Damage visible** | Notches partially visible as dark indentations at upper-right corner. Full scar stripe across face. Cracked eye displayed | Minimal — clean side visible. Thin scar continuation on left side face only. Cracked eye is near eye | Clean left side face. Thin scar-line at edge where it meets front face. No notches | MAXIMUM DAMAGE VISIBILITY — two triangular notches fully visible as Void Black cavities at upper-right. Full scar continuation on right side face. Cracked eye partially visible | Minimal — back is unexposed. Scar arrives at right edge of back face as thin horizontal line, then stops |
-| **Magenta scar markings** | Full scar: diagonal stripe from upper-right to lower-left at 0.08 units width. Secondary scatter marks near primary scar | Thin scar continuation on left/clean side face. Reduced width compared to front face | Very thin scar line at the left face edge — almost edge-on | Full scar continuation from front face onto right side face, reducing in width as it wraps. Shadow tone (#9E1540) applies in shadow areas | Scar arrives as thin horizontal termination line at right edge of back face. Scar does NOT cover the back face fully |
+| **Body silhouette** | Clean ellipse — smooth oval arc on both sides, wider than tall (1.0:0.85 W:H), no corners | Left arc curving away — oval depth apparent; smooth soft edge with no breaks or corners | Tall oval profile (depth dimension as visible width, ~0.9 units). Single clean arc, no flat faces | Right arc curving away — scar on right side arc visible; smooth oval edge | Clean oval arc — back surface smooth, slight White-Cyan highlight at top arc |
+| **Upper limbs — neutral position** | Both sprouting from upper side-arcs at 10° below horizontal, tips angled toward lower-front | Near (left) limb extends toward viewer. Far (right) limb partially occluded behind oval | Near (left) limb extends outward-forward. Far limb not visible | Near (right) limb extends outward from right side arc | Both limbs visible, sprouting from upper-back arc positions, angling toward camera |
+| **Lower limbs — neutral position** | Both sprouting from lower arc, pointing straight down (0° from vertical), floating gap 0.25 units at tips | Near (left) lower limb fully visible. Far (right) lower limb partially obscured behind oval | Near (left) lower limb visible. Far limb not visible. Full 0.25 unit floating gap visible from side | Near (right) lower limb visible. Far limb partially occluded | Both lower limbs visible descending from lower-back arc, symmetrical from this angle |
+| **Damage visible** | Full scar stripe across face surface. Cracked eye displayed. No notches — oval has no corners | Minimal — clean left arc visible. Thin scar trace at left arc edge only. Cracked eye is near eye | Clean left arc. Very thin scar trace at arc edge only | MAXIMUM DAMAGE VISIBILITY — full scar continuation from face surface onto right side arc. Cracked eye partially visible | Minimal — back arc undamaged. Thin scar termination line at right arc edge only |
+| **Magenta scar markings** | Full scar: diagonal stripe from upper-right to lower-left at 0.08 units width across face surface. Secondary scatter marks near primary scar | Thin scar trace at left arc edge — almost edge-on, barely visible | Very thin trace at left arc edge — essentially not visible | Full scar continuation from face surface onto right side arc, curving around ellipsoid as it reduces in width. Shadow tone (#9E1540) in shadow areas | Scar terminates as thin horizontal line at right arc edge. Scar does NOT cover back surface |
 
 ### Specific Damaged-Side (View 4: 3/4-RIGHT) Callouts
 
 Per this view's unique importance as the "character history" angle:
 
-- **Notch position:** The two triangular notches (0.08 units each) at the upper-right corner of the front face become fully legible cavities from this angle. They read as Void Black (#0A0A14) interior — small dark holes into the body's interior. They are approximately 15–20% of the upper-right corner area.
+- **Scar path in this view:** The Hot Magenta scar runs from the front face surface, wraps around the oval's right arc, and is visible as a continuous curved stroke. Because the oval has no sharp corner to break the scar, it reads as a genuine wound that follows the body's curvature — more organic than a cube's flat-face scar, more unsettling.
 - **Cracked eye position in this view:** The cracked eye is the FAR eye from this angle (viewer's left). It is approximately 50% visible due to foreshortening. The crack diagonal — running upper-left to lower-right of the eye frame — is still identifiable even at 50% visibility because the crack line passes through the widest visible portion of the foreshortened eye.
-- **Magenta scar in this view:** The scar continues from the front face onto the right side face at reduced width. In this 3/4 angle, both the front-face scar and the beginning of the side-face continuation are visible simultaneously. The scar's directional read (received blow from upper-right) is maximally clear from this angle.
+- **Magenta scar in this view:** The scar continues from the front face surface onto the right side arc at reduced width. In this 3/4 angle, both the front-face scar and the beginning of the side-arc continuation are visible simultaneously. The scar's directional read (received blow from upper-right) is maximally clear from this angle.
 - **Normal eye in this view:** The normal eye (near eye from this angle — viewer's right) is at full visibility. Its glowing Electric Cyan iris is fully readable. The contrast between the near organic-looking normal eye and the partially obscured cracked eye creates the most visually complex and narratively rich view of Byte.
 
 ---
@@ -793,7 +800,7 @@ Byte's silhouette line does not behave like a clean, single vector stroke. It ap
 
 **Jitter application rules:**
 - Applied to the entire silhouette edge, not selectively.
-- The secondary stroke stops at corners (chamfered cube edges) — it does not wrap around corners. At each corner, the secondary stroke terminates and a new instance begins on the next edge. This creates small "gap" moments at corners where the jitter breaks — making the corners feel sharper, which is correct.
+- The secondary stroke traces continuously along the oval silhouette edge. Because the oval has no hard corners, the jitter runs as a smooth parallel offset around the full perimeter. The jitter is perceptible at curve inflection points (widest and tallest extents of the oval) where the primary stroke direction changes most — this is where the "glitch break" effect is most visible.
 - Internal lines (limb attachment seams, scar edges) do NOT use the jitter effect. Only the outer silhouette.
 - The normal eye outline does NOT use jitter — it should read as clean and organic. The cracked eye frame DOES use jitter on its outer border.
 
@@ -838,10 +845,10 @@ The 2px offset is specified at 100px body-width reference. Scale this proportion
 Byte is small enough that he can be completely hidden within Luma's hands when cupped, but he is NOT insect-small. He is firmly in the "small magical companion" size category — think of a very small stuffed animal, or a particularly large mouse standing upright. He is present in a room. You notice him. He demands to be noticed.
 
 **Side-by-side standing reference:**
-If Byte were placed directly beside Luma (no shoulder): his upper limbs would reach approximately to her kneecap. The visual contrast — her rounded warm orange form against his small sharp cyan cube — should be maximally clear. This is the image that establishes their relationship at a glance: large organic warmth adjacent to small geometric cool.
+If Byte were placed directly beside Luma (no shoulder): his upper limbs would reach approximately to her kneecap. The visual contrast — her rounded warm orange form against his small floating cyan oval — should be maximally clear. This is the image that establishes their relationship at a glance: large organic warmth adjacent to small buoyant cool digital creature.
 
 **Cosmo comparison:**
-Byte next to Cosmo reaches even less height — Cosmo's taller proportions mean Byte only reaches Cosmo's mid-shin. The trio arrangement reads as: tall rectangle (Cosmo), medium rounded mass (Luma), tiny jagged cube (Byte). Three completely different visual weights and silhouettes.
+Byte next to Cosmo reaches even less height — Cosmo's taller proportions mean Byte only reaches Cosmo's mid-shin. The trio arrangement reads as: tall rectangle (Cosmo), medium rounded mass (Luma), tiny floating oval (Byte). Three completely different visual weights and silhouettes.
 
 ---
 
@@ -910,14 +917,14 @@ For shots where Byte is below 15px eye-effective-size (see Section 9A), the pixe
 ### What Makes Byte Work
 - The ASYMMETRY between his two eyes is load-bearing. The normal eye provides the organic emotional baseline; the cracked eye provides the digital punctuation. If both eyes are the same, the character flattens dramatically.
 - The PIXEL DISPLAY must be LEGIBLE. At reduced sizes, the pixel symbols need to be clean enough to read. When in doubt, go larger with the symbol within the eye frame.
-- His SMALL SIZE creates comedy by contrast. He is a cube the size of a small toy who speaks with the authority of an ancient and deeply experienced entity. Never let the design lose this tension.
-- His COLOR is the strongest contrast in the trio. He is the glitch-world intrusion into every scene. His Electric Cyan body against the warm analog world creates the central visual tension of the show.
+- His SMALL SIZE creates comedy by contrast. He is a floating oval the size of a small toy who speaks with the authority of an ancient and deeply experienced entity. Never let the design lose this tension.
+- His COLOR is the strongest contrast in the trio. He is the glitch-world intrusion into every scene. His Electric Cyan/Byte Teal oval form against the warm analog world creates the central visual tension of the show.
 - His LIMBS, though stubby, are expressive. They should not be static. The angle and energy of the limbs is his body language.
 
 ### What to Avoid
 - **DO NOT** make both eyes the same. The cracked eye is always different from the normal eye.
 - **DO NOT** draw clean, smooth curves on Byte. Every curve he might have should be approximated as stepped or jagged — he is pixel geometry, not organic shape.
-- **DO NOT** make him cute-round. He can be endearing, but his shape language is TRIANGLES and polygons. If he starts looking like a rounded cube, he's drifted toward Luma's territory. Keep the chamfered corners, keep the notches, keep the spike.
+- **DO NOT** make the oval too perfectly smooth and round. The oval is buoyant and soft-edged, but Byte's personality lives in the jagged detail — the scar, the cracked eye, the stepped geometry of his pixel elements. If the overall design loses all angularity, he reads as too organic. Keep the scar markings sharp. Keep the glitch-eye frame irregular. Keep the pixel confetti shapes as hard squares, not soft circles.
 - **DO NOT** forget the floating gap. He never touches surfaces. Even when sitting on Luma's shoulder, there is a tiny floating gap between his lower limbs and the fabric. The pixel confetti is always present beneath him.
 - **DO NOT** let the glitch-scar markings look like decoration. They are damage. They have history. The diagonal main scar should cross the face plane with intention and weight — it should look like something happened.
 - **DO NOT** animate the pixel eye as smooth transitions. All pixel eye changes are INSTANT — digital, not analog. He doesn't fade between symbols; he cuts between them. The only exception is the loading dots, which cycle smoothly as a deliberate "processing" animation.
@@ -925,12 +932,11 @@ For shots where Byte is below 15px eye-effective-size (see Section 9A), the pixe
 
 ### Silhouette Test
 Reading Byte as a solid black silhouette:
-- A roughly cubic form with chamfered corners and visible geometric complexity at the edges.
-- The small spike visible at the top right.
-- The stubby limbs extending outward from the corners.
-- The floating gap beneath (a thin light gap between limb tips and any surface).
-- When on Luma's shoulder, his silhouette forms a small sharp angular crown on top of her rounded form — maximum contrast between their shape languages.
-- **The silhouette should read as "small, angular, digital entity" — unmistakably different from every organic element in the frame.**
+- A compact oval form — buoyant, slightly wider than tall, with no hard corners or flat edges.
+- The stubby limbs extending outward from the oval perimeter — four blunt appendages that give the silhouette a distinctive "floating creature" read.
+- The floating gap beneath (a thin light gap between lower limb tips and any surface).
+- When on Luma's shoulder, his oval silhouette forms a small rounded mass on top of her larger rounded form — visually distinct by scale contrast and limb geometry, not by shape opposition.
+- **The silhouette should read as "small, buoyant, floating digital creature" — scale and the four-limb configuration distinguish him from every other element in the frame.**
 
 ---
 
@@ -938,7 +944,7 @@ Reading Byte as a solid black silhouette:
 
 Byte is, philosophically, the show's most honest character. He does not perform emotions he does not have. He reports his internal state through the pixel display, and when he turns the display off, he is actively choosing to withhold — which is its own kind of transparency. His grumpiness is not a mask; his protectiveness is not a performance. He is exactly what he says he is, which is a corrupted piece of data who has decided, against all probability, to have a personality.
 
-The design reflects this. The corruption (notches, scar, cracked eye) is not hidden or cosmetically resolved. It is the most visible thing about him. His body is a record of what happened to him. This is unusual for a companion character — most sidekicks are designed to be adorable and unthreatening. Byte's design retains genuine strangeness. He is not domesticated. He has chosen, for now, to be here. That choice is visible in the Reluctant Effort expression, in the secretly pleased dim star, in the heart that turns off the instant it appears.
+The design reflects this. The corruption (scar, cracked eye, glitch markings) is not hidden or cosmetically resolved. It is the most visible thing about him. His body is a record of what happened to him. This is unusual for a companion character — most sidekicks are designed to be adorable and unthreatening. Byte's design retains genuine strangeness. He is not domesticated. He has chosen, for now, to be here. That choice is visible in the Reluctant Effort expression, in the secretly pleased dim star, in the heart that turns off the instant it appears.
 
 The color choice — Electric Cyan against Hot Magenta scars — is the glitch palette's most fundamental contrast, expressing the tension between his "intended" state (functional glitchkin data) and his corrupted/experienced actual state. He carries both in his color identity, simultaneously.
 
@@ -946,6 +952,7 @@ He is the smallest character and the oldest character and the one with the most 
 
 ---
 
-*Document Version 2.1 — Maya Santos, Character Designer*
+*Document Version 3.1 — Maya Santos (Character Designer) / Alex Chen (Art Director, Cycle 10 revision)*
+*Cycle 10 revisions (Alex Chen): Complete oval-body revision pass. All remaining chamfered-cube, flat-face, and notch references purged from Sections 5, 6, 8, 10, 11, 12, size comparison, and rationale. Turnaround section (Section 10) fully rewritten for oval/ellipsoid geometry — all five views now describe oval arcs, oval depth, and oval silhouettes. Quick Reference table updated. DO NOT list cube entry replaced with oval-specific rule. Silhouette Test updated to oval. Design Rationale updated. Version header updated to 3.1.*
 *Cycle 2 revisions: Added Pixel-Eye at Distance section with minimum-size specs and 3x3 simplified grid, expanded limb vocabulary from 4 to 8 fully specified configurations, added jitter-line silhouette technical spec (2px offset, 4-frame oscillation frequency), completed all 5 turnaround views with full measurement documentation, added animation cost mitigation section with FX priority-drop order.*
 *Cycle 3 revisions: Added Section 9AA — Pixel-Eye Production Scale Thresholds (definitive, locked): full-detail above 25% frame height (480px+ at 1080p), 3×3 simplified grid at 10–25% frame height, animation suppressed below 10% frame height. Complete 3×3 symbol survival analysis with specific "survives cleanly / partial / redesign required" verdicts for all 8 symbols. Question mark replaced by horizontal flat line at below-10% size threshold. Star redesigned to cross (+) shape for 3×3. Loading Dots requires animation at 3×3 (substitute flat line if animation unavailable). Turnaround section supplemented with Quick Reference table providing per-view eye positions, limb positions in neutral, body axis angle, damage visibility, and scar markings for all 5 views. View 4 (3/4-right, damaged side) given expanded callout section.*

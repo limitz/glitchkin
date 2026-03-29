@@ -39,6 +39,30 @@
 - **Couch back cushion position IS the directionality.** Back cushion LEFT → character faces RIGHT → monitors. This geometry must be consistent across all tools that draw the couch shape.
 - **3 light sources in Luma's house = 3 independent gradient passes:** (1) Window warm spill from far left; (2) Monitor cyan spill from right; (3) Desk lamp tight warm cone on far right. These must never be merged or they create muddy overlap zones.
 
+## Cycle 11 Lessons
+- **LTG naming: create compliant copies alongside originals** — never rename in isolation. Cycle 11 added `LTG_ENV_lumashome_layout_v001.png` and `LTG_ENV_millbrook_mainstreet_v001.png` as copies of the legacy layout PNGs in `/output/backgrounds/environments/layouts/`. `LTG_ENV_glitchlayer_frame_v001.png` already existed.
+- **Encounter composition vs. establishing composition:** bg_glitch_layer_encounter.py uses a confrontation-focused layout — Corruption bloom (UV_PURPLE + HOT_MAGENTA) dominates upper-center instead of neutral aurora; flanking NEAR platforms create an arena; CHARACTER STAND platform is wider/lower with a notch for damage read; Corruption scatter falls DOWNWARD (data decay) vs. pixel trails rising upward (platform energy). These are inverted to signal antagonist presence.
+- **Corruption pixel scatter direction:** Upward = healthy platform energy. Downward = Corruption decay. Always check source and direction when placing particle effects.
+- **Flora suppressed in confrontation scenes:** Near/mid platforms get no flora in high-tension encounter frames. Only far platforms get trace presence (5% luminance, 30% spawn rate). Flora = ambient life = absent when the Corruption dominates.
+- **HOT_MAGENTA (#FF2D6B) = Corruption active front perimeter.** Appears as rim/edge on the Corruption mass bloom. Consistent with style_frame_02_glitch_storm.md storm edge spec.
+- **Pitch package index created** at `/home/wipkat/team/output/production/pitch_package_index.md` — Cycle 11. Single-document inventory of all pitch assets with quality status and open blockers.
+
+## Cycle 10 Lessons
+- **All derived depth-tier colors in bg_glitch_layer_frame.py are now named constants** with GL parent references: NEAR_COLOR/SHADOW/EDGE, MID_COLOR/SHADOW/EDGE, FAR_COLOR/SHADOW/EDGE, GHOST_COLOR/GHOST_EDGE, AURORA_CYAN_BLEED. Do not add un-named inline color tuples to platform rendering passes.
+- **Lower void debris colors are a rendering construct** — explicitly comment any procedural palette block that is not a canonical swatch.
+- **AURORA_CYAN_BLEED = (0,160,220)** — GL-01 ELEC_CYAN desaturated/darkened ~14%. Only appears in aurora sinusoidal pass, never as a fill.
+- **Platform variants implemented: L-shaped (_platform_l_shaped), bridge (_platform_bridge), fragmented (_platform_fragmented).** MID tier uses L-shaped + bridge; NEAR tier uses bridge + fragmented. Fragmented platforms take an `rng` arg for randomised gaps.
+- **"Glitch Layer — Depth Tiers" subsection added to master_palette.md** (end of SECTION 2, before SECTION 3) with all 12 derived constants documented as a table with parent references.
+
+## Cycle 9 Lessons
+- **Naming convention: `LTG_[CATEGORY]_[descriptor]_v[###].[ext]`** — all production assets must use this. CATEGORY for backgrounds = `ENV`; tools = `TOOL`. Three-digit version numbers always. Never overwrite; create new versions.
+- **Retired prefix reconciliation rule:** Do not rename existing retired-prefix assets in isolation — wait for the v3.0 environment document reconciliation pass. For non-prefixed legacy files, create compliant-named copies and flag to Art Director.
+- **Glitch Layer compositing background key colors:** NEAR platforms = ELEC_CYAN (#00F0FF); MID platforms = desaturated DATA_BLUE (~#0A4878); FAR platforms = near-void (#001A28). Aurora uses 4-band value ladder: Void Black → GL-04b Atmos Mid Purple → UV Purple → Data Blue.
+- **Aurora rendering strategy:** Per-row horizontal `draw.line()` with sinusoidal x-phase modulation per row gives streaming ripple quality. Follow with RGBA alpha_composite soft glow overlay pass. Refresh `draw` handle after every alpha_composite.
+- **Pixel trails rise upward from platform surfaces** — not downward. Fade from platform-brightness at base to near-zero at top. y-weighted density concentrates near the platform surface.
+- **Pixel flora:** Faint ACID_GREEN (12-22% brightness), sparse, grows downward from platform edges. Near=22%, Mid=12%, Far=6%.
+- **Ghost platforms in lower void:** Use BELOW_VOID (#050508) as underside abyss per GL-08a spec — covers <2-3% of frame area only.
+
 ## Cycle 8 Lessons
 - **Glow pass overwrites base gradient — use alpha-composite layering.** When a glow overlay repaints columns over a gradient (Step 1), it replaces the gradient with a flat tone. Fix: draw the glow as an RGBA overlay (alpha-composite), then redraw the atmospheric gradient as a semi-transparent overlay on top. Both effects coexist at the overlap zone.
 - **Worn path = texture change, never a filled rectangle.** Use alpha-composite scanline strips with a horizontal bell-curve falloff and vertical fade. Add scuff marks (short diagonal `draw.line()` strokes). The right side of the path near the monitor wall gets a slight cyan tint.

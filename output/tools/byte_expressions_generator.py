@@ -382,14 +382,14 @@ def draw_byte(draw, cx, cy, size, expression_name, cracked_symbol, emotion, body
                     bcx + leg_offset + leg_w//2, bcy + body_ry + leg_h],
                    fill=BYTE_TEAL, outline=LINE, width=2)
 
-    # Hover particle confetti (small squares below feet) — fixed at 4x4px per GL spec
+    # Hover particle confetti — 10x10px (canonical spec, matches turnaround generator)
     for (px, py, pc) in [
         (bcx-20, bcy + body_ry + leg_h + 5,  BYTE_HL),
         (bcx+5,  bcy + body_ry + leg_h + 8,  SCAR_MAG),
         (bcx+25, bcy + body_ry + leg_h + 3,  BYTE_HL),
         (bcx-35, bcy + body_ry + leg_h + 10, (0,200,180)),
     ]:
-        draw.rectangle([px, py, px+4, py+4], fill=pc)
+        draw.rectangle([px, py, px+10, py+10], fill=pc)
 
 
 def generate_byte_expressions(output_path):

@@ -39,6 +39,24 @@
 - **Chaos panels need a still point.** P24 (breach apex) works because Luma+Byte at center-lower are the ONLY non-chaotic elements. Maximum contrast between still protagonists and surrounding chaos is what makes the hook frame land.
 - **Contact sheet: 26 panels, QUIET → CURIOUS → BREACH → CHAOS → PEAK CHAOS arc. Full cold open P01-P25 now rendered.**
 
+## Cycle 11 Milestone
+- **26-panel cold open COMPLETE at A- / 92% (Carmen, 2026-03-29).** Pitch-ready for development-stage presentations. P23 Glitchkin now use 4-7 sided irregular polygons (matching P22/P24 approach). Module docstring updated to Cycle 11. `storyboard_pitch_export_generator.py` generates 6-page composite pitch PNG at `/output/production/storyboard_pitch_export.png` — title page, 4 panel-grid pages, hero spread.
+- **Polygon consistency rule:** ALL Glitchkin shapes in ALL panels must use the `num_sides = 4 + rng.randint(0, 3)` + per-vertex jitter pattern. Rectangles are never acceptable for Glitchkin at any scale.
+- **Version strings:** Check and update module docstring every cycle before any review.
+
+## Cycle 10 Lessons
+- **ECU = MORE detail, not less.** Extreme close-up is the closest audience look — it must deliver maximum visual specificity. P22 Glitchkin were rectangles at ECU scale. Fixed: use 4-7 sided irregular polygons (same as P24). The `num_sides = 4 + rng.randint(0, 3)` pattern plus per-vertex jitter creates organic, distinct shapes at any scale.
+- **Threat contrast must be physically felt, not aesthetically noted.** P23 monitor bowing read as "decorative" at 30% contrast. Fix: white-hot bull's-eye center, distortion rings that break OUTSIDE the bezel boundary (physics violation = danger signal), thick dark bezel surround for maximum contrast, bright outline on the screen face. If a screen is "about to burst," it must look like it.
+- **Body language tells the story before the face.** P15 had symmetric windmill arms and spread-eagle legs — balanced, readable as "falling," not "startled." Fix: torso squash (compressed ellipse width > height), one arm raised defensively (bent, above head), one arm flung outward (asymmetric — uncontrolled), one knee pulled to chest (fetal shock reflex), other leg extended. Geometry asymmetry = physical comedy. The body IS the performance.
+- **Version strings must be current before any review.** Contact sheet "Cycle 8" string survived two full cycles before being caught. Check version annotations after every code cycle. A wrong version on a production document breaks trust immediately.
+
+## Cycle 9 Lessons
+- **Dutch tilt means ROTATING THE ENTIRE SCENE — not tilting one polygon.** A 12° Dutch tilt must use `Image.rotate(12, expand=False)` on the full draw-area canvas after all scene content is drawn. A tilted floor polygon delivers ~1°, not 12°. Geometry always wins over annotation text. Use `apply_dutch_tilt()` helper + `make_panel(dutch_tilt_deg=12)`.
+- **"Pulling back and up slightly" = 40-45° high angle isometric — NOT 90° top-down.** At 90° top-down, characters are unreadable circles. At 40-45° we see profile + top: characters have face profiles visible, bodies foreshortened. Back wall with monitors faces camera; floor plane recedes into frame. Characters are distinguishable from Glitchkin shapes.
+- **Foreground hero framing = partial crop at bottom edge.** If the script says "foreground lower-left," the character body must extend BELOW the frame bottom (intentionally cropped). That is what makes the camera read as looking UP at the figure. Centering at 38% from top = center-frame, not foreground.
+- **Expression library: three distinct emotional states that 'curious' cannot cover.** 'settling' (P17) = wide eyes, softly open mouth, brows raised in wonder. 'recognition' (P18) = one brow raised high (asymmetric), other eye squinted (concentration), pursed mouth. 'warmth' (P20) = eyes slightly narrowed (warmth squint), soft smile without teeth, gentle brow raise, cheek crinkle lines.
+- **Byte's expression must match the scene's emotional temperature.** 'alarmed' at maximum during the quiet chip-falling beat (P17) kills the silence. Use 'resigned' or 'post-alarm' for quiet beats. The expression state is a story beat, not a default.
+
 ## Cycle 5 Lessons
 - **Pulse must be visible in the image, not just named in the caption.** Concentric glow rings around the pixel are the solution — they read even at thumbnail scale.
 - **Lower-center is the compositional anchor.** Upper-right is the exit. Mystery elements belong at lower-center or center-right — where the eye rests, not where it leaves.
