@@ -4,7 +4,7 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present.
 
 ## Status
-**Cycle 37 complete. Work cycles: 37. Critique cycles: 14 (Critique 15 just ran — see below).**
+**Cycle 37 complete. Critique 15 complete. Work cycles: 37. Critique cycles: 15.**
 **Next critique at C40 (every 3 work cycles).**
 
 ## Active Team (12 slots)
@@ -73,6 +73,43 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 ## QA Baseline (C37)
 precritique_qa v2.2.0: **333 PASS / 26 WARN / 0 FAIL**
 CI suite: WARN (0 hard FAILs). SF03 warm/cool: PASS (render_qa v1.4.0).
+
+## Critique 15 — Key Findings (C38 priorities)
+
+### P1 Blockers
+- **Story bible cold open contradicts storyboard** — bible=school/daytime, board=night/Grandma's den. Alex must decide canon before any work proceeds. → Alex + Priya + Diego
+- **Pitch package index frozen at C24** — 13 cycles absent. → Alex
+- **CI suite report non-reproducible** — spec_sync_ci doesn't load suppression list, G002 surfaces as P1 FAIL. → Kai
+- **Luma motion spec: CG outside support polygon** — character would fall. → Ryo
+- **Storyboard hoodie wrong color** — slate blue vs canonical orange. Spec violation in pitch board. → Diego
+- **Naming convention violations** — CHAR/SB prefixed generators in output/tools/. → Kai
+- **Luma v010 silhouette FAIL** — 8 FAIL pairs at 97.9% RPD. Not tested before submission. → Maya
+- **W004 in storyboard generator** — stale draw object after img.paste(). → Diego
+
+### P2
+- Dual-Miri visual seed absent from all images (Zoe + Ingrid both flagged)
+- Luma psychology too resolved — must doubt in the moment of being right (Taraji)
+- Byte verbal finale wrong for character — show don't tell (Taraji)
+- THE NOTICING right-eye lid: bottom-lid rise (wince) not top-lid drop (squint) (Takeshi)
+- SF01 no sight-line: Luma pointing not seeing (Ingrid)
+- Luma visually outperformed by Byte — protagonist losing to supporting cast (Zoe)
+- Glitch reads as Tamagotchi not a threat (Zoe)
+- Cosmo SKEPTICAL silhouette collapse — 3+ cycles unresolved (Takeshi)
+
+### C15 Scores
+- Zoe Park: 78 overall
+- Taraji Coleman: 70 overall
+- Takeshi: storyboard=54, Luma v010=67, Cosmo v006=72, Luma motion=61, Byte motion=70
+- Ingrid: story bible=78, storyboard=71, style frames=66
+- Reinhardt: multiple P1 FAILs (tool-verified)
+
+### Positives
+- SF04 strongest narrative frame (Ingrid)
+- Byte: "best thing in this pitch" (Zoe)
+- Grandma Miri doorway: best-staged emotional moment (Ingrid)
+- Dual-Miri seed: compelling when found — Zoe clocked it independently
+- Cold open escalation arc reads without words (Ingrid)
+- Byte motion timing values: production-usable (Takeshi)
 
 ## C37 Key Lessons
 - **Story bible revealed**: Grandma Miri and Glitch Layer Miri share a name intentionally — season 1 finale seed. No visual plant yet. Alex flag pending.

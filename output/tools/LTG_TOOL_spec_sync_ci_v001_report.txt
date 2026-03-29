@@ -1,18 +1,17 @@
 ========================================================================
 LTG Spec Sync CI Gate — v1.0.0
-Characters: cosmo
+Characters: glitch
 ========================================================================
 
   ────────────────────────────────────────────────────────────────────
-  WARN    COSMO  [LTG_TOOL_cosmo_expression_sheet_v006.py]
+  FAIL    GLITCH  [...ch_storm_colorfix_v001.py, LTG_TOOL_bg_other_side_v002.py]
   ────────────────────────────────────────────────────────────────────
-  Checks: 4 PASS / 1 WARN / 0 FAIL
-  No P1 violations.
+  Checks: 3 PASS / 27 WARN / 0 FAIL
 
-  Advisory WARNs (1) — not a CI failure:
-    WARN [S002] S002: Eye-width coefficient 0.18 not confirmed in source. Check that `ew = int(HR * 0.18)` patter...
+  P1 VIOLATIONS (1):
+    FAIL [G002] G002: Body mass ratio FAIL — ry=34 must be > rx=38 (diamond must be taller than wide)
 
 ========================================================================
-P1 violations: 0  |  Per-char: COSMO:WARN  |  CI PASS
-CI RESULT: PASS
+P1 violations: 1  |  Per-char: GLITCH:FAIL  |  CI FAIL
+CI RESULT: FAIL — P1 violations must be fixed before merge.
 ========================================================================

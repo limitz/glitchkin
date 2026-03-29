@@ -1,8 +1,7 @@
-LTG Draw-Order Linter — v2.0.0
+LTG Draw-Order Linter — v2.1.0
 ======================================================================
 
-PASS   LTG_TOOL_cosmo_turnaround_v002.py
-PASS   LTG_TOOL_miri_turnaround_v001.py
-PASS   LTG_TOOL_glitch_turnaround_v002.py
+WARN   LTG_SB_pilot_cold_open_v001.py  (1 warning(s))
+         [W004] line 115: img.paste() at line 115 is NOT followed by 'draw = ImageDraw.Draw(img)' refresh within the next 5 substantive lines at the same scope. Subsequent draw calls will operate on the stale draw object.   >> img.paste(Image.alpha_composite(base, glow).convert('RGB'))
 
-Summary: 3 file(s) — 3 PASS / 0 WARN / 0 ERROR
+Summary: 1 file(s) — 0 PASS / 1 WARN / 0 ERROR
