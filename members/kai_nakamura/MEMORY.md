@@ -510,3 +510,77 @@ Import: `from LTG_TOOL_render_lib_v001 import ...`
 - Regex-based linters are vulnerable to matching their own docstrings that contain example/reference values. Suppression list is the immediate fix; docstring-stripping is the long-term fix (ideabox idea submitted).
 - When render_qa has already been updated by another agent in same cycle, check before re-doing work (read version header first).
 - Forwarding stubs via importlib.util are the right pattern for large files — avoids import-statement lint flags from stub_linter_v001.
+
+## Cycle 39 — C39 Docstring-Stripping Lint Fix + REAL_STORM + Byte Spec Checks
+
+**Status:** COMPLETE
+
+**Tasks completed:**
+- **Task 1 (P1) — SF02 warm/cool WARN fix:**
+  - render_qa_v001 already at v1.6.0 (Sam Kowalski deployed earlier C39): `_infer_world_subtype()` splits REAL into REAL_INTERIOR (threshold 12) and REAL_STORM (threshold 3). SF02 sep~6.5 → REAL_STORM → PASS.
+  - Updated `LTG_TOOL_palette_warmth_lint_v004.py`: added REAL_STORM world preset (warm_cool_threshold: 6). Updated `infer_world_type()` inference rules — glitch_storm/sf02/style_frame_02 now returns "REAL_STORM" (was "REAL").
+  - Both tools now consistently label SF02 as REAL_STORM. FP-006 for SF02 closed.
+- **Task 2 (P1) — Docstring-stripping pre-pass in glitch_spec_lint:**
+  - `LTG_TOOL_glitch_spec_lint_v001.py` → v1.4.0 (linter also added file_prefix suppression mode stub in version comment): core change = `_strip_comments_and_docstrings()` added. Strips triple-quoted docstrings and `#` comments from source before numeric-regex checks (G001/G002/G003/G005/G006/G007/G008).
+  - G004 (draw-order) still uses full original source.
+  - G002 self-suppression entry removed from `glitch_spec_suppressions.json` — no longer needed.
+  - Total suppressions: back to 26 (from 27 in C38).
+- **Task 3 — Char spec lint expansion (Byte checks):**
+  - `LTG_TOOL_char_spec_lint_v001.py` → v1.1.0: added Byte checks B001–B005.
+  - New functions: `_check_byte_oval_ratio()`, `_check_byte_pixel_eye_grid()`, `_lint_byte()`.
+  - Byte added to `_CHAR_REGISTRY` with patterns for `LTG_TOOL_byte_expression_sheet_v*.py`.
+- **README.md updated:** C39 section added, char_spec_lint entry updated.
+- **Inbox archived:** 20260329_2225 + 20260329_2248 moved to inbox/archived/.
+- **Ideabox:** `20260329_kai_nakamura_byte_spec_checks_in_ci_suite.md` submitted — update spec_sync_ci to delegate B001-B005 to char_spec_lint instead of inline checks.
+
+## LTG_TOOL_glitch_spec_lint_v001.py — v1.4.0 (C39 UPDATED)
+- Added `_strip_comments_and_docstrings(source)` — removes docstrings and `#` comments before checks
+- G001/G002/G003/G005/G006/G007/G008 use stripped source (no docstring false positives)
+- G004 uses original source (draw-order check needs full code context)
+- G002 self-suppression removed from glitch_spec_suppressions.json
+
+## glitch_spec_suppressions.json — C39 update
+- Removed entry: `("LTG_TOOL_glitch_spec_lint_v001.py", "G002")` — no longer needed
+- Total suppressions: 26 (back to C37 count)
+
+## LTG_TOOL_palette_warmth_lint_v004.py — C39 UPDATED
+- Added "REAL_STORM" world preset: `warm_cool_threshold: 6`
+- `infer_world_type()` updated: sf02/glitch_storm/style_frame_02 → "REAL_STORM" (was "REAL")
+- "REAL" rule scope narrowed: now covers sf01/sf04/discovery only (sf02 handled by new rule above)
+
+## LTG_TOOL_render_qa_v001.py — v1.6.0 (C39, Sam Kowalski — already deployed)
+- `_infer_world_subtype(img_path, world_type)` — sub-types "REAL" → "REAL_INTERIOR" or "REAL_STORM"
+- `_WORLD_WARM_COOL_THRESHOLD["REAL_STORM"] = 3.0`, `["REAL_INTERIOR"] = 12.0`
+- `_REAL_STORM_PATTERN` regex: sf02/glitch_storm/style_frame_02
+
+## LTG_TOOL_char_spec_lint_v001.py — v1.1.0 (C39 UPDATED)
+- Added Byte: B001 oval W:H (wider-than-tall), B002 body color #00D4E8, B003 HOT_MAG crack, B004 confetti, B005 5×5 eye grid
+- Characters: "luma" / "cosmo" / "miri" / "byte"
+- `_check_byte_oval_ratio()`, `_check_byte_pixel_eye_grid()` — new helpers
+
+## LTG_TOOL_world_type_infer_v001.py — v1.1.0 (C39 UPDATED)
+- WORLD_REAL_STORM, WORLD_REAL_INTERIOR constants added
+- WARM_COOL_THRESHOLDS: REAL_STORM=3.0, REAL_INTERIOR=12.0, REAL=12.0 (backward-compat)
+- New inference rule: sf02/glitch_storm/style_frame_02 → REAL_STORM (before REAL rule)
+- REAL rule narrowed to sf01/sf04/discovery only
+
+## LTG_TOOL_costume_bg_clash_v001.py (C39 NEW)
+- `clash_check_images(char_path, bg_path) → dict` — Mode 1: image vs image
+- `clash_check_palette(colors, bg_path) → dict` — Mode 2: hex colors vs image
+- `format_report(result) → str` — human-readable
+- CIE76 ΔE in CIELAB space (pure Python, no cv2 needed)
+- Thresholds: FAIL < ΔE 5, WARN < ΔE 15, PASS ≥ ΔE 15
+- Known-safe list: Byte ELEC_CYAN vs Glitch Layer → DOCUMENTED_PASS
+- Exit: 0=PASS, 1=WARN, 2=FAIL
+
+## warm_cool_world_type_spec.md (C39 NEW)
+- Creative canon doc at `output/production/warm_cool_world_type_spec.md`
+- REAL_INTERIOR=12 (lamp-lit), REAL_STORM=3 (storm scene), GLITCH=3, OTHER_SIDE=0
+- Per Alex Chen brief: "The storm is cold. That's the point."
+
+## Lessons Learned (C39)
+- Check version headers of all tools before implementing — Sam Kowalski already deployed render_qa v1.6.0
+- Docstring-stripping with triple-quote removal + `#` comment removal is effective and safe for regex-based linters
+- When adding world sub-types: ensure both palette_warmth_lint and render_qa agree on the mapping; render_qa's `_infer_world_subtype` still works correctly when warmth_lint returns REAL_STORM directly (no longer "REAL")
+- CIE76 ΔE in CIELAB space is achievable in pure Python (no cv2 needed for basic distance computation)
+- Always read ALL inbox messages before starting work — additional tasks may be in later-dated messages

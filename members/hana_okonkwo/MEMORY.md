@@ -6,13 +6,14 @@ Comedy-adventure cartoon. Three worlds: Real World (warm/domestic), Glitch World
 ## Joined
 Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style frames).
 
-## Existing Environments (as of C38)
+## Existing Environments (as of C39)
 - Kitchen (Grandma's): v004 — `output/backgrounds/environments/LTG_ENV_grandma_kitchen_v004.png`
 - Tech Den: v004 + warminjected — `LTG_ENV_tech_den_v004_warminjected.png`
 - Glitch Layer: v003
 - School Hallway: **v003** (C38 figure-ground pass) — `LTG_ENV_school_hallway_v003.png` — QA WARN (pre-existing color fidelity WARN, value range PASS)
 - Millbrook Street: v002
-- **Living Room (C37)**: v001 — `LTG_ENV_grandma_living_room_v001.png` — CLEAR for critique (Sam Kowalski review)
+- **Living Room (C39)**: **v002** — `LTG_ENV_grandma_living_room_v002.png` — QA PASS
+  - C39 addition: diamond-crystal figurine at (438, 328), top shelf of bookcase, secondary visual plant connecting Grandma Miri / Glitch Layer elder Miri and diamond body geometry. Warm amber catch-light only. No GL palette.
 
 ## Key Palette References
 - Master palette: `output/color/palettes/master_palette.md`

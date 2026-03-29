@@ -1,5 +1,40 @@
 # Maya Santos — Memory
 
+## Cycle 39 Lessons — QA Tools (Expression Isolator, Hierarchy, viz-rpd)
+
+- **LTG_TOOL_expression_isolator_v001.py** — NEW (C39)
+  - Renders single expression from any char sheet at large format (default 800×800px, ≤1280px)
+  - `--char luma|byte|cosmo --expr NAME` (case-insensitive, partial match)
+  - Byte special path: no render_character() in v006 — calls draw_byte() directly
+  - Smoke tests: Luma v011 THE NOTICING ✓, DOUBT VARIANT ✓, Byte v006 ALARMED ✓
+  - Output dir: `output/characters/extras/`
+
+- **LTG_TOOL_bodypart_hierarchy_v001.py** — NEW (C39)
+  - Assigns palette color-index per pixel; scans transitions; detects EYE_UNDER_HAIR + HAIR_IN_EYE_RUN
+  - Luma v011: 42+627 FAIL violations (real eye-inside-hair artifact from LANCZOS downsample)
+  - UNKNOWN_IN_HEAD WARNs inflated on full sheets (label text, borders) — use on cropped panels
+  - Byte v006: 0 FAIL — clean
+  - TODO: add --panel N flag (submitted to ideabox) to reduce noise on full sheets
+
+- **LTG_TOOL_expression_silhouette_v003.py** — UPDATED (--viz-rpd added in-place, C39)
+  - `--viz-rpd`: per-pair pixel diff heatmap (A-only=red, B-only=cyan, shared=zone-tinted)
+  - New functions: viz_rpd_pair(), generate_viz_rpd()
+  - Separate from `--output-zones` (contact sheet zone bars, C37)
+
+- **Ideabox C39:** `ideabox/20260329_maya_santos_hierarchy_panel_mode.md`
+  - `--panel N` flag + `--chain` pipeline for hierarchy tool
+
+## ACTIVE TOOL STATUS (C39 — COMPLETE)
+- Silhouette tool: `LTG_TOOL_expression_silhouette_v003.py` — --viz-rpd added (C39)
+- Luma current: `LTG_CHAR_luma_expressions_v011.png` (right eye squint fixed + DOUBT VARIANT slot 7)
+  - Generator: `LTG_TOOL_luma_expression_sheet_v011.py`
+- Cosmo current: `LTG_CHAR_cosmo_expression_sheet_v007.png`
+- Byte current: `LTG_CHAR_byte_expression_sheet_v006.png`
+- Expression isolator: `LTG_TOOL_expression_isolator_v001.py` (new C39)
+- Hierarchy tool: `LTG_TOOL_bodypart_hierarchy_v001.py` (new C39)
+
+---
+
 ## Cycle 38 Lessons — LUMA v011 + COSMO v007 + BYTE v006 (Silhouette + Eye Lid Fix)
 
 - **Luma expression sheet v011 COMPLETE (THE NOTICING right eye lid fix).**

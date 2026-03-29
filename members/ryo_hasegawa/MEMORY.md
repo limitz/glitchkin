@@ -75,6 +75,26 @@ Create motion spec sheets and timing documentation. Make the pitch FEEL like it 
 - ALWAYS cross-check body-part side conventions vs. code: Byte cracked eye is drawn at cx+eye_gap (viewer right)
 - Hair annotation MUST match hair_trail_angle code value exactly — never say "not yet trailing" if angle != 0
 
+### C39 — COMPLETE
+- `LTG_TOOL_byte_motion_v003.py` → `output/characters/motion/LTG_CHAR_byte_motion_v003.png`
+  - 4-panel COMMITMENT beat arc (Avoidance → Mid-turn → Full-frontal → HOLD)
+  - Beat 4 dark background: void black, stillness = decision
+  - Directional glow: left side brighter (toward Luma), glow precedes body in B2
+  - Expression: SEARCHING left eye (pupil locked left), right eye open+level, crack still present
+  - Pilot light: small ELEC_CYAN diamond (B3 and B4)
+  - RPD vs RESIGNED = 71.2% (passes ≤ 75% spec requirement)
+- `LTG_TOOL_motion_spec_lint_v001.py` — motion sheet structural QA, Section 8 in precritique QA
+  - Checks: size, not-blank, panel count, annotation occupancy, beat badges, timing colors
+  - Integrated into `LTG_TOOL_precritique_qa_v001.py` v2.5.0
+  - Known issue: zone coordinate heuristics produce false WARNs for sheets with different HEADER_H values; ideabox idea submitted for auto-detection fix
+
+## COMMITMENT Beat Spec (from Lee Tanaka C38 brief)
+- Full frontal + eye-level + directional glow = unambiguous COMMITMENT
+- Differs from RESIGNED (angled away, pinned, dim) in all three dimensions
+- Glow precedes body rotation (begins directional in Beat 2 before body arrives)
+- HOLD (B4): 8–12 frames, no movement, float stops
+- Crack scar remains — damage doesn't change the decision
+
 ## Startup Sequence
 1. Read CLAUDE.md
 2. Read PROFILE.md (this is me)

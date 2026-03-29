@@ -36,6 +36,13 @@ Character-specific checks:
     M004  Chopstick/bun hair indicator present in code
     M005  Crow's feet drawing indicator present (aging detail)
 
+  Byte (C39 addition — Kai Nakamura):
+    B001  Body oval wider than tall (bw ≥ bh or oval_w ≥ oval_h) — spec 1.0:0.85 W:H
+    B002  Body color present: BYTE_TEAL/BYTE_BODY ~ #00D4E8 (GL-01b Byte Teal) ± tolerance
+    B003  Hot Magenta cracked-eye crack indicator present (HOT_MAG / HOT_MAGENTA)
+    B004  Pixel confetti (floating mechanism) indicator present in code
+    B005  Eye pixel grid is 5×5 (pixel_size, PIXEL_SIZE, grid dim 5 near eye-drawing code)
+
 Results: per-character PASS / WARN / FAIL report.
   FAIL  = canonical constant present but value violates spec
   WARN  = check could not be confirmed (constant absent or ambiguous)
@@ -45,7 +52,19 @@ Usage (standalone):
     python LTG_TOOL_char_spec_lint_v001.py
     python LTG_TOOL_char_spec_lint_v001.py --char luma
     python LTG_TOOL_char_spec_lint_v001.py --char cosmo --char miri
+    python LTG_TOOL_char_spec_lint_v001.py --char byte
     python LTG_TOOL_char_spec_lint_v001.py --save-report PATH
+
+Changelog
+---------
+v1.1.0 (C39): Byte checks added (B001–B005) — Kai Nakamura.
+    B001 body oval W:H ratio (wider than tall).
+    B002 body color #00D4E8 Byte Teal (GL-01b).
+    B003 Hot Magenta crack indicator.
+    B004 pixel confetti floating mechanism.
+    B005 5×5 pixel eye grid.
+    Byte added to _CHAR_REGISTRY with generator patterns.
+v1.0.0 (C34): Initial implementation — Luma/Cosmo/Miri checks.
 
 API:
     from LTG_TOOL_char_spec_lint_v001 import lint_character, lint_all, format_report
@@ -54,7 +73,7 @@ API:
     print(format_report(results))
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"  # C39: Byte checks added (B001–B005) — Kai Nakamura
 
 import os
 import re
@@ -432,6 +451,96 @@ def _check_cosmo_frame_thickness(source, check_code):
     return "WARN", issues
 
 
+# ── Byte-specific checks ─────────────────────────────────────────────────────
+
+def _check_byte_oval_ratio(source, check_code):
+    """
+    B001 — Body oval wider than tall (bw >= bh).
+
+    Spec: oval is ~1.0:0.85 (W:H) — wider than tall.
+    Failure: if bh > bw explicitly (taller than wide).
+    Warn: if no distinguishable bw/bh constants found.
+    """
+    issues = []
+    # Look for bw/bh or body_w/body_h assignments
+    bw_re = re.compile(r'\b(bw|body_w|BODY_W|oval_w|OW)\s*=\s*([0-9]+(?:\.[0-9]+)?)')
+    bh_re = re.compile(r'\b(bh|body_h|BODY_H|oval_h|OH)\s*=\s*([0-9]+(?:\.[0-9]+)?)')
+    bw_matches = [(m.group(1), float(m.group(2))) for m in bw_re.finditer(source)]
+    bh_matches = [(m.group(1), float(m.group(2))) for m in bh_re.finditer(source)]
+
+    if bw_matches and bh_matches:
+        bw_val = bw_matches[0][1]
+        bh_val = bh_matches[0][1]
+        if bw_val >= bh_val:
+            return "PASS", []
+        else:
+            issues.append({
+                "code": check_code,
+                "result": "FAIL",
+                "message": (
+                    f"{check_code}: Byte oval ratio: spec requires width >= height "
+                    f"(~1.0:0.85 W:H). Found bw={bw_val} < bh={bh_val} — taller than wide. "
+                    f"Byte's body oval must be wider-than-tall (spec §2, §4)."
+                ),
+            })
+            return "FAIL", issues
+
+    # Also accept: int(bw * 0.85) style height derivation
+    if re.search(r'\b(bh|body_h|oval_h)\s*=\s*int\s*\([a-z_]+\s*\*\s*0\.[78]\d\)', source):
+        return "PASS", []
+
+    # Not found — WARN
+    issues.append({
+        "code": check_code,
+        "result": "WARN",
+        "message": (
+            f"{check_code}: Byte oval W:H ratio not confirmed. "
+            f"Expected `bw` and `bh` (or body_w/body_h) constants with bw >= bh. "
+            f"Spec: oval is ~1.0:0.85 W:H (wider than tall)."
+        ),
+    })
+    return "WARN", issues
+
+
+def _check_byte_pixel_eye_grid(source, check_code):
+    """
+    B005 — Byte's eye pixel grid must be 5x5.
+
+    Look for pixel_size=5, PIXEL_SIZE=5, or grid_dim=5 near eye-drawing code.
+    Also accept eye_size=5 or a literal `5` near "pixel_eye" or "eye_grid".
+    """
+    issues = []
+    # Direct constant
+    if re.search(r'\b(PIXEL_SIZE|pixel_size|GRID_DIM|grid_dim|eye_grid_sz)\s*=\s*5\b', source):
+        return "PASS", []
+    # 5x5 literal near eye-drawing keywords
+    eye_context = re.search(
+        r'(draw.*pixel.*eye|pixel.*eye.*draw|eye_grid|5\s*[x×]\s*5)',
+        source, re.IGNORECASE,
+    )
+    if eye_context:
+        snippet = source[max(0, eye_context.start() - 200): eye_context.start() + 400]
+        if re.search(r'\b5\s*,\s*5\b|\b5\s*[x×]\s*5\b|range\s*\(\s*5\s*\)', snippet):
+            return "PASS", []
+    # Check for range(5) near any pixel or eye drawing section
+    pixel_section = re.search(r'(def draw.*eye|# eye|PIXEL|pixel_col)', source, re.IGNORECASE)
+    if pixel_section:
+        snippet = source[pixel_section.start(): pixel_section.start() + 600]
+        if len(re.findall(r'range\s*\(\s*5\s*\)', snippet)) >= 2:
+            # Two range(5) loops = 5x5 grid
+            return "PASS", []
+    issues.append({
+        "code": check_code,
+        "result": "WARN",
+        "message": (
+            f"{check_code}: Byte 5x5 pixel-eye grid not confirmed. "
+            f"Expected `PIXEL_SIZE = 5` or `range(5)` double-loop near eye-drawing code. "
+            f"Spec: 5×5 pixel grid per eye (byte.md §5)."
+        ),
+    })
+    return "WARN", issues
+
+
 # ── Per-character lint functions ──────────────────────────────────────────────
 
 def _lint_luma(source, filepath):
@@ -546,6 +655,52 @@ def _lint_miri(source, filepath):
     return results
 
 
+def _lint_byte(source, filepath):
+    """
+    Byte-specific spec checks (B001–B005).
+
+    Added C39 (Kai Nakamura). Byte's pixel-eye 5x5 grid and oval-body construction
+    have drifted in expression sheet generators — these checks gate against regressions.
+    """
+    results = []
+
+    # B001 body oval wider than tall
+    r, issues = _check_byte_oval_ratio(source, "B001")
+    results.append({"check": "B001", "result": r, "issues": issues})
+
+    # B002 body color #00D4E8 (GL-01b Byte Teal)
+    r, issues = _check_rgb_color(
+        source, "#00D4E8",
+        ["BYTE_TEAL", "BYTE_BODY", "BODY_COL", "body_col", "TEAL", "GL01B"],
+        "B002", "Byte Teal #00D4E8 (GL-01b)", tol=COLOR_TOL,
+    )
+    results.append({"check": "B002", "result": r, "issues": issues})
+
+    # B003 Hot Magenta crack indicator
+    r, issues = _check_keyword_present(
+        source,
+        ["HOT_MAG", "HOT_MAGENTA", "hot_mag", "hot_magenta", "CRACK", "crack_line"],
+        "B003",
+        "Hot Magenta cracked-eye crack indicator",
+    )
+    results.append({"check": "B003", "result": r, "issues": issues})
+
+    # B004 pixel confetti (floating mechanism)
+    r, issues = _check_keyword_present(
+        source,
+        ["confetti", "CONFETTI", "pixel_sq", "PIXEL_SQ", "float_px", "floating"],
+        "B004",
+        "Pixel confetti / floating mechanism",
+    )
+    results.append({"check": "B004", "result": r, "issues": issues})
+
+    # B005 5x5 pixel eye grid
+    r, issues = _check_byte_pixel_eye_grid(source, "B005")
+    results.append({"check": "B005", "result": r, "issues": issues})
+
+    return results
+
+
 # ── Character registry ────────────────────────────────────────────────────────
 
 # Maps short name → (generator glob pattern(s), lint function)
@@ -573,6 +728,14 @@ _CHAR_REGISTRY = {
         "lint_fn": _lint_miri,
         "label": "Grandma Miri",
     },
+    "byte": {
+        "patterns": [
+            "LTG_TOOL_byte_expression_sheet_v*.py",
+            "LTG_TOOL_byte_expressions_generator.py",
+        ],
+        "lint_fn": _lint_byte,
+        "label": "Byte",
+    },
 }
 
 
@@ -598,7 +761,7 @@ def lint_character(char_name, tools_dir=None):
     Parameters
     ----------
     char_name : str
-        One of "luma", "cosmo", "miri".
+        One of "luma", "cosmo", "miri", "byte".
     tools_dir : str | None
         Directory containing LTG_TOOL_*.py files.
         Defaults to the directory containing this script.

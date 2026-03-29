@@ -1,6 +1,8 @@
 {
-  "_comment": "Suppression list for LTG_TOOL_glitch_spec_lint_v001.py — known false positives",
+  "_comment": "Suppression list for LTG_TOOL_glitch_spec_lint_v001.py — known false positives. NOTE: G002 self-suppression for glitch_spec_lint_v001.py removed in C39 — docstring-stripping pre-pass in v1.3.0 eliminates this false positive at source. C39: file_prefix entries added for character_lineup_* files (v1.4.0+ required).",
   "suppressions": [
+    {"file_prefix": "LTG_TOOL_character_lineup_", "rule": "G006", "reason": "lineup files draw 5 characters with varied skin tones — non-Glitch fills are not Glitch body violations"},
+    {"file_prefix": "LTG_TOOL_character_lineup_", "rule": "G007", "reason": "lineup files do not draw Glitch body polygon with VOID_BLACK outline — Glitch figure drawn via separate draw_glitch_body helper, not the spec pattern"},
     {"file": "LTG_TOOL_color_verify_v001.py",       "rule": "G007", "reason": "color verify tool, not a Glitch generator"},
     {"file": "LTG_TOOL_color_verify_v002.py",       "rule": "G007", "reason": "color verify tool, not a Glitch generator"},
     {"file": "LTG_TOOL_render_qa_v001.py",          "rule": "G007", "reason": "QA tool, not a Glitch generator"},
@@ -15,7 +17,6 @@
     {"file": "LTG_TOOL_spec_sync_ci_v001.py",       "rule": "G007", "reason": "CI tool, not a Glitch generator"},
     {"file": "LTG_TOOL_char_spec_lint_v001.py",     "rule": "G007", "reason": "spec lint tool, not a Glitch generator"},
     {"file": "LTG_TOOL_glitch_spec_lint_v001.py",   "rule": "G007", "reason": "self-referential; not a Glitch generator"},
-    {"file": "LTG_TOOL_glitch_spec_lint_v001.py",   "rule": "G002", "reason": "docstring contains reference values rx=38/ry=34 (old spec) which the regex falsely matches as geometry assignments"},
     {"file": "LTG_TOOL_spec_extractor_v001.py",     "rule": "G007", "reason": "spec extractor tool, not a Glitch generator"},
     {"file": "LTG_TOOL_naming_cleanup_v001.py",     "rule": "G007", "reason": "naming tool, not a Glitch generator"},
     {"file": "LTG_TOOL_naming_compliance_copier_v001.py", "rule": "G007", "reason": "naming tool, not a Glitch generator"},

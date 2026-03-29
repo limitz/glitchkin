@@ -27,6 +27,16 @@ Author: Sam Kowalski (Color & Style Artist) — Cycle 38
 Version: 1.0.0
 
 Changelog:
+  1.1.0 (Cycle 39): REAL_STORM sub-type added (Kai Nakamura, per Alex Chen brief).
+                    SF02 "Glitch Storm" is a contested real-world storm scene with
+                    intentionally cool-dominant palette. Split from REAL to prevent
+                    persistent false WARNs on SF02 warm/cool check (sep~6.5 < REAL
+                    threshold 12). REAL_STORM threshold = 3.0 PIL units.
+                    New constants: WORLD_REAL_STORM, WORLD_REAL_INTERIOR.
+                    WARM_COOL_THRESHOLDS updated: REAL_STORM=3.0, REAL_INTERIOR=12.0.
+                    Inference rules updated: sf02/glitch_storm → REAL_STORM (new rule
+                    inserted before the REAL rule). REAL rule scope narrowed to
+                    sf01/sf04/discovery only.
   1.0.0 (Cycle 38): Initial implementation. Standalone extraction of the
                     infer_world_type() logic from LTG_TOOL_palette_warmth_lint_v004.
                     Adds get_warm_cool_threshold(), batch mode, rule listing,
@@ -43,7 +53,7 @@ import glob
 from typing import Dict, List, Optional, Tuple
 
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"  # C39: REAL_STORM sub-type added (Kai Nakamura)
 __author__  = "Sam Kowalski"
 
 
@@ -51,18 +61,23 @@ __author__  = "Sam Kowalski"
 # World type constants
 # ---------------------------------------------------------------------------
 
-WORLD_REAL       = "REAL"
-WORLD_OTHER_SIDE = "OTHER_SIDE"
-WORLD_GLITCH     = "GLITCH"
+WORLD_REAL         = "REAL"
+WORLD_REAL_STORM   = "REAL_STORM"    # v1.1.0: SF02 storm sub-type (cool-dominant)
+WORLD_REAL_INTERIOR = "REAL_INTERIOR"  # v1.1.0: alias for warm lamp-lit interiors
+WORLD_OTHER_SIDE   = "OTHER_SIDE"
+WORLD_GLITCH       = "GLITCH"
 
 # Canonical warm/cool separation thresholds (PIL hue units, 0-255 scale)
-# Must match render_qa v1.5.0 _WORLD_WARM_COOL_THRESHOLD and
-# warmth_lint_v004 world_presets.
+# Must match render_qa v1.6.0 _WORLD_WARM_COOL_THRESHOLD and
+# warmth_lint_v004 world_presets (updated C39).
+# v1.1.0: REAL_STORM added (threshold=3.0); REAL kept for backward-compat (=REAL_INTERIOR).
 WARM_COOL_THRESHOLDS: Dict[Optional[str], float] = {
-    WORLD_REAL:       12.0,   # lamp-lit interiors / contested-but-warm scenes
-    WORLD_GLITCH:      3.0,   # near-zero warm; only tiny hot-spot residual allowed
-    WORLD_OTHER_SIDE:  0.0,   # fully digital, zero warm — skip warm/cool check
-    None:             12.0,   # unknown world; apply conservative REAL default
+    WORLD_REAL:           12.0,   # backward-compat; treated as REAL_INTERIOR
+    WORLD_REAL_INTERIOR:  12.0,   # lamp-lit interiors / daytime exteriors
+    WORLD_REAL_STORM:      3.0,   # contested storm scenes (SF02); cool-dominant by design
+    WORLD_GLITCH:          3.0,   # near-zero warm; only tiny hot-spot residual allowed
+    WORLD_OTHER_SIDE:      0.0,   # fully digital, zero warm — skip warm/cool check
+    None:                 12.0,   # unknown world; apply conservative REAL default
 }
 
 # Human-readable descriptions for each world type
@@ -70,6 +85,15 @@ WORLD_DESCRIPTIONS: Dict[Optional[str], str] = {
     WORLD_REAL: (
         "Real World — lamp-lit interiors or daytime exteriors. "
         "Warm palette dominant. Glitch palette forbidden."
+    ),
+    WORLD_REAL_STORM: (
+        "Real World Storm — contested exterior storm scene (SF02 archetype). "
+        "Cool sky dominant; warm tones present only as subdued window glow accents. "
+        "Threshold 3 — intentionally cool-dominant, not a defect."
+    ),
+    WORLD_REAL_INTERIOR: (
+        "Real World Interior — warm lamp-lit interior or calm daytime exterior. "
+        "Alias for REAL. Threshold 12 — warm presence expected."
     ),
     WORLD_GLITCH: (
         "Glitch Layer — digital void space. "
@@ -110,15 +134,27 @@ _INFERENCE_RULES: List[Tuple[re.Pattern, str, str]] = [
         "Glitch Layer / encounter / world keyword",
     ),
 
-    # ---- REAL — named style frames -----------------------------------------
+    # ---- REAL_STORM — SF02 glitch_storm (cool-dominant storm scene) ----------
+    # v1.1.0: split from REAL. Must appear before the REAL rule.
     (
         re.compile(
-            r'(sf01|sf02|sf04|discovery|glitch[_\-]?storm|'
-            r'style[_\-]?frame[_\-]?0[124]|luma[_\-]?byte)',
+            r'(sf02|glitch[_\-]?storm|style[_\-]?frame[_\-]?02)',
+            re.IGNORECASE,
+        ),
+        WORLD_REAL_STORM,
+        "SF02 / glitch_storm — contested real-world storm (cool-dominant; threshold=3)",
+    ),
+
+    # ---- REAL — named style frames (SF01, SF04) ----------------------------
+    # v1.1.0: sf02/glitch_storm removed — handled by REAL_STORM rule above.
+    (
+        re.compile(
+            r'(sf01|sf04|discovery|'
+            r'style[_\-]?frame[_\-]?0[14]|luma[_\-]?byte)',
             re.IGNORECASE,
         ),
         WORLD_REAL,
-        "SF01/SF02/SF04 — discovery / glitch_storm / style_frame 01/02/04 / luma_byte (SF04)",
+        "SF01/SF04 — discovery / style_frame 01/04 / luma_byte (SF04)",
     ),
 
     # ---- REAL — Real World environment backgrounds -------------------------

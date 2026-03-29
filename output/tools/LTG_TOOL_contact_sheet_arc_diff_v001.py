@@ -46,6 +46,18 @@ Constants:
   PANEL_ASPECT_H     =  9   (panel aspect ratio height component)
   MIN_PANEL_PX       = 40   (minimum panel short side in pixels to be valid)
   BORDER_PX          =  4   (border thickness in pixels around each thumbnail)
+
+Programmatic API (for LTG_TOOL_precritique_qa_v001 integration — Morgan Walsh):
+  from LTG_TOOL_contact_sheet_arc_diff_v001 import compare_contact_sheets
+  result = compare_contact_sheets(old_path, new_path, output_path=None)
+  # Returns dict: ok, error, n_old, n_new, same, changed, added, removed,
+  #               changed_slots, added_slots, removed_slots, diff_output.
+  # Does NOT call sys.exit() — safe to import.
+  # If output_path provided, writes arc-diff PNG.  If None, skips PNG.
+
+C39 review (Lee Tanaka): compare_contact_sheets() API confirmed correct for
+  precritique_qa_v001.py Section 10 integration. No API changes needed.
+  Docstring updated to advertise the programmatic API.
 """
 
 import sys
@@ -364,6 +376,112 @@ def build_arc_diff(old_path: str, new_path: str, output_path: str) -> None:
     print(f"Arc-diff written: {output_path}  ({out.size[0]}×{out.size[1]}px)")
     print(f"  OLD panels: {n_old}  NEW panels: {n_new}")
     print(f"  SAME: {n_same}  CHANGED: {n_changed}  ADDED: {n_added}  REMOVED: {n_removed}")
+
+
+def compare_contact_sheets(old_path: str, new_path: str, output_path: str = None) -> dict:
+    """
+    Programmatic API: compare two contact sheet PNGs and return a result dict.
+
+    Does NOT call sys.exit() — safe to import and call from other tools.
+    If output_path is provided, writes the visual arc-diff PNG to that path.
+    If output_path is None, skips writing the output image.
+
+    Parameters
+    ----------
+    old_path    : str — path to the older contact sheet PNG
+    new_path    : str — path to the newer contact sheet PNG
+    output_path : str | None — path to write arc-diff comparison PNG (optional)
+
+    Returns
+    -------
+    dict with keys:
+        ok          : bool  — True if both files were found and compared
+        error       : str | None — error message if ok=False
+        n_old       : int  — panel count in old sheet
+        n_new       : int  — panel count in new sheet
+        same        : int  — panels unchanged
+        changed     : int  — panels changed (diff > CHANGED_THRESHOLD)
+        added       : int  — panels present in new, not in old
+        removed     : int  — panels present in old, not in new
+        changed_slots : list of int — 0-based slot indices that changed
+        added_slots   : list of int — 0-based slot indices that were added
+        removed_slots : list of int — 0-based slot indices that were removed
+        diff_output : str | None — output_path used (or None if not saved)
+    """
+    if not os.path.isfile(old_path):
+        return {"ok": False, "error": f"OLD file not found: {old_path}",
+                "n_old": 0, "n_new": 0, "same": 0, "changed": 0,
+                "added": 0, "removed": 0, "changed_slots": [],
+                "added_slots": [], "removed_slots": [], "diff_output": None}
+    if not os.path.isfile(new_path):
+        return {"ok": False, "error": f"NEW file not found: {new_path}",
+                "n_old": 0, "n_new": 0, "same": 0, "changed": 0,
+                "added": 0, "removed": 0, "changed_slots": [],
+                "added_slots": [], "removed_slots": [], "diff_output": None}
+
+    old_sheet = Image.open(old_path).convert("RGB")
+    new_sheet = Image.open(new_path).convert("RGB")
+
+    old_cols, old_rows, old_pw, old_ph = _detect_panel_grid(*old_sheet.size)
+    new_cols, new_rows, new_pw, new_ph = _detect_panel_grid(*new_sheet.size)
+
+    old_thumbs = _extract_panel_thumbs(old_sheet, old_cols, old_rows, old_pw, old_ph)
+    new_thumbs = _extract_panel_thumbs(new_sheet, new_cols, new_rows, new_pw, new_ph)
+
+    n_old = len(old_thumbs)
+    n_new = len(new_thumbs)
+    n_max = max(n_old, n_new)
+
+    old_statuses = []
+    new_statuses = []
+    changed_slots = []
+    added_slots   = []
+    removed_slots = []
+
+    for i in range(n_max):
+        has_old = i < n_old
+        has_new = i < n_new
+        if has_old and not has_new:
+            old_statuses.append("REMOVED")
+            removed_slots.append(i)
+        elif has_new and not has_old:
+            new_statuses.append("ADDED")
+            added_slots.append(i)
+        else:
+            diff = _mean_abs_diff(old_thumbs[i], new_thumbs[i])
+            status = "CHANGED" if diff > CHANGED_THRESHOLD else "SAME"
+            old_statuses.append(status)
+            new_statuses.append(status)
+            if status == "CHANGED":
+                changed_slots.append(i)
+
+    n_changed = old_statuses.count("CHANGED")
+    n_added   = len(added_slots)
+    n_removed = len(removed_slots)
+    n_same    = old_statuses.count("SAME")
+
+    saved_path = None
+    if output_path is not None:
+        try:
+            build_arc_diff(old_path, new_path, output_path)
+            saved_path = output_path
+        except Exception:
+            pass  # Non-fatal; result dict is complete regardless
+
+    return {
+        "ok": True,
+        "error": None,
+        "n_old": n_old,
+        "n_new": n_new,
+        "same": n_same,
+        "changed": n_changed,
+        "added": n_added,
+        "removed": n_removed,
+        "changed_slots": changed_slots,
+        "added_slots": added_slots,
+        "removed_slots": removed_slots,
+        "diff_output": saved_path,
+    }
 
 
 def main() -> None:

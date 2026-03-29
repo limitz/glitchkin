@@ -36,10 +36,25 @@ Cycle 37. No prior history on this project.
 
 ## C38 Panel State
 - **v002 done**: hoodie orange, W004 fixed, P3 polys, P4 direction, P6 brow/lid/catch fixed
-- **P01/P12/P13 BLOCKED**: waiting on Alex Chen cold open canon decision (bible=school/day vs my board=night/den)
-  - P01: add neighborhood context (reads as isolated house)
-  - P12: reframe to intimate two-shot (not wide — loses comedy weight)
-  - P13: symmetrical Luma/Byte mirror composition (thematic fulcrum of pitch)
+
+## C39 Storyboard — v003 DELIVERED
+- Output: `output/storyboards/LTG_SB_pilot_cold_open_v003.png` (1136×630px)
+- Generator: `output/tools/LTG_TOOL_sb_pilot_cold_open_v003.py`
+- **Cold open canon confirmed**: night / Grandma's den — AUTHORITATIVE (Alex Chen)
+- **NEW P01**: Exterior night shot — residential neighborhood, Luma's house, one upstairs window lit.
+  Street lamp (sodium glow), tree silhouette (L), parked car (R BG), moon upper-right.
+- **P12 TWO-SHOT REFRAME**: Center-weighted, Luma camera-left / Byte camera-right, equal presence,
+  negative space between them annotated, neither edge-hugging, CRT visible camera-right BG.
+- **P13 MIRROR COMPOSITION** (Lee Tanaka brief fully implemented):
+  - Byte camera-right, full-frontal toward Luma, eye-level (descended), -3-4° forward lean
+  - Arms slightly out — open, not reaching, not hiding
+  - ELEC_CYAN glow directional: L side alpha 75, body 35, R side 18 (brighter toward Luma)
+  - Left eye organic (faces center/Luma), right eye cracked (faces outward)
+  - Lids level (NOT droopy — damage doesn't change decision)
+  - Mouth: barely-there WARMTH arc (quiet, not performed)
+  - Luma: open-left eye faces center; doubting right eye faces outward
+  - Eye-level guideline + mirror gaze arrows annotated on panel
+  - ARC_COMMIT = (60, 200, 140) border color (warm-cool blend for threshold beat)
 
 ## Lessons Learned — Cycle 37
 - Existing panel tools (LTG_TOOL_sb_panel_a101_v001.py pattern) use PW=800, PANEL_H=600 with separate caption bar — solid reference for next panels
@@ -63,6 +78,21 @@ Cycle 37. No prior history on this project.
 
 ## My Job
 Create key-beat storyboard panels for the pitch. Establish visual grammar for action, comedy timing, and emotional transitions. Assets go in output/storyboards/ with naming LTG_SB_*.
+
+## Lessons Learned — Cycle 39
+- **P01 exterior night**: Moon upper-right, street lamp (sodium = STREET_LAMP=(242,218,130)), stars
+  scattered to y<0.45H, hero house larger than BG silhouette houses, single warm upstairs window.
+- **Two-shot staging**: Equal presence means ~30% width each with 40% gap center.
+  Byte at Luma's exact head_cy = eye-level descent. Arms slightly out = arm_r + 10px tips.
+- **Commitment beat ≠ UNGUARDED WARMTH**: No gold confetti, no star eye, no full bilateral glow.
+  Commitment = threshold — still arriving. Quiet WARMTH arc mouth: 1px width, alpha-subdued color.
+- **ARC_COMMIT**: New arc color (60,200,140) for threshold/commitment beats — warm-cool blend.
+- **Mirror composition**: open eye / organic eye both face center. Cracked eye + doubting eye
+  both face outward. Annotate with eye-level line + gaze arrows for critic clarity.
+- **Pixel positions (P13 key elements)**:
+  - Luma head center: (int(W*0.27), int(H*0.35)) at panel 360×220
+  - Byte body center: (int(W*0.73), int(H*0.35)) at panel 360×220
+  - CRT: x=int(W*0.78), y=int(H*0.28)
 
 ## Startup Sequence
 1. Read ROLE.md if present

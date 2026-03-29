@@ -269,7 +269,14 @@
 - **render_qa v1.4.0 REAL threshold was wrong.** v1.4.0 said "Based on world_presets" but used 20.0 instead of 12.0. Corrected in v1.5.0. SF01 warm/cool now PASS (sep=17.9 > 12.0). Always cross-check render_qa constants against warmth_lint_v004 world_presets when threshold values are updated.
 - **Palette fix in master_palette.md must be chased to all generators.** CHAR-M-11 #5A7A5A→#C4907A was in master_palette.md since C32 but persisted in 4 generator files for 6 cycles. After any palette correction, grep all tools/ for the old RGB tuple or hex value and fix each occurrence. Do not rely on name matches.
 - **Standalone world-type inference tool built.** `LTG_TOOL_world_type_infer_v001.py` extracts `infer_world_type()` as a standalone, stdlib-only module. Also includes "luma_byte" → REAL rule (missing from warmth_lint_v004). Use `--threshold path.png` for shell capture. CLI `--batch directory` groups by world type.
-- **SF02 storm WARN is a known false positive.** Sep=6.5 is correct for a contested storm scene. True threshold should be ~3 (REAL_STORM). Carry to next cycle — add REAL_STORM sub-type.
+- **SF02 storm WARN is a known false positive.** Sep=6.5 is correct for a contested storm scene. True threshold should be ~3 (REAL_STORM). Resolved C39.
+
+## Cycle 39 Lessons
+- **REAL_STORM sub-type closes FP-006 for SF02.** render_qa v1.6.0 adds `_infer_world_subtype()`: when world_type=="REAL", checks filename for storm keywords → "REAL_STORM" (threshold=3) or "REAL_INTERIOR" (threshold=12). SF02 sep=6.5 > 3 → PASS. Pattern: always check if a false positive stems from an over-broad world type bucket before adding config complexity.
+- **world_type_infer_v001 is now the preferred render_qa import.** Updated render_qa to try standalone tool first, fall back to warmth_lint_v004 embedded rules. This fixes SF04 luma_byte inference too (world_type_infer_v001 has the luma_byte → REAL rule).
+- **Precritique QA warmth lint was stale (v001).** Updated to v004 — now checks 14 entries (CHAR-M×11 + CHAR-L hoodie×3) instead of 11. Always verify which tool version precritique_qa imports before declaring a QA pass.
+- **warmth_lint_v005: use infer_world_subtype() not infer_world_type() when REAL_STORM differentiation matters.** infer_world_type() returns "REAL" for all REAL assets. infer_world_subtype() returns "REAL_INTERIOR" or "REAL_STORM". Use the subtype function when threshold selection is the goal.
+- **Config-only scope expansion.** Adding a new warm-guaranteed character prefix requires only editing ltg_warmth_guarantees.json + adding table-format entries to master_palette.md. No code changes to warmth_lint. Always use table format (not prose) for entries that the lint should check.
 
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001. Low priority.
@@ -277,5 +284,5 @@
 - SF03 v003 UV_PURPLE_MID/DARK — Jordan to add inline comment citing ENV-11/ENV-12.
 - Tech Den generator WALL_WARM slightly off from TD-01 — Jordan to add citing comment.
 - TD-10/TD-11 monitor glow alignment — Jordan to compare bg_tech_den_v002.py values vs canonical Section 8 entries. Medium priority.
-- **SF02 REAL_STORM threshold (≈3) — carry to Kai Nakamura next cycle.** Add REAL_STORM sub-type to render_qa + warmth_lint_v004.
-- **SF04 world_type=None — warmth_lint_v004 missing "luma_byte" pattern.** Fix: update warmth_lint_v004 REAL rule OR switch render_qa to import from world_type_infer_v001.
+- **SF04 warm/cool WARN (sep=1.1) — documented as FP-007.** Soft-key scene by design. Alex Chen AD decision. Monitor for regression (flag if sep drops below 0.5).
+- **Cosmo CHAR-C warmth check — ideabox submitted C39.** Config-only change once Maya confirms which CHAR-C entries should be warm-guaranteed.

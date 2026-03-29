@@ -54,6 +54,31 @@ API
 
 Changelog
 ---------
+v1.4.0 (C39): file_prefix suppression mode (Morgan Walsh — C39 pipeline task).
+    glitch_spec_suppressions.json now supports "file_prefix" entries in addition to
+    "file" (exact-match) entries. A prefix entry suppresses all files whose basename
+    starts with the given prefix string for the specified rule(s). Example entry:
+      {"file_prefix": "LTG_TOOL_character_lineup_", "rule": "G006",
+       "reason": "lineup files contain non-Glitch skin tones — false positive"}
+    _load_suppressions() now returns a dict: {"exact": set, "prefix": list}.
+      exact  — set of (basename, rule) for exact-match entries (as before)
+      prefix — list of (prefix_str, rule) for prefix-match entries
+    _apply_suppressions() updated to check prefix entries via str.startswith().
+    Callers that pass suppressions= must now pass the full dict (not a bare set).
+    lint_file() and lint_directory() updated accordingly.
+    New lineup suppressions added to glitch_spec_suppressions.json:
+      LTG_TOOL_character_lineup_* → G006 (non-Glitch skin tones)
+      LTG_TOOL_character_lineup_* → G007 (VOID_BLACK outline not in lineup files)
+    Expected WARN reduction: ~15 to ~3 (lineup v003–v007 all suppressed).
+v1.3.0 (C39): Docstring-stripping pre-pass for numeric-regex checks (Kai Nakamura).
+    _strip_comments_and_docstrings() added: removes triple-quoted docstrings and
+    single-line # comments from source before running G001/G002 numeric regex checks.
+    This eliminates the G002 false-positive class where spec reference values in
+    docstrings (e.g. "spec reference: rx=38") were matched by _RX_ASSIGN/_RY_ASSIGN
+    regexes. The G002 self-suppression entry in glitch_spec_suppressions.json has been
+    removed — no longer needed. draw-order checks (G004) still use full original source
+    to preserve comment context for those pattern matches. G005/G006/G007/G008 checks
+    updated to use stripped source.
 v1.2.0 (C37): Suppression list support via glitch_spec_suppressions.json.
     lint_file() accepts optional suppressions= set of (basename, rule) tuples.
     lint_directory() loads suppressions once and shares across batch.
@@ -63,7 +88,12 @@ v1.1.0 (C35): G002 spec constants corrected (rx=34, ry=38); G001 range widened.
 v1.0.0 (C33): Initial implementation.
 """
 
-__version__ = "1.2.0"  # C37: suppression list support (glitch_spec_suppressions.json)
+__version__ = "1.4.0"  # C39: file_prefix suppression mode — suppress by filename prefix/pattern
+                       #       (e.g. all *_lineup_* files); future-proof as lineup versions increase.
+                       #       _load_suppressions() now returns dict with "exact" and "prefix" sets.
+                       #       _apply_suppressions() checks prefix entries via str.startswith().
+                       # C39: docstring-stripping pre-pass for G001/G002 numeric checks
+                       # C37: suppression list support (glitch_spec_suppressions.json)
                        # C35: G002 spec constants corrected (rx=34, ry=38); wider G001 range
 
 import json
@@ -80,19 +110,41 @@ def _load_suppressions(path=None):
     """
     Load suppression list from glitch_spec_suppressions.json.
 
-    Returns a set of (basename, rule) tuples that should be silenced.
-    Returns empty set if file is missing or malformed.
+    Supports two entry formats:
+      {"file": "exact_basename.py", "rule": "G00x", "reason": "..."}
+        → exact-match suppression for a specific file.
+      {"file_prefix": "LTG_TOOL_character_lineup_", "rule": "G00x", "reason": "..."}
+        → prefix-match suppression: suppresses the rule for ALL files whose
+          basename starts with the given prefix string.
+
+    Returns a dict:
+        {
+            "exact":  set of (basename, rule) tuples   — exact-match entries
+            "prefix": list of (prefix_str, rule) tuples — prefix-match entries
+        }
+    Returns {"exact": set(), "prefix": []} if file is missing or malformed.
     """
+    _empty = {"exact": set(), "prefix": []}
     p = path or _SUPPRESSION_FILE
     if not os.path.isfile(p):
-        return set()
+        return _empty
     try:
         with open(p, "r", encoding="utf-8") as fh:
             data = json.load(fh)
         entries = data.get("suppressions", [])
-        return {(e["file"], e["rule"]) for e in entries if "file" in e and "rule" in e}
+        exact_set = set()
+        prefix_list = []
+        for e in entries:
+            rule = e.get("rule")
+            if not rule:
+                continue
+            if "file" in e:
+                exact_set.add((e["file"], rule))
+            elif "file_prefix" in e:
+                prefix_list.append((e["file_prefix"], rule))
+        return {"exact": exact_set, "prefix": prefix_list}
     except (json.JSONDecodeError, OSError):
-        return set()
+        return _empty
 
 
 def _apply_suppressions(issues, basename, suppression_set):
@@ -100,20 +152,50 @@ def _apply_suppressions(issues, basename, suppression_set):
     Filter *issues* (list of str) using the suppression set.
 
     An issue is suppressed if its rule code (e.g. "G007") appears in
-    a suppression entry for this file's basename.
+    a suppression entry for this file:
+      - exact-match: (basename, rule) in suppression_set["exact"]
+      - prefix-match: basename starts with prefix and (prefix, rule) in
+        suppression_set["prefix"]
+
+    suppression_set must be a dict returned by _load_suppressions() (v1.4.0+).
+    For backwards compatibility with callers passing a bare set, the function
+    treats a plain set as if it were {"exact": <the set>, "prefix": []}.
 
     Returns (kept_issues, suppressed_count).
     """
+    # Backwards-compat: plain set → exact-only dict
+    if isinstance(suppression_set, set):
+        suppression_set = {"exact": suppression_set, "prefix": []}
+
+    exact_set   = suppression_set.get("exact", set())
+    prefix_list = suppression_set.get("prefix", [])
+
     kept = []
     suppressed = 0
     for issue in issues:
         # Extract rule code: first word that matches G\d{3}
         m = re.match(r'(G\d{3}):', issue)
         rule = m.group(1) if m else None
-        if rule and (basename, rule) in suppression_set:
+        if rule is None:
+            kept.append(issue)
+            continue
+
+        # Exact-match check
+        if (basename, rule) in exact_set:
+            suppressed += 1
+            continue
+
+        # Prefix-match check
+        matched_prefix = False
+        for prefix_str, prefix_rule in prefix_list:
+            if prefix_rule == rule and basename.startswith(prefix_str):
+                matched_prefix = True
+                break
+        if matched_prefix:
             suppressed += 1
         else:
             kept.append(issue)
+
     return kept, suppressed
 
 # ── Spec constants (from glitch.md) ────────────────────────────────────────────
@@ -175,6 +257,44 @@ def _read_source(filepath):
             return fh.read(), None
     except OSError as e:
         return None, str(e)
+
+
+def _strip_comments_and_docstrings(source):
+    """
+    Return a copy of *source* with Python docstrings and single-line comments removed.
+
+    Purpose: prevent spec-reference values in comments/docstrings (e.g.
+    "spec reference: rx=38") from being matched by numeric-regex checks
+    such as _RX_ASSIGN / _RY_ASSIGN, which would produce false positives.
+
+    Strategy:
+      1. Remove triple-quoted strings (both '''...''' and \"\"\"...\"\"\") — these are
+         docstrings or multiline string literals that may contain spec references.
+      2. Remove single-line # comments (from # to end of line).
+
+    The result preserves all executable code lines, only comments/docstrings
+    are blanked out (replaced with empty strings / blank lines to preserve
+    line numbers for any future line-number reporting).
+
+    Parameters
+    ----------
+    source : str
+
+    Returns
+    -------
+    str  — source with comments and docstrings removed.
+    """
+    # Step 1: strip triple-quoted strings (docstrings / multiline strings)
+    # Replace content with empty placeholder to preserve character positions.
+    # Use a non-greedy match with re.DOTALL so newlines are matched.
+    stripped = re.sub(r'""".*?"""', '""""""', source, flags=re.DOTALL)
+    stripped = re.sub(r"'''.*?'''", "''''''", stripped, flags=re.DOTALL)
+
+    # Step 2: strip single-line # comments
+    # Replace from # to end of line with empty (keep the newline)
+    stripped = re.sub(r'#[^\n]*', '', stripped)
+
+    return stripped
 
 
 def _is_glitch_generator(source):
@@ -389,15 +509,20 @@ def lint_file(filepath, suppressions=None):
             "status": "SKIP",
         }
 
+    # v1.3.0: use stripped source (no docstrings/comments) for numeric-regex checks
+    # to prevent spec-reference values in docstrings from triggering false positives.
+    # draw-order checks (G004) use original source to preserve full code structure.
+    stripped = _strip_comments_and_docstrings(source)
+
     raw_issues = []
-    raw_issues.extend(_check_g001_dimensions(source))
-    raw_issues.extend(_check_g002_body_mass_ratio(source))
-    raw_issues.extend(_check_g003_multi_glitchkin(source))
-    raw_issues.extend(_check_g004_crack_draw_order(source))
-    raw_issues.extend(_check_g005_uv_shadow(source))
-    raw_issues.extend(_check_g006_no_organic_fill(source))
-    raw_issues.extend(_check_g007_void_outline(source))
-    raw_issues.extend(_check_g008_interior_bilateral(source))
+    raw_issues.extend(_check_g001_dimensions(stripped))    # numeric regex — use stripped
+    raw_issues.extend(_check_g002_body_mass_ratio(stripped))  # numeric regex — use stripped
+    raw_issues.extend(_check_g003_multi_glitchkin(stripped))
+    raw_issues.extend(_check_g004_crack_draw_order(source))   # draw order — use original
+    raw_issues.extend(_check_g005_uv_shadow(stripped))
+    raw_issues.extend(_check_g006_no_organic_fill(stripped))
+    raw_issues.extend(_check_g007_void_outline(stripped))
+    raw_issues.extend(_check_g008_interior_bilateral(stripped))
 
     basename = os.path.basename(filepath)
     issues, suppressed_count = _apply_suppressions(raw_issues, basename, suppressions)

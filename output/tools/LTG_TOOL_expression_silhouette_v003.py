@@ -60,7 +60,7 @@ Usage:
           [--mode full|arms]
           [--arms-top 0.25] [--arms-bot 0.75] [--center-mask 0.30]
           [--threshold 0.85] [--warn-threshold 0.70]
-          [--output silhouettes.png] [--json] [--output-zones]
+          [--output silhouettes.png] [--json] [--output-zones] [--viz-rpd]
 
   --mode arms     Isolates arm/shoulder region only (no HEAD/LEGS contribution).
   --arms-top      Top of arm zone as fraction of bounding-box height (default 0.25).
@@ -82,6 +82,22 @@ Output:
   - Exit codes: 0=PASS, 1=WARN, 2=FAIL.
 
 Author: Maya Santos — Cycle 36 Task 1 (C35 IoM metric root-cause fix)
+Date: 2026-03-30
+  --viz-rpd   For each FAIL/WARN pair, generates a side-by-side pixel difference
+              heatmap PNG showing exactly which pixels differ between the two
+              silhouettes, colorized by zone contribution:
+                HEAD zone pixels = blue tint
+                ARMS zone pixels = orange tint
+                LEGS zone pixels = green tint
+              Panel A pixels only = bright red overlay
+              Panel B pixels only = bright cyan overlay
+              Shared pixels = light grey
+              Output: <--output-base>_pair_XX_YY_vizdiff.png per flagged pair.
+              Requires --output (used as base path for generated files).
+              Added in C39 (actioned ideabox, Maya Santos).
+
+Author: Maya Santos — Cycle 36 Task 1 (C35 IoM metric root-cause fix)
+  --viz-rpd added: Cycle 39 (actioned ideabox idea, Maya Santos)
 Date: 2026-03-30
 """
 
@@ -624,6 +640,200 @@ def make_silhouette_contact_sheet(silhouettes: list, rows: int, cols: int,
     return out
 
 
+# ─── RPD PAIR DIFF VISUALIZATION (--viz-rpd) ─────────────────────────────────
+
+def _zone_color_for_y(y: int, bb_y_min: int, bb_h: int,
+                      a_only_col=(220, 60, 40),
+                      b_only_col=(40, 200, 220)) -> tuple:
+    """
+    Return the zone-tint color based on y position within the bounding box.
+    HEAD zone (top 25%)  → blue tint
+    ARMS zone (mid 50%)  → orange tint
+    LEGS zone (bot 25%)  → green tint
+    """
+    if bb_h <= 0:
+        frac = 0.5
+    else:
+        frac = (y - bb_y_min) / bb_h
+    frac = max(0.0, min(1.0, frac))
+
+    if frac <= ZONE_HEAD_BOT:
+        return (80, 120, 220)    # HEAD — blue
+    elif frac <= ZONE_ARMS_BOT:
+        return (220, 110, 40)    # ARMS — orange
+    else:
+        return (60, 180, 80)     # LEGS — green
+
+
+def viz_rpd_pair(sil_a: Image.Image, sil_b: Image.Image,
+                 label_a: str = "A", label_b: str = "B",
+                 rpd_score: float = None,
+                 zone_scores: dict = None) -> Image.Image:
+    """
+    Generate a side-by-side pixel difference heatmap for a pair of silhouettes.
+
+    Layout (horizontal strip, 3 panels):
+      [Silhouette A]  [Silhouette B]  [Diff Heatmap]
+
+    Diff heatmap pixel coding:
+      Pixels only in A     → bright red   (220, 60, 40)
+      Pixels only in B     → bright cyan  (40, 200, 220)
+      Pixels in both       → zone color, muted grey-tint:
+                              HEAD zone → blue-grey  (120, 140, 200)
+                              ARMS zone → orange-grey (200, 150, 100)
+                              LEGS zone → green-grey  (100, 180, 110)
+      No character pixel   → white (255, 255, 255)
+
+    Zone colors are derived from the union bounding box to be consistent
+    with the RPD zone definitions.
+
+    Returns an RGB image ≤ 1280px wide.
+    """
+    # Normalize both to same size
+    wa, ha = sil_a.size
+    wb, hb = sil_b.size
+    if (wa, ha) != (wb, hb):
+        sil_b_r = sil_b.resize((wa, ha), Image.LANCZOS)
+    else:
+        sil_b_r = sil_b
+
+    w, h = wa, ha
+
+    # Get bounding box (union)
+    bb_a = bounding_box(sil_a)
+    bb_b = bounding_box(sil_b_r)
+    if bb_a and bb_b:
+        bb_y_min = min(bb_a[1], bb_b[1])
+        bb_y_max = max(bb_a[3], bb_b[3])
+        bb_h     = bb_y_max - bb_y_min
+    else:
+        bb_y_min = 0
+        bb_h     = h
+
+    # Build diff image
+    arr_a = sil_a.load()
+    arr_b = sil_b_r.load()
+    diff  = Image.new("RGB", (w, h), (255, 255, 255))
+    diff_arr = diff.load()
+
+    for y in range(h):
+        zone_col = _zone_color_for_y(y, bb_y_min, bb_h)
+        for x in range(w):
+            a_char = (arr_a[x, y] == 0)
+            b_char = (arr_b[x, y] == 0)
+
+            if a_char and b_char:
+                # shared pixel — zone tint, slightly muted
+                r = min(255, zone_col[0] + 80)
+                g = min(255, zone_col[1] + 80)
+                b_val = min(255, zone_col[2] + 80)
+                diff_arr[x, y] = (r, g, b_val)
+            elif a_char:
+                diff_arr[x, y] = (220, 60, 40)    # A only — red
+            elif b_char:
+                diff_arr[x, y] = (40, 200, 220)   # B only — cyan
+
+    # Build 3-panel strip
+    LABEL_H = 28
+    MARGIN   = 6
+    strip_w  = w * 3 + MARGIN * 4
+    strip_h  = h + LABEL_H + MARGIN * 2
+    strip    = Image.new("RGB", (strip_w, strip_h), (230, 228, 224))
+    draw     = ImageDraw.Draw(strip)
+
+    try:
+        from PIL import ImageFont
+        font = ImageFont.truetype(
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 11)
+        font_sm = ImageFont.truetype(
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 10)
+    except Exception:
+        from PIL import ImageFont
+        font    = ImageFont.load_default()
+        font_sm = font
+
+    panels = [
+        (sil_a.convert("RGB"),  f"A: {label_a}", (60, 60, 60)),
+        (sil_b.convert("RGB"),  f"B: {label_b}", (60, 60, 60)),
+        (diff,                  "DIFF (red=A-only, cyan=B-only, zone-tinted=shared)", (40, 80, 160)),
+    ]
+    for i, (panel_img, plabel, pcol) in enumerate(panels):
+        x0 = MARGIN + i * (w + MARGIN)
+        y0 = MARGIN
+        sil_disp = panel_img.resize((w, h), Image.LANCZOS) if panel_img.size != (w, h) else panel_img
+        strip.paste(sil_disp, (x0, y0))
+        draw.rectangle([x0, y0, x0 + w - 1, y0 + h - 1], outline=(160, 155, 148), width=1)
+        draw.text((x0, y0 + h + 3), plabel, fill=pcol, font=font)
+
+    # Add score info in bottom-right
+    score_txt = ""
+    if rpd_score is not None:
+        score_txt += f"RPD={rpd_score:.1%}"
+    if zone_scores:
+        parts = [f"{k.replace('_sim','').upper()}={v:.0%}" for k, v in zone_scores.items()]
+        score_txt += "  " + "  ".join(parts)
+    if score_txt:
+        draw.text((MARGIN, y0 + h + 16), score_txt, fill=(100, 80, 60), font=font_sm)
+
+    # Zone legend
+    legend_x = MARGIN + 2 * (w + MARGIN) + 4
+    draw.text((legend_x, y0 + h + 3), "H=blue  A=orange  L=green", fill=(100, 100, 100), font=font_sm)
+
+    strip.thumbnail((1280, 1280), Image.LANCZOS)
+    return strip
+
+
+def generate_viz_rpd(result: dict,
+                     silhouettes: list,
+                     panel_labels: list,
+                     output_base: str,
+                     verbose: bool = True):
+    """
+    For every FAIL or WARN pair in result["pairs"], generate a viz-rpd diff PNG.
+    Files are saved as: <output_base_no_ext>_pair_XX_YY_vizdiff.png
+
+    Parameters:
+      result      — dict returned by run_test()
+      silhouettes — list of silhouette images indexed by panel number
+      panel_labels— list of panel label strings indexed by panel number
+      output_base — path used as the base for output filenames
+                    (extension stripped, _pair_XX_YY_vizdiff.png appended)
+    """
+    base, _ = os.path.splitext(output_base)
+    flagged  = [p for p in result["pairs"] if p["status"] != "PASS"]
+
+    if not flagged:
+        if verbose:
+            print("--viz-rpd: No FAIL/WARN pairs to visualize.")
+        return
+
+    saved = []
+    for p in flagged:
+        ia = p["panel_a"]
+        ib = p["panel_b"]
+        la = panel_labels[ia] if ia < len(panel_labels) else f"P{ia:02d}"
+        lb = panel_labels[ib] if ib < len(panel_labels) else f"P{ib:02d}"
+
+        sil_a = silhouettes[ia]
+        sil_b = silhouettes[ib]
+
+        img = viz_rpd_pair(
+            sil_a, sil_b,
+            label_a=la, label_b=lb,
+            rpd_score=p.get("rpd"),
+            zone_scores=p.get("zone_scores"),
+        )
+        out_path = f"{base}_pair_{ia:02d}_{ib:02d}_{p['status'].lower()}_vizdiff.png"
+        img.save(out_path)
+        saved.append(out_path)
+        if verbose:
+            print(f"  viz-rpd [{p['status']}] P{ia:02d}↔P{ib:02d}  RPD={p['rpd']:.1%} → {out_path}")
+
+    if verbose:
+        print(f"--viz-rpd: {len(saved)} diff image(s) generated.")
+    return saved
+
+
 # ─── MAIN TEST RUNNER ────────────────────────────────────────────────────────
 
 def run_test(sheet_path: str,
@@ -637,7 +847,8 @@ def run_test(sheet_path: str,
              arms_top_frac: float = ARMS_TOP_FRAC,
              arms_bot_frac: float = ARMS_BOT_FRAC,
              center_mask_frac: float = CENTER_MASK_FRAC,
-             output_zones: bool = False) -> dict:
+             output_zones: bool = False,
+             viz_rpd: bool = False) -> dict:
     """
     Run silhouette differentiation test on an expression sheet.
 
@@ -773,6 +984,20 @@ def run_test(sheet_path: str,
             if output_zones and mode == "full":
                 print("Zone overlays: H=blue (HEAD top 25%), A=orange (ARMS mid 50%), L=green (LEGS bot 25%)")
 
+    if viz_rpd and output_path:
+        if verbose:
+            print("\n--viz-rpd: Generating RPD pair diff images for FAIL/WARN pairs...")
+        generate_viz_rpd(
+            result=result,
+            silhouettes=silhouettes,
+            panel_labels=panel_labels,
+            output_base=output_path,
+            verbose=verbose,
+        )
+    elif viz_rpd and not output_path:
+        if verbose:
+            print("WARNING: --viz-rpd requires --output to be set (used as base filename). Skipping.")
+
     return result
 
 
@@ -868,6 +1093,16 @@ if __name__ == "__main__":
                             "Requires --output to save the contact sheet. "
                             "Helps designers immediately see which zone drove a WARN/FAIL."
                         ))
+    parser.add_argument("--viz-rpd", action="store_true",
+                        help=(
+                            "For each FAIL/WARN pair, generate a side-by-side pixel diff "
+                            "heatmap PNG showing which pixels drove the RPD score. "
+                            "Pixels unique to A = red, unique to B = cyan, shared = "
+                            "zone-tinted (blue=HEAD, orange=ARMS, green=LEGS). "
+                            "Requires --output (used as base path for generated files). "
+                            "Output: <base>_pair_XX_YY_<status>_vizdiff.png per flagged pair. "
+                            "Added C39 (actioned ideabox, Maya Santos)."
+                        ))
     args = parser.parse_args()
 
     result = run_test(
@@ -883,6 +1118,7 @@ if __name__ == "__main__":
         arms_bot_frac=args.arms_bot,
         center_mask_frac=args.center_mask,
         output_zones=args.output_zones,
+        viz_rpd=args.viz_rpd,
     )
 
     if args.json:

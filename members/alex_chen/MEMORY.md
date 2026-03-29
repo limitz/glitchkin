@@ -12,7 +12,57 @@
 - Never send high-res images to Claude unless absolutely necessary.
 - Vision limitations: hallucination risk on low-quality/rotated/tiny (<200px) images; limited spatial reasoning; approximate counting only.
 
-## Cycle 38 State (current)
+## Pipeline Update (C39)
+- **numpy, OpenCV (cv2), and PyTorch now authorized** for the pipeline. numpy for array ops (faster than PIL loops), OpenCV for LAB color space + SSIM, PyTorch if neural analysis needed. OpenCV default is BGR — convert on load. Use Pillow for I/O/drawing; numpy/cv2 for analysis/math. Broadcast sent to all team members.
+
+## Cycle 39 State (current)
+
+**C39 tasks complete (Alex Chen's portion).**
+
+### C39 Work Done
+1. **Archived** all 13 inbox messages (C38 completions + C39 directives + C39 completions).
+2. **SF02 storm threshold brief** sent to Kai: document REAL_STORM sub-type (threshold≈3) in warmth_lint + render_qa + world_type_infer. Closes recurring false-WARN.
+3. **Costume-background clash lint brief** sent to Kai: `LTG_TOOL_costume_bg_clash_v001.py` — ΔE CIELAB (OpenCV LAB) per-pair character vs background. P2 C39, P1 C40.
+4. **numpy/OpenCV broadcast** sent to all 11 other team members.
+5. **Pitch package index updated**: C39 additions registered (14 entries: Kitchen v005, Cold Open v003, Living Room v002, Story Bible v003, Proportion audit v003, Fill Light Adapter v001, Procedural Draw v1.6.0, Luma v011, Cosmo v007, Byte v006, SF01 v006, render_qa v1.5.0, world_type_infer v001, Miri slipper audit, color QA C38, CI C38). C39 status table written.
+6. **Ideabox**: `20260330_alex_chen_numpy_opencv_qa_upgrade.md` — upgrade core QA tools to numpy/cv2 for speed + ΔE accuracy.
+7. **C39 completion report**: `members/alex_chen/inbox/archived/20260330_0015_alex_c39_completion.md`.
+
+### C39 Canonical Asset Versions (current)
+- Luma expression sheet: **v011 PITCH PRIMARY** (right-eye lid top-drop, power balance, DOUBT VARIANT slot 7)
+- Luma motion spec: v002 (unchanged)
+- Luma color model: v002 (unchanged)
+- Luma turnaround: v004 (unchanged)
+- Character lineup: v007 (unchanged)
+- Byte expression sheet: **v006** (silhouette differentiation — 4 expressions clarified)
+- Byte motion spec: v002 (unchanged)
+- Miri expression sheet: v004 (unchanged)
+- Cosmo expression sheet: **v007** (SKEPTICAL arm fix — 3-cycle P2 resolved)
+- Glitch expression sheet: v003 GEOMETRY CORRECTED (unchanged)
+- SF01: **v006 PITCH PRIMARY** (sight-line: head turn, eye shift, reaching arm) / SF02: v008 / SF03: v005 / SF04: v004
+- Kitchen: **v005** (Miri fridge label visual plant)
+- Living Room: **v002** (diamond-crystal plant)
+- School Hallway: v003 (unchanged)
+- Story Bible: **v003** (cold open restructured, Glitch antagonist complete — FLAGS 01+03 RESOLVED)
+- Cold Open storyboard: **v003** (P01 exterior night, P12 two-shot, P13 commitment beat)
+- Logo: v001
+
+### C39 Key Decisions
+- **SF02 warm/cool WARN = creative intent**, not a defect. REAL_STORM sub-type to be documented C39 by Kai+Sam.
+- **Costume-background clash lint**: Kai to build. Use OpenCV LAB (ΔE) not Euclidean RGB.
+- **numpy/OpenCV/PyTorch authorized** for pipeline. Broadcast sent.
+
+### C39 Open Items (carry to C40)
+- **SF02 REAL_STORM threshold** (Kai+Sam — P1): add sub-type to warmth_lint/render_qa/world_type_infer
+- **Costume-background clash tool** (Kai — P2): `LTG_TOOL_costume_bg_clash_v001.py`
+- **Byte RPD oval-body tool tuning** (Maya — P3): tool cannot distinguish small oval body expressions at panel resolution
+- **RPD baseline run**: all current expression sheets against silhouette_v003
+- **Antagonist appearance guide** (Priya — for Lee+Diego): staging language for Glitch first appearances
+- **Story bible v003 critique**: first look for critics at complete antagonist profile
+
+---
+
+## Cycle 38 State (current — superseded by C39)
 
 **C38 tasks complete (Alex Chen's portion).**
 

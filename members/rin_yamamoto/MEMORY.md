@@ -1,5 +1,26 @@
 # Rin Yamamoto — MEMORY
 
+## C39 Completed Work
+- `LTG_TOOL_procedural_draw_v001.py` bumped to v1.6.0 — C39 audit notes added; no logic changes
+- `LTG_TOOL_fill_light_adapter_v001.py` (v1.0.0) — resolution-aware fill light adapter
+  - `FillLightAdapter(cw, ch)` + `FillLightConfig` dataclass
+  - Fractional OR absolute position modes; auto-scales blur/gradient to canvas
+  - `make_glitch_storm_fill_configs()` factory for SF02 3-char HOT_MAGENTA preset
+  - Self-test: 720p PASS, 1080p PASS
+- `LTG_TOOL_proportion_audit_v003.py` — adds `--cycle N` CLI flag; no more per-cycle runners
+  - C39 audit: PASS=4, ASYM-WARN=2, WARN=1, FAIL=0, N/A=14 (21 files)
+  - Report: `output/production/proportion_audit_c39.md`
+- Ideabox: `ideabox/20260329_rin_yamamoto_fill_light_adapter_fractional_presets.md`
+
+## C39 Lessons
+- `get_char_bbox()` on a multi-char frame returns a bbox spanning ALL characters — NEVER use for
+  single-char rim light on a multi-char frame. Hardcode cx from geometry constants instead.
+  Only safe for single-char crops or single-char layers.
+- Fill light adapter pattern: fractional positions (0.0–1.0) + canvas_w/canvas_h injection is
+  the cleanest resolution-portable API. Scale blur_r = max(2, int(4 * scale)) where scale = min(cw/1280, ch/720).
+- Proportion audit --cycle N flag: `_report_path(cycle)` function avoids all path-hardcoding.
+  Default cycle constant at top of file for easy update each cycle.
+
 ## C38 Completed Work
 - `LTG_TOOL_styleframe_discovery_v006.py` — SF01 v006 generator (C38 sight-line + visual power fix)
 - `output/color/style_frames/LTG_COLOR_styleframe_discovery_v006.png` — 1280×720px

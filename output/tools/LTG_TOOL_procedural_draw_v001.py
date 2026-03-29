@@ -14,6 +14,14 @@ Adapted from artistry project techniques (Zeno Particelli AI artist):
   - Character bbox: auto-compute character center x from silhouette for rim-light use (C33)
   - Scene snapshot: crop a named region from a scene image and save as labelled diagnostic PNG (C34)
 
+C39 Audit Notes:
+  - get_char_bbox() confirmed present and correct (added C33, v1.4.0).
+  - SF02 v008 audit: uses char_cx from geometry constants (NOT get_char_bbox on full frame) — CORRECT.
+    Note: get_char_bbox() on a multi-character frame returns a bbox spanning all characters.
+    Always pass per-character cx from geometry constants when the frame has multiple characters.
+  - SF03 v005 audit: does NOT call add_rim_light() — no canvas-midpoint bug risk — CLEAN.
+  - No latent head_cx bugs found in latest generator versions.
+
 Library design:
   - All drawing functions accept seeded RNG for reproducibility
   - No cairocffi — 100% PIL/Pillow
@@ -36,9 +44,9 @@ CLI demo:
 Dependencies: Python 3.8+, Pillow (PIL). No NumPy required.
 """
 
-__version__ = "1.5.0"
+__version__ = "1.6.0"
 __author__ = "Rin Yamamoto"
-__cycle__ = 26
+__cycle__ = 26  # library created; updated C27–C39
 
 import math
 import random

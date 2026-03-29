@@ -13,10 +13,16 @@ Tools chained (in order):
   2. LTG_TOOL_color_verify_v002.py    — canonical color fidelity on style frames
   3. LTG_TOOL_proportion_verify_v001.py — head/body proportion checks on character sheets
   4. LTG_TOOL_stub_linter_v001.py     — broken import detection in output/tools/
-  5. LTG_TOOL_palette_warmth_lint_v001.py — CHAR-M warmth compliance on master_palette.md
+  5. LTG_TOOL_palette_warmth_lint_v004.py — CHAR-M + CHAR-L hoodie warmth compliance on master_palette.md
+                                             (v005 available; v004 used here for stable import)
   6. LTG_TOOL_glitch_spec_lint_v001.py    — Glitchkin generator spec validation
   7. LTG_TOOL_readme_sync_v001.py     — README Script Index completeness audit
-  8. Delta Report                     — compare current run vs last run (qa_baseline_last.json)
+  8. LTG_TOOL_motion_spec_lint_v001.py — Motion spec sheet structural checks (Ryo Hasegawa C39)
+  9. Delta Report                     — compare current run vs last run (qa_baseline_last.json)
+ 10. Arc-Diff Gate (informational)    — contact sheet version diff (Lee Tanaka C38 ideabox idea)
+     LTG_TOOL_contact_sheet_arc_diff_v001.compare_contact_sheets(). Compares current and prior
+     contact sheet versions. CHANGED > 3: NOTE listing changed panels. REMOVED > 0: WARN.
+     Does not affect overall PASS/WARN/FAIL score — informational gate only.
 
 Output:
     output/production/precritique_qa_c<NN>.md
@@ -29,7 +35,11 @@ Exit codes:
 
 Author: Morgan Walsh (Pipeline Automation Specialist)
 Created: Cycle 34 — 2026-03-29
-Version: 2.3.0 (Cycle 38: CYCLE_LABEL→C38; report renamed precritique_qa_c38_baseline.md)
+Version: 2.6.0 (C39 Morgan Walsh: arc-diff gate Section 10 added — contact sheet changelog for critics.
+              Lineup suppression expansion complete — glitch_spec_lint v1.4.0 file_prefix mode;
+              character_lineup_* G006/G007 now auto-suppressed via prefix.)
+Version: 2.5.0 (C39 Ryo Hasegawa: motion spec lint Section 8 added.)
+Version: 2.4.0 (C39 Sam Kowalski: warmth lint v001→v004; CHAR-L hoodie + REAL_STORM threshold.)
 """
 
 import os
@@ -49,7 +59,7 @@ PALETTE_MD  = REPO_ROOT / "output" / "color" / "palettes" / "master_palette.md"
 BASELINE_JSON = TOOLS_DIR / "qa_baseline_last.json"
 
 # Cycle label — update each cycle
-CYCLE_LABEL = "C38"
+CYCLE_LABEL = "C39"
 
 if str(TOOLS_DIR) not in sys.path:
     sys.path.insert(0, str(TOOLS_DIR))
@@ -60,11 +70,33 @@ if str(TOOLS_DIR) not in sys.path:
 from LTG_TOOL_render_qa_v001 import qa_report, qa_batch
 from LTG_TOOL_color_verify_v002 import verify_canonical_colors, get_canonical_palette
 from LTG_TOOL_stub_linter_v001 import lint_directory as stub_lint_directory, format_report as stub_format_report
-from LTG_TOOL_palette_warmth_lint_v001 import lint_palette_file, format_report as palette_format_report
+from LTG_TOOL_palette_warmth_lint_v004 import lint_palette_file, format_report as palette_format_report
 from LTG_TOOL_glitch_spec_lint_v001 import lint_directory as glitch_lint_directory, format_report as glitch_format_report
 from LTG_TOOL_readme_sync_v001 import audit as readme_sync_audit, format_report as readme_sync_format_report
+from LTG_TOOL_motion_spec_lint_v001 import lint_motion_spec, format_report as motion_lint_format_report
+import importlib.util as _importlib_util
 
 from PIL import Image
+
+# Arc-diff tool: loaded lazily to avoid import errors if Pillow not installed yet
+_arc_diff_mod = None
+
+def _load_arc_diff():
+    """Lazily import LTG_TOOL_contact_sheet_arc_diff_v001. Returns module or None."""
+    global _arc_diff_mod
+    if _arc_diff_mod is not None:
+        return _arc_diff_mod
+    try:
+        spec = _importlib_util.spec_from_file_location(
+            "LTG_TOOL_contact_sheet_arc_diff_v001",
+            str(TOOLS_DIR / "LTG_TOOL_contact_sheet_arc_diff_v001.py"),
+        )
+        mod = _importlib_util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        _arc_diff_mod = mod
+        return mod
+    except Exception:
+        return None
 
 # ---------------------------------------------------------------------------
 # Target file collections
@@ -101,6 +133,34 @@ CHARACTER_SHEETS = [
 GLITCH_GENERATORS = list(TOOLS_DIR.glob("LTG_TOOL_glitch_*.py")) + \
                     list(TOOLS_DIR.glob("LTG_TOOL_style_frame_03_*.py")) + \
                     list(TOOLS_DIR.glob("LTG_TOOL_character_lineup_*.py"))
+
+# Motion spec sheets for Section 8 lint (add new versions here each cycle)
+MOTION_DIR = OUTPUT_DIR / "characters" / "motion"
+MOTION_SHEETS = [
+    # (path, expected_panel_count)
+    (MOTION_DIR / "LTG_CHAR_luma_motion_v002.png",  3),
+    (MOTION_DIR / "LTG_CHAR_byte_motion_v003.png",  4),
+]
+
+# Contact sheet pairs for arc-diff gate (Section 10).
+# Each entry: (label, old_sheet_path, new_sheet_path)
+# old = previous version, new = current version.
+# Arc-diff output PNG saves to output/production/.
+SB_DIR = OUTPUT_DIR / "storyboards"
+ARC_DIFF_PAIRS = [
+    (
+        "Act 2 contact sheet v005→v006",
+        SB_DIR / "act2" / "LTG_SB_act2_contact_sheet_v005.png",
+        SB_DIR / "act2" / "LTG_SB_act2_contact_sheet_v006.png",
+        PROD_DIR / "arc_diff_act2_v005_v006_c39.png",
+    ),
+    (
+        "Act 1 cold open contact sheet v001→v002",
+        SB_DIR / "LTG_SB_act1_coldopen_contact_sheet_v001.png",
+        SB_DIR / "LTG_SB_act1_coldopen_contact_sheet_v002.png",
+        PROD_DIR / "arc_diff_act1_v001_v002_c39.png",
+    ),
+]
 
 
 # ---------------------------------------------------------------------------
@@ -155,6 +215,7 @@ def _make_snapshot(
     palette_lint_res,
     glitch_lint_res,
     readme_sync_res,
+    motion_spec_res,
     run_ts: str,
     cycle: str,
 ) -> dict:
@@ -169,6 +230,9 @@ def _make_snapshot(
             "missing": r.get("missing", []),
             "flagged": r.get("flagged", []),
         }
+    _all = [render_qa_res, color_verify_res, proportion_res,
+            stub_lint_res, palette_lint_res, glitch_lint_res,
+            readme_sync_res, motion_spec_res]
     return {
         "cycle": cycle,
         "run_ts": run_ts,
@@ -180,14 +244,12 @@ def _make_snapshot(
             "palette_warmth": _section(palette_lint_res,    "Palette Warmth Lint"),
             "glitch_spec":    _section(glitch_lint_res,     "Glitch Spec Lint"),
             "readme_sync":    _section(readme_sync_res,     "README Sync"),
+            "motion_spec":    _section(motion_spec_res,     "Motion Spec Lint"),
         },
         "totals": {
-            "pass":  sum(r["pass"]  for r in [render_qa_res, color_verify_res, proportion_res,
-                                               stub_lint_res, palette_lint_res, glitch_lint_res, readme_sync_res]),
-            "warn":  sum(r["warn"]  for r in [render_qa_res, color_verify_res, proportion_res,
-                                               stub_lint_res, palette_lint_res, glitch_lint_res, readme_sync_res]),
-            "fail":  sum(r["fail"]  for r in [render_qa_res, color_verify_res, proportion_res,
-                                               stub_lint_res, palette_lint_res, glitch_lint_res, readme_sync_res]),
+            "pass":  sum(r["pass"]  for r in _all),
+            "warn":  sum(r["warn"]  for r in _all),
+            "fail":  sum(r["fail"]  for r in _all),
         },
     }
 
@@ -532,7 +594,9 @@ def run_stub_linter() -> dict:
 
 def run_palette_warmth_lint() -> dict:
     """
-    Run LTG_TOOL_palette_warmth_lint_v001 on master_palette.md.
+    Run LTG_TOOL_palette_warmth_lint_v004 on master_palette.md.
+    Checks CHAR-M (all entries) + CHAR-L hoodie entries (CHAR-L-04, -08, -11).
+    Upgraded from v001 in C39 (Sam Kowalski) — now covers CHAR-L hoodie warmth guarantee.
     Returns a summary dict.
     """
     if not PALETTE_MD.exists():
@@ -647,6 +711,177 @@ def run_glitch_spec_lint() -> dict:
     }
 
 
+def run_motion_spec_lint() -> dict:
+    """
+    Run LTG_TOOL_motion_spec_lint_v001 on all motion spec sheets.
+    Returns a summary dict compatible with precritique_qa section format.
+
+    Section 8 — Ryo Hasegawa / Cycle 39.
+    """
+    results = []
+    missing = []
+    for path, expected_panels in MOTION_SHEETS:
+        if not path.exists():
+            missing.append(str(path))
+            continue
+        r = lint_motion_spec(str(path), expected_panels=expected_panels)
+        results.append(r)
+
+    pass_count = sum(r["pass"] for r in results)
+    warn_count = sum(r["warn"] for r in results)
+    fail_count = sum(r["fail"] for r in results)
+
+    flagged = []
+    for r in results:
+        fname = Path(r["file"]).name
+        for item in r.get("flagged", []):
+            flagged.append(f"  - {fname}: {item}")
+        for m in r.get("missing", []):
+            flagged.append(f"  - MISSING: {m}")
+
+    overall = "PASS"
+    if fail_count > 0 or missing:
+        overall = "WARN"  # missing motion sheets → WARN (advisory, not block)
+    elif warn_count > 0:
+        overall = "WARN"
+
+    return {
+        "overall": overall,
+        "pass": pass_count,
+        "warn": warn_count,
+        "fail": fail_count,
+        "missing": missing,
+        "flagged": flagged,
+    }
+
+
+def run_arc_diff_gate() -> list:
+    """
+    Section 10 — Arc-Diff Gate (informational, not scored).
+
+    For each contact sheet pair in ARC_DIFF_PAIRS:
+      - If both files exist: run compare_contact_sheets() from arc-diff tool.
+      - If CHANGED > 3: add NOTE listing changed panel slot indices.
+      - If REMOVED > 0: add WARN (panel removal = story continuity risk).
+      - If one/both files missing: skip with NOTE.
+
+    Returns a list of result dicts, one per pair:
+        {
+            label       : str   — human-readable pair label
+            old_path    : str
+            new_path    : str
+            diff_output : str | None — path to arc-diff PNG (if generated)
+            skipped     : bool  — True if files were missing
+            skip_reason : str | None
+            ok          : bool  — comparison succeeded
+            n_old       : int
+            n_new       : int
+            same        : int
+            changed     : int
+            added       : int
+            removed     : int
+            changed_slots : list[int]
+            severity    : "PASS" | "NOTE" | "WARN"
+            messages    : list[str]
+        }
+    """
+    arc_mod = _load_arc_diff()
+    results = []
+
+    for label, old_path, new_path, diff_out in ARC_DIFF_PAIRS:
+        entry = {
+            "label": label,
+            "old_path": str(old_path),
+            "new_path": str(new_path),
+            "diff_output": None,
+            "skipped": False,
+            "skip_reason": None,
+            "ok": False,
+            "n_old": 0, "n_new": 0,
+            "same": 0, "changed": 0, "added": 0, "removed": 0,
+            "changed_slots": [],
+            "severity": "PASS",
+            "messages": [],
+        }
+
+        # Check file availability
+        old_exists = old_path.exists()
+        new_exists = new_path.exists()
+        if not old_exists or not new_exists:
+            missing = []
+            if not old_exists:
+                missing.append(f"OLD: {old_path.name}")
+            if not new_exists:
+                missing.append(f"NEW: {new_path.name}")
+            entry["skipped"] = True
+            entry["skip_reason"] = "Missing: " + ", ".join(missing)
+            entry["severity"] = "PASS"   # skipped ≠ failure
+            entry["messages"].append(f"NOTE: Skipped — {entry['skip_reason']}")
+            results.append(entry)
+            continue
+
+        if arc_mod is None:
+            entry["skipped"] = True
+            entry["skip_reason"] = "arc-diff module could not be loaded"
+            entry["severity"] = "PASS"
+            entry["messages"].append("NOTE: arc-diff tool unavailable — skipping")
+            results.append(entry)
+            continue
+
+        # Run comparison
+        try:
+            r = arc_mod.compare_contact_sheets(str(old_path), str(new_path), str(diff_out))
+            entry.update({
+                "ok":           r["ok"],
+                "n_old":        r["n_old"],
+                "n_new":        r["n_new"],
+                "same":         r["same"],
+                "changed":      r["changed"],
+                "added":        r["added"],
+                "removed":      r["removed"],
+                "changed_slots": r["changed_slots"],
+                "diff_output":  r.get("diff_output"),
+            })
+
+            if not r["ok"]:
+                entry["severity"] = "PASS"
+                entry["messages"].append(f"NOTE: comparison error — {r.get('error', 'unknown')}")
+            else:
+                # Gate logic per spec
+                severity = "PASS"
+                if r["removed"] > 0:
+                    severity = "WARN"
+                    entry["messages"].append(
+                        f"WARN: {r['removed']} panel(s) REMOVED — story continuity risk. "
+                        f"Removed slots: {r['removed_slots']}"
+                    )
+                if r["changed"] > 3:
+                    if severity == "PASS":
+                        severity = "NOTE"
+                    slots_str = ", ".join(str(s) for s in r["changed_slots"])
+                    entry["messages"].append(
+                        f"NOTE: {r['changed']} panel(s) CHANGED this cycle "
+                        f"(slots: {slots_str}) — critics: focus review on these panels."
+                    )
+                if r["added"] > 0:
+                    entry["messages"].append(
+                        f"NOTE: {r['added']} panel(s) ADDED (new panels, not in prior version)."
+                    )
+                if not entry["messages"]:
+                    entry["messages"].append(
+                        f"PASS: {r['same']} panel(s) unchanged, "
+                        f"{r['changed']} changed, {r['added']} added, {r['removed']} removed."
+                    )
+                entry["severity"] = severity
+        except Exception as exc:
+            entry["severity"] = "PASS"
+            entry["messages"].append(f"NOTE: arc-diff exception — {exc}")
+
+        results.append(entry)
+
+    return results
+
+
 # ---------------------------------------------------------------------------
 # Report builder
 # ---------------------------------------------------------------------------
@@ -659,6 +894,8 @@ def build_report(
     palette_lint_res,
     glitch_lint_res,
     readme_sync_res,
+    motion_spec_res,
+    arc_diff_results: list,
     delta: dict,
     run_ts: str,
 ) -> str:
@@ -692,20 +929,15 @@ def build_report(
         palette_lint_res["overall"],
         glitch_lint_res["overall"],
         readme_sync_res["overall"],
+        motion_spec_res["overall"],
     )
 
-    total_pass  = (render_qa_res["pass"]   + color_verify_res["pass"]  +
-                   proportion_res["pass"]  + stub_lint_res["pass"]     +
-                   palette_lint_res["pass"] + glitch_lint_res["pass"]  +
-                   readme_sync_res["pass"])
-    total_warn  = (render_qa_res["warn"]   + color_verify_res["warn"]  +
-                   proportion_res["warn"]  + stub_lint_res["warn"]     +
-                   palette_lint_res["warn"] + glitch_lint_res["warn"]  +
-                   readme_sync_res["warn"])
-    total_fail  = (render_qa_res["fail"]   + color_verify_res["fail"]  +
-                   proportion_res["fail"]  + stub_lint_res["fail"]     +
-                   palette_lint_res["fail"] + glitch_lint_res["fail"]  +
-                   readme_sync_res["fail"])
+    _all_sections = [render_qa_res, color_verify_res, proportion_res,
+                     stub_lint_res, palette_lint_res, glitch_lint_res,
+                     readme_sync_res, motion_spec_res]
+    total_pass  = sum(r["pass"] for r in _all_sections)
+    total_warn  = sum(r["warn"] for r in _all_sections)
+    total_fail  = sum(r["fail"] for r in _all_sections)
 
     # README sync prominence flag
     readme_discrepancies = readme_sync_res.get("unlisted_count", 0) + readme_sync_res.get("ghost_count", 0)
@@ -722,7 +954,7 @@ def build_report(
         f"# Pre-Critique QA Report — {CYCLE_LABEL}",
         "",
         f"**Run date:** {run_ts}",
-        f"**Script:** LTG_TOOL_precritique_qa_v001.py v2.1.0",
+        f"**Script:** LTG_TOOL_precritique_qa_v001.py v2.4.0",
         "",
         "---",
         "",
@@ -745,6 +977,7 @@ def build_report(
         f"| Palette Warmth Lint            | {palette_lint_res['overall']}| {palette_lint_res['pass']}| {palette_lint_res['warn']}| {palette_lint_res['fail']}|",
         f"| Glitch Spec Lint               | {glitch_lint_res['overall']} | {glitch_lint_res['pass']} | {glitch_lint_res['warn']} | {glitch_lint_res['fail']} |",
         f"| README Script Index Sync       | {readme_sync_res['overall']} | {readme_sync_res['pass']} | {readme_sync_res['warn']} | {readme_sync_res['fail']} |",
+        f"| Motion Spec Lint               | {motion_spec_res['overall']} | {motion_spec_res['pass']} | {motion_spec_res['warn']} | {motion_spec_res['fail']} |",
         "",
         "---",
         "",
@@ -850,9 +1083,59 @@ def build_report(
     lines.append(flagged_block(readme_sync_res))
     lines.append("")
 
+    # Section 8: Motion Spec Lint
+    lines.append(section_header("8. Motion Spec Lint — motion sheets", motion_spec_res))
+    lines.append("")
+    lines.append("Target sheets:")
+    for path, panels in MOTION_SHEETS:
+        exists = "found" if path.exists() else "MISSING"
+        lines.append(f"  - `{path.name}` (expected {panels} panels, {exists})")
+    lines.append("")
+    lines.append(flagged_block(motion_spec_res))
+    lines.append("")
+
+    # Section 9: Arc-Diff Gate (informational)
+    lines.append("## 9. Arc-Diff Gate — Contact Sheet Changelog")
+    lines.append("")
+    lines.append("_Informational only — does not affect overall PASS/WARN/FAIL score._")
+    lines.append("_WARN = panel removed (story continuity risk). NOTE = changed panels (critics: prioritize review of these)._")
+    lines.append("")
+
+    if not arc_diff_results:
+        lines.append("_No contact sheet pairs configured._")
+        lines.append("")
+    else:
+        for entry in arc_diff_results:
+            label = entry["label"]
+            severity = entry["severity"]
+            lines.append(f"### {label}")
+            if entry.get("skipped"):
+                lines.append(f"  - *{entry.get('skip_reason', 'skipped')}*")
+            else:
+                lines.append(
+                    f"  - OLD panels: {entry['n_old']}  "
+                    f"NEW panels: {entry['n_new']}  "
+                    f"SAME: {entry['same']}  "
+                    f"CHANGED: {entry['changed']}  "
+                    f"ADDED: {entry['added']}  "
+                    f"REMOVED: {entry['removed']}"
+                )
+                if entry.get("diff_output"):
+                    lines.append(f"  - Arc-diff PNG: `{Path(entry['diff_output']).name}`")
+            for msg in entry.get("messages", []):
+                prefix = "> **WARN:**" if msg.startswith("WARN:") else "_"
+                suffix = "_" if msg.startswith("NOTE:") or msg.startswith("PASS:") else ""
+                if msg.startswith("WARN:"):
+                    lines.append(f"\n> **{msg}**\n")
+                elif msg.startswith("NOTE:") or msg.startswith("PASS:"):
+                    lines.append(f"  - _{msg}_")
+                else:
+                    lines.append(f"  - {msg}")
+            lines.append("")
+
     lines.append("---")
     lines.append("")
-    lines.append("*Generated by LTG_TOOL_precritique_qa_v001.py v2.2.0 — Morgan Walsh, Pipeline Automation*")
+    lines.append("*Generated by LTG_TOOL_precritique_qa_v001.py v2.6.0 — Morgan Walsh (arc-diff gate S9 + lineup suppression expansion C39)*")
 
     return "\n".join(lines)
 
@@ -873,31 +1156,31 @@ def main():
     else:
         print("[precritique_qa] No baseline found — this run will establish the baseline.")
 
-    print("[1/7] Running Render QA on pitch PNGs...")
+    print("[1/8] Running Render QA on pitch PNGs...")
     render_qa_res = run_render_qa()
     print(f"      → {render_qa_res['overall']} (PASS={render_qa_res['pass']}, WARN={render_qa_res['warn']}, FAIL={render_qa_res['fail']}, MISSING={len(render_qa_res['missing'])})")
 
-    print("[2/7] Running Color Verify on style frames...")
+    print("[2/8] Running Color Verify on style frames...")
     color_verify_res = run_color_verify()
     print(f"      → {color_verify_res['overall']} (PASS={color_verify_res['pass']}, WARN={color_verify_res['warn']})")
 
-    print("[3/7] Running Proportion Verify on character turnarounds...")
+    print("[3/8] Running Proportion Verify on character turnarounds...")
     proportion_res = run_proportion_verify()
     print(f"      → {proportion_res['overall']} (PASS={proportion_res['pass']}, WARN={proportion_res['warn']}, FAIL={proportion_res['fail']})")
 
-    print("[4/7] Running Stub Linter on output/tools/...")
+    print("[4/8] Running Stub Linter on output/tools/...")
     stub_lint_res = run_stub_linter()
     print(f"      → {stub_lint_res['overall']} (PASS={stub_lint_res['pass']}, WARN={stub_lint_res['warn']}, ERROR={stub_lint_res['fail']})")
 
-    print("[5/7] Running Palette Warmth Lint on master_palette.md...")
+    print("[5/8] Running Palette Warmth Lint on master_palette.md...")
     palette_lint_res = run_palette_warmth_lint()
     print(f"      → {palette_lint_res['overall']} (checked={palette_lint_res['pass'] + palette_lint_res['warn']}, violations={palette_lint_res['warn']})")
 
-    print("[6/7] Running Glitch Spec Lint on generators...")
+    print("[6/8] Running Glitch Spec Lint on generators...")
     glitch_lint_res = run_glitch_spec_lint()
     print(f"      → {glitch_lint_res['overall']} (PASS={glitch_lint_res['pass']}, WARN={glitch_lint_res['warn']}, FAIL={glitch_lint_res['fail']}, SKIP={glitch_lint_res.get('skip',0)})")
 
-    print("[7/7] Running README Script Index Sync audit...")
+    print("[7/8] Running README Script Index Sync audit...")
     readme_sync_res = run_readme_sync()
     # Prominently report README WARN to console
     if readme_sync_res["warn"] > 0:
@@ -905,10 +1188,25 @@ def main():
     else:
         print(f"      → {readme_sync_res['overall']} (OK={readme_sync_res['pass']}, UNLISTED/GHOST={readme_sync_res['warn']}, disk={readme_sync_res.get('disk_total','?')}, listed={readme_sync_res.get('listed_total','?')})")
 
+    print("[8/9] Running Motion Spec Lint on motion sheets...")
+    motion_spec_res = run_motion_spec_lint()
+    print(f"      → {motion_spec_res['overall']} (PASS={motion_spec_res['pass']}, WARN={motion_spec_res['warn']}, FAIL={motion_spec_res['fail']}, MISSING={len(motion_spec_res['missing'])})")
+
+    print("[9/9] Running Arc-Diff Gate on contact sheet pairs...")
+    arc_diff_results = run_arc_diff_gate()
+    for ad in arc_diff_results:
+        sev = ad["severity"]
+        if ad.get("skipped"):
+            print(f"      → {ad['label']}: SKIP ({ad.get('skip_reason', '')})")
+        else:
+            msgs = "; ".join(m[:80] for m in ad.get("messages", [])[:2])
+            print(f"      → {ad['label']}: {sev} — {msgs}")
+
     # Build snapshot and compute delta
     current_snapshot = _make_snapshot(
         render_qa_res, color_verify_res, proportion_res,
         stub_lint_res, palette_lint_res, glitch_lint_res, readme_sync_res,
+        motion_spec_res,
         run_ts, CYCLE_LABEL,
     )
     delta = compute_delta(current_snapshot, baseline)
@@ -926,6 +1224,8 @@ def main():
         palette_lint_res,
         glitch_lint_res,
         readme_sync_res,
+        motion_spec_res,
+        arc_diff_results,
         delta,
         run_ts,
     )
@@ -944,6 +1244,7 @@ def main():
         palette_lint_res["overall"],
         glitch_lint_res["overall"],
         readme_sync_res["overall"],
+        motion_spec_res["overall"],
     )
 
     print(f"[precritique_qa] OVERALL: {overall}")

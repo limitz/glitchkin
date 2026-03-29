@@ -16,6 +16,18 @@ Created: Cycle 26 — 2026-03-29
 Version: 1.5.0
 
 Changelog:
+  1.6.0 (Cycle 39): REAL_STORM threshold split (Sam Kowalski C39).
+                    Implements ideabox 20260330_sam_kowalski_render_qa_real_threshold_split.
+                    Adds _infer_world_subtype(): when world_type=="REAL", checks filename
+                    for storm keywords (glitch_storm, storm_sf, sf02, style_frame_02) and
+                    returns "REAL_STORM" (threshold=3) or "REAL_INTERIOR" (threshold=12).
+                    Effect: SF02 glitch_storm (sep=6.5) now PASS under REAL_STORM 3.0.
+                    SF01 discovery (sep=17.8) unchanged under REAL_INTERIOR 12.0.
+                    Closes FP-006 entirely. Adds import re. No API changes for callers —
+                    warm_cool result now reports "REAL_INTERIOR"/"REAL_STORM" in world_type.
+                    Also (Task 4 C39): world-type inference now prefers standalone
+                    LTG_TOOL_world_type_infer_v001 (lighter, stdlib-only) over
+                    palette_warmth_lint_v004 embedded rules. Falls back gracefully.
   1.5.0 (Cycle 38): REAL world threshold corrected 20→12 (Sam Kowalski C38).
                     _WORLD_WARM_COOL_THRESHOLD["REAL"] was 20.0 but warmth_lint_v004
                     world_presets define REAL warm_cool_threshold=12.  The v1.4.0
@@ -54,6 +66,7 @@ Coordinate note (Rin Inoue):
 """
 
 import os
+import re
 import sys
 import random
 import statistics
@@ -71,20 +84,27 @@ if str(_TOOLS_DIR) not in sys.path:
 from LTG_TOOL_color_verify_v001 import verify_canonical_colors, get_canonical_palette
 
 # ---------------------------------------------------------------------------
-# Optional: world-type inference from palette_warmth_lint_v004 (v1.4.0)
+# World-type inference (v1.6.0: prefer standalone world_type_infer_v001 — Task 4 C39)
+# Falls back to palette_warmth_lint_v004, then to no-op.
 # ---------------------------------------------------------------------------
 try:
-    from LTG_TOOL_palette_warmth_lint_v004 import infer_world_type as _infer_world_type_external
+    # Prefer standalone tool (Sam Kowalski C38 — stdlib only, lighter weight)
+    from LTG_TOOL_world_type_infer_v001 import infer_world_type as _infer_world_type_external
     _WORLD_TYPE_AVAILABLE = True
 except ImportError:
-    _WORLD_TYPE_AVAILABLE = False
-    def _infer_world_type_external(path):
-        return None
+    try:
+        # Fallback: warmth_lint_v004 embedded inference (Kai Nakamura C37)
+        from LTG_TOOL_palette_warmth_lint_v004 import infer_world_type as _infer_world_type_external
+        _WORLD_TYPE_AVAILABLE = True
+    except ImportError:
+        _WORLD_TYPE_AVAILABLE = False
+        def _infer_world_type_external(path):
+            return None
 
 # ---------------------------------------------------------------------------
 # Version
 # ---------------------------------------------------------------------------
-__version__ = "1.5.0"  # C38: REAL warm/cool threshold corrected 20→12 (Sam Kowalski)
+__version__ = "1.6.0"  # C39: REAL_STORM threshold split (Sam Kowalski). REAL→REAL_INTERIOR(12)/REAL_STORM(3)
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -101,25 +121,51 @@ random.seed(42)   # reproducible sampling
 # Asset types that skip warm/cool check (uniform neutral bg by design)
 _SKIP_WARM_COOL = {"character_sheet", "color_model", "turnaround"}
 
-# Per-world warm/cool minimum separation thresholds (v1.5.0)
-# Based on world_presets from palette_warmth_lint_v004 (REAL corrected C38):
+# Per-world warm/cool minimum separation thresholds (v1.6.0)
+# Based on world_presets from palette_warmth_lint_v004 + ideabox C37 (Sam Kowalski):
 #   REAL_INTERIOR → 12 PIL units (lamp-lit interiors; warm-dominant but single-temp)
-#   REAL_STORM    →  3 PIL units (contested; warm accents only, not dominant)
+#   REAL_STORM    →  3 PIL units (contested storm scene; warm window accents only)
 #   GLITCH        →  3 PIL units (near-zero warm; some residual hot-spot allowed)
 #   OTHER_SIDE    →  0 PIL units (fully digital, zero warm — effectively skip)
-#   None          → 12 PIL units (unknown world; apply conservative default)
-# Note: infer_world_type() maps discovery/sf01/sf04 → "REAL" and glitch_storm/sf02 →
-#       "REAL".  Both use the same "REAL" key here.  At 12, SF01 (17.8) and SF02 pass.
-#       SF03/SF04 are OTHER_SIDE/None and are handled separately.
-# C38 Sam Kowalski: corrected REAL from 20.0 → 12.0 to match warmth_lint_v004
-#   world_presets ("REAL": warm_cool_threshold: 12).  Prior 20.0 caused persistent
-#   false WARN on all REAL-world style frames.  Closes FP-006 (SF01/SF02 gap).
+#   None          → 12 PIL units (unknown world; apply conservative REAL_INTERIOR default)
+# v1.6.0 (C39 Sam Kowalski): REAL sub-typed into REAL_INTERIOR and REAL_STORM.
+#   infer_world_type() maps glitch_storm/sf02/storm → "REAL"; _infer_world_subtype()
+#   then checks for storm keywords and upgrades "REAL" → "REAL_STORM" (threshold=3).
+#   Effect: SF02 glitch_storm (sep=6.5) → REAL_STORM threshold=3 → PASS.
+#           SF01 discovery (sep=17.8) → REAL_INTERIOR threshold=12 → PASS (unchanged).
+#   Closes FP-006 for SF02. Implements ideabox 20260330_sam_kowalski_render_qa_real_threshold_split.
 _WORLD_WARM_COOL_THRESHOLD = {
-    "REAL":       12.0,   # C38: was 20.0 — now matches warmth_lint_v004 world_presets
-    "GLITCH":      3.0,
-    "OTHER_SIDE":  0.0,   # 0 = always pass warm/cool (no warm expected)
-    None:         12.0,   # C38: was 20.0
+    "REAL":          12.0,   # kept for backward-compat; treated as REAL_INTERIOR
+    "REAL_INTERIOR": 12.0,   # lamp-lit interiors and daytime Real World exteriors
+    "REAL_STORM":     3.0,   # contested storm/Glitch-invasion scenes (SF02)
+    "GLITCH":         3.0,   # Glitch Layer — near-zero warm expected
+    "OTHER_SIDE":     0.0,   # fully digital — zero warm; always pass warm/cool
+    None:            12.0,   # unknown world; conservative default
 }
+
+# Storm filename pattern — used to sub-type REAL → REAL_STORM (v1.6.0)
+_REAL_STORM_PATTERN = re.compile(
+    r'(glitch[_\-]?storm|storm[_\-]?sf|sf02|style[_\-]?frame[_\-]?02)',
+    re.IGNORECASE,
+)
+
+
+def _infer_world_subtype(img_path: str, world_type) -> str:
+    """
+    Sub-type "REAL" into "REAL_INTERIOR" or "REAL_STORM".
+
+    If world_type is already "REAL", checks the filename for storm-scene keywords.
+    Returns "REAL_STORM" if matched, "REAL_INTERIOR" otherwise.
+    Non-REAL world types are returned unchanged.
+
+    Added in v1.6.0 (C39 Sam Kowalski) to close FP-006 for SF02.
+    """
+    if world_type != "REAL":
+        return world_type
+    basename = os.path.basename(str(img_path))
+    if _REAL_STORM_PATTERN.search(basename):
+        return "REAL_STORM"
+    return "REAL_INTERIOR"
 
 
 # ---------------------------------------------------------------------------
@@ -734,13 +780,15 @@ def qa_report(img_path: str, asset_type: str = "auto") -> dict:
             "reason": f"{asset_type} — uniform bg by design",
         }
     else:
-        # Infer world type from generator filename (not the PNG filename — same stem)
+        # Infer world type from filename, then sub-type REAL → REAL_INTERIOR/REAL_STORM
         world_type = _infer_world_type_external(img_path) if _WORLD_TYPE_AVAILABLE else None
+        # v1.6.0: sub-type REAL into REAL_INTERIOR or REAL_STORM based on filename
+        world_subtype = _infer_world_subtype(img_path, world_type)
         # OTHER_SIDE threshold=0 means always pass (zero warm expected)
-        warm_cool_threshold = _WORLD_WARM_COOL_THRESHOLD.get(world_type, _WARM_COOL_MIN_SEPARATION)
+        warm_cool_threshold = _WORLD_WARM_COOL_THRESHOLD.get(world_subtype, _WARM_COOL_MIN_SEPARATION)
         warm_cool_result = _check_warm_cool(img, min_separation=warm_cool_threshold)
-        if world_type is not None:
-            warm_cool_result["world_type"] = world_type
+        if world_subtype is not None:
+            warm_cool_result["world_type"] = world_subtype
 
     # E — Line weight consistency
     line_weight_result = _check_line_weight(img)

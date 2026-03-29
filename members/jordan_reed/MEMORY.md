@@ -1,5 +1,25 @@
 # Jordan Reed — Memory
 
+## Cycle 39 Deliverables
+- `LTG_TOOL_bg_grandma_kitchen_v005.py` → `LTG_ENV_grandma_kitchen_v005.png` (1280×720) GENERATED ✓
+  - Dual-Miri visual plant: handwritten "MIRI" label on cream paper scrap on fridge lower door
+  - Label position: x=906–946, y=461–477 (right-center of lower fridge door, near travel magnets)
+  - Real World palette only: AGED_CREAM paper, LINE_DARK ink, warm amber magnet pip
+  - All v004 content retained unchanged
+- Ideabox: `20260329_jordan_reed_label_pixel_font_util.md` — pixel font utility proposal
+- README.md updated ✓ | Inbox archived ✓ | Completion report sent to Alex Chen ✓
+
+## Cycle 39 Status: COMPLETE
+
+## Cycle 39 Notes
+- **Lee Tanaka SF01 CC (sight-line brief)**: Rin Yamamoto is primary on SF01 v006. I was CC'd.
+  My role: ensure CRT position/glow in SF01 is consistent with sight-line geometry if BG is regenerated.
+  No SF01 work assigned to me this cycle. Monitor for next cycle.
+- **Dual-Miri plant**: Executed as kitchen fridge label per Alex C39 direction.
+  Label is legible at full PNG but subtle at thumbnail — correct stealth level.
+- **PIL line format**: draw.line() takes list of tuples [(x0,y0),(x1,y1)] — NOT [(x0,y0,x1,y1)].
+  Previously hit this bug with flat tuples inside a list. Confirmed fix in v005 dline() helper.
+
 ## Cycle 38 Deliverables
 - Dual-Miri plant proposal: `output/production/dual_miri_visual_plant_proposal_c38.md`
   - WAITING for Alex Chen brief before execution
@@ -8,7 +28,7 @@
 - Ideabox: `20260329_jordan_reed_miri_plant_name_label.md` — passive plant technique
 - Completion report sent to Alex Chen ✓ | Inbox archived ✓
 
-## Cycle 38 Status: WAITING (pending Alex brief + cold open canon decision)
+## Cycle 38 Status: COMPLETE
 
 ## Cycle 38 Notes
 - **Dual-Miri**: Story bible names the Grandma Miri / Glitch Layer Miri name connection as

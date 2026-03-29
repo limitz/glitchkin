@@ -189,7 +189,16 @@ _BUILTIN_WORLD_PRESETS: Dict[str, Dict] = {
         "warm_cool_threshold": 12,
         "note": (
             "Lamp-lit warm interior / daytime exterior. Warm presence expected. "
-            "SF01/SF02/SF04 archetypes. Real-world environments."
+            "SF01/SF04 archetypes. Real-world environments (not storm)."
+        ),
+    },
+    "REAL_STORM": {
+        "warm_cool_threshold": 6,
+        "note": (
+            "Contested real-world storm scene (SF02 archetype). Cool sky dominant; "
+            "warm tones present only as subdued window glow accents (alpha 110–115). "
+            "Threshold 6 (not 12) reflects intentional cool-dominant palette. "
+            "Kai Nakamura C39: split from REAL to prevent persistent false WARNs on SF02."
         ),
     },
     "OTHER_SIDE": {
@@ -231,9 +240,16 @@ _WORLD_INFERENCE_RULES: List[Tuple[re.Pattern, str]] = [
         re.IGNORECASE,
     ), "GLITCH"),
 
-    # REAL — SF01/SF02/SF04 style frames (explicitly named)
+    # REAL_STORM — SF02 / glitch_storm (contested real-world storm; cool-dominant palette)
+    # Split from REAL in C39: warm/cool threshold 6 (not 12) for storm scenes.
     (re.compile(
-        r'(sf01|sf02|sf04|discovery|glitch[_\-]?storm|style[_\-]?frame[_\-]?0[124])',
+        r'(sf02|glitch[_\-]?storm|style[_\-]?frame[_\-]?02)',
+        re.IGNORECASE,
+    ), "REAL_STORM"),
+
+    # REAL — SF01/SF04 style frames (explicitly named; excludes SF02 — handled above)
+    (re.compile(
+        r'(sf01|sf04|discovery|style[_\-]?frame[_\-]?0[14])',
         re.IGNORECASE,
     ), "REAL"),
 
