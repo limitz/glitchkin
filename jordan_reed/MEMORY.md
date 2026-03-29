@@ -1,5 +1,28 @@
 # Jordan Reed — Memory
 
+## Cycle 17 Deliverables
+- `LTG_TOOL_bg_tech_den_v001.py` → `LTG_ENV_tech_den_v001.png`
+  - Cosmo's bedroom/tech workspace daylight version (A2-01, A2-03, A2-04, A2-05)
+  - Desk dominant left, CRT+flat monitors, oscilloscope, breadboards, cables
+  - Natural daylight LEFT window + blue-white monitor glow on desk zone
+  - Bed pushed to right wall, dusty lavender jacket on chair
+  - Canvas 1280×720, Real World palette only
+- `LTG_TOOL_bg_school_hallway_v001.py` → `LTG_ENV_school_hallway_v001.png`
+  - Millbrook School Hallway (A1-03, A1-05)
+  - 3-point perspective, slight low angle, lockers both sides (sage + lavender alternating)
+  - Checkerboard linoleum floor, fluorescent pools, SUNLIT_AMBER shaft from left window
+  - Trophy case, classroom doors (terracotta), T-intersection with school seal, far daylight
+  - Canvas 1280×720, Real World palette only
+
+## Remaining Act Background Gaps (post Cycle 17)
+- All A1 and A2 backgrounds now built (no known gaps)
+
+## Cycle 17 Lessons
+- **draw_rect guard**: always check y1 > y0 + 2 before drawing perspective-projected fixture rectangles — y_far/y_near can swap or be equal.
+- **1280×720 canvas** is the Cycle 17 standard for new ENV backgrounds (older tools used 1920×1080). Use W, H = 1280, 720.
+- **Checkerboard floor in perspective**: t_persp = t**0.6 gives good spacing distribution from far to near. Alternate (ri + ci) % 2 for tile coloring.
+- **get_wall_band()** utility is effective for generating perspective-projected wall quads for bulletin boards, banners, doors.
+
 ## Cycle 16 Deliverables
 - `LTG_TOOL_style_frame_02_glitch_storm_v003.py` → `LTG_COLOR_styleframe_glitch_storm_v003.png`
   - Fix: cold confetti (DATA_BLUE 70% dominant), Dutch angle verified 4°, Byte CORRUPT_AMBER #C87A20 3px outline, storm rim lighting on buildings

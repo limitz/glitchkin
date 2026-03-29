@@ -1,6 +1,22 @@
 # Alex Chen — Memory
 
-## Cycle 16 State (current)
+## Cycle 17 State (current)
+
+**Cycle 17 work completed (this cycle):**
+- **Alex (self):** Read all main character sheets (luma.md v2.0, cosmo.md v2.0, byte.md v3.2, grandma_miri.md v1.2). Reviewed all PNGs in output/characters/. Reviewed critic feedback cycles 8 and 15. Wrote `output/production/char_refinement_directive_c17.md`. Archived both producer inbox messages.
+
+**Directive summary:**
+- Defines "refined" for LTG: construction clarity, 3-tier line weight (3/2/1px), thumbnail expression readability, on-model consistency, emotional triangle (eyes+mouth+body).
+- **Gap 1 (CRITICAL):** No expression sheet for Grandma Miri. Blocks Act 2 performance quality and pitch package completeness.
+- **Gap 2 (CRITICAL):** Line weight undifferentiation across expression sheets — producer concern root cause. 3-tier weight not consistently enforced as visibly distinct.
+- **Gap 3 (SIGNIFICANT):** Luma Act 2 standing pose -5° lean imperceptible; turnaround not reconciled with Act 2 pose.
+- **Maya Santos C17 assignments:** (1) Miri expression sheet — 6 expressions, LTG_CHAR_miri_expression_sheet_v001.png; (2) Line weight audit and fix pass on all existing expression sheet tools; (3) Luma Act 2 pose lean fix to -8°.
+
+**Directive sent to Maya Santos inbox:** `maya_santos/inbox/20260329_2115_char_refinement_directive_c17.md`. Lee and Jordan streams continue independently (Act 2 panels, environments).
+
+**Next critique:** Cycle 18 (next cycle after 17).
+
+## Cycle 16 State (archived)
 
 **Cycle 16 completed work (mid-cycle):**
 - **Maya Santos DONE:** Byte RESIGNED right eye fixed (45% aperture, +10px downcast pupil, parabolic lid droop, body_tilt +14°). Cosmo SKEPTICAL lean +6° added, 2 new expressions (WORRIED, SURPRISED) added — sheet now 6/6. Luma Act 2 pose mitten geometry corrected. New files: `LTG_CHAR_byte_expression_sheet_v002.png` (regen), `LTG_CHAR_cosmo_expression_sheet_v002.png`, `LTG_CHAR_luma_act2_standing_pose_v002.png`.

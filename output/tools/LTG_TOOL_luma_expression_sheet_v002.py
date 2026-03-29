@@ -1,758 +1,626 @@
 #!/usr/bin/env python3
 """
 LTG_TOOL_luma_expression_sheet_v002.py
-Luma Expression Sheet Generator v2 — "Luma & the Glitchkin"
-Cycle 12: 4×2 grid (8 expressions). Adds NEUTRAL/RESTING + AT-REST CURIOSITY
-to the existing 6-expression set from Cycle 11.
+Luma Expression Sheet — Refined v002
+"Luma & the Glitchkin" — Cycle 17 Refinement Pass
 
-NOTE (Cycle 14 — Alex Chen, Art Director):
-  This file was previously misnamed LTG_CHAR_luma_expression_sheet_v002.py.
-  Scripts and pipeline utilities must use the TOOL category code (not CHAR).
-  Corrected name: LTG_TOOL_luma_expression_sheet_v002.py (this file).
-  The old file LTG_CHAR_luma_expression_sheet_v002.py is retained in tools/
-  for backward compatibility but is non-compliant; do not create further CHAR-named scripts.
+REPLACES previous v002 (Cycle 12, 4x2, 8 expressions).
+This is the Cycle 17 dedicated refinement: 3x2 grid, 6 core expressions,
+construction guide marks visible, varied line weight.
 
-New in v2:
-  - Expression 7: NEUTRAL / RESTING — default baseline face, no heightened emotion
-  - Expression 8: AT-REST CURIOSITY — very mild interest, eyes slightly alert but body relaxed
-  - Layout: 4 cols × 2 rows (was 3×2)
-  - Sheet header: version tag, head unit reference, canvas dimensions
-  - WARMTH prev_state updated to "← was: ANY EARNED MOMENT" per Dmitri Volkov Cycle 11 note
+6 expressions: CURIOUS, DETERMINED, SURPRISED, WORRIED, DELIGHTED, FRUSTRATED
+Layout: 3x2 grid
+Canvas: 1200x900
 
-Head unit reference:
-  Head radius = 100px (full canvas scale before FACE_SCALE resize)
-  1 head unit = 200px (diameter) at full render scale
-  At panel scale (FACE_SCALE = 0.55): 1 head unit ≈ 110px in final panel
+Design principles:
+  - Visible construction circle as head base (faint guide overlay)
+  - Varied line weight: ~4px silhouette (8px at 2x render), ~2px interior (4px at 2x)
+  - Clear shape language — hair is key silhouette element
+  - Each expression reads at 200px thumbnail scale
+  - Luma: 12yo, spirited, round face, shoulder-length hair with choppy fringe,
+           large expressive eyes, small nose
 
-Canvas dimensions: 4×280 + 5×18 = 1210 wide; header(52) + 2×(390+18) + 18 = 886 tall
-  → see TOTAL_W, TOTAL_H constants below.
+Color palette from luma.md canonical spec:
+  SKIN     #C8885A  Warm Caramel
+  HAIR     #1A0F0A  Near-Black Espresso
+  EYE_W    #FAF0DC  Warm Cream
+  EYE_IRIS #C87D3E  Warm Amber
+  EYE_PUP  #3B2820  Deep Cocoa
+  EYE_HL   #F0F0F0  Static White
+  LINE     #3B2820  Deep Cocoa
+
+Output: output/characters/main/LTG_CHAR_luma_expression_sheet_v002.png
 """
+
 from PIL import Image, ImageDraw, ImageFont
 import math
+import os
 
-# ── Palette — matches luma_face_generator.py ─────────────────────────────────
-SKIN       = (200, 136, 90)
-SKIN_SH    = (168, 104, 56)
-SKIN_HL    = (232, 184, 136)
-HAIR       = (26, 15, 10)
-EYE_W      = (255, 252, 245)
-EYE_PUP    = (20, 12, 8)
-EYE_IRIS   = (60, 38, 20)
-BLUSH      = (220, 100, 60, 140)
-LINE       = (59, 40, 32)
+# -- Palette ------------------------------------------------------------------
+SKIN        = (200, 136, 90)
+SKIN_SH     = (160, 104, 64)
+SKIN_HL     = (223, 160, 112)
+HAIR        = (26, 15, 10)
+HAIR_HL     = (61, 31, 15)
+EYE_W       = (250, 240, 220)
+EYE_IRIS    = (200, 125, 62)
+EYE_PUP     = (59, 40, 32)
+EYE_HL      = (240, 240, 240)
+BLUSH_C     = (232, 148, 100)
+LINE        = (59, 40, 32)
+HOODIE      = (232, 114, 42)
+CANVAS_BG   = (28, 20, 14)
 
-# Hoodie colors per expression
-HOODIE_O   = (232, 114, 42)    # orange — Excitement
-HOODIE_W   = (52,  38,  24)    # dark — Worried
-HOODIE_M   = (180, 60, 120)    # magenta-purple — Mischief
-HOODIE_S   = (88, 130, 175)    # steel blue — Settling/Wonder
-HOODIE_R   = (60,  95, 145)    # deep blue — Recognition
-HOODIE_WA  = (198, 140,  70)   # warm gold — Warmth
-HOODIE_N   = (165, 138,  95)   # neutral warm tan — Neutral/Resting (canonical default)
-HOODIE_C   = (120, 155, 130)   # muted sage — At-Rest Curiosity
+# Panel backgrounds per expression (distinct at thumbnail scale)
+BG = {
+    "CURIOUS":    (200, 225, 215),
+    "DETERMINED": (215, 205, 190),
+    "SURPRISED":  (240, 218, 175),
+    "WORRIED":    (198, 215, 235),
+    "DELIGHTED":  (250, 222, 192),
+    "FRUSTRATED": (215, 198, 208),
+}
 
-# Panel backgrounds — each immediately distinct at pitch/print distance
-BG_EXCITE  = (240, 200, 150)   # warm amber (canonical Cycle 9)
-BG_WORRY   = (195, 212, 228)   # cool blue-grey
-BG_MISCH   = (220, 205, 242)   # warm lavender
-BG_SETTLE  = (180, 215, 205)   # soft teal-mint
-BG_RECOG   = (165, 185, 220)   # medium periwinkle
-BG_WARMTH  = (250, 215, 170)   # soft warm peach
-BG_NEUTRAL = (215, 208, 198)   # warm light grey — resting baseline
-BG_CURIOS  = (195, 218, 200)   # pale sage green — at-rest curiosity
+# Hoodie tones per mood
+HOODIE_MAP = {
+    "CURIOUS":    (160, 185, 205),
+    "DETERMINED": (155, 85, 45),
+    "SURPRISED":  (232, 114, 42),
+    "WORRIED":    (80, 100, 140),
+    "DELIGHTED":  (232, 114, 42),
+    "FRUSTRATED": (135, 75, 65),
+}
 
-CANVAS_BG  = (30, 22, 16)
-
-# ── Layout ────────────────────────────────────────────────────────────────────
-PANEL_W = 280
-PANEL_H = 390
-COLS    = 4
+# -- Layout -------------------------------------------------------------------
+COLS    = 3
 ROWS    = 2
-PAD     = 18
-HEADER  = 52
+PAD     = 20
+HEADER  = 58
+LABEL_H = 36
+# Derived panel dimensions for 1200x900 canvas
+PANEL_W = (1200 - PAD * (COLS + 1)) // COLS      # 380
+PANEL_H = (900 - HEADER - PAD * (ROWS + 1) - LABEL_H * ROWS) // ROWS  # 356
+TOTAL_W = 1200
+TOTAL_H = 900
 
-VERSION         = "v2.0"
-HEAD_UNIT_PX    = 200   # 1 head unit = diameter of head at full render scale (100px radius)
-FACE_SCALE      = 0.55
-HEAD_UNIT_PANEL = int(HEAD_UNIT_PX * FACE_SCALE)  # ≈ 110px in final panel
+# Render scale: faces rendered at 2x for anti-aliasing, then downscaled
+RENDER_SCALE = 2
+HEAD_R = 105    # head radius at 1x panel size (px)
+HR = HEAD_R * RENDER_SCALE   # head radius at render scale = 210
 
+# -- Geometry helpers ---------------------------------------------------------
 
-# ── Hair helpers (unchanged from v1) ─────────────────────────────────────────
-def _draw_hair_mass(draw, cx, cy):
-    draw.ellipse([cx-155, cy-195, cx+145, cy+40],  fill=HAIR)
-    draw.ellipse([cx-175, cy-170, cx-80,  cy-60],   fill=HAIR)
-    draw.ellipse([cx-165, cy-140, cx-95,  cy-30],   fill=HAIR)
-    draw.ellipse([cx+80,  cy-160, cx+155, cy-60],   fill=HAIR)
-    draw.ellipse([cx+90,  cy-130, cx+145, cy-40],   fill=HAIR)
-    draw.ellipse([cx-60,  cy-215, cx+20,  cy-140],  fill=HAIR)
-    draw.ellipse([cx-20,  cy-225, cx+70,  cy-145],  fill=HAIR)
-    draw.ellipse([cx-100, cy-200, cx-30,  cy-130],  fill=HAIR)
-
-
-def _draw_head(draw, cx, cy):
-    head_r = 100
-    draw.ellipse([cx-head_r, cy-head_r, cx+head_r, cy+head_r+15],
-                 fill=SKIN, outline=LINE, width=3)
-    draw.ellipse([cx-95, cy-20, cx+95, cy+head_r+25], fill=SKIN)
-    draw.arc([cx-95, cy-20, cx+95, cy+head_r+25], start=0, end=180, fill=LINE, width=3)
-    draw.ellipse([cx-head_r-12, cy-20, cx-head_r+14, cy+20],
-                 fill=SKIN, outline=LINE, width=2)
-    draw.ellipse([cx+head_r-14, cy-20, cx+head_r+12, cy+20],
-                 fill=SKIN, outline=LINE, width=2)
+def bezier3(p0, p1, p2, steps=40):
+    """Quadratic Bezier curve."""
+    pts = []
+    for i in range(steps + 1):
+        t = i / steps
+        x = (1-t)**2 * p0[0] + 2*(1-t)*t * p1[0] + t**2 * p2[0]
+        y = (1-t)**2 * p0[1] + 2*(1-t)*t * p1[1] + t**2 * p2[1]
+        pts.append((x, y))
+    return pts
 
 
-def _draw_nose(draw, cx, cy):
-    draw.ellipse([cx-8, cy+8,  cx-2, cy+14], fill=SKIN_SH)
-    draw.ellipse([cx+2, cy+8,  cx+8, cy+14], fill=SKIN_SH)
-    draw.arc([cx-6, cy-10, cx+6, cy+12], start=200, end=340, fill=SKIN_SH, width=2)
+def polyline(draw, pts, color, width=2):
+    for i in range(len(pts) - 1):
+        draw.line([pts[i], pts[i+1]], fill=color, width=width)
 
 
-def _draw_hair_overlay(draw, cx, cy):
-    draw.arc([cx-60, cy-195, cx-10, cy-140], start=30,  end=200, fill=HAIR, width=8)
-    draw.arc([cx-20, cy-190, cx+40, cy-130], start=10,  end=190, fill=HAIR, width=7)
+def arc_draw(draw, cx, cy, rx, ry, a0_deg, a1_deg, color, width=3, steps=50):
+    """Draw an arc as polyline for smooth rendering."""
+    pts = []
+    for i in range(steps + 1):
+        t = math.radians(a0_deg + (a1_deg - a0_deg) * i / steps)
+        pts.append((cx + rx * math.cos(t), cy + ry * math.sin(t)))
+    polyline(draw, pts, color, width)
 
 
-def _draw_collar(draw, cx, cy, head_r, color=HOODIE_O, rotate_deg=0):
-    """Rotated collar ellipse — matches luma_face_generator.py logic exactly."""
-    collar_cx = cx
-    collar_cy = cy + head_r + 45
-    rx, ry = 90, 35
-    theta = math.radians(rotate_deg)
-    cos_t, sin_t = math.cos(theta), math.sin(theta)
+# -- Drawing primitives -------------------------------------------------------
 
-    def rot(x, y):
-        return (int(collar_cx + x*cos_t - y*sin_t),
-                int(collar_cy + x*sin_t + y*cos_t))
-
-    N = 48
-    full_pts = [rot(int(rx*math.cos(2*math.pi*i/N)),
-                    int(ry*math.sin(2*math.pi*i/N))) for i in range(N)]
-    draw.polygon(full_pts, fill=color)
-    arc_pts = [rot(int(rx*math.cos(math.radians(a))),
-                   int(ry*math.sin(math.radians(a)))) for a in range(180, 361, 5)]
-    draw.line(arc_pts, fill=LINE, width=3)
-    for i in range(5):
-        local_x = -35 + i*17
-        local_y = 8
-        sq = [rot(local_x-5, local_y-4), rot(local_x+5, local_y-4),
-              rot(local_x+5, local_y+4), rot(local_x-5, local_y+4)]
-        draw.polygon(sq, fill=(0, 240, 255))
+def draw_construction_guide(img, cx, cy):
+    """Overlay faint construction circle + cross as RGBA layer."""
+    guide = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    gd = ImageDraw.Draw(guide)
+    gc = (180, 155, 128, 48)
+    gd.ellipse([cx - HR, cy - HR, cx + HR, cy + HR], outline=gc, width=3)
+    gd.line([(cx - HR - 20, cy), (cx + HR + 20, cy)], fill=gc, width=2)
+    gd.line([(cx, cy - HR - 20), (cx, cy + HR + 20)], fill=gc, width=2)
+    return Image.alpha_composite(img, guide)
 
 
-def _draw_body(draw, cx, body_top_y, hoodie_color, arm_l_dy=0, arm_r_dy=0,
-               body_tilt=0, body_squash=1.0):
-    """Draw Luma's A-line hoodie body, arms, legs, and sneakers.
+def draw_head(draw, cx, cy):
+    """Head circle with softened jaw + heavy silhouette outline."""
+    draw.ellipse(
+        [cx - HR, cy - HR, cx + HR, cy + HR],
+        fill=SKIN
+    )
+    # Soften jaw: skin ellipse at chin area
+    jaw_r = int(HR * 0.52)
+    jaw_y = cy + int(HR * 0.82)
+    draw.ellipse(
+        [cx - jaw_r, jaw_y - int(HR * 0.20),
+         cx + jaw_r, jaw_y + int(HR * 0.20)],
+        fill=SKIN
+    )
+    # Heavy silhouette outline (8px at 2x render = ~4px output)
+    draw.ellipse(
+        [cx - HR, cy - HR, cx + HR, cy + HR],
+        outline=LINE, width=8
+    )
 
-    A-line trapezoid: narrow at shoulders, wider at hem — canonical Cycle 5 silhouette fix.
-    Sneaker width: hu*0.52 (Cycle 11 canonical, matches front-view proportion).
+
+def draw_ears(draw, cx, cy):
+    er = int(HR * 0.13)
+    ey = cy + int(HR * 0.12)
+    draw.ellipse(
+        [cx - HR - er + 4, ey - er, cx - HR + er + 4, ey + er],
+        fill=SKIN, outline=LINE, width=5
+    )
+    draw.ellipse(
+        [cx + HR - er - 4, ey - er, cx + HR + er - 4, ey + er],
+        fill=SKIN, outline=LINE, width=5
+    )
+
+
+def draw_hair(draw, cx, cy, variant="default"):
     """
-    hu = 140   # body height unit (scales all body proportions)
+    Luma's hair: dark cloud with choppy fringe, 5 curl indicators (LOCKED spec).
+    variants: default, excited, drooped, tight
+    """
+    if variant == "excited":
+        top_lift = int(HR * 1.44)
+        spread_l = int(HR * 1.14)
+        spread_r = int(HR * 1.08)
+    elif variant == "drooped":
+        top_lift = int(HR * 1.24)
+        spread_l = int(HR * 1.00)
+        spread_r = int(HR * 0.96)
+    elif variant == "tight":
+        top_lift = int(HR * 1.30)
+        spread_l = int(HR * 1.04)
+        spread_r = int(HR * 0.98)
+    else:
+        top_lift = int(HR * 1.36)
+        spread_l = int(HR * 1.08)
+        spread_r = int(HR * 1.02)
 
-    shoulder_w = int(hu * 0.52)
-    hem_w      = int(hu * 0.70)
-    hem_y      = body_top_y + int(hu * 0.85)
-    tilt_off   = int(body_tilt * 0.5)
+    hair_top_y = cy - top_lift
+    hair_mid_y = cy - int(HR * 0.84)
 
-    hoodie_pts = [
-        (cx - shoulder_w + tilt_off, body_top_y),
-        (cx + shoulder_w + tilt_off, body_top_y),
-        (cx + hem_w,                 hem_y),
-        (cx - hem_w,                 hem_y),
+    # Main hair mass
+    draw.ellipse(
+        [cx - spread_l, hair_top_y, cx + spread_r, hair_mid_y + int(HR * 0.24)],
+        fill=HAIR
+    )
+    # Left lobe
+    draw.ellipse(
+        [cx - int(spread_l * 0.94), hair_top_y + int(HR * 0.10),
+         cx - int(HR * 0.10),       hair_mid_y + int(HR * 0.38)],
+        fill=HAIR
+    )
+    # Right lobe
+    draw.ellipse(
+        [cx + int(HR * 0.06),       hair_top_y + int(HR * 0.18),
+         cx + int(spread_r * 0.90), hair_mid_y + int(HR * 0.30)],
+        fill=HAIR
+    )
+    # Choppy fringe: two overlapping ellipses
+    fringe_top = cy - int(HR * 0.66)
+    fringe_bot = cy - int(HR * 0.30)
+    draw.ellipse(
+        [cx - int(HR * 0.82), fringe_top, cx + int(HR * 0.26), fringe_bot + int(HR * 0.12)],
+        fill=HAIR
+    )
+    draw.ellipse(
+        [cx - int(HR * 0.30), fringe_top - int(HR * 0.06),
+         cx + int(HR * 0.74), fringe_bot],
+        fill=HAIR
+    )
+    # Choppy fringe teeth: 3 dip points
+    for dx in [-int(HR * 0.46), int(HR * 0.04), int(HR * 0.50)]:
+        draw.ellipse(
+            [cx + dx - int(HR * 0.17), fringe_bot - int(HR * 0.06),
+             cx + dx + int(HR * 0.17), fringe_bot + int(HR * 0.18)],
+            fill=HAIR
+        )
+
+    # Crown highlight
+    hl = bezier3(
+        (cx - int(HR * 0.30), hair_top_y + int(HR * 0.22)),
+        (cx + int(HR * 0.02), hair_top_y + int(HR * 0.06)),
+        (cx + int(HR * 0.36), hair_top_y + int(HR * 0.26))
+    )
+    polyline(draw, hl, HAIR_HL, width=5)
+
+    # 5 curl indicators (LOCKED count per production spec)
+    curls = [
+        (cx - int(HR * 0.62), hair_top_y + int(HR * 0.42)),
+        (cx - int(HR * 0.28), hair_top_y + int(HR * 0.14)),
+        (cx + int(HR * 0.10), hair_top_y + int(HR * 0.08)),
+        (cx + int(HR * 0.48), hair_top_y + int(HR * 0.34)),
+        (cx + int(HR * 0.16), hair_top_y + int(HR * 0.60)),
     ]
-    draw.polygon(hoodie_pts, fill=hoodie_color, outline=LINE, width=3)
-
-    pocket_x  = cx - hem_w + int(hu * 0.06)
-    pocket_y  = body_top_y + int(hu * 0.42)
-    pocket_w  = int(hu * 0.22)
-    pocket_h  = int(hu * 0.28)
-    draw.ellipse([pocket_x, pocket_y,
-                  pocket_x + pocket_w, pocket_y + pocket_h],
-                 fill=hoodie_color, outline=LINE, width=2)
-
-    seam_y = body_top_y + int(hu * 0.38)
-    draw.arc([cx - int(hu*0.25), seam_y,
-              cx + int(hu*0.25), seam_y + int(hu*0.18)],
-             start=10, end=170, fill=LINE, width=2)
-
-    lw    = int(hu * 0.13)
-    lh    = int(hu * 0.45)
-    arm_y = body_top_y + int(hu * 0.10)
-
-    lax1 = cx - shoulder_w + tilt_off - int(hu * 0.05)
-    lay1 = arm_y + arm_l_dy
-    draw.rectangle([lax1 - lw, lay1, lax1, lay1 + lh],
-                   fill=hoodie_color, outline=LINE, width=2)
-    draw.ellipse([lax1 - lw - 8, lay1 + lh - 4,
-                  lax1 + 4,      lay1 + lh + 20],
-                 fill=SKIN, outline=LINE, width=2)
-
-    rax1 = cx + shoulder_w + tilt_off + int(hu * 0.05)
-    ray1 = arm_y + arm_r_dy
-    draw.rectangle([rax1, ray1, rax1 + lw, ray1 + lh],
-                   fill=hoodie_color, outline=LINE, width=2)
-    draw.ellipse([rax1 - 4,      ray1 + lh - 4,
-                  rax1 + lw + 8, ray1 + lh + 20],
-                 fill=SKIN, outline=LINE, width=2)
-
-    leg_w  = int(hu * 0.18)
-    leg_h  = int(hu * 0.45)
-    leg_l  = cx - int(hem_w * 0.38)
-    leg_r  = cx + int(hem_w * 0.38)
-    leg_y  = hem_y
-
-    draw.rectangle([leg_l - leg_w, leg_y, leg_l + leg_w, leg_y + leg_h],
-                   fill=(60, 50, 80), outline=LINE, width=2)
-    draw.rectangle([leg_r - leg_w, leg_y, leg_r + leg_w, leg_y + leg_h],
-                   fill=(60, 50, 80), outline=LINE, width=2)
-
-    fw    = int(hu * 0.52)
-    fh    = int(hu * 0.28)
-    sn_y  = leg_y + leg_h
-    base_y = sn_y + fh
-
-    draw.ellipse([leg_l - leg_w - fw + int(fw*0.3), sn_y,
-                  leg_l - leg_w + int(fw*0.5),      base_y],
-                 fill=(220, 220, 220), outline=LINE, width=2)
-    draw.arc([leg_l - leg_w - fw + int(fw*0.3) + 4, sn_y + 4,
-              leg_l - leg_w + int(fw*0.5) - 4,      base_y - 4],
-             start=200, end=340, fill=(180, 180, 180), width=2)
-
-    draw.ellipse([leg_r + leg_w - int(fw*0.5),      sn_y,
-                  leg_r + leg_w + fw - int(fw*0.3), base_y],
-                 fill=(220, 220, 220), outline=LINE, width=2)
-    draw.arc([leg_r + leg_w - int(fw*0.5) + 4, sn_y + 4,
-              leg_r + leg_w + fw - int(fw*0.3) - 4, base_y - 4],
-             start=200, end=340, fill=(180, 180, 180), width=2)
-
-
-# ── Expression face draw functions (v1 unchanged) ────────────────────────────
-
-def draw_reckless_excitement(draw, cx, cy):
-    """Signature grin — broken symmetry, from luma_face_generator.py."""
-    head_r = 100
-    _draw_hair_mass(draw, cx, cy)
-    _draw_head(draw, cx, cy)
-
-    lex, ley = cx-38, cy-18
-    rex, rey = cx+38, cy-18
-    ew = 28
-    leh, reh = 30, 26
-
-    draw.ellipse([lex-ew, ley-leh, lex+ew, ley+leh], fill=EYE_W, outline=LINE, width=2)
-    iris_r = 15
-    draw.chord([lex-iris_r, ley-iris_r+2, lex+iris_r, ley+iris_r+2], start=15, end=345, fill=EYE_IRIS)
-    draw.ellipse([lex-9, ley-7, lex+9, ley+9], fill=EYE_PUP)
-    draw.ellipse([lex+6, ley-9, lex+13, ley-2], fill=(255,252,245))
-    draw.arc([lex-ew, ley-leh, lex+ew, ley+leh], start=200, end=340, fill=LINE, width=4)
-
-    draw.ellipse([rex-ew, rey-reh, rex+ew, rey+reh], fill=EYE_W, outline=LINE, width=2)
-    draw.chord([rex-iris_r, rey-iris_r+2, rex+iris_r, rey+iris_r+2], start=15, end=345, fill=EYE_IRIS)
-    ps = 5
-    draw.ellipse([rex-9+ps, rey-7, rex+9+ps, rey+9], fill=EYE_PUP)
-    draw.ellipse([rex+6+ps, rey-9, rex+13+ps, rey-2], fill=(255,252,245))
-    draw.arc([rex-ew, rey-reh, rex+ew, rey+reh], start=200, end=340, fill=LINE, width=4)
-    draw.ellipse([lex-9+ps, ley-7, lex+9+ps, ley+9], fill=EYE_PUP)
-
-    l_brow = [(lex-30, ley-42), (lex-5, ley-52), (lex+22, ley-39)]
-    draw.line(l_brow, fill=HAIR, width=5)
-    r_brow = [(rex-22, rey-34), (rex-5, rey-40), (rex+28, rey-32)]
-    draw.line(r_brow, fill=HAIR, width=5)
-
-    _draw_nose(draw, cx, cy)
-    m_off = -6
-    draw.arc([cx-45+m_off, cy+18, cx+45+m_off, cy+70], start=5, end=175, fill=LINE, width=4)
-    draw.arc([cx-44+m_off, cy+20, cx+44+m_off, cy+50], start=5, end=175, fill=LINE, width=3)
-    draw.chord([cx-42+m_off, cy+22, cx+42+m_off, cy+65], start=7, end=173, fill=(250,246,238))
-    draw.arc([cx-42+m_off, cy+22, cx+42+m_off, cy+65], start=7, end=173, fill=LINE, width=2)
-    draw.arc([cx-20+m_off, cy+62, cx+26+m_off, cy+76], start=5, end=175, fill=SKIN_SH, width=2)
-    draw.arc([cx-50, cy+25, cx-30, cy+45], start=320, end=60, fill=SKIN_SH, width=2)
-    draw.ellipse([cx-head_r+8,  cy+5, cx-head_r+58, cy+38], fill=(220, 80, 50, 110))
-    draw.ellipse([cx+head_r-58, cy+5, cx+head_r-8,  cy+38], fill=(220, 80, 50, 90))
-
-    _draw_hair_overlay(draw, cx, cy)
-    _draw_collar(draw, cx, cy, head_r, color=HOODIE_O, rotate_deg=8)
-
-
-def draw_worried_determined(draw, cx, cy):
-    """Inner brow kink, tense."""
-    head_r = 100
-    _draw_hair_mass(draw, cx, cy)
-    _draw_head(draw, cx, cy)
-
-    lex, ley = cx-38, cy-20
-    rex, rey = cx+38, cy-20
-    ew, eh = 28, 22
-
-    draw.ellipse([lex-ew, ley-eh, lex+ew, ley+eh], fill=EYE_W, outline=LINE, width=2)
-    draw.ellipse([lex-13, ley-13, lex+13, ley+13], fill=EYE_IRIS)
-    draw.ellipse([lex-8, ley-8, lex+8, ley+8], fill=EYE_PUP)
-    draw.ellipse([lex+3, ley-8, lex+9, ley-2], fill=(255,252,245))
-    draw.arc([lex-ew, ley-eh, lex+ew, ley+eh], start=195, end=345, fill=LINE, width=5)
-
-    draw.ellipse([rex-ew, rey-eh, rex+ew, rey+eh], fill=EYE_W, outline=LINE, width=2)
-    draw.ellipse([rex-13, rey-13, rex+13, rey+13], fill=EYE_IRIS)
-    draw.ellipse([rex-8, rey-8, rex+8, rey+8], fill=EYE_PUP)
-    draw.ellipse([rex+3, rey-8, rex+9, rey-2], fill=(255,252,245))
-    draw.arc([rex-ew, rey-eh, rex+ew, rey+eh], start=195, end=345, fill=LINE, width=5)
-
-    l_brow = [(lex-28, ley-38), (lex+5, ley-26), (lex+20, ley-20), (lex+26, ley-28)]
-    draw.line(l_brow, fill=HAIR, width=6)
-    r_brow = [(rex+28, rey-30), (rex-5, rey-24), (rex-20, rey-20), (rex-26, rey-28)]
-    draw.line(r_brow, fill=HAIR, width=6)
-
-    _draw_nose(draw, cx, cy)
-    draw.line([(cx-32, cy+38), (cx+32, cy+38)], fill=LINE, width=3)
-    draw.line([(cx-32, cy+38), (cx-38, cy+44)], fill=LINE, width=3)
-    draw.line([(cx+32, cy+38), (cx+38, cy+44)], fill=LINE, width=3)
-    draw.ellipse([cx-head_r+12, cy+10, cx-head_r+52, cy+36], fill=(200,80,50,55))
-    draw.ellipse([cx+head_r-52, cy+10, cx+head_r-12, cy+36], fill=(200,80,50,55))
-
-    _draw_hair_overlay(draw, cx, cy)
-    _draw_collar(draw, cx, cy, head_r, color=HOODIE_W, rotate_deg=2)
-
-
-def draw_mischievous_plotting(draw, cx, cy):
-    """Tilted smirk, sky-high brow."""
-    head_r = 100
-    _draw_hair_mass(draw, cx, cy)
-    _draw_head(draw, cx, cy)
-
-    lex, ley = cx-38, cy-18
-    rex, rey = cx+38, cy-18
-    ew = 28
-
-    leh_top = 14
-    draw.ellipse([lex-ew, ley-leh_top, lex+ew, ley+leh_top+6], fill=EYE_W, outline=LINE, width=2)
-    draw.ellipse([lex-13, ley-12, lex+13, ley+12], fill=EYE_IRIS)
-    draw.ellipse([lex-8, ley-8, lex+8, ley+8], fill=EYE_PUP)
-    draw.ellipse([lex+3, ley-7, lex+9, ley-1], fill=(255,252,245))
-    draw.arc([lex-ew, ley-leh_top, lex+ew, ley+leh_top+6], start=195, end=345, fill=LINE, width=6)
-
-    reh = 28
-    draw.ellipse([rex-ew, rey-reh, rex+ew, rey+reh], fill=EYE_W, outline=LINE, width=2)
-    draw.ellipse([rex-13, rey-13, rex+13, rey+13], fill=EYE_IRIS)
-    draw.ellipse([rex-8, rey-8, rex+8, rey+8], fill=EYE_PUP)
-    draw.ellipse([rex+3, rey-10, rex+9, rey-3], fill=(255,252,245))
-    draw.arc([rex-ew, rey-reh, rex+ew, rey+reh], start=200, end=340, fill=LINE, width=4)
-
-    l_brow = [(lex-30, ley-46), (lex-5, ley-58), (lex+24, ley-44)]
-    draw.line(l_brow, fill=HAIR, width=5)
-    r_brow = [(rex-24, rey-22), (rex+5, rey-30), (rex+28, rey-38)]
-    draw.line(r_brow, fill=HAIR, width=5)
-
-    _draw_nose(draw, cx, cy)
-
-    r_corner = (cx+55, cy+38)
-    l_corner = (cx-38, cy+30)
-    draw.line([r_corner, (cx-2, cy+38)], fill=LINE, width=3)
-    smirk_pts = [(cx-2, cy+38), (cx-18, cy+32), l_corner]
-    draw.line(smirk_pts, fill=LINE, width=3)
-    teeth_pts = [l_corner, (cx-18,cy+30),(cx+10,cy+30),(cx+55,cy+38),
-                 (cx+40,cy+46),(cx+0,cy+48),(cx-28,cy+44)]
-    draw.polygon(teeth_pts, fill=(250,246,238))
-    draw.line([r_corner, (cx-2, cy+38)], fill=LINE, width=3)
-    draw.line(smirk_pts, fill=LINE, width=3)
-    draw.ellipse([cx-head_r+8, cy+5, cx-head_r+58, cy+35], fill=(200,70,130,90))
-
-    _draw_hair_overlay(draw, cx, cy)
-    _draw_collar(draw, cx, cy, head_r, color=HOODIE_M, rotate_deg=-5)
-
-
-def draw_settling_wonder(draw, cx, cy):
-    """After excitement high, settling into wonder."""
-    head_r = 100
-    _draw_hair_mass(draw, cx, cy)
-    _draw_head(draw, cx, cy)
-
-    lex, ley = cx-38, cy-18
-    rex, rey = cx+38, cy-18
-    ew, eh = 28, 30
-
-    for (ex, ey) in [(lex, ley), (rex, rey)]:
-        draw.ellipse([ex-ew, ey-eh, ex+ew, ey+eh], fill=EYE_W, outline=LINE, width=2)
-        draw.ellipse([ex-14, ey-14, ex+14, ey+14], fill=EYE_IRIS)
-        draw.ellipse([ex-9, ey-9, ex+9, ey+9], fill=EYE_PUP)
-        draw.ellipse([ex+4, ey-11, ex+11, ey-4], fill=(255,252,245))
-        draw.arc([ex-ew, ey-eh, ex+ew, ey+eh], start=200, end=340, fill=LINE, width=3)
-
-    draw.arc([lex-26, ley-52, lex+26, ley-28], start=200, end=340, fill=HAIR, width=5)
-    draw.arc([rex-26, rey-50, rex+26, rey-26], start=200, end=340, fill=HAIR, width=5)
-
-    _draw_nose(draw, cx, cy)
-
-    mouth_y = cy + 30
-    draw.arc([cx-28, mouth_y, cx+28, mouth_y+24], start=20, end=160, fill=LINE, width=2)
-    draw.ellipse([cx-14, mouth_y+4, cx+14, mouth_y+20], fill=(50,30,15))
-
-    draw.ellipse([cx-head_r+8,  cy+8, cx-head_r+52, cy+36], fill=(220,90,50,80))
-    draw.ellipse([cx+head_r-52, cy+8, cx+head_r-8,  cy+36], fill=(220,90,50,70))
-
-    _draw_hair_overlay(draw, cx, cy)
-    _draw_collar(draw, cx, cy, head_r, color=HOODIE_S, rotate_deg=0)
-
-
-def draw_recognition(draw, cx, cy):
-    """Cognitive connection: asymmetric brow raise, concentrated narrowed eyes."""
-    head_r = 100
-    _draw_hair_mass(draw, cx, cy)
-    _draw_head(draw, cx, cy)
-
-    lex, ley = cx-38, cy-18
-    rex, rey = cx+38, cy-18
-    ew = 28
-
-    leh = 26
-    draw.ellipse([lex-ew, ley-leh, lex+ew, ley+leh], fill=EYE_W, outline=LINE, width=2)
-    draw.ellipse([lex-12, ley-12, lex+12, ley+12], fill=EYE_IRIS)
-    draw.ellipse([lex-7, ley-7, lex+7, ley+7], fill=EYE_PUP)
-    draw.ellipse([lex+3, ley-9, lex+10, ley-3], fill=(255,252,245))
-    draw.arc([lex-ew, ley-leh, lex+ew, ley+leh], start=200, end=340, fill=LINE, width=3)
-
-    reh = 20
-    draw.ellipse([rex-ew, rey-reh, rex+ew, rey+reh], fill=EYE_W, outline=LINE, width=2)
-    draw.ellipse([rex-11, rey-11, rex+11, rey+11], fill=EYE_IRIS)
-    draw.ellipse([rex-6,  rey-6,  rex+6,  rey+6],  fill=EYE_PUP)
-    draw.ellipse([rex+3,  rey-8,  rex+10, rey-2],  fill=(255,252,245))
-    draw.arc([rex-ew, rey-reh, rex+ew, rey+reh], start=200, end=340, fill=LINE, width=5)
-
-    l_brow = [(lex-28, ley-52), (lex-2, ley-60), (lex+24, ley-48)]
-    draw.line(l_brow, fill=HAIR, width=6)
-    r_brow = [(rex-24, rey-28), (rex+2, rey-32), (rex+26, rey-28)]
-    draw.line(r_brow, fill=HAIR, width=5)
-
-    _draw_nose(draw, cx, cy)
-
-    draw.arc([cx-24, cy+28, cx+24, cy+44], start=15, end=165, fill=LINE, width=2)
-    draw.ellipse([cx-8, cy+32, cx+8, cy+44], fill=(50,30,15))
-
-    _draw_hair_overlay(draw, cx, cy)
-    _draw_collar(draw, cx, cy, head_r, color=HOODIE_R, rotate_deg=3)
-
-
-def draw_warmth(draw, cx, cy):
-    """Choosing connection deliberately. Soft smile, happiness-narrowed eyes."""
-    head_r = 100
-    _draw_hair_mass(draw, cx, cy)
-    _draw_head(draw, cx, cy)
-
-    lex, ley = cx-38, cy-18
-    rex, rey = cx+38, cy-18
-    ew = 28
-
-    for (ex, ey) in [(lex, ley), (rex, rey)]:
-        eh = 20
-        draw.ellipse([ex-ew, ey-eh, ex+ew, ey+eh], fill=EYE_W, outline=LINE, width=2)
-        draw.ellipse([ex-12, ey-12, ex+12, ey+12], fill=EYE_IRIS)
-        draw.ellipse([ex-7, ey-7, ex+7, ey+7], fill=EYE_PUP)
-        draw.ellipse([ex+3, ey-8, ex+10, ey-2], fill=(255,252,245))
-        draw.arc([ex-ew, ey-eh, ex+ew, ey+eh], start=195, end=345, fill=LINE, width=5)
-
-    draw.arc([lex-26, ley-46, lex+26, ley-26], start=200, end=340, fill=HAIR, width=5)
-    draw.arc([rex-26, rey-44, rex+26, rey-24], start=200, end=340, fill=HAIR, width=5)
-
-    _draw_nose(draw, cx, cy)
-
-    draw.arc([cx-34, cy+28, cx+34, cy+56], start=15, end=165, fill=LINE, width=3)
-
-    draw.line([(cx-head_r+28, cy+10), (cx-head_r+18, cy+24)], fill=SKIN_SH, width=2)
-    draw.line([(cx-head_r+34, cy+8),  (cx-head_r+24, cy+20)], fill=SKIN_SH, width=2)
-    draw.line([(cx+head_r-28, cy+10), (cx+head_r-18, cy+24)], fill=SKIN_SH, width=2)
-    draw.line([(cx+head_r-34, cy+8),  (cx+head_r-24, cy+20)], fill=SKIN_SH, width=2)
-
-    draw.ellipse([cx-head_r+8,  cy+5, cx-head_r+55, cy+35], fill=(230, 100, 60, 100))
-    draw.ellipse([cx+head_r-55, cy+5, cx+head_r-8,  cy+35], fill=(230, 100, 60, 90))
-
-    _draw_hair_overlay(draw, cx, cy)
-    _draw_collar(draw, cx, cy, head_r, color=HOODIE_WA, rotate_deg=1)
-
-
-# ── NEW in v2: NEUTRAL/RESTING expression ────────────────────────────────────
-
-def draw_neutral_resting(draw, cx, cy):
-    """Neutral/Resting — Luma's calm, at-rest default face.
-
-    Design notes:
-    - Eyes at standard aperture — neither wide (excitement) nor squinted (warmth/worry)
-    - Brows in default position: very slight inward tilt, horizontal with minimal kink
-      (per character bible sec. 4: "Default position: horizontal with a very slight
-      inward tilt — this is her neutral/curious expression")
-    - Mouth: gentle upward arc, closed — "about to smile" baseline
-      (per character bible sec. 4: "she looks like she's about to smile even when resting")
-    - No blush — blush applied only in heightened states
-    - No asymmetric body language — arms hang level, no body tilt
-    - Asymmetry mechanism: in NEUTRAL, both eyes are nearly equal in aperture.
-      Left eye is fractionally more open (leh=24) vs right (reh=22) — barely perceptible,
-      establishing that the left eye is Luma's "lead eye" by default.
-      Full asymmetry emerges only as emotional intensity increases.
-    - Hoodie color: warm tan (HOODIE_N) — the most neutral hoodie state
+    cr = int(HR * 0.17)
+    for (hx, hy) in curls:
+        arc_draw(draw, hx, hy, cr, cr, 200, 335, HAIR_HL, width=4)
+
+    # Hair silhouette outline (heavy)
+    draw.ellipse(
+        [cx - spread_l, hair_top_y, cx + spread_r, hair_mid_y + int(HR * 0.24)],
+        outline=LINE, width=8
+    )
+
+    # Escaping ringlet near left ear
+    esc_x = cx - int(HR * 0.80)
+    esc_y = cy - int(HR * 0.08)
+    arc_draw(draw, esc_x, esc_y, int(HR * 0.14), int(HR * 0.20), 55, 290, HAIR, width=7)
+    arc_draw(draw, esc_x, esc_y, int(HR * 0.14), int(HR * 0.20), 55, 290, LINE, width=3)
+
+
+def draw_eyes_full(draw, cx, cy, params):
     """
-    head_r = 100
-    _draw_hair_mass(draw, cx, cy)
-    _draw_head(draw, cx, cy)
-
-    lex, ley = cx-38, cy-18
-    rex, rey = cx+38, cy-18
-    ew = 28
-
-    # Left eye — fractionally more open (lead eye, Luma's dominant)
-    leh = 24
-    draw.ellipse([lex-ew, ley-leh, lex+ew, ley+leh], fill=EYE_W, outline=LINE, width=2)
-    draw.ellipse([lex-13, ley-13, lex+13, ley+13], fill=EYE_IRIS)
-    draw.ellipse([lex-8, ley-8, lex+8, ley+8], fill=EYE_PUP)
-    draw.ellipse([lex+3, ley-9, lex+10, ley-3], fill=(255,252,245))
-    draw.arc([lex-ew, ley-leh, lex+ew, ley+leh], start=200, end=340, fill=LINE, width=3)
-
-    # Right eye — fractionally less open (matching eye, slightly more closed)
-    reh = 22
-    draw.ellipse([rex-ew, rey-reh, rex+ew, rey+reh], fill=EYE_W, outline=LINE, width=2)
-    draw.ellipse([rex-13, rey-13, rex+13, rey+13], fill=EYE_IRIS)
-    draw.ellipse([rex-8, rey-8, rex+8, rey+8], fill=EYE_PUP)
-    draw.ellipse([rex+3, rey-8, rex+10, rey-2], fill=(255,252,245))
-    draw.arc([rex-ew, rey-reh, rex+ew, rey+reh], start=200, end=340, fill=LINE, width=3)
-
-    # Brows — default position per character bible: nearly horizontal, very slight inward tilt
-    # Both brows nearly symmetric in neutral (minimal asymmetry — personality at rest)
-    l_brow = [(lex-28, ley-32), (lex-2, ley-36), (lex+24, ley-30)]
-    draw.line(l_brow, fill=HAIR, width=5)
-    r_brow = [(rex-24, rey-30), (rex+2, rey-36), (rex+26, rey-32)]
-    draw.line(r_brow, fill=HAIR, width=5)
-
-    _draw_nose(draw, cx, cy)
-
-    # Mouth — gentle upward arc, closed. "About to smile" resting state.
-    draw.arc([cx-30, cy+28, cx+30, cy+52], start=15, end=165, fill=LINE, width=3)
-    # No teeth, no gap — fully closed, quiet contentment
-
-    # No blush in neutral (blush reserved for heightened states)
-
-    _draw_hair_overlay(draw, cx, cy)
-    _draw_collar(draw, cx, cy, head_r, color=HOODIE_N, rotate_deg=0)
-
-
-# ── NEW in v2: AT-REST CURIOSITY expression ───────────────────────────────────
-
-def draw_at_rest_curiosity(draw, cx, cy):
-    """At-Rest Curiosity — mild interest; lowest-intensity expressive state.
-
-    Bridge between NEUTRAL and RECOGNITION. Luma notices something and is mildly
-    interested — not yet alert, not bored. One eye very slightly more open,
-    one brow fractionally elevated. The body barely moves.
-
-    Design notes:
-    - Left brow raises ~4px above neutral default — the first detectable asymmetric move
-    - Right brow stays flat — holds neutral
-    - Left eye fractionally wider (leh=26), right stays at neutral (reh=22)
-    - Mouth: same gentle closed arc as NEUTRAL — curiosity hasn't reached the mouth yet
-    - Head: tilt 0 — or barely perceptible. Body: arms hang neutral, no tilt
-    - Subtle lean of pupils toward "object of interest" direction (left of center)
+    Full eye renderer with expression params dict.
+    Keys: l_open, r_open, brow_l_dy, brow_r_dy,
+          brow_furrow_l, brow_furrow_r, pupils_wide,
+          gaze_dx, gaze_dy, crinkle, half_lid
     """
-    head_r = 100
-    _draw_hair_mass(draw, cx, cy)
-    _draw_head(draw, cx, cy)
+    eye_y   = cy + int(HR * 0.08)
+    sep     = int(HR * 0.70)
+    lx      = cx - sep // 2
+    rx      = cx + sep // 2
+    ew      = int(HR * 0.44)
+    eh_full = int(HR * 0.30)
+    p       = params
 
-    lex, ley = cx-38, cy-18
-    rex, rey = cx+38, cy-18
-    ew = 28
+    for (ex, open_f, is_right) in [(lx, p["l_open"], False), (rx, p["r_open"], True)]:
+        if p.get("half_lid"):
+            actual_h = int(eh_full * 0.52)
+        else:
+            actual_h = max(3, int(eh_full * open_f))
 
-    # Left eye — slightly elevated brow, marginally wider
-    leh = 26
-    draw.ellipse([lex-ew, ley-leh, lex+ew, ley+leh], fill=EYE_W, outline=LINE, width=2)
-    draw.ellipse([lex-13, ley-13, lex+13, ley+13], fill=EYE_IRIS)
-    # Pupil shifted very slightly toward center — tracking something
-    draw.ellipse([lex-6, ley-8, lex+10, ley+8], fill=EYE_PUP)
-    draw.ellipse([lex+6, ley-9, lex+13, ley-2], fill=(255,252,245))
-    draw.arc([lex-ew, ley-leh, lex+ew, ley+leh], start=200, end=340, fill=LINE, width=3)
+        # Eye white
+        draw.ellipse(
+            [ex - ew, eye_y - actual_h, ex + ew, eye_y + actual_h],
+            fill=EYE_W
+        )
+        # Iris
+        ir  = int(ew * 0.68)
+        iry = min(ir, actual_h - 2)
+        if iry < 2:
+            iry = 2
+        pdx = int(p.get("gaze_dx", 0) * HR * 0.10)
+        pdy = int(p.get("gaze_dy", 0) * HR * 0.08)
+        draw.ellipse(
+            [ex + pdx - ir, eye_y + pdy - iry,
+             ex + pdx + ir, eye_y + pdy + iry],
+            fill=EYE_IRIS
+        )
+        # Pupil
+        pr = int(ir * 0.68) if p.get("pupils_wide") else int(ir * 0.50)
+        draw.ellipse(
+            [ex + pdx - pr, eye_y + pdy - pr,
+             ex + pdx + pr, eye_y + pdy + pr],
+            fill=EYE_PUP
+        )
+        # Highlight — upper-left (canonical position per spec)
+        hr_small = max(int(pr * 0.38), 5)
+        hlx = ex + pdx - int(ir * 0.28)
+        hly = eye_y + pdy - int(iry * 0.36)
+        draw.ellipse(
+            [hlx - hr_small, hly - hr_small, hlx + hr_small, hly + hr_small],
+            fill=EYE_HL
+        )
+        # Upper eyelid curve (interior, lighter weight = 4px at 2x = ~2px output)
+        draw.arc(
+            [ex - ew, eye_y - actual_h, ex + ew, eye_y + actual_h],
+            start=200, end=340, fill=LINE, width=4
+        )
+        # Crinkle lines at outer corners (delighted)
+        if p.get("crinkle"):
+            dsign = 1 if is_right else -1
+            outer_x = ex + ew * dsign
+            for k in range(3):
+                dy_k = int(HR * 0.04) * k
+                draw.line(
+                    [(outer_x, eye_y + dy_k),
+                     (outer_x + dsign * int(HR * 0.11), eye_y + dy_k - int(HR * 0.07))],
+                    fill=LINE, width=3
+                )
+        # Eye silhouette outline (heavy = 6px at 2x = ~3px output)
+        draw.ellipse(
+            [ex - ew, eye_y - actual_h, ex + ew, eye_y + actual_h],
+            outline=LINE, width=6
+        )
 
-    # Right eye — stays at neutral aperture
-    reh = 22
-    draw.ellipse([rex-ew, rey-reh, rex+ew, rey+reh], fill=EYE_W, outline=LINE, width=2)
-    draw.ellipse([rex-13, rey-13, rex+13, rey+13], fill=EYE_IRIS)
-    draw.ellipse([rex-8, rey-8, rex+8, rey+8], fill=EYE_PUP)
-    draw.ellipse([rex+3, rey-8, rex+10, rey-2], fill=(255,252,245))
-    draw.arc([rex-ew, rey-reh, rex+ew, rey+reh], start=200, end=340, fill=LINE, width=3)
+    # Eyebrows
+    brow_base_y = eye_y - int(eh_full * 1.42)
 
-    # Left brow — raised 4px above neutral default
-    l_brow = [(lex-28, ley-36), (lex-2, ley-42), (lex+24, ley-34)]
-    draw.line(l_brow, fill=HAIR, width=5)
-    # Right brow — stays at neutral
-    r_brow = [(rex-24, rey-30), (rex+2, rey-34), (rex+26, rey-30)]
-    draw.line(r_brow, fill=HAIR, width=5)
+    for (bx, b_dy, b_furrow) in [
+        (lx, p.get("brow_l_dy", 0), p.get("brow_furrow_l", False)),
+        (rx, p.get("brow_r_dy", 0), p.get("brow_furrow_r", False)),
+    ]:
+        by = brow_base_y + b_dy
+        is_right_b = (bx == rx)
+        inner_x = bx + int(HR * 0.10) if is_right_b else bx - int(HR * 0.10)
+        outer_x = bx - int(HR * 0.38) if is_right_b else bx + int(HR * 0.38)
+        # Corrugator furrow: inner end pushed down (worry / anger)
+        inner_y = by + (int(HR * 0.16) if b_furrow else 0)
+        outer_y = by
 
-    _draw_nose(draw, cx, cy)
-
-    # Mouth — same closed gentle arc as neutral (curiosity hasn't reached the mouth)
-    draw.arc([cx-30, cy+28, cx+30, cy+52], start=15, end=165, fill=LINE, width=3)
-
-    # No blush — below threshold
-
-    _draw_hair_overlay(draw, cx, cy)
-    _draw_collar(draw, cx, cy, head_r, color=HOODIE_C, rotate_deg=0)
-
-
-# ── Expression table — 8 expressions for 4×2 grid ────────────────────────────
-#   (name, draw_fn, bg_color, hoodie_color, arm_l_dy, arm_r_dy, body_tilt, body_squash,
-#    prev_state, next_state)
-EXPRESSIONS = [
-    # Row 1 — heightened emotional states
-    (
-        "RECKLESS EXCITEMENT",
-        draw_reckless_excitement,
-        BG_EXCITE, HOODIE_O,
-        0, -8, 6, 1.0,
-        "← was: ANY STATE",
-        "→ next: CHARGING IN"
-    ),
-    (
-        "WORRIED / DETERMINED",
-        draw_worried_determined,
-        BG_WORRY, HOODIE_W,
-        0, 0, 0, 1.0,
-        "← was: CALM",
-        "→ next: TAKING ACTION"
-    ),
-    (
-        "MISCHIEVOUS PLOTTING",
-        draw_mischievous_plotting,
-        BG_MISCH, HOODIE_M,
-        -4, -10, -4, 1.0,
-        "← was: BORED",
-        "→ next: EXECUTING PLAN"
-    ),
-    (
-        "SETTLING / WONDER",
-        draw_settling_wonder,
-        BG_SETTLE, HOODIE_S,
-        8, 8, 0, 1.0,
-        "← was: EXCITEMENT",
-        "→ next: CURIOSITY"
-    ),
-    # Row 2 — lower register (pilot emotional arc + baseline)
-    (
-        "RECOGNITION",
-        draw_recognition,
-        BG_RECOG, HOODIE_R,
-        -6, 2, -5, 1.0,
-        "← was: CONFUSION",
-        "→ next: CONNECTING"
-    ),
-    (
-        "WARMTH",
-        draw_warmth,
-        BG_WARMTH, HOODIE_WA,
-        10, 6, 2, 1.0,
-        "← was: ANY EARNED MOMENT",     # updated per Dmitri Volkov Cycle 11 note
-        "→ next: CONNECTION"
-    ),
-    (
-        "NEUTRAL / RESTING",             # NEW in v2 — baseline anchor
-        draw_neutral_resting,
-        BG_NEUTRAL, HOODIE_N,
-        0, 0, 0, 1.0,
-        "← was: ANY STATE",
-        "→ next: ANY STATE"
-    ),
-    (
-        "AT-REST CURIOSITY",             # NEW in v2 — lowest-intensity expressive state
-        draw_at_rest_curiosity,
-        BG_CURIOS, HOODIE_C,
-        0, 2, 0, 1.0,
-        "← was: NEUTRAL",
-        "→ next: RECOGNITION"
-    ),
-]
+        pts = bezier3((outer_x, outer_y), (bx, by - int(HR * 0.04)), (inner_x, inner_y))
+        polyline(draw, pts, LINE, width=10)
 
 
-def generate_luma_expression_sheet(output_path):
-    """Render a 4×2 expression grid for Luma (v2 — 8 expressions)."""
+def draw_nose(draw, cx, cy):
+    """Minimal apostrophe nose — lighter interior line weight."""
+    arc_draw(draw, cx, cy + int(HR * 0.32), int(HR * 0.09), int(HR * 0.07),
+             135, 305, LINE, width=4)
 
-    total_w = COLS * (PANEL_W + PAD) + PAD
-    total_h = HEADER + ROWS * (PANEL_H + PAD) + PAD
 
-    img  = Image.new('RGBA', (total_w, total_h), (*CANVAS_BG, 255))
-    draw = ImageDraw.Draw(img, 'RGBA')
+def draw_mouth(draw, cx, cy, style="neutral"):
+    my = cy + int(HR * 0.58)
+    mw = int(HR * 0.42)
+    lx, rx = cx - mw, cx + mw
+
+    if style == "neutral":
+        pts = bezier3((lx, my + 6), (cx, my - 14), (rx, my + 6))
+        polyline(draw, pts, LINE, width=5)
+
+    elif style == "smile_closed":
+        pts = bezier3((lx, my + 4), (cx, my - 30), (rx, my + 4))
+        polyline(draw, pts, LINE, width=6)
+        draw.line([(lx, my + 4), (lx - 6, my + 16)], fill=LINE, width=4)
+        draw.line([(rx, my + 4), (rx + 6, my + 16)], fill=LINE, width=4)
+
+    elif style == "smile_big":
+        sh = int(HR * 0.22)
+        top_pts = bezier3((lx, my), (cx, my - 34), (rx, my))
+        bot_pts = bezier3((lx, my + sh), (cx, my + sh + 12), (rx, my + sh))
+        fill_pts = top_pts + bot_pts[::-1]
+        draw.polygon(fill_pts, fill=(210, 70, 50))
+        tw = int(mw * 0.82)
+        draw.rectangle([cx - tw, my - 2, cx + tw, my + sh - 4], fill=(248, 242, 230))
+        polyline(draw, top_pts, LINE, width=6)
+        polyline(draw, bot_pts, LINE, width=5)
+        draw.line([(lx, my), (lx, my + sh)], fill=LINE, width=5)
+        draw.line([(rx, my), (rx, my + sh)], fill=LINE, width=5)
+
+    elif style == "open_oval":
+        ow = int(mw * 0.54)
+        oh = int(HR * 0.28)
+        draw.ellipse(
+            [cx - ow, my - int(oh * 0.38), cx + ow, my + int(oh * 0.62)],
+            fill=(210, 65, 48)
+        )
+        draw.ellipse(
+            [cx - ow, my - int(oh * 0.38), cx + ow, my + int(oh * 0.62)],
+            outline=LINE, width=5
+        )
+
+    elif style == "pressed_flat":
+        pts = bezier3((lx, my + 4), (cx, my + 10), (rx, my + 4))
+        polyline(draw, pts, LINE, width=6)
+
+    elif style == "corners_down":
+        pts = bezier3((lx, my - 14), (cx, my + 18), (rx, my - 14))
+        polyline(draw, pts, LINE, width=5)
+
+    elif style == "frown_slight":
+        pts = bezier3((lx, my - 8), (cx, my + 18), (rx, my - 8))
+        polyline(draw, pts, LINE, width=5)
+
+
+def draw_blush(draw, cx, cy, alpha=120):
+    if alpha <= 0:
+        return
+    bw = int(HR * 0.26)
+    bh = int(HR * 0.11)
+    by = cy + int(HR * 0.38)
+    for bx in [cx - int(HR * 0.56), cx + int(HR * 0.56)]:
+        draw.ellipse([bx - bw, by - bh, bx + bw, by + bh], fill=BLUSH_C)
+
+
+def draw_collar(draw, cx, cy, hoodie_col):
+    """Neck + hoodie collar."""
+    nt = cy + int(HR * 0.88)
+    nb = cy + int(HR * 1.18)
+    nw = int(HR * 0.28)
+    cw = int(HR * 1.02)
+    ch = int(HR * 0.40)
+    draw.rectangle([cx - nw, nt, cx + nw, nb], fill=SKIN)
+    draw.ellipse(
+        [cx - cw, nb - ch // 2, cx + cw, nb + ch],
+        fill=hoodie_col
+    )
+    draw.ellipse(
+        [cx - cw, nb - ch // 2, cx + cw, nb + ch],
+        outline=LINE, width=7
+    )
+    draw.rectangle([cx - nw, nt, cx + nw, nb], outline=LINE, width=5)
+
+
+# -- Expression specification table ------------------------------------------
+
+EXPR_SPECS = {
+    "CURIOUS": {
+        "hair": "default",
+        "blush": 80,
+        "eyes": {
+            "l_open": 0.90, "r_open": 0.86,
+            "brow_l_dy": -int(HR * 0.18), "brow_r_dy": -int(HR * 0.24),
+            "gaze_dx": 0.4, "gaze_dy": -0.2,
+            "brow_furrow_l": False, "brow_furrow_r": False,
+        },
+        "mouth": "neutral",
+        "cy_offset": 0,
+    },
+    "DETERMINED": {
+        "hair": "tight",
+        "blush": 0,
+        "eyes": {
+            "l_open": 0.80, "r_open": 0.80,
+            "brow_l_dy": int(HR * 0.10), "brow_r_dy": int(HR * 0.10),
+            "gaze_dx": 0, "gaze_dy": 0.12,
+            "brow_furrow_l": False, "brow_furrow_r": False,
+        },
+        "mouth": "pressed_flat",
+        "cy_offset": int(HR * 0.06),
+    },
+    "SURPRISED": {
+        "hair": "excited",
+        "blush": 0,
+        "eyes": {
+            "l_open": 1.0, "r_open": 1.0,
+            "brow_l_dy": -int(HR * 0.32), "brow_r_dy": -int(HR * 0.32),
+            "gaze_dx": 0, "gaze_dy": 0,
+            "pupils_wide": True,
+            "brow_furrow_l": False, "brow_furrow_r": False,
+        },
+        "mouth": "open_oval",
+        "cy_offset": 0,
+    },
+    "WORRIED": {
+        "hair": "drooped",
+        "blush": 0,
+        "eyes": {
+            "l_open": 0.72, "r_open": 0.72,
+            "brow_l_dy": -int(HR * 0.18), "brow_r_dy": -int(HR * 0.18),
+            "gaze_dx": 0, "gaze_dy": 0.18,
+            "brow_furrow_l": True, "brow_furrow_r": True,
+        },
+        "mouth": "corners_down",
+        "cy_offset": 0,
+    },
+    "DELIGHTED": {
+        "hair": "excited",
+        "blush": 140,
+        "eyes": {
+            "l_open": 0.60, "r_open": 0.60,
+            "brow_l_dy": -int(HR * 0.16), "brow_r_dy": -int(HR * 0.16),
+            "gaze_dx": 0, "gaze_dy": 0,
+            "crinkle": True,
+            "brow_furrow_l": False, "brow_furrow_r": False,
+        },
+        "mouth": "smile_big",
+        "cy_offset": 0,
+    },
+    "FRUSTRATED": {
+        "hair": "tight",
+        "blush": 0,
+        "eyes": {
+            "l_open": 0.55, "r_open": 0.55,
+            "brow_l_dy": int(HR * 0.14), "brow_r_dy": int(HR * 0.14),
+            "gaze_dx": 0, "gaze_dy": 0.22,
+            "half_lid": True,
+            "brow_furrow_l": True, "brow_furrow_r": True,
+        },
+        "mouth": "frown_slight",
+        "cy_offset": 0,
+    },
+}
+
+
+# -- Expression renderer ------------------------------------------------------
+
+def render_face(expr, face_w, face_h):
+    """Render one expression at 2x scale for AA, return RGBA downscaled image."""
+    rw = face_w * RENDER_SCALE
+    rh = face_h * RENDER_SCALE
+    img = Image.new("RGBA", (rw, rh), (0, 0, 0, 0))
+
+    cx   = rw // 2
+    spec = EXPR_SPECS[expr]
+    cy_off = spec.get("cy_offset", 0)
+    cy   = int(rh * 0.52) + cy_off
+
+    # Construction guide as RGBA overlay
+    img  = draw_construction_guide(img, cx, cy)
+    draw = ImageDraw.Draw(img)
+
+    draw_head(draw, cx, cy)
+    draw_ears(draw, cx, cy)
+    draw_hair(draw, cx, cy, variant=spec["hair"])
+    draw_blush(draw, cx, cy, alpha=spec["blush"])
+    draw_eyes_full(draw, cx, cy, spec["eyes"])
+    draw_nose(draw, cx, cy)
+    draw_mouth(draw, cx, cy, style=spec["mouth"])
+    draw_collar(draw, cx, cy, HOODIE_MAP[expr])
+
+    # Downscale 2x -> 1x with LANCZOS for anti-aliasing
+    return img.resize((face_w, face_h), Image.LANCZOS)
+
+
+# -- Sheet assembly -----------------------------------------------------------
+
+EXPRESSIONS = ["CURIOUS", "DETERMINED", "SURPRISED",
+               "WORRIED",  "DELIGHTED",  "FRUSTRATED"]
+
+
+def build_sheet():
+    sheet = Image.new("RGB", (TOTAL_W, TOTAL_H), CANVAS_BG)
+    draw  = ImageDraw.Draw(sheet)
 
     try:
         font_title = ImageFont.truetype(
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 18)
-        font       = ImageFont.truetype(
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 13)
-        font_sm    = ImageFont.truetype(
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 10)
-        font_meta  = ImageFont.truetype(
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 10)
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 26)
+        font_label = ImageFont.truetype(
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 17)
+        font_sub   = ImageFont.truetype(
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 13)
     except Exception:
-        font_title = font = font_sm = font_meta = ImageFont.load_default()
+        font_title = ImageFont.load_default()
+        font_label = font_title
+        font_sub   = font_title
 
-    # ── Sheet header with metadata ─────────────────────────────────────────────
-    draw.text((PAD, 8),
-              f"LUMA — Expression Sheet — Luma & the Glitchkin  |  {VERSION}",
-              fill=(235, 200, 140), font=font_title)
-    meta_line = (f"Canvas: {total_w}×{total_h}px  |  "
-                 f"1 head unit = {HEAD_UNIT_PX}px (full scale) / "
-                 f"~{HEAD_UNIT_PANEL}px (panel scale {FACE_SCALE})  |  "
-                 f"Panel: {PANEL_W}×{PANEL_H}px  |  "
-                 f"8 expressions / 4×2 grid")
-    draw.text((PAD, 30), meta_line, fill=(160, 148, 120), font=font_meta)
+    title = "LUMA — Expression Sheet v002  |  Luma & the Glitchkin"
+    sub   = ("Designer: Maya Santos  |  Cycle 17 Refinement  |  "
+             "3x2 grid  |  6 core expressions  |  Construction guides visible")
+    draw.text((PAD, 10), title, fill=(235, 218, 196), font=font_title)
+    draw.text((PAD, 38), sub,   fill=(165, 150, 130), font=font_sub)
 
-    for i, (name, draw_fn, bg_col, hoodie_col,
-            arm_l_dy, arm_r_dy, body_tilt, body_squash,
-            prev_st, next_st) in enumerate(EXPRESSIONS):
+    face_w = PANEL_W - PAD * 2
+    face_h = PANEL_H - PAD
 
-        col = i % COLS
-        row = i // COLS
+    for idx, expr in enumerate(EXPRESSIONS):
+        col = idx % COLS
+        row = idx // COLS
         px  = PAD + col * (PANEL_W + PAD)
-        py  = HEADER + row * (PANEL_H + PAD)
+        py  = HEADER + PAD + row * (PANEL_H + LABEL_H + PAD)
 
         # Panel background
-        draw.rectangle([px, py, px+PANEL_W, py+PANEL_H],
-                       fill=(*bg_col, 255), outline=(160, 150, 140, 255), width=2)
+        bg = BG[expr]
+        draw.rectangle([px, py, px + PANEL_W, py + PANEL_H], fill=bg)
+        draw.rectangle([px, py, px + PANEL_W, py + PANEL_H], outline=LINE, width=2)
 
-        # Face rendered at reduced scale on intermediate canvas, then LANCZOS resize
-        FULL_W, FULL_H = 400, 440
-        full_face = Image.new('RGBA', (FULL_W, FULL_H), (*bg_col, 0))
-        fd = ImageDraw.Draw(full_face, 'RGBA')
-        draw_fn(fd, FULL_W//2, FULL_H//2 + 20)
+        # Render and paste face
+        face_img = render_face(expr, face_w, face_h)
+        ox = px + PAD
+        oy = py + PAD // 2
+        sheet.paste(face_img, (ox, oy), face_img)
 
-        face_cw = int(FULL_W * FACE_SCALE)
-        face_ch = int(FULL_H * FACE_SCALE)
-        full_face_resized = full_face.resize((face_cw, face_ch), Image.LANCZOS)
+        # IMPORTANT: refresh draw object after paste
+        draw = ImageDraw.Draw(sheet)
 
-        face_x = px + (PANEL_W - face_cw) // 2
-        face_y = py + 6
-        img.alpha_composite(full_face_resized, (face_x, face_y))
+        # Label strip
+        label_y  = py + PANEL_H + 2
+        label_bg = tuple(max(0, int(c * 0.88)) for c in bg)
+        draw.rectangle([px, label_y, px + PANEL_W, label_y + LABEL_H], fill=label_bg)
+        bbox = draw.textbbox((0, 0), expr, font=font_label)
+        tw   = bbox[2] - bbox[0]
+        th   = bbox[3] - bbox[1]
+        tx   = px + (PANEL_W - tw) // 2
+        ty   = label_y + (LABEL_H - th) // 2
+        draw.text((tx, ty), expr, fill=LINE, font=font_label)
 
-        # Body below face
-        body_top = face_y + face_ch - 20
-        body_cx  = px + PANEL_W // 2
-        _draw_body(draw, body_cx, body_top, hoodie_col,
-                   arm_l_dy=arm_l_dy, arm_r_dy=arm_r_dy,
-                   body_tilt=body_tilt, body_squash=body_squash)
-
-        # Label bar at bottom of panel
-        bar_h = 62
-        bar_y = py + PANEL_H - bar_h
-        draw.rectangle([px, bar_y, px+PANEL_W, py+PANEL_H], fill=(18, 12, 8, 230))
-
-        # NEW marker for expressions added in v2
-        label_color = (235, 200, 140)
-        if "NEUTRAL" in name or "CURIOSITY" in name:
-            label_color = (160, 230, 180)   # soft green tag — new in v2
-            draw.text((px + PANEL_W - 44, bar_y + 4), "[NEW]",
-                      fill=(100, 200, 130), font=font_sm)
-
-        draw.text((px+8, bar_y+4),  name,    fill=label_color, font=font)
-        draw.text((px+8, bar_y+22), prev_st, fill=(150, 130, 100), font=font_sm)
-        draw.text((px+8, bar_y+36), next_st, fill=(150, 130, 100), font=font_sm)
-
-    img = img.convert('RGB')
-    img.save(output_path)
-    print(f"Saved: {output_path}  ({total_w}×{total_h}px)")
+    return sheet
 
 
-if __name__ == '__main__':
-    import os
-    out_dir = "/home/wipkat/team/output/characters/main"
+if __name__ == "__main__":
+    out_dir  = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                            "..", "characters", "main")
     os.makedirs(out_dir, exist_ok=True)
-    generate_luma_expression_sheet(
-        os.path.join(out_dir, "luma_expression_sheet.png")
-    )
+    out_path = os.path.join(out_dir, "LTG_CHAR_luma_expression_sheet_v002.png")
+    sheet    = build_sheet()
+    sheet.save(out_path)
+    print(f"Saved: {os.path.abspath(out_path)}")
+    print(f"Canvas: {sheet.size[0]}x{sheet.size[1]}")

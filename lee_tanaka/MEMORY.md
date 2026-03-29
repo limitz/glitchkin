@@ -140,12 +140,23 @@
 - **Glow in montage cells: pass absolute coordinates to add_glow().** Cells have local coordinate systems; `add_glow()` uses image-absolute coords. Add cell origin before calling. Fixed in Cycle 16 by computing absolute positions directly.
 - **Waveform seed consistency is subconscious continuity.** A2-05b, A2-06 MED, and A2-06 INSERT all use seed=42 for the GLITCH FREQ waveform. Same wave pattern creates subliminal connection across cuts.
 
-## Current Status (after Cycle 16)
+## Cycle 17 Milestone
+- **3 Act 2 panels GENERATED — Act 2 deck NOW COMPLETE:**
+  - A2-01: Tech Den Wide — `LTG_TOOL_sb_panel_a201_v001.py` → `LTG_SB_act2_panel_a201_v001.png`. WIDE slightly high-angle. Two-point perspective room. Cosmo BG at desk (3/4 back, monitor glow). Luma FG-left in doorway (DETERMINED lean, warm jacket). Hallway light from behind Luma. Monitor glow on Cosmo's face/neck.
+  - A2-05: Millbrook Exterior — `LTG_TOOL_sb_panel_a205_v001.py` → `LTG_SB_act2_panel_a205_v001.png`. MEDIUM eye-level tracking. Single-point perspective street. Luma FG (ENTHUSIASTIC — both arms gesticulating, mid-stride, mouth open mid-word). Cosmo BG-right (SKEPTICAL — arms crossed, asymmetric raised brow). Suburban Millbrook with buildings + trees.
+  - A2-08: Grandma Miri Returns — `LTG_TOOL_sb_panel_a208_v001.py` → `LTG_SB_act2_panel_a208_v001.png`. ECU low angle. Face fills 2/3 of frame. SURPRISED→KNOWING expression (wide eyes, soft brows, one corner of mouth rising = recognition). CRT amber-green catch light on left cheek + brow. Doorway rim light. Age lines = earned warmth not exaggeration.
+- **Act 2 contact sheet v004:** `LTG_TOOL_sb_act2_contact_sheet_v004.py` → `LTG_SB_act2_contact_sheet_v004.png`. 11 panels, 3-row layout (4/4/3), arc-colored borders, full arc: NEAR-MISS → ESTABLISHED → VULNERABLE → SKEPTICAL → INVESTIGATING → WALK+TALK → DETERMINED → HOPEFUL → FAILURE → RESIGNED → RECOGNITION.
+
+## Cycle 17 Lessons
+- **ECU low-angle = face fills frame + camera below eyeline.** To feel "larger than life," the face MUST fill 2/3+ of DRAW_H. Centering at 40% y with head_h=300 at 540px draw area achieves this. Low angle is not just an annotation — it's geometry.
+- **SURPRISED → KNOWING is NOT two expressions — it's one transitional state.** Wide eyes + soft (not scrunched) brows = surprise WITHOUT alarm. One corner of mouth beginning to lift = recognition surfacing. Cheek crinkles + laugh lines = warmth. All four elements must coexist in a single image.
+- **CRT catch light must be directional.** The glow source is off-frame lower-left. The catch light hits the left cheek and left brow — not symmetrically on both sides. Directionality is what makes it feel like a real light source, not decoration.
+- **Walk-and-talk requires two simultaneous body languages.** Luma: forward lean + arms both active + open mouth (mid-word) + forward leg extension. Cosmo: arms crossed + backward lean + raised brow + closed mouth. The contrast reads in a single glance — the picture argues without a caption.
+- **Wide establishing requires foreground depth reading.** Luma at the doorway must be FG-scale (larger) AND cropped at frame bottom to signal "camera closer than her feet." The monitor must be BG-scale (smaller) AND have a perspective-shortened desk. Scale difference IS the spatial story.
+
+## Current Status (after Cycle 17)
 - Cold open: 26 panels COMPLETE, all Carmen notes resolved
-- Act 2 panels COMPLETE: A1-04, A2-02, A2-03 v2, A2-04 v2, A2-05b, A2-06 MED, A2-06 INSERT, A2-07 v2 (8 panels)
-- All Carmen Cycle 8 feedback CLOSED
-- REMAINING: A2-01, A2-05 (exterior wide), A2-08 (Miri returns)
-- Contact sheet: v003 (8 panels, 4×2 layout, full arc)
-- Luma Act2 standing pose: `LTG_CHAR_luma_act2_standing_pose_v001.png` — use for A2-01, A2-05, A2-08
-- A2-02 minor open item (Carmen B+): Byte float/ground relationship; annotation box placement
-- A2-07 right eye spec (Maya's Cycle 16 fix): aperture=45% (NOT 50%), pupil +10px down (NOT +5px), parabolic lower lid sag (max 7px droop at center). Current v002 uses 50% — close but not exact. Flag for next revision if Carmen requests precision pass.
+- Act 2 panels COMPLETE: ALL 11 panels (A1-04, A2-01, A2-02, A2-03 v2, A2-04 v2, A2-05, A2-05b, A2-06 MED, A2-06 INSERT, A2-07 v2, A2-08)
+- Contact sheet: v004 (11 panels, 4/4/3 row layout, arc-colored borders)
+- REMAINING open items: A2-02 float/ground annotation (Carmen B+ note); A2-07 right eye 45% aperture precision
+- No blocked panels — full Act 2 deck ready for review

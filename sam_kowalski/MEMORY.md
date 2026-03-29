@@ -108,6 +108,14 @@
 - **SF03 DRW-18 UV rim IS in the generator** (HAIR_UV_SHEEN = UV_PURPLE on crown). Naomi's concern was execution scale — the sheen may be too narrow to read at final render scale (~216px figure height). Flagged to Alex/Jordan for v002 geometry increase.
 - **SF03 confetti physics flag.** Confetti distributed W×H full canvas — some particles will be mid-air with no source proximity. For v002: constrain to within 150px of platform or characters.
 
+## Cycle 17 Lessons
+- **Glasses frame not always specified in color models.** If a color model is missing a prop/accessory color, derive it from the nearest character-consistent value rather than inventing a new one. Miri glasses = #8A7A70 Warm Gray (same as eyebrows) — visually recede so face reads first.
+- **Monitor glow in domestic environments requires explicit R-channel floor.** Monitor glow must NOT have R < 150 in the Tech Den or it risks reading as GL-01/GL-01b Glitch emission. Aged phosphor glow is warm-neutral (R:184-200), not saturated blue-white.
+- **School hallway: all grays must have a warm or cool lean — no pure R=G=B grays.** The institutional palette uses desaturated tones in the RW palette family shifted toward green-cool by fluorescent influence. This is what makes the hallway read as "institutional fluorescent" without being garish.
+- **Luma hoodie desaturation in hallway is a narrative beat.** The washed-out orange in fluorescent institutional light is intentional. It recovers full saturation when she leaves. Color tells the belonging story.
+- **New ENV entries not yet in master_palette.md:** Tech Den monitor glow values and school hallway institutional tones are scene-specific construction values. Register as ENV-xx only if they recur in a third environment.
+- **Message sent to Maya Santos inbox** at maya_santos/inbox/20260329_2130_miri_color_values.md — all Miri expression sheet hex values + key production notes.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001 (TERRA_CYAN_LIT still old value). v002 is correct. Coordinate with Jordan Reed on v001 if it is still used.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan should add inline comment on next revision pass (low priority).
