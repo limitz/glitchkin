@@ -12,7 +12,13 @@ Evaluates rendered PNGs against LTG rendering standards across five checks:
 
 Author: Kai Nakamura (Technical Art Engineer)
 Created: Cycle 26 — 2026-03-29
-Version: 1.0.0
+Version: 1.1.0
+
+Changelog:
+  1.1.0 (Cycle 27): Add asset_type param to qa_report() and qa_batch().
+                    Warm/cool check is skipped for character_sheet, color_model,
+                    and turnaround asset types. Auto-inference from filename.
+                    Overall grade excludes SKIPPED checks.
 
 Coordinate note (Rin Inoue):
   silhouette_test(img) and value_study(img) are importable from this module.
@@ -38,6 +44,11 @@ if str(_TOOLS_DIR) not in sys.path:
 from LTG_TOOL_color_verify_v001 import verify_canonical_colors, get_canonical_palette
 
 # ---------------------------------------------------------------------------
+# Version
+# ---------------------------------------------------------------------------
+__version__ = "1.1.0"
+
+# ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
 SILHOUETTE_THUMB_SIZE = (100, 100)
@@ -48,6 +59,40 @@ _VALUE_MIN_BRIGHT = 225
 _VALUE_MIN_RANGE = 150
 _LINE_SAMPLE_COUNT = 20
 random.seed(42)   # reproducible sampling
+
+# Asset types that skip warm/cool check (uniform neutral bg by design)
+_SKIP_WARM_COOL = {"character_sheet", "color_model", "turnaround"}
+
+
+# ---------------------------------------------------------------------------
+# Asset type inference
+# ---------------------------------------------------------------------------
+
+def _infer_asset_type(img_path: str) -> str:
+    """
+    Infer asset type from filename (lowercased).
+
+    Rules (in order):
+      contains "styleframe" or "colorkey"                              → "style_frame"
+      contains "expression_sheet", "color_model", "turnaround", "lineup" → "character_sheet"
+      contains "ENV_" (case-sensitive) and not "styleframe"            → "environment"
+      otherwise                                                         → "style_frame"
+    """
+    name = Path(img_path).name
+    name_lower = name.lower()
+
+    if "styleframe" in name_lower or "colorkey" in name_lower:
+        return "style_frame"
+    if (
+        "expression_sheet" in name_lower
+        or "color_model" in name_lower
+        or "turnaround" in name_lower
+        or "lineup" in name_lower
+    ):
+        return "character_sheet"
+    if "ENV_" in name and "styleframe" not in name_lower:
+        return "environment"
+    return "style_frame"
 
 
 # ---------------------------------------------------------------------------
@@ -378,27 +423,37 @@ def _check_line_weight(img: Image.Image, n_samples: int = _LINE_SAMPLE_COUNT) ->
 # Public API
 # ---------------------------------------------------------------------------
 
-def qa_report(img_path: str) -> dict:
+def qa_report(img_path: str, asset_type: str = "auto") -> dict:
     """
     Run all QA checks on a single image. Returns results dict.
-
-    Checks:
-      A. Silhouette readability — threshold image, check shape at 100×100
-      B. Value range — darkest pixel ≤ 30, brightest ≥ 225; flag if range < 150
-      C. Color fidelity — wrap verify_canonical_colors() from LTG_TOOL_color_verify_v001
-      D. Warm/cool separation — sample hues in two zones, check separation ≥ 20 PIL units
-      E. Line weight consistency — edge detect, sample 20 points, check cluster spread
 
     Parameters
     ----------
     img_path : str
         Path to the PNG file to evaluate.
+    asset_type : str, optional
+        Controls which checks apply. Default "auto" infers from filename.
+
+        Values:
+          "auto"            — infer from filename (see _infer_asset_type)
+          "style_frame"     — full checks including warm/cool
+          "character_sheet" — skip warm/cool (uniform neutral bg by design)
+          "color_model"     — skip warm/cool
+          "turnaround"      — skip warm/cool
+          "environment"     — full checks including warm/cool
+
+        Auto-inference rules (filename-based):
+          contains "styleframe" or "colorkey"                               → "style_frame"
+          contains "expression_sheet", "color_model", "turnaround", "lineup" → "character_sheet"
+          contains "ENV_" (case-sensitive, not "styleframe")                → "environment"
+          otherwise                                                          → "style_frame"
 
     Returns
     -------
     dict
         {
           "file": str,
+          "asset_type": str,            # resolved asset type
           "silhouette": {
               "score": "distinct|ambiguous|blob",
               "thumbnail": PIL.Image (100×100 B&W)
@@ -412,6 +467,11 @@ def qa_report(img_path: str) -> dict:
           "warm_cool": {
               "zone_a_hue": float, "zone_b_hue": float,
               "separation": float, "pass": bool, "notes": list[str]
+          }
+          OR for skipped asset types:
+          "warm_cool": {
+              "status": "SKIPPED",
+              "reason": "character_sheet — uniform bg by design"
           },
           "line_weight": {
               "sampled_widths": list, "mean_width": float,
@@ -420,7 +480,15 @@ def qa_report(img_path: str) -> dict:
           },
           "overall_grade": "PASS|WARN|FAIL"
         }
+
+    Notes
+    -----
+    The overall_grade is computed only from checks that were actually run.
+    A SKIPPED warm/cool check does not contribute a WARN to the grade.
     """
+    if asset_type == "auto":
+        asset_type = _infer_asset_type(img_path)
+
     img = Image.open(img_path)
     img.load()
 
@@ -435,16 +503,24 @@ def qa_report(img_path: str) -> dict:
     palette = get_canonical_palette()
     color_result = verify_canonical_colors(img, palette, max_delta_hue=5)
 
-    # D — Warm/cool separation
-    warm_cool_result = _check_warm_cool(img)
+    # D — Warm/cool separation (conditional on asset type)
+    skip_warm_cool = asset_type in _SKIP_WARM_COOL
+    if skip_warm_cool:
+        warm_cool_result = {
+            "status": "SKIPPED",
+            "reason": f"{asset_type} — uniform bg by design",
+        }
+    else:
+        warm_cool_result = _check_warm_cool(img)
 
     # E — Line weight consistency
     line_weight_result = _check_line_weight(img)
 
     # --- Grading logic ---
     # FAIL: silhouette=blob, value range completely fails (no dark AND no bright)
-    # WARN: any single check fails (silhouette ambiguous, minor value issue, color drift, flat palette)
-    # PASS: all checks pass
+    # WARN: any single *active* check fails
+    # PASS: all active checks pass
+    # SKIPPED checks do not contribute to the grade.
 
     fail_conditions = []
     warn_conditions = []
@@ -465,8 +541,8 @@ def qa_report(img_path: str) -> dict:
     if not color_result.get("overall_pass", True):
         warn_conditions.append("color_fidelity: hue drift detected")
 
-    # Warm/cool
-    if not warm_cool_result["pass"]:
+    # Warm/cool — only if check was run
+    if not skip_warm_cool and not warm_cool_result.get("pass", True):
         warn_conditions.append("warm_cool: insufficient separation")
 
     # Line weight
@@ -482,6 +558,7 @@ def qa_report(img_path: str) -> dict:
 
     return {
         "file": str(img_path),
+        "asset_type": asset_type,
         "silhouette": {
             "score": sil_score,
             "thumbnail": sil_thumb,
@@ -496,7 +573,7 @@ def qa_report(img_path: str) -> dict:
     }
 
 
-def qa_batch(directory: str) -> list:
+def qa_batch(directory: str, asset_type: str = "auto") -> list:
     """
     Run qa_report on all PNGs in *directory*. Returns list of result dicts.
 
@@ -504,6 +581,9 @@ def qa_batch(directory: str) -> list:
     ----------
     directory : str
         Path to directory containing PNG files.
+    asset_type : str, optional
+        Asset type override. Default "auto" infers per-file from filename.
+        See qa_report() for valid values.
 
     Returns
     -------
@@ -515,10 +595,11 @@ def qa_batch(directory: str) -> list:
     results = []
     for png in png_files:
         try:
-            result = qa_report(str(png))
+            result = qa_report(str(png), asset_type=asset_type)
         except Exception as exc:
             result = {
                 "file": str(png),
+                "asset_type": asset_type,
                 "error": str(exc),
                 "overall_grade": "FAIL",
             }
@@ -538,33 +619,39 @@ def qa_summary_report(results: list, output_path: str):
         Destination file path for the Markdown report.
     """
     lines = []
-    lines.append("# LTG Render QA Report — Cycle 26")
+    lines.append("# LTG Render QA Report — Cycle 27")
     lines.append("")
     lines.append(f"**Generated:** 2026-03-29  ")
-    lines.append(f"**Tool:** LTG_TOOL_render_qa_v001.py  ")
+    lines.append(f"**Tool:** LTG_TOOL_render_qa_v001.py v{__version__}  ")
     lines.append(f"**Total assets evaluated:** {len(results)}")
     lines.append("")
 
     # Summary table
     lines.append("## Summary")
     lines.append("")
-    lines.append("| File | Silhouette | Value Range | Color Fidelity | Warm/Cool | Line Weight | Grade |")
-    lines.append("|------|-----------|-------------|----------------|-----------|-------------|-------|")
+    lines.append("| File | Asset Type | Silhouette | Value Range | Color Fidelity | Warm/Cool | Line Weight | Grade |")
+    lines.append("|------|-----------|-----------|-------------|----------------|-----------|-------------|-------|")
 
     for r in results:
         fname = Path(r["file"]).name
+        atype = r.get("asset_type", "—")
         if "error" in r:
-            lines.append(f"| {fname} | ERROR | — | — | — | — | **FAIL** |")
+            lines.append(f"| {fname} | {atype} | ERROR | — | — | — | — | **FAIL** |")
             continue
 
         sil = r["silhouette"]["score"]
         vr = "PASS" if r["value_range"]["pass"] else "WARN"
         cf = "PASS" if r["color_fidelity"].get("overall_pass", True) else "WARN"
-        wc = "PASS" if r["warm_cool"]["pass"] else "WARN"
+        # Warm/cool: SKIPPED or PASS/WARN
+        wc_data = r["warm_cool"]
+        if wc_data.get("status") == "SKIPPED":
+            wc = "SKIP"
+        else:
+            wc = "PASS" if wc_data.get("pass", True) else "WARN"
         lw = "PASS" if r["line_weight"]["pass"] else "WARN"
         grade = r["overall_grade"]
         grade_fmt = f"**{grade}**" if grade in ("FAIL", "WARN") else grade
-        lines.append(f"| {fname} | {sil} | {vr} | {cf} | {wc} | {lw} | {grade_fmt} |")
+        lines.append(f"| {fname} | {atype} | {sil} | {vr} | {cf} | {wc} | {lw} | {grade_fmt} |")
 
     lines.append("")
 
@@ -583,7 +670,9 @@ def qa_summary_report(results: list, output_path: str):
 
     for r in results:
         fname = Path(r["file"]).name
+        atype = r.get("asset_type", "—")
         lines.append(f"### {fname}")
+        lines.append(f"*Asset type: {atype}*")
         lines.append("")
 
         if "error" in r:
@@ -646,15 +735,18 @@ def qa_summary_report(results: list, output_path: str):
 
         # D — Warm/cool
         wc = r["warm_cool"]
-        wc_status = "PASS" if wc["pass"] else "WARN"
-        lines.append(
-            f"**D. Warm/Cool Separation:** {wc_status} — "
-            f"zone_a={wc['zone_a_hue']}, zone_b={wc['zone_b_hue']}, "
-            f"separation={wc['separation']}"
-        )
-        if wc["notes"]:
-            for note in wc["notes"]:
-                lines.append(f"  - {note}")
+        if wc.get("status") == "SKIPPED":
+            lines.append(f"**D. Warm/Cool Separation:** SKIPPED — {wc['reason']}")
+        else:
+            wc_status = "PASS" if wc.get("pass", True) else "WARN"
+            lines.append(
+                f"**D. Warm/Cool Separation:** {wc_status} — "
+                f"zone_a={wc['zone_a_hue']}, zone_b={wc['zone_b_hue']}, "
+                f"separation={wc['separation']}"
+            )
+            if wc.get("notes"):
+                for note in wc["notes"]:
+                    lines.append(f"  - {note}")
         lines.append("")
 
         # E — Line weight
@@ -688,8 +780,8 @@ if __name__ == "__main__":
 
     if len(sys.argv) < 2:
         print("Usage:")
-        print("  python LTG_TOOL_render_qa_v001.py <image.png>          # single file")
-        print("  python LTG_TOOL_render_qa_v001.py --batch <directory>  # batch mode")
+        print("  python LTG_TOOL_render_qa_v001.py <image.png> [asset_type]          # single file")
+        print("  python LTG_TOOL_render_qa_v001.py --batch <directory> [output.md]   # batch mode")
         sys.exit(0)
 
     if sys.argv[1] == "--batch" and len(sys.argv) >= 3:
@@ -700,17 +792,23 @@ if __name__ == "__main__":
         for r in results:
             grade = r.get("overall_grade", "?")
             fname = Path(r["file"]).name
-            print(f"  {grade:4s}  {fname}")
+            atype = r.get("asset_type", "—")
+            print(f"  {grade:4s}  [{atype}]  {fname}")
         qa_summary_report(results, output_md)
     else:
         img_path = sys.argv[1]
-        print(f"[QA] Checking: {img_path}")
-        result = qa_report(img_path)
+        atype_arg = sys.argv[2] if len(sys.argv) >= 3 else "auto"
+        print(f"[QA] Checking: {img_path} (asset_type={atype_arg})")
+        result = qa_report(img_path, asset_type=atype_arg)
+        print(f"  Asset type:    {result['asset_type']}")
         print(f"  Silhouette:    {result['silhouette']['score']}")
         vr = result["value_range"]
         print(f"  Value range:   min={vr['min']} max={vr['max']} range={vr['range']} pass={vr['pass']}")
         wc = result["warm_cool"]
-        print(f"  Warm/cool:     separation={wc['separation']:.1f} pass={wc['pass']}")
+        if wc.get("status") == "SKIPPED":
+            print(f"  Warm/cool:     SKIPPED ({wc['reason']})")
+        else:
+            print(f"  Warm/cool:     separation={wc['separation']:.1f} pass={wc['pass']}")
         lw = result["line_weight"]
         print(f"  Line weight:   mean={lw['mean_width']}px outliers={lw['outlier_count']} pass={lw['pass']}")
         cf_pass = result["color_fidelity"].get("overall_pass", True)

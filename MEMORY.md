@@ -4,8 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present; Cycle 25 major gap closures complete.
 
 ## Status
-**Cycle 26 complete. Work cycles: 26. Critique cycles: 11.**
-**Cycle 27 starts next. Critique Cycle 12 after Cycle 27.**
+**Cycle 27 complete. Work cycles: 27. Critique cycles: 11.**
+**Critique Cycle 12 starts next. Cycle 28 after.**
 
 ## Active Team (all 5 slots used)
 
@@ -30,8 +30,8 @@ Rule is in: CLAUDE.md, all member MEMORYs, tools/README.md, character_sheet_stan
 ### Style Frames
 - **SF01 Discovery**: v003
 - **SF02 Glitch Storm**: v005
-- **SF03 Other Side**: v003
-- **SF04 Luma+Byte**: v001 — Luma CURIOUS, Byte WORRIED on shoulder, dual warm/cool lighting. **Byte teal = intentional blend** (BYTE_FILL (0,190,210) + BYTE_SH (0,110,140) α180 shadow — not a palette error)
+- **SF03 Other Side**: v004 NEW C27 (confetti constrained to 150px of platform/chars — 16-cycle carry-forward CLOSED)
+- **SF04 Luma+Byte**: v002 NEW C27 (procedural quality: wobble outlines, variable stroke, face lighting, cyan rim light)
 - **Note:** All `*_styled*.png` post-processing outputs DELETED C26. Rin's role is now procedural generation, not post-processing. Stylize tools → legacy/.
 
 ### Logo
@@ -43,15 +43,41 @@ Rule is in: CLAUDE.md, all member MEMORYs, tools/README.md, character_sheet_stan
 - Cosmo: expr v004, turnaround v002 (side view fixed) NEW C25, color model v001 NEW C25
 - Miri: expr v003 (KNOWING expression added) NEW C25, turnaround v001, color model v001
 - Glitch: expr v002, turnaround v002, color model v001
-- Character lineup: v004 (all 5)
+- Character lineup: v005 NEW C27 (Luma updated to v006 construction — 8-ellipse hair, cheek nubs)
+- **Luma turnaround v002: line weight still heavy** — flagged for C28 fix (v003 needed)
 
 ### Environments
-All complete (Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street) — styled versions present
+All complete (Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street)
 
 ### Documentation
 - Pitch brief: `ltg_pitch_brief_v001.md` — COMPLETE
 - Delivery manifest: `pitch_delivery_manifest_v001.md`
 - Pitch package index: updated C25
+
+## Cycle 27 — Completed
+
+### Alex Chen
+- Pitch package audit: all assets confirmed present on disk → VERDICT: READY for Critique 12
+- pitch_audit_cycle27.md written; pitch_package_index.md updated (Luma v006, C27 additions)
+
+### Sam Kowalski
+- SF03 v004: confetti constrained to within 150px of anchors (C16 carry-forward CLOSED)
+
+### Rin Yamamoto
+- SF04 v002: wobble outlines, variable_stroke, add_face_lighting(), add_rim_light() — first pitch asset with full procedural quality
+
+### Kai Nakamura
+- LTG_TOOL_render_qa_v001.py v1.1.0: asset_type param, warm/cool skipped for character sheets
+- QA re-run 29 assets: 6 PASS / 21 WARN / 2 FAIL
+  - FAIL: lineup v004 (stale — v005 now exists); classroom env (low contrast, low priority)
+  - SUNLIT_AMBER hue drift on Luma persists — needs generator investigation
+  - Style frame warm/cool WARN = expected dramatic lighting
+
+### Maya Santos
+- Lineup v005: Luma updated to v006 construction (8-ellipse hair, cheek nubs, near-circular eyes)
+- Luma turnaround v002 line weight flagged for C28 (still using heavy width=5-6)
+
+---
 
 ## Cycle 26 — Completed
 

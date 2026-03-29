@@ -6,7 +6,28 @@
 ## Image Output Rule
 **Prefer smallest resolution appropriate for the task. Hard limit: ≤ 1280px in both width and height.** Use `img.thumbnail((1280, 1280), Image.LANCZOS)` before saving any PNG. Preserve aspect ratio. Only use large sizes when fine detail inspection requires it. Detail crops also ≤ 1280×1280px. Note: SF04 and logo generated at 1920×1080 this cycle — resize agent corrected these in-place.
 
-## Cycle 26 State (current)
+## Cycle 27 State (current)
+
+**C27 key decisions:**
+- **Luma expression sheet v006 CONFIRMED**: Maya delivered v006 with 3-tier line weight fix (head=4, structure=3, detail=2 at 2× buffer). v005 had correct construction but 2× heavy lines. v006 now matches classroom pose standard. PITCH PRIMARY for Luma character sheet.
+- **Miri expression sheet v003 CONFIRMED**: On disk. KNOWING expression present (PENSIVE replaced). Narrative secret visible in character design.
+- **Rin face lighting delivered**: `add_face_lighting()` in `LTG_TOOL_procedural_draw_v001.py` v1.1.0. Artistry extraction complete — all 5 techniques now implemented.
+- **SUNLIT_AMBER QC false positive**: `LTG_TOOL_color_verify_v001.py` false-positives on Luma/Miri character sheets due to skin tone hue overlap (~18-25°). Workaround: validate sampled pixels manually. Not a rendering defect.
+- **Pitch package audit C27**: ALL assets present on disk. READY for Critique 12. Weakest link: SF01 v003 still UNLOCKED (v004 not yet delivered). Ships as v003.
+- **Index updated**: C26 + C27 additions sections added, Luma entry bumped to v006, Miri v003 marked COMPLETE, pipeline retirement documented.
+- **Inbox cleared**: All 6 C26/C27 messages archived.
+
+**C27 canonical asset versions (for Critique 12):**
+- Luma expression sheet: v006
+- Byte expression sheet: v004
+- Cosmo expression sheet: v004
+- Miri expression sheet: v003
+- Glitch expression sheet: v002
+- Character lineup: v004
+- SF01: v003 (open for v004), SF02: v005, SF03: v003, SF04: v001
+- Logo: `LTG_BRAND_logo_v001.png`
+
+## Cycle 26 State (previous)
 
 **C26 key decisions:**
 - **New critics panel**: 15 all-new brutal critics replace the old panel. Critics: Takeshi Mori, Ingrid Solberg, Daisuke Kobayashi, Priya Nair, Marcus Webb, Chiara Ferrara, Dr. Samuel Osei, Yuki Tanaka, Reinhardt Böhm, Amara Diallo, Jonas Feld, Dr. Leila Asgari, Sven Halvorsen, Nkechi Adeyemi, Petra Volkov. All bio files in `critics/`. All old critic files deleted. New critics review ALL output, not just latest cycle. Standing rule added: no comments on resolution/pixel dimensions.

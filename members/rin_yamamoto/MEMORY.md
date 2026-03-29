@@ -79,5 +79,21 @@ All key techniques have been extracted to MEMORY and implemented. No further rea
 - Kai Nakamura: `LTG_TOOL_render_qa_v001.py` — silhouette_test/value_study interfaces matched
 - Reports to Alex Chen
 
+## C27 Completed Work
+- `output/tools/LTG_COLOR_styleframe_luma_byte_v002.py` — SF04 v002 generator
+- `output/color/style_frames/LTG_COLOR_styleframe_luma_byte_v002.png` — 1280×720
+- Procedural quality applied: wobble_polygon (hair silhouette, hoodie torso, window frame, arm),
+  wobble_line (baseboard, desk edge, window frame outer, eyebrows), variable_stroke (Luma head
+  perimeter 8-arc chain, Byte body perimeter 8-arc chain), add_face_lighting (Luma, warm upper-left,
+  SKIN_SH shadow, SKIN_HL highlight), add_rim_light (Luma, BYTE_TEAL cool rim from monitor, width=3)
+
+## C27 Lessons
+- Composition scales: use SX/SY factors (W/1920, H/1080) to port 1920×1080 coords to 1280×720
+- variable_stroke on character perimeters: best done as 8-arc segments around an ellipse — smooth,
+  tapered, organic result without breaking fill underneath
+- add_face_lighting before add_rim_light: face lighting shapes form, rim defines silhouette edge
+- wobble_polygon on hair works beautifully: organic silhouette edge with fill preserved
+- Always refresh draw = ImageDraw.Draw(img) after variable_stroke / add_rim_light / add_face_lighting
+
 ## Joined
 Cycle 23 (2026-03-29)

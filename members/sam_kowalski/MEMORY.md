@@ -190,11 +190,16 @@
 - **SUNLIT_AMBER false positive in QC tool — known limitation.** `verify_canonical_colors()` radius=40 samples skin tone pixels (hue ~18-25°) on Luma character sheets, causing false SUNLIT_AMBER fails. To document for Kai when next collaborating. Actual SUNLIT_AMBER placement in Luma assets should be verified from generator source, not QC tool alone.
 - **GL-04b luminance VERIFIED.** master_palette.md Section 2 GL-04b entry reads "approximately 0.017" — correct. C25 order-of-magnitude fix is intact.
 
+## Cycle 27 Lessons
+- **SF03 confetti constraint method.** Reject-sample within 150px of an anchor: pick random anchor, random polar offset, reject if nearest_anchor_dist > 150px, cap at 200 attempts. All 50 particles confirmed within 145px max. X range 159-539px, Y range 555-872px — correctly clustered around left platform area.
+- **thumbnail() before save is the image size rule enforcement point.** Call `img.thumbnail((1280, 1280), Image.LANCZOS)` immediately before `img.save()`. It preserves aspect ratio — 1920x1080 becomes 1280x720 automatically.
+- **SF03 v004 generated.** `output/color/style_frames/LTG_COLOR_styleframe_otherside_v004.png` (1280x720, 79KB). Generator: `output/tools/LTG_TOOL_style_frame_03_other_side_v004.py`. Zero warm light sources confirmed.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001 (TERRA_CYAN_LIT still old value). v001 likely superseded by v005 — low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan should add inline comment on next revision pass (low priority).
 - BYTE_GLOW (0,168,180) vs GL-01a (0,168,192): CLOSED as acceptable. Jordan may add inline comment on next pass (low priority, not a production fix).
-- SF03 confetti full-canvas distribution still unresolved (carry from C16). Constrain to within 150px of platform for v004.
+- ~~SF03 confetti full-canvas distribution~~ **RESOLVED C27.** v004 constrains to 150px of anchors.
 - SF03 v003 UV_PURPLE_MID/DARK — Jordan to add inline comment citing ENV-11/ENV-12 (values confirmed matching).
 - Tech Den generator WALL_WARM slightly off from TD-01 — Jordan to add citing comment.
 - ~~**Rin Yamamoto SF02 + SF03 styled_v002: STILL FAILING.** UV_PURPLE Δ13-14° hue rotation.~~ **CLOSED (C26).** Post-processing pipeline retired. No styled outputs exist. Issue moot.

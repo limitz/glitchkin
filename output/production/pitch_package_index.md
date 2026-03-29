@@ -402,6 +402,7 @@
 | Byte expression sheet v004 | `/home/wipkat/team/output/characters/main/LTG_CHAR_byte_expression_sheet_v004.png` | CRACKED EYE glyph corrected per byte.md Section 9B (void-black crack overlay, not pixel state). STORM arm asymmetry 20+ units (unambiguous from RESIGNED). RELUCTANT JOY asymmetric (one arm resisting). POWERED DOWN squash 0.75 (unambiguous vs NEUTRAL). Supersedes v003. (Cycle 22 — Maya Santos) |
 | Cosmo expression sheet v004 | `/home/wipkat/team/output/characters/main/LTG_CHAR_cosmo_expression_sheet_v004.png` | SKEPTICAL arm posture fixed: arm_dy 2/2 (near-neutral, contained) vs previous -14/-10 (read as SURPRISED). body_squash 0.92 added. Supersedes v003. (Cycle 22 — Maya Santos) |
 | Luma expression sheet v004 | `/home/wipkat/team/output/characters/main/LTG_CHAR_luma_expression_sheet_v004.png` | show_guides=False clean export. CURIOUS upgraded: brow asymmetry -0.34HR, wider eye aperture, forward lean. Supersedes v003. Pitch export version. (Cycle 22 — Maya Santos) |
+| Luma expression sheet v005 | `/home/wipkat/team/output/characters/main/LTG_CHAR_luma_expression_sheet_v005.png` | Full-body silhouette differentiation in all 6 poses. Classroom-style head construction: circle+chin+cheek nubs, 8-ellipse cloud hair, near-circular eyes. Warm parchment BG. Hoodie pixel pattern legible. Per-expression hoodie color map. Supersedes v004. (Cycle 26 — Maya Santos) |
 | Luma expression sheet v004 (guides) | `/home/wipkat/team/output/characters/main/LTG_CHAR_luma_expression_sheet_v004_guides.png` | Construction guides visible version. Internal production reference only — do not ship in pitch package. (Cycle 22 — Maya Santos) |
 | Tech Den v004 | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_tech_den_v004.png` | Light shaft repositioned into desk zone (apex near window edge, base on DESK_TOP_Y). Three individuated monitor glow zones (CRT1/CRT2/flat panel — distinct temperature areas). Supersedes v003. (Cycle 22 — Jordan Reed) |
 | Grandma Kitchen v003 | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_grandma_kitchen_v003.png` | Side wall texture extended to all three wall surfaces (polygon mask approach). Floor grid conflict resolved: single perspective-correct grid with non-linear horizontal spacing. Supersedes v002. (Cycle 22 — Jordan Reed) |
@@ -534,8 +535,8 @@ All critical path assets verified on disk. No blocking issues found. The package
 |---|---|---|
 | Show logo (canonical) | **RESOLVED** | `LTG_BRAND_logo_v001.png` delivered. Logo ambiguity closed after 24 cycles. |
 | SF04 — Luma+Byte dynamic | **DELIVERED** | `LTG_COLOR_styleframe_luma_byte_v001.png` — Valentina's P1 gap closed. |
-| Luma canonical alignment | IN PROGRESS | Directive sent to Maya. v005 expression sheet + v002 turnaround pending. |
-| Miri KNOWING expression | IN PROGRESS | Directive sent to Maya. Miri v003 pending. |
+| Luma canonical alignment | **COMPLETE** | v005 (C26) style-aligned to classroom pose. v006 (C27) line weight corrected — 3-tier system matches classroom standard throughout. |
+| Miri KNOWING expression | **COMPLETE** | `LTG_CHAR_grandma_miri_expression_sheet_v003.png` delivered. KNOWING expression replaces PENSIVE. |
 | Character lineup — all 5 | **COMPLETE** | `LTG_CHAR_lineup_v004.png` — Glitch integrated at correct scale. |
 | Glitch expression sheet v002 | **COMPLETE** | 6 expressions, 1200×900, silhouette-level differentiation. |
 | Glitch turnaround v002 | **COMPLETE** | Shadow contrast fixed — profile no longer flat. |
@@ -562,3 +563,59 @@ All critical path assets verified on disk. No blocking issues found. The package
 | SF02 spec doc correction | `/home/wipkat/team/output/color/style_frames/style_frame_02_glitch_storm.md` | ENV-06 #9A8C8A→#96ACA2 and DRW-07 #C07A70→#C8695A corrected. Spec now matches generators. (Cycle 25 — Sam Kowalski) |
 | Master palette GL-04b fix | `/home/wipkat/team/output/color/palettes/master_palette.md` | GL-04b relative luminance 0.17→0.017 (order of magnitude error corrected). (Cycle 25 — Sam Kowalski) |
 | Miri color story section | `/home/wipkat/team/output/color/style_frames/ltg_style_frame_color_story.md` | "Grandma Miri — Palette as Narrative Signal" section added. CHAR-M values = camouflage, not just warmth. Production note: no GL hue drift in Miri scenes. (Cycle 25 — Sam Kowalski) |
+
+---
+
+### Cycle 26 Additions
+
+> **Pipeline change C26:** Post-processing stylization pipeline RETIRED. All `*_styled*.png` deliverables removed by producer directive. Style baked at draw time via procedural tools. Stylize tools moved to `output/tools/legacy/`.
+
+| Asset | File Path | Notes |
+|---|---|---|
+| Procedural draw library v1.0.0 | `/home/wipkat/team/output/tools/LTG_TOOL_procedural_draw_v001.py` | Wobble paths, variable stroke weight, silhouette-first methodology, rim lights, value study, silhouette test. Rin Yamamoto's artistry study extracted and implemented in PIL/Pillow. (Cycle 26 — Rin Yamamoto) |
+| Render QA tool | `/home/wipkat/team/output/tools/LTG_TOOL_render_qa_v001.py` | 5 QC checks: silhouette readability, value range, color fidelity, warm/cool separation, line weight. All C25 assets = 0 FAIL / 8 WARN. (Cycle 26 — Kai Nakamura) |
+| Color QC report C25 | `/home/wipkat/team/output/production/color_qc_c25_assets.md` | 7/10 assets cleared. SUNLIT_AMBER hue drift on Luma/Miri sheets flagged — confirmed QC tool false positive (skin tone overlap, hue ~18-25° vs target 34.3°). (Cycle 26 — Sam Kowalski) |
+| Luma expression sheet v005 | `/home/wipkat/team/output/characters/main/LTG_CHAR_luma_expression_sheet_v005.png` | Style-aligned to classroom pose: circle+chin+cheek nubs head, 8-ellipse cloud hair, near-circular eyes. Warm parchment BG. Full-body silhouette differentiation 6 poses. Supersedes v004. (Cycle 26 — Maya Santos) |
+| Luma turnaround v002 (front fix) | `/home/wipkat/team/output/characters/main/turnarounds/LTG_CHAR_luma_turnaround_v002.png` | Front view fixed to match Act 2 proportions. (Cycle 26 — Maya Santos) |
+
+#### Cycle 26 QC Notes
+
+- **SUNLIT_AMBER false positive:** `LTG_TOOL_color_verify_v001.py` at radius=40 will flag SUNLIT_AMBER FAIL on Luma/Miri character sheets due to skin tone hue overlap (~18-25° vs SUNLIT_AMBER target ~34.3°). Workaround: validate sampled pixels manually — if hue ~18-27° it is skin tone, not a color error. Does not affect environment/palette assets. (Sam Kowalski C26)
+- **SF04 Byte teal confirmed intentional:** `BYTE_FILL=(0,190,210)` with shadow alpha 180 on shadow half. Sam's sampled ~138-160 is correct lit+shadow blend under warm window key. No regen needed.
+
+---
+
+### Cycle 27 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| Luma expression sheet v006 | `/home/wipkat/team/output/characters/main/LTG_CHAR_luma_expression_sheet_v006.png` | **PITCH PRIMARY for Luma.** Line weight reduced to classroom-pose standard throughout: 3-tier system (head outline=4 / structure=3 / detail=2 at 2× buffer). v005 had correct construction but 2× too heavy lines. v006 now reads consistently with `LTG_CHAR_luma_classroom_pose_v002.png` across all 6 expressions. Generator: `output/tools/LTG_CHAR_luma_expression_sheet_v006.py`. (Cycle 27 — Maya Santos) |
+| Procedural draw library v1.1.0 | `/home/wipkat/team/output/tools/LTG_TOOL_procedural_draw_v001.py` | `add_face_lighting()` added: volumetric split-light for face areas using 4 composited RGBA layers (brow shadow, nose-on-cheek shadow, chin-on-neck shadow, highlight accent). Feathered alpha falloff, wobble_line organic edges, anatomical position ratios, fully seeded. PIL-only. (Cycle 27 — Rin Yamamoto) |
+| Face lighting test image | `/home/wipkat/team/output/tools/test_face_lighting_v001.png` | 600×300px test render: left panel warm real-world lighting, right panel cool Glitch-world lighting. (Cycle 27 — Rin Yamamoto) |
+
+#### Cycle 27 Pitch Package Audit
+
+**Audit date:** 2026-03-29. Full audit: `output/production/pitch_audit_cycle27.md`.
+
+**Verdict: READY for Critique 12.** All primary pitch assets confirmed on disk. No blocking gaps.
+
+| Requirement | C27 Status |
+|---|---|
+| All 4 style frames | PRESENT — SF01 v003 (open for v004), SF02 v005, SF03 v003, SF04 v001 |
+| Luma expression sheet | v006 PRESENT (line weight corrected) |
+| Byte expression sheet | v004 PRESENT |
+| Cosmo expression sheet | v004 PRESENT |
+| Miri expression sheet | v003 PRESENT (KNOWING expression delivered) |
+| Glitch expression sheet | v002 PRESENT |
+| All 5 turnarounds | PRESENT |
+| Character lineup v004 | PRESENT (all 5 characters) |
+| Canonical logo | PRESENT — `LTG_BRAND_logo_v001.png` |
+| All environments | PRESENT — Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street, Classroom, Luma's House |
+| Visual color models | PRESENT — all 4 characters |
+
+**Active non-blocking item:** SF01 v003 UNLOCKED — v004 not yet delivered. Ships as v003 for Critique 12. Luma inconsistency with expression sheets remains the weakest visible issue.
+
+---
+
+*Updated by Alex Chen, Art Director — Cycle 26 — 2026-03-29*
+*Updated by Alex Chen, Art Director — Cycle 27 — 2026-03-29*

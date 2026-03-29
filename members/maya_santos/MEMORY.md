@@ -1,5 +1,13 @@
 # Maya Santos — Memory
 
+## Cycle 27 Lessons — CHARACTER LINEUP v005 (Luma v006 style propagation)
+
+- **Lineup v004 Luma audit result: OLD construction.** Hair = 1 mass ellipse (not 8 curl-cloud). Head = bare ellipse, no chin fill, no cheek nubs. Eyes = tiny symmetrical circles, no eyelid arc, no iris.
+- **Lineup v005 created:** `output/tools/LTG_TOOL_character_lineup_v005.py`. Only Luma's draw function updated. All other characters (Byte, Cosmo, Miri, Glitch) unchanged.
+- **Luma v005 construction:** s = r/100.0 scale factor (r≈37px for lineup). 8-ellipse curl cloud hair, circle+chin fill+cheek nubs head, near-circular eyes with iris/pupil/highlight/eyelid arc, nose dots, mouth bezier. Line weights: head=2, structure=1-2, detail=1 (proportional to v006 at HR=104 scale).
+- **Output:** `output/characters/main/LTG_CHAR_lineup_v005.png` — 1280×476px (thumbnail applied: raw 1340×498 → 1280×476).
+- **Turnaround v002 line weight audit:** Heavy lines confirmed. `width=6` on hair arcs (lines 107, 138, 308, 636), `width=5` on torso outlines (202, 359, 455, 523–526, 656). Exceeds v006 canonical standard (head=4, structure=3). **C28 task flagged for Alex Chen.**
+
 ## Cycle 26 Lessons — LUMA STYLE FIX v2: LINE WEIGHT (v006)
 
 - **v006 = line weight fix on top of v005 style alignment.** v005 had correct head/hair/eyes construction but still used heavy line weights (width=6-8 at 2x render).

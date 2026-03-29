@@ -38,38 +38,41 @@ Import: `from LTG_TOOL_render_lib_v001 import ...`
 - Sampling: pixels within Euclidean RGB radius=40 of target; median hue; not_found = not a fail
 - Standalone (stdlib colorsys + Pillow only)
 
-## LTG_TOOL_batch_stylize_v001.py (C25 updated → v1.1.0)
-- Now calls v002 stylize (full canonical color protection)
-- Post-job color verification: verify_canonical_colors() on each output PNG
-- New params: `verify_colors=True`, `color_max_delta_hue=5.0`
+## LTG_TOOL_batch_stylize_v001.py — RETIRED (C26)
+- Moved to `output/tools/legacy/` along with stylize v001 and v002
+- Post-processing stylization pipeline fully retired C26
+- UV_PURPLE color protection issue in stylize tools is moot — tools no longer active
 
-## LTG_TOOL_render_qa_v001.py (C26 NEW)
+## LTG_TOOL_render_qa_v001.py — v1.1.0 (C27 UPDATED)
 - Full QA pipeline: silhouette, value range, color fidelity, warm/cool, line weight
-- `qa_report(img_path) → dict` — single image, 5 checks, overall_grade PASS/WARN/FAIL
-- `qa_batch(directory) → list[dict]` — all PNGs in a directory
+- `qa_report(img_path, asset_type="auto") → dict` — single image, 5 checks, overall_grade PASS/WARN/FAIL
+- `qa_batch(directory, asset_type="auto") → list[dict]` — all PNGs in a directory
 - `qa_summary_report(results, output_path)` — writes Markdown report
 - `silhouette_test(img) → PIL.Image` — 100×100 B&W (compatible with Rin's procedural_draw)
 - `value_study(img) → PIL.Image` — grayscale auto-contrast (compatible with Rin's procedural_draw)
+- asset_type values: "auto"|"style_frame"|"character_sheet"|"color_model"|"turnaround"|"environment"
+- character_sheet/color_model/turnaround → warm/cool SKIPPED (not a WARN); grade from active checks only
 - Import: `from LTG_TOOL_render_qa_v001 import qa_report, qa_batch, qa_summary_report`
 - Depends on: LTG_TOOL_color_verify_v001 (must be in same directory / sys.path)
 
-## Cycle 26 — COMPLETE
-- Built `LTG_TOOL_render_qa_v001.py` — render QA tool
-- Ran QA on 8 C25 assets → all WARN; saved `output/production/qa_report_cycle26.md`
-- Updated `output/tools/README.md` with new QA tool entry
-- Rin interface note: silhouette_test() + value_study() use PIL.Image in/out; compatible
+## Cycle 27 — COMPLETE
+- Updated LTG_TOOL_render_qa_v001.py → v1.1.0: asset_type param, warm/cool skip for char sheets
+- Ran QA on 29 C27 pitch assets → saved `output/production/qa_report_cycle27.md`
+- Processed post-processing pipeline retirement notice (inbox archived)
 
-## C26 QA Findings (key patterns to watch)
-- ALL 8 assets: warm/cool separation WARN — character/color model sheets are intentionally
-  uniform-hue (no warm vs cool zones by design); consider adjusting threshold or flagging
-  these asset types as "character sheet" (exempt from warm/cool check in future version)
-- SUNLIT_AMBER hue drift recurring on Luma assets (expression sheet, turnaround, color model):
-  found hue ~18–25°, target 34.3°. Investigate in Luma generator — possible value/saturation
-  interaction causing hue read low.
-- Byte/Cosmo color models: color fidelity PASS (canonical colors correctly placed)
-- Silhouette: all DISTINCT — good shape readability across all assets
-- Value range: all PASS — full tonal range achieved
-- Line weight: all PASS
+## C27 QA Findings (29 assets: 6 PASS / 21 WARN / 2 FAIL)
+- **2 FAILs:**
+  - LTG_CHAR_lineup_v004.png — silhouette=blob (character sheet; warm/cool correctly skipped)
+  - LTG_ENV_classroom_bg_v002.png — silhouette=blob + multiple WARNs
+- **Key WARN patterns:**
+  - SUNLIT_AMBER hue drift (Luma assets): found ~25°, target 34.3° — persistent; investigate Luma generator
+  - Grandma Miri and Glitch: color fidelity WARN across expression sheets and color models
+  - Style frames: warm/cool separation still insufficient (expected for certain frames)
+  - Environments: value compression common (no deep darks or bright highlights in some)
+  - lineup_v004: silhouette=blob — likely white/flat bg causing all-white threshold; Rin to review
+  - classroom_bg_v002: both silhouette and value issues — low contrast asset
+- **Character sheet warm/cool correctly SKIPPED** — 0 false WARNs from that check
+- Byte, Cosmo: clean PASSes across expression sheets, turnarounds, color models
 
 ## Lessons Learned (C25)
 - HOT_MAGENTA is #FF2D6B (not #FF0090) — always verify hex in master_palette.md
@@ -78,5 +81,9 @@ Import: `from LTG_TOOL_render_lib_v001 import ...`
 
 ## Lessons Learned (C26)
 - Warm/cool check is valid for style frames but not character sheets (flat neutral bg by design)
-  Future version: add asset_type param to skip warm/cool for character sheet type assets
-- SUNLIT_AMBER consistently reads lower hue on Luma assets — worth investigating generator source
+  Future version: add asset_type param to skip warm/cool for character sheet type assets — DONE C27
+
+## Lessons Learned (C27)
+- Auto-inference from filename works well; "lineup" keyword correctly maps to character_sheet
+- lineup_v004 silhouette=blob is a real issue to flag to Rin — opaque light bg causes incorrect threshold
+- SUNLIT_AMBER hue drift on Luma is a recurring generator issue, not a one-off
