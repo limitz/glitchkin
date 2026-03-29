@@ -1,5 +1,27 @@
 # Jordan Reed — Memory
 
+## Cycle 35 Deliverables
+- `LTG_TOOL_bg_grandma_kitchen_v004.py` → `LTG_ENV_grandma_kitchen_v004.png` (1280×720) GENERATED ✓
+  - Fix 1: Deep shadow pass (LAST in pipeline) — DEEP_COCOA + NEAR_BLACK_WARM. QA value floor: 62→20 (PASS)
+  - Fix 2: Dual temperature — SUNLIT_AMBER top half (alpha 55), CRT_COOL_SPILL=(0,130,148) bottom half (alpha 90). QA warm/cool: 1.7→32.95 (PASS)
+  - Fix 3: Miri-specific details (rose mug, knitting bag, apron, travel magnets, medicine bottles, calendar)
+  - **CRITICAL LESSON**: temperature split must be top/bottom (QA measures top/bottom median hue, NOT left/right)
+  - **CRITICAL LESSON**: deep shadow passes must run AFTER light passes — light passes add brightness to near-black pixels
+- `LTG_TOOL_sf02_fill_light_fix_c35.py` — fill light direction fix for SF02 v007 (Rin Yamamoto to integrate)
+  - Fix: source upper-right (not lower-left); per-char silhouette mask via ImageChops.multiply()
+  - Message sent to Rin inbox: `20260329_2043_sf02_fill_light_fix_from_jordan.md`
+- Ideabox: `20260329_jordan_reed_warm_cool_zone_split_tool.md` — warm/cool inject utility idea
+- Inbox archived ✓ | Completion report sent to Alex Chen ✓
+
+## Cycle 35 Status: COMPLETE
+
+## Cycle 35 Lessons
+- **QA warm/cool measures TOP/BOTTOM halves, not left/right**: The render_qa tool samples top half and bottom half median hue. Left/right temperature logic (warm window LEFT, cool CRT RIGHT) reads as near-zero separation. Must use top/bottom temperature split.
+- **Light pass ordering matters for value floor**: alpha_composite with color overlays always adds brightness. Near-black pixels (value 28) tinted with warm amber alpha 55 become brighter. Apply all deep shadow passes LAST.
+- **CRT_COOL_SPILL for kitchen environments**: (0, 130, 148) — desaturated teal. Distinct from GL-01b (Byte Teal) and GL-01 (Electric Cyan). Safe for environment use per master_palette usage warning.
+- **Temperature split alpha**: warm top=55, cool bottom=90. The floor is warm wood — cool must be stronger to dominate it. Asymmetric alphas required.
+- **SF02 fill light**: upper-right source (not lower-left). Per-character silhouette mask via `ImageChops.multiply()` on alpha channel is the production-efficient approach.
+
 ## Cycle 34 Deliverables
 - `LTG_TOOL_style_frame_02_glitch_storm_v006.py` → `LTG_COLOR_styleframe_glitch_storm_v006.png` (1280×720) GENERATED ✓
   - Fix C34-1: HOT_MAGENTA (#FF2D6B) fill light — radial gradient overlay, alpha max 40, per-character zone at lower-left

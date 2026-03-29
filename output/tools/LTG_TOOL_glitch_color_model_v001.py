@@ -59,7 +59,7 @@ SOFT_GOLD      = (232, 201,  90)
 
 def draw_character_silhouette(draw, cx, cy):
     """Simplified Glitch character front view for color model reference."""
-    rx, ry = 56, 50
+    rx, ry = 50, 56  # ry > rx: body taller than wide — spec §2.1
     # Shadow
     sh_pts = [(cx+4, cy-ry), (cx+rx+4, cy+8), (cx+4, cy+int(ry*1.1)+4), (cx-rx+4, cy-8)]
     draw.polygon(sh_pts, fill=UV_PURPLE)

@@ -3,18 +3,27 @@ LTG_TOOL_render_qa_v001.py
 ===========================
 Render Quality Assessment tool for "Luma & the Glitchkin."
 
-Evaluates rendered PNGs against LTG rendering standards across five checks:
+Evaluates rendered PNGs against LTG rendering standards across six checks:
   A. Silhouette readability
   B. Value range
   C. Color fidelity (wraps LTG_TOOL_color_verify_v001)
   D. Warm/cool separation
   E. Line weight consistency
+  F. Value ceiling guard (thumbnail downscale brightness loss detection)
 
 Author: Kai Nakamura (Technical Art Engineer)
 Created: Cycle 26 — 2026-03-29
-Version: 1.1.0
+Version: 1.3.0
 
 Changelog:
+  1.3.0 (Cycle 35): Check F — Value Ceiling Guard (Jordan Reed / C34 ideabox,
+                    implemented Morgan Walsh C35). Detects when thumbnail
+                    downscaling drops image max brightness below ≥225 threshold.
+                    Tests max value before and after thumbnail(), reports
+                    brightness_before, brightness_after, brightness_loss, and
+                    whether specular dots (isolated bright pixels) could restore
+                    the ceiling. WARN when after < 225 and before >= 225.
+                    PASS when after >= 225 or before < 225 (already dim).
   1.2.0 (Cycle 30): Automatic downscale to ≤1280px before QA checks.
                     Images larger than 1280px in either dimension are
                     downscaled (thumbnail, LANCZOS, aspect-ratio-preserved)
@@ -50,7 +59,7 @@ from LTG_TOOL_color_verify_v001 import verify_canonical_colors, get_canonical_pa
 # ---------------------------------------------------------------------------
 # Version
 # ---------------------------------------------------------------------------
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -424,6 +433,143 @@ def _check_line_weight(img: Image.Image, n_samples: int = _LINE_SAMPLE_COUNT) ->
 
 
 # ---------------------------------------------------------------------------
+# F. Value ceiling guard (Cycle 35 — Jordan Reed ideabox / Morgan Walsh)
+# ---------------------------------------------------------------------------
+
+def check_value_ceiling_guard(img_path: str) -> dict:
+    """
+    Detect when thumbnail downscaling drops the image's max brightness below
+    the ≥225 specular threshold.
+
+    Opens the original file at native resolution, records max brightness before
+    downscaling, then thumbnails to ≤1280px and records max brightness after.
+    Reports the loss and whether isolated specular dots (small clusters of
+    bright pixels ≤ 5px radius) might restore the ceiling.
+
+    Parameters
+    ----------
+    img_path : str
+        Path to the source PNG.
+
+    Returns
+    -------
+    dict
+        {
+          "brightness_before":  int,     # max brightness before thumbnail
+          "brightness_after":   int,     # max brightness after thumbnail
+          "brightness_loss":    int,     # before - after (0 if no loss)
+          "specular_candidate": bool,    # True if isolated bright clusters found
+          "specular_count":     int,     # count of isolated bright pixel regions
+          "pass":               bool,    # True if after >= 225 or before < 225
+          "notes":              list[str]
+        }
+    """
+    notes = []
+
+    # Load original at native resolution
+    orig = Image.open(img_path)
+    orig.load()
+    orig_rgb = orig.convert("L")
+    pixels_before = list(orig_rgb.getdata())
+    max_before = max(pixels_before)
+
+    # Downscale copy
+    downscaled = orig.copy()
+    if downscaled.width > _MAX_OUTPUT_PX or downscaled.height > _MAX_OUTPUT_PX:
+        downscaled.thumbnail((_MAX_OUTPUT_PX, _MAX_OUTPUT_PX), Image.LANCZOS)
+
+    ds_gray = downscaled.convert("L")
+    pixels_after = list(ds_gray.getdata())
+    max_after = max(pixels_after)
+    brightness_loss = max(0, max_before - max_after)
+
+    # Specular candidate detection: count isolated bright-pixel clusters in
+    # the PRE-downscale image (clusters ≤ 5px radius = "specular dot" scale)
+    specular_count = 0
+    specular_candidate = False
+
+    if max_before >= _VALUE_MIN_BRIGHT:
+        # Find all pixels >= 240 in original
+        bright_positions = [
+            (i % orig_rgb.width, i // orig_rgb.width)
+            for i, v in enumerate(pixels_before) if v >= 240
+        ]
+        # Cluster: a pixel is "isolated" if its 5×5 neighbourhood contains
+        # fewer than 25 other bright pixels (not a solid large highlight zone)
+        W_orig = orig_rgb.width
+        H_orig = orig_rgb.height
+        bright_set = set(bright_positions)
+
+        visited = set()
+        for (px, py) in bright_positions:
+            if (px, py) in visited:
+                continue
+            # BFS to find cluster size
+            cluster = set()
+            queue = [(px, py)]
+            while queue:
+                cx, cy = queue.pop()
+                if (cx, cy) in cluster:
+                    continue
+                cluster.add((cx, cy))
+                visited.add((cx, cy))
+                for dx in range(-1, 2):
+                    for dy in range(-1, 2):
+                        nx, ny = cx + dx, cy + dy
+                        if (
+                            0 <= nx < W_orig
+                            and 0 <= ny < H_orig
+                            and (nx, ny) in bright_set
+                            and (nx, ny) not in cluster
+                        ):
+                            queue.append((nx, ny))
+            # Clusters of 1–25 pixels are candidate specular dots
+            if 1 <= len(cluster) <= 25:
+                specular_count += 1
+
+        if specular_count > 0:
+            specular_candidate = True
+
+    # Determine pass/warn
+    if max_after >= _VALUE_MIN_BRIGHT:
+        # Ceiling preserved after downscale — PASS
+        passed = True
+    elif max_before < _VALUE_MIN_BRIGHT:
+        # Image was already dim before downscale — not a downscale regression
+        passed = True
+        notes.append(
+            f"Image max brightness {max_before} < {_VALUE_MIN_BRIGHT} even at native "
+            "resolution — value ceiling issue pre-dates thumbnail step"
+        )
+    else:
+        # max_before >= 225 but max_after < 225 — downscale ate the specular
+        passed = False
+        notes.append(
+            f"Thumbnail downscale dropped max brightness from {max_before} to "
+            f"{max_after} (lost {brightness_loss}) — specular highlights below ≥{_VALUE_MIN_BRIGHT} threshold"
+        )
+        if specular_candidate:
+            notes.append(
+                f"  {specular_count} isolated specular dot(s) detected — "
+                "adding small bright specular points to the composited output may restore ceiling"
+            )
+        else:
+            notes.append(
+                "  No isolated specular dots detected — value ceiling may need a general contrast lift"
+            )
+
+    return {
+        "brightness_before":  max_before,
+        "brightness_after":   max_after,
+        "brightness_loss":    brightness_loss,
+        "specular_candidate": specular_candidate,
+        "specular_count":     specular_count,
+        "pass":               passed,
+        "notes":              notes,
+    }
+
+
+# ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
 
@@ -482,6 +628,11 @@ def qa_report(img_path: str, asset_type: str = "auto") -> dict:
               "std_width": float, "outlier_count": int,
               "pass": bool, "notes": list[str]
           },
+          "value_ceiling": {
+              "brightness_before": int, "brightness_after": int,
+              "brightness_loss": int, "specular_candidate": bool,
+              "specular_count": int, "pass": bool, "notes": list[str]
+          },
           "overall_grade": "PASS|WARN|FAIL"
         }
 
@@ -528,6 +679,9 @@ def qa_report(img_path: str, asset_type: str = "auto") -> dict:
     # E — Line weight consistency
     line_weight_result = _check_line_weight(img)
 
+    # F — Value ceiling guard (thumbnail brightness loss detection)
+    value_ceiling_result = check_value_ceiling_guard(img_path)
+
     # --- Grading logic ---
     # FAIL: silhouette=blob, value range completely fails (no dark AND no bright)
     # WARN: any single *active* check fails
@@ -561,6 +715,14 @@ def qa_report(img_path: str, asset_type: str = "auto") -> dict:
     if not line_weight_result["pass"]:
         warn_conditions.append("line_weight: inconsistent widths")
 
+    # Value ceiling guard
+    if not value_ceiling_result["pass"]:
+        warn_conditions.append(
+            f"value_ceiling: thumbnail dropped max brightness "
+            f"{value_ceiling_result['brightness_before']}→{value_ceiling_result['brightness_after']} "
+            f"(loss={value_ceiling_result['brightness_loss']})"
+        )
+
     if fail_conditions:
         overall_grade = "FAIL"
     elif warn_conditions:
@@ -579,6 +741,7 @@ def qa_report(img_path: str, asset_type: str = "auto") -> dict:
         "color_fidelity": color_result,
         "warm_cool": warm_cool_result,
         "line_weight": line_weight_result,
+        "value_ceiling": value_ceiling_result,
         "overall_grade": overall_grade,
         "_fail_conditions": fail_conditions,
         "_warn_conditions": warn_conditions,
@@ -641,14 +804,14 @@ def qa_summary_report(results: list, output_path: str):
     # Summary table
     lines.append("## Summary")
     lines.append("")
-    lines.append("| File | Asset Type | Silhouette | Value Range | Color Fidelity | Warm/Cool | Line Weight | Grade |")
-    lines.append("|------|-----------|-----------|-------------|----------------|-----------|-------------|-------|")
+    lines.append("| File | Asset Type | Silhouette | Value Range | Color Fidelity | Warm/Cool | Line Weight | Value Ceiling | Grade |")
+    lines.append("|------|-----------|-----------|-------------|----------------|-----------|-------------|---------------|-------|")
 
     for r in results:
         fname = Path(r["file"]).name
         atype = r.get("asset_type", "—")
         if "error" in r:
-            lines.append(f"| {fname} | {atype} | ERROR | — | — | — | — | **FAIL** |")
+            lines.append(f"| {fname} | {atype} | ERROR | — | — | — | — | — | **FAIL** |")
             continue
 
         sil = r["silhouette"]["score"]
@@ -661,9 +824,10 @@ def qa_summary_report(results: list, output_path: str):
         else:
             wc = "PASS" if wc_data.get("pass", True) else "WARN"
         lw = "PASS" if r["line_weight"]["pass"] else "WARN"
+        vc = "PASS" if r.get("value_ceiling", {}).get("pass", True) else "WARN"
         grade = r["overall_grade"]
         grade_fmt = f"**{grade}**" if grade in ("FAIL", "WARN") else grade
-        lines.append(f"| {fname} | {atype} | {sil} | {vr} | {cf} | {wc} | {lw} | {grade_fmt} |")
+        lines.append(f"| {fname} | {atype} | {sil} | {vr} | {cf} | {wc} | {lw} | {vc} | {grade_fmt} |")
 
     lines.append("")
 
@@ -773,6 +937,23 @@ def qa_summary_report(results: list, output_path: str):
             for note in lw["notes"]:
                 lines.append(f"  - {note}")
         lines.append("")
+
+        # F — Value ceiling guard
+        vc = r.get("value_ceiling", {})
+        if vc:
+            vc_status = "PASS" if vc.get("pass", True) else "WARN"
+            lines.append(
+                f"**F. Value Ceiling Guard:** {vc_status} — "
+                f"before={vc.get('brightness_before', '?')}, "
+                f"after={vc.get('brightness_after', '?')}, "
+                f"loss={vc.get('brightness_loss', 0)}, "
+                f"specular_dots={vc.get('specular_count', 0)}"
+            )
+            if vc.get("notes"):
+                for note in vc["notes"]:
+                    lines.append(f"  - {note}")
+            lines.append("")
+
         lines.append("---")
         lines.append("")
 

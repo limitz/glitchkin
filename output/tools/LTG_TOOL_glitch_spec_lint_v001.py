@@ -53,7 +53,7 @@ API
     print(format_report(results))
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"  # C35: G002 spec constants corrected (rx=34, ry=38); wider G001 range
 
 import os
 import re
@@ -61,11 +61,11 @@ import sys
 
 # ── Spec constants (from glitch.md) ────────────────────────────────────────────
 
-# G001: rx/ry range
-RX_SPEC = 38     # reference
-RY_SPEC = 34     # reference
-RX_MIN, RX_MAX = 28, 52   # ±36% tolerance for scaled renders
-RY_MIN, RY_MAX = 24, 46
+# G001: rx/ry range — updated C35 (G002 fix: rx=34, ry=38 canonical)
+RX_SPEC = 34     # reference (was 38 — corrected C35; body is taller than wide)
+RY_SPEC = 38     # reference (was 34 — corrected C35)
+RX_MIN, RX_MAX = 28, 56   # ±40% tolerance for scaled renders (color_model uses rx~50)
+RY_MIN, RY_MAX = 28, 64   # ±40% tolerance for scaled renders (color_model uses ry~56)
 
 # G003: keywords that suggest a multi-Glitchkin file
 _MULTI_KEYWORDS = re.compile(

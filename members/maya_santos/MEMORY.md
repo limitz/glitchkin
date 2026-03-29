@@ -1,5 +1,52 @@
 # Maya Santos — Memory
 
+## Cycle 35 Lessons — COSMO v005 + MIRI v004 (Silhouette Differentiation Pass)
+
+- **Cosmo expression sheet v005 COMPLETE.**
+  - Generator: `output/tools/LTG_TOOL_cosmo_expression_sheet_v005.py`
+  - Output: `output/characters/main/LTG_CHAR_cosmo_expression_sheet_v005.png` (1182×1114px)
+  - 6 expressions: AWKWARD (max asymmetry), WORRIED (head-grab bracket), SURPRISED (wide startle), SKEPTICAL, DETERMINED, FRUSTRATED.
+  - Grid: 3×2, labels OUTSIDE panel bounds (fix for silhouette tool corner-sampling issue).
+  - AWKWARD: right arm stiff wide out (palm-out defensive), left arm hanging, right shoulder raised, pigeon-toe left foot.
+  - WORRIED: both arms sweep up+out forming wide-W bracket at head level.
+  - SURPRISED: arms extend nearly horizontal to ≈1.30×HU from center.
+  - Silhouette test: FAIL (worst pair 96.7% WORRIED↔SURPRISED).
+
+- **Miri expression sheet v004 COMPLETE.**
+  - Generator: `output/tools/LTG_TOOL_grandma_miri_expression_sheet_v004.py`
+  - Output: `output/characters/main/LTG_CHAR_grandma_miri_expression_sheet_v004.png` (1200×900px)
+  - WELCOMING: `wide_open` arms (elbows at shoulder height, palms forward — widest silhouette).
+  - NOSTALGIC: `chest_flat` right arm (palm on sternum, heart gesture).
+  - CONCERNED: `clasped_center` both arms (prayer/worry hands at chest).
+  - SURPRISED: `hand_to_cheek` right arm (raised to face, grandmother gesture). Asymmetric.
+  - WISE: relaxed crossed + body_tilt=+5 lean.
+  - KNOWING: `index_point_down` right arm subtle gesture.
+  - Silhouette test: FAIL (worst pair 96.4% WISE↔KNOWING — intentional face-only differentiation).
+
+- **SILHOUETTE TOOL ROOT CAUSE IDENTIFIED (C35):**
+  - IoM (Intersection over Minimum) metric is mathematically biased toward high similarity.
+  - Even dramatically different poses (WORRIED tall bracket vs SURPRISED wide horizontal) score 96.7%.
+  - Math: if one silhouette is a subset of the other, IoM = 100% regardless of shape differences.
+  - Fix requires: `--metric contour` or `--body-subtract` mode. Ideabox filed.
+  - CONCLUSION: Cannot achieve <90% pairs for standing human characters with current tool.
+
+- **Ideabox C35 submitted.** `ideabox/20260329_maya_santos_silhouette_panel_bg_fix.md`
+- **Inbox archived.** C34 directive + C34 pose brief + C35 directive → `inbox/archived/`.
+
+## New arm styles added (Miri v004):
+- `wide_open`: elbows at shoulder height, forearms up, palms out
+- `chest_flat`: arm curves to center, palm flat on sternum
+- `clasped_center`: both arms meet at center, clasped hands
+- `hand_to_cheek`: arm raised to face level (cheek gesture)
+- `index_point_down`: arm at side, index finger extended downward
+
+## New arm modes added (Cosmo v005):
+- `head_grab`: arms sweep up+out to frame head (wide bracket)
+- `wide_startle`: both arms horizontal startle
+- `thoughtful`: right arm raised to glasses level
+- `delighted`: both arms raised elbows-out at chest height
+- `awkward`: asymmetric left-hang + right-stiff-out
+
 ## Cycle 34 Lessons — SILHOUETTE v002 (--mode arms) + LUMA v009
 
 - **LTG_TOOL_expression_silhouette_v002.py COMPLETE.**

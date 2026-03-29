@@ -25,9 +25,9 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 *Luma at the CRT — warm lamp from upper-left, cool CRT rim from the right. Procedural wobble outlines, variable stroke, face lighting.*
 ![SF01 Discovery](output/color/style_frames/LTG_COLOR_styleframe_discovery_v005.png)
 
-### SF02 — Glitch Storm (v006)
-*Luma sprinting through a cascade of Glitchkin. C34: HOT_MAGENTA fill light + ELEC_CYAN specular on Luma added.*
-![SF02 Glitch Storm](output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v006.png)
+### SF02 — Glitch Storm (v007)
+*Luma sprinting through a cascade of Glitchkin. C35: FOCUSED DETERMINATION face added, 10° torso lean, steeper hair stream, bbox fix.*
+![SF02 Glitch Storm](output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v007.png)
 
 ### SF03 — The Other Side (v005)
 *The Glitch Layer. UV_PURPLE_DARK saturation corrected. Zero warm light — UV ambient only.*
@@ -61,14 +61,16 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 ### Byte — Turnaround (v001)
 ![Byte Turnaround](output/characters/main/turnarounds/LTG_CHAR_byte_turnaround_v001.png)
 
-### Cosmo — Expression Sheet (v004)
-![Cosmo Expressions](output/characters/main/LTG_CHAR_cosmo_expression_sheet_v004.png)
+### Cosmo — Expression Sheet (v005)
+*C35: AWKWARD (max asymmetry, jagged silhouette), WORRIED (head-grab bracket) per Lee's brief.*
+![Cosmo Expressions](output/characters/main/LTG_CHAR_cosmo_expression_sheet_v005.png)
 
 ### Cosmo — Turnaround (v002)
 ![Cosmo Turnaround](output/characters/main/turnarounds/LTG_CHAR_cosmo_turnaround_v002.png)
 
-### Grandma Miri — Expression Sheet (v003 — KNOWING STILLNESS)
-![Grandma Miri Expressions](output/characters/main/LTG_CHAR_grandma_miri_expression_sheet_v003.png)
+### Grandma Miri — Expression Sheet (v004)
+*C35: WELCOMING (wide-open arms), SURPRISED/DELIGHTED (hand-to-cheek asymmetric hook) per Lee's brief.*
+![Grandma Miri Expressions](output/characters/main/LTG_CHAR_grandma_miri_expression_sheet_v004.png)
 
 ### Glitch — Expression Sheet (v003 — interior states: YEARNING / COVETOUS / HOLLOW)
 *Bilateral eyes = genuine feeling. Destabilized right eye = performance mode.*
@@ -81,8 +83,9 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 
 ## Backgrounds & Environments
 
-### Grandma's Kitchen (v003)
-![Kitchen](output/backgrounds/environments/LTG_ENV_grandma_kitchen_v003.png)
+### Grandma's Kitchen (v004)
+*C35: Value floor 62→20, warm/cool separation 1.7→32.95, Miri-specific spatial identity added.*
+![Kitchen](output/backgrounds/environments/LTG_ENV_grandma_kitchen_v004.png)
 
 ### Tech Den — Cosmo's Workspace (v004)
 ![Tech Den](output/backgrounds/environments/LTG_ENV_tech_den_v004.png)
@@ -122,7 +125,7 @@ Three-world palette system:
 
 ---
 
-## Team (Cycle 34)
+## Team (Cycle 35)
 
 | Member | Role | Status |
 |--------|------|--------|
@@ -139,23 +142,29 @@ Three-world palette system:
 
 ## Progress
 
-- **Work cycles:** 34 | **Critique cycles:** 14
-- **Next:** Cycle 35
-- **Ideabox:** 8 ideas actioned C34 (all queued C35)
+- **Work cycles:** 35 | **Critique cycles:** 14
+- **Next:** Cycle 36
+- **Ideabox:** 8 ideas actioned C35 (all queued C36)
 
 ### Pitch Package Status
 | Asset | Latest | Notes |
 |-------|--------|-------|
-| SF01 Discovery | v005 | rim_light bug fixed C34 |
-| SF02 Glitch Storm | **v006** | fill light + cyan specular C34 |
+| SF01 Discovery | v005 | unchanged |
+| SF02 Glitch Storm | **v007** | C35: Luma face (FOCUSED DETERMINATION), torso lean, hair stream, bbox fix |
 | SF03 The Other Side | v005 | unchanged |
-| SF04 Luma + Byte | v004 | rim_light bug fixed C34 |
-| Luma expressions | **v009** | eye-width 22px, pose vocabulary C34 |
+| SF04 Luma + Byte | v004 | unchanged |
+| Luma expressions | v009 | unchanged |
 | Luma turnaround | v004 | unchanged |
-| Byte expressions | v005 | UNGUARDED WARMTH added C33 |
+| Byte expressions | v005 | unchanged |
+| Cosmo expressions | **v005** | C35: AWKWARD + WORRIED per Lee's brief |
+| Miri expressions | **v004** | C35: WELCOMING + SURPRISED/DELIGHTED per Lee's brief |
 | Character lineup | v007 | unchanged |
 | Logo | v001 | Canonical |
-| Environments | — | All 5 complete |
+| Kitchen | **v004** | C35: deep shadows, CRT warm/cool split, Miri spatial identity |
+| Tech Den | v004 | unchanged |
+| Glitch Layer | v003 | unchanged |
+| School Hallway | v002 | C35: perspective exponent t**1.5 (was t**0.6→t**2) |
+| Millbrook Street | v002 | unchanged |
 
 ---
 
@@ -163,7 +172,7 @@ Three-world palette system:
 
 One `CLAUDE.md` starts a producer agent. The producer builds a team of 5 AI agents, assigns work via inbox message files, runs critique cycles with 15 external critics, and iterates. No human drew these images.
 
-All output generated with Python + PIL (open source only). Generators in `output/tools/` — 135+ tools, compounding each cycle.
+All output generated with Python + PIL (open source only). Generators in `output/tools/` — 150+ tools, compounding each cycle.
 
 ---
 

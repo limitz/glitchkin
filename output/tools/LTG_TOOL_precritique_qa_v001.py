@@ -5,18 +5,20 @@ LTG_TOOL_precritique_qa_v001.py
 Pre-Critique QA Pipeline for "Luma & the Glitchkin."
 
 Single entry-point script that chains all existing QA tools and produces a
-consolidated Markdown report at output/production/precritique_qa_c34.md.
+consolidated Markdown report at output/production/precritique_qa_c35.md.
 
 Tools chained (in order):
-  1. LTG_TOOL_render_qa_v001.py     — size/resolution/quality checks on pitch PNGs
-  2. LTG_TOOL_color_verify_v002.py  — canonical color fidelity on style frames
+  1. LTG_TOOL_render_qa_v001.py       — size/resolution/quality checks on pitch PNGs
+                                        (v1.3.0: adds Check F value ceiling guard)
+  2. LTG_TOOL_color_verify_v002.py    — canonical color fidelity on style frames
   3. LTG_TOOL_proportion_verify_v001.py — head/body proportion checks on character sheets
-  4. LTG_TOOL_stub_linter_v001.py   — broken import detection in output/tools/
+  4. LTG_TOOL_stub_linter_v001.py     — broken import detection in output/tools/
   5. LTG_TOOL_palette_warmth_lint_v001.py — CHAR-M warmth compliance on master_palette.md
-  6. LTG_TOOL_glitch_spec_lint_v001.py  — Glitchkin generator spec validation
+  6. LTG_TOOL_glitch_spec_lint_v001.py    — Glitchkin generator spec validation
+  7. LTG_TOOL_readme_sync_v001.py     — README Script Index completeness audit
 
 Output:
-    output/production/precritique_qa_c34.md
+    output/production/precritique_qa_c35.md
 
 Exit codes:
     0 — All checks PASS
@@ -25,7 +27,7 @@ Exit codes:
 
 Author: Morgan Walsh (Pipeline Automation Specialist)
 Created: Cycle 34 — 2026-03-29
-Version: 1.0.0
+Version: 2.0.0 (Cycle 35: Section 7 README sync added; render_qa v1.3.0 value ceiling guard)
 """
 
 import os
@@ -53,6 +55,7 @@ from LTG_TOOL_color_verify_v002 import verify_canonical_colors, get_canonical_pa
 from LTG_TOOL_stub_linter_v001 import lint_directory as stub_lint_directory, format_report as stub_format_report
 from LTG_TOOL_palette_warmth_lint_v001 import lint_palette_file, format_report as palette_format_report
 from LTG_TOOL_glitch_spec_lint_v001 import lint_directory as glitch_lint_directory, format_report as glitch_format_report
+from LTG_TOOL_readme_sync_v001 import audit as readme_sync_audit, format_report as readme_sync_format_report
 
 from PIL import Image
 
@@ -60,10 +63,10 @@ from PIL import Image
 # Target file collections
 # ---------------------------------------------------------------------------
 
-# Pitch PNGs: style frames (current versions) + brand logo + storyboard export
+# Pitch PNGs: style frames (current versions as of C35) + brand logo + storyboard export
 PITCH_PNGS = [
     OUTPUT_DIR / "color" / "style_frames" / "LTG_COLOR_styleframe_discovery_v005.png",
-    OUTPUT_DIR / "color" / "style_frames" / "LTG_COLOR_styleframe_glitch_storm_v005.png",
+    OUTPUT_DIR / "color" / "style_frames" / "LTG_COLOR_styleframe_glitch_storm_v006.png",
     OUTPUT_DIR / "color" / "style_frames" / "LTG_COLOR_styleframe_otherside_v005.png",
     OUTPUT_DIR / "color" / "style_frames" / "LTG_COLOR_styleframe_luma_byte_v004.png",
     PROD_DIR / "LTG_BRAND_logo_v001.png",
@@ -73,7 +76,7 @@ PITCH_PNGS = [
 # Style frames for color verification
 STYLE_FRAMES = [
     OUTPUT_DIR / "color" / "style_frames" / "LTG_COLOR_styleframe_discovery_v005.png",
-    OUTPUT_DIR / "color" / "style_frames" / "LTG_COLOR_styleframe_glitch_storm_v005.png",
+    OUTPUT_DIR / "color" / "style_frames" / "LTG_COLOR_styleframe_glitch_storm_v006.png",
     OUTPUT_DIR / "color" / "style_frames" / "LTG_COLOR_styleframe_otherside_v005.png",
     OUTPUT_DIR / "color" / "style_frames" / "LTG_COLOR_styleframe_luma_byte_v004.png",
 ]
@@ -412,6 +415,42 @@ def run_palette_warmth_lint() -> dict:
     }
 
 
+def run_readme_sync() -> dict:
+    """
+    Run LTG_TOOL_readme_sync_v001 — cross-check LTG_TOOL_*.py on disk vs README Script Index.
+    Returns a summary dict.
+
+    readme_sync_audit result dict keys:
+        disk_tools, listed, legacy, unlisted, ghost, legacy_ghost, ok, result
+    """
+    result = readme_sync_audit(TOOLS_DIR)
+
+    unlisted_count = len(result.get("unlisted", []))
+    ghost_count    = len(result.get("ghost", []))
+    ok_count       = len(result.get("ok", []))
+
+    flagged = []
+    for name in result.get("unlisted", []):
+        flagged.append(f"  - UNLISTED: `{name}` (on disk, not in README Script Index)")
+    for name in result.get("ghost", []):
+        flagged.append(f"  - GHOST: `{name}` (in README, not on disk)")
+    for name in result.get("legacy_ghost", []):
+        flagged.append(f"  - LEGACY GHOST: `{name}` (marked retired, not in legacy/)")
+
+    overall = "PASS" if result.get("result") == "PASS" else "WARN"
+
+    return {
+        "overall": overall,
+        "pass": ok_count,
+        "warn": unlisted_count + ghost_count + len(result.get("legacy_ghost", [])),
+        "fail": 0,
+        "missing": [],
+        "flagged": flagged,
+        "disk_total": len(result.get("disk_tools", [])),
+        "listed_total": len(result.get("listed", [])),
+    }
+
+
 def run_glitch_spec_lint() -> dict:
     """
     Run LTG_TOOL_glitch_spec_lint_v001 on all generators in output/tools/.
@@ -468,13 +507,13 @@ def build_report(
     stub_lint_res,
     palette_lint_res,
     glitch_lint_res,
+    readme_sync_res,
     run_ts: str,
 ) -> str:
     """Compose the final Markdown report."""
 
     def section_header(title: str, result: dict) -> str:
         badge = _grade_line(result["overall"])
-        total = result["pass"] + result["warn"] + result["fail"]
         return (
             f"## {title} — {badge}\n\n"
             f"PASS: {result['pass']}  WARN: {result['warn']}  FAIL: {result['fail']}  "
@@ -500,23 +539,27 @@ def build_report(
         stub_lint_res["overall"],
         palette_lint_res["overall"],
         glitch_lint_res["overall"],
+        readme_sync_res["overall"],
     )
 
-    total_pass  = (render_qa_res["pass"]  + color_verify_res["pass"]  +
-                   proportion_res["pass"] + stub_lint_res["pass"]     +
-                   palette_lint_res["pass"] + glitch_lint_res["pass"])
-    total_warn  = (render_qa_res["warn"]  + color_verify_res["warn"]  +
-                   proportion_res["warn"] + stub_lint_res["warn"]     +
-                   palette_lint_res["warn"] + glitch_lint_res["warn"])
-    total_fail  = (render_qa_res["fail"]  + color_verify_res["fail"]  +
-                   proportion_res["fail"] + stub_lint_res["fail"]     +
-                   palette_lint_res["fail"] + glitch_lint_res["fail"])
+    total_pass  = (render_qa_res["pass"]   + color_verify_res["pass"]  +
+                   proportion_res["pass"]  + stub_lint_res["pass"]     +
+                   palette_lint_res["pass"] + glitch_lint_res["pass"]  +
+                   readme_sync_res["pass"])
+    total_warn  = (render_qa_res["warn"]   + color_verify_res["warn"]  +
+                   proportion_res["warn"]  + stub_lint_res["warn"]     +
+                   palette_lint_res["warn"] + glitch_lint_res["warn"]  +
+                   readme_sync_res["warn"])
+    total_fail  = (render_qa_res["fail"]   + color_verify_res["fail"]  +
+                   proportion_res["fail"]  + stub_lint_res["fail"]     +
+                   palette_lint_res["fail"] + glitch_lint_res["fail"]  +
+                   readme_sync_res["fail"])
 
     lines = [
-        "# Pre-Critique QA Report — Cycle 34",
+        "# Pre-Critique QA Report — Cycle 35",
         "",
         f"**Run date:** {run_ts}",
-        f"**Script:** LTG_TOOL_precritique_qa_v001.py v1.0.0",
+        f"**Script:** LTG_TOOL_precritique_qa_v001.py v2.0.0",
         "",
         "---",
         "",
@@ -532,6 +575,7 @@ def build_report(
         f"| Stub Linter (tools dir)        | {stub_lint_res['overall']}   | {stub_lint_res['pass']}   | {stub_lint_res['warn']}   | {stub_lint_res['fail']}   |",
         f"| Palette Warmth Lint            | {palette_lint_res['overall']}| {palette_lint_res['pass']}| {palette_lint_res['warn']}| {palette_lint_res['fail']}|",
         f"| Glitch Spec Lint               | {glitch_lint_res['overall']} | {glitch_lint_res['pass']} | {glitch_lint_res['warn']} | {glitch_lint_res['fail']} |",
+        f"| README Script Index Sync       | {readme_sync_res['overall']} | {readme_sync_res['pass']} | {readme_sync_res['warn']} | {readme_sync_res['fail']} |",
         "",
         "---",
         "",
@@ -582,9 +626,19 @@ def build_report(
     lines.append(flagged_block(glitch_lint_res))
     lines.append("")
 
+    # Section 7: README Script Index Sync
+    lines.append(section_header("7. README Script Index Sync", readme_sync_res))
+    lines.append("")
+    disk_total   = readme_sync_res.get("disk_total", "?")
+    listed_total = readme_sync_res.get("listed_total", "?")
+    lines.append(f"_(Tools on disk: {disk_total}  |  Tools listed in README: {listed_total})_")
+    lines.append("")
+    lines.append(flagged_block(readme_sync_res))
+    lines.append("")
+
     lines.append("---")
     lines.append("")
-    lines.append("*Generated by LTG_TOOL_precritique_qa_v001.py — Morgan Walsh, Pipeline Automation*")
+    lines.append("*Generated by LTG_TOOL_precritique_qa_v001.py v2.0.0 — Morgan Walsh, Pipeline Automation*")
 
     return "\n".join(lines)
 
@@ -595,32 +649,36 @@ def build_report(
 
 def main():
     run_ts = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-    print(f"[precritique_qa] Starting C34 QA pipeline — {run_ts}")
+    print(f"[precritique_qa] Starting C35 QA pipeline — {run_ts}")
     print(f"[precritique_qa] Repo root: {REPO_ROOT}")
 
-    print("[1/6] Running Render QA on pitch PNGs...")
+    print("[1/7] Running Render QA on pitch PNGs...")
     render_qa_res = run_render_qa()
     print(f"      → {render_qa_res['overall']} (PASS={render_qa_res['pass']}, WARN={render_qa_res['warn']}, FAIL={render_qa_res['fail']}, MISSING={len(render_qa_res['missing'])})")
 
-    print("[2/6] Running Color Verify on style frames...")
+    print("[2/7] Running Color Verify on style frames...")
     color_verify_res = run_color_verify()
     print(f"      → {color_verify_res['overall']} (PASS={color_verify_res['pass']}, WARN={color_verify_res['warn']})")
 
-    print("[3/6] Running Proportion Verify on character turnarounds...")
+    print("[3/7] Running Proportion Verify on character turnarounds...")
     proportion_res = run_proportion_verify()
     print(f"      → {proportion_res['overall']} (PASS={proportion_res['pass']}, WARN={proportion_res['warn']}, FAIL={proportion_res['fail']})")
 
-    print("[4/6] Running Stub Linter on output/tools/...")
+    print("[4/7] Running Stub Linter on output/tools/...")
     stub_lint_res = run_stub_linter()
     print(f"      → {stub_lint_res['overall']} (PASS={stub_lint_res['pass']}, WARN={stub_lint_res['warn']}, ERROR={stub_lint_res['fail']})")
 
-    print("[5/6] Running Palette Warmth Lint on master_palette.md...")
+    print("[5/7] Running Palette Warmth Lint on master_palette.md...")
     palette_lint_res = run_palette_warmth_lint()
     print(f"      → {palette_lint_res['overall']} (checked={palette_lint_res['pass'] + palette_lint_res['warn']}, violations={palette_lint_res['warn']})")
 
-    print("[6/6] Running Glitch Spec Lint on generators...")
+    print("[6/7] Running Glitch Spec Lint on generators...")
     glitch_lint_res = run_glitch_spec_lint()
     print(f"      → {glitch_lint_res['overall']} (PASS={glitch_lint_res['pass']}, WARN={glitch_lint_res['warn']}, FAIL={glitch_lint_res['fail']}, SKIP={glitch_lint_res.get('skip',0)})")
+
+    print("[7/7] Running README Script Index Sync audit...")
+    readme_sync_res = run_readme_sync()
+    print(f"      → {readme_sync_res['overall']} (OK={readme_sync_res['pass']}, UNLISTED/GHOST={readme_sync_res['warn']}, disk={readme_sync_res.get('disk_total','?')}, listed={readme_sync_res.get('listed_total','?')})")
 
     report_md = build_report(
         render_qa_res,
@@ -629,11 +687,12 @@ def main():
         stub_lint_res,
         palette_lint_res,
         glitch_lint_res,
+        readme_sync_res,
         run_ts,
     )
 
     PROD_DIR.mkdir(parents=True, exist_ok=True)
-    report_path = PROD_DIR / "precritique_qa_c34.md"
+    report_path = PROD_DIR / "precritique_qa_c35.md"
     report_path.write_text(report_md, encoding="utf-8")
     print(f"\n[precritique_qa] Report written to: {report_path}")
 
@@ -645,6 +704,7 @@ def main():
         stub_lint_res["overall"],
         palette_lint_res["overall"],
         glitch_lint_res["overall"],
+        readme_sync_res["overall"],
     )
 
     print(f"[precritique_qa] OVERALL: {overall}")

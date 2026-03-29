@@ -44,10 +44,10 @@ left  = (cx - int(rx * cos(-tilt)),       cy - int(rx * 0.2 * sin(-tilt)))
 ```
 
 **Key values (reference: expression sheet panels, 1× render):**
-- `rx` = 38px (horizontal half-extent)
-- `ry` = 34px (vertical half-extent before squash/stretch)
+- `rx` = 34px (horizontal half-extent)
+- `ry` = 38px (vertical half-extent before squash/stretch)
 - `cx, cy` = body center point
-- The diamond is taller than it is wide: `ry > rx`
+- The diamond is taller than it is wide: `ry > rx` (G002 fix — C35)
 - Bottom vertex sits slightly lower than the geometric midpoint: `cy + ry * 1.15`
 - Top vertex has a slight forward lean at non-zero tilt: the `0.15 * sin(tilt)` offset
 
@@ -450,7 +450,7 @@ To reproduce Glitch in any new generator:
    VOID_BLACK=(10,10,20), SOFT_GOLD=(232,201,90), ACID_GREEN=(57,255,20),
    ELEC_CYAN=(0,240,255), STATIC_WHITE=(248,246,236).
 
-2. **Compute body center** (cx, cy) for the view. Set rx=38, ry=34 (adjust for scale).
+2. **Compute body center** (cx, cy) for the view. Set rx=34, ry=38 (adjust for scale). `ry > rx` — body is taller than wide.
 
 3. **Draw hover confetti** FIRST (bottom layer) at position `(cx, cy + ry*squash*stretch*1.15 + 6)`.
 

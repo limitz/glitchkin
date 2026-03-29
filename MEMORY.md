@@ -4,9 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present.
 
 ## Status
-**Cycle 34 complete. Work cycles: 34. Critique cycles: 13.**
-**Critique 14 complete. Work cycles: 34. Critique cycles: 14.**
-**Cycle 35 starts next.**
+**Cycle 35 complete. Work cycles: 35. Critique cycles: 14.**
+**Next critique at C37 (every 3 work cycles).**
 
 ## Active Team (8 slots — expanded C34)
 
@@ -32,27 +31,32 @@ Before sending any image to Claude: prefer tools; downscale if lower-res suffice
 ## Critique Format
 Critics use: Score (0–100) → bullet issues (≤2 lines each) → single Bottom line sentence. ≤15 lines per asset. Rule in CLAUDE.md.
 
-## Pitch Package Status — POST CYCLE 34
+## Pitch Package Status — POST CYCLE 35
 
 ### Style Frames
-- **SF01 Discovery**: v005 (rim_light bug fixed C34 — was flooding ELEC_CYAN)
-- **SF02 Glitch Storm**: **v006 NEW C34** (HOT_MAGENTA fill light + ELEC_CYAN specular on Luma; Jordan Reed)
-- **SF03 Other Side**: v005 (Luma = intentional pixel-art silhouette; unchanged)
-- **SF04 Luma+Byte**: v004 (rim_light bug fixed C34 — was flooding warm amber)
+- **SF01 Discovery**: v005 (unchanged)
+- **SF02 Glitch Storm**: **v007 NEW C35** (Luma FOCUSED DETERMINATION face, 10° torso lean, steeper hair stream, bbox fix — Rin)
+- **SF03 Other Side**: v005 (unchanged)
+- **SF04 Luma+Byte**: v004 (unchanged)
+- NOTE: SF02 fill light direction fix (Jordan C35) NOT integrated into v007 — lands C36
 
 ### Logo
 - **LTG_BRAND_logo_v001.png** — DECIDED C25
 
 ### Characters
-- Luma: **expr v009 NEW C34** (eye-width 22px=HR×0.22, pose vocabulary for silhouette differentiation), turnaround v004, color model v002
-- Byte: expr v005 (UNGUARDED WARMTH), turnaround v001, color model v001
-- Cosmo: expr v004, turnaround v002, color model v001
-- Miri: expr v003 (KNOWING STILLNESS), turnaround v001
-- Glitch: expr v003 (YEARNING/COVETOUS/HOLLOW), turnaround v002, color model v001
+- Luma: expr v009, turnaround v004, color model v002
+- Byte: expr v005, turnaround v001, color model v001
+- Cosmo: **expr v005 NEW C35** (AWKWARD max-asymmetry, WORRIED head-grab — per Lee's brief)
+- Miri: **expr v004 NEW C35** (WELCOMING wide-open arms, SURPRISED/DELIGHTED hand-to-cheek — per Lee's brief)
+- Glitch: **expr v003 body ratio FIXED C35** (rx/ry were swapped — now taller than wide per spec G002)
 - Character lineup: v007 (unchanged)
 
 ### Environments
-All complete (Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street)
+- Kitchen: **v004 NEW C35** (value floor 62→20, warm/cool 1.7→32.95, Miri spatial identity)
+- Tech Den: v004 (unchanged)
+- Glitch Layer: v003 (unchanged)
+- School Hallway: v002 (C35: floor tiles t**1.5, lockers 1-(1-t)**1.5 — perspective fixed)
+- Millbrook Street: v002 (unchanged)
 
 ## Critical Bug Fixed C34 — add_rim_light() Canvas Flood
 `edge_mask.convert("RGBA")` set alpha=255 everywhere (not edge mask value), flooding entire canvas with rim color. Fixed: use edge_mask directly as alpha channel. Affected SF01 v004/v005, SF02 v006, SF04 v004 — all regenerated.
@@ -80,14 +84,24 @@ All complete (Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street)
 - Chiara: Kitchen=58, TechDen=62, GlitchLayer=74, Street=71, Hallway=55
 - Nkechi: Luma=58, SF02=72, SF04=65, Overall=68
 
-## Known Open Items for C35
-1. SF02 v007: Luma face (Rin + Lee + Jordan)
-2. Cosmo v005 + Miri v004 (Maya)
-3. Glitch G002 fix (Kai)
-4. Warm/cool system decision (Alex + Sam)
-5. Kitchen v004 rebuild (Jordan)
-6. Hallway v003 rebuild (Jordan or Rin) — perspective fixed, SUNLIT_AMBER/scale remain
-7. 35 unlisted README tools + value ceiling guard tool (Morgan)
+## Known Open Items for C36
+1. SF02 v008: integrate Jordan's fill light direction + masking fix (upper-right source, char-masked)
+2. Silhouette tool fix: IoM metric is broken for human chars — Maya's idea actioned (contour/delta metric)
+3. Jordan's warm/cool inject utility for Tech Den, Hallway, Millbrook Street
+4. 8 ideabox ideas actioned → C36 (all queued)
+5. Spec sync CI gate (Kai C36)
+6. Face test as mandatory gate in team ROLE.md files (Lee C36)
+7. Per-world warm/cool QA --world-type flag (Sam + Kai C36)
+8. QA delta report in precritique_qa (Morgan C36)
+9. Proportion audit asymmetric eye detection (Rin C36)
+
+## C35 Key Lessons
+- **Warm/cool QA metric**: measures TOP vs BOTTOM half hue — irrelevant to three-world palette. Per-world presets now in warmth_lint_config.json. SF03/SF04 near-zero warm ratio is CORRECT by design.
+- **SUNLIT_AMBER drift in SF04**: compositing artifact + skin-tone false positive. No fix needed. Registered in qa_false_positives.md.
+- **Silhouette IoM is broken for humans**: arm differentiation fails because shared trunk dominates. All FAIL results on human chars are tool defects, not pose defects.
+- **SF02 face finally delivered**: 3-cycle blocker resolved. Face test tool (Lee) now mandatory gate.
+- **Glitch G002**: rx/ry were swapped since original implementation. All 6 generators fixed.
+- **precritique_qa v2.0**: 7 sections now, 145 tools registered, QA baseline 302 PASS / 42 WARN / 0 FAIL.
 
 ## Ideabox — C30 (5 ideas, all filed)
 - Alex: proportion verifier tool (actioned → Kai C31)
@@ -272,15 +286,18 @@ Do NOT duplicate inbox message content in agent prompts. The inbox message IS th
 - Alex: lineup palette audit tool
 - Maya: expression silhouette --mode arms (regional similarity)
 
-## Shared Library (updated C34)
-`LTG_TOOL_procedural_draw_v001.py` (**v1.5.0** — scene_snapshot() added; add_rim_light() flood bug fixed C34)
-`LTG_TOOL_expression_silhouette_v002.py` — C34. Adds --mode arms (arm/shoulder region comparison)
-`LTG_TOOL_palette_warmth_lint_v002.py` — C34. Configurable prefix list via warmth_lint_config.json
-`LTG_TOOL_char_spec_lint_v001.py` — C34. General spec linter (Luma/Cosmo/Miri; 5 checks each)
-`LTG_TOOL_draw_order_lint_v002.py` — C34. Scope-aware W004; 147→69 warnings (53% FP reduction)
-`LTG_TOOL_lineup_palette_audit_v001.py` — C34. Verifies lineup PNG body colors vs master_palette.md
-`LTG_TOOL_precritique_qa_v001.py` — C34. Chains 6 QA tools; consolidated Markdown report
-`LTG_TOOL_expression_silhouette_v001.py` — C33. (superseded by v002 for new work)
-`LTG_TOOL_stub_linter_v001.py` — C33. Broken import scanner; --pre-commit flag
-`LTG_TOOL_glitch_spec_lint_v001.py` — C33. Glitchkin generator validator (G001–G008)
-`LTG_TOOL_palette_warmth_lint_v001.py` — C33. (superseded by v002)
+## Shared Library (updated C35)
+`LTG_TOOL_procedural_draw_v001.py` (v1.5.0 — scene_snapshot() + add_rim_light() flood fix C34)
+`LTG_TOOL_precritique_qa_v001.py` — **v2.0.0 C35**. 7 sections; README sync integrated; 302P/42W/0F baseline
+`LTG_TOOL_render_qa_v001.py` — **v1.3.0 C35**. Value ceiling guard (Check F); specular dot detection
+`LTG_TOOL_palette_warmth_lint_v003.py` — **C35**. soft-tolerance mode; world_presets in config
+`LTG_TOOL_readme_sync_v001.py` — **C35**. Audits LTG_TOOL_*.py vs README Script Index; Section 7 of precritique
+`LTG_TOOL_character_face_test_v001.py` — **C35** (Lee). Sprint-scale face legibility tester; 6 variants with PASS/WARN/FAIL
+`LTG_TOOL_spec_extractor_v001.py` — **C35** (Kai). Parses char spec .md files; extracts proportions, colors, constants
+`LTG_TOOL_glitch_spec_lint_v001.py` — v1.1.0 C35. RX_SPEC=34/RY_SPEC=38 corrected (G002 fix)
+`LTG_TOOL_expression_silhouette_v002.py` — C34. --mode arms. NOTE: IoM broken for humans (C35 finding); fix queued C36
+`LTG_TOOL_palette_warmth_lint_v002.py` — C34. (superseded by v003)
+`LTG_TOOL_char_spec_lint_v001.py` — C34. General spec linter (Luma/Cosmo/Miri)
+`LTG_TOOL_draw_order_lint_v002.py` — C34. Scope-aware W004
+`LTG_TOOL_lineup_palette_audit_v001.py` — C34. Lineup body color audit
+`LTG_TOOL_stub_linter_v001.py` — C33. Broken import scanner

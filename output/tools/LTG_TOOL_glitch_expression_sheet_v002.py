@@ -141,7 +141,7 @@ def draw_bottom_spike(draw, cx, cy_bot, spike_h=10):
     draw.polygon(pts, outline=VOID_BLACK, width=2)
 
 
-def draw_arm(draw, cx, cy, side='left', arm_dy=0, arm_dx=0, rx=40):
+def draw_arm(draw, cx, cy, side='left', arm_dy=0, arm_dx=0, rx=34):
     if side == 'left':
         ax  = cx - rx - 6
         ay  = cy + arm_dy
@@ -278,8 +278,8 @@ def draw_expression(draw, panel_cx, panel_cy, panel_w, panel_h,
                             arm_l_dy=-22, arm_r_dy=2,   spike_h=12, crack=True),
     }
     p  = params.get(expr, params['neutral'])
-    rx = 38
-    ry = 34
+    rx = 34  # horizontal half-extent (ry > rx: body taller than wide — spec §2.1)
+    ry = 38  # vertical half-extent
 
     cy_bot = cy + int(ry * p['squash'] * p['stretch'] * 1.15) + 6
     draw_hover_confetti(draw, cx, cy_bot, expr=expr, seed=hash(expr) % 100 + 1)

@@ -117,6 +117,30 @@ In generators that use `h = int(hu() * SCALE)` (head HEIGHT at scale):
   - Byte body fill fixed: BYTE_TEAL (0, 212, 232) canonical GL-01b (was (0, 190, 210))
   - Rim light fixed: side="right" — cyan only on monitor-facing side of Luma
 
+## C35 Completed Work
+- `LTG_TOOL_style_frame_02_glitch_storm_v007.py` — SF02 v007 generator (C35 face + pose pass)
+- `output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v007.png` — 1280×720px
+  - `_draw_luma_face_sprint(draw, cx, head_cy, head_r)`: FOCUSED DETERMINATION expression
+    - Left eye: radius = int(head_r*0.26) (wider), right eye: radius = int(head_r*0.17) (narrower)
+    - Pupils: small dark ellipses offset forward-down — doing gaze
+    - Left brow: angled inward-down (corrugator), right brow: flat/level (asymmetric interior read)
+    - Mouth: compressed horizontal line (jaw set, no smile, no fear oval)
+  - Torso lean 10°: polygon torso, head follows at half offset — body committed to motion
+  - Hair stream: more horizontal (velocity), second fine trailing strand
+  - `get_char_bbox()` misuse FIXED in `draw_cyan_specular_luma()` — now uses luma_cx directly
+- Ideabox: submitted proportion audit asymmetric eye detection idea
+
+## C35 Lessons
+- Asymmetric eye radii (`eye_r_left`/`eye_r_right`) need distinct variable names — proportion audit
+  regex looks for `ew = ` and won't find them. Document the ratio in comments and flag in report.
+- Torso lean as polygon: compute `lean_offset = int(torso_h * math.tan(math.radians(deg)))`,
+  offset top of torso forward, keep bottom at foot plumb. Head follows at lean_offset//2.
+- Face features drawn in a separate RGBA overlay AFTER all body compositing — prevents body
+  fills from painting over face elements. Always call face draw on a fresh overlay.
+- get_char_bbox() on a 3-character frame returns a bbox spanning all characters — useless for
+  single-character rim light. When character position is known from geometry, hardcode it.
+  Only use get_char_bbox() on a single-character crop or single-character layer.
+
 ## C34 Completed Work
 - `LTG_TOOL_procedural_draw_v001.py` bumped to **v1.5.0**
   - `scene_snapshot(img, region, label, out_dir) -> str` added

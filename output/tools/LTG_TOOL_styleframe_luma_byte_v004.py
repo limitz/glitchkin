@@ -66,7 +66,11 @@ def sp(n): return int(n * min(SX, SY))
 # ── Canonical Palette ─────────────────────────────────────────────────────────
 WARM_CREAM      = (250, 240, 220)
 SOFT_GOLD       = (232, 201,  90)
-SUNLIT_AMBER    = (212, 146,  58)
+SUNLIT_AMBER    = (212, 146,  58)   # RW-03 #D4923A — defined for reference; not placed in SF04.
+                                    # SF04 lamp halo uses (255,200,80) hue=41° — incandescent
+                                    # lamp amber, intentionally warmer/brighter than outdoor RW-03.
+                                    # Use RW-03 for sunlit-window/exterior surfaces; (255,200,80)
+                                    # for indoor lamp glow. C35 analysis: warm_cool_analysis_c35.md.
 TERRACOTTA      = (199,  91,  57)
 RUST_SHADOW     = (140,  58,  34)
 WARM_TAN        = (196, 168, 130)

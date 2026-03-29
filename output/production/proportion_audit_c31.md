@@ -17,6 +17,7 @@
 | `LTG_TOOL_style_frame_02_glitch_storm_v004.py` | Luma: sprint pose, no eyes (canonical N/A) | `head_r  = int(h * 0.12)` | `—` | — | **N/A** |
 | `LTG_TOOL_style_frame_02_glitch_storm_v005.py [stub → LTG_TOOL_style_frame_02_glitch_storm_v005.py]` | Luma: sprint pose, no eyes (canonical N/A) | `—` | `—` | — | **N/A** |
 | `LTG_TOOL_style_frame_02_glitch_storm_v006.py` | Luma: sprint pose, no eyes (canonical N/A) | `head_r  = int(h * 0.12)` | `—` | — | **N/A** |
+| `LTG_TOOL_style_frame_02_glitch_storm_v007.py` | Luma with eyes | `head_r  = int(h * 0.12)` | `—` | — | **N/A (no ew found)** |
 | `LTG_TOOL_style_frame_03_other_side_v001.py` | Luma: pixel-art style (organic spec N/A) | `—` | `eye_w = max(4, head_w // 4)` | — | **N/A** |
 | `LTG_TOOL_style_frame_03_other_side_v002.py` | Luma: pixel-art style (organic spec N/A) | `—` | `eye_w = max(4, head_w // 4)` | — | **N/A** |
 | `LTG_TOOL_style_frame_03_other_side_v003.py` | Luma: pixel-art style (organic spec N/A) | `—` | `eye_w = max(4, head_w // 4)` | — | **N/A** |
@@ -36,8 +37,8 @@
 - **PASS:** 3
 - **WARN:** 1
 - **FAIL:** 0
-- **N/A:** 14
-- **Total files scanned:** 18
+- **N/A:** 15
+- **Total files scanned:** 19
 
 ---
 

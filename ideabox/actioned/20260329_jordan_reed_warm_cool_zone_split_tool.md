@@ -1,0 +1,5 @@
+**Author:** Jordan Reed
+**Cycle:** 35
+**Date:** 2026-03-29
+**Idea:** Create a `LTG_TOOL_warm_cool_inject_v001.py` utility that adds a calibrated top/bottom temperature split pass to any environment PNG that is failing the QA warm/cool separation check (threshold: ≥20 PIL units). The tool would: (1) read a PNG, (2) run the QA check, (3) if separation < 20, apply a parametric warm top / cool bottom split using scene-appropriate colors (warm = SUNLIT_AMBER for Real World, UV_PURPLE for Glitch Layer), (4) re-run QA, (5) save the result. The key insight from C35 Kitchen v004 work: the QA tool measures top/bottom half median hue, not left/right. Any left/right temperature logic is invisible to this check. A top/bottom temperature split can be added to any environment without requiring a full regeneration — it is a post-process that works on existing PNGs.
+**Benefits:** Every Real World environment (Kitchen, Tech Den, Hallway, Street) currently fails the warm/cool QA check. This tool would bring all of them to PASS without full rebuilds. Saves multiple cycles of environment work and unblocks the pre-critique QA pipeline from flagging these as failures.

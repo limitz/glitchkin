@@ -330,3 +330,45 @@ Import: `from LTG_TOOL_render_lib_v001 import ...`
   (single-level function nesting); deeply nested closures/lambdas are out of scope for v002
 - `alpha_composite` false positives in v001 were the largest source: most files use
   `tmp = Image.alpha_composite(...)` (not img reassignment) — v002 correctly skips these
+
+## Cycle 35 — G002 Fix + Spec Extractor
+
+**Status:** COMPLETE
+
+**Tasks completed:**
+- **G002 Glitch body ratio fix:** All 6 Glitch generators corrected: rx=34, ry=38 (was rx=38, ry=34)
+  - expression_sheet v001/v002/v003, turnaround v001/v002, color_model v001
+  - draw_arm default `rx=40` also corrected to `rx=34` in expression sheets (linter reads first rx= match)
+  - glitch.md spec updated: §2.1 key values and §10 step 2 both now show rx=34, ry=38
+  - `LTG_TOOL_glitch_spec_lint_v001.py` → v1.1.0: spec constants corrected, G001 range widened
+  - G002 verified PASS for all three expression sheet generators
+- **Built `LTG_TOOL_spec_extractor_v001.py`** — parses character .md specs to extract numeric constraints
+  - Supports: luma, cosmo, miri, byte, glitch
+  - Extracts: head_ratio, eye_coeff, hex colors, degree constants, line weights, element counts
+  - Output: JSON-serialisable dict; `format_spec_report()` for human-readable output
+- README.md updated: header C35, spec_extractor registered, glitch_spec_lint entry updated to v1.1.0
+- Ideabox: submitted spec_sync_ci_gate idea
+- Inbox messages archived, completion report sent to Alex Chen
+
+## LTG_TOOL_spec_extractor_v001.py (C35 NEW)
+- `extract_spec(char_name, spec_dir=None) → dict` — parse one character's spec .md
+- `extract_all(spec_dir=None) → list[dict]` — all characters
+- `format_spec_report(result_or_list) → str` — human-readable output
+- CLI: `python LTG_TOOL_spec_extractor_v001.py [char|all] [--json] [--save-dir] [--save-report]`
+
+## Glitch Generator G002 Fix (C35 CANONICAL VALUES)
+- expression_sheet v001/v002/v003: `rx=34, ry=38` — draw_arm default also `rx=34`
+- turnaround v001/v002: `rx_1x=38, ry_1x=42` — render_view default `rx=38, ry=42`
+- color_model v001: `rx, ry = 50, 56`
+- glitch.md spec: §2.1 `rx=34, ry=38`; §10 step 2 same
+- glitch_spec_lint v1.1.0: RX_SPEC=34, RY_SPEC=38; G001 ranges [28-56]/[28-64]
+- **Key lesson:** linter `_RX_ASSIGN` finds FIRST `rx=N` in file — must match draw_arm default too
+
+## Lessons Learned (C35)
+- Linter regex picks first `rx=N` in file — function default params (draw_arm rx=40) appear
+  before main body `rx=34`. Fix: update function default to match body value, or make linter smarter.
+- Spec doc can contain internally contradictory statements (rule: ry>rx; values: rx=38>ry=34).
+  Always check both the stated rule AND the stated values — and confirm which to fix.
+- For spec-doc/linter sync: extractor tool + CI gate is the right architecture (spec_sync_check idea).
+- Turnaround color_model use tuple assignment `rx, ry = ...` — regex `rx\s*=\s*(\d+)` doesn't match;
+  G002 silently skips these files (not a false FAIL — just unchecked).

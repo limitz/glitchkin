@@ -241,12 +241,18 @@
 - **SF02 v006 delivery blocking Task 2 completion.** When v006 arrives: run `LTG_TOOL_color_verify_v002.py --histogram` and verify HOT_MAGENTA (fill-light, expect n >> 1,103) and ELECTRIC_CYAN (specular, expect n >> 817). Δ ≤ 5° on both.
 - **histogram mode confirms all C34 FPs.** SF03 UV_PURPLE: gradient pixels drag median; canonical bucket (270-275°) still second-largest. SF03 SUNLIT_AMBER: skin/hoodie orange at 20-25°, not warm lamp. SF04 SUNLIT_AMBER: Soft Gold 40-45°, not lamp amber. False-positive registry tool (Kai ideabox) would eliminate this investigation loop.
 
+## Cycle 35 Lessons
+- **Warm/cool QA metric is wrong for single-dominant-temperature SFs.** `_check_warm_cool()` tests top-half vs. bottom-half median hue split. LTG's three-world palette applies temperature uniformly frame-wide — vertical split is irrelevant. All 4 SF warm/cool WARNs are systematic false positives. Per-world thresholds: real_world_interior=12, real_world_night_storm=3, glitch_world=0. Defined in `warmth_lint_config.json` world_presets. Kai to integrate `--world-type` into render_qa.
+- **SUNLIT_AMBER in SF04 v004 is defined but unused.** Draw calls use (255,200,80) hue 41.1° (incandescent lamp amber) — intentionally warmer than outdoor RW-03 34.3°. Δ15.7° is a compositing + skin-tone false positive (Alex C35 decision). Generator annotated at line 69.
+- **QA False Positive Registry created.** `output/production/qa_false_positives.md` — 6 FPs documented (FP-001 through FP-006). Check this FIRST before investigating new QA failures.
+- **SF02 v006 color audit: PASS.** ELECTRIC_CYAN specular confirmed at n=3,571 (4.4× vs v005 n=817). HOT_MAGENTA Δ1.5° clean, n=1,064. No regressions.
+- **LTG_TOOL_palette_warmth_lint_v003.py deployed.** Soft-tolerance mode: `soft_tolerance: {"G": int, "B": int}` in warmth_lint_config.json. `--strict` CLI flag forces tolerance=0 (for CI). Default is strict (G±0, B±0). Violation dict gains `margin` field.
+- **SF02 v007 (Rin):** PENDING. Run color_verify when delivered.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001. Low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan to add inline comment. Low priority.
 - SF03 v003 UV_PURPLE_MID/DARK — Jordan to add inline comment citing ENV-11/ENV-12.
 - Tech Den generator WALL_WARM slightly off from TD-01 — Jordan to add citing comment.
-- **SF04 generator source missing — HIGH.** All luma_byte_v*.py are forwarding stubs; originals gone. Kai must rebuild. SF04 PNG exists but is non-reproducible. (SF04 v004 was rebuilt by Rin in C32 — check if generator now exists.)
 - TD-10/TD-11 monitor glow alignment — Jordan to compare bg_tech_den_v002.py values vs canonical Section 8 entries. Medium priority.
-- **SF02 v006 color audit PENDING.** Jordan delivering v006 with magenta fill-light + cyan specular. Re-run color_verify when it arrives.
-- **Warmth lint soft-tolerance mode ideabox** — submitted C34. If actioned, add `soft_tolerance` JSON key to warmth_lint_config.json with per-channel tolerance values.
+- **SF02 v007 color audit PENDING.** Rin Yamamoto delivering v007 this cycle. Run color_verify when arrives.

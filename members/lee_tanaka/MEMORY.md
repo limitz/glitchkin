@@ -258,3 +258,28 @@ Read inbox for directive. Two tasks: (1) SF02 staging brief for Luma interiority
   - For Maya: actionable without further review
 - **Ideabox:** `LTG_TOOL_character_face_test_v001.py` proposal submitted
 - **Reported to Alex Chen** via inbox
+
+## Cycle 35 Milestone
+- **Role: Character Staging & Visual Acting Specialist (C35)**
+- **SF02 v007 NOT yet delivered by Rin at cycle start.** Jordan's v006 was lighting only (no face). Rin tasked with v007 implementation.
+- **Supplementary implementation notes DELIVERED:** `output/production/sf02_face_implementation_notes_c35.md`
+  - Code-level guidance: eye placement at head_r=23 (`eye_r_L=4, eye_r_R=3`), `_draw_luma_face_sprint()` scaffold, corrected hair stream, torso lean (+lean_px offset), `get_char_bbox()` fix (hardcode `luma_char_cx = int(W*0.45)`)
+- **Pre-review assessment DELIVERED:** `output/production/sf02_face_review_c35.md`
+  - Baseline: v006 has zero face elements (3rd cycle)
+  - Face legibility tool results: FOCUSED DET. = PASS, FEAR = WARN (wrong emotion), TOO SMALL = FAIL
+  - Full acceptance criteria for v007 sign-off written
+- **LTG_TOOL_character_face_test_v001.py BUILT + TESTED:** `output/tools/LTG_TOOL_character_face_test_v001.py`
+  - Renders 6–8 expression variants at sprint scale (head_r configurable, default 23)
+  - Left sub-panel: actual scale. Right sub-panel: 3× zoom. Output ≤ 600×400px.
+  - Supports luma / cosmo / miri characters
+  - Test run: `--char luma --head-r 23` → PASS. Output: `output/production/LTG_TOOL_face_test_luma_r23_v001.png`
+  - **Key finding:** eye_r ≥ 4px (0.17×head_r) = minimum readable. eye_r ≤ 2px = FAIL.
+- **Ideabox:** face_test as mandatory gate proposal → `ideabox/20260329_lee_tanaka_face_test_as_gate.md`
+- **SF02 v007 sign-off PENDING** — will run `LTG_TOOL_expression_silhouette_v002.py` on Luma crop when Rin delivers
+- **Reported to Alex Chen** via `members/alex_chen/inbox/20260329_2300_lee_c35_complete.md`
+
+## Cycle 35 Lessons
+- **Sprint face legibility has a hard threshold: eye_r ≥ 4px at head_r=23.** Below 2px, eyes become single dots indistinguishable from noise. The 0.17×head_r rule is confirmed empirically.
+- **FOCUSED DETERMINATION ≠ FEAR.** Fear = both eyes wide + brows arched + open O mouth. Determination = left eye wider, brows asymmetric (L inward, R level), jaw set. These differ at sprint scale — the face test confirms they are distinguishable.
+- **Pre-review documents (before asset delivery) are valuable.** Writing acceptance criteria BEFORE v007 is generated gives Rin a clear pass/fail checklist during implementation. Reduces iteration cycles.
+- **face_test tool as pipeline gate:** Tool should be run before any face geometry change in SF generators. Output PNG referenced in generator docstring. Prevents "invisible face" regression.

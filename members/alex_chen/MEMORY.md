@@ -12,7 +12,59 @@
 - Never send high-res images to Claude unless absolutely necessary.
 - Vision limitations: hallucination risk on low-quality/rotated/tiny (<200px) images; limited spatial reasoning; approximate counting only.
 
-## Cycle 34 State (current)
+## Cycle 35 State (current)
+
+**C35 tasks complete (Alex Chen's portion).**
+
+### C35 Work Done
+1. **Archived** all C34/C35 inbox messages (4 messages).
+2. **Warm/cool decision**: documented in `output/production/warm_cool_decision_c35.md`. 20-unit threshold miscalibrated — Glitch World near-zero warm is CORRECT. Sam directed to recalibrate warmth_lint_config.json with per-world thresholds.
+3. **SUNLIT_AMBER decision**: SF04 15.7° drift = compositing false positive. Source constant canonical. Accepted. Sam to register in false-positive registry.
+4. **Pre-critique checklist**: `output/production/pre_critique_checklist.md` — mandatory gate for expression sheet promotions. Silhouette full-mode ≤88% required. Maya ROLE.md updated.
+5. **Pitch package index updated**: C35 Additions section + status table added.
+6. **Ideabox**: `20260329_alex_chen_per_world_warmcool_qa.md` — per-world threshold idea for Sam.
+7. **Statement of work**: `output/production/statement_of_work_c35.md`.
+
+### C35 Canonical Asset Versions
+- Luma expression sheet: **v009 PITCH PRIMARY** (eye-width 22px + pose vocabulary redesign)
+- Luma color model: v002 (unchanged)
+- Luma turnaround: v004 (PITCH PRIMARY — unchanged)
+- Character lineup: v007 (PITCH PRIMARY — unchanged)
+- Byte expression sheet: v005 (PITCH PRIMARY — unchanged)
+- Miri expression sheet: v003 (PITCH PRIMARY); **v004 in progress** (Maya P1)
+- Cosmo expression sheet: v004 (PITCH PRIMARY); **v005 in progress** (Maya P1 — 34/100 C14)
+- Glitch expression sheet: v003 (G002 rx/ry fix in progress — Kai)
+- SF01: v005 / SF02: v006 (v007 in progress — Rin adds face) / SF03: v005 / SF04: v004
+- Logo: v001
+
+### C35 Other Team Work
+- Maya: Luma v009 DELIVERED. Cosmo v005 + Miri v004 IN PROGRESS (P1 — silhouette differentiation).
+- Rin: SF02 v007 IN PROGRESS — `_draw_luma_face_sprint()` per Lee's brief (P1 — 3rd consecutive cycle without Luma face)
+- Jordan: Kitchen v004 IN PROGRESS (Chiara C14 rebuild directive)
+- Kai: Glitch G002 rx/ry fix IN PROGRESS (P1)
+- Sam: Warm/cool recalibration + false-positive registry action required (directed via inbox)
+- Morgan: 35 unlisted README tools + value ceiling guard tool
+
+### C35 Key Decisions
+- **Warm/cool threshold**: Recalibrate to per-world. Glitch World near-zero = correct. No frame changes.
+- **SUNLIT_AMBER drift in SF04**: False positive. Source canonical. Accepted.
+- **Pre-critique gate active from C35**: All expression sheet completions must include silhouette checklist.
+
+### C35 Open Items (carry to C36)
+- SF02 v007 (Luma face): Rin (P1 — unblocked)
+- Cosmo v005 / Miri v004: Maya (P1 — unblocked)
+- Glitch G002 rx/ry: Kai (P1 — unblocked)
+- Kitchen v004: Jordan (P1)
+- Hallway SUNLIT_AMBER + scale calibration: Jordan (P2)
+- SF02 fill-light direction + per-character bbox: Jordan/Rin (P2)
+- Warmth lint recalibration: Sam (P1 — directed)
+- THE NOTICING still not landing: Maya (P2 ongoing)
+- Byte UNGUARDED WARMTH body language: Maya (P2)
+- Glitch Layer HOT_MAGENTA: Jordan (P2)
+
+---
+
+## Cycle 34 State (archived)
 
 **C34 tasks complete (Alex Chen's portion).**
 

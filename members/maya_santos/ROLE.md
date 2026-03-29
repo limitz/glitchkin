@@ -47,3 +47,18 @@
 - 3-tier line weight is non-negotiable: silhouette weight MUST be visually heavier than interior structure weight
 - NEVER overwrite existing assets — always new versioned file (e.g., v002 → v003)
 - Expression sheets at 1200×900 (standard); render at 2x then downsample with LANCZOS
+
+## Pre-Critique Checklist (MANDATORY from C35 — Alex Chen directive)
+
+Before filing ANY expression sheet completion report, you MUST run the pre-critique checklist and include results in your report. See `output/production/pre_critique_checklist.md` for the full checklist.
+
+**Required steps before completion report:**
+1. Run `output/tools/LTG_TOOL_expression_silhouette_v002.py --mode full` — document worst pair score (must be ≤ 88%)
+2. Run `--mode arms --center-mask 0.36` — document worst arms pair (diagnostic only)
+3. Verify pose vocabulary diversity: no two expressions share the same primary arm pose
+4. Confirm line weight 3-tier compliance
+5. Confirm eye-width formula uses `ew = int(head_r_rendered × 0.22)` where `head_r_rendered` is the drawn radius
+6. Verify label format ALL CAPS, matches generator dict
+7. Verify canvas ≤ 1280px both dimensions
+
+Completion reports without this checklist will be rejected. No exceptions from C35 onward.

@@ -1,4 +1,20 @@
 {
   "warm_prefixes": ["CHAR-M"],
-  "description": "Characters whose palette entries must be unambiguously warm (R >= G and R >= B). Add character prefix codes here to extend coverage beyond Grandma Miri (CHAR-M). Example: add 'CHAR-X' for any future warm-guaranteed character."
+  "soft_tolerance": {"G": 0, "B": 0},
+  "description": "Characters whose palette entries must be unambiguously warm (R >= G and R >= B, within soft_tolerance). Add character prefix codes to warm_prefixes to extend coverage beyond Grandma Miri (CHAR-M). Set soft_tolerance.B > 0 (e.g. 10) to allow warm-adjacent dusty lavenders/grays where B may slightly exceed R without flagging. Default: strict (tolerance 0 for both channels). Use --strict CLI flag to force strict mode regardless of config.",
+  "world_presets": {
+    "real_world_interior": {
+      "warm_cool_threshold": 12,
+      "note": "Lamp-lit warm interior with cyan monitor accent. SF01 archetype."
+    },
+    "real_world_night_storm": {
+      "warm_cool_threshold": 3,
+      "note": "Night/storm scene — cold dominant, warm building-window accents only. SF02 archetype."
+    },
+    "glitch_world": {
+      "warm_cool_threshold": 0,
+      "note": "Warm tones are PROHIBITED in Glitch World. Near-zero warm/cool ratio is CORRECT. Warm presence (not absence) would be a FAIL. SF03/SF04 archetype."
+    }
+  },
+  "_world_presets_note": "Per-world warm/cool thresholds for LTG_TOOL_render_qa_v001._check_warm_cool(). Currently informational — Kai Nakamura to integrate --world-type parameter into render_qa tool. C35 art director decision: Alex Chen warm_cool_decision_c35.md."
 }

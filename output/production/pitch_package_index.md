@@ -841,3 +841,39 @@ All critical path assets verified on disk. No blocking issues found. The package
 | QA tools | lineup_palette_audit_v001 (C34 Alex), char_spec_lint_v001 (C34 Kai), draw_order_lint_v002 (C34 Kai), scene_snapshot in procedural_draw v1.5.0 (C34 Rin) |
 
 *Updated by Alex Chen, Art Director — Cycle 34 — 2026-03-29*
+
+---
+
+### Cycle 35 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| Luma expression sheet v009 | `/home/wipkat/team/output/characters/main/LTG_CHAR_luma_expressions_v009.png` | **PITCH PRIMARY for Luma expressions.** Eye-width corrected: ew=22px (int(104×0.22)) — fixes v008 double-width bug. Pose vocabulary redesigned for silhouette differentiation: SURPRISED (Y-shape arms, hands above shoulder), FRUSTRATED (crossed arms), WORRIED (self-hug), DELIGHTED (V above head), CURIOUS (one-arm reaching), DETERMINED (fists+elbow flare), THE NOTICING (unchanged). New tight_frown mouth style for FRUSTRATED. 1200×900. Generator: `output/tools/LTG_TOOL_luma_expression_sheet_v009.py`. (Cycle 35 — Maya Santos) |
+| Expression silhouette tool v002 | `/home/wipkat/team/output/tools/LTG_TOOL_expression_silhouette_v002.py` | Extends v001 with `--mode arms` flag: crops arm/shoulder region (top=0.20, bot=0.70 of panel height), optional `--center-mask FRAC` (default 0.28) to mask trunk. Contact sheet in arms mode shows arm-region crops. JSON output supported. New `crop_arm_region()` API. (Cycle 35 — Maya Santos) |
+| Pre-critique checklist | `/home/wipkat/team/output/production/pre_critique_checklist.md` | **New production gate.** Mandatory checklist before any expression sheet version is promoted to PITCH PRIMARY. Checks: silhouette full-mode ≤88% (gate), arms-mode diagnostic, pose vocabulary diversity, 3-tier line weight, eye-width formula, label format, canvas standards, no regression. Completion report template included. Effective C35 onward. (Cycle 35 — Alex Chen) |
+| Warm/cool design system decision | `/home/wipkat/team/output/production/warm_cool_decision_c35.md` | **Art Director decision.** Priya C14 warm/cool threshold (20 PIL units) is miscalibrated for our three-world palette. SF03/SF04 near-zero warm is correct by design (Glitch World = warm-banned). SF04 SUNLIT_AMBER 15.7° drift = compositing false positive. Source constant (212,146,58) matches canonical. Directive: Sam to recalibrate warmth_lint_config.json with per-world thresholds. (Cycle 35 — Alex Chen) |
+| Character sheet standards update | `/home/wipkat/team/output/production/character_sheet_standards_v001.md` | Pre-critique checklist mandate added to Maya Santos ROLE.md. Character_sheet_standards document now cross-references the checklist gate. (Cycle 35 — Alex Chen) |
+| SF02 Glitch Storm v007 | *In progress — Rin Yamamoto* | Implements `_draw_luma_face_sprint()` per Lee Tanaka's sf02_staging_brief_c34.md. Luma will have a face in the show's action centerpiece. Fill-light direction fix (lower-left → upper-right, toward storm crack). Masking fill light to character areas only. Per-character get_char_bbox() for rim-light. |
+| Cosmo expression sheet v005 | *In progress — Maya Santos* | Silhouette differentiation. Pose vocabulary brief from Lee Tanaka C34. P1 per Daisuke C14 (6 FAIL pairs, worst 95.9%). |
+| Miri expression sheet v004 | *In progress — Maya Santos* | Silhouette differentiation. Lee Tanaka's gesture brief. P1 per Daisuke C14 (7 FAIL pairs, worst 96.9%). |
+| Glitch G002 rx/ry fix | *In progress — Kai Nakamura* | All Glitch generators — ry must be > rx (diamond taller than wide). Opposite of spec found in C34. |
+| Kitchen environment v004 | *In progress — Jordan Reed* | Chiara C14 55/100 rebuild. 12 cycles of character evolution not reflected in show's origin space. |
+
+#### Cycle 35 Pitch Package Status (CURRENT)
+
+| Requirement | C35 Status |
+|---|---|
+| All 4 style frames | SF01 v005, SF02 v006 (v007 in progress — face-sprint), SF03 v005, SF04 v004 |
+| Luma expression sheet | **v009 PITCH PRIMARY** (eye-width 22px + pose vocabulary differentiation) |
+| Byte expression sheet | v005 PITCH PRIMARY (unchanged) |
+| Cosmo expression sheet | **v005 in progress** (P1 — silhouette differentiation) |
+| Miri expression sheet | v003 PITCH PRIMARY; **v004 in progress** (P1 — silhouette differentiation) |
+| Glitch expression sheet | v003 (G002 rx/ry fix in progress — Kai) |
+| All 5 turnarounds | Luma v004 PITCH PRIMARY (unchanged) |
+| Character lineup | v007 PITCH PRIMARY (unchanged) |
+| Canonical logo | `LTG_BRAND_logo_v001.png` (unchanged) |
+| Environments | Kitchen v004 in progress (Chiara C14 rebuild directive); all others unchanged |
+| Production gate | **pre_critique_checklist.md NEW** — mandatory silhouette gate for expression sheet promotions |
+| Warm/cool QA | Metric recalibration in progress (Sam Kowalski — per-world thresholds); source constants confirmed correct |
+
+*Updated by Alex Chen, Art Director — Cycle 35 — 2026-03-29*

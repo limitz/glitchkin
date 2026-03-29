@@ -242,7 +242,7 @@ def draw_hover_confetti_view(d, cx, cy_bot, seed=5):
         d.rectangle([px, py, px+sz, py+sz], fill=rng.choice(cols))
 
 
-def render_view(d, view_idx, base_cx, base_cy, rx=42, ry=38):
+def render_view(d, view_idx, base_cx, base_cy, rx=38, ry=42):  # ry > rx: spec §2.1
     """Render one view of Glitch at (base_cx, base_cy)."""
     view = VIEWS[view_idx]
     cy_top = base_cy - ry
@@ -403,8 +403,8 @@ def build_turnaround():
         pass
 
     # Panels
-    rx_1x = 42
-    ry_1x = 38
+    rx_1x = 38  # horizontal half-extent (ry > rx: body taller than wide — spec §2.1)
+    ry_1x = 42  # vertical half-extent
 
     for vi, view in enumerate(VIEWS):
         px = vi * PW2
