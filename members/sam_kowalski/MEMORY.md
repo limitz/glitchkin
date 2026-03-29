@@ -195,12 +195,20 @@
 - **thumbnail() before save is the image size rule enforcement point.** Call `img.thumbnail((1280, 1280), Image.LANCZOS)` immediately before `img.save()`. It preserves aspect ratio — 1920x1080 becomes 1280x720 automatically.
 - **SF03 v004 generated.** `output/color/style_frames/LTG_COLOR_styleframe_otherside_v004.png` (1280x720, 79KB). Generator: `output/tools/LTG_TOOL_style_frame_03_other_side_v004.py`. Zero warm light sources confirmed.
 
+## Cycle 28 Lessons
+- **GL-06c REGISTERED.** Storm Confetti Blue `#0A4F8C` = (10,79,140) is a deliberate atmospheric depth derivative of GL-06 Data Stream Blue. Carries 70% of SF02 cold confetti weight. Not an error — the darkening is intentional distance perspective. GL-06a (Deep Data Blue, #1040A0) and GL-06b (Light Data Blue, #6ABAFF) were already taken; GL-06c is the new slot. Completeness check updated in master_palette.md.
+- **UV_PURPLE_DARK in SF03 was wrong value class.** (43,32,80)=#2B2050 = ENV-12 (mid-distance void zone color, 31% sat). Correct is GL-04a (58,16,96)=#3A1060 (72% sat, deep digital void). The error was using a mid-distance zone construction value as the sky gradient dark anchor. Fixed in v005.
+- **SF03 v005 generated.** `output/color/style_frames/LTG_COLOR_styleframe_otherside_v005.png` (1280x720, 79KB). Generator: `output/tools/LTG_TOOL_style_frame_03_other_side_v005.py`. Zero warm light sources confirmed.
+- **Section 7.7 added to master_palette.md.** Explicit cross-reference: RW-10 (#C4A882) = neutral skin base; CHAR-L-01 (#C8885A) = warm-lamp-lit scene derivation. Both correct in their context. Added per Priya Nair C12 P2 fix.
+- **SF04 blush + Byte fill spec sent to Rin.** Correct blush: #E8A87C (232,168,124) alpha 55-70, warm peach per Luma skin system. Correct Byte fill: (0,212,232) GL-01b canonical. Message at rin_yamamoto/inbox/20260329_1800_sf04_blush_spec.md.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001 (TERRA_CYAN_LIT still old value). v001 likely superseded by v005 — low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan should add inline comment on next revision pass (low priority).
 - BYTE_GLOW (0,168,180) vs GL-01a (0,168,192): CLOSED as acceptable. Jordan may add inline comment on next pass (low priority, not a production fix).
 - ~~SF03 confetti full-canvas distribution~~ **RESOLVED C27.** v004 constrains to 150px of anchors.
-- SF03 v003 UV_PURPLE_MID/DARK — Jordan to add inline comment citing ENV-11/ENV-12 (values confirmed matching).
+- SF03 v003 UV_PURPLE_MID/DARK — Jordan to add inline comment citing ENV-11/ENV-12 (values confirmed matching). NOTE: UV_PURPLE_DARK value itself corrected in v005 (was ENV-12 value, now correctly GL-04a).
 - Tech Den generator WALL_WARM slightly off from TD-01 — Jordan to add citing comment.
 - ~~**Rin Yamamoto SF02 + SF03 styled_v002: STILL FAILING.** UV_PURPLE Δ13-14° hue rotation.~~ **CLOSED (C26).** Post-processing pipeline retired. No styled outputs exist. Issue moot.
 - **SF04 (luma_byte): Byte teal below canonical — PENDING Alex Chen decision.** Teal hue correct (183-185°) but luminance at ~60-70% of canonical (0,212,232). May be intentional scene lighting. Alex investigating.
+- **SF04 blush + Byte fill — PENDING Rin Yamamoto.** Spec sent C28. Blush: #E8A87C; Byte: (0,212,232).

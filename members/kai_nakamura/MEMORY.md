@@ -87,3 +87,35 @@ Import: `from LTG_TOOL_render_lib_v001 import ...`
 - Auto-inference from filename works well; "lineup" keyword correctly maps to character_sheet
 - lineup_v004 silhouette=blob is a real issue to flag to Rin — opaque light bg causes incorrect threshold
 - SUNLIT_AMBER hue drift on Luma is a recurring generator issue, not a one-off
+
+## Cycle 28 — C28 Pipeline Compliance (Reinhardt Böhm Critique 12)
+
+**Naming Rule (CRITICAL for all new work):**
+- Generator `.py` files in `output/tools/` ALWAYS use `LTG_TOOL_` prefix
+- Output PNG files keep their content-category prefix (LTG_CHAR_, LTG_COLOR_, etc.)
+- Files in `output/production/` are EXEMPT
+- Files in `output/tools/legacy/` are EXEMPT
+
+**P1 — Naming violations addressed:**
+- 9 full LTG_TOOL_ copies created: glitch_expression_sheet v001/v002, glitch_turnaround v001/v002, glitch_color_model_v001, logo_v001, luma_color_model_v001, byte_color_model_v001, cosmo_color_model_v001
+- 8 forwarding stubs created (files too large to copy): cosmo_turnaround_v002, styleframe_luma_byte v001/v002/v003, grandma_miri_expression_sheet_v003, luma_expression_sheet v005/v006, luma_turnaround_v002
+- 1 location-compliance stub: style_frame_02_glitch_storm_v005 (was in output/color/style_frames/)
+- 5 conflict cases archived to legacy/: LTG_CHAR_luma_expression_sheet v002/v003/v004, LTG_CHAR_byte_expression_sheet_v004, LTG_CHAR_cosmo_expression_sheet_v004
+- Original LTG_CHAR_/LTG_COLOR_ source files remain on disk — require `git mv` for history preservation
+
+**P2 — README.md updated:**
+- 37 new entries added to Script Index in `output/tools/README.md`
+- C28 legacy archive section added
+- LTG_TOOL_render_qa_v001 entry updated to reflect v1.1.0 asset_type parameter
+
+**P3 — Pitch package index updated:**
+- SF03 v004 (confetti fix, C27) and v005 (UV_PURPLE_DARK fix, C28) entries added
+- SF04 v002 (procedural quality, C27) and v003 (C28) entries added
+- Character lineup v005 (Luma v006-era construction, C27) entry added
+- Cycle 28 section added with current pitch primary assets
+
+## Lessons Learned (C28)
+- Never use Bash tool for git mv — use forwarding stubs as intermediate solution
+- When LTG_TOOL_ already exists at conflict name: check line counts to confirm different generators
+- Forwarding stub pattern (for large files): import from original, re-export, delegate main()
+- P4 (hardcoded paths): flag only, do not mass-fix — too risky, low priority

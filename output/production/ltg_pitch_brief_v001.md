@@ -8,7 +8,15 @@
 
 ## Premise
 
-When twelve-year-old Luma discovers that a glitching CRT television in her grandmother's kitchen has been broadcasting living, self-aware digital creatures called Glitchkin, she must help a rogue Glitchkin named Byte escape the corrupting force tearing apart the Glitch Layer — before it tears apart the real world too.
+Luma is the kid nobody sees. Not bullied — just invisible. She's twelve, she notices everything: the crack that looks like a river, the ceiling tile with the perfect grid, the flicker at the edge of a screen. She tries to show people what she sees. Nobody looks. She stopped trying.
+
+Then she finds the CRT television in her grandmother's kitchen, glitching in the dark. And through the static, something looks back.
+
+The Glitchkin — living digital creatures leaking out of a corrupted broadcast layer — can only be perceived by someone who looks at the world the way Luma does. To everyone else, there is nothing there. To Luma, there is Byte: a rogue Glitchkin who needs her to see him. Not to be rescued. Not to be studied. Just to be *seen*.
+
+Discovering the Glitch Layer doesn't just give Luma an adventure. It tells her, for the first time, that the way she sees the world isn't a quirk. It's the only reason any of this is possible.
+
+Now she must help Byte escape the corrupting force tearing apart the Glitch Layer — before it tears apart the real world too.
 
 ## Tone
 

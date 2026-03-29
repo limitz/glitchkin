@@ -33,7 +33,7 @@ CLI demo:
 Dependencies: Python 3.8+, Pillow (PIL). No NumPy required.
 """
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 __author__ = "Rin Yamamoto"
 __cycle__ = 26
 
@@ -205,7 +205,8 @@ def variable_stroke(img, p1, p2, max_width=6, min_width=1,
     return img
 
 
-def add_rim_light(img, threshold=200, light_color=(255, 240, 200), width=3):
+def add_rim_light(img, threshold=200, light_color=(255, 240, 200), width=3,
+                  side="all"):
     """Add a rim light edge on the bright / character areas of the image.
 
     Finds the edges of bright regions (where pixel luminance > threshold) and
@@ -220,6 +221,14 @@ def add_rim_light(img, threshold=200, light_color=(255, 240, 200), width=3):
         threshold   (int)      : Luminance cutoff for 'bright' region detection (0–255).
         light_color (tuple)    : RGB color of the rim light highlight.
         width       (int)      : Rim light width in pixels (via edge dilation).
+        side        (str)      : Spatial filter for rim light direction:
+                                   "all"    — apply to all bright edges (backward compat default)
+                                   "right"  — right half of canvas only (x > width*0.5)
+                                   "left"   — left half of canvas only  (x < width*0.5)
+                                   "top"    — top half of canvas only   (y < height*0.5)
+                                   "bottom" — bottom half of canvas only (y > height*0.5)
+                                 This is a practical spatial approximation that correctly prevents
+                                 the rim appearing on the wrong side without full normal-map analysis.
 
     Returns:
         PIL.Image: The modified image (same object as img).
@@ -234,6 +243,25 @@ def add_rim_light(img, threshold=200, light_color=(255, 240, 200), width=3):
     # Edge pixels = in dilated bright but not in original bright
     dilated = bright_mask.filter(ImageFilter.MaxFilter(size=width * 2 + 1))
     edge_mask = ImageChops.subtract(dilated, bright_mask)
+
+    # Apply spatial mask to restrict rim to the specified side
+    if side != "all":
+        w, h = img.size
+        spatial_mask = Image.new("L", (w, h), 0)
+        if side == "right":
+            # Only pixels in the right half
+            spatial_mask.paste(255, (w // 2, 0, w, h))
+        elif side == "left":
+            # Only pixels in the left half
+            spatial_mask.paste(255, (0, 0, w // 2, h))
+        elif side == "top":
+            # Only pixels in the top half
+            spatial_mask.paste(255, (0, 0, w, h // 2))
+        elif side == "bottom":
+            # Only pixels in the bottom half
+            spatial_mask.paste(255, (0, h // 2, w, h))
+        # Multiply edge_mask by spatial_mask (keep only edge pixels in the specified region)
+        edge_mask = ImageChops.multiply(edge_mask, spatial_mask)
 
     # Convert edge mask to RGBA for compositing
     edge_rgba = edge_mask.convert("RGBA")

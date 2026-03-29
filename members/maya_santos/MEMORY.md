@@ -1,5 +1,32 @@
 # Maya Santos — Memory
 
+## Cycle 28 Lessons — TURNAROUND v003 + GLITCH EXPRESSION v003 (Interior Desire)
+
+- **Turnaround v003 COMPLETE.** Line weight fix applied to all 4 views per v006 standard:
+  - Head outline (FRONT, 3/4, BACK): was width=6 → now width=4
+  - SIDE head polygon: was width=5 → now width=4
+  - Torso outlines (FRONT, 3/4, BACK): was width=5 → now width=3
+  - SIDE torso edges: was width=5/4 → now width=3
+  - Cheek nubs, ears, eye outlines, pants, shoes: normalized to structure=3
+  - BACK view confirmed present (was flagged as possibly missing — it exists in v002 and v003)
+  - Thumbnail applied: 1600×700 → 1280×560 (≤1280px rule satisfied)
+  - Generator: `output/tools/LTG_TOOL_luma_turnaround_v003.py`
+  - Output: `output/characters/main/turnarounds/LTG_CHAR_luma_turnaround_v003.png` (1280×560)
+
+- **Glitch Expression Sheet v003 COMPLETE.** Grid expanded 3×2 → 3×3 (6→9 expressions).
+  - New interior desire states responding to Nkechi Adeyemi critique C12:
+    - YEARNING: utterly still body, UV_PURPLE eyes (soft glow, not glyph), arms hanging low, no confetti, no mouth, deep indigo BG. Read: watching what Glitch cannot have.
+    - COVETOUS: lean (tilt=+12), ACID_GREEN slit eyes bilateral (both eyes target-locked), arms reaching, tight horizontal mouth, sparse UV_PURPLE confetti. Read: "I could take that."
+    - HOLLOW: deflated (squash=0.88), empty bilateral stare (VOID_BLACK + single white pixel center), dangling arms, no confetti, single dim mouth dot. Read: aftermath of wanting.
+  - New pixel color codes: 6=UV_PURPLE (yearning glow), 7=STATIC_WHITE (hollow center)
+  - Canvas unchanged: 1200×900 (within ≤1280px rule)
+  - Generator: `output/tools/LTG_TOOL_glitch_expression_sheet_v003.py`
+  - Output: `output/characters/main/LTG_CHAR_glitch_expression_sheet_v003.png` (1200×900)
+
+- **Alex Chen C28 directive received:** Canonical Luma ratio = 3.2 heads (already correct in turnaround v002/v003). Eye spec: h×0.22. Expression sheet v007 and Lineup v006 also required by directive — NOTE: those deliverables are listed in Alex Chen's message as separate P1 tasks for C28. Turnaround v003 and Glitch v003 are the tasks assigned to Maya for C28.
+
+- **Inbox archived.** `20260329_1723_luma_proportion_directive.md` → `inbox/archived/`.
+
 ## Cycle 27 Lessons — CHARACTER LINEUP v005 (Luma v006 style propagation)
 
 - **Lineup v004 Luma audit result: OLD construction.** Hair = 1 mass ellipse (not 8 curl-cloud). Head = bare ellipse, no chin fill, no cheek nubs. Eyes = tiny symmetrical circles, no eyelid arc, no iris.

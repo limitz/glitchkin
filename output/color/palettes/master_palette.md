@@ -611,6 +611,19 @@ The Glitch palette is an invader. These colors do not belong to the natural worl
 
 ---
 
+### GL-06c — Storm Confetti Blue
+- **Hex:** `#0A4F8C`
+- **RGB:** 10, 79, 140
+- **Role:** Dominant cold confetti color in the Glitch Storm (Style Frame 02). Carries 70% of cold confetti weight. Darker and cooler than GL-06 Data Stream Blue due to atmospheric perspective — storm confetti in the far/mid distance reads darker as it recedes through the cyan-dominant storm atmosphere.
+- **Derivation:** GL-06 (#2B7FFF) desaturated and darkened by approximately 45% to represent atmospheric depth recession within the storm. This is not an error or a substitute for GL-06 — it is the same blue family seen through storm atmosphere and distance haze. Registered in Cycle 28 per Priya Nair critique (C12).
+- **Shadow companion:** `#06304A` (near-void confetti shadow — implicit, construction value only)
+- **Use-case notes:** Storm scene (SF02) confetti generation only. The 70/20/10 split (Storm Confetti Blue / Void Black / Electric Cyan) creates the cold threat of the storm. At full saturation GL-06 reads too vibrant for distance atmosphere — GL-06c is the correct atmospheric derivative. **Do not substitute GL-06 for GL-06c in the storm generator:** GL-06 reads as close-field data structure, not storm distance.
+- **Source file:** `output/tools/LTG_TOOL_style_frame_02_glitch_storm_v004.py` constant `DATA_BLUE`.
+- **Pairs with:** GL-01 (Electric Cyan — near-field accent confetti), GL-05 (Void Black — weight/depth confetti)
+- **Avoid using:** As a data structure color (use GL-06), as a character color, as any Real World sky or water color.
+
+---
+
 ### GL-07 — Corrupted Amber
 - **Hex:** `#FF8C00`
 - **RGB:** 255, 140, 0
@@ -1277,6 +1290,19 @@ When any human character is in a cool-ambient or Glitch Layer environment, warm 
 
 ---
 
+### 7.7 — Cross-Reference: RW-10 and CHAR-L-01 (Cycle 28 — Priya Nair C12 fix)
+
+**Both values are correct. They are different tiers of the same skin system.**
+
+- **RW-10 = `#C4A882` — Neutral skin base.** Use when lighting conditions are unspecified, in standard daylight, or as the derivation starting point for any scene variant. This is the value painters default to.
+- **CHAR-L-01 = `#C8885A` — Lamp-lit skin derivation.** Use in warm lamp-dominant scenes (specifically Frame 01 three-light interior setup). This is what `#C4A882` looks like under a Soft Gold lamp key. It is warmer, more saturated (R +4, G −32 effective shift toward amber), and is the correct value for all lamp-lit skin surfaces in SF01.
+
+**These are not competing values. They are not a discrepancy.** RW-10 is the neutral base. CHAR-L-01 is the warm-lamp-lit scene derivation. Both are correct in their context. A painter who uses `#C4A882` in a lamp-lit Frame 01 scene is using the wrong tier. A painter who uses `#C8885A` as a default in a neutral-light scene is also using the wrong tier.
+
+*Cross-reference note added — Sam Kowalski — Cycle 28 (2026-03-29). Per Priya Nair C12 critique: P2 Fix 3 (Luma skin base 3-way conflict).*
+
+---
+
 *Section 7 added — Sam Kowalski — Cycle 9 (2026-03-29). Per Fiona O'Sullivan Cycle 8 critique: skin discrepancy between luma_color_model.md, master_palette.md RW-10, and style_frame_01_rendered.py.*
 
 ---
@@ -1442,7 +1468,9 @@ These are the show's foundational colors. Every generator, color key, and painte
 
 ### GL NUMBERING — COMPLETENESS CHECK
 
-The GL (Glitch Layer) palette numbering is **complete and unbroken**: GL-01, GL-01a, GL-01b, GL-02, GL-02a, GL-03, GL-03a, GL-04, GL-04a, GL-04b, GL-05, GL-05a, GL-06, GL-06a, GL-06b, GL-07, GL-07a, GL-08, GL-08a. No numbered gaps. All have documented shadow companions per the Section 2 table. The depth-tier construction values are documented separately and correctly attributed.
+The GL (Glitch Layer) palette numbering is **complete and unbroken**: GL-01, GL-01a, GL-01b, GL-02, GL-02a, GL-03, GL-03a, GL-04, GL-04a, GL-04b, GL-05, GL-05a, GL-06, GL-06a, GL-06b, GL-06c, GL-07, GL-07a, GL-08, GL-08a. No numbered gaps. All have documented shadow companions per the Section 2 table. The depth-tier construction values are documented separately and correctly attributed.
+
+**GL-06c** (Storm Confetti Blue, #0A4F8C) added Cycle 28 — atmospheric depth derivative of GL-06 for the Glitch Storm confetti. This is a deliberate distance/atmosphere darkening, not an error or substitute for GL-06.
 
 ---
 

@@ -1,7 +1,7 @@
 # Tools Index — "Luma & the Glitchkin"
 
 **Maintained by:** Alex Chen, Art Director
-**Last updated:** 2026-03-29 (Cycle 26)
+**Last updated:** 2026-03-29 (Cycle 28 — C28 compliance pass, Kai Nakamura)
 
 ---
 
@@ -101,7 +101,44 @@ This production uses **open source tools exclusively**. No proprietary software 
 | ~~`LTG_TOOL_batch_stylize_v001.py`~~ | Kai Nakamura / Cycle 24–25 | **RETIRED Cycle 26 — moved to `output/tools/legacy/`.** Batch runner for the stylize pipeline. Post-processing pipeline retired as of Cycle 26. | Pillow, LTG_TOOL_stylize_handdrawn_v002 |
 | ~~`LTG_TOOL_stylize_handdrawn_v002.py`~~ | Rin Yamamoto / Cycle 25 | **RETIRED Cycle 26 — moved to `output/tools/legacy/`.** Hand-drawn stylization pass v002 (4 canonical color protection fixes). Post-processing pipeline retired as of Cycle 26. | Pillow, NumPy (optional) |
 | `LTG_TOOL_color_verify_v001.py` | Kai Nakamura / Cycle 25 | Canonical color verification utility. Samples canonical palette colors from a PIL Image and returns per-color hue drift analysis. `verify_canonical_colors(img, palette_dict, max_delta_hue=5)` — returns per-color `{target_hue, found_hue, delta, pass}` + `overall_pass`. `get_canonical_palette()` — returns standard LTG 6-color palette dict. Colors not present in the image are marked `not_found` (not a failure). Designed as a gating function: call after stylize() or any processing pass that could shift hues. Standalone; no imports beyond `colorsys` + Pillow. All six canonical colors verified from `master_palette.md`. | Pillow (colorsys stdlib) |
-| `LTG_TOOL_render_qa_v001.py` | Kai Nakamura / Cycle 26 | **Render Quality Assessment tool.** Evaluates any LTG PNG against rendering standards across 5 checks: (A) silhouette readability at 100×100 (score: distinct/ambiguous/blob), (B) value range (darkest ≤ 30, brightest ≥ 225, range ≥ 150), (C) color fidelity via `verify_canonical_colors()`, (D) warm/cool separation ≥ 20 PIL hue units (top/bottom zone sampling), (E) line weight consistency (20 random edge samples, outlier detection). API: `qa_report(img_path) → dict`, `qa_batch(directory) → list[dict]`, `qa_summary_report(results, output_path)` (writes Markdown). Also exports `silhouette_test(img) → PIL.Image` and `value_study(img) → PIL.Image` — interfaces compatible with Rin Inoue's `LTG_TOOL_procedural_draw_v001.py`. Overall grade: PASS / WARN / FAIL. Cycle 26 baseline QA run on 8 C25 assets: all WARN (main issue: warm/cool separation — character sheets are intentionally neutral-dominant). | Pillow, LTG_TOOL_color_verify_v001 |
+| `LTG_TOOL_byte_expression_sheet_v001.py` | Alex Chen / Cycle 13 | Byte expression sheet v001. Migrated from `byte_expressions_generator.py`. 4×2 grid (7 expressions): NEUTRAL/DEFAULT-GRUMPY added (Dmitri Volkov P1). Output: `LTG_CHAR_byte_expression_sheet_v001.png`. | Pillow |
+| `LTG_TOOL_byte_expression_sheet_v003.py` | Maya Santos / Cycle 21 | Byte expression sheet v003. Adds STORM/CRACKED damage state (9th expression). Layout upgraded to 3×3 grid. Storm pose: right eye uses dead-pixel cracked glyph per byte.md §9B, bent antenna, angular lean (+18 tilt). Output: `LTG_CHAR_byte_expression_sheet_v003.png`. | Pillow |
+| `LTG_TOOL_cosmo_expression_sheet_v001.py` | Maya Santos / Cycle 14 | Cosmo expression sheet v001. 6 expressions: THOUGHTFUL, SKEPTICAL, DELIGHTED, AWKWARD, WORRIED, SURPRISED. 3×2 grid, 1200×900. Cycle 16 fixes: SKEPTICAL body_tilt adjusted, two empty slots populated. Output: `LTG_CHAR_cosmo_expression_sheet_v001.png`. | Pillow |
+| `LTG_TOOL_cosmo_expression_sheet_v002.py` | Maya Santos / Cycle 14/16 | Cosmo expression sheet v002. Carries Cycle 16 fixes from v001 (SKEPTICAL tilt, WORRIED+SURPRISED added). Shares same 6-expression set. Output: `LTG_CHAR_cosmo_expression_sheet_v002.png`. | Pillow |
+| `LTG_TOOL_cosmo_expression_sheet_v003.py` | Maya Santos / Cycle 19 | Cosmo expression sheet v003. Critical fix: body_tilt displacement formula corrected (was 0.4× factor = invisible at thumbnail; now full pixel displacement). Carries all v001/v002 expressions. Output: `LTG_CHAR_cosmo_expression_sheet_v003.png`. | Pillow |
+| `LTG_TOOL_cosmo_turnaround_v002.py` | Maya Santos / Cycle 25 | Cosmo 4-view turnaround v002. Side-view depth fix. Forwarding stub → `LTG_CHAR_cosmo_turnaround_v002.py`. Output: `LTG_CHAR_cosmo_turnaround_v002.png`. | Pillow |
+| `LTG_TOOL_glitch_expression_sheet_v001.py` | Maya Santos / Cycle 23 | Glitch expression sheet v001. 4 expressions: NEUTRAL, MISCHIEVOUS, PANICKED, TRIUMPHANT. 2×2 grid, 800×800. Diamond/rhombus body with CORRUPT_AMBER, HOT_MAGENTA crack lines, 3×3 pixel dual-eye system. Output: `LTG_CHAR_glitch_expression_sheet_v001.png`. | Pillow |
+| `LTG_TOOL_glitch_expression_sheet_v002.py` | Maya Santos / Cycle 24 | Glitch expression sheet v002. Expands to 6 expressions: adds STUNNED and CALCULATING. 3×2 grid, 1200×900. Output: `LTG_CHAR_glitch_expression_sheet_v002.png`. | Pillow |
+| `LTG_TOOL_glitch_expression_sheet_v003.py` | Maya Santos / Cycle 28 | Glitch expression sheet v003. Expands to 9 expressions: adds YEARNING, REACHING OUT, REMEMBERING (interior desire expressions per Nkechi Adeyemi C12). 3×3 grid, 1200×900. Output: `LTG_CHAR_glitch_expression_sheet_v003.png`. | Pillow |
+| `LTG_TOOL_glitch_turnaround_v001.py` | Maya Santos / Cycle 23 | Glitch 4-view turnaround v001. FRONT, 3/4, SIDE, BACK views. 1600×700 canvas. Diamond body in CORRUPT_AMBER with HOT_MAGENTA crack lines. Output: `LTG_CHAR_glitch_turnaround_v001.png`. | Pillow |
+| `LTG_TOOL_glitch_turnaround_v002.py` | Maya Santos / Cycle 24 | Glitch turnaround v002. Shadow contrast fix: SIDE and BACK views use CORRUPT_AMB_SHADOW (not UV_PURPLE) for depth shadows. Output: `LTG_CHAR_glitch_turnaround_v002.png`. | Pillow |
+| `LTG_TOOL_glitch_color_model_v001.py` | Sam Kowalski / Cycle 23 | Glitch color model. 800×500 canvas, 10 swatches grouped by zone (body, cracks, shadow, glow, outline). All values from master_palette.md. Output: `LTG_COLOR_glitch_color_model_v001.png`. | Pillow |
+| `LTG_TOOL_grandma_miri_expression_sheet_v001.py` | Maya Santos / Cycle 17 | Grandma Miri expression sheet v001. 5 expressions: WARM/WELCOMING, NOSTALGIC/WISTFUL, CONCERNED, SURPRISED/DELIGHTED, WISE/KNOWING. 3+2 grid, 1200×900. Output: `LTG_CHAR_grandma_miri_expression_sheet_v001.png`. | Pillow |
+| `LTG_TOOL_grandma_miri_expression_sheet_v002.py` | Maya Santos / Cycle 19 | Grandma Miri expression sheet v002. Ground-up rebuild (v001 failed squint test). Body-language differentiation: full-body gesture change per expression, not face-only. Output: `LTG_CHAR_grandma_miri_expression_sheet_v002.png`. | Pillow |
+| `LTG_TOOL_grandma_miri_expression_sheet_v003.py` | Maya Santos / Cycle 25 | Grandma Miri expression sheet v003. Narrative expression addition (Cycle 25). Forwarding stub → `LTG_CHAR_grandma_miri_expression_sheet_v003.py`. Output: `LTG_CHAR_grandma_miri_expression_sheet_v003.png`. | Pillow |
+| `LTG_TOOL_grandma_miri_color_model_v001.py` | Sam Kowalski / Cycle 17 | Grandma Miri color model. 800×500 canvas, swatches grouped by zone (face/skin, hair, clothing, accessories). All values from grandma_miri_color_model.md + master_palette.md. Output: `LTG_COLOR_grandma_miri_color_model_v001.png`. | Pillow |
+| `LTG_TOOL_luma_color_model_v001.py` | Sam Kowalski / Cycle 25 | Luma color model. 800×500 canvas, 14 swatches (hoodie orange, skin, hair, pants, shoes, pixel cyan/magenta zones). All values from luma_color_model.md. Output: `LTG_COLOR_luma_color_model_v001.png`. | Pillow |
+| `LTG_TOOL_byte_color_model_v001.py` | Sam Kowalski / Cycle 25 | Byte color model. 800×500 canvas, 14 swatches. CRITICAL: body fill = GL-01b #00D4E8 BYTE_TEAL (not #00F0FF Electric Cyan). Output: `LTG_COLOR_byte_color_model_v001.png`. | Pillow |
+| `LTG_TOOL_cosmo_color_model_v001.py` | Sam Kowalski / Cycle 25 | Cosmo color model. 800×500 canvas, 14 swatches (cerulean/sage stripes, glasses). All values from cosmo_color_model.md. Output: `LTG_COLOR_cosmo_color_model_v001.png`. | Pillow |
+| `LTG_TOOL_luma_expression_sheet_v005.py` | Maya Santos / Cycle 25 | Luma expression sheet v005. Forwarding stub → `LTG_CHAR_luma_expression_sheet_v005.py`. Output: `LTG_CHAR_luma_expression_sheet_v005.png`. | Pillow |
+| `LTG_TOOL_luma_expression_sheet_v006.py` | Maya Santos / Cycle 27 | **Current Luma expression sheet.** Luma expression sheet v006. Forwarding stub → `LTG_CHAR_luma_expression_sheet_v006.py`. Output: `LTG_CHAR_luma_expression_sheet_v006.png`. | Pillow |
+| `LTG_TOOL_luma_turnaround_v002.py` | Maya Santos / Cycle 25 | Luma 4-view character turnaround v002 (Cycle 25/26). Forwarding stub → `LTG_CHAR_luma_turnaround_v002.py`. Output: `LTG_CHAR_luma_turnaround_v002.png`. | Pillow |
+| `LTG_TOOL_luma_turnaround_v003.py` | Maya Santos / Cycle 28 | Luma turnaround v003. Line weight corrected to v006 3-tier standard at 2× render (head=4, structure=3, detail=2). All views updated. Output: `LTG_CHAR_luma_turnaround_v003.png`. | Pillow |
+| `LTG_TOOL_miri_turnaround_v001.py` | Maya Santos / Cycle 20 | Grandma Miri 4-view character turnaround. 1600×800 canvas, 3-tier line weight. MIRI-A canonical: bun + crossed chopsticks, A-line cardigan, round glasses. Height 3.2 heads. Output: `LTG_CHAR_miri_turnaround_v001.png`. | Pillow |
+| `LTG_TOOL_character_lineup_v004.py` | Maya Santos / Cycle 24 | Character lineup v004. Added Glitch (5th character, far right). Glitch: diamond body in CORRUPT_AMBER, HOT_MAG crack, UV_PURPLE shadow, VOID_BLACK outline, hover. Output: `LTG_CHAR_lineup_v004.png`. | Pillow |
+| `LTG_TOOL_character_lineup_v005.py` | Maya Santos / Cycle 27 | **Current character lineup.** Luma rebuilt to v006-era construction (8-ellipse hair curl cloud, cheek nubs, near-circular eyes, 3-tier line weight at lineup scale). Output: `LTG_CHAR_lineup_v005.png`. | Pillow |
+| `LTG_TOOL_luma_cold_overlay_swatches_v001.py` | Sam Kowalski / Cycle 18 | Cold overlay swatch generator. Reference PNG showing base color, Electric Cyan overlay, and alpha-composite result side-by-side for each cold overlay variant from luma_color_model.md. 1280×1067 (≤1280 after thumbnail). Output: `LTG_COLOR_luma_cold_overlay_v001.png`. | Pillow |
+| `LTG_TOOL_luma_classroom_pose_v001.py` | Maya Santos / Cycle 14 | Luma classroom sitting pose for storyboard beat A1-04. Seated at desk, slight slouch, left hand supporting chin (distracted lean), right hand pen-tapping desk, head tilted 8° toward blackboard. Output: `LTG_CHAR_luma_classroom_pose_v001.png`. | Pillow |
+| `LTG_TOOL_fidelity_check_c24.py` | Sam Kowalski / Cycle 24 | Color fidelity check utility. Samples 6 canonical palette colors from styled PNGs vs originals. Tolerance 20 per channel. Targets: GL-07 CORRUPT_AMBER, GL-01b BYTE_TEAL, UV_PURPLE, SUNLIT_AMBER, SOFT_GOLD, ENV-06. Precursor to `LTG_TOOL_color_verify_v001.py`. | Pillow |
+| `LTG_TOOL_logo_v001.py` | Alex Chen / Cycle 25 | Canonical show logo entry point. Imports from `LTG_TOOL_logo_asymmetric_v002.py` and saves output to `output/production/LTG_BRAND_logo_v001.png`. Alias/entry point for the canonical Cycle 13 asymmetric logo design. | Pillow |
+| `LTG_TOOL_style_frame_02_glitch_storm_v005.py` | Sam Kowalski / Cycle 22 | SF02 Glitch Storm fix pass (Critique C10). Reduced window pane alpha (160/180 → 115/110). Source in `output/color/style_frames/`; stub in `output/tools/` is location-compliance entry point. Output: `LTG_COLOR_style_frame_02_glitch_storm_v005.png`. | Pillow |
+| `LTG_TOOL_style_frame_03_other_side_v004.py` | Sam Kowalski / Cycle 27 | SF03 Other Side confetti fix pass. Confetti particles constrained to within 150px of nearest character/platform anchor (was full-canvas scatter). Output: `LTG_COLOR_styleframe_otherside_v004.png`. | Pillow |
+| `LTG_TOOL_style_frame_03_other_side_v005.py` | Sam Kowalski / Cycle 28 | SF03 Other Side UV_PURPLE_DARK saturation fix. Corrected from (43,32,80)=#2B2050 (31% sat) to GL-04a (58,16,96)=#3A1060 (72% sat). Deep void zones now read as digital void, not grey-purple. Output: `LTG_COLOR_styleframe_otherside_v005.png`. | Pillow |
+| `LTG_TOOL_styleframe_luma_byte_v001.py` | Sam Kowalski / Cycle 25 | SF04 "The Dynamic" (Luma + Byte interaction) v001. Forwarding stub → `LTG_COLOR_styleframe_luma_byte_v001.py`. Output: `LTG_COLOR_styleframe_luma_byte_v001.png`. | Pillow |
+| `LTG_TOOL_styleframe_luma_byte_v002.py` | Sam Kowalski / Cycle 27 | SF04 "The Dynamic" v002. Procedural quality upgrade. Forwarding stub → `LTG_COLOR_styleframe_luma_byte_v002.py`. Output: `LTG_COLOR_styleframe_luma_byte_v002.png`. | Pillow |
+| `LTG_TOOL_styleframe_luma_byte_v003.py` | Rin Yamamoto / Cycle 28 | SF04 "The Dynamic" v003. Forwarding stub → `LTG_COLOR_styleframe_luma_byte_v003.py`. Output: `LTG_COLOR_styleframe_luma_byte_v003.png`. | Pillow |
+| `LTG_TOOL_procedural_draw_v001.py` | Rin Yamamoto / Cycle 26 | **Procedural drawing library.** Provides hand-drawn stylization functions: `wobble_line()`, `wobble_polygon()`, `variable_stroke()`, `add_rim_light()`, `silhouette_test()`, `value_study()`, `volumetric_face_lighting()` (C27). Seeded RNG for reproducibility. 100% PIL — no cairocffi. Compatible with `LTG_TOOL_render_qa_v001.py` API. | Pillow |
+| `LTG_TOOL_render_qa_v001.py` | Kai Nakamura / Cycle 26 (v1.1.0 C27) | **Render Quality Assessment tool.** Evaluates any LTG PNG against rendering standards across 5 checks: (A) silhouette readability at 100×100 (score: distinct/ambiguous/blob), (B) value range (darkest ≤ 30, brightest ≥ 225, range ≥ 150), (C) color fidelity via `verify_canonical_colors()`, (D) warm/cool separation ≥ 20 PIL hue units (top/bottom zone sampling), (E) line weight consistency (20 random edge samples, outlier detection). API: `qa_report(img_path, asset_type=None) → dict` (v1.1.0: `asset_type` parameter added C27 — pass `"character_sheet"` to adjust warm/cool threshold for character sheets), `qa_batch(directory) → list[dict]`, `qa_summary_report(results, output_path)` (writes Markdown). Also exports `silhouette_test(img) → PIL.Image` and `value_study(img) → PIL.Image` — interfaces compatible with `LTG_TOOL_procedural_draw_v001.py`. Overall grade: PASS / WARN / FAIL. Cycle 26 baseline QA run on 8 C25 assets: all WARN (main issue: warm/cool separation — character sheets are intentionally neutral-dominant; use `asset_type="character_sheet"` to suppress this false-positive). | Pillow, LTG_TOOL_color_verify_v001 |
 
 ---
 
@@ -133,6 +170,35 @@ Twenty legacy scripts (non-LTG-named, all with LTG equivalents) have been moved 
 Similarly, 27 legacy storyboard panel image files have been moved from
 `output/storyboards/panels/` to `output/storyboards/panels/legacy/`.
 See `output/storyboards/panels/legacy/README.md` for the archive manifest.
+
+---
+
+## Legacy Archive — Cycle 28 C28 Compliance Pass
+
+**Kai Nakamura — 2026-03-29 (Cycle 28)**
+
+Naming compliance pass (Reinhardt Böhm Critique C12). All generator `.py` files in `output/tools/` must use `LTG_TOOL_` prefix. PNG output filenames are unchanged.
+
+**Conflict cases** — the following `LTG_CHAR_` files existed in `output/tools/` alongside distinct LTG_TOOL_ versions (different generators, not identical renames). Legacy stubs created in `output/tools/legacy/`:
+- `LTG_CHAR_luma_expression_sheet_v002.py` → superseded by `LTG_TOOL_luma_expression_sheet_v002.py`
+- `LTG_CHAR_luma_expression_sheet_v003.py` → superseded by `LTG_TOOL_luma_expression_sheet_v003.py`
+- `LTG_CHAR_luma_expression_sheet_v004.py` → superseded by `LTG_TOOL_luma_expression_sheet_v004.py`
+- `LTG_CHAR_byte_expression_sheet_v004.py` → superseded by `LTG_TOOL_byte_expression_sheet_v004.py`
+- `LTG_CHAR_cosmo_expression_sheet_v004.py` → superseded by `LTG_TOOL_cosmo_expression_sheet_v004.py`
+
+**New LTG_TOOL_ forwarding stubs created** (source files await `git mv` for history preservation):
+- `LTG_TOOL_cosmo_turnaround_v002.py` → forwards to `LTG_CHAR_cosmo_turnaround_v002.py`
+- `LTG_TOOL_styleframe_luma_byte_v001.py` → forwards to `LTG_COLOR_styleframe_luma_byte_v001.py`
+- `LTG_TOOL_styleframe_luma_byte_v002.py` → forwards to `LTG_COLOR_styleframe_luma_byte_v002.py`
+- `LTG_TOOL_styleframe_luma_byte_v003.py` → forwards to `LTG_COLOR_styleframe_luma_byte_v003.py`
+- `LTG_TOOL_grandma_miri_expression_sheet_v003.py` → forwards to `LTG_CHAR_grandma_miri_expression_sheet_v003.py`
+- `LTG_TOOL_luma_expression_sheet_v005.py` → forwards to `LTG_CHAR_luma_expression_sheet_v005.py`
+- `LTG_TOOL_luma_expression_sheet_v006.py` → forwards to `LTG_CHAR_luma_expression_sheet_v006.py`
+- `LTG_TOOL_luma_turnaround_v002.py` → forwards to `LTG_CHAR_luma_turnaround_v002.py`
+
+**Misplaced file:** `output/color/style_frames/LTG_TOOL_style_frame_02_glitch_storm_v005.py` — already correctly named, but placed outside `output/tools/`. Entry point stub added at `output/tools/LTG_TOOL_style_frame_02_glitch_storm_v005.py`.
+
+**TODO (requires `git mv`):** The original LTG_CHAR_ and LTG_COLOR_ source files remain on disk. A future `git mv` pass should rename them to LTG_TOOL_ and remove the forwarding stubs.
 
 ---
 

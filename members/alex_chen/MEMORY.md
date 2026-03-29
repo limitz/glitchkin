@@ -6,7 +6,28 @@
 ## Image Output Rule
 **Prefer smallest resolution appropriate for the task. Hard limit: ≤ 1280px in both width and height.** Use `img.thumbnail((1280, 1280), Image.LANCZOS)` before saving any PNG. Preserve aspect ratio. Only use large sizes when fine detail inspection requires it. Detail crops also ≤ 1280×1280px. Note: SF04 and logo generated at 1920×1080 this cycle — resize agent corrected these in-place.
 
-## Cycle 27 State (current)
+## Cycle 28 State (current)
+
+**C28 key decisions (Art Director):**
+- **Luma canonical head-to-body ratio: 3.2 heads** — turnaround v002 is the construction reference. Expression sheet v006 (~2.5) and lineup v005 (~3.5) are out of spec.
+- **Luma canonical eye spec: h×0.22 width** — turnaround v002 values are canonical. Expression sheet v006 used HR×0.28 (21% too wide). Turnaround spec propagates to ALL generators.
+- **Maya directive sent** (`members/maya_santos/inbox/20260329_1723_luma_proportion_directive.md`): rebuild expression sheet → v007, lineup → v006, both to 3.2 heads + turnaround eye spec.
+- **Pitch brief updated** (`output/production/ltg_pitch_brief_v001.md`): Premise section rewritten to include Luma's interior need — she feels invisible (notices what no one else sees, can't make them look). Glitchkin are the first things that *need* her to see them. Discovering them validates her way of seeing as a gift, not a quirk.
+- **C27 completion reports archived**: Sam SF03 v004, Kai QA v1.10, Rin SF04 v002, Maya lineup audit — all noted, no blockers.
+- **Critique 12 summary archived**: decisions made, directives sent.
+
+**C28 canonical asset versions (pending Maya):**
+- Luma expression sheet: v007 (in progress — was v006)
+- Character lineup: v006 (in progress — was v005)
+- All other assets unchanged from C27.
+
+**C28 open P2/P3 items (for team — not Art Director action):**
+- Sam: DATA_BLUE unregistered in SF02, UV_PURPLE_DARK saturation in SF03, SF04 blush color, Byte body fill drift, Luma skin base 3-way conflict
+- Rin: `add_rim_light()` needs `direction` parameter
+- Kai: 54+ naming convention violations, 24 unregistered tools, SF03 v004 + SF04 v002 missing from index, hardcoded absolute paths
+- Maya (P3): Glitch interior desire expression, SF04 gaze line interaction
+
+## Cycle 27 State (previous)
 
 **C27 key decisions:**
 - **Luma expression sheet v006 CONFIRMED**: Maya delivered v006 with 3-tier line weight fix (head=4, structure=3, detail=2 at 2× buffer). v005 had correct construction but 2× heavy lines. v006 now matches classroom pose standard. PITCH PRIMARY for Luma character sheet.

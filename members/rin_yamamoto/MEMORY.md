@@ -29,11 +29,12 @@ Do NOT reference, fix, or regenerate any of these.
 
 ## Active Tools
 `output/tools/LTG_TOOL_render_lib_v001.py` (v1.1.0) — 8 render functions incl. paper_texture
-`output/tools/LTG_TOOL_procedural_draw_v001.py` — v1.1.0 (C26 launch, C27 update). Procedural drawing library:
+`output/tools/LTG_TOOL_procedural_draw_v001.py` — v1.2.0 (C28 update). Procedural drawing library:
 - `wobble_line(draw, p1, p2, color, width, amplitude, frequency, seed)`
 - `wobble_polygon(draw, points, color, width, amplitude, frequency, seed, fill)`
 - `variable_stroke(img, p1, p2, max_width, min_width, color, seed)` — modifies in-place
-- `add_rim_light(img, threshold, light_color, width)` — modifies in-place
+- `add_rim_light(img, threshold, light_color, width, side="all")` — modifies in-place
+  side: "all"|"right"|"left"|"top"|"bottom" — spatial filter, prevents wrong-side rim
 - `silhouette_test(img, threshold) -> PIL.Image` — returns RGB B&W
 - `value_study(img) -> PIL.Image` — returns contrast-stretched RGB grayscale
 - `add_face_lighting(img, face_center, face_radius, light_dir, shadow_color, highlight_color, seed)` — NEW C27
@@ -82,18 +83,27 @@ All key techniques have been extracted to MEMORY and implemented. No further rea
 ## C27 Completed Work
 - `output/tools/LTG_COLOR_styleframe_luma_byte_v002.py` — SF04 v002 generator
 - `output/color/style_frames/LTG_COLOR_styleframe_luma_byte_v002.png` — 1280×720
-- Procedural quality applied: wobble_polygon (hair silhouette, hoodie torso, window frame, arm),
-  wobble_line (baseboard, desk edge, window frame outer, eyebrows), variable_stroke (Luma head
-  perimeter 8-arc chain, Byte body perimeter 8-arc chain), add_face_lighting (Luma, warm upper-left,
-  SKIN_SH shadow, SKIN_HL highlight), add_rim_light (Luma, BYTE_TEAL cool rim from monitor, width=3)
 
-## C27 Lessons
+## C28 Completed Work
+- `output/tools/LTG_TOOL_procedural_draw_v001.py` bumped to v1.2.0
+  - add_rim_light() now takes side="all"|"right"|"left"|"top"|"bottom" parameter
+  - Spatial mask: PIL paste of 255 into half-canvas, ImageChops.multiply against edge_mask
+  - Backward compat: default side="all" preserves prior behavior
+- `output/tools/LTG_COLOR_styleframe_luma_byte_v003.py` — SF04 v003 generator (C28 fixes)
+- `output/color/style_frames/LTG_COLOR_styleframe_luma_byte_v003.png` — 1280×720
+  - Blush fixed: RGB (232, 168, 124) alpha 65 — warm peach (was orange-red)
+  - Byte body fill fixed: BYTE_TEAL (0, 212, 232) canonical GL-01b (was (0, 190, 210))
+  - Rim light fixed: side="right" — cyan only on monitor-facing side of Luma
+
+## C27/C28 Lessons
 - Composition scales: use SX/SY factors (W/1920, H/1080) to port 1920×1080 coords to 1280×720
 - variable_stroke on character perimeters: best done as 8-arc segments around an ellipse — smooth,
   tapered, organic result without breaking fill underneath
 - add_face_lighting before add_rim_light: face lighting shapes form, rim defines silhouette edge
 - wobble_polygon on hair works beautifully: organic silhouette edge with fill preserved
 - Always refresh draw = ImageDraw.Draw(img) after variable_stroke / add_rim_light / add_face_lighting
+- Rim light direction: use side= parameter to restrict to correct half-canvas — essential for
+  physically correct lighting (monitor on right → side="right")
 
 ## Joined
 Cycle 23 (2026-03-29)

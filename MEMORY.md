@@ -4,8 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present; Cycle 25 major gap closures complete.
 
 ## Status
-**Critique 12 complete. Work cycles: 27. Critique cycles: 12.**
-**Cycle 28 starts next. Critique Cycle 13 after Cycle 30.**
+**Cycle 28 complete. Work cycles: 28. Critique cycles: 12.**
+**Cycle 29 starts next. Critique Cycle 13 after Cycle 30.**
 
 ## Active Team (all 5 slots used)
 
@@ -30,21 +30,22 @@ Rule is in: CLAUDE.md, all member MEMORYs, tools/README.md, character_sheet_stan
 ### Style Frames
 - **SF01 Discovery**: v003
 - **SF02 Glitch Storm**: v005
-- **SF03 Other Side**: v004 NEW C27 (confetti constrained to 150px of platform/chars — 16-cycle carry-forward CLOSED)
-- **SF04 Luma+Byte**: v002 NEW C27 (procedural quality: wobble outlines, variable stroke, face lighting, cyan rim light)
+- **SF03 Other Side**: v005 NEW C28 (UV_PURPLE_DARK saturation fixed: 31%→72%; GL-04a #3A1060)
+- **SF04 Luma+Byte**: v003 NEW C28 (blush fixed #E8A87C, Byte fill canonical GL-01b, rim light right-side only)
 - **Note:** All `*_styled*.png` post-processing outputs DELETED C26. Rin's role is now procedural generation, not post-processing. Stylize tools → legacy/.
 
 ### Logo
 - **LTG_BRAND_logo_v001.png** — DECIDED C25 (asymmetric layout, A grade). Closes 24-cycle ambiguity.
 
 ### Characters
-- Luma: expr **v006** NEW C26 (line weight canonical — 3-tier: head=4, structure=3, detail=2 at 2× render), turnaround v002 (Act 2 proportions), color model v001
-- Byte: expr v004, turnaround v001, color model v001 NEW C25
-- Cosmo: expr v004, turnaround v002 (side view fixed) NEW C25, color model v001 NEW C25
-- Miri: expr v003 (KNOWING expression added) NEW C25, turnaround v001, color model v001
-- Glitch: expr v002, turnaround v002, color model v001
-- Character lineup: v005 NEW C27 (Luma updated to v006 construction — 8-ellipse hair, cheek nubs)
-- **Luma turnaround v002: line weight still heavy** — flagged for C28 fix (v003 needed)
+- Luma: expr v006 (line weight canonical), **turnaround v003 NEW C28** (line weight fixed, BACK view confirmed), color model v001
+  - **STILL NEEDED C29: expr v007** (3.2 heads + eye spec h×0.22 reconciliation — Alex directed, not yet built)
+- Byte: expr v004, turnaround v001, color model v001
+- Cosmo: expr v004, turnaround v002, color model v001
+- Miri: expr v003 (KNOWING expression), turnaround v001, color model v001
+- Glitch: **expr v003 NEW C28** (9 panels: added YEARNING/COVETOUS/HOLLOW interior states; bilateral eyes = genuine feeling tell), turnaround v002, color model v001
+- Character lineup: v005 (Luma v006 construction)
+  - **STILL NEEDED C29: lineup v006** (3.2 heads — Alex directed, not yet built)
 
 ### Environments
 All complete (Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street)
@@ -53,6 +54,35 @@ All complete (Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street)
 - Pitch brief: `ltg_pitch_brief_v001.md` — COMPLETE
 - Delivery manifest: `pitch_delivery_manifest_v001.md`
 - Pitch package index: updated C25
+
+## Cycle 28 — Completed
+
+### Alex Chen
+- Canonical Luma ratio locked: **3.2 heads** (turnaround = construction master)
+- Canonical eye width: **h×0.22** (turnaround values)
+- Pitch brief updated: Luma's interior need — "the kid who notices what no one else sees; Glitchkin need her to see them"
+- Maya directed: build expr v007 + lineup v006 (3.2 heads compliance)
+
+### Sam Kowalski
+- GL-06c STORM_CONFETTI_BLUE (#0A4F8C) registered in master_palette.md
+- SF03 v005: UV_PURPLE_DARK corrected (31%→72% saturation, GL-04a #3A1060)
+- Luma skin base cross-reference: RW-10 neutral, CHAR-L-01 lamp-lit — both correct in context
+
+### Rin Yamamoto
+- `LTG_TOOL_procedural_draw_v001.py` → v1.2.0: `add_rim_light()` gains `side` param (right/left/top/bottom/all)
+- SF04 v003: blush #E8A87C, Byte fill GL-01b canonical, rim `side="right"`
+
+### Kai Nakamura
+- 9 LTG_TOOL_ compliant copies created for Glitch/logo/color model generators
+- 8 forwarding stubs for large generators (original files pending git mv pass)
+- 37 new README entries; pitch index updated with SF03 v005, SF04 v003, lineup v005
+- **Carry-forward C29:** original LTG_CHAR_/LTG_COLOR_ source files still on disk — need git mv pass
+
+### Maya Santos
+- Luma turnaround v003: line weight fixed (all views), BACK view confirmed present, 1280×560
+- Glitch expr v003: 9 panels, YEARNING/COVETOUS/HOLLOW added. **Bilateral eyes = genuine feeling** (breaks destabilized-right-eye signature)
+
+---
 
 ## Critique 12 — Key Findings (C28 priorities)
 

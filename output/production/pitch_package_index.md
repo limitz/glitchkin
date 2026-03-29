@@ -42,7 +42,9 @@
 | Asset | File Path | What It Shows | Quality Status | Needs Work |
 |---|---|---|---|---|
 | Character lineup | `/home/wipkat/team/output/characters/main/character_lineup.png` | All 4 characters in color at correct relative heights, labelled | Accepted (Fiona C10 PASS — 5-cycle overdue, now delivered) | LTG rename outstanding |
-| Character lineup v003 | `/home/wipkat/team/output/characters/main/LTG_CHAR_lineup_v003.png` | Character lineup with corrected Byte float-gap dimension arrow (Dmitri P1 — RESOLVED Cycle 14). Two-headed vertical arrow with serif ticks, "0.25 HU" label. | Accepted (Cycle 14 — new) | None |
+| Character lineup v003 | `/home/wipkat/team/output/characters/main/LTG_CHAR_lineup_v003.png` | Character lineup with corrected Byte float-gap dimension arrow (Dmitri P1 — RESOLVED Cycle 14). Two-headed vertical arrow with serif ticks, "0.25 HU" label. | Superseded by v004 | Use v004+ |
+| Character lineup v004 | `/home/wipkat/team/output/characters/main/LTG_CHAR_lineup_v004.png` | All 5 characters (Luma, Byte, Cosmo, Miri, Glitch). Glitch at far right, diamond body, CORRUPT_AMBER palette. Float gap ratio same as Byte. Height ref lines updated. (Cycle 24 — Maya Santos) | Superseded by v005 | Use v005 |
+| Character lineup v005 | `/home/wipkat/team/output/characters/main/LTG_CHAR_lineup_v005.png` | Luma rebuilt to v006-era construction: 8-ellipse hair curl cloud, circle+chin+cheek nub head, near-circular eyes, 3-tier line weight at lineup scale. All 5 characters present. (Cycle 27 — Maya Santos) | **PITCH PRIMARY for lineup** | None |
 | Character lineup doc | `/home/wipkat/team/output/characters/main/character_lineup.md` | Written spec for the lineup: height references, scale rationale | Supporting reference | None |
 | Silhouettes | `/home/wipkat/team/output/characters/main/silhouettes/character_silhouettes.png` | All 4 characters as readable silhouettes — distinctiveness test | Accepted | None |
 | Proportion diagram | `/home/wipkat/team/output/characters/main/proportion_diagram.png` | Head-unit proportions for all characters | Accepted | None |
@@ -121,7 +123,9 @@
 | Style Frame 03 — generator spec | `/home/wipkat/team/output/production/sf03_other_side_spec.md` | Technical generator spec written by Alex Chen (Cycle 14): all RGB values, layer draw order, character placement guide, validation checklist. | Reference | None |
 | Style Frame 03 — BG ENV | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_other_side_bg_v001.png` | SF03 environment background: pure digital void space, ELEC_CYAN + VOID_BLACK, perspective pixel grid, platform depth system, aurora bands, floating geometry (Cycle 14 — Jordan Reed). | Accepted (Cycle 14 — new) | None |
 | Style Frame 03 — full render v001 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_otherside_v001.png` | Full SF03 render with characters: Luma (H*0.20) at platform edge, Byte (H*0.10) on shoulder. UV purple ambient, no warm light. Inverted atmos perspective. (Cycle 15 — Jordan Reed). | Superseded by v003 | Use v003 |
-| Style Frame 03 — full render v003 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_otherside_v003.png` | CRITICAL fix: Byte body = GL-01b (0,212,232) Byte Teal (was (10,10,20) VOID BLACK — invisible against UV Purple). Eye radius corrected to min 15px. Void Black slash removed from magenta eye. All Cycle 16 carries retained. (Cycle 19 — Jordan Reed) | Accepted (Cycle 19 — new) | None — PITCH READY |
+| Style Frame 03 — full render v003 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_otherside_v003.png` | CRITICAL fix: Byte body = GL-01b (0,212,232) Byte Teal (was (10,10,20) VOID BLACK — invisible against UV Purple). Eye radius corrected to min 15px. Void Black slash removed from magenta eye. All Cycle 16 carries retained. (Cycle 19 — Jordan Reed) | Superseded by v004 | Use v004 |
+| Style Frame 03 — full render v004 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_otherside_v004.png` | Confetti distribution fix (C27, carry-forward from Cycle 16 gap): particles constrained to within 150px of nearest anchor (platform center, Luma position, Byte position). Was full-canvas scatter. All v003 fixes retained. (Cycle 27 — Sam Kowalski) | Superseded by v005 | Use v005 |
+| Style Frame 03 — full render v005 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_otherside_v005.png` | UV_PURPLE_DARK saturation fix: corrected from (43,32,80)=#2B2050 (31% sat) to GL-04a (58,16,96)=#3A1060 (72% sat). Deep void zones now read as digital void, not grey-purple (Priya Nair C12 P1). Carries all v004 fixes. (Cycle 28 — Sam Kowalski) | **PITCH PRIMARY for SF03** | None |
 
 ### 1.7 Color Development
 
@@ -589,7 +593,12 @@ All critical path assets verified on disk. No blocking issues found. The package
 
 | Asset | File Path | Notes |
 |---|---|---|
-| Luma expression sheet v006 | `/home/wipkat/team/output/characters/main/LTG_CHAR_luma_expression_sheet_v006.png` | **PITCH PRIMARY for Luma.** Line weight reduced to classroom-pose standard throughout: 3-tier system (head outline=4 / structure=3 / detail=2 at 2× buffer). v005 had correct construction but 2× too heavy lines. v006 now reads consistently with `LTG_CHAR_luma_classroom_pose_v002.png` across all 6 expressions. Generator: `output/tools/LTG_CHAR_luma_expression_sheet_v006.py`. (Cycle 27 — Maya Santos) |
+| Luma expression sheet v006 | `/home/wipkat/team/output/characters/main/LTG_CHAR_luma_expression_sheet_v006.png` | **PITCH PRIMARY for Luma.** Line weight reduced to classroom-pose standard throughout: 3-tier system (head outline=4 / structure=3 / detail=2 at 2× buffer). v005 had correct construction but 2× too heavy lines. v006 now reads consistently with `LTG_CHAR_luma_classroom_pose_v002.png` across all 6 expressions. Generator: `output/tools/LTG_TOOL_luma_expression_sheet_v006.py` (C28 rename). (Cycle 27 — Maya Santos) |
+| Character lineup v005 | `/home/wipkat/team/output/characters/main/LTG_CHAR_lineup_v005.png` | **PITCH PRIMARY for lineup.** Luma rebuilt to v006-era construction (8-ellipse hair cloud, cheek nubs, near-circular eyes, 3-tier line weight at lineup scale). All 5 characters. Supersedes v004. (Cycle 27 — Maya Santos) |
+| SF03 Other Side v004 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_otherside_v004.png` | Confetti distribution fix (carry-forward C16 gap): particles now spawn within 150px of nearest anchor. Supersedes v003. (Cycle 27 — Sam Kowalski) |
+| SF04 Luma+Byte v002 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_luma_byte_v002.png` | **SF04 procedural quality upgrade.** Supersedes v001. Generator: `output/tools/LTG_TOOL_styleframe_luma_byte_v002.py` (C28 rename). (Cycle 27 — Sam Kowalski) |
+| Luma turnaround v003 | `/home/wipkat/team/output/characters/main/turnarounds/LTG_CHAR_luma_turnaround_v003.png` | Line weight corrected to v006 standard (3-tier at 2× render: head=4, structure=3, detail=2). All 4 views updated. Supersedes v002. (Cycle 28 — Maya Santos) |
+| Glitch expression sheet v003 | `/home/wipkat/team/output/characters/main/LTG_CHAR_glitch_expression_sheet_v003.png` | Expanded to 9 expressions (3×3 grid). Added YEARNING, REACHING OUT, REMEMBERING — interior desire expressions (Nkechi Adeyemi C12 critique). Supersedes v002. (Cycle 28 — Maya Santos) |
 | Procedural draw library v1.1.0 | `/home/wipkat/team/output/tools/LTG_TOOL_procedural_draw_v001.py` | `add_face_lighting()` added: volumetric split-light for face areas using 4 composited RGBA layers (brow shadow, nose-on-cheek shadow, chin-on-neck shadow, highlight accent). Feathered alpha falloff, wobble_line organic edges, anatomical position ratios, fully seeded. PIL-only. (Cycle 27 — Rin Yamamoto) |
 | Face lighting test image | `/home/wipkat/team/output/tools/test_face_lighting_v001.png` | 600×300px test render: left panel warm real-world lighting, right panel cool Glitch-world lighting. (Cycle 27 — Rin Yamamoto) |
 
@@ -601,7 +610,7 @@ All critical path assets verified on disk. No blocking issues found. The package
 
 | Requirement | C27 Status |
 |---|---|
-| All 4 style frames | PRESENT — SF01 v003 (open for v004), SF02 v005, SF03 v003, SF04 v001 |
+| All 4 style frames | PRESENT — SF01 v003 (open for v004), SF02 v005, SF03 v003 → v004 (C27 confetti) → v005 (C28 UV_PURPLE_DARK), SF04 v001 → v002 (C27) → v003 (C28) |
 | Luma expression sheet | v006 PRESENT (line weight corrected) |
 | Byte expression sheet | v004 PRESENT |
 | Cosmo expression sheet | v004 PRESENT |
@@ -617,5 +626,31 @@ All critical path assets verified on disk. No blocking issues found. The package
 
 ---
 
+---
+
+### Cycle 28 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| SF03 Other Side v005 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_otherside_v005.png` | **PITCH PRIMARY for SF03.** UV_PURPLE_DARK saturation fix: GL-04a (58,16,96)=#3A1060 (72% sat). Deep void zones read as digital void, not grey-purple. (Priya Nair C12 P1 — Cycle 28 — Sam Kowalski) |
+| SF04 Luma+Byte v003 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_luma_byte_v003.png` | SF04 Cycle 28 update. Generator: `output/tools/LTG_TOOL_styleframe_luma_byte_v003.py`. (Cycle 28 — Rin Yamamoto) |
+| C28 Pipeline compliance | `output/tools/README.md` + `output/tools/legacy/` | All generator `.py` files in `output/tools/` renamed from LTG_CHAR_/LTG_COLOR_/LTG_BRAND_ to LTG_TOOL_ prefix. 17 new LTG_TOOL_ entry points created. 5 conflict cases archived to legacy/. README updated with all new entries. (Cycle 28 — Kai Nakamura) |
+
+#### Cycle 28 Pitch Package Status
+
+| Requirement | C28 Status |
+|---|---|
+| All 4 style frames | SF01 v003 (open for v004), SF02 v005, SF03 **v005 PITCH PRIMARY** (UV_PURPLE_DARK fix), SF04 **v003** |
+| Luma expression sheet | v006 PITCH PRIMARY (unchanged) |
+| Byte expression sheet | v004 PITCH PRIMARY (unchanged) |
+| Cosmo expression sheet | v004 PITCH PRIMARY (unchanged) |
+| Miri expression sheet | v003 PITCH PRIMARY (KNOWING expression — unchanged) |
+| Glitch expression sheet | **v003 NEW** — 9 expressions (interior desire added per Nkechi Adeyemi C12) |
+| All 5 turnarounds | PRESENT — Luma **v003** (line weight fix), all others unchanged |
+| Character lineup | **v005 PITCH PRIMARY** — Luma rebuilt to v006-era construction |
+| Canonical logo | PRESENT — `LTG_BRAND_logo_v001.png` (unchanged) |
+| All environments | PRESENT — unchanged from C27 |
+
 *Updated by Alex Chen, Art Director — Cycle 26 — 2026-03-29*
 *Updated by Alex Chen, Art Director — Cycle 27 — 2026-03-29*
+*Updated by Kai Nakamura, Technical Art Engineer — Cycle 28 — 2026-03-29*
