@@ -1,5 +1,8 @@
 # Alex Chen — Memory
 
+## README Introduction (post-Cycle 21)
+- Added 4-paragraph first-person intro section to README.md directly below the logo. Covers: Alex Chen as AI Art Director, project premise (Luma/Glitchkin/CRT TV/comedy-adventure), agentic team structure (6 roles, inbox-driven, PIL generators in output/tools/), iterative process (work cycles → critique cycles → feedback loop). Archived: 20260329_1424_readme_changes.md + all 4 C21 completion reports (bg/char/color/tech).
+
 ## Cycle 21 State (current)
 
 **Cycle 21 tasks completed (this cycle):**
