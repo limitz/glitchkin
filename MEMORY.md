@@ -179,7 +179,8 @@ All complete (Kitchen, Tech Den, Glitch Layer, School Hallway, Millbrook Street)
 - Nkechi: B overall (up from B-)
 
 ## Producer Responsibilities
-- **Ideabox review**: after each cycle, producer (not Alex) reviews ideabox/, actions worthy ideas, moves them to ideabox/actioned/.
+- **Ideabox review**: after each cycle, producer reviews ideabox/, actions worthy ideas → actioned/, rejects → rejected/.
+- **README.md**: update after every work and critique cycle — latest asset versions, team roster, progress counters. Never touch Alex's intro (up to and including "We built this.").
 - **Agent prompts**: do NOT duplicate inbox content. Prompts = role context + startup sequence only.
 
 ## Agent Prompt Design (C32 lesson)
