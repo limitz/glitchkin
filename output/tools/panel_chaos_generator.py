@@ -759,7 +759,10 @@ def draw_p15(draw, img, font, font_bold, font_ann):
               fill=LUMA_SKIN, width=6)   # forearm: curls inward (defensive guard)
 
     # RIGHT ARM — lower, flung outward (uncontrolled, asymmetric)
-    draw.line([(luma_cx + 10, body_top + 10), (luma_cx + 52, body_top + 18)],
+    # CYCLE 12 FIX (Carmen Cycle 11 brief): endpoint moved from body_top+18 to body_top+10
+    # for true horizontal read. 8px elevation drop over ~42px horizontal = ~11° below H.
+    # Bringing endpoint UP 8px achieves near-perfect horizontal exit trajectory.
+    draw.line([(luma_cx + 10, body_top + 10), (luma_cx + 52, body_top + 10)],
               fill=LUMA_SKIN, width=6)
 
     # RIGHT LEG — KNEE TO CHEST (fetal/shock reflex — pulled tight)
@@ -2042,7 +2045,7 @@ PANELS = [
 
 def main():
     print("=" * 60)
-    print("Panel Chaos Generator — Cycle 9")
+    print("Panel Chaos Generator — Cycle 12")
     print("Generating P14–P24 (The Chaos Sequence)")
     print("=" * 60)
 

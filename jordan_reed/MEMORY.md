@@ -39,6 +39,15 @@
 - **Couch back cushion position IS the directionality.** Back cushion LEFT → character faces RIGHT → monitors. This geometry must be consistent across all tools that draw the couch shape.
 - **3 light sources in Luma's house = 3 independent gradient passes:** (1) Window warm spill from far left; (2) Monitor cyan spill from right; (3) Desk lamp tight warm cone on far right. These must never be merged or they create muddy overlap zones.
 
+## Cycle 12 Lessons
+- **Naming compliance pass: create LTG copies with `shutil.copy2()`** — never rename originals. Created 10 CHAR/COLOR/ENV copies in one tool run (`LTG_TOOL_naming_compliance_copier_v001.py`).
+- **Version order integrity: check file sizes before creating v002 from legacy source.** `LTG_ENV_glitchlayer_frame_v001.png` (81483 bytes) is NEWER than `glitch_layer_frame.png` (80664 bytes) — legacy was NOT the newest. Creating v002 from legacy would mislead. When sizes differ, v001 LTG is canonical.
+- **Style Frame 02 BG generator** delivered as `LTG_TOOL_style_frame_02_glitch_storm_v001.py`, outputs `LTG_COLOR_styleframe_glitch_storm_v001.png` (1920×1080, 204KB). Spec fully honored: UV cloud masses, main ELEC_CYAN crack (orthogonal segments), HOT_MAGENTA storm edges, pixel confetti (4 colors, NO acid green), town silhouette, warm windows, street + cyan pool + warm spill, shattered storefront, character sprint poses (Luma/Cosmo/Byte), 4° Dutch angle via PIL rotate(-4, expand=True) + center-crop.
+- **`lerp_color()` expects 3-tuples.** Do not pass 1-tuples to it. Use inline arithmetic for scalar lerps: `int(a + (b - a) * t)`.
+- **Spec compliance for confetti:** ACID_GREEN is semantically "healthy glitch energy" — FORBIDDEN in storm confetti. Storm colors = ELEC_CYAN, STATIC_WHITE, HOT_MAGENTA, UV_PURPLE only.
+- **Byte Visibility Rule** in cyan-dominant environments: 2px CORRUPT_AMBER (#FF8C00) outline, LEFT shoulder position, cracked eye (HOT_MAGENTA) faces right toward danger, cyan eye faces left toward Luma.
+- **Dutch angle = camera tilt, not element tilt.** Applied as very last step to the entire composed image. `img.rotate(-degrees, expand=True)` then center-crop to W×H.
+
 ## Cycle 11 Lessons
 - **LTG naming: create compliant copies alongside originals** — never rename in isolation. Cycle 11 added `LTG_ENV_lumashome_layout_v001.png` and `LTG_ENV_millbrook_mainstreet_v001.png` as copies of the legacy layout PNGs in `/output/backgrounds/environments/layouts/`. `LTG_ENV_glitchlayer_frame_v001.png` already existed.
 - **Encounter composition vs. establishing composition:** bg_glitch_layer_encounter.py uses a confrontation-focused layout — Corruption bloom (UV_PURPLE + HOT_MAGENTA) dominates upper-center instead of neutral aurora; flanking NEAR platforms create an arena; CHARACTER STAND platform is wider/lower with a notch for damage read; Corruption scatter falls DOWNWARD (data decay) vs. pixel trails rising upward (platform energy). These are inverted to signal antagonist presence.

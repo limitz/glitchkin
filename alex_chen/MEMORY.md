@@ -1,5 +1,13 @@
 # Alex Chen — Memory
 
+## Cycle 12 Lessons
+- **Byte ground-floor annotation:** Added dashed `GROUNDFLOOR_COL=(100,168,200)` line at `BASELINE_Y` under Byte, with label "ground floor." and downward arrow. Dmitri P1 (3rd notice) closed. New output: `LTG_CHAR_lineup_v002.png`.
+- **Cosmo side glasses refactor:** `_draw_cosmo_glasses()` extended with `is_side=True, front_x=` parameters. Side view now uses shared helper (inline code removed from `draw_cosmo_side()`). All four views now route through the same function. Output: `LTG_CHAR_cosmo_turnaround_v002.png`.
+- **Ghost Byte visual surprise (A+ gap):** Faint oval Byte-ghost (alpha 55/255) composite on 3 peripheral monitors via RGBA layer. Implies Byte was watching from all screens before revealing itself — story beat hidden in art. Victoria Ashford A+ direction. Output: `LTG_COLOR_styleframe_discovery_v002.png`. Cycle label: "Ghost Byte".
+- **Asymmetric logo:** `LTG_TOOL_logo_asymmetric_v001.py` produces `LTG_BRAND_logo_asymmetric_v001.png`. "Luma" at 180px (dominant left), "&" at 56px (bridge), "the Glitchkin" stacked at 72px (right). Bi-color scan bar below; larger pixel scatter on right as visual counterweight.
+- **NEVER overwrite existing assets** — always new versioned files. Naming: `LTG_[CAT]_[descriptor]_v[###].png`.
+- **Style frame draw order after RGBA composite:** Must refresh `draw = ImageDraw.Draw(img)` after any `img.paste()` call from compositing, or subsequent draws go to the old surface.
+
 ## Cycle 1 Lessons
 - No images = no package. Push for visual approximations even in text workflows.
 - Secondary characters need design. Antagonists need design early.

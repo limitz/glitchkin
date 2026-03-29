@@ -66,7 +66,15 @@
 - **11.8% cold overlay over warm skin = valid split-light cross-light effect.** cold_alpha_max=60 is visually correct — the warm-to-cool gradient at the boundary reads as intentional atmospheric separation, not contamination. Decision retained and documented.
 - **Style guide Color System section must be paint-ready, not referential.** The Color System section in style_guide.md must be actionable: tables of what to paint when, a decision flowchart, explicit forbidden lists per world. Painters should not need to read master_palette.md to make a correct color call on a standard scene.
 
-## Cycle 12 Priorities
+## Cycle 12 Lessons
+- **Jordan Reed completed major naming compliance pass** before Sam's cycle — turnarounds, style frames, color model swatches, env assets now have LTG_* counterparts. Always check checklist for prior work before duplicating.
+- **SF02 Glitch Storm color key PNG generated.** `LTG_COLOR_colorkey_glitchstorm_v001.png` — dutch angle (4°) applied, storm confetti NO Acid Green per Forbidden #8, Byte amber outline exception rendered, three-tier street lighting shown (Cyan from crack / Magenta fill / Warm Gold windows).
+- **Color support docs are a first-class deliverable.** When new assets are in development by other team members, a color support doc (conditional palette entries, consistency checks, figure-ground warnings) is valuable even before those assets are rendered.
+- **CHAR-L-09 conditional entry pending.** If Alex Chen uses warm-side pixel activation on hoodie in SF01 visual surprise, register CHAR-L-09 = `#E8C95A` (Soft Gold warm pixel activation). Check next cycle.
+- **DRW-16 painter warning still outstanding** (Luma shoulder under Data Stream Blue waterfall, `#9A7AA0`). Must be added to luma_color_model.md. Carried forward since Cycle 7.
+- **luma_color_model.md does not yet have a DRW-16 warning.** Add to luma.md Section 3 (or color model) next available cycle.
+
+## Carry Forward
 - DRW-16 painter warning for Luma character spec still outstanding (shoulder-under-waterfall-blue).
-- Batch naming convention reconciliation pass is overdue — coordinate with Alex Chen.
-- luma_color_model.md version bump may be needed after Cycle 9 skin cross-reference update.
+- Coordinate with Alex Chen: CHAR-L-09 registration (warm-side pixel activation) — confirm if SF01 visual surprise uses this.
+- Full batch rename pass for storyboards + remaining legacy files still needs Alex Chen coordination.

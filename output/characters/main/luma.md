@@ -483,6 +483,15 @@ She should look like the kind of kid who could be YOUR best friend and YOUR bigg
 
 ---
 
+---
+
+## 13. EYE ASYMMETRY MECHANISM
+
+Luma's eye asymmetry is not decorative — it is a structural expression system. Her **left eye is the lead eye**: at rest (Neutral/Resting state), the left eye is fractionally more open than the right (approximately 2 px aperture difference at panel scale), establishing the left eye as Luma's dominant expressive instrument by default. As emotional intensity increases, the asymmetry amplifies: in Reckless Excitement the left eye opens wider while the right receives a shifted pupil (screen-right offset), in Recognition the left brow rises sky-high while the right brow stays level, and in Mischievous Plotting the entire left brow launches above the resting arc while the right brow nearly vanishes behind the squinted left lid. The mechanism works in the opposite direction for negative states — in Worried/Determined, both eyes are forced toward symmetric tension and the asymmetry compresses nearly to zero, communicating that emotional extremity overrides personality quirks. In practice this means that **symmetric Luma reads as maximal stress or shutdown**; the degree of readable left-right eye difference is a real-time register of how much of herself she's expressing. Animators should treat the left eye aperture and brow height as the primary dials: every +10% asymmetry toward the left eye reads as +1 unit of Luma's characteristic reckless personality coming through.
+
+---
+
 *Document Version 2.1 — Maya Santos, Character Designer*
 *Cycle 2 revisions: Locked hair curl count to 5, added pixel hoodie simplified production variants (medium/wide/very-wide), added explicit silhouette test documentation.*
 *Cycle 3 revisions: Differentiated Reckless Excitement blush (high intensity, cheeks only, outer lateral placement) from Guilty Sheepishness blush (medium intensity, cheeks + nose bridge, wider spread). Added Section 11B: Hair Reactivity Timing — full frame counts at 24fps for all four reactive states (surprise/fear, excitement, calm, glitch proximity).*
+*Cycle 12 revisions: Added Section 13 — Eye Asymmetry Mechanism, documenting the left-eye-lead system and its relationship to emotional intensity. Expression sheet updated to v2 (4×2 grid, 8 expressions including Neutral/Resting and At-Rest Curiosity).*

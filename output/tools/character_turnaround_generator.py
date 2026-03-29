@@ -515,14 +515,40 @@ def _cosmo_head_unit():
     return CHAR_H / 4.0
 
 
-def _draw_cosmo_glasses(draw, cx, gy, gr, is_front=True, is_back=False):
+def _draw_cosmo_glasses(draw, cx, gy, gr, is_front=True, is_back=False, is_side=False,
+                        front_x=None):
     """Draw Cosmo's glasses as the defining silhouette element.
     Thick plastic frames with NEG_SPACE lens cutouts.
     gr: lens radius. gy: vertical center of glasses.
-    is_front: both lenses visible. is_back: no lenses. Otherwise: 3/4 or side.
+    is_front: both lenses visible (front view).
+    is_back: no lenses visible (back view).
+    is_side: single lens in profile, projecting forward from front_x.
+    Otherwise: 3/4 view (near lens full, far lens compressed).
+
+    Cycle 12: is_side parameter added so draw_cosmo_side() calls this helper
+    instead of inline code, matching the consistency guarantee of front/3-quarter/back views.
     """
     if is_back:
         return  # back view: glasses not visible
+
+    if is_side:
+        # Side/profile view: one circular lens as a protrusion ahead of the face silhouette.
+        # front_x is the front edge of the head in profile — lens sits slightly ahead of it.
+        if front_x is None:
+            front_x = cx - int(gr * 0.4)  # fallback estimate
+        rim = 3
+        lens_cx = front_x - int(gr * 0.4)  # ahead of front face edge
+        # Outer rim
+        draw.ellipse([lens_cx - gr - rim, gy - gr - rim, lens_cx + gr + rim, gy + gr + rim],
+                     fill=SILHOUETTE)
+        # Inner lens cutout
+        draw.ellipse([lens_cx - gr, gy - gr, lens_cx + gr, gy + gr], fill=NEG_SPACE)
+        # Ear arm: extends from lens rim to the back of the head
+        # back_x is estimated as front_x + head_depth (≈ 2.5 × gr from front_x)
+        back_x = front_x + int(gr * 3.0)
+        draw.rectangle([lens_cx + gr, gy - 2, back_x + int(gr * 0.33), gy + 2],
+                       fill=SILHOUETTE)
+        return
 
     if is_front:
         lcx = cx - int(gr * 1.55)
@@ -679,16 +705,14 @@ def draw_cosmo_side(draw, cx, base_y):
     back_x  = cx + int(head_depth * 0.40)
     draw.rounded_rectangle([front_x, hy, back_x, hy + hh], radius=6, fill=SILHOUETTE)
 
-    # Glasses — in side profile: one lens as circular protrusion beyond front face
+    # Glasses — in side profile: one lens as circular protrusion beyond front face.
+    # Cycle 12: refactored to call _draw_cosmo_glasses(is_side=True) for consistency
+    # with front, 3/4, and back views. Inline code removed.
     gr = int(hu * 0.18)
     gy = hy + int(hh * 0.48)
-    rim = 3
-    lens_cx = front_x - int(gr * 0.4)   # slightly ahead of the front face
-    draw.ellipse([lens_cx - gr - rim, gy - gr - rim, lens_cx + gr + rim, gy + gr + rim],
-                 fill=SILHOUETTE)
-    draw.ellipse([lens_cx - gr, gy - gr, lens_cx + gr, gy + gr], fill=NEG_SPACE)
-    # Ear arm extending from lens to ear
-    draw.rectangle([lens_cx + gr, gy - 2, back_x + int(hu*0.06), gy + 2], fill=SILHOUETTE)
+    _draw_cosmo_glasses(draw, cx=front_x, gy=gy, gr=gr,
+                        is_front=False, is_back=False, is_side=True,
+                        front_x=front_x)
 
     # Hair — extends slightly behind head
     draw.ellipse([front_x - 2, hy - int(hu*0.08), back_x + int(hu*0.14), hy + int(hu*0.12)],
@@ -1177,10 +1201,11 @@ def main():
         BYTE_VIEW_DRAWERS,
         os.path.join(out_dir, "byte_turnaround.png")
     )
+    # Cycle 12: new versioned file — glasses refactored to use _draw_cosmo_glasses(is_side=True)
     generate_turnaround(
         "Cosmo",
         COSMO_VIEW_DRAWERS,
-        os.path.join(out_dir, "cosmo_turnaround.png")
+        os.path.join(out_dir, "LTG_CHAR_cosmo_turnaround_v002.png")
     )
     generate_turnaround(
         "Miri",

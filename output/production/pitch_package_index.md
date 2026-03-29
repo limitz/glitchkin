@@ -1,9 +1,9 @@
 # Pitch Package Index
 ## "Luma & the Glitchkin" — Complete Asset Inventory
 
-**Prepared by:** Jordan Reed, Background & Environment Artist
-**Date:** 2026-03-29
-**Cycle:** 11
+**Prepared by:** Jordan Reed, Background & Environment Artist / Updated by Alex Chen, Art Director
+**Date:** 2026-03-29 / Updated 2026-03-30 (Cycle 12)
+**Cycle:** 12
 **Purpose:** Single-document navigator for all pitch-ready assets. Use this to locate, assess, and present any component of the package. Quality grades are drawn from critic records where available.
 
 ---
@@ -46,6 +46,7 @@
 | Silhouettes | `/home/wipkat/team/output/characters/main/silhouettes/character_silhouettes.png` | All 4 characters as readable silhouettes — distinctiveness test | Accepted | None |
 | Proportion diagram | `/home/wipkat/team/output/characters/main/proportion_diagram.png` | Head-unit proportions for all characters | Accepted | None |
 | Luma expressions | `/home/wipkat/team/output/characters/main/luma_expressions.png` | Expression range: happy, scared, determined, frustrated, wonder | Accepted | None |
+| Luma expression sheet (full) | `/home/wipkat/team/output/characters/main/luma_expression_sheet.png` | Full expression sheet — 6 expressions, full-body panels, coherent emotional arc (Cycle 11, matches Byte sheet format) | Accepted (Dmitri C11 A) | None |
 | Luma face closeup | `/home/wipkat/team/output/characters/main/luma_face_closeup.png` | ECU face render — style detail and linework quality | Accepted | None |
 | Byte expressions | `/home/wipkat/team/output/characters/main/byte_expressions.png` | Expression range for Byte, oval body, hover particles (Cycle 10 fix: 10×10px) | Accepted (Naomi C10 review indirect) | None |
 
@@ -73,6 +74,9 @@
 | Glitch Layer layout | `/home/wipkat/team/output/backgrounds/environments/layouts/glitch_layer_layout.png` | Layout card: 3-tier platform depth system, aurora band, void floor | Accepted (Cycle 6/7 revisions; Cycle 10: depth tiers named) | LTG rename → see `LTG_ENV_glitchlayer_layout_v001.png` (pending) |
 | Glitch Layer frame BG | `/home/wipkat/team/output/backgrounds/environments/glitch_layer_frame.png` | Compositing-ready Glitch Layer BG: aurora, platforms, pixel trails, flora, void debris | Accepted (Naomi C10 A- for palette documentation) | LTG rename outstanding |
 | Glitch Layer frame (LTG) | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_glitchlayer_frame_v001.png` | LTG-named compositing BG | Accepted (Fiona C10 — 1 of 3 compliant files verified) | Canonical LTG-compliant copy |
+| Glitch Layer frame v2 (LTG) | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_glitchlayer_frame_v002.png` | Cycle 11 updated Glitch Layer BG | Accepted (Cycle 11 — new) | None |
+| Glitch Layer encounter frame | `/home/wipkat/team/output/backgrounds/environments/bg_glitch_layer_encounter.png` | Encounter-specific environment frame: action-oriented Glitch Layer composition (Cycle 11) | Accepted (Cycle 11 — new) | LTG rename outstanding |
+| Glitch Layer encounter (LTG) | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_glitchlayer_encounter_v001.png` | LTG-named encounter frame | Accepted (Cycle 11 — LTG-compliant) | None |
 | Glitch Layer environment doc | `/home/wipkat/team/output/backgrounds/environments/glitch_layer.md` | Written spec: visual identity, platform rules, void depth, color authority | Reference | None |
 | Millbrook main street layout | `/home/wipkat/team/output/backgrounds/environments/layouts/millbrook_main_street_layout.png` | Street layout: buildings, clock tower, power lines (thin catenary), pavement depth anchor | Accepted (Cycle 6/7 revisions) | LTG rename → see `LTG_ENV_millbrook_mainstreet_v001.png` (Cycle 11) |
 | Millbrook environment doc | `/home/wipkat/team/output/backgrounds/environments/millbrook_main_street.md` | Written spec: street proportions, building roster, signage, time-of-day notes | Reference | None |
@@ -84,11 +88,13 @@
 
 | Asset | File Path | What It Shows | Quality Status | Needs Work |
 |---|---|---|---|---|
-| Style Frame 01 — rendered PNG | `/home/wipkat/team/output/color/style_frames/style_frame_01_rendered.png` | Composited style frame: Luma at desk, Byte emerging from monitor — discovery moment | Accepted (Naomi C10 A- for rendering; Alex Cycle 10 lean + monitor content fix applied) | LTG rename outstanding |
+| Style Frame 01 — rendered PNG | `/home/wipkat/team/output/color/style_frames/style_frame_01_rendered.png` | Composited style frame: Luma at desk, Byte emerging from monitor — discovery moment. Cycle 11: mid-air transition element + 15px screen pixel figures added. | Accepted (Victoria C11 A) | Visual surprise element (A+ gap) — Cycle 12 work |
+| Style Frame 01 — LTG export | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v001.png` | LTG-named canonical copy of Style Frame 01 | Accepted (Cycle 11 — LTG-compliant) | None |
 | Style Frame 01 — composition | `/home/wipkat/team/output/color/style_frames/compositions/frame01_discovery_composition.png` | Composition layout card for Frame 01 | Reference | None |
 | Style Frame 01 — spec doc | `/home/wipkat/team/output/color/style_frames/style_frame_01_discovery.md` | Written spec: composition, lighting, color zones | Reference | None |
-| Style Frame 02 — composition | `/home/wipkat/team/output/color/style_frames/compositions/frame02_glitch_storm_composition.png` | Composition layout card for Frame 02 (Glitch Storm) | Reference — no composited PNG yet | **No compositing-ready BG for Frame 02.** Background script pending (Cycle 11 work). |
-| Style Frame 02 — spec doc | `/home/wipkat/team/output/color/style_frames/style_frame_02_glitch_storm.md` | Written spec: composition, sky color architecture, confetti rules, Byte visibility fix | Approved for illustration (Sam Kowalski Cycle 2) | BG needed before compositing can proceed |
+| Style Frame 02 — BG render | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v001.png` | Compositing-ready BG: night sky, UV storm masses, main crack, town silhouette, street, characters (Luma+Cosmo+Byte), storefront, 4° Dutch angle | Delivered Cycle 12 (Jordan Reed) | Ready for compositing pass by Sam Kowalski |
+| Style Frame 02 — composition | `/home/wipkat/team/output/color/style_frames/compositions/frame02_glitch_storm_composition.png` | Composition layout card for Frame 02 (Glitch Storm) | Reference | BG delivered Cycle 12 |
+| Style Frame 02 — spec doc | `/home/wipkat/team/output/color/style_frames/style_frame_02_glitch_storm.md` | Written spec: composition, sky color architecture, confetti rules, Byte visibility fix | Approved for illustration (Sam Kowalski Cycle 2) | BG delivered — compositing can proceed |
 | Style Frame 03 — composition | `/home/wipkat/team/output/color/style_frames/compositions/frame03_other_side_composition.png` | Composition layout card for Frame 03 (Other Side) | Reference — no composited PNG yet | No compositing-ready BG for Frame 03. Medium priority. |
 | Style Frame 03 — spec doc | `/home/wipkat/team/output/color/style_frames/style_frame_03_other_side.md` | Written spec for the "Other Side" frame | Approved for illustration | BG needed before compositing can proceed |
 
@@ -140,7 +146,13 @@
 | Panel P24 — breach apex | `/home/wipkat/team/output/storyboards/panels/panel_p24_breach_apex.png` | Apex moment: breach imminent | Accepted | LTG rename outstanding |
 | Panel P25 — title card | `/home/wipkat/team/output/storyboards/panels/panel_p25_title_card.png` | Title card panel | Accepted | LTG rename outstanding |
 
-### 2.2 Contact Sheet
+### 2.2 Storyboard Pitch Export
+
+| Asset | File Path | What It Shows | Quality Status | Needs Work |
+|---|---|---|---|---|
+| Storyboard pitch export | `/home/wipkat/team/output/production/storyboard_pitch_export.png` | All 25 cold-open panels composed as a pitch-ready single-image export (Cycle 11) | Accepted (Cycle 11 — new) | LTG rename outstanding |
+
+### 2.3 Contact Sheet
 
 | Asset | File Path | What It Shows | Quality Status | Needs Work |
 |---|---|---|---|---|
@@ -160,7 +172,7 @@
 
 | Asset | File Path | What It Shows | Quality Status | Needs Work |
 |---|---|---|---|---|
-| Style guide | `/home/wipkat/team/output/style_guide.md` | Visual style rules: line quality, color language, camera conventions, glitch design | Incomplete (Fiona C10: 6/10) | **Missing sections: animation style, prop design, Glitchkin construction rules. Three cycles deferred. HIGH priority before pitch.** |
+| Style guide | `/home/wipkat/team/output/style_guide.md` | Visual style rules: line quality, color language, camera conventions, glitch design, animation style (§9), Glitchkin construction (§10), prop design guidelines (§11) | Accepted — 11 sections complete (Cycle 11 additions: §9 Animation Style Notes, §10 Glitchkin Construction Rules, §11 Prop Design Guidelines) | None blocking pitch |
 
 ### 3.3 Master Palette
 
@@ -198,23 +210,41 @@
 | Character design sheets (all 4) | COMPLETE | Byte v3.1 header inconsistency: minor 1-line fix |
 | Character turnarounds (all 4) | COMPLETE | Delivered Cycle 10 |
 | Color model sheets | COMPLETE | All 4 characters |
-| Style frames (3 frames) | PARTIAL | Frame 01 composited; Frames 02 and 03 have composition layouts + specs but no composited PNGs |
-| Environment designs | COMPLETE | All 3 environments documented and have layout assets |
-| Storyboard / cold open | COMPLETE | 25 panels + contact sheet |
+| Style frames (3 frames) | PARTIAL | Frame 01 composited + LTG export (v001 + v002); Frame 02 BG delivered Cycle 12 (pending Sam compositing); Frame 03 BG pending |
+| Environment designs | COMPLETE | All 3 environments documented; Cycle 11 additions: encounter frame, Glitch Layer v2 |
+| Storyboard / cold open | COMPLETE | 25 panels + contact sheet + storyboard pitch export (Cycle 11) |
 | Show bible | COMPLETE | — |
-| Style guide | INCOMPLETE | Missing: animation style, prop design, Glitchkin construction rules |
+| Style guide | COMPLETE | 11 sections including §9 Animation Style Notes, §10 Glitchkin Construction Rules, §11 Prop Design Guidelines (all added Cycle 11) |
 | Color palette | COMPLETE | Master palette with Glitch Layer depth tiers documented |
 | Standalone pitch brief | NOT VERIFIED | Production bible covers narrative premise; a standalone one-page is standard practice |
 
 ### Open Blockers Before External Pitch Use
 
-1. Style guide: add animation style, prop design, Glitchkin construction rules (HIGH — Fiona C10)
-2. Style frames 02 and 03: compositing-ready background PNGs missing — BG for Frame 02 in progress (Cycle 11)
-3. Logo tagline: replace "A cartoon series by the Dream Team" placeholder (MEDIUM — Fiona C10)
-4. byte.md version header: 3.0 → 3.1 (LOW — one-line fix)
-5. Luma color model cold overlay arithmetic: recalculate per Naomi C10 flag (LOW)
+1. ~~Style guide: missing sections~~ — **RESOLVED Cycle 11.** All 11 sections present.
+2. Style Frame 02 BG: **DELIVERED Cycle 12** (`LTG_COLOR_styleframe_glitch_storm_v001.png`). Compositing pass (character layer overlay) still pending (Sam Kowalski). Frame 03 BG still outstanding.
+3. Logo tagline: removed Cycle 11 (Victoria Ashford / Fiona O'Sullivan). Show title only. **RESOLVED.**
+4. byte.md version header: corrected to v3.1 **RESOLVED Cycle 11.**
+5. Luma color model cold overlay arithmetic: recalculate per Naomi C10 flag (LOW — open)
+6. Character lineup: Byte float-height ground-floor annotation — **RESOLVED Cycle 12.** New file: `LTG_CHAR_lineup_v002.png`
+7. Cosmo turnaround: side-view glasses now use shared `_draw_cosmo_glasses()` — **RESOLVED Cycle 12.** New file: `LTG_CHAR_cosmo_turnaround_v002.png`
+
+### Cycle 12 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| Character lineup v002 | `/home/wipkat/team/output/characters/main/LTG_CHAR_lineup_v002.png` | Byte ground-floor annotation added (Dmitri C11/C12 P1) |
+| Cosmo turnaround v002 | `/home/wipkat/team/output/characters/main/turnarounds/LTG_CHAR_cosmo_turnaround_v002.png` | Side-view glasses refactored to use shared helper |
+| Style Frame 01 v002 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v002.png` | Visual surprise element added (Victoria C11 A+ gap) |
+| Show logo asymmetric | `/home/wipkat/team/output/production/LTG_BRAND_logo_asymmetric_v001.png` | Alternative layout: Luma larger/left-anchored, Glitchkin stacked right |
+| **Style Frame 02 BG** | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v001.png` | **NEW Cycle 12 (Jordan Reed).** Night sky + UV storm cloud masses + main crack + town silhouette + street + characters (Luma/Cosmo/Byte) + shattered storefront + 4° Dutch angle. Per spec in style_frame_02_glitch_storm.md. Ready for compositing. |
+| LTG compliance copies — turnarounds | `characters/main/turnarounds/LTG_CHAR_*_turnaround_v001.png` (×4) | Cycle 12 compliance pass: LTG-named copies of all 4 character turnarounds. |
+| LTG compliance copies — style frame 01 | `color/style_frames/LTG_COLOR_styleframe_discovery_v001.png` | Cycle 12 compliance pass: LTG-named copy of style_frame_01_rendered.png. |
+| LTG compliance copies — color swatches | `characters/color_models/swatches/LTG_COLOR_*_color_model_swatches_v001.png` (×4) | Cycle 12 compliance pass: LTG-named copies of all 4 color model swatch PNGs. |
+| LTG compliance copies — ENV layouts | `backgrounds/environments/layouts/LTG_ENV_glitchlayer_layout_v001.png` | Cycle 12: final outstanding ENV layout now has LTG copy. |
+| LTG compliance copies — ENV encounter | `backgrounds/environments/LTG_ENV_glitchlayer_encounter_v001.png` | Cycle 12: LTG copy of bg_glitch_layer_encounter.png. |
+| Naming compliance tool | `/home/wipkat/team/output/tools/LTG_TOOL_naming_compliance_copier_v001.py` | Reusable tool for creating LTG-compliant copies from legacy assets. |
 
 ---
 
 *Jordan Reed — Cycle 11 — 2026-03-29*
-*Background & Environment Artist*
+*Updated by Alex Chen, Art Director — Cycle 12 — 2026-03-30*

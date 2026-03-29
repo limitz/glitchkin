@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 Contact Sheet Generator — Luma & the Glitchkin
-Cycle 10: Combines ALL rendered panels in chronological order.
-Updated to include P14–P24 (The Chaos Sequence). Version string fixed per Carmen's Cycle 9 critique.
+Cycle 12: Combines ALL rendered panels in chronological order.
+Updated to include P14–P24 (The Chaos Sequence). P15 right arm endpoint corrected (Cycle 12).
 
 Output: /home/wipkat/team/output/storyboards/panels/contact_sheet.png
 
@@ -108,9 +108,9 @@ def generate():
     d.rectangle([0, HEADER_H - 1, cs_w, HEADER_H], fill=(0, 180, 200))  # teal rule
 
     d.text((PAD, 8), "LUMA & THE GLITCHKIN", fill=(0, 240, 255), font=font_hdr)
-    d.text((PAD, 30), "Ep.01 Cold Open — Cycle 10 Contact Sheet (P01–P25 complete)", fill=(200, 190, 165), font=font_sub)
+    d.text((PAD, 30), "Ep.01 Cold Open — Cycle 12 Contact Sheet (P01–P25 complete)", fill=(200, 190, 165), font=font_sub)
     d.text((cs_w - 160, 8),  f"{n} panels rendered", fill=(140, 130, 110), font=font_sub)
-    d.text((cs_w - 160, 24), "2026-03-29 Cycle 10", fill=(120, 110, 90), font=font_foot)
+    d.text((cs_w - 160, 24), "2026-03-29 Cycle 12", fill=(120, 110, 90), font=font_foot)
 
     # ── Place panels in grid ────────────────────────────────────────────────
     for i, (label, img) in enumerate(loaded):

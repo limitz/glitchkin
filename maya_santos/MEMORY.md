@@ -55,6 +55,14 @@
 - **Character lineup generator complete.** `character_lineup_generator.py` renders all 4 chars in COLOR at correct relative heights on shared baseline. Height ref lines show Cosmo top, Luma top, Miri top, Byte/Luma-chest. Per-char brackets with px labels.
 - **3/4 far-side leg guard:** When `far_bw` < `lw + 4`, the rectangle inverts. Guard: `far_leg_x2 = cx + max(far_bw - 4, lw + 8)`. Apply in any 3/4 body with asymmetric width values.
 
+## Cycle 12 Lessons
+- **Neutral/Resting is a structural requirement, not optional.** Without it, no expression has a measured distance from baseline. Left eye fractionally more open than right (leh=24 vs reh=22) establishes left as the lead eye even at zero emotional intensity.
+- **Eye asymmetry mechanism documented in character bible (Section 13).** Symmetric Luma = maximal stress/shutdown. Degree of left-right asymmetry = readout of personality intensity. This must be treated as animation spec, not a stylistic choice.
+- **4×2 expression sheet layout is superior to 3×2+strip.** Keeps all states on one canvas and makes visual comparison across all 8 states instant. FACE_SCALE=0.55 still works well at PANEL_W=280.
+- **Sheet metadata belongs in BOTH the header text AND a companion .md file.** Header for quick visual reference during production; .md for version history and archival.
+- **At-Rest Curiosity as slot 8 completes the low-register range.** Neutral → At-Rest Curiosity → Recognition now forms a complete low-to-mid register sequence. WARMTH prev_state updated to "← was: ANY EARNED MOMENT" (Dmitri's note: don't constrain it to the pilot timeline).
+- **New v2 generator: `LTG_CHAR_luma_expression_sheet_v002.py`.** Output: `luma_expression_sheet.png` (1210×886px). Old v1 generator retained as `luma_expression_sheet_generator.py`.
+
 ## Cycle 11 Lessons
 - **Luma expression sheet is now LIVE.** `luma_expression_sheet_generator.py` generates a 3×2 grid (912×886px) with 6 full-body expressions: Reckless Excitement, Worried/Determined, Mischievous Plotting, Settling/Wonder, Recognition, Warmth. Matches Byte sheet structure: per-panel BG color, label bar, prev_state/next_state annotations. Face panels rendered at 0.55 scale via intermediate canvas + LANCZOS resize.
 - **Luma is the lead character — her documentation tier must match or exceed the companion.** Byte had 6 expressions first; Luma's sheet closes the gap. Never let a supporting character have richer documentation than the lead.

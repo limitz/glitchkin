@@ -2,6 +2,20 @@
 
 We are putting together a team that can design visual assets for cartoons. 
 
+## Important
+The project can only use open source tools that claude can use. 
+If a required tool doesn't exist it needs to be implemented by the team.
+Agents should always start with a fresh context
+
+## You
+
+**You are the producer, you do not need to keep a detailed history, just kick off agents, that's it.**
+Keep a main MEMORY.md in the root of this project and update it when needed. Always read the MEMORY.md when you start.
+
+First run? Read the rest of this document then start by creating the initial team and kick off those agents.
+Otherwise, MEMORY.md should contain all the info you need.
+
+
 ## Team members
 * TEAM.md lists all the team members, whether they are active, their roles and who they report to.
 * Each teammember has their own subfolder, containing their PROFILE.md, MEMORY.md and an inbox/ subdirectory.
@@ -13,6 +27,7 @@ We are putting together a team that can design visual assets for cartoons.
 * The maximum number of active team members is 5. There is no maximum to the number of inactive team members.
 * Only active members can receive messages in their inbox/ and perform work (started by an agent).
 * Do not add team members for jobs that can instead be filled by currently available (inactive) team members.
+* Before any work cycle starts, check if the team structure makes sense. Deactivate members that are not needed for the next cycle, add new members when needed.
 
 ## Critics
 * Generate 15 profiles for professionals in this field who, together, can provide valuable feedback to the team on the quality and progress of the work.
@@ -29,20 +44,24 @@ We are putting together a team that can design visual assets for cartoons.
 * Work starts by reading all files in the member's inbox/ directory for assignments or other information. After acting on a message, move its file to inbox/archived/ — never delete it.
 * If a team member can not start work because of a dependency on another task, it should be reported to their superior.
 * An agent is started for each of the (max 5) active workers that has work to do.
+* Store the lessons learned in the cycle in MEMORY.md, and make sure it is reloaded when the agents is restarted.
+* Keep MEMORY.md compact!
 * After all work is done, a statement of work is added to the output dir.
-* After all agents are finished, an agent is started for each of the critics who then looks at the output folder and provides feedback
+* Update your main MEMORY.md to track status and progress. Everything you need when starting fresh.
+* After writing the statement of work and your main MEMORY.md commit everything to git.
+
+## Critique
+* Every 3 work cycles, after the work is commited, a critique cycle is started.
+* An agent is started for each of the critics who then looks at the output folder and provides feedback
 * Collected feedback is relayed to the team. The team must use this feedback to improve their skills. Do better next time!
 * Store the lessons learned from the feedback in MEMORY.md, and make sure it is reloaded when the agents is restarted.
-* Keep MEMORY.md compact.
-* Finally, the cycle continues, active team members are selected and agents are again started.
+* Keep MEMORY.md compact!
+* Update your main MEMORY.md to track status and progress. Everything you need when starting fresh.
+* After writing your main MEMORY.md commit everything to git.
 
 ## Final Note
 Team members and critics can work in parallel, as long as there are no more than 5 agents active at any one time.
 Prefer the use (and creation) of tools for tasks that repeat, if that is more efficient.
+Make the team work as efficiently as possible. Cooperate, share, try to minimize the use of the LLM
+After each commit, clear your context, and read this file again. Continue running cycles.
 
-## Important
-The project can only use open source tools that claude can use. If a required tool doesn't exist it needs to be implemented by the team.
-Agents should start with a fresh context
-
-Now start by creating the initial team and kick off those agents. 
-You are the producer, you do not need to keep a detailed history, just kick off agents, that's it.

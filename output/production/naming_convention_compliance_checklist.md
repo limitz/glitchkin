@@ -109,13 +109,69 @@ LTG_CHAR_luma_designsheet_v001.png   ← PNG export
 
 ---
 
-### 8. Reconciliation Status (as of Cycle 9)
+### 8. Reconciliation Status (updated Cycle 12 — Jordan Reed, 2026-03-29)
 
 The existing output folder contains files named under the pre-convention system. These are not yet renamed — the reconciliation pass is pending and must be done as a coordinated batch (not file-by-file). Until then:
 
 - **Do NOT rename existing legacy files in isolation** — wait for the batch reconciliation pass coordinated by Alex Chen.
 - **Do apply the convention to ALL new files** created from Cycle 9 forward. No new non-compliant filenames.
 - If you need to produce a new version of a legacy file, name the new version correctly (LTG-compliant) and note the prior filename in the file's header.
+
+#### Cycle 12 Compliance Pass — Completed (Jordan Reed, 2026-03-29)
+
+LTG-compliant copies created alongside legacy originals (originals untouched):
+
+**Character Turnarounds (CHAR):**
+- `luma_turnaround.png` → `LTG_CHAR_luma_turnaround_v001.png` ✓
+- `byte_turnaround.png` → `LTG_CHAR_byte_turnaround_v001.png` ✓
+- `cosmo_turnaround.png` → `LTG_CHAR_cosmo_turnaround_v001.png` ✓
+- `miri_turnaround.png` → `LTG_CHAR_miri_turnaround_v001.png` ✓
+
+**Style Frames (COLOR):**
+- `style_frame_01_rendered.png` → `LTG_COLOR_styleframe_discovery_v001.png` ✓
+- Style Frame 02 BG newly created: `LTG_COLOR_styleframe_glitch_storm_v001.png` ✓
+
+**Color Model Swatches (COLOR):**
+- `luma_swatches.png` → `LTG_COLOR_luma_color_model_swatches_v001.png` ✓
+- `byte_swatches.png` → `LTG_COLOR_byte_color_model_swatches_v001.png` ✓
+- `cosmo_swatches.png` → `LTG_COLOR_cosmo_color_model_swatches_v001.png` ✓
+- `grandma_miri_swatches.png` → `LTG_COLOR_grandma_miri_color_model_swatches_v001.png` ✓
+
+**Character Supporting Assets (CHAR):**
+- `character_lineup.png` → `LTG_CHAR_character_lineup_v001.png` ✓
+
+**Environment Assets (ENV):**
+- `glitch_layer_layout.png` → `LTG_ENV_glitchlayer_layout_v001.png` ✓ (layouts/)
+- `bg_glitch_layer_encounter.png` → `LTG_ENV_glitchlayer_encounter_v001.png` ✓
+- `LTG_ENV_glitchlayer_frame_v001.png` — CANONICAL (81483 bytes, regenerated Cycle 11)
+- `LTG_ENV_glitchlayer_frame_v002.png` — NOTE: copied from legacy `glitch_layer_frame.png`
+  (80664 bytes, older render). v001 is canonical — higher byte count confirms it is the newer regeneration.
+
+**Color Key Thumbnails (COLOR) — Sam Kowalski Cycle 12 pass (2026-03-30):**
+- `key01_sunny_afternoon.png` → `LTG_COLOR_colorkey_sunny_afternoon_v001.png` ✓
+- `key02_nighttime_glitch.png` → `LTG_COLOR_colorkey_nighttime_glitch_v001.png` ✓
+- `key03_glitch_layer_entry.png` → `LTG_COLOR_colorkey_glitchlayer_entry_v001.png` ✓
+- `key04_quiet_moment.png` → `LTG_COLOR_colorkey_quiet_moment_v001.png` ✓
+- NEW: `LTG_COLOR_colorkey_glitchstorm_v001.png` — SF02 Glitch Storm key (no legacy source, new file) ✓
+**Character Color Model Swatches (COL) — Sam Kowalski Cycle 12 pass (2026-03-30):**
+Note: Jordan Reed created LTG_COLOR_*_color_model_swatches_v001.png versions above.
+Sam Kowalski created LTG_COL_*_colormodel_v001.png variants per Priority 2 task spec.
+Both exist for cross-reference; use Jordan Reed's LTG_COLOR_ versions as canonical.
+- `luma_swatches.png` → `LTG_COL_luma_colormodel_v001.png` ✓ (secondary alias)
+- `byte_swatches.png` → `LTG_COL_byte_colormodel_v001.png` ✓ (secondary alias)
+- `cosmo_swatches.png` → `LTG_COL_cosmo_colormodel_v001.png` ✓ (secondary alias)
+- `grandma_miri_swatches.png` → `LTG_COL_miri_colormodel_v001.png` ✓ (secondary alias)
+
+**Still Outstanding (require coordinated batch rename by Alex Chen):**
+- All storyboard panels (panel_p01_exterior.png through panel_p25_title_card.png → LTG_SB_*)
+- All legacy background layout and environment PNGs not yet LTG-named
+- color_model .md documents (CHAR category, not yet addressed)
+- `naming_conventions.md` and `naming_convention_compliance_checklist.md` themselves (PROD rename irony — flag to Alex Chen)
+
+**Tools created this cycle (TOOL):**
+- `LTG_TOOL_naming_compliance_copier_v001.py` — copies legacy assets to LTG-named versions
+- `LTG_TOOL_naming_compliance_copier_v002.py` — ENV pass
+- `LTG_TOOL_style_frame_02_glitch_storm_v001.py` — Style Frame 02 BG generator
 
 ---
 

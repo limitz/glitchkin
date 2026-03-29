@@ -66,6 +66,8 @@ import random
 from PIL import Image, ImageDraw, ImageFont
 
 OUTPUT_PATH = "/home/wipkat/team/output/color/style_frames/style_frame_01_rendered.png"
+# Cycle 12: new versioned output for ghost Byte A+ surprise element
+OUTPUT_PATH_V002 = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_v002.png"
 W, H = 1920, 1080
 
 # ── Master Palette (from master_palette.md) ──────────────────────────────────
@@ -294,6 +296,50 @@ def draw_background(draw, img):
         # Monitor bezel highlight — (40, 40, 60): one-off construction detail line (cool dark grey).
         # Not in palette: it is a micro-detail of the monitor casing; too small and specific to register.
         draw.line([(mx, my), (mx + mw_s, my)], fill=(40, 40, 60), width=2)
+
+    # ── Cycle 12 (Victoria Ashford A+ gap): Visual surprise — ghost Byte silhouettes ──
+    # ON PERIPHERAL MONITORS: faint oval Byte-form ghost, barely perceptible, on three of the
+    # six background monitors. The viewer's eye first goes to Byte emerging from the CRT.
+    # On a second look, they notice the same oval form watching from the other screens —
+    # implying Byte has been observing Luma through every screen before choosing to reveal itself.
+    # This is a story beat hidden inside the production art. It elevates the frame from "a
+    # girl meeting something digital" to "something digital that has been waiting for her."
+    # Ghost alpha is 55/255 (~22%) — visible on careful inspection, not on first glance.
+    # Implementation: RGBA composite over the RGB image at each peripheral screen.
+    ghost_screens = [
+        monitor_specs[0],   # top-left monitor
+        monitor_specs[2],   # top-right monitor
+        monitor_specs[4],   # mid-right monitor
+    ]
+    for gs_mx, gs_my, gs_mw, gs_mh in ghost_screens:
+        # Byte ghost: small oval (body only) centered on the screen, very faint
+        # Ghost body parameters
+        ghost_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        ghost_draw  = ImageDraw.Draw(ghost_layer)
+        g_cx  = gs_mx + gs_mw // 2
+        g_cy  = gs_my + gs_mh // 2 - int(gs_mh * 0.08)  # slightly above center (floating)
+        g_rx  = int(gs_mw * 0.28)   # oval body radius — proportional to monitor size
+        g_ry  = int(gs_mh * 0.38)
+        # Ghost body oval — very dark near-void slightly lighter than screen bg (25% BYTE_TEAL)
+        # (0, 53, 58) = BYTE_TEAL at ~23% over ELEC_CYAN background: read as a shadow impression.
+        # Not in palette: this is a composite ghost value, not a paintable production color.
+        ghost_draw.ellipse([g_cx - g_rx, g_cy - g_ry, g_cx + g_rx, g_cy + g_ry],
+                           fill=(0, 53, 58, 55))
+        # Ghost eye glints — two tiny pixel squares suggesting the dual eyes
+        # (0, 220, 240) at alpha 70 — faint hotspot inside ghost form
+        eye_y = g_cy - int(g_ry * 0.15)
+        e_r   = max(2, int(g_rx * 0.20))
+        ghost_draw.rectangle([g_cx - int(g_rx * 0.35) - e_r, eye_y - e_r,
+                               g_cx - int(g_rx * 0.35) + e_r, eye_y + e_r],
+                              fill=(0, 220, 240, 70))
+        ghost_draw.ellipse([g_cx + int(g_rx * 0.20) - e_r, eye_y - e_r,
+                            g_cx + int(g_rx * 0.20) + e_r, eye_y + e_r],
+                           fill=(0, 220, 240, 60))
+        # Composite ghost onto main image
+        base_rgba = img.convert("RGBA")
+        img_with_ghost = Image.alpha_composite(base_rgba, ghost_layer)
+        img.paste(img_with_ghost.convert("RGB"))
+    draw = ImageDraw.Draw(img)   # refresh draw handle after compositing
 
     # ── CRT screen (central, Byte emergence point) ──────────────────────────
     # The main CRT where Byte emerges — larger, more prominent, screen-center
@@ -1403,13 +1449,14 @@ def generate():
     # Not in palette: it is a non-character UI element. Chosen to be legible against the near-black
     # strip without being too bright (does not compete with the image above).
     draw.text((20, H - 32),
-              "LUMA & THE GLITCHKIN — Frame 01: The Discovery  |  Cycle 11 Rendered",
+              "LUMA & THE GLITCHKIN — Frame 01: The Discovery  |  Cycle 12 — Ghost Byte",
               fill=(180, 150, 100),
               font=font_xs)
 
-    img.save(OUTPUT_PATH, "PNG")
-    print(f"Saved: {OUTPUT_PATH}")
-    return OUTPUT_PATH
+    # Cycle 12: save as new versioned file — never overwrite existing assets
+    img.save(OUTPUT_PATH_V002, "PNG")
+    print(f"Saved: {OUTPUT_PATH_V002}")
+    return OUTPUT_PATH_V002
 
 
 if __name__ == "__main__":

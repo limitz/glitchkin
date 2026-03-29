@@ -584,12 +584,40 @@ def generate_lineup(output_path):
     draw.rectangle([0, 0, IMG_W, IMG_H], fill=BG)
 
     # Title
-    title = "LUMA & THE GLITCHKIN — Character Height Lineup — Cycle 10"
+    title = "LUMA & THE GLITCHKIN — Character Height Lineup — Cycle 12"
     draw.text((20, 14), title, fill=LABEL_COL, font=font_title)
     draw.line([(0, TITLE_H - 4), (IMG_W, TITLE_H - 4)], fill=TICK_COL, width=1)
 
     # Baseline
     draw.line([(40, BASELINE_Y), (IMG_W - 20, BASELINE_Y)], fill=BASELINE_COL, width=2)
+
+    # ── Cycle 12: Ground-floor annotation under Byte (Dmitri Volkov P1 — 3rd notice) ──
+    # Byte floats above BASELINE_Y. A dashed ground-floor line at BASELINE_Y under Byte
+    # + a labeled arrow makes the float-height explicit. Annotation is local to Byte's column.
+    byte_cx   = CHAR_X["byte"]
+    gf_x0     = byte_cx - 70
+    gf_x1     = byte_cx + 70
+    gf_y      = BASELINE_Y
+    # Dashed ground-floor line (slightly thicker, distinct color from the shared baseline)
+    # (100, 168, 200): one-off annotation color — cool blue-gray; distinct from BASELINE_COL
+    # to read as a call-out, not as the shared height system line.
+    GROUNDFLOOR_COL = (100, 168, 200)
+    x = gf_x0
+    while x < gf_x1:
+        draw.line([(x, gf_y), (min(x + 10, gf_x1), gf_y)],
+                  fill=GROUNDFLOOR_COL, width=2)
+        x += 10 + 4
+    # Label: "ground floor." with downward tick arrow
+    label = "ground floor."
+    lw_px = len(label) * 6
+    label_x = byte_cx - lw_px // 2
+    label_y = gf_y + 6
+    draw.text((label_x, label_y), label, fill=GROUNDFLOOR_COL, font=font_small)
+    # Small downward-pointing arrow above the label, on the line itself
+    arrow_x = byte_cx
+    draw.line([(arrow_x, gf_y - 1), (arrow_x, gf_y - 12)], fill=GROUNDFLOOR_COL, width=1)
+    draw.polygon([(arrow_x - 4, gf_y - 12), (arrow_x + 4, gf_y - 12), (arrow_x, gf_y - 4)],
+                 fill=GROUNDFLOOR_COL)
 
     # Height reference markers
     draw_height_markers(draw, font_small)
@@ -637,7 +665,7 @@ def generate_lineup(output_path):
     footer = (
         "Heights shown at correct relative scale. "
         f"Reference: 1 head unit = {HEAD_UNIT:.0f}px. "
-        "Colors per master_palette.md (canonical). Cycle 10."
+        "Colors per master_palette.md (canonical). Cycle 12 — ground floor annotation added."
     )
     draw.text((20, IMG_H - 18), footer, fill=TICK_COL, font=font_small)
 
@@ -649,7 +677,8 @@ def main():
     import os
     out_dir = "/home/wipkat/team/output/characters/main"
     os.makedirs(out_dir, exist_ok=True)
-    generate_lineup(os.path.join(out_dir, "character_lineup.png"))
+    # Cycle 12: new versioned output — never overwrite existing assets
+    generate_lineup(os.path.join(out_dir, "LTG_CHAR_lineup_v002.png"))
     print("Character lineup generation complete.")
 
 
