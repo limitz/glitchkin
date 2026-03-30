@@ -1,0 +1,5 @@
+**Author:** Lee Tanaka
+**Cycle:** 42
+**Date:** 2026-03-30
+**Idea:** Create a reusable staging spec template (`output/production/templates/staging_spec_template.md`) that Diego can fill in for each planned panel before rendering. The template would capture: shot type, camera angle, Dutch tilt (yes/no/degrees), character positions (x%, y% of frame), active expressions with aperture specs, gaze aim (xy coordinates or frame-zone), depth tier (FG/BG), arc color, and annotated elements required. The template would be 1 page. Diego fills in the fields; Lee reviews before render starts. This would eliminate the "brief arrives after render is done" cycle and catch staging problems at spec time rather than critique time.
+**Benefits:** Diego gets a structural checklist that prevents omissions (e.g., sight-line annotation was absent until Lee's C41 review). Lee can review a filled template in minutes vs reading a full generated PNG. Reduces iteration cycles for complex panels like P07/P09. Could be validated by `LTG_TOOL_sight_line_diagnostic.py` in a pre-render mode (spec check, no image required).
