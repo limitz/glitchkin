@@ -10,7 +10,7 @@ Style Frame 04 — "Resolution" (Luma returns to the Real World)
 "Luma & the Glitchkin"
 
 Author: Jordan Reed — Style Frame Art Specialist
-Cycle: 42
+Cycle: 42 (updated C45)
 
 CONCEPT:
   SF04 completes the emotional arc of the pitch package:
@@ -94,7 +94,8 @@ SUNLIT_AMBER    = (212, 146,  58)   # canonical (212,146,58) — window top half
 LAMP_AMBER      = (255, 140,   0)   # GL-07 / #FF8C00 — intentional in SF04 (C42 Alex brief)
                                     # Real World lamp halo reads as subtly Glitch-residue marked.
                                     # Post-crossing kitchen: the room has been touched by the Layer.
-                                    # Low alpha (max ~55 = 22%) — not a character GL color.
+                                    # Alpha ceiling raised C45 per Alex brief: ~88 peak ≈ 35%
+                                    # — should be felt before it's seen; not a character GL color.
 SPECULAR_WHITE  = (255, 252, 240)   # value ceiling ≥ 225
 
 # Kitchen props — Real World palette
@@ -409,6 +410,23 @@ def draw_doorway(img, draw):
             fill=(glow_r, glow_g, glow_b, alpha)
         )
 
+    # ── CORRUPT_AMBER contamination fringe (C45 Alex brief) ─────────────────
+    # Thin horizontal band at the outer edge of the CRT static zone.
+    # "The static is slightly warm-tinted" — a wrong warmth, not an obvious alien
+    # color. GL-07 / #FF8C00. Low alpha: not a character GL application.
+    # Placed at the lower edge of the CRT glow ellipse (transition zone).
+    fringe_y0 = crt_cy + int(crt_h * 0.55)
+    fringe_y1 = fringe_y0 + sp(6)
+    fringe_x0 = door_x0 + sp(4)
+    fringe_x1 = door_x1 - sp(4)
+    for fy in range(fringe_y0, min(fringe_y1, H)):
+        band_t = (fy - fringe_y0) / max(1, fringe_y1 - fringe_y0)
+        band_alpha = int(38 * (1.0 - band_t))  # fades downward — max 38 ≈ 15%
+        crt_glow_draw.line(
+            [(fringe_x0, fy), (fringe_x1, fy)],
+            fill=(*LAMP_AMBER, band_alpha)
+        )
+
     # Byte ghost form in doorway — barely legible faded silhouette
     ghost_cx = crt_cx
     ghost_cy = door_y0 + (door_y1 - door_y0) // 2
@@ -539,13 +557,16 @@ def draw_warm_light(img, draw):
         ld.line([(0, i), (W, i)], fill=(*SUNLIT_AMBER, alpha))
 
     # ── Lamp halo (upper-left ceiling fixture) ────────────────────────────────
+    # C45 Alex brief: halo radius +30%, alpha ceiling raised from ~22% → ~35%
+    # so the warm bloom creeps onto ceiling above and top edge of fridge.
+    # Still felt-before-seen: no single step exceeds alpha 88 (35%).
     lamp_cx = sx(760)
     lamp_cy = sy(40)
-    for step in range(20, 0, -1):
-        t = step / 20
-        r_x = int(sx(260) * (1 - t * 0.5))
-        r_y = int(sy(180) * (1 - t * 0.5))
-        alpha = int(55 * t * t)
+    for step in range(24, 0, -1):
+        t = step / 24
+        r_x = int(sx(340) * (1 - t * 0.45))
+        r_y = int(sy(240) * (1 - t * 0.45))
+        alpha = int(88 * t * t)
         ld.ellipse([lamp_cx - r_x, lamp_cy - r_y, lamp_cx + r_x, lamp_cy + r_y],
                    fill=(*LAMP_AMBER, alpha))
 

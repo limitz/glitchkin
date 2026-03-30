@@ -315,6 +315,16 @@ Read inbox for directive. Two tasks: (1) SF02 staging brief for Luma interiority
 - **Per-tier shadow bands encode depth grammar, not just aesthetics.** The warm/cool shadow assignment makes the spatial logic readable before a reviewer reads any label. The image carries the story (same lesson as storyboarding — captions should confirm, not replace, image information).
 - **Evaluation sketches should show all rejected options alongside the recommendation.** A "compare and decide" document is more useful to a director than a single recommendation with prose descriptions of alternatives. Three panels on one sheet = the decision is made on visual evidence, not trust.
 
+## Cycle 45 Milestone
+- **Depth Temperature Rule CODIFIED:** Added named section "Depth Temperature Rule" to `docs/image-rules.md`. Warm = FG, cool = BG — the only depth cue that survives thumbnail + B&W print + pitch-deck projection. Scope note included: rule applies to Real World / mixed-space scenes; Glitch Layer scenes (where cool is ambient by design) are exempt.
+- **Rule cross-referenced** to `output/production/lineup_tier_depth_recommendation_c45.md` and the Option C dual-warmth bands evaluation.
+- **Ideabox:** Proposed `LTG_TOOL_depth_temp_lint.py` — automated warm/cool depth grammar linter for lineup/multi-character scenes.
+- **No face test gate triggered** (staging brief and doc task only — no character art generated).
+
+## Cycle 45 Lessons
+- **Rules need scope boundaries.** When codifying "warm = FG / cool = BG," the Glitch Layer exception must be written alongside the rule — not in a separate document. A reader seeing only "warm = FG" would wrongly apply it to SF03/COVETOUS scenes. The scope note prevents misuse.
+- **A named rule in docs/ has force; an unnamed pattern in a MEMORY.md has none.** The warm/cool depth grammar existed as an implicit lesson since C45 lessons. Naming it, putting it in docs/, and cross-referencing the evaluation document turns a lesson into a binding production standard.
+
 ## Cycle 36 Lessons
 - **Pipeline policy must live in ROLE.md.** A tool built in C35 but not in ROLE.md is invisible to a fresh agent. Gate sections in ROLE.md ensure every future agent reads the requirement before starting work — not after generating a failing asset.
 - **Rin's ROLE.md was missing entirely.** An active member without a ROLE.md is a risk: fresh context will rely only on PROFILE.md and MEMORY.md. ROLE.md is the operational spec; it must exist for every active member.

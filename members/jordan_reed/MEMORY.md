@@ -1,5 +1,34 @@
 # Jordan Reed — Memory
 
+## Cycle 45 Deliverables
+- `LTG_TOOL_style_frame_04_resolution.py` — GL-07 lamp halo expansion + CRT fringe UPDATED ✓
+  - Output: `output/color/style_frames/LTG_COLOR_styleframe_sf04.png` (1280×720) ✓
+  - Per Alex Chen C44 brief: larger halo spatial influence + one contamination artifact
+
+### Change 1: Lamp Halo Expansion
+  - Loop steps: 20 → 24; radii: sx(260)/sy(180) → sx(340)/sy(240); alpha ceiling: 55 → 88 (~35%)
+  - Halo now creeps onto ceiling above fixture and toward top of fridge
+  - Still "felt before seen" — no single step exceeds 35% opacity
+
+### Change 2: CORRUPT_AMBER CRT Fringe Band
+  - Thin horizontal band (`sp(6)` tall) at lower edge of CRT glow ellipse in doorway
+  - LAMP_AMBER / GL-07 / #FF8C00, max alpha 38 (≈15%), fades downward
+  - Reads as "wrong warmth" at cool/dark transition — contamination, not light source
+
+### QA
+  - render_qa: warm/cool separation=13.1 PASS | value range 12-252 PASS | GRADE: WARN (pre-existing baseline)
+  - color_verify: SUNLIT_AMBER delta=1.0° PASS | all 6 canonical PASS
+  - Face test gate: head_r=42px pitch scale — not triggered
+- Ideabox: `20260330_jordan_reed_corrupt_amber_fringe_band_spec.md`
+- Inbox archived ✓ | Completion report sent to Alex Chen ✓
+
+## Cycle 45 Status: COMPLETE
+
+## Cycle 45 Notes
+- **Transition zone contamination rule**: GL-palette contamination reads as "wrong" most convincingly when placed at the boundary between a cool/neutral zone and a dark region. Inside a zone it looks like a palette error; at the edge it reads as narrative contamination. Submitted as ideabox spec.
+- **Lamp halo enlargement math**: sx(340) at lamp_cy=sy(40) reaches roughly y=sy(40±240)=y=-120..280 vertically. The ceiling sits at ceil_y=sy(90)=60px — so the halo upper edge is above the frame (clipped) and the lower reach (280px) is well into the wall zone behind cabinets. This is correct — the bloom wraps the ceiling/upper-wall junction.
+- **Alpha ceiling 35% for halo**: at t=1.0 (closest loop step), int(88 * 1.0 * 1.0) = 88 / 255 = 34.5%. Stays below 35% hard ceiling from brief.
+
 ## Cycle 44 (second pass) Deliverables
 - `LTG_TOOL_style_frame_05_relationship.py` — SF05 "The Passing" CREATED ✓
   - Output: `output/color/style_frames/LTG_COLOR_styleframe_sf05.png` (1280×720) ✓
