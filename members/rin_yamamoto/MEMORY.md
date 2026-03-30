@@ -1,5 +1,45 @@
 # Rin Yamamoto — MEMORY
 
+## C50 Completed Work
+- **P1 — Alternative Rendering Exploration** (C50 full-team character quality pivot)
+  - `LTG_TOOL_rendering_comparison.py` (v1.0.0, new)
+  - Prototyped 4 approaches: pycairo, 2x+LANCZOS supersample, dense polygon (64pt/edge), baseline PIL
+  - Subject: Byte character (diamond body, pixelated eyes, crown spike, glow)
+  - **Key metric: AA ratio (unique edge colors / edge pixel count)**
+    - pycairo: 0.358 (19x baseline) — bezier curves + native sub-pixel AA
+    - 2x+LANCZOS: 0.189 (10x baseline) — supersampling via downscale
+    - Dense poly: 0.017 (~same as baseline) — smoother shape, no AA
+    - Baseline PIL: 0.018
+  - **Recommendation: B+C combined** (supersample wrapper + dense bezier polygons)
+    - ~80% of pycairo quality, ~10% migration cost
+    - No new deps, incremental adoption, every generator compatible
+    - pycairo = longer-term R&D track
+  - Output: 6 PNGs in `output/production/LTG_RENDER_*_c50.png` + report
+  - Report: `output/production/rendering_comparison_report_c50.md`
+  - Flagged to Alex: `docs/pil-standards.md` says "No cairocffi or other external deps" but
+    assignment says pycairo allowed — needs reconciling if pycairo route is chosen
+- `output/tools/README.md` updated — C50 entry added
+- Inbox: archived C50 assignment
+- Ideabox: supersampled render wrapper for procedural_draw
+
+## C50 Lessons
+- pycairo's anti-aliasing advantage is massive (19x AA ratio) because it uses sub-pixel
+  coverage computation natively. PIL has NO anti-aliasing on polygon/ellipse edges.
+- 2x supersampling + LANCZOS downscale is the cheapest path to good edges: zero code changes
+  to draw logic, just scale all coords by 2 and resize at the end. Render time ~6x longer
+  (4x pixels + resize overhead) but still fast (64ms for 1280x1280 → 640x640).
+- Dense polygons (64+ pts/edge) improve SHAPE smoothness (fewer visible facets) but do NOT
+  improve EDGE smoothness (still binary pixel on/off, no gradient transitions). The two
+  problems are distinct: shape = geometric fidelity, edge = rasterization quality.
+- Combined B+C addresses both: C fixes shape, B fixes edges. Measured result would be
+  smooth bezier shapes with LANCZOS-blended edges — close to pycairo visual quality.
+- pycairo ARGB32 → PIL RGB conversion is straightforward (numpy byte reorder BGRA→RGB)
+  but adds a dependency on numpy for the bridge. For a full pycairo pipeline, would need
+  a clean bridge module.
+- Cairo's path model (move_to, curve_to, fill, stroke) is fundamentally different from
+  PIL's shape model (draw.polygon, draw.ellipse). Migration is not incremental — each
+  generator must be substantially rewritten. This is why B+C is the pragmatic choice.
+
 ## C49 Completed Work
 - **P1 — CRT Glow Asymmetry Fix** (HIGH priority)
   - `LTG_TOOL_styleframe_discovery.py` updated to v008 (C49)
