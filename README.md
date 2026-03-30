@@ -165,12 +165,12 @@ Three-world palette system:
 
 ## Progress
 
-- **Work cycles:** 44 | **Critique cycles:** 17
-- **Next:** Cycle 45 = Critique 18
-- **Ideabox:** 12 ideas actioned C44 (all 12 submitted)
+- **Work cycles:** 45 | **Critique cycles:** 17
+- **Next:** Cycle 46 = Critique 18
+- **Ideabox:** 12 ideas actioned C45 (all 12 submitted)
 - **Critics panel:** 20 total (15 professionals + 5 audience)
 - **Team:** 12 active
-- **QA baseline:** re-run needed (precritique_qa v2.13.0, all 5 motion sheets, UV_PURPLE linter integrated)
+- **QA baseline:** re-run needed (precritique_qa v2.14.1, all 6 motion sheets, GLITCH_DARK_SCENE COVETOUS subtype fixed)
 
 ### Pitch Package Status
 | Asset | Latest | Notes |
@@ -178,7 +178,7 @@ Three-world palette system:
 | SF01 Discovery | v006 | Sight-line fixed C38 |
 | **SF02 Glitch Storm** | **v008 C43** | Native 1280×720 — SUNLIT_AMBER ΔE 1.1 PASS |
 | SF03 The Other Side | v005 | UV_PURPLE ΔE 0.0 C41 |
-| **SF04 Resolution** | **C42 canonical** | Warm/cool 13.2 PASS — GL-07 lamp halo (Leila's find) |
+| **SF04 Resolution** | **C45 updated** | Lamp halo +31%, CRT doorway CORRUPT_AMBER fringe — warm/cool 13.2 PASS |
 | **SF05 COVETOUS** | **v3.0.0 C43** | Luma SENSING UNEASE face — face gate PASS |
 | **SF05 "The Passing"** | **NEW C44** | Jordan — kitchen pre-dawn, mug of tea, CRT through doorway |
 | **SF06 "The Hand-Off"** | **NEW C44** | Maya — living room, Miri+CRT+Luma, moment of transmission |
@@ -189,11 +189,11 @@ Three-world palette system:
 | **Miri expressions** | **v006 C44** | FLAG 05 CLOSED — wooden hairpins (was chopstick MIRI-A) |
 | Glitch expressions | v003 | unchanged |
 | **Glitch body primitive diagram** | **NEW C41** | rx/ry proportions, vertex formulas |
-| **Character lineup** | **v009 C44** | Wooden hairpin atomic update (Maya) |
-| **Logo** | **v003 C44** | Nunito Bold + Space Grotesk Bold pipeline ready — fonts pending install |
-| **Kitchen** | **v007 C44** | line_weight FAIL resolved (paper_texture/vignette/flatten) |
-| **Tech Den** | **v006 C41** | In-generator warm/cool 102.9 PASS |
-| Living Room | v001 | unchanged |
+| **Character lineup** | **v010 C45** | Dual-warmth tier depth bands (Option C) — warm FG / cool BG |
+| **Logo** | **v003 C44** | Nunito Bold + Space Grotesk Bold — fonts installed C45, rendered |
+| **Kitchen** | **v007 C44** | line_weight FAIL resolved |
+| **Tech Den** | **v007 C45** | Hardcoded path migrated to output_dir() |
+| **Living Room** | **v003 C45** | CRT centered, warm-left/cool-right staging — SF06 aligned |
 | Glitch Layer | v003 | UV_PURPLE linter: ENVs WARN (17%) — creative direction pending |
 | **Classroom** | **v003 C43** | Chalkboard text deployed (pixel font) |
 | **Luma Study Interior** | **NEW C42** | 33.1 PASS, first-ever generator |
@@ -201,14 +201,15 @@ Three-world palette system:
 | **School Hallway** | **v004 C43** | MILLBROOK MIDDLE SCHOOL seal — pixel font |
 | Millbrook Street | v002 | unchanged |
 | **Cold open storyboard** | **v003 C39** | Night/den canonical |
-| **Panels** | **P03–P11/P14/P15/P23/P24 + EP05 COVETOUS** | P14/P15 new C44; all captions retrofitted to 3-tier |
-| **Story Bible** | **v004 C43** | Miri heritage + Millbrook + school name canonical |
+| **Panels** | **P03–P11/P14–P17/P23/P24 + EP05 COVETOUS** | P16/P17 new C45; legacy PNGs moved to panels/legacy/ |
+| **Story Bible** | **v005 C45** | FLAG 05 closed throughout; SF05/SF06 as staging references |
+| **Pilot cold open beat outline** | **v001 NEW C45** | Priya — gap analysis, P18/P19 flagged |
 | **Relationship frame brief** | **NEW C44** | Priya — A1-01 kitchen morning, logline, staging spec |
 | **Scene handoff briefs** | **NEW C42** | Acts 1–3 + pre-credits, A3-02 highest priority |
 | Motion — Luma | v002 C38 | unchanged |
 | Motion — Byte | v002 C38 | unchanged |
 | Cosmo motion spec | v001 C41 | IDLE/STARTLED/ANALYSIS_LEAN/RELUCTANT_MOVE |
-| **Miri motion spec** | **v001 C43** | WARM ATTENTION/SHARP ASSESSMENT/PROUD JOY/PATIENT CORRECTION |
+| **Miri motion spec** | **v002 C45** | OBSERVING STILL/RECOGNITION/WARMTH BURST/FOND SETTLE |
 | **Glitch motion spec** | **v001 NEW C44** | PREDATORY STILL/COVETOUS REACH/CORRUPTION SURGE/RETREAT |
 
 ---
@@ -221,4 +222,4 @@ All output generated with Python + PIL (open source only). Generators in `output
 
 ---
 
-*Cycle 44 — 2026-03-31*
+*Cycle 45 — 2026-03-30*

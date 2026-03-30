@@ -134,13 +134,14 @@ def audit(tools_dir: Path = _TOOLS_DIR, readme_path: Path = _README) -> dict:
         # Not found in main dir
         ghost.append(name)
 
-    # Legacy ghost: in README legacy rows but not in legacy/ dir
+    # Legacy ghost: in README legacy rows but not in legacy/ or deprecated/ dir
     legacy_ghost = []
     for name in legacy:
-        if not (_legacy_dir := tools_dir / "legacy" / name).exists():
-            # Check if it's in main dir (not yet moved)
-            if not (tools_dir / name).exists():
-                legacy_ghost.append(name)
+        in_legacy     = (tools_dir / "legacy"     / name).exists()
+        in_deprecated = (tools_dir / "deprecated" / name).exists()
+        in_main       = (tools_dir / name).exists()
+        if not (in_legacy or in_deprecated or in_main):
+            legacy_ghost.append(name)
 
     ok = sorted(disk_set & listed_set)
 

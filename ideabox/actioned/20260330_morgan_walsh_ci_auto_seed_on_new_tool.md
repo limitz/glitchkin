@@ -1,0 +1,5 @@
+**Author:** Morgan Walsh
+**Cycle:** C45
+**Date:** 2026-03-30
+**Idea:** Add an `--auto-seed` flag to `LTG_TOOL_ci_suite.py` that, when a NEW FAIL is detected for `hardcoded_path_check` or `thumbnail_lint`, automatically appends a suppression entry to `ci_known_issues.json` with `since_cycle` set to the current cycle label. This would eliminate the manual round-trip of running CI, identifying the new file, and hand-editing the JSON. The entry would be marked with a `"auto_seeded": true` field so it can be flagged by `--warn-stale` for eventual cleanup rather than permanent suppression.
+**Benefits:** Every time a new generator is added (Diego's storyboard panels, Ryo's motion sheets, etc.), the CI suite currently requires a manual two-step: run to identify the FAIL, then hand-edit ci_known_issues.json and re-run to confirm WARN. Auto-seed would make the first run the only run needed, saving at least one context-costly CI invocation per new tool and reducing the chance of a FAIL slipping into a commit.

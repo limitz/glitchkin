@@ -4,8 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present.
 
 ## Status
-**Cycle 44 complete. Critique 17 complete. Work cycles: 44. Critique cycles: 17.**
-**C45 = Critique 18 (every 3 cycles — due C45).**
+**Cycle 45 complete. Critique 17 complete. Work cycles: 45. Critique cycles: 17.**
+**C46 = Critique 18 (every 3 cycles — due C46). Run critics after C46 work cycle.**
 
 ## Active Team (12 slots)
 
@@ -40,16 +40,16 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 - C17 critics: Jonas Feld, Amara Diallo, Leila Asgari, Petra Volkov, Marcus Webb, Eleanor Whitfield
 - **C18 candidates (C45)**: Takeshi Mori, Ingrid Solberg, Reinhardt Böhm, Chiara Ferrara + 1 audience not from C16/C17 (Zoe Park, Marcus Okafor, Jayden Torres, Taraji Coleman)
 
-## Pitch Package Status — POST CYCLE 44
+## Pitch Package Status — POST CYCLE 45
 
 ### Style Frames
 - **SF01 Discovery**: v006
 - **SF02 Glitch Storm**: v008 C43 native 1280×720. SUNLIT_AMBER ΔE 1.1 PASS.
 - **SF03 Other Side**: v005 (UV_PURPLE ΔE 0.0 C41)
-- **SF04 Resolution**: CANONICAL C42. GL-07 LAMP_AMBER intentional (post-crossing "touched by the Layer", α max 22%).
+- **SF04 Resolution**: CANONICAL C42, updated C45 (Jordan). Lamp halo radius +31% (α max 35%), CRT doorway CORRUPT_AMBER contamination fringe added. render_qa warm/cool 13.2 PASS.
 - **SF05 COVETOUS**: v3.0.0 C43 (Lee). Luma SENSING UNEASE face PASS.
 - **SF05 "The Passing"** NEW C44 (Jordan): Kitchen pre-dawn, mug of tea, CRT through doorway. Warm/cool 16.7 PASS. `LTG_TOOL_style_frame_05_relationship.py` / `LTG_COLOR_styleframe_sf05.png`. ⚠️ Naming conflict with COVETOUS SF05 — Alex to confirm numbering scheme.
-- **SF06 "The Hand-Off"** NEW C44 (Maya): Living room, Miri (arm extended) + CRT (center) + Luma (forward lean). `LTG_TOOL_sf_miri_luma_handoff.py` / `LTG_COLOR_sf_miri_luma_handoff.png`. Closes C17 most-cited gap.
+- **SF06 "The Hand-Off"** NEW C44 (Maya): Living room, Miri (arm extended) + CRT (center) + Luma (forward lean). `LTG_TOOL_sf_miri_luma_handoff.py` / `LTG_COLOR_sf_miri_luma_handoff.png`. Closes C17 most-cited gap. Living Room v003 C45 (Hana) now aligned to this staging.
 
 ### Logo
 - **LTG_BRAND_logo_asymmetric.py v003 C44** (Sam). Nunito Bold (Luma) + Space Grotesk Bold (Glitchkin). `assets/fonts/` directory created with README + download instructions. **Fonts not yet installed** — run `assets/fonts/README.md` wget commands to activate. Falls back to DejaVu Sans silently if fonts absent.
@@ -58,9 +58,9 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 - Luma: expr v013 C41, turnaround v004, color model v002.
 - Byte: expr v007 C41. `--char byte` face test **NOW LIVE** (Kai C44).
 - Cosmo: expr v007 C38. Motion spec v001 C41.
-- Miri: **expr v006 C44** (Maya). **FLAG 05 CLOSED** — wooden hairpins (was chopstick). 6 files updated atomically. Motion spec v001 C43.
+- Miri: **expr v006 C44** (Maya). **FLAG 05 CLOSED** — wooden hairpins. Story Bible v005 C45 (Priya) fully reflects this. Motion spec **v002 C45** (Ryo): OBSERVING STILL / RECOGNITION / WARMTH BURST / FOND SETTLE.
 - Glitch: expr v003. Body primitive diagram C41. **Motion spec v001 NEW C44** (Ryo): PREDATORY STILL / COVETOUS REACH / CORRUPTION SURGE / RETREAT.
-- Character lineup: **v009 C44** (Maya). Wooden hairpin atomic update. Depth indicator band: Option C (dual-warmth drop-shadows) recommended by Lee — implement in C45 as v010.
+- Character lineup: **v010 C45** (Maya). Dual-warmth tier depth bands (Option C): warm amber FG, cool slate BG. Face gate PASS baseline confirmed.
 
 ### Environments
 - Kitchen: **v007 C44** (Hana). line_weight FAIL resolved (paper_texture + vignette + flatten). Warm/cool 32.9 PASS.
@@ -69,19 +69,18 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 - Classroom: v003 C43 (pixel font deployed).
 - School Hallway: v004 C43 (MILLBROOK MIDDLE SCHOOL).
 - Millbrook Street: v002.
-- Living Room: v001.
+- Living Room: **v003 C45** (Hana). CRT centered, warm-left/cool-right staging pass added, aligns to SF06.
 - Other Side: C41.
 - Luma Study Interior: NEW C42.
 
 ### Storyboards
 - Cold Open: v003 C39 (night/den canonical).
-- Panels: P03–P11, P14, P15, P23, P24 + EP05 COVETOUS. **All P03–P09/P23/P24 caption-retrofitted** (Diego — 3-tier hierarchy, Jonas Feld P1). P14: Byte ricochets off bookshelf. P15: Luma hits floor, Glitch forced-hair circle.
-- Caption retrofit tool: `LTG_TOOL_sb_caption_retrofit.py` (Diego C44).
-- 26 legacy `LTG_SB_coldopen_panel_XX` PNGs: still in `panels/` — physical move to `panels/legacy/` deferred C45 (Bash blocked).
-- PANEL_MAP: P14/P15 → EXISTS. Next: P16, P17.
+- Panels: P03–P11, P14–P17, P23, P24 + EP05 COVETOUS. All caption-retrofitted (3-tier hierarchy). P16 C45 (Diego): ECU Luma face/floor, Byte tracking. P17 C45 (Diego): MED still beat, chip falls, depth temp rule applied. Pilot cold open beat outline v001 (Priya C45) — gap analysis complete.
+- 26 legacy `LTG_SB_coldopen_panel_XX` PNGs: **MOVED** to `panels/legacy/` (Morgan C45).
+- PANEL_MAP: P16/P17 → EXISTS. Next: P18 (notebook doodles), P19 (Byte "preferred term is Glitchkin").
 
 ### Story
-- Story Bible: v004 C43.
+- Story Bible: **v005 C45** (Priya). FLAG 05 closed throughout; SF05/SF06 incorporated as staging references.
 - **Relationship frame brief**: NEW C44 (`output/production/story/LTG_relationship_frame_brief.md`). A1-01 kitchen morning, mug of tea, logline: "The woman who owns this house hands the girl who inherited her eyes a cup of tea, and neither of them mentions the television."
 - Quiet Frame Spec: ideabox actioned → Jordan C45.
 
@@ -91,50 +90,50 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 - Cosmo: v001 C41.
 - Miri: v001 C43.
 - **Glitch: v001 NEW C44** (Ryo). PREDATORY STILL / COVETOUS REACH / CORRUPTION SURGE / RETREAT. CORRUPT_AMBER beat color.
-- precritique_qa v2.13.0 — all 5 motion sheets; Section 11 UV_PURPLE lint integrated.
+- precritique_qa **v2.14.1 C45** — all 6 motion sheets (Miri v002 added); GLITCH_DARK_SCENE COVETOUS subtype fix.
 - annotation_occupancy false WARNs on Byte/Glitch dark sheets: Ryo ideabox actioned → C45.
 
 ## QA Baseline
-**precritique_qa v2.13.0 C44** (Rin). All 5 motion sheets. Section 11 UV_PURPLE Dominance Lint. **Full re-run needed.**
-Section 10 alpha_blend_lint: unblocked (Rin C43 `--save-nolight` flag). Generate base images first.
+**precritique_qa v2.14.1 C45** (Ryo). All 6 motion sheets. Section 11 UV_PURPLE with GLITCH_DARK_SCENE subtype (Rin C45). Dark-sheet annotation_occupancy fix (Ryo C45 — byte/glitch false WARNs resolved). **Full re-run needed C46.**
 
-## C44 Key Decisions & Deliverables
-- **FLAG 05 CLOSED** — Miri chopstick → wooden hairpins. 6-file atomic commit. char_spec_lint token config already data-driven (Kai C44).
-- **Typeface CONFIRMED** — Nunito Bold + Space Grotesk Bold. Font pipeline ready; fonts need manual install.
-- **`--char byte` face test LIVE** (Kai). Pixel-grid eyes, PASS/WARN/FAIL gates FG-B01/B02/B03.
-- **char_spec_lint v1.2.0 + token config JSON** (Kai). M004 data-driven. Both "hairpin" and "chopstick" accepted.
-- **SF05 "The Passing" + SF06 "The Hand-Off"** — two Miri+Luma relationship frames delivered (C17 most-cited gap closed).
-- **Glitch motion spec v001** — all 5 characters now have motion specs.
-- **CI suite v1.4.0** — Check 7 hardcoded path gate, Check 8 thumbnail lint, Check 9 motion coverage. 52 pre-existing offenders in known_issues.
-- **`LTG_TOOL_uv_purple_linter.py` v1.0.0** — COVETOUS FAILs are UV_PURPLE_DARK variants (not wrong hue); GLITCH_DARK_SCENE subtype fix actioned C45.
-- **precritique_qa v2.13.0** — Section 11 UV_PURPLE integrated.
-- **Caption retrofit** — all existing panels updated to 3-tier hierarchy (Jonas Feld P1 from C17).
-- **P14/P15** — 2 new cold open panels (TENSE/THRESHOLD).
-- **Kitchen v007** — line_weight FAIL resolved.
-- **Pixel font perspective helper** (Hana) — `draw_pixel_text_perspective()` in v001.1.
-- **Lineup tier depth: Option C selected** (Lee) — dual-warmth drop-shadows. Implement C45.
-- **Depth Temperature Rule** (Lee ideabox) — codify in docs C45.
+## C45 Key Decisions & Deliverables
+- **Depth Temperature Rule** codified in `docs/image-rules.md` (Lee). Warm=FG, cool=BG. Applies to Real World / mixed-space; Glitch Layer exempt.
+- **UV_PURPLE linter v1.1.0** (Rin) — GLITCH_DARK_SCENE subtype; COVETOUS FAILs resolved (both PASS).
+- **Lineup v010** (Maya) — dual-warmth tier depth bands (Option C). Face gate PASS.
+- **Miri motion spec v002** (Ryo) — WARMTH BURST / FOND SETTLE added. 6 motion sheets total.
+- **P16/P17 cold open panels** (Diego). P16: ECU floor/eye. P17: still beat, chip falls.
+- **Story Bible v005** (Priya) — FLAG 05 closed, SF05/SF06 incorporated.
+- **Pilot cold open beat outline v001** (Priya) — gap analysis, P18/P19 flagged next.
+- **CI suite v1.5.0** (Morgan) — known_issues suppression on dual_output + thumbnail checks. 244 entries seeded. OVERALL WARN (exit 0).
+- **26 legacy storyboard PNGs** moved to `panels/legacy/` (Morgan).
+- **char_spec_lint v1.3.0** (Kai) — filename fix for all 4 canonical character generators (no-version-suffix).
+- **Living Room v003** (Hana) — CRT centered, warm-left/cool-right staging, aligns to SF06.
+- **Tech Den v007** (Hana) — hardcoded path migrated to `output_dir()`.
+- **SF04 updated** (Jordan) — lamp halo +31%, CRT doorway CORRUPT_AMBER fringe. render_qa warm/cool 13.2 PASS.
+- **Color script analysis** (Sam) — 6-frame warm/cool arc confirmed coherent.
+- **Reference shopping list** created — `docs/reference_shopping_list.md`. Sam responded; 11 remaining in C46.
+- **Alex dispatched C46 briefs** to all 11 members. Note: Rin's GLITCH_DARK_SCENE brief was already done — clarification sent.
 
-## Open Items for C45 (Critique 18)
-**C45 = Critique 18 — run critics after work cycle**
+## Open Items for C46 (Critique 18)
+**C46 = Critique 18 — run critics AFTER C46 work cycle**
 
-**Pre-critique work (C45 work cycle):**
-0. **Alex**: Confirm SF numbering scheme (COVETOUS vs "The Passing" both claiming SF05)
-1. **Alex/Morgan**: Install Nunito Bold + Space Grotesk Bold fonts in `assets/fonts/` and run logo generator
-2. **Kai**: Multi-character style frame face gate (Maya ideabox) + font verification tool (Sam ideabox) + `--char byte` CI Check 7 (Kai ideabox)
-3. **Ryo**: annotation_occupancy dark-panel autofix for Byte + Glitch motion sheets
-4. **Rin**: GLITCH_DARK_SCENE subtype for UV_PURPLE linter (hue-angle matching)
-5. **Maya**: Character lineup v010 — dual-warmth tier depth bands (Lee's Option C)
-6. **Priya/Diego**: Pilot Tag scene brief (Priya) + storyboard panels (Diego)
-7. **Jordan**: Quiet Frame Spec doc (Jordan ideabox)
-8. **Lee**: Depth Temperature Rule in docs/image-rules.md
-9. **Morgan**: Legacy naming CI check (Morgan ideabox) + physical move of 26 legacy storyboard PNGs to panels/legacy/
-10. **Morgan/Hana**: ENV final passes audit (Hana ideabox)
-11. **Kai**: char_spec_lint Miri expression sheet filename pattern fix (no version suffix)
+**C46 work:**
+1. **Priya**: story bible v005 already done — check Alex brief for any residuals
+2. **Diego**: P18 (notebook doodles) + P19 (Byte "preferred term is Glitchkin")
+3. **Ryo**: Glitch motion G004 draw-order fix (HOT_MAG crack before body fill)
+4. **Rin**: UV_PURPLE hue-family range review (h° 255°–325° calibration) — see ideabox
+5. **Kai**: readme_sync `--draft-entry` flag
+6. **Lee/Maya**: `LTG_TOOL_depth_temp_lint.py` (depth grammar linter, integrate precritique_qa)
+7. **Morgan**: CI `--auto-seed` flag for new FAIL auto-seeding
+8. **Hana**: ENV hardcoded path audit — classroom + school_hallway
+9. **Jordan**: CORRUPT_AMBER fringe band spec doc
+10. **Sam**: `LTG_TOOL_warmcool_scene_calibrate.py` (once reference photo acquired)
+11. **All members**: respond to reference shopping list (`docs/reference_shopping_list.md`) in inbox
+12. **Diego/Priya**: cold open scene gap log (persistent beat gap tracking doc)
 
-**Critique 18 (C45):**
-- 5 critics: Takeshi Mori, Ingrid Solberg, Reinhardt Böhm, Chiara Ferrara + 1 audience (Zoe Park or Marcus Okafor or Jayden Torres or Taraji Coleman)
-- Key assets to review: SF05/SF06 relationship frames, Glitch motion, logo v003 (with new fonts), retrofitted panels, lineup v009
+**Critique 18 (C46):**
+- 5 critics: Takeshi Mori, Ingrid Solberg, Reinhardt Böhm, Chiara Ferrara + 1 audience (Zoe Park, Marcus Okafor, Jayden Torres, or Taraji Coleman — not from C16/C17)
+- Key assets: lineup v010, Miri motion v002, P16/P17, SF04 updated, Living Room v003, Story Bible v005
 
 ## Canonical Palette
 - Byte body = GL-01b #00D4E8 BYTE_TEAL (NOT #00F0FF)
@@ -175,26 +174,35 @@ Section 10 alpha_blend_lint: unblocked (Rin C43 `--save-nolight` flag). Generate
 - **NEVER use `.thumbnail()` in generators** — native 1280×720 canvas only
 - Paths: use `LTG_TOOL_project_paths.project_root()` — never hardcode `/home/wipkat/team`
 
-## Shared Library (updated C44)
+## Shared Library (updated C45)
+`LTG_TOOL_uv_purple_linter.py` — **v1.1.0 C45** (Rin). GLITCH_DARK_SCENE subtype; COVETOUS FAILs resolved.
+`LTG_TOOL_precritique_qa.py` — **v2.14.1 C45** (Ryo). 6 motion sheets; GLITCH_DARK_SCENE COVETOUS explicit subtype.
+`LTG_TOOL_motion_spec_lint.py` — **C45** (Ryo). Dark-sheet annotation_occupancy fix; `occupancy_threshold_dark` config.
+`LTG_TOOL_miri_motion_v002.py` — **v002 NEW C45** (Ryo). 4-beat emotional warmth pacing.
+`LTG_TOOL_char_spec_lint.py` — **v1.3.0 C45** (Kai). No-version-suffix canonical pattern for all 4 chars.
+`LTG_TOOL_ci_suite.py` — **v1.5.0 C45** (Morgan). known_issues suppression on dual_output + thumbnail checks. 244 entries.
+`LTG_TOOL_character_lineup.py` — **v010 C45** (Maya). Dual-warmth tier depth bands (Option C).
+`LTG_TOOL_env_grandma_living_room.py` — **v003 C45** (Hana). CRT centered, warm-left/cool-right staging, SF06 aligned.
+`LTG_TOOL_bg_tech_den.py` — **v007 C45** (Hana). Hardcoded path migrated to `output_dir()`.
+`LTG_TOOL_style_frame_04_resolution.py` — **C45** (Jordan). Lamp halo +31%; CRT doorway CORRUPT_AMBER fringe.
+`LTG_TOOL_sb_cold_open_P16.py` / `P17.py` — **NEW C45** (Diego). P16: ECU floor/eye; P17: still beat/chip fall.
+`sheet_geometry_config.json` — **v2 C45** (Ryo). dark bg_mode + occupancy_threshold_dark for byte + glitch.
+
+## Shared Library (historical C44)
 `LTG_TOOL_character_face_test.py` — **C44** (Kai). `--char byte` live. Pixel-grid eyes, FG-B01/B02/B03.
 `LTG_TOOL_char_spec_lint.py` — **v1.2.0 C44** (Kai). Data-driven M004 via `char_spec_token_config.json`.
 `char_spec_token_config.json` — **NEW C44** (Kai). Token lists for M004+ — JSON-editable.
 `LTG_TOOL_uv_purple_linter.py` — **v1.0.0 NEW C44** (Rin). UV_PURPLE dominance + warm contamination checks.
 `LTG_TOOL_world_type_infer.py` — **v1.2.0 C44** (Rin). covetous_glitch/sf_covetous patterns added.
-`LTG_TOOL_precritique_qa.py` — **v2.13.0 C44** (Rin). Section 11 UV_PURPLE lint; all 5 motion sheets.
 `LTG_TOOL_ci_suite.py` — **v1.4.0 C44** (Morgan). Check 7 hardcoded-path, Check 8 thumbnail-lint, Check 9 motion-coverage.
 `LTG_TOOL_glitch_motion.py` — **v001 NEW C44** (Ryo). 4-panel Glitch motion spec.
 `LTG_TOOL_style_frame_05_relationship.py` — **NEW C44** (Jordan). SF05 "The Passing" kitchen pre-dawn.
 `LTG_TOOL_sf_miri_luma_handoff.py` — **NEW C44** (Maya). SF06 "The Hand-Off" living room.
 `LTG_TOOL_logo_asymmetric.py` — **v003 C44** (Sam). Nunito Bold + Space Grotesk Bold font loaders.
-`LTG_TOOL_sb_caption_retrofit.py` — **NEW C44** (Diego). 3-tier caption bar retrofit for existing panels.
-`LTG_TOOL_pixel_font_v001.py` — **v001.1 C44** (Hana). `draw_pixel_text_perspective()` added.
-`LTG_TOOL_bg_grandma_kitchen.py` — **v007 C44** (Hana). line_weight FAIL fixed; paper_texture+vignette+flatten.
+`LTG_TOOL_sb_caption_retrofit.py` — **NEW C44** (Diego). 3-tier caption bar retrofit.
+`LTG_TOOL_bg_grandma_kitchen.py` — **v007 C44** (Hana). line_weight FAIL fixed.
 `LTG_TOOL_character_lineup.py` — **v009 C44** (Maya). Wooden hairpin atomic update.
-`LTG_TOOL_grandma_miri_expression_sheet.py` — **v006 C44** (Maya). Hairpin rename.
-`LTG_TOOL_miri_turnaround.py` — **C44** (Maya). HAIRPIN constants.
-`LTG_TOOL_lineup_tier_depth_sketch.py` — **NEW C44** (Lee). Evaluation-only — Option C dual-warmth bands.
-`LTG_TOOL_sb_cold_open_P14.py` / `P15.py` — **NEW C44** (Diego). P14: Byte ricochet; P15: Luma floor/forced-hair-circle.
+`LTG_TOOL_sb_cold_open_P14.py` / `P15.py` — **NEW C44** (Diego). P14: Byte ricochet; P15: Luma floor.
 
 ## Shared Library (historical C43)
 `LTG_TOOL_project_paths.py` — v1.0.0 C43. `project_root()` anchor + `--audit` CLI.

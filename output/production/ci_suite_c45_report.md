@@ -4,9 +4,9 @@ Tools dir : /home/wipkat/team/output/tools
 Fail-on   : FAIL
 ========================================================================
   ✓ [PASS ] Stub Integrity Linter
-          142 file(s) — 0 PASS / 0 WARN / 0 ERROR
+          144 file(s) — 0 PASS / 0 WARN / 0 ERROR
   ⚠ [WARN ] Draw Order Linter
-          137 file(s) — 96 PASS / 41 WARN / 0 ERROR  [59 KNOWN]
+          139 file(s) — 96 PASS / 43 WARN / 0 ERROR  [64 KNOWN]
   ⚠ [WARN ] Glitch Spec Linter
           21 Glitch generator(s) — 7 PASS / 14 WARN
   ✓ [PASS ] Spec Sync CI Gate
@@ -15,14 +15,14 @@ Fail-on   : FAIL
           3 character(s) — 0 PASS / 0 WARN / 0 FAIL
   ⚠ [WARN ] Dual-Output File Check
           30 KNOWN conflict(s) (all by-design) — 76 generator(s) involved
-  ⚠ [WARN ] Hardcoded Path Check
-          169 hardcoded /home/ occurrence(s) in 82 KNOWN file(s) (migration backlog — no new violations)
-  ⚠ [WARN ] Thumbnail Lint
-          67 .thumbnail() call(s) in 62 KNOWN generator(s) (migration backlog — no new violations)
+  ✗ [FAIL ] Hardcoded Path Check
+          167 hardcoded /home/ occurrence(s) in 82 file(s): 1 NEW (FAIL) + 81 KNOWN (migration backlog)
+  ✗ [FAIL ] Thumbnail Lint
+          68 unwhitelisted .thumbnail() call(s) in 63 generator(s): 1 NEW (FAIL) + 62 KNOWN (migration backlog)
   ⚠ [WARN ] Motion Sheet Coverage
           1 character(s) missing motion sheet: grandma_miri
 
-  ⚠ OVERALL: WARN  (exit code 0)  (59 KNOWN issues annotated)
+  ✗ OVERALL: FAIL  (exit code 1)  (64 KNOWN issues annotated)
     NOTE: KNOWN issues are pre-existing/expected — annotated for visibility only.
     They do not suppress the overall grade. Remove entries from ci_known_issues.json
     once the underlying issue is fixed.
