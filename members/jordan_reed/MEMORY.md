@@ -1,5 +1,32 @@
 # Jordan Reed — Memory
 
+## Cycle 49 Deliverables
+- `LTG_TOOL_sightline_validator.py` v2.0.0 — PIXEL DETECTION MODE ✓
+  - New API: `detect_eyes_from_png(image_path, search_box, ...)` — eye-white detection via color matching + morphological dilation (SciPy ndimage) + connected components
+  - New API: `validate_sightline_from_png(image_path, target, ...)` — end-to-end pixel gaze validation
+  - New API: `_pair_eyes(eyes)` — left/right pairing by horizontal alignment
+  - Confidence system: HIGH (eye_w >= 30px), LOW (15-30px), VERY_LOW (<15px)
+  - CLI: `--png PATH --target TX TY`, `--pixel-test`, `--self-test`
+  - Dependencies added: Pillow, NumPy, SciPy (ndimage for morphological ops)
+  - SF01 v007 pixel test: eyes detected at (413, 428) and (436, 430) — within 2px of construction
+  - **ACCURACY FINDING: pixel gaze direction unreliable at style-frame scale (eye_w ~15px, pupil shift 3-5px below noise floor)**
+  - Construction mode: all 5 self-tests PASS unchanged
+- Diagnostic scripts: `output/production/sightline_pixel_debug_c49.py`, `sightline_pixel_debug2_c49.py`
+- Ideabox: `20260330_jordan_reed_high_res_gaze_crop_mode.md` — 2x gaze crop render for reliable pixel validation
+- Inbox archived ✓ (1 message: C49 brief)
+- README.md updated (C49 Jordan Reed section + Last Updated header) ✓
+- Completion report sent to Alex Chen ✓
+
+## Cycle 49 Status: COMPLETE
+
+## Cycle 49 Notes
+- **Pixel gaze detection is fundamentally limited at style-frame scale**: At 1280x720 with head_r ~44px, eyes are only ~15px wide. The pupil shift p(8) = 4px is too small relative to the iris width (~12px) and noise sources (brow outlines, expression asymmetry, catch-lights). Pixel centroid estimation cannot isolate a 4px gaze shift from these confounders.
+- **Eye POSITION detection works well**: The morphological dilation approach (vertical 13x1 kernel to bridge sclera arcs separated by iris) correctly identifies individual eyes and locates their centers within 2px of construction data.
+- **Sclera asymmetry ≠ gaze direction**: Expression shape (wonder/squint per C38) creates sclera distribution biases that dominate over gaze shift. Cannot use sclera pixel counts to infer pupil position.
+- **Brow contamination**: Brow outlines (V=28, LINE color) are within 5px vertically of the sclera top edge and use nearly identical dark values as the pupil (V=25). Any vertical expansion of the pupil search area catches brows. Must keep search constrained to sclera bbox.
+- **Construction mode remains the gold standard**: For generators that output construction geometry (SF01 v007 via draw_luma_head_v006), the geometry API gives exact results. Pixel mode is useful when construction data is unavailable (e.g., validating a legacy render, or checking a frame from an external source).
+- **Viable path to pixel gaze detection**: Render a 2x "gaze crop" centered on the eye region (400x400px crop from 2560x1440 render). At that scale, eyes would be 30-40px wide — firmly in HIGH confidence zone. Submitted as ideabox.
+
 ## Cycle 48 Deliverables
 - `LTG_TOOL_sightline_validator.py` v1.0.0 — SIGHT-LINE AUTO-VALIDATOR ✓
   - Core API: `validate_sightline(gazer, target)` — raw eye/pupil coords → angular error, miss_px, grade
