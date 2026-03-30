@@ -29,8 +29,8 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 *C38: Sight-line fixed — Luma's gaze now locked on Byte, open-palm reach replaces pointing, forward lean. Right brow DOUBT VARIANT kink corrected.*
 ![SF01 Discovery](output/color/style_frames/LTG_COLOR_styleframe_discovery.png)
 
-### SF02 — Glitch Storm (v008)
-*C36: Fill light direction corrected (upper-right, matching storm crack position), per-character silhouette mask applied — no background bleed.*
+### SF02 — Glitch Storm (v008 — native 1280×720)
+*C43: Full native canvas refactor. 1920×1080+LANCZOS pattern removed — SUNLIT_AMBER drift fixed (ΔE 47.04→1.1 PASS).*
 ![SF02 Glitch Storm](output/color/style_frames/LTG_COLOR_styleframe_glitch_storm.png)
 
 ### SF03 — The Other Side (v005)
@@ -41,8 +41,8 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 *Luma returns to the Real World. Byte appears as a faded CRT ghost through the kitchen doorway. Post-crossing kitchen: the room has been touched. Warm/cool 13.2 PASS.*
 ![SF04 Resolution](output/color/style_frames/LTG_COLOR_styleframe_sf04.png)
 
-### SF05 — COVETOUS Glitch (v2.0.0)
-*Episode 5 debut. Three-character triangulation: Glitch (desire) → Byte (barrier) → Luma (the wanted thing). Glitch spec PASS — G001/G004/G008 all clear.*
+### SF05 — COVETOUS Glitch (v3.0.0)
+*C43: Luma SENSING UNEASE face added (face gate PASS). ACID_GREEN covet-vector sight-line. UV_PURPLE rim on Luma shoulder — she is in the Glitch Layer.*
 ![SF05 Covetous](output/color/style_frames/LTG_COLOR_sf_covetous_glitch.png)
 
 ---
@@ -92,8 +92,8 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 
 ## Backgrounds & Environments
 
-### Grandma's Kitchen (v005)
-*C39: MIRI fridge label confirmed. Dual spatial identity.*
+### Grandma's Kitchen (v006)
+*C43: MIRI fridge label now uses canonical draw_pixel_text(). Dual spatial identity.*
 ![Kitchen](output/backgrounds/environments/LTG_ENV_grandma_kitchen.png)
 
 ### Tech Den — Cosmo's Workspace (v006)
@@ -104,8 +104,8 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 *First-ever generator built from scratch. CRT monitor key light, warm bedside lamp, cool night window. Warm/cool 33.1 PASS.*
 ![Luma Study Interior](output/backgrounds/environments/LTG_ENV_luma_study_interior.png)
 
-### Classroom (v001 NEW C41)
-*Dual-temp split (warm amber top / cool fluorescent bottom), perspective-correct floor. Warm/cool 17.0 PASS.*
+### Classroom (v003 C43)
+*Chalkboard text deployed via pixel font tool ("1011 XOR 0110", "F X  2X 5"). Warm/cool 17.0 PASS.*
 ![Classroom](output/backgrounds/environments/LTG_ENV_classroom.png)
 
 ### The Other Side — Glitch Layer (v003)
@@ -114,8 +114,8 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 ### Millbrook Street (v002)
 ![Millbrook Street](output/backgrounds/environments/LTG_ENV_millbrook_main_street.png)
 
-### School Hallway (v003 regenerated C42)
-*SUNLIT_AMBER hue fix applied.*
+### School Hallway (v004 C43)
+*MILLBROOK MIDDLE SCHOOL seal rendered via pixel font tool. School name canonical — Story Bible v004.*
 ![School Hallway](output/backgrounds/environments/LTG_ENV_school_hallway.png)
 
 ---
@@ -144,7 +144,7 @@ Three-world palette system:
 
 ---
 
-## Team (Cycle 42)
+## Team (Cycle 43)
 
 | Member | Role | Status |
 |--------|------|--------|
@@ -165,46 +165,48 @@ Three-world palette system:
 
 ## Progress
 
-- **Work cycles:** 42 | **Critique cycles:** 17
-- **Next:** Cycle 43
-- **Ideabox:** 10 ideas actioned C42 (all 10 submitted)
+- **Work cycles:** 43 | **Critique cycles:** 17
+- **Next:** Cycle 44 (Critique 18 after C45)
+- **Ideabox:** 12 ideas actioned C43 (all 12 submitted)
 - **Critics panel:** 20 total (15 professionals + 5 audience)
 - **Team:** 12 active
-- **QA baseline (C41):** 255 PASS / 31 WARN / 0 FAIL
+- **QA baseline:** re-run needed (precritique_qa v2.11.0, SF04 path corrected, Miri motion added)
 
 ### Pitch Package Status
 | Asset | Latest | Notes |
 |-------|--------|-------|
 | SF01 Discovery | v006 | Sight-line fixed C38 |
-| SF02 Glitch Storm | v008 | ⚠️ Last 1920×1080+LANCZOS generator — C43 refactor |
+| **SF02 Glitch Storm** | **v008 C43** | Native 1280×720 — SUNLIT_AMBER ΔE 1.1 PASS (was 47.04) |
 | SF03 The Other Side | v005 | UV_PURPLE ΔE 0.0 C41 |
-| **SF04 Resolution** | **C42 canonical** | Warm/cool 13.2 PASS — Alex decision C42 |
-| **SF05 COVETOUS** | **v2.0.0 C42** | G001/G004/G008 PASS, 3-char triangulation |
+| **SF04 Resolution** | **C42 canonical** | Warm/cool 13.2 PASS — output dir fixed C43 |
+| **SF05 COVETOUS** | **v3.0.0 C43** | Luma SENSING UNEASE face added — face gate PASS |
 | **Luma expressions** | **v013 C41** | Tier-1 body postures, THE_NOTICING gaze fixed |
 | Luma turnaround | v004 | unchanged |
 | **Byte expressions** | **v007 C41** | UNGUARDED WARMTH body delta |
 | Cosmo expressions | v007 | unchanged |
-| Miri expressions | v005 C40 | M001 head ratio constant |
+| Miri expressions | v005 C40 | FLAG 05 open — chopstick→wooden hairpin (C44) |
 | Glitch expressions | v003 | unchanged |
 | **Glitch body primitive diagram** | **NEW C41** | rx/ry proportions, vertex formulas |
 | **Character lineup** | **v008 C42** | Two-tier ground plane — Luma center |
-| Logo | v001 | Canonical C25 |
-| Kitchen | v005 C39 | MIRI fridge label |
+| Logo | v001 | Typography brief C43 — Alex decision pending C44 |
+| **Kitchen** | **v006 C43** | MIRI label via canonical draw_pixel_text() |
 | **Tech Den** | **v006 C41** | In-generator warm/cool 102.9 PASS |
 | Living Room | v001 | unchanged |
 | Glitch Layer | v003 | 3 generators native 1280×720 C42 |
-| **Classroom** | **v001 C41** | Dual-temp split, 17.0 PASS |
+| **Classroom** | **v003 C43** | Chalkboard text deployed (pixel font) |
 | **Luma Study Interior** | **NEW C42** | 33.1 PASS, first-ever generator |
 | Other Side ENV | C41 | UV_PURPLE ΔE 0.0 |
-| School Hallway | v003 C42 | SUNLIT_AMBER regenerated |
+| **School Hallway** | **v004 C43** | MILLBROOK MIDDLE SCHOOL seal — pixel font |
 | Millbrook Street | v002 | unchanged |
 | **Cold open storyboard** | **v003 C39** | Night/den canonical |
-| **Panels** | **P03/P06/P07/P08/P09/P23/P24 + EP05 COVETOUS** | All on disk |
-| **Story Bible** | **v003 C39** | Glitch = Corruption's avatar canonical |
+| **Panels** | **P03/P06/P07/P08/P09/P10/P11/P23/P24 + EP05 COVETOUS** | P10/P11 new C43 |
+| **Story Bible** | **v004 C43** | Miri heritage confirmed, Millbrook midwest, FLAG 05 |
+| **Miri cultural identity brief** | **NEW C43** | Chopstick error, replacement spec, school name |
 | **Scene handoff briefs** | **NEW C42** | Acts 1–3 + pre-credits, A3-02 highest priority |
 | Motion — Luma | v002 C38 | unchanged |
 | Motion — Byte | v002 C38 | unchanged |
 | Cosmo motion spec | v001 C41 | IDLE/STARTLED/ANALYSIS_LEAN/RELUCTANT_MOVE |
+| **Miri motion spec** | **v001 NEW C43** | WARM ATTENTION/SHARP ASSESSMENT/PROUD JOY/PATIENT CORRECTION |
 
 ---
 
@@ -216,4 +218,4 @@ All output generated with Python + PIL (open source only). Generators in `output
 
 ---
 
-*Cycle 42 — 2026-03-30*
+*Cycle 43 — 2026-03-31*

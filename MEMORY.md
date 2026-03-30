@@ -4,8 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present.
 
 ## Status
-**Cycle 42 complete. Critique 17 complete. Work cycles: 42. Critique cycles: 17.**
-**C43 = next work cycle.**
+**Cycle 43 complete. Critique 17 complete. Work cycles: 43. Critique cycles: 17.**
+**C44 = next work cycle. Critique 18 due after C45.**
 
 ## Active Team (12 slots)
 
@@ -28,6 +28,7 @@ Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are m
 
 ## Image Output Rule (MANDATORY)
 **Hard limit: ≤ 1280px in both dimensions.** Use `img.thumbnail((1280,1280), Image.LANCZOS)` before saving.
+**WARNING:** `.thumbnail()` on 1920px → 1280px averages 1.5px strips — warm hues drift up to 47° LAB. Use native canvas (1280×720) instead. See Jordan's C43 SF02 refactor.
 
 ## Critique Format
 Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤15 lines per asset.
@@ -35,162 +36,103 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 ## Critics Panel (20 total)
 - 15 industry professionals + 5 audience (Zoe Park age 11, Marcus Okafor parent, Jayden Torres age 13, Eleanor Whitfield grandparent, Taraji Coleman educator)
 - **Rotate each cycle. Min 1 audience critic per critique cycle.**
-- C15 critics (last ran): Takeshi Mori, Ingrid Solberg, Reinhardt Böhm, Zoe Park, Taraji Coleman
-- **C16 ran**: Daisuke Kobayashi, Priya Nair, Sven Halvorsen, Chiara Ferrara, Jayden Torres (audience, age 13)
-- C17 candidates: rotate in Jonas Feld, Amara Diallo, Leila Asgari, Petra Volkov, Marcus Webb (+ 1 audience not from C15/C16: Marcus Okafor, Eleanor Whitfield)
+- C15 critics: Takeshi Mori, Ingrid Solberg, Reinhardt Böhm, Zoe Park, Taraji Coleman
+- C16 critics: Daisuke Kobayashi, Priya Nair, Sven Halvorsen, Chiara Ferrara, Jayden Torres
+- C17 critics: Jonas Feld, Amara Diallo, Leila Asgari, Petra Volkov, Marcus Webb, Eleanor Whitfield
+- **C18 candidates**: rotate in Takeshi Mori, Ingrid Solberg, Reinhardt Böhm, Chiara Ferrara, + 1 audience not from C16/C17 (Zoe Park, Marcus Okafor, Jayden Torres, Taraji Coleman)
 
-## Pitch Package Status — POST CYCLE 42
+## Pitch Package Status — POST CYCLE 43
 
 ### Style Frames
 - **SF01 Discovery**: v006
-- **SF02 Glitch Storm**: v008 ⚠️ LAST 1920×1080+LANCZOS generator — Jordan to refactor C43
-- **SF03 Other Side**: v005 (UV_PURPLE ΔE 0.0 C41 — root cause fixed)
-- **SF04 Resolution**: CANONICAL C42 (Jordan) — Luma post-crossing in kitchen, Byte as CRT ghost, warm/cool 13.2 PASS. Alex decision broadcast C42.
-- **SF05 COVETOUS Glitch**: v2.0.0 C42 (Rin) — G001/G004/G008 all PASS, 3-char triangulation (Glitch→Byte→Luma)
+- **SF02 Glitch Storm**: **v008 C43 — native 1280×720 COMPLETE** (Jordan). SUNLIT_AMBER ΔE 1.1 PASS (was 47.04). No more 1920+LANCZOS generators.
+- **SF03 Other Side**: v005 (UV_PURPLE ΔE 0.0 C41)
+- **SF04 Resolution**: CANONICAL C42 (Jordan). Output dir fixed C43 → `output/color/style_frames/`. Warm/cool 13.2 PASS.
+- **SF05 COVETOUS Glitch**: **v3.0.0 C43** (Lee). Luma SENSING UNEASE face added — face gate PASS. ACID_GREEN covet-vector sight-line. UV_PURPLE rim on Luma shoulder.
 
 ### Logo
-- **LTG_BRAND_logo.png** — DECIDED C25
+- **LTG_BRAND_logo.png** — DECIDED C25. DejaVu Sans — **typography brief C43** (Sam). 5 candidates evaluated; primary rec: Nunito Bold + Space Grotesk Bold. Alex decision pending C44.
 
 ### Characters
-- Luma: **expr v013 NEW C41** (RECKLESS wide-arm body, ALARMED bilateral recoil, THE_NOTICING gaze RIGHT fixed — sight-line PASS), turnaround v004, color model v002
-  - **v012 C41**: face curves live (THE_NOTICING/WORRIED/FRUSTRATED/DETERMINED/THE_NOTICING_DOUBT on bezier)
-  - Face Curve Spec v002 C40 — 100px eye width
-  - Silhouette strategy: Hybrid (RECKLESS/ALARMED/FRUSTRATED/THE_NOTICING = Tier 1 body postures)
-- Byte: **expr v007 NEW C41** (UNGUARDED WARMTH — bilateral arm raise, float −4px, toe-in trapezoid legs), turnaround v001, color model v001
-- Cosmo: expr v007 C38. **Motion spec v001 NEW C41** (IDLE/STARTLED/ANALYSIS_LEAN/RELUCTANT_MOVE)
-- Miri: expr v005 C40 (M001 fixed)
-- Glitch: expr v003. Diamond body primitive spec + diagram `LTG_CHAR_glitch_body_primitive_diagram.png` C41. G007 = VOID_BLACK outline is CORRECT per spec (Alex clarified C41).
-- Character lineup: **v008 C42** (Maya) — two-tier ground plane, Luma center-protagonist, RPD PASS
+- Luma: expr v013 C41, turnaround v004, color model v002. Face curves live (v1.1.0 Kai).
+- Byte: expr v007 C41, turnaround v001, color model v001. **`--char byte` face test profile: STILL MISSING** (Kai — C44 P1).
+- Cosmo: expr v007 C38. Motion spec v001 C41.
+- Miri: expr v005 C40. **FLAG 05 OPEN**: chopstick MIRI-A = cross-cultural error (Amara Diallo C17). Replace with wooden hairpins — Alex confirmation pending C44. Maya assessed: 6 files to update atomically. Motion spec v001 NEW C43 (Ryo).
+- Glitch: expr v003. Body primitive diagram C41. No motion spec — Ryo flagged.
+- Character lineup: v008 C42 (Maya). **Miri+Luma shared-frame asset: OPEN GAP** (Marcus Webb + Eleanor Whitfield C17 — highest priority new asset for C44).
 
 ### Environments
-- Kitchen: v005 C39 (MIRI fridge label)
-- **Tech Den: v006 C41** — warm/cool 102.9 PASS in-generator (no warminjected needed; RGBA→RGB flatten fix)
-- Glitch Layer: v003 (3 generators fixed native 1280×720 C42 — bg_glitchlayer_frame, bg_glitch_layer_frame, bg_glitch_layer_encounter)
-- School Hallway: v003 C42 regenerated (Jordan)
-- Millbrook Street: v002
-- Living Room: v001
-- Other Side: C41 (UV_PURPLE ΔE 0.0 — root cause: native 1280×720 canvas; was 1920×1080+LANCZOS)
-- **Classroom: v001 C41** — warm/cool 17.0 PASS
-- **Luma Study Interior: NEW C42** (Hana) — warm/cool 33.1 PASS, 3 light sources, Miri Easter eggs, first-ever generator
+- Kitchen: **v006 C43** — MIRI label via canonical draw_pixel_text(). Warm/cool 32.6 PASS.
+- Tech Den: v006 C41 — warm/cool 102.9 PASS.
+- Glitch Layer: v003 (3 generators native 1280×720 C42).
+- **School Hallway: v004 C43** — MILLBROOK MIDDLE SCHOOL seal (pixel font). Canonical school name confirmed Story Bible v004.
+- Millbrook Street: v002.
+- Living Room: v001.
+- Other Side: C41 (UV_PURPLE ΔE 0.0).
+- Classroom: **v003 C43** — chalkboard text deployed ("1011 XOR 0110", "F X  2X 5"). Warm/cool 17.0 PASS.
+- Luma Study Interior: NEW C42. Warm/cool 33.1 PASS.
 
 ### Storyboards
-- Cold Open: v003 C39 (night/den canonical)
-- **Standalone panels C41**: P06 (cracked-eye divergence fixed), P08 (gaze contempt corrected), P23 (Promise Shot — Luma+Byte backs to monitors), P24 (Chaos Apex — 28 Glitchkin swarm, Dutch angle, PITCH BEAT)
-- All panels: P03/P06/P07/P08/P09/P23/P24 EXISTS. **EP05 COVETOUS panel NEW C42** (Diego).
-- Canon: Night/Grandma's den. School/daytime = pre-credits Act 1 tag.
-- **pilot_episode_outline_v001.md C41** — "Dead Pixels" scene-by-scene
-- **scene_handoff_briefs_v001.md NEW C42** (Priya) — per-scene execution briefs for Acts 1–3, keyed to PANEL_MAP.md. A3-02 = highest storyboard priority.
+- Cold Open: v003 C39 (night/den canonical).
+- Panels: P03/P06/P07/P08/P09/P23/P24 + EP05 COVETOUS + **P10/P11 NEW C43** (Diego). P10: OTS Byte POV pre-discovery. P11: ECU Luma closed eyes/brow twitch threshold.
+- Three-tier caption hierarchy (Jonas Feld C17): implemented on P10/P11. **Caption retrofit tool for P03–P09/P23/P24: C44** (Diego).
+- PANEL_MAP.md: P01–P25 with status. Storyboard naming audit complete C43 — legacy `LTG_SB_coldopen_panel_XX` (26 files) NOT yet renamed (tool hardcodes). Morgan to add CI action C44.
 
 ### Story
-- **Story Bible: v003 NEW C39** (cold open = night/den canonical, Glitch = Corruption's avatar)
-- **Glitch Appearance Guide NEW C39** — 8-beat first appearance, geometric-pattern communication rules
-- Glitch role: Corruption's avatar (decided C38)
+- **Story Bible: v004 C43** (Priya). Miri heritage confirmed: Igbo-Nigerian + Brazilian-descended. Millbrook = Ohio/Indiana region, post-war, modest industrial past. School = MILLBROOK MIDDLE SCHOOL. FLAG 05 open.
+- **Miri Cultural Identity Brief: NEW C43** (`output/production/story/LTG_miri_cultural_identity_brief.md`). Chopstick → wooden hairpins spec. Cultural framework documented.
+- Scene handoff briefs v001 C42. Pilot outline v001 C41.
 
 ### Motion
-- **Luma motion: v002 NEW C38** (CG polygon fix, shoulder mass, hair annotation)
-- **Byte motion: v002 NEW C38** (crack scar side, glow radius annotated)
+- Luma motion: v002 C38.
+- Byte motion: v002 C38.
+- Cosmo motion: v001 C41.
+- **Miri motion: v001 NEW C43** (Ryo). WARM ATTENTION / SHARP ASSESSMENT / PROUD QUIET JOY / PATIENT CORRECTION. Lint: 6 PASS / 0 WARN / 0 FAIL.
 
-## QA Baseline (C41 — C42 baseline not yet run)
-precritique_qa **v2.9.0**: **255 PASS / 31 WARN / 0 FAIL** (Morgan C41 baseline).
-Section 10 alpha_blend_lint: all 3 SF assets SKIP (no `*_nolight.png` bases yet).
-Native resolution fix: UV_PURPLE ΔE 0.0 in SF03 + Other Side ENV + 3 Glitch Layer ENV generators (C42).
-render_lib v1.2.0: `flatten_rgba_to_rgb()` helper added (Hana C42) — correct Porter-Duff via Pillow alpha_composite.
-Motion spec lint: annotation occupancy false WARNs fixed (Ryo C42) — per-family bg color spec in sheet_geometry_config.json.
+## QA Baseline
+**precritique_qa v2.11.0 C43** (Ryo). SF04 path corrected; all 4 motion sheets covered; motion lint: 20 PASS / 4 WARN / 0 FAIL.
+**QA re-run required** — scope changed (SF04 path, Miri motion added).
+Section 10 alpha_blend_lint: **NOW UNBLOCKED** — Rin added `--save-nolight` to SF01/SF02/SF04. Run `--save-nolight` to generate base images.
 
-## C42 Key Decisions & Deliverables
-- **SF04 canonical = "Resolution"** (Jordan C42, Alex decision broadcast). Warm/cool 13.2 PASS. C41 lamp scene v005 superseded.
-- **LAMP_AMBER = GL-07 intentional** in SF04 (post-crossing kitchen "touched by the Layer", alpha max 22%). Inline comment added.
-- **Rin's native res audit**: Only SF02 remains at 1920×1080+LANCZOS (complex refactor). All ENV generators now fixed or legacy-flagged.
-- **Luma Study Interior**: First-ever generator built from scratch (31 cycles of legacy PNG closed).
-- **render_lib v1.2.0**: `flatten_rgba_to_rgb()` canonical pattern replacing manual numpy Porter-Duff.
-- **ci_suite v1.2.0**: `--warn-stale N` flag operational, all 38 suppressions tagged `since_cycle: C39`.
-- **Sobel VP detect v1.0.0**: HoughLines-based VP coordinate detection with tolerance PASS/WARN/FAIL.
-- **Scene handoff briefs v001**: Full pilot Acts 1–3 briefs keyed to PANEL_MAP.md (A3-02 = pilot's emotional center).
+## C43 Key Decisions & Deliverables
+- **SF02 native refactor complete** — LANCZOS era over. `.thumbnail()` on 1920→1280 = up to 47° LAB drift. Canonical pattern: native 1280×720 canvas.
+- **SF04 output dir fixed** — `output/color/style_frames/` canonical.
+- **SF05 COVETOUS v3.0.0** — Luma face (SENSING UNEASE) + covet-vector sight-line + UV rim.
+- **`LTG_TOOL_project_paths.py` v1.0.0** (Kai) — `project_root()` resolver, `--audit` CLI. 94 files need migration; CI gate ideabox → C44 Morgan.
+- **`vp_spec_config.json` v1.0.0** (Kai) — 11 ENV VP specs. `sobel_vp_detect` v1.1.0 batch mode.
+- **CI suite v1.3.0** (Morgan) — Check 6: dual-output-file detection. SF01 legacy retired to `deprecated/`.
+- **Pixel font deployed**: classroom chalkboard + kitchen MIRI label + hallway seal (MILLBROOK MIDDLE SCHOOL).
+- **Story Bible v004** — Miri cultural framework, Millbrook location, school name canonical.
+- **Miri cultural identity brief** — FLAG 05 open (chopstick→hairpin). Maya assessed 6-file impact; awaiting Alex C44 confirmation.
+- **Typography brief** — 5 OFL font candidates; primary rec Nunito Bold + Space Grotesk Bold. Alex decides C44.
+- **Miri motion spec v001** — 4-beat vocabulary; lint PASS.
+- **P10/P11 new panels** — Three-tier caption hierarchy (Jonas Feld P1) implemented.
+- **`--save-nolight` flag** (Rin) — unlocks Section 10 alpha_blend_lint.
 
-## C39 Key Decisions & Deliverables
-- **Bezier face system**: `output/production/luma_face_curve_spec.md` — 10 named curves, 6 expression deltas. **HOLD on tool implementation** — Maya found critical eye width discrepancy (spec 56px vs generator ~100px at 600px canvas). Alex must resolve before Kai builds tool.
-- **Glitch appearance guide**: `output/production/story/LTG_glitch_appearance_guide.md` (Priya) — 8-beat first-appearance sequence, geometric communication rules.
-- **Kitchen v005**: MIRI fridge label confirmed in place.
-- **PANEL_MAP.md**: `output/storyboards/PANEL_MAP.md` — P01–P25 with status (6 on contact sheet, 19 planned).
-- **numpy/OpenCV/PyTorch**: Now authorized. render_qa v2.0.0, warmth_lint v6.0.0 upgraded.
-- **Cosmo warmth lint**: CHAR-C added to warm_prefixes. 17 entries / 0 violations.
-- **Sheet geometry calibration**: `sheet_geometry_config.json` created. Motion lint zone sampling now auto-calibrated.
+## Open Items for C44
+**P0 — Decision needed:**
+0. **Alex**: Confirm chopstick→wooden hairpin for Miri (FLAG 05). Maya has 6-file list + lint constraint. Atomic commit required.
+1. **Alex**: Choose logo display typeface from Sam's brief (Nunito+Space Grotesk primary rec).
 
-## C17 Critique Scores
+**P1 — High priority:**
+2. **Kai**: `--char byte` face test profile (still missing — Diego/Lee/Rin blocked on Byte face gate)
+3. **Maya**: Execute Miri chopstick→hairpin change (6 files, atomic — after Alex confirmation)
+4. **Jordan/Priya/Maya**: Miri+Luma relationship style frame (biggest pitch gap per C17 — "CRT as matrilineal heirloom")
+5. **Diego**: Caption retrofit tool + apply to P03–P09/P23/P24 (Jonas Feld P1)
+6. **Morgan**: Path migration C44 — 94 generators, use `LTG_TOOL_project_paths.py`
+7. **Morgan**: CI gate for hardcoded paths (`--audit` in ci_suite) + `.thumbnail(` lint check
 
-| Asset | Jonas | Amara | Leila | Petra | Marcus | Eleanor |
-|-------|-------|-------|-------|-------|--------|---------|
-| SF01 | — | — | 68 | — | 72 | — |
-| SF02 | — | — | 55 | — | 55 | — |
-| SF03 | — | — | 71 | — | 66 | — |
-| SF04 | — | — | 62 | — | 74 | — |
-| SF05 COVETOUS | — | — | 74 | — | 58 | — |
-| Lineup v008 | — | — | 66 | — | 64 | — |
-| Logo | 52 | — | — | — | 68 | — |
-| Classroom chalkboard | 34 | — | — | — | — | — |
-| Hallway seal | 38 | — | — | — | — | — |
-| Pixel font tool | 68 | — | — | — | — | — |
-| Miri design | — | 48 | — | — | — | 88 |
-| Luma design | — | 62 | — | — | — | — |
-| Kitchen ENV | — | 54 | — | — | — | 81 |
-| Millbrook | — | 44 | — | — | — | — |
-| CRT treatment | — | — | — | — | — | 91 |
-| Intergenerational rel. | — | — | — | — | 74 (SF04) | 74 |
-| Coherence | — | — | 59 | 2 FAIL | — | 80 (overall) |
+**P2 — Actioned ideabox:**
+8. **Sam/Kai**: `assets/fonts/` directory + font pipeline integration (after Alex typeface decision)
+9. **Morgan**: Retired tools section in README Script Index
+10. **Kai**: char_spec_lint token config (data-driven JSON/TOML, M004 etc.)
+11. **Kai or Morgan**: UV_PURPLE dominance linter for Glitch Layer generators (Rin ideabox)
+12. **Morgan**: Motion sheet coverage check in ci_suite (Glitch has no motion spec)
+13. **Hana or Kai**: Pixel font perspective-scale helper (chalkboard text recession)
+14. **Ryo**: Glitch motion spec (no motion spec exists)
+15. **Maya**: Lineup tier depth indicator band (carried from C43)
 
-**C17 Key Findings:**
-- Miri cultural identity P0: surname "Okonkwo-Santos" (Igbo Nigerian/Pt-Brazilian) but chopstick MIRI-A reads as East Asian — cross-cultural error. Alex/Maya/Priya/Hana to resolve C43.
-- No Miri+Luma rendered asset: Marcus Webb + Eleanor Whitfield both called this the primary gap (new style frame or key panel needed)
-- Logo: 30 cycles of DejaVu Sans — P1 since C12/C13 (Sam: typography brief C43)
-- Classroom chalkboard 34: no text, only rectangles — pixel font tool unused
-- Hallway seal 38: school has no name after 20+ cycles (Jonas + Chiara C16)
-- Petra FAIL 1: hardcoded absolute paths (8+ generators — Kai: project-root resolver)
-- Petra FAIL 2: dual-generator SF01 conflict (Morgan: retire old generator)
-- Leila: UV_PURPLE drifting toward 2010s dystopian palette (cyberpunk ≠ digital-sublime)
-- Leila: GL-07 lamp halo in SF04 is most original narrative-visual idea — foreground it
-- Petra WARN: SF04 generator in wrong output dir (Jordan fix); storyboard naming split (Morgan/Diego)
-
-## C16 Critique Scores
-
-| Asset | Daisuke | Priya | Sven | Chiara | Jayden |
-|-------|---------|-------|------|--------|--------|
-| SF01 | — | 74 | 76 | — | 78 |
-| SF02 | — | 52 | 71 | — | 51 |
-| SF03 | — | 57 | 59 | — | 82 |
-| SF04 | — | 50 | 62 | P1 | 63 |
-| Luma expr | 44 | — | — | — | 54 |
-| Cosmo expr | 72 | — | — | — | — |
-| Kitchen v005 | — | — | — | 76 | — |
-| Cross-pitch coherence | — | 45 | — | — | — |
-
-## Open Items for C43
-**P0 — Requires Alex decision and broadcast:**
-0. **Alex/Maya/Priya/Hana**: Miri cultural identity — resolve chopstick MIRI-A vs Okonkwo-Santos heritage conflict; document cultural framework for Miri, Luma, Millbrook
-
-**P1 — Mandated (from C17 critique):**
-1. **Jordan**: SF02 native canvas refactor (last 1920×1080+LANCZOS — 300+ lines, assign dedicated cycle)
-2. **Jordan**: SF04 output directory fix (`output/style_frames/` → `output/color/style_frames/`)
-3. **Kai**: Byte face test profile (`--char byte` — Diego blocked on face gate for panels)
-4. **Kai**: Project-root resolver utility (Petra FAIL — 8+ generators hardcode absolute paths)
-5. **Morgan**: Retire old SF01 generator + resolve dual-generator conflict (Petra FAIL)
-6. **Sam**: Logo display typeface brief (30-cycle gap — DejaVu Sans)
-7. **Hana/Diego**: Pixel font deployment — classroom chalkboard (text!), hallway seal (school name!), kitchen MIRI label migration
-8. **Alex+team**: Miri+Luma shared-frame asset — new style frame or key relationship panel (Marcus + Eleanor)
-
-**P1 — Carried from C42 ideabox:**
-9. **Lee/Diego**: COVETOUS style frame execution (Rin's generator fixed, spec ready)
-10. **Morgan**: Storyboard naming convention fix (coordinate with Diego)
-
-**P2 — From C42 ideabox:**
-11. **Kai**: `vp_spec_config.json` + VP003 CI check
-12. **Morgan**: `--apply-stale-review` auto-close (ci_suite v1.3.0)
-13. **Morgan/Jordan**: `# GLITCH-COLOR-IN-REAL-WORLD` sentinel + ci_suite INFORMATIONAL check
-14. **Hana or Kai**: `LTG_TOOL_env_lighting_audit.py`
-15. **Priya or Kai**: Dialogue register linter
-16. **Maya**: Lineup tier depth indicator band
-17. **Priya**: School name for Millbrook (for hallway seal + Diego's panels)
-
-**C44 = Critique 18 (every 3 cycles)**
+**C45 = Critique 18 (every 3 cycles)**
 
 ## Canonical Palette
 - Byte body = GL-01b #00D4E8 BYTE_TEAL (NOT #00F0FF)
@@ -215,9 +157,10 @@ Motion spec lint: annotation occupancy false WARNs fixed (Ryo C42) — per-famil
 - Tools: `output/tools/`
 - Master Palette: `output/color/palettes/master_palette.md`
 - Pitch Package Index: `output/production/pitch_package_index.md`
+- Deprecated tools: `output/tools/deprecated/`
 
 ## Pipeline Standards
-- Open source only: Python PIL + **numpy, OpenCV (cv2), PyTorch** (authorized C39 — Alex Chen broadcast)
+- Open source only: Python PIL + **numpy, OpenCV (cv2), PyTorch** (authorized C39)
 - cv2 default is BGR — convert to RGB on load. Use PIL for drawing; numpy/cv2 for analysis.
 - ΔE color distance threshold = 5.0 (LAB perceptual, replaces RGB Euclidean)
 - Naming: `LTG_[CATEGORY]_[descriptor]_v[###].[ext]` — everything in output/tools/ uses LTG_TOOL_* prefix
@@ -226,54 +169,45 @@ Motion spec lint: annotation occupancy false WARNs fixed (Ryo C42) — per-famil
 - show_guides=False for all pitch exports
 - Python 3.8 compat: `from __future__ import annotations`
 - REAL_INTERIOR warm/cool threshold = 12.0 (render_qa v2.0.0)
+- **NEVER use `.thumbnail()` on generators** — use native canvas (1280×720). `.thumbnail()` causes LAB drift up to 47°.
+- Paths: use `LTG_TOOL_project_paths.py` `project_root()` — never hardcode `/home/wipkat/team`.
 
-## Shared Library (updated C42)
-`LTG_TOOL_render_lib.py` — **v1.2.0 C42** (Hana). `flatten_rgba_to_rgb()` helper added — correct Porter-Duff via Pillow alpha_composite
-`LTG_TOOL_ci_suite.py` — **v1.2.0 C42** (Morgan). `--warn-stale N` flag; all 38 known-issue entries tagged `since_cycle: C39`
-`LTG_TOOL_sobel_vp_detect.py` — **v1.0.0 NEW C42** (Kai). Sobel/HoughLines VP coordinate detection, `--vp-x-expected`/`--vp-y-expected` flags, debug overlay
-`LTG_TOOL_sf_covetous_glitch.py` — **v2.0.0 C42** (Rin). G001/G004/G008 PASS; 3-char triangulation
-`LTG_TOOL_motion_spec_lint.py` — **C42** (Ryo). Per-family `annotation_bg_color` in sheet_geometry_config.json; Luma/Cosmo annotation_occupancy WARN→PASS
-`LTG_TOOL_bg_luma_study_interior.py` — **NEW C42** (Hana). 1280×720, warm/cool 33.1 PASS, 3 light sources
-`LTG_TOOL_character_lineup.py` — **v008 C42** (Maya). Two-tier ground plane, Luma center, RPD PASS
-`LTG_TOOL_sb_cold_open_P07.py` / `P09.py` — **NEW C42** (Diego). P07: Dutch 8° CW, Byte mid-phase; P09: CURIOUS/FIRST ENCOUNTER
-`LTG_TOOL_sb_ep05_covetous.py` — **NEW C42** (Diego). 3-char triangulation storyboard panel
+## Shared Library (updated C43)
+`LTG_TOOL_project_paths.py` — **v1.0.0 NEW C43** (Kai). `project_root()` anchor on CLAUDE.md; `output_dir/tools_dir/resolve_output()`; `--audit` CLI.
+`vp_spec_config.json` — **v1.0.0 NEW C43** (Kai). 11 ENV VP specs (7 real-world, 4 glitch-layer null).
+`LTG_TOOL_sobel_vp_detect.py` — **v1.1.0 C43** (Kai). `--vp-config` batch mode.
+`LTG_TOOL_ci_suite.py` — **v1.3.0 C43** (Morgan). Check 6: dual-output-file detection.
+`LTG_TOOL_precritique_qa.py` — **v2.11.0 C43** (Ryo). All 4 motion sheets; SF04 path corrected.
+`LTG_TOOL_miri_motion.py` — **v001 NEW C43** (Ryo). 4-panel motion spec, lint PASS.
+`LTG_TOOL_sf_covetous_glitch_c43.py` — **v3.0.0 C43** (Lee). Luma SENSING UNEASE face; covet-vector sight-line.
+`LTG_TOOL_bg_classroom.py` — **v003 C43** (Hana). Pixel font on chalkboard.
+`LTG_TOOL_bg_grandma_kitchen.py` — **v006 C43** (Hana). MIRI label via draw_pixel_text().
+`LTG_TOOL_bg_school_hallway.py` — **v004 C43** (Diego). MILLBROOK MIDDLE SCHOOL seal.
+`LTG_TOOL_style_frame_02_glitch_storm.py` — **C43 native rewrite** (Jordan). 1280×720 native.
+`LTG_TOOL_styleframe_discovery.py` — **C43** (Rin). `--save-nolight` flag added.
+`LTG_TOOL_style_frame_04_resolution.py` — **C43** (Jordan/Rin). Output dir fixed + `--save-nolight`.
 
-## Shared Library (historical C40)
-`LTG_TOOL_render_qa.py` — **v2.0.0 C39**. numpy/cv2 LAB ΔE, comparison report CLI
-`LTG_TOOL_precritique_qa.py` — **v2.8.0 C40**. arc_diff JSON config + LAB ΔE + Section 10 alpha_blend_lint (Morgan+Kai+Rin)
-`LTG_TOOL_ci_suite.py` — **v1.1.0 C40**. `--known-issues` flag; `ci_known_issues.json` seeded (Morgan)
-`LTG_TOOL_palette_warmth_lint.py` — **v6.0.0 C39**. numpy vectorized
-`LTG_TOOL_spec_sync_ci.py` — **v1.1.0 C39**. Byte CI delegates to char_spec_lint (B001–B005)
-`LTG_TOOL_luma_face_curves.py` — **v1.1.0 C40** (Kai). All 9 expressions, corrected 100px eye width
-`LTG_TOOL_face_curve_validator.py` — **NEW C40** (Maya). Validates all 10 expressions; all PASS
-`LTG_TOOL_sight_line_diagnostic.py` — **v002 C40** (Lee). `--batch config.json` mode
-`LTG_TOOL_motion_spec_lint.py` — **C40** (Ryo). Per-family beat color config; Luma timing WARN→PASS
-`LTG_TOOL_sf04_luma_byte_v005.py` — **NEW C40** (Jordan). SF04 generator; warm/cool 36.6
-`LTG_TOOL_sf_covetous_glitch.py` — **NEW C40** (Rin). SF05 COVETOUS generator
-`LTG_TOOL_bg_other_side.py` — **C40** (Rin). UV_PURPLE corrected to GL-04a
-`LTG_TOOL_bg_tech_den.py` — **v005 C40** (Hana). VP floor fix, warm/cool 100.8 PASS
-`LTG_TOOL_fill_light_adapter.py` — **v1.1.0 C39**. Scene registry loading
-`LTG_fill_light_presets.json` — **NEW C39**. SF01–SF04 standard configs
-`arc_diff_config.json` — **NEW C39**. External arc-diff pair config
-`LTG_TOOL_alpha_blend_lint.py` — **NEW C39** (Rin). LAB gradient, FLAT_FILL detection
-`LTG_TOOL_sight_line_diagnostic.py` — **NEW C39** (Lee). Eye→aim ray, perpendicular miss distance
-`LTG_TOOL_pixel_font_v001.py` — **NEW C39** (Jordan). 5×7 bitmap A–Z/0–9, no font deps
-`LTG_TOOL_thumbnail_preview_v001.py` — **NEW C39** (Hana). Full/thumbnail side-by-side with region bbox
-`LTG_TOOL_bodypart_hierarchy.py` — **v002 C39** (Maya). --panel N, --chain pipeline
-`LTG_TOOL_sheet_geometry_calibrate.py` — **NEW C39** (Ryo). Auto-detects panel top row
-`sheet_geometry_config.json` — **NEW C39**. Luma panel_top=54, Byte panel_top=56
-`LTG_TOOL_motion_spec_lint.py` — **C39** (Ryo). Config-loaded zone sampling
-`LTG_TOOL_world_type_infer.py` — **NEW C38**. Standalone world-type inference
-`LTG_TOOL_ci_suite.py` — C37 (suppression fix C38 via json)
-`glitch_spec_suppressions.json` — **C38** (G002 docstring FP added)
-`LTG_TOOL_luma_motion.py` / `LTG_TOOL_byte_motion.py` — C39 geo-config updated
-`LTG_TOOL_pilot_cold_open.py` — C38 rename
-`LTG_TOOL_contact_sheet_arc_diff.py` — C37
-`LTG_TOOL_warmth_inject_hook.py` — C37
-`LTG_TOOL_draw_order_lint.py` — v2.1.0 C37
-`LTG_TOOL_glitch_spec_lint.py` — v1.2.0 C37
-`LTG_TOOL_expression_silhouette.py` — C37
-`LTG_TOOL_proportion_audit.py` — C36
+## Shared Library (historical C42)
+`LTG_TOOL_render_lib.py` — **v1.2.0 C42** (Hana). `flatten_rgba_to_rgb()` helper.
+`LTG_TOOL_ci_suite.py` — **v1.2.0 C42** (Morgan). `--warn-stale N` flag.
+`LTG_TOOL_sobel_vp_detect.py` — **v1.0.0 C42** (Kai). Sobel/HoughLines VP detection.
+`LTG_TOOL_sf_covetous_glitch.py` — **v2.0.0 C42** (Rin). G001/G004/G008 PASS.
+`LTG_TOOL_motion_spec_lint.py` — **C42** (Ryo). Per-family beat color config.
+`LTG_TOOL_bg_luma_study_interior.py` — **NEW C42** (Hana). 1280×720, warm/cool 33.1 PASS.
+`LTG_TOOL_character_lineup.py` — **v008 C42** (Maya). Two-tier ground plane.
+`LTG_TOOL_sb_cold_open_P07.py` / `P09.py` — **NEW C42** (Diego). P07 Dutch 8° CW; P09 FIRST ENCOUNTER.
+`LTG_TOOL_sb_ep05_covetous.py` — **NEW C42** (Diego). 3-char triangulation storyboard.
+`LTG_TOOL_render_qa.py` — **v2.0.0 C39**. numpy/cv2 LAB ΔE.
+`LTG_TOOL_precritique_qa.py` — **v2.9.0 C41** baseline (255 PASS / 31 WARN / 0 FAIL).
+`LTG_TOOL_palette_warmth_lint.py` — **v6.0.0 C39**. numpy vectorized.
+`LTG_TOOL_luma_face_curves.py` — **v1.1.0 C40** (Kai). All 9 expressions, 100px eye width.
+`LTG_TOOL_face_curve_validator.py` — **NEW C40** (Maya). All 10 expressions PASS.
+`LTG_TOOL_sight_line_diagnostic.py` — **v002 C40** (Lee). `--batch config.json`.
+`LTG_TOOL_pixel_font_v001.py` — **NEW C39** (Jordan). 5×7 bitmap A–Z/0–9.
+`LTG_TOOL_fill_light_adapter.py` — **v1.1.0 C39**.
+`LTG_TOOL_alpha_blend_lint.py` — **NEW C39** (Rin). LAB gradient, FLAT_FILL detection.
+`LTG_TOOL_bodypart_hierarchy.py` — **v002 C39** (Maya).
+`LTG_TOOL_world_type_infer.py` — **NEW C38**.
 
 ## Agent Prompt Design
 Do NOT duplicate inbox content in agent prompts. Prompts = role context + startup sequence only.
