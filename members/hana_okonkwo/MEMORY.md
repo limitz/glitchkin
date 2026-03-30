@@ -169,8 +169,7 @@ Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style fr
 - **Tech Den: v006** — `LTG_ENV_tech_den.png`
   - C41 fix (v006): in-generator cool bottom pass via numpy Porter-Duff (alpha=130, 60-row graduated transition). Warm/cool 102.9 PASS, line_weight outliers=1 PASS, grade WARN (pre-existing color fidelity only).
 - Glitch Layer: v003
-- School Hallway: **v005 (C46)** — `LTG_ENV_school_hallway.png` — C46 path migration
-- **School Hallway: v006 (C49)** — `LTG_ENV_school_hallway.png` — ceiling convergence pass (3px junction lines, VP-compressed fixtures)
+- **School Hallway: v006 (C49)** — `LTG_ENV_school_hallway.png` — C49 ceiling convergence (3px junction lines, VP-compressed fixtures)
 - **Millbrook Street: v003 (C47)** — `LTG_ENV_millbrook_main_street.png` — value floor fix, cool bottom, final passes, path migration
 - **Living Room**: **v003 (C46)** — `LTG_ENV_grandma_living_room.png` — QA PASS (SF06 aligned, CRT center, warm-left/cool-right staging)
 - **Classroom: FULL REBUILD C41** — `LTG_ENV_classroom_bg.png`
