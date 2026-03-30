@@ -29,9 +29,9 @@ Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the conta
 | P04 | WIDE INTERIOR — Full tech den revealed. Glitch bleeds into warm room. MCU push-in, cyan intrusion has directional source point. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
 | P05 | MCU MONITOR — Camera inside shelf looking out. Pixel cluster growing (8–12 cyan pixels). Luma's blurred warm form in BG. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
 | P06 | CU MONITOR SCREEN — Byte's face pressed against glass from inside. Disgust/curious expression. First appearance of Byte. | EXISTS | `LTG_SB_cold_open_P06.png` (C41, Diego Vargas) |
-| P07 | MED WIDE — Monitor bulging, Dutch tilt 8° CW. Low angle. Byte phases through screen. Warm room invaded by cyan. | PLANNED | — |
+| P07 | MED WIDE — Monitor bulging, Dutch tilt 8° CW. Low angle. Byte phases through screen. Warm room invaded by cyan. | EXISTS | `LTG_SB_cold_open_P07.png` (C43, Diego Vargas) |
 | P08 | MED — Byte full character reveal, standing in real world. Pixel confetti drifting. "The flesh dimension." | EXISTS | `LTG_SB_cold_open_P08.png` (C41, Diego Vargas) |
-| P09 | MED WIDE — Byte floating (18" off floor), spots Luma on couch. Cracked eye scans her. Cautious approach begins. | PLANNED | — |
+| P09 | MED WIDE — Byte floating (18" off floor), spots Luma on couch. Cracked eye scans her. Cautious approach begins. | EXISTS | `LTG_SB_cold_open_P09.png` (C43, Diego Vargas) |
 | P10 | OTS — Byte's POV looking at Luma's sleeping face. Byte in FG silhouette (cool), Luma in BG (warm). Cyan glow on her cheek. | PLANNED | — |
 | P11 | ECU — Luma's closed eyes. Cyan glow on face. Long hold on nothing happening. Then brow twitches. Eyes SNAP open. | PLANNED | — |
 | P12 | CU TWO-SHOT — Luma and Byte nose-to-nose. Equal presence, center-weighted. Breathing negative space between them. CRT visible camera-right BG. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
@@ -81,5 +81,8 @@ Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the conta
 3. ~~**P08**~~ — DONE (C41, Diego Vargas)
 4. ~~**P24**~~ — DONE (C42, Diego Vargas) — Chaos apex / hook frame
 5. ~~**P23**~~ — DONE (C42, Diego Vargas) — Promise shot: backs to camera
-6. **P07** — Monitor bulging breach begins (next after P23/P24 complete)
-7. **P09** — Byte floating, spots Luma (next character staging challenge)
+6. ~~**P07**~~ — DONE (C43, Diego Vargas) — Monitor bulging breach begins
+7. ~~**P09**~~ — DONE (C43, Diego Vargas) — Byte floating, spots Luma
+8. **P10** — Byte POV: Luma's sleeping face. Byte FG silhouette / Luma BG warm.
+9. **P11** — ECU: Luma's closed eyes. Brow twitch. Eyes SNAP open.
+10. **EP05 COVETOUS** — Three-character triangulation (Glitch/Byte/Luma) — EXISTS `LTG_SB_ep05_covetous.png` (C43)

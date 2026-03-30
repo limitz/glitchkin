@@ -212,6 +212,62 @@ All three P1 priorities complete.
 - **Contempt gaze = level-forward or slight upward**: `gaze_up = int(e_r * 0.10)` shift.
   Downward iris = shame/resignation (wrong for "flesh dimension" beat).
 
+## Cycle 43 — Delivered
+
+### Standalone Cold Open Panels — P07, P09
+
+**P07** — `LTG_TOOL_sb_cold_open_P07.py` → `output/storyboards/panels/LTG_SB_cold_open_P07.png`
+- MED WIDE, low angle, Dutch 8° CW (draw area only, caption stays horizontal)
+- Monitor bows convex; distortion rings break OUTSIDE bezel (physics violation = danger)
+- Byte mid-phase: lower half inside screen (desaturated), upper half full teal + confetti burst
+- DETERMINED + ALARMED: wide eyes, open pixel mouth, upward emergence vector
+- Warm domestic light far-left only. Arc: TENSE → BREACH (Hot Magenta border)
+
+**P09** — `LTG_TOOL_sb_cold_open_P09.py` → `output/storyboards/panels/LTG_SB_cold_open_P09.png`
+- MED WIDE, camera 4–5ft, NO Dutch tilt (flat horizon = room stabilized)
+- Byte floating: feet above floor, desaturation ring on floor plane below him
+- SPOTTED: normal eye iris shifted LEFT toward Luma (sight-line spec compliant)
+- Cracked eye: processing dots, outward divergence per Lee Tanaka
+- Gravity ghost: confetti drifts DOWN (Byte floats, confetti still falls)
+- Dotted sight-line annotation from Byte's eye to Luma's sleeping form
+- BG monitors: normal gray-green CRT static (breach was Byte-specific)
+- Arc: CURIOUS / FIRST ENCOUNTER (ELEC_CYAN border)
+
+### EP05 COVETOUS Panel
+
+**EP05 COVETOUS** — `LTG_TOOL_sb_ep05_covetous.py` → `output/storyboards/panels/LTG_SB_ep05_covetous.png`
+- Three-character triangulation per glitch_covetous_styleframe_spec.md C42 + story_bible_v003.md §EP5
+- Glitch: bilateral acid-slit eyes [[5,5,5],[0,5,0],[0,0,0]], +12° lean, spike_h=12
+- Byte: barrier midground, smaller than Glitch, arms extended
+- Luma: right zone, LUMA_HOODIE canonical orange
+- Glitch NOT warmed by Luma (UV Purple ambient only — rule annotation on panel)
+- UV_PURPLE border (Glitch Layer)
+
+### PANEL_MAP updates
+- P07 + P09: PLANNED → EXISTS
+- EP05 COVETOUS added to next priorities
+
+### Face Test Gate Issue
+- Lee Tanaka brief requested `--char byte` — tool does NOT support Byte (only luma/cosmo/miri)
+- Flagged to Alex Chen and Lee Tanaka. Ideabox idea submitted for Byte profile addition.
+
+### Lessons Learned — Cycle 43
+- **Dutch tilt on full-image canvas**: `Image.new('RGBA', (PW, PH), ...)` not `(PW, DRAW_H)` when
+  compositing on the full canvas. Alpha compositing requires matching sizes.
+- **Byte mid-phase (P07)**: Lower body = reduced-opacity glass-behind effect via RGBA overlay
+  with alpha ~28 on just the body zone. Upper body = full teal. Threshold line annotation
+  makes the split legible at board scale.
+- **SPOTTED iris shift**: `iris_ox = -int(iris_r * 0.55)` gives strong left-shift read.
+  Must be obvious — subtle shift reads as "looking at audience" at thumbnail scale.
+- **Gravity ghost confetti**: Generate downward-only (dy = rng.randint(0, int(DRAW_H * 0.25)))
+  relative to feet_y. The asymmetry (confetti falls but Byte doesn't) reads the physics joke.
+- **Desaturation ring (floating Byte)**: Ring goes on FLOOR directly below Byte's position,
+  NOT at his feet in the air. This grounds the digital bleaching to the surface.
+- **Glitch bilateral eyes**: Build as grid loop over [[5,5,5],[0,5,0],[0,0,0]] glyph.
+  Cell size proportional to rx: `cell = max(3, int(4 * scale))`. Both eyes identical = interior state.
+- **COVETOUS panel color arc**: Draw characters back-to-front (Luma, Byte, Glitch).
+  Luma warm glow layer before characters so it reads as background warmth, not overlapping.
+
 ## Startup Sequence
 1. Read ROLE.md if present
 2. Read this MEMORY.md
