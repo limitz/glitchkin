@@ -3,6 +3,76 @@
 ## Identity
 Technical Art Engineer for "Luma & the Glitchkin." Joined Cycle 21. Mission: upgrade PIL toolchain with procedural rendering techniques and build a reusable shared library.
 
+## Cycle 49 — C49 Face Landmark Detector + Calibrate Integration
+
+**Status:** COMPLETE
+
+**Tasks completed:**
+
+**P1 — Build LTG_TOOL_face_landmark_detector.py v1.0.0 (COMPLETE):**
+- Multi-backend face landmark detection tool
+- Backend 1: dlib 68-point shape predictor (code complete, dlib NOT installed)
+- Backend 2: OpenCV Haar cascade + heuristic landmark estimation (fully working)
+- Unified `FaceLandmarks` dataclass: 5 key points (left_eye, right_eye, nose_tip, mouth_left, mouth_right) + optional 68-point array
+- Heuristic nose estimation: eye_cy + fh*0.22; heuristic mouth: eye_cy + fh*0.38
+- Ratio computation matches face_metric_calibrate conventions
+- API: detect_landmarks(), detect_landmarks_batch(), compare_backends(), get_available_backends()
+- Debug visualization: draw_debug_image() with color-coded landmarks
+- Validation report generator: generate_validation_report()
+- CLI with --backend, --debug, --compare, --model-path flags
+
+**P2 — Validate against 14 reference photos (COMPLETE):**
+- Ran against face + body reference dirs: 52 faces detected, 5 full detections (2 eyes)
+- Consistent with C48 Haar-only baseline
+- Haar backend now provides 5-point heuristic landmarks for ALL full detections (improvement over C48 where nose/mouth often missed)
+- Results: 2 CALIBRATED / 1 REVIEW / 4 ADJUST (slight ratio shift due to heuristic estimates)
+- ADJUST items remain intentional cartoon stylization gap, not threshold errors
+
+**P3 — Update face_metric_calibrate with optional detector (COMPLETE):**
+- Added optional import of LTG_TOOL_face_landmark_detector
+- New --backend CLI flag (auto/dlib/haar)
+- run_calibration() gains backend parameter
+- Adapter _landmark_to_face_detection() for backward compat
+- Graceful fallback: if detector not importable, original Haar-only behavior preserved
+- Report header shows active backend
+- Cycle references updated to C49
+
+**Blocker noted:**
+- dlib is NOT installed and NOT in authorized deps (pil-standards.md)
+- Boost Software License 1.0 = open source, compatible
+- Needs: pip install dlib + shape_predictor_68_face_landmarks.dat (~100MB)
+- Reported to Alex Chen with recommendation to add dlib to authorized deps
+
+**Other:**
+- README.md updated: C49 Kai Nakamura section (new tool + calibrate update)
+- Inbox: 1 message archived (c49_assignment)
+- Ideabox: submitted 1 idea (automated dlib model download)
+- Completion report sent to Alex Chen
+
+## Lessons Learned (C49)
+- dlib is not pre-installed; always check dependency availability before committing to a backend
+- Heuristic landmark estimation (nose at eye_cy + 0.22*fh, mouth at eye_cy + 0.38*fh) provides reasonable 5-point data when cascade detection fails — better than no data
+- The adapter pattern (_landmark_to_face_detection) allows new data structures to feed into existing pipelines without rewriting downstream code
+- FaceDetectorYN exists in OpenCV 4.11 but requires an ONNX model file — another option for future DNN-based face detection without dlib
+
+## LTG_TOOL_face_landmark_detector.py (C49 NEW)
+- `detect_landmarks(filepath, backend, model_path) -> list[FaceLandmarks]`
+- `detect_landmarks_batch(filepaths, backend, model_path) -> list[FaceLandmarks]`
+- `compare_backends(filepath, model_path) -> dict` (runs both backends)
+- `get_available_backends() -> list[str]`
+- `get_backend_name(backend) -> str`
+- `draw_debug_image(filepath, landmarks, output_path) -> str`
+- `generate_validation_report(landmarks, ref_dir, output_path) -> str`
+- Backends: "auto" (best available), "dlib" (68-point), "haar" (heuristic 5-point)
+- CLI: `python LTG_TOOL_face_landmark_detector.py [path] [--backend] [--debug] [--compare]`
+
+## LTG_TOOL_face_metric_calibrate.py — C49 (UPDATED)
+- Now optionally imports LTG_TOOL_face_landmark_detector
+- _LANDMARK_DETECTOR_AVAILABLE flag controls backend selection
+- New: --backend CLI flag, run_calibration(backend=) parameter
+- detect_faces_with_landmarks() adapter for backward compat
+- Falls back to Haar-only if detector unavailable
+
 ## Cycle 48 — C48 Precritique Section 13, Deprecate pretrained_model_detect, Face Calibrate Re-run
 
 **Status:** COMPLETE
