@@ -484,7 +484,8 @@ Read inbox for directive. Two tasks: (1) SF02 staging brief for Luma interiority
 - **README updated:** v1.2.0 entry in C49 section.
 - **Ideabox:** `20260330_lee_tanaka_discover_precritique_auto_suggest.md` — auto-suggest discovered bands in precritique_qa for assets without overrides.
 - **Reported to Alex Chen** via inbox.
-- **Inbox archived:** C49 assignment.
+- **Inbox archived:** C49 assignment, C49 staging review request.
+- **CARRIED to next cycle:** Staging review pass on new assets (P22/P22a from Diego, hallway from Hana, SF06 from Maya) — depends on those assets landing. Focus: shoulder involvement, depth tier separation, sight-line flow. Also verify new rules (CRT Glow Asymmetry, BG Saturation Drop, Sigmoid warm-cool transition) in context of staging reviews.
 
 ## Cycle 49 Lessons
 - **Discovery finds the globally optimal pair, not the semantically "correct" pair.** SF04 discovery picks fg=0.35 (character torso, warmest spot) vs manual fg=0.55 (character feet, calibrated by visual inspection). Both produce PASS. The discovery algorithm optimizes for maximum separation, which may differ from the manually chosen "character ground plane" position. This is fine — the purpose is to produce a working override quickly, not to replicate human spatial reasoning.
