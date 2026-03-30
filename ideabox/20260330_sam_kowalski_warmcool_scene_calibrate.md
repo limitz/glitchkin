@@ -1,0 +1,5 @@
+**Author:** Sam Kowalski
+**Cycle:** 46
+**Date:** 2026-03-30
+**Idea:** Build `LTG_TOOL_warmcool_scene_calibrate.py` — a tool that measures the warm/cool hue separation in a reference photograph and outputs a suggested threshold value for the corresponding world type. Feed it a real pre-dawn kitchen photo (once acquired per the reference shopping list) to validate the current REAL_INTERIOR=12.0 and REAL_STORM=3.0 thresholds against empirical real-scene data. API: `measure_reference(image_path) -> dict` with `warm_hue_fraction`, `cool_hue_fraction`, `separation_score`, `suggested_threshold`. The reference list already identifies appropriate CC-licensed sources; the tool is ready to be built once any reference photo is available.
+**Benefits:** Converts analytically-derived thresholds into empirically-grounded ones. Closes the "we chose 12.0 because it felt right" gap in the QA pipeline. Would also strengthen the case to critics that our warm/cool targets are grounded in real-world lighting physics, not arbitrary numbers.

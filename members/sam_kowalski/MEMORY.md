@@ -315,6 +315,13 @@
 - **Typography brief was already at `ltg_typography_brief_display_typeface.md`, not `typography_brief_c44.md`.** C43 deliverable named differently from P1 brief spec. Content is complete and correct. Flag to Alex if canonical filename matters for pitch package.
 - **Logo v003 generator is ready but render is PENDING.** Font files `Nunito-Bold.ttf` + `SpaceGrotesk-Bold.ttf` must be placed in `assets/fonts/` before running. Install instructions in `assets/fonts/README.md`. Any agent with Bash access can complete in under 5 minutes.
 
+## Cycle 46 Lessons
+- **NEVER use `.thumbnail()` — project-wide rule supersedes my C27 MEMORY.** Producer MEMORY confirms: "NEVER use `.thumbnail()` in generators — causes LAB drift up to 47°." Native 1280×720 canvas is the enforcement mechanism. My older MEMORY note saying "call `img.thumbnail((1280, 1280), Image.LANCZOS)` before save" is now INCORRECT. The correct rule is: author at 1280×720 natively. Never post-process resize.
+- **Color script analysis written for 6-frame SF sequence.** `output/color/ltg_color_script_analysis_c46.md`. Arc: SF05 (warm stable) → SF06 (warm/transmission) → SF01 (wonder) → SF02 (crisis) → SF03 (cold/alien) → SF04 (return/marked). Coherent arc confirmed. One structural note: SF03→SF04 temperature jump is intentional but needs a title card in pitch presentation to read as intentional.
+- **Logo v003 COMPLETED by Alex Chen.** `output/production/LTG_BRAND_logo_asymmetric.png` rendered with Nunito Bold + Space Grotesk Bold. Carry-forward item CLOSED.
+- **Reference shopping list reviewed.** Top priorities: interior lighting photos (threshold calibration), depth/atmospheric perspective (Depth Temperature Rule validation), Macbeth ColorChecker (ΔE=5.0 calibration). Additions suggested: D50/D65 illuminant comparison (GL-07 saturation risk), simultaneous contrast swatch pairs (amber-on-purple pop measurement), Bezold-Brücke shift (high-luminance cyan hue direction). Tool proposed: `LTG_TOOL_warmcool_scene_calibrate.py` (ideabox submitted).
+- **SF numbering: The Passing = SF05, The Hand-Off = SF06.** Alex's C46 brief confirms this ordering. COVETOUS is a separate asset not in the 6-frame pitch sequence enumerated in the brief. Carry forward: confirm with Alex whether COVETOUS gets an SF number in the canonical sequence.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm.py v001. Low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan to add inline comment. Low priority.
@@ -324,4 +331,4 @@
 - **SF04 warm/cool WARN (sep=1.1) — documented as FP-007.** Soft-key scene by design. Alex Chen AD decision. Monitor for regression (flag if sep drops below 0.5). NOTE: C42 SF04 "Resolution" rebuild now uses REAL_INTERIOR threshold (sep=13.2 PASS) — different asset from luma_byte SF04 (FP-007 was the luma_byte version).
 - **COVETOUS style frame execution** pending Diego Vargas (spec updated). Diego notified. Color key needs regeneration to match 3-char staging.
 - **LAMP_AMBER inline comment** in `LTG_TOOL_style_frame_04_resolution.py` — assigned to Jordan Reed P2.
-- **Logo font files PENDING install.** `assets/fonts/Nunito-Bold.ttf` + `assets/fonts/SpaceGrotesk-Bold.ttf` must be downloaded (see `assets/fonts/README.md`). Once in place, run `python3 output/tools/LTG_TOOL_logo_asymmetric.py` to generate v003 logo. Report render result to Alex inbox.
+- **Logo font files INSTALLED and logo rendered.** Closed C46 — Alex Chen ran generator. No further action needed.

@@ -144,7 +144,7 @@ If Diego wants a school mascot/motto for the seal, the story team does not have 
 | Item | Recommendation | Decision Authority | Urgency |
 |---|---|---|---|
 | Miri heritage — story documentation | Make it meaningful; canonical statement above | Priya Shah (story) — recommendation only | C43 |
-| Chopstick hair accessory | Replace with wooden hairpins or equivalent | Alex Chen (design) + Maya Santos | P0 — before next character lineup render |
+| Chopstick hair accessory | **RESOLVED C44** — Wooden hairpins confirmed. Maya Santos executed atomic update across all active tools/docs. Alex Chen confirmed. FLAG 05 closed. | Alex Chen + Maya Santos | Complete |
 | Millbrook specificity | Midwest; mid-century small town; Black community present | Alex Chen (visual direction) | C43 |
 | School name | MILLBROOK MIDDLE SCHOOL confirmed | Priya Shah (story) — canonical | Diego can proceed |
 | Millbrook school founding year | EST. 1962 (suggestion only) | Diego Vargas — at discretion | Low |
@@ -153,12 +153,14 @@ If Diego wants a school mascot/motto for the seal, the story team does not have 
 
 ## 7. STORY BIBLE ACTION
 
-The story bible (v003) will be updated to v004 to incorporate:
+The story bible (v003) was updated to v004 to incorporate (C43):
 - Miri cultural heritage statement (Section 5, Grandma Miri profile)
 - Millbrook specificity (Section 3, World Rules — Real World)
 - School name confirmation (Section 3)
 
-Story bible v004 is attached to this cycle.
+Story bible v005 (C46) incorporates:
+- FLAG 05 closure: chopstick reference removed; canonical description updated to "bun secured with a pair of dark-stained wooden hairpins"
+- SF05 "The Passing" and SF06 "The Hand-Off" referenced as emotional spine in Section 5 (Grandma Miri) and Section 6 (Pilot, Act 1)
 
 ---
 
