@@ -6,6 +6,18 @@ Pipeline Automation Specialist. Core mandate: reduce LLM token cost by maximisin
 ## Joined
 C34 (first active cycle).
 
+## C41 Work Done
+- Bumped `LTG_TOOL_precritique_qa.py` → **v2.9.0**: CYCLE_LABEL updated C40→C41. Version docstring, report header, and footer updated.
+  - Task 1 confirmed: README v2.7.0/v2.8.0 sequence is unambiguous (two v2.7.0 branches merged C40; Rin's Section 10 also at v2.8.0 per delivery).
+  - Task 2 confirmed: Section 10 alpha_blend_lint present and functional (all 3 SF assets skip gracefully — no *_nolight.png bases on disk; PASS).
+- Registered 4 UNLISTED tools in README: LTG_TOOL_sb_cold_open_P03.py, P06.py, P08.py (Diego Vargas C41), LTG_TOOL_colorkey_glitch_covetous_gen.py (Sam Kowalski C41).
+- C41 QA baseline run completed: **OVERALL WARN** (PASS=255, WARN=31, FAIL=0).
+  - Section 7 README sync: PASS (113 disk, 230 listed, 0 UNLISTED, 0 GHOST).
+  - Section 10 Alpha Blend Lint: PASS (all 3 skip — no nolight bases).
+  - Pre-existing WARNs: color fidelity (4), proportion verify (3), glitch spec lint (13), motion spec lint (5), render QA (6). No new FAILs.
+- Report: output/production/precritique_qa_c41.md
+- Archived 1 inbox message.
+
 ## C40 Work Done
 - Upgraded `LTG_TOOL_ci_suite.py` → **v1.1.0**: `--known-issues PATH` flag added.
   - `load_known_issues(path) → dict` exported for programmatic use.
