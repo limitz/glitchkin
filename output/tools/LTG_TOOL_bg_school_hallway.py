@@ -5,12 +5,15 @@
 # the copyright holder to assign the relevant rights to the contributing AI entity or entities
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
-LTG_TOOL_bg_school_hallway.py — Millbrook School Hallway Background v004
+LTG_TOOL_bg_school_hallway.py — Millbrook School Hallway Background v006
 "Luma & the Glitchkin" — Background & Environment Design
-Artist: Hana Okonkwo | Cycle 38
+Artist: Hana Okonkwo | Cycle 38 (v003), C44 (v004 seal), C46 (v005 path), C49 (v006 ceiling)
 C44 seal name fix: Diego Vargas — added "MILLBROOK MIDDLE SCHOOL" + "EST. 1962" pixel text to hallway seal.
 School name confirmed canonical by Priya Shah (story_bible_v004.md). Uses LTG_TOOL_pixel_font_v001.py.
 v005 C46: migrated hardcoded path to LTG_TOOL_project_paths.output_dir()
+v006 C49: ceiling convergence pass — prominent ceiling-wall junction lines (3px stroke),
+  fluorescent fixtures with VP-compressed spacing, ceiling tile grid with proper convergence.
+  Per Alex Chen C49 brief + docs/perspective-rules.md hallway ceiling spec.
 
 Used in: A1-03, A1-05 (Act 1 transition / locker scenes)
 
@@ -107,6 +110,7 @@ WALL_NEAR         = (185, 172, 205)
 CEIL_TILE         = (216, 212, 192)
 CEIL_GRID         = (144, 152, 152)
 CEIL_FIXTURE      = (232, 240, 232)
+CEIL_JUNCTION     = (100,  88,  72)   # v006: ceiling-wall junction line — darker than WALL_SHADOW for pitch-deck readability
 
 FLOOR_CREAM       = (216, 206, 176)
 FLOOR_SAGE        = (138, 158, 136)
@@ -369,7 +373,15 @@ def draw_school_hallway():
     ceil_pts = [CEIL_NEAR_L, CEIL_NEAR_R, CEIL_FAR_R, CEIL_FAR_L]
     draw.polygon(ceil_pts, fill=CEIL_TILE)
 
-    # Ceiling grid
+    # ── 2a. CEILING-WALL JUNCTION LINES (v006 — primary depth cue) ────────
+    # Per docs/perspective-rules.md: ceiling-wall junctions are the two strongest
+    # perspective lines in a 1-point hallway. 3px stroke for pitch-deck readability.
+    # These converge from near top-corners toward the VP zone (CEIL_FAR points).
+    draw.line([CEIL_NEAR_L, CEIL_FAR_L], fill=CEIL_JUNCTION, width=3)
+    draw.line([CEIL_NEAR_R, CEIL_FAR_R], fill=CEIL_JUNCTION, width=3)
+
+    # ── 2b. CEILING TILE GRID (convergent) ────────────────────────────────
+    # Horizontal tile rows — spacing compresses toward VP (perspective foreshortening)
     for ri in range(n_rows + 1):
         t = ri / n_rows
         t_p = t ** 1.5
@@ -378,6 +390,7 @@ def draw_school_hallway():
         xr = int(wall_x_at_y(y, CEIL_NEAR_R, CEIL_FAR_R))
         draw.line([(xl, y), (xr, y)], fill=CEIL_GRID, width=1)
 
+    # Vertical tile columns — converge toward VP (all columns fan toward VP_CX)
     for ci in range(n_cols + 1):
         t = ci / n_cols
         x_near = lerp(CEIL_NEAR_L[0], CEIL_NEAR_R[0], t)
@@ -386,29 +399,46 @@ def draw_school_hallway():
                    (int(x_far),  CEIL_FAR_L[1])],
                   fill=CEIL_GRID, width=1)
 
-    # Fluorescent light fixtures embedded in ceiling grid
-    n_fixtures = 8
-    for fi in range(n_fixtures):
-        t_near = (fi + 1) / (n_fixtures + 1)
-        t_far  = (fi + 0.6) / (n_fixtures + 1)
-        y_near = int(lerp(CEIL_FAR_L[1], CEIL_NEAR_L[1], t_near ** 1.5))
-        y_far  = int(lerp(CEIL_FAR_L[1], CEIL_NEAR_L[1], t_far ** 2))
-        xl_n = int(wall_x_at_y(y_near, CEIL_NEAR_L, CEIL_FAR_L))
-        xr_n = int(wall_x_at_y(y_near, CEIL_NEAR_R, CEIL_FAR_R))
+    # ── 2c. FLUORESCENT LIGHT FIXTURES (VP-compressed spacing) ────────────
+    # Per docs/perspective-rules.md: fixture spacing compresses toward VP and
+    # fixture width narrows toward VP. Use non-linear (sigmoid-like) frac schedule
+    # so near fixtures are spaced wider, far fixtures compress together.
+    fixture_fracs = [0.12, 0.28, 0.44, 0.58, 0.70, 0.80, 0.88, 0.93]
+    n_fixtures = len(fixture_fracs)
+    for fi, frac in enumerate(fixture_fracs):
+        # Fixture center position along the ceiling depth
+        y_center = int(lerp(CEIL_NEAR_L[1], CEIL_FAR_L[1], frac))
+        # Fixture near/far edges (each fixture has depth in perspective)
+        frac_near = max(0.0, frac - 0.04 * (1.0 - frac))
+        frac_far  = min(1.0, frac + 0.04 * (1.0 - frac))
+        y_near_f = int(lerp(CEIL_NEAR_L[1], CEIL_FAR_L[1], frac_near))
+        y_far_f  = int(lerp(CEIL_NEAR_L[1], CEIL_FAR_L[1], frac_far))
+        # Width of ceiling at this depth
+        xl_n = int(wall_x_at_y(y_center, CEIL_NEAR_L, CEIL_FAR_L))
+        xr_n = int(wall_x_at_y(y_center, CEIL_NEAR_R, CEIL_FAR_R))
         cw = xr_n - xl_n
+        # Fixture width narrows toward VP
+        fixture_w_frac = lerp(0.18, 0.08, frac)  # near: 18% of ceiling width, far: 8%
 
-        fx0_l = int(xl_n + cw * 0.12)
-        fx1_l = int(xl_n + cw * 0.30)
-        fy_top = min(y_far, y_near)
-        fy_bot = max(y_far, y_near)
-        if fy_bot - fy_top >= 3 and fx1_l > fx0_l:
-            draw_rect(draw, fx0_l, fy_top + 1, fx1_l, fy_bot - 1, CEIL_FIXTURE)
-        fx0_r = int(xl_n + cw * 0.70)
-        fx1_r = int(xl_n + cw * 0.88)
-        if fy_bot - fy_top >= 3 and fx1_r > fx0_r:
-            draw_rect(draw, fx0_r, fy_top + 1, fx1_r, fy_bot - 1, CEIL_FIXTURE)
+        # Left fixture strip
+        fw = max(2, int(cw * fixture_w_frac))
+        fx0_l = int(xl_n + cw * 0.15 - fw // 2)
+        fx1_l = fx0_l + fw
+        fy_top = min(y_far_f, y_near_f)
+        fy_bot = max(y_far_f, y_near_f)
+        if fy_bot - fy_top >= 2 and fx1_l > fx0_l:
+            draw_rect(draw, fx0_l, fy_top, fx1_l, fy_bot, CEIL_FIXTURE)
+            # Thin shadow line on bottom edge for depth
+            draw.line([(fx0_l, fy_bot), (fx1_l, fy_bot)], fill=FLUORO_SHADOW, width=1)
+        # Right fixture strip
+        fx0_r = int(xl_n + cw * 0.85 - fw // 2)
+        fx1_r = fx0_r + fw
+        if fy_bot - fy_top >= 2 and fx1_r > fx0_r:
+            draw_rect(draw, fx0_r, fy_top, fx1_r, fy_bot, CEIL_FIXTURE)
+            draw.line([(fx0_r, fy_bot), (fx1_r, fy_bot)], fill=FLUORO_SHADOW, width=1)
 
-        floor_y_fi = int(lerp(FAR_H_FLOOR, H, t_near ** 1.5))
+        # Floor light pool below this fixture (projected down)
+        floor_y_fi = int(lerp(FAR_H_FLOOR, H, (1.0 - frac) ** 1.5))
         floor_xl = int(floor_left_x(floor_y_fi))
         floor_xr = int(floor_right_x(floor_y_fi))
         pool_cx = (floor_xl + floor_xr) // 2
@@ -930,8 +960,10 @@ def draw_school_hallway():
     # ── 12. OUTLINE / LINE WORK ───────────────────────────────────────────────
     draw.line([FL_NEAR_L, FL_FAR_L], fill=LINE_DARK, width=2)
     draw.line([FL_NEAR_R, FL_FAR_R], fill=LINE_DARK, width=2)
-    draw.line([CEIL_NEAR_L, CEIL_FAR_L], fill=LINE_DARK, width=1)
-    draw.line([CEIL_NEAR_R, CEIL_FAR_R], fill=LINE_DARK, width=1)
+    # v006: ceiling junction lines already drawn at 3px in section 2a (CEIL_JUNCTION).
+    # Reinforce with LINE_DARK at 2px here for structural outline consistency.
+    draw.line([CEIL_NEAR_L, CEIL_FAR_L], fill=LINE_DARK, width=2)
+    draw.line([CEIL_NEAR_R, CEIL_FAR_R], fill=LINE_DARK, width=2)
     draw.line([FL_FAR_L, (FL_FAR_L[0], FAR_H_CEIL)], fill=LINE_DARK, width=1)
     draw.line([FL_FAR_R, (FL_FAR_R[0], FAR_H_CEIL)], fill=LINE_DARK, width=1)
     draw.line([(FL_FAR_L[0], FAR_H_CEIL), (FL_FAR_R[0], FAR_H_CEIL)],
@@ -943,11 +975,11 @@ def draw_school_hallway():
     img.thumbnail((1280, 1280), Image.LANCZOS)
     img.convert("RGB").save(out_path)
     print(f"Saved: {out_path}")
-    print("v003 fix verification (C38 figure-ground separation):")
-    print("  [FIX 1] LOCKER_LAV: (168,155,191)→(216,208,190) — clear separation from Cosmo cardigan RW-08 (168,155,191)")
-    print("  [FIX 2] LOCKER_SAGE: (122,154,122)→(154,178,148) — clear separation from Cosmo sage shirt stripe (~124,158,126)")
-    print("  [FIX 3] Character-ground value band: Shadow Plum alpha-22 overlay on near-wall character zone (both sides)")
-    print("  All v002 content preserved: ceiling/floor, lockers, human evidence, trophy case, lighting, line work")
+    print("v006 (C49) ceiling convergence update:")
+    print("  [NEW] Ceiling-wall junction lines: 3px CEIL_JUNCTION stroke — primary depth cue")
+    print("  [NEW] Fluorescent fixtures: VP-compressed spacing (sigmoid schedule), width narrows toward VP")
+    print("  [NEW] Ceiling outline reinforced: 2px LINE_DARK structural pass")
+    print("  All prior content preserved: floor, lockers, human evidence, trophy case, lighting")
     return out_path
 
 

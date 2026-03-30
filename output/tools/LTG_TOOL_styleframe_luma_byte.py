@@ -187,6 +187,8 @@ def draw_background(img, draw):
                     mon_x1 + frame_pad, mon_y1 + frame_pad + sp(30)],
                    fill=(38, 34, 28))
     # Screen glow (BYTE_TEAL gradient — brightest center)
+    # C49: CRT glow asymmetry — 0.70 multiplier below screen midpoint
+    _below_mult = 0.70
     for step in range(16, 0, -1):
         t = step / 16
         g_r = int(BYTE_TEAL[0] * t * 0.4)
@@ -194,8 +196,30 @@ def draw_background(img, draw):
         g_b = int(BYTE_TEAL[2] * t * 0.95)
         ex = int(mon_w // 2 * t)
         ey = int(mon_h // 2 * t)
-        draw.ellipse([mon_cx - ex, mon_cy - ey, mon_cx + ex, mon_cy + ey],
-                     fill=(g_r, g_g, g_b))
+        ring_top = mon_cy - ey
+        ring_bot = mon_cy + ey
+        if ring_bot <= mon_cy:
+            draw.ellipse([mon_cx - ex, ring_top, mon_cx + ex, ring_bot],
+                         fill=(g_r, g_g, g_b))
+        elif ring_top >= mon_cy:
+            draw.ellipse([mon_cx - ex, ring_top, mon_cx + ex, ring_bot],
+                         fill=(int(g_r * _below_mult), int(g_g * _below_mult),
+                               int(g_b * _below_mult)))
+        else:
+            # Straddles midpoint: draw dimmed, overdraw upper with scanlines
+            dim = (int(g_r * _below_mult), int(g_g * _below_mult),
+                   int(g_b * _below_mult))
+            draw.ellipse([mon_cx - ex, ring_top, mon_cx + ex, ring_bot], fill=dim)
+            full = (g_r, g_g, g_b)
+            for row_y in range(max(ring_top, 0), min(mon_cy, ring_bot)):
+                dy = row_y - mon_cy
+                disc = 1.0 - (dy / max(ey, 1)) ** 2
+                if disc <= 0:
+                    continue
+                half_w = int(ex * math.sqrt(disc))
+                if half_w > 0:
+                    draw.line([(mon_cx - half_w, row_y), (mon_cx + half_w, row_y)],
+                              fill=full, width=1)
     # Screen rim
     draw.rectangle([mon_x0, mon_y0, mon_x1, mon_y1],
                    outline=(60, 50, 40), width=sp(3))
@@ -216,19 +240,33 @@ def draw_background(img, draw):
                    fill=(44, 38, 30))
 
     # Monitor ambient glow radiating onto wall / floor (BYTE_TEAL spill)
+    # C49: CRT glow asymmetry — dimmed below screen midpoint (mon_cy)
     glow_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     glow_draw  = ImageDraw.Draw(glow_layer)
     glow_steps = 12
     for gs in range(glow_steps, 0, -1):
         t = gs / glow_steps
-        alpha = int(55 * t * t)
+        alpha_full = int(55 * t * t)
+        alpha_dim  = int(alpha_full * _below_mult)
         gr  = int(BYTE_TEAL[0] * 0.1)
         gg  = int(BYTE_TEAL[1] * 0.85 * t)
         gb  = int(BYTE_TEAL[2] * 0.90 * t)
         ex  = int(mon_w * 0.9 * (1.0 + (1 - t) * 1.5))
         ey  = int(mon_h * 0.9 * (1.0 + (1 - t) * 1.5))
-        glow_draw.ellipse([mon_cx - ex, mon_cy - ey, mon_cx + ex, mon_cy + ey],
-                          fill=(gr, gg, gb, alpha))
+        ring_top = mon_cy - ey
+        ring_bot = mon_cy + ey
+        # Draw dimmed ellipse first, then overdraw upper half at full alpha
+        glow_draw.ellipse([mon_cx - ex, ring_top, mon_cx + ex, ring_bot],
+                          fill=(gr, gg, gb, alpha_dim))
+        for row_y in range(max(ring_top, 0), min(mon_cy, ring_bot)):
+            dy = row_y - mon_cy
+            disc = 1.0 - (dy / max(ey, 1)) ** 2
+            if disc <= 0:
+                continue
+            half_w = int(ex * math.sqrt(disc))
+            if half_w > 0:
+                glow_draw.line([(mon_cx - half_w, row_y), (mon_cx + half_w, row_y)],
+                               fill=(gr, gg, gb, alpha_full), width=1)
     base_rgba = img.convert("RGBA")
     base_rgba = Image.alpha_composite(base_rgba, glow_layer)
     img.paste(base_rgba.convert("RGB"))

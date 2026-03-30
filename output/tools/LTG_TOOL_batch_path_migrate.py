@@ -13,9 +13,15 @@ and generates a migration report. Optionally applies safe automatic migrations
 for the most common pattern (output path assignment).
 
 This tool does NOT blindly sed-replace. It classifies each occurrence:
-  - SAFE_AUTO:    single output path assignment → can auto-migrate to output_dir()
-  - SAFE_MANUAL:  docstring/comment reference → cosmetic only, low risk
-  - NEEDS_REVIEW: complex expression, multi-use, or non-output path → manual only
+  - SAFE_AUTO:      single output path assignment → can auto-migrate to output_dir()
+  - SAFE_MANUAL:    docstring/comment reference → cosmetic only, low risk
+  - SAFE_FALLBACK:  ImportError fallback def for output_dir() → correct pattern, no action needed
+  - SAFE_LITERAL:   string literal inside except/try block or advisory message → cosmetic, no action
+  - NEEDS_REVIEW:   complex expression, multi-use, or non-output path → manual only
+
+C49 update (Hana Okonkwo): added SAFE_FALLBACK and SAFE_LITERAL classifications.
+  ~65 former NEEDS_REVIEW items were ImportError fallback defs — reclassified as SAFE_FALLBACK.
+  Advisory message strings and subprocess script paths reclassified as SAFE_LITERAL.
 
 Usage:
     python3 LTG_TOOL_batch_path_migrate.py                    # dry-run report
@@ -46,6 +52,39 @@ RE_OUTPUT_ASSIGN = re.compile(
 RE_COMMENT = re.compile(r'^\s*#')
 RE_DOCSTRING_LINE = re.compile(r'^\s*("""|\'\'\'|[^=]*' + re.escape(HARDCODED_PREFIX) + r')')
 
+# Pattern: ImportError fallback def for output_dir (the correct migration pattern)
+# Matches: def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+RE_FALLBACK_DEF = re.compile(
+    r'^\s+def\s+output_dir\(\*parts\)\s*:\s*return\s+pathlib\.Path\(["\']'
+    + re.escape(OUTPUT_PREFIX.rstrip('/'))
+    + r'["\']\)\.joinpath\(\*parts\)'
+)
+# Also match: return pathlib.Path("/home/wipkat/team/output").joinpath(*parts) on its own line
+RE_FALLBACK_RETURN = re.compile(
+    r'^\s+return\s+pathlib\.Path\(["\']'
+    + re.escape(OUTPUT_PREFIX.rstrip('/'))
+    + r'["\']\)\.joinpath\(\*parts\)'
+)
+# Pattern: ensure_dir fallback
+RE_FALLBACK_ENSURE = re.compile(
+    r'^\s+def\s+ensure_dir\('
+)
+
+# Pattern: BASE = "/home/wipkat/team/output" (standalone base assignment — known pattern)
+RE_BASE_ASSIGN = re.compile(
+    r'^\s*\w+\s*=\s*["\']' + re.escape(OUTPUT_PREFIX.rstrip('/')) + r'["\']\s*$'
+)
+
+# Pattern: string literal path inside a list, tuple, or function call (e.g. subprocess script paths)
+RE_STRING_LITERAL_PATH = re.compile(
+    r'^\s*["\']' + re.escape(HARDCODED_PREFIX) + r'[^"\']*["\']\s*,?\s*$'
+)
+
+# Pattern: advisory/message string containing the path (e.g. lines.append("... /home/wipkat/...")
+RE_ADVISORY_STRING = re.compile(
+    r'^\s*\w+\.append\(|^\s*print\(|^\s*.*["\'].*→.*' + re.escape(HARDCODED_PREFIX)
+)
+
 # Pattern: any hardcoded path
 RE_ANY_HARDCODED = re.compile(re.escape(HARDCODED_PREFIX))
 
@@ -58,6 +97,14 @@ def classify_line(line, lineno, in_docstring):
     if in_docstring or stripped.startswith('#'):
         return "SAFE_MANUAL", "docstring/comment reference"
 
+    # Check for ImportError fallback definitions — these ARE the correct migration pattern.
+    # Files that already have try/except ImportError with a fallback def output_dir(*)
+    # using the hardcoded path are fully migrated; the fallback is intentional.
+    if RE_FALLBACK_DEF.match(line):
+        return "SAFE_FALLBACK", "ImportError fallback def output_dir() — correct pattern"
+    if RE_FALLBACK_RETURN.match(line):
+        return "SAFE_FALLBACK", "ImportError fallback return — correct pattern"
+
     # Check for simple output path assignment
     m = RE_OUTPUT_ASSIGN.match(line)
     if m:
@@ -65,6 +112,18 @@ def classify_line(line, lineno, in_docstring):
         rel = path[len(OUTPUT_PREFIX):]
         parts = rel.split('/')
         return "SAFE_AUTO", f"{varname} = output_dir({', '.join(repr(p) for p in parts)})"
+
+    # Check for BASE = "/home/wipkat/team/output" standalone assignments
+    if RE_BASE_ASSIGN.match(line):
+        return "NEEDS_REVIEW", "BASE-style assignment — migrate to output_dir()"
+
+    # Check for string literal paths in lists (e.g. subprocess script references)
+    if RE_STRING_LITERAL_PATH.match(stripped):
+        return "SAFE_LITERAL", "string literal path in list/call — cosmetic reference"
+
+    # Check for advisory/message strings
+    if RE_ADVISORY_STRING.match(stripped):
+        return "SAFE_LITERAL", "advisory/log message containing path — cosmetic"
 
     # Everything else needs manual review
     return "NEEDS_REVIEW", "complex expression or non-standard pattern"
@@ -175,9 +234,9 @@ def apply_safe_auto(results):
 
 def print_report(results):
     """Print human-readable report."""
-    counts = {"SAFE_AUTO": 0, "SAFE_MANUAL": 0, "NEEDS_REVIEW": 0}
+    counts = {"SAFE_AUTO": 0, "SAFE_MANUAL": 0, "SAFE_FALLBACK": 0, "SAFE_LITERAL": 0, "NEEDS_REVIEW": 0}
     for r in results:
-        counts[r["classification"]] += 1
+        counts[r["classification"]] = counts.get(r["classification"], 0) + 1
 
     total = len(results)
     files = len(set(r["file"] for r in results))
@@ -185,7 +244,7 @@ def print_report(results):
     print("=" * 72)
     print("LTG Batch Path Migration Report")
     print(f"  Total occurrences: {total}  in {files} files")
-    print(f"  SAFE_AUTO: {counts['SAFE_AUTO']}  SAFE_MANUAL: {counts['SAFE_MANUAL']}  NEEDS_REVIEW: {counts['NEEDS_REVIEW']}")
+    print(f"  SAFE_AUTO: {counts['SAFE_AUTO']}  SAFE_MANUAL: {counts['SAFE_MANUAL']}  SAFE_FALLBACK: {counts['SAFE_FALLBACK']}  SAFE_LITERAL: {counts['SAFE_LITERAL']}  NEEDS_REVIEW: {counts['NEEDS_REVIEW']}")
     print("=" * 72)
 
     current_file = None

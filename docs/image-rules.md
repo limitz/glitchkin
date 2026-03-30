@@ -30,7 +30,48 @@ In any composition with depth tiers, the warm/cool split is the primary depth cu
 - BG tier: cool drop-shadow band beneath BG_GROUND_Y (slate/cool family)
 - This is Option C from the C45 lineup tier depth evaluation (`output/production/lineup_tier_depth_recommendation_c45.md`)
 
+**BG Saturation Drop:** In addition to the cool temperature shift, background tier elements must desaturate by 15-25% relative to foreground tier elements. This mimics atmospheric perspective — distant objects lose chroma. Implementation: multiply BG tier saturation by 0.75-0.85 (exact factor per scene; 0.80 is the default). This stacks with the cool shift — both cues reinforce depth.
+
+**Warm→Cool Transition Curve:** The temperature shift from warm FG to cool BG follows a **sigmoid curve**, not a linear gradient. The transition band is narrow — approximately 10-15% of the room depth (measured in canvas Y). Implementation: use a logistic function centered at the FG/BG boundary:
+
+```
+import math
+
+def warm_cool_mix(y, fg_y, bg_y, steepness=12.0):
+    """Returns 0.0 (fully warm/FG) to 1.0 (fully cool/BG).
+    y: current vertical position
+    fg_y: foreground ground line (Y pixels)
+    bg_y: background ground line (Y pixels)
+    steepness: sigmoid steepness (12.0 = ~10% transition band)
+    """
+    midpoint = (fg_y + bg_y) / 2.0
+    span = abs(bg_y - fg_y) or 1.0
+    t = (y - midpoint) / (span / steepness)
+    return 1.0 / (1.0 + math.exp(-t))
+```
+
+Steepness=12.0 produces a transition band of ~10% of the FG-BG span. Lower values (8.0) widen the band to ~15%. Generators should use this function (or the equivalent in their drawing pipeline) rather than `lerp()` for warm/cool blending.
+
 **This rule does not override scene color keys.** In a GL (Glitch Layer) scene where cool is ambient and UV_PURPLE is dominant, cool is everywhere — the rule applies within Real World scenes and mixed-space compositions where natural depth reads are needed.
+
+## CRT Glow Asymmetry Rule
+*Codified C49 — applies to all CRT-emitting scenes (Luma's study, cold open CRT shots, any scene with an active CRT).*
+
+**CRT glow is asymmetric: brighter above and to the sides, dimmer below.**
+
+Real CRT monitors sit in a cabinet or on a surface. The cabinet/desk occludes downward light spread. Reference images consistently show the glow pool is 25-35% dimmer below the screen centerline compared to above.
+
+| Direction | Glow Intensity (relative to peak) |
+|---|---|
+| Above screen | 100% (full glow — unoccluded) |
+| Left/Right of screen | 90-100% (slight falloff at extreme angles) |
+| Below screen | 65-75% (cabinet/surface occlusion) |
+
+**Implementation:** All CRT glow generators must apply a **0.70 multiplier** (default) to glow alpha/intensity for pixels below the screen's vertical midpoint. This applies to both the direct glow ellipse and any ambient bounce. The multiplier is adjustable per scene via config but defaults to 0.70.
+
+**Does not apply to:** Floating CRT in Glitch Layer (no physical cabinet), or scenes where the CRT is wall-mounted with no lower occlusion.
+
+---
 
 ## Shoulder Involvement Rule
 *Codified C47 — applies to all human characters (Luma, Cosmo, Miri). Byte and Glitch are exempt.*

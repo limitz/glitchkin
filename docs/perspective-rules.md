@@ -104,6 +104,33 @@ When updating or creating an environment generator, verify every drawn element:
 | Ceiling tiles/panels | Tile edges converge toward VP | Especially critical in hallways — major depth cue |
 | Light fixtures (ceiling) | Spacing compresses toward VP | Receding row of pendants/fluorescents must foreshorten |
 
+### Hallway Ceiling Convergence (1-Point)
+
+School hallways are 1-point perspective scenes. The ceiling is the **highest-impact depth cue** after the floor — its convergence lines are long, unbroken, and visible from any angle. Missing ceiling convergence collapses the hallway to a flat backdrop.
+
+**Required elements for hallway ceiling:**
+
+1. **Ceiling edge lines** — left and right ceiling-wall junctions converge toward `VP_X, VP_Y`. These are the two strongest perspective lines in the scene.
+2. **Tile/panel grid** — if ceiling tiles are drawn, both X and Y tile edges must converge toward VP. Tiles farther from camera are smaller in both dimensions.
+3. **Fluorescent light fixtures** — draw as rectangular strips parallel to the hallway axis. Spacing between fixtures compresses toward VP (closer spacing = farther away). Width of each fixture narrows toward VP.
+4. **Minimum implementation** — even without tiles or fixtures, the ceiling-wall junction lines are mandatory. Two converging lines from top-left and top-right corners toward VP provide immediate depth.
+
+**Hallway VP_Y spec (School Hallway):** VP_Y = 158 (28.9% of canvas). This is an adult-height establishing shot looking down the corridor. The low VP_Y means the ceiling occupies a smaller fraction of the frame — make the convergence lines prominent (2-3px stroke) so they read at pitch-deck scale.
+
+**PIL implementation sketch:**
+```
+# Ceiling-wall junction lines (left and right)
+draw.line([(0, ceiling_y_near), (VP_X, VP_Y)], fill=WALL_SHADOW, width=3)
+draw.line([(W, ceiling_y_near), (VP_X, VP_Y)], fill=WALL_SHADOW, width=3)
+
+# Fluorescent fixtures — spacing compresses toward VP
+for i, frac in enumerate([0.15, 0.35, 0.55, 0.72, 0.85, 0.93]):
+    fx = int(lerp(fixture_near_x, VP_X, frac))
+    fy = int(lerp(fixture_near_y, VP_Y, frac))
+    fw = int(lerp(fixture_near_w, 2, frac))  # narrows toward VP
+    draw.rectangle([(fx - fw//2, fy - 1), (fx + fw//2, fy + 1)], fill=FIXTURE_COLOR)
+```
+
 ---
 
 ## Verification

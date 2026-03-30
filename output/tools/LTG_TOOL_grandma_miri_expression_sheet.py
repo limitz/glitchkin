@@ -6,8 +6,17 @@
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
 LTG_TOOL_grandma_miri_expression_sheet.py
-Grandma Miri Expression Sheet — v007 Shoulder Involvement (C47)
-"Luma & the Glitchkin" — Cycle 47 / Maya Santos
+Grandma Miri Expression Sheet — v008 Elder Posture (C49)
+"Luma & the Glitchkin" — Cycle 49 / Maya Santos
+
+v008 CHANGES (C49 — Alex Chen P1: elder posture update):
+  - FORWARD LEAN: 3-5 degree forward lean implemented as horizontal offset.
+    Head shifts forward by ELDER_LEAN_DX (~5px at 2x), torso shifts 60% of
+    head offset, feet stay centered. Natural elder posture — not a hunch.
+  - ROUNDED SHOULDERS: neutral shoulder rest position drops by ELDER_SHOULDER_DROP
+    (3px base) and shifts inward by ELDER_SHOULDER_INWARD (2px base). Stacks
+    with existing shoulder involvement rule — dynamic arm-raise displacement
+    still applies on top of the new elder rest position.
 
 v007 CHANGES (C47 — Takeshi critique #3: shoulder involvement):
   - Added deltoid/trapezius displacement to draw_body_miri().
@@ -138,6 +147,15 @@ HR     = HEAD_R * RENDER_SCALE
 # Grandma Miri's canonical head-to-body ratio: total character height = 3.2 × head height.
 # This matches the lineup tool (MIRI_HEADS = 3.2) and the character spec.
 MIRI_HEAD_RATIO = 3.2
+
+# ── C49: Elder posture constants ──────────────────────────────────────────────
+# Reference images of elderly characters show a consistent 3-5 degree forward
+# lean and rounded shoulders. These adjustments stack with the existing
+# shoulder involvement rule — the neutral REST position changes, but dynamic
+# shoulder movement still applies on top.
+ELDER_LEAN_DX = int(HR * 0.04)    # ~5px at 2x render — subtle forward lean offset
+ELDER_SHOULDER_DROP = 3 * RENDER_SCALE   # 3px base * 2x render = 6px drop
+ELDER_SHOULDER_INWARD = 2 * RENDER_SCALE # 2px base * 2x render = 4px inward shift
 
 EXPRESSIONS = ["WARM", "SKEPTICAL", "CONCERNED", "SURPRISED", "WISE", "KNOWING"]
 EXPR_LABELS = {
@@ -409,13 +427,20 @@ def draw_body_miri(draw, cx, body_top_y, body_data):
     r_sh_dy = -4 if r_style in ("extended", "palms_out") else (max(-5, int(arm_r_dy * 0.20)) if arm_r_dy < 0 else 0)
     sh_bump_w = int(HR * 0.10)
 
+    # C49: ELDER POSTURE — rounded shoulders (drop + inward shift)
+    # Stacks with dynamic shoulder involvement above. This changes the
+    # neutral rest position; arm-raise displacement still applies on top.
+    l_sh_dy += ELDER_SHOULDER_DROP
+    r_sh_dy += ELDER_SHOULDER_DROP
+    elder_inward = ELDER_SHOULDER_INWARD
+
     torso_pts = [
-        (cx - tw + tilt - sh_bump_w, body_top_y),           # outer left shoulder
-        (cx - tw + tilt, body_top_y + l_sh_dy),              # left deltoid peak
-        (cx - int(tw * 0.3) + tilt, body_top_y),             # inner left
-        (cx + int(tw * 0.3) + tilt, body_top_y),             # inner right
-        (cx + tw + tilt, body_top_y + r_sh_dy),              # right deltoid peak
-        (cx + tw + tilt + sh_bump_w, body_top_y),            # outer right shoulder
+        (cx - tw + tilt - sh_bump_w + elder_inward, body_top_y),  # outer left shoulder (inward)
+        (cx - tw + tilt + elder_inward, body_top_y + l_sh_dy),    # left deltoid peak (dropped + inward)
+        (cx - int(tw * 0.3) + tilt, body_top_y),                   # inner left
+        (cx + int(tw * 0.3) + tilt, body_top_y),                   # inner right
+        (cx + tw + tilt - elder_inward, body_top_y + r_sh_dy),    # right deltoid peak (dropped + inward)
+        (cx + tw + tilt + sh_bump_w - elder_inward, body_top_y),  # outer right shoulder (inward)
         (cx + tw,        torso_bot),
         (cx - tw,        torso_bot),
     ]
@@ -768,27 +793,36 @@ def render_panel_miri(expr, panel_w, panel_h):
     guide = Image.new("RGBA", (rw, rh), (0, 0, 0, 0))
     gd    = ImageDraw.Draw(guide)
     gc    = (180, 155, 128, 44)
-    cx    = rw // 2
+    cx_base = rw // 2
     spec  = EXPR_SPECS[expr]
+
+    # C49: ELDER POSTURE — forward lean. Head and upper body shift forward
+    # (leftward in composition) relative to feet. 3-5 degrees from vertical,
+    # implemented as a horizontal offset that increases toward the top.
+    # Feet stay at cx_base; head shifts by ELDER_LEAN_DX.
+    cx_head = cx_base + ELDER_LEAN_DX   # head shifted forward
+    cx_body = cx_base + int(ELDER_LEAN_DX * 0.6)  # torso shifts less than head
+    # Feet (legs/slippers) drawn from cx_base — no shift
+
     cy    = int(rh * 0.32) + spec.get("cy_offset", 0) * RENDER_SCALE
     ry    = int(HR * 0.94)
-    gd.ellipse([cx - HR, cy - ry, cx + HR, cy + ry], outline=gc, width=3)
-    gd.line([(cx - HR - 18, cy), (cx + HR + 18, cy)], fill=gc, width=2)
-    gd.line([(cx, cy - HR - 18), (cx, cy + HR + 18)], fill=gc, width=2)
+    gd.ellipse([cx_head - HR, cy - ry, cx_head + HR, cy + ry], outline=gc, width=3)
+    gd.line([(cx_head - HR - 18, cy), (cx_head + HR + 18, cy)], fill=gc, width=2)
+    gd.line([(cx_head, cy - HR - 18), (cx_head, cy + HR + 18)], fill=gc, width=2)
     img = Image.alpha_composite(img, guide)
     draw = ImageDraw.Draw(img)
 
     body_top_y = cy + int(HR * 0.92)
-    draw_body_miri(draw, cx, body_top_y, spec["body"])
+    draw_body_miri(draw, cx_body, body_top_y, spec["body"])
 
-    draw_head_miri(draw, cx, cy)
-    draw_ears_miri(draw, cx, cy)
-    draw_hair_bun(draw, cx, cy)
-    draw_blush_miri(draw, cx, cy, strength=spec["blush"])
+    draw_head_miri(draw, cx_head, cy)
+    draw_ears_miri(draw, cx_head, cy)
+    draw_hair_bun(draw, cx_head, cy)
+    draw_blush_miri(draw, cx_head, cy, strength=spec["blush"])
     draw = ImageDraw.Draw(img)
-    draw_eyes_miri(draw, cx, cy, spec["eyes"])
-    draw_nose_miri(draw, cx, cy)
-    draw_mouth_miri(draw, cx, cy, style=spec["mouth"])
+    draw_eyes_miri(draw, cx_head, cy, spec["eyes"])
+    draw_nose_miri(draw, cx_head, cy)
+    draw_mouth_miri(draw, cx_head, cy, style=spec["mouth"])
 
     return img.resize((panel_w, panel_h), Image.LANCZOS)
 
@@ -811,9 +845,9 @@ def build_sheet():
         font_label = font_title
         font_sub   = font_title
 
-    title = "GRANDMA MIRI — Expression Sheet v005  |  Luma & the Glitchkin"
-    sub   = ("Designer: Maya Santos  |  C41 M001 Fix  |  "
-             f"6 expressions  |  HEAD_RATIO={MIRI_HEAD_RATIO}  |  WELCOMING redesign + hand-to-cheek")
+    title = "GRANDMA MIRI — Expression Sheet v008  |  Luma & the Glitchkin"
+    sub   = ("Designer: Maya Santos  |  C49 Elder Posture  |  "
+             f"6 expressions  |  HEAD_RATIO={MIRI_HEAD_RATIO}  |  forward lean + rounded shoulders")
     draw.text((PAD, 10), title, fill=(235, 218, 196), font=font_title)
     draw.text((PAD, 38), sub,   fill=(165, 150, 130), font=font_sub)
 

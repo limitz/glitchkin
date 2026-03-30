@@ -1403,3 +1403,54 @@ All critical path assets verified on disk. No blocking issues found. The package
 | P2 Open items C48 | Depth temp lint per-asset band overrides (SF04/SF05); SF06 shoulder + Luma lean generator fix (Maya); Glitch G004 draw-order WARN (3 generators); Color script analysis SF01–SF06 (Sam); P22/P22a panels (Diego); Shoulder involvement in style frame + storyboard generators (cross-team) |
 
 *Updated by Alex Chen, Art Director — Cycle 47 — 2026-03-30*
+
+---
+
+### Cycle 48 Additions
+
+| Asset | Path | Notes |
+|---|---|---|
+| Depth Temp Band Overrides Config | `output/tools/depth_temp_band_overrides.json` | NEW — Per-asset FG/BG band Y-fraction overrides for Section 12. SF04 and SF05 false FAILs resolved. (Cycle 48 — Lee Tanaka) |
+| Depth Temperature Lint v1.1.0 | `output/tools/LTG_TOOL_depth_temp_lint.py` | Band override auto-loading. SF04 FAIL→PASS, SF05 FAIL→PASS. Zero Section 12 FAILs. (Cycle 48 — Lee Tanaka) |
+| precritique_qa v2.17.0 | `output/tools/LTG_TOOL_precritique_qa.py` | Section 12 band override display. (Cycle 48 — Lee Tanaka) |
+| precritique_qa v2.16.0 (Section 13) | `output/tools/LTG_TOOL_precritique_qa.py` | Section 13 Warm Pixel Percentage. 10 registered assets. (Cycle 48 — Kai Nakamura) |
+| pretrained_model_detect REMOVED | `deprecated/` | Moved to deprecated — pretrained torchvision models are allowed for QA. (Cycle 48 — Kai Nakamura) |
+| Face Metric Calibration Report | `output/production/face_metric_calibration_report.md` | Re-calibrated with 14 refs. 1 CALIBRATED / 3 REVIEW / 3 ADJUST. No threshold changes. (Cycle 48 — Kai Nakamura) |
+| Sightline Validator v1.0.0 | `output/tools/LTG_TOOL_sightline_validator.py` | NEW — Angular error validation. PASS<5deg, WARN 5-15deg, FAIL>15deg. 5/5 self-tests PASS. (Cycle 48 — Jordan Reed) |
+| draw_shoulder_arm Helper | `output/tools/LTG_TOOL_draw_shoulder_arm.py` | NEW — Shared shoulder-arm drawing module. All 3 clothing types. (Cycle 48 — Ryo Hasegawa) |
+| CI Suite v1.8.0 | `output/tools/LTG_TOOL_ci_suite.py` | Check 10 repurposed to doc_staleness (was ext_model_check). (Cycle 48 — Morgan Walsh) |
+| Reference Art Direction Notes | `output/production/reference_art_direction_notes_c48.md` | 168 images across 22 categories reviewed. 7 sections of findings. (Cycle 48 — Alex Chen) |
+| CRT Glow Asymmetry Rule | `docs/image-rules.md` | NEW rule — 0.70 multiplier below CRT screen midpoint. (Cycle 49 — Alex Chen) |
+| BG Saturation Drop Rule | `docs/image-rules.md` | NEW rule — 15-25% saturation reduction in BG tier (default 0.80 multiplier). (Cycle 49 — Alex Chen) |
+| Sigmoid Warm→Cool Transition | `docs/image-rules.md` | NEW specification — logistic function with steepness=12.0, ~10% transition band. (Cycle 49 — Alex Chen) |
+| Hallway Ceiling Convergence | `docs/perspective-rules.md` | NEW section — ceiling-wall junction lines, fluorescent fixtures with VP compression. (Cycle 49 — Alex Chen) |
+
+#### Cycle 48/49 Pitch Package Status (CURRENT)
+
+| Requirement | Status |
+|---|---|
+| **SF01** | v007 (unchanged from C47) |
+| **SF02 Glitch Storm** | v008 NATIVE (unchanged) |
+| **SF03 Other Side** | v005 PITCH PRIMARY (unchanged) |
+| **SF04 Resolution** | CANONICAL — **depth temp lint now PASS** (band override C48) |
+| **SF05 COVETOUS** | v3.0.0 — **depth temp lint now PASS** (band override C48) |
+| **SF05 "The Passing"** | C45 (unchanged) |
+| **SF06 "The Hand-Off"** | C45 — shoulder + lean fix **in progress C49** (Maya) |
+| **GL Showcase** | C47 (unchanged) |
+| Luma expression sheet | v014 (unchanged) |
+| Byte expression sheet | v007 (unchanged) |
+| Cosmo expression sheet | v008 (unchanged) |
+| Cosmo turnaround | v003 — proportion check **in progress C49** (Maya) |
+| Miri expression sheet | v007 — posture update **in progress C49** (Maya) |
+| Glitch expression sheet | v003 (unchanged) |
+| Character lineup | v011 (unchanged) |
+| Logo | v003 (unchanged) |
+| Story Bible | v005 — **v006 in progress C49** (Priya — Cosmo bridge tape + production bible refresh) |
+| Storyboards | 19 standalone panels. **P22/P22a in progress C49** (Diego). |
+| Environments | Hallway ceiling convergence **in progress C49** (Hana). Others unchanged. |
+| QA/Pipeline | precritique_qa v2.17.0. Sightline validator v1.0.0 NEW. draw_shoulder_arm NEW. CI v1.8.0. warmcool_scene_calibrate **in progress C49** (Sam). glow_profile_extract **in progress C49** (Jordan). |
+| Art Direction docs | CRT glow asymmetry, BG saturation drop, sigmoid transition, hallway ceiling convergence — all NEW C49 (Alex). |
+| P1 Open items C49 | Production bible refresh (Priya); Warm/cool threshold recalibration (Sam); CRT glow asymmetry fix across generators (Rin/Jordan/Hana) |
+| P2 Open items C49 | SF06 shoulder+lean (Maya); Miri posture update (Maya); UV_PURPLE hue shift eval (Rin); Glitch G004 draw-order (Ryo); dlib face landmark prototype (Kai); Color script analysis SF01-SF06 (Sam — carried) |
+
+*Updated by Alex Chen, Art Director — Cycles 48/49 — 2026-03-30*

@@ -6,8 +6,8 @@
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
 LTG_TOOL_styleframe_discovery.py
-Style Frame 01 — The Discovery (C47 sight-line gaze-lock fix)
-"Luma & the Glitchkin" — Cycle 47
+Style Frame 01 — The Discovery (C49 CRT glow asymmetry fix)
+"Luma & the Glitchkin" — Cycle 49
 
 Art Director: Alex Chen
 Procedural Art Engineer: Rin Yamamoto (C38), Jordan Reed (C47)
@@ -161,7 +161,16 @@ def load_font(size=14, bold=False):
     return ImageFont.load_default()
 
 
-def draw_filled_glow(draw, cx, cy, rx, ry, glow_rgb, bg_rgb, steps=14):
+def draw_filled_glow(draw, cx, cy, rx, ry, glow_rgb, bg_rgb, steps=14,
+                     screen_mid_y=None, below_mult=0.70):
+    """Draw concentric ellipse glow.
+
+    CRT Glow Asymmetry Rule (C49): when *screen_mid_y* is set, glow intensity
+    is multiplied by *below_mult* (default 0.70) for pixels below that Y line.
+    Rings fully above the midpoint render at full intensity; rings fully below
+    render dimmed; straddling rings are drawn dimmed then overdrawn with
+    scanline spans at full intensity above the midpoint.
+    """
     for i in range(steps, 0, -1):
         t = i / steps
         r_v = int(bg_rgb[0] + (glow_rgb[0] - bg_rgb[0]) * (1 - t))
@@ -169,7 +178,39 @@ def draw_filled_glow(draw, cx, cy, rx, ry, glow_rgb, bg_rgb, steps=14):
         b_v = int(bg_rgb[2] + (glow_rgb[2] - bg_rgb[2]) * (1 - t))
         er   = max(1, int(rx * t))
         er_y = max(1, int(ry * t))
-        draw.ellipse([cx - er, cy - er_y, cx + er, cy + er_y], fill=(r_v, g_v, b_v))
+
+        if screen_mid_y is None:
+            draw.ellipse([cx - er, cy - er_y, cx + er, cy + er_y],
+                         fill=(r_v, g_v, b_v))
+        else:
+            ring_top = cy - er_y
+            ring_bot = cy + er_y
+            if ring_bot <= screen_mid_y:
+                # Fully above midpoint — full intensity
+                draw.ellipse([cx - er, ring_top, cx + er, ring_bot],
+                             fill=(r_v, g_v, b_v))
+            elif ring_top >= screen_mid_y:
+                # Fully below midpoint — dimmed
+                dim = (int(r_v * below_mult),
+                       int(g_v * below_mult),
+                       int(b_v * below_mult))
+                draw.ellipse([cx - er, ring_top, cx + er, ring_bot], fill=dim)
+            else:
+                # Straddles midpoint: draw dimmed ellipse, overdraw upper half
+                dim = (int(r_v * below_mult),
+                       int(g_v * below_mult),
+                       int(b_v * below_mult))
+                draw.ellipse([cx - er, ring_top, cx + er, ring_bot], fill=dim)
+                full = (r_v, g_v, b_v)
+                for row_y in range(max(ring_top, 0), min(screen_mid_y, ring_bot)):
+                    dy = row_y - cy
+                    disc = 1.0 - (dy / er_y) ** 2
+                    if disc <= 0:
+                        continue
+                    half_w = int(er * math.sqrt(disc))
+                    if half_w > 0:
+                        draw.line([(cx - half_w, row_y), (cx + half_w, row_y)],
+                                  fill=full, width=1)
 
 
 def draw_amber_outline(draw, cx, cy, rx, ry, width=3):
@@ -212,6 +253,14 @@ def draw_background(draw, img):
     mw_h  = sy(int(1080 * 0.57))
     draw.rectangle([mw_x, mw_y, mw_x + mw_w, mw_y + mw_h], fill=(14, 10, 22))
 
+    # CRT screen midpoint Y — pre-computed for glow asymmetry (C49 rule)
+    _crt_y  = mw_y + int(mw_h * 0.08)
+    _crt_h  = int(mw_h * 0.62)
+    _scr_pad = sp(24)
+    _scr_y0 = _crt_y + _scr_pad
+    _scr_y1 = _crt_y + _crt_h - _scr_pad * 2
+    crt_screen_mid_y = (_scr_y0 + _scr_y1) // 2
+
     # Monitor specs (scaled from 1920x1080)
     monitor_specs = [
         (mw_x + sx(40),  mw_y + sy(20),  sx(260), sy(150)),  # [0] top-left — WARM ZONE (lamp bleed)
@@ -222,13 +271,15 @@ def draw_background(draw, img):
         (mw_x + sx(685), mw_y + sy(185), sx(210), sy(150)),  # [5] mid-right
     ]
 
+    # C49: CRT glow asymmetry — 0.70 multiplier below screen midpoint
     cx_glow = mw_x + mw_w // 2
     cy_glow = mw_y + mw_h // 2
     draw_filled_glow(draw, cx_glow, cy_glow,
                      rx=sx(720), ry=sy(420),
                      glow_rgb=(0, 60, 100),
                      bg_rgb=(14, 10, 22),
-                     steps=16)
+                     steps=16,
+                     screen_mid_y=crt_screen_mid_y)
 
     for mx, my, mw_s, mh_s in monitor_specs:
         draw.rectangle([mx - sp(6), my - sp(6), mx + mw_s + sp(6), my + mh_s + sp(6)],
@@ -236,11 +287,13 @@ def draw_background(draw, img):
         draw.rectangle([mx, my, mx + mw_s, my + mh_s], fill=ELEC_CYAN)
         cx_m = mx + mw_s // 2
         cy_m = my + mh_s // 2
+        # C49: each subsidiary monitor gets glow asymmetry at its own midpoint
         draw_filled_glow(draw, cx_m, cy_m,
                          mw_s // 2, mh_s // 2,
                          glow_rgb=(180, 255, 255),
                          bg_rgb=ELEC_CYAN,
-                         steps=8)
+                         steps=8,
+                         screen_mid_y=cy_m)
         for sy_scan in range(my + sp(3), my + mh_s, sp(5)):
             draw.line([(mx, sy_scan), (mx + mw_s, sy_scan)], fill=(0, 168, 180), width=1)
         draw.line([(mx, my), (mx + mw_s, my)], fill=(40, 40, 60), width=sp(2))
@@ -376,12 +429,16 @@ def draw_background(draw, img):
         (crt_x + crt_w + sx(160), H),
         (crt_x - sx(100),  H),
     ]
-    draw.polygon(floor_glow_pts, fill=(0, 22, 38))
+    # C49: floor glow is entirely below CRT screen — apply 0.70 asymmetry multiplier
+    _floor_mult = 0.70
+    draw.polygon(floor_glow_pts, fill=(0, int(22 * _floor_mult), int(38 * _floor_mult)))
+    # Left-wall spill glow spans above and below — use screen_mid_y asymmetry
     draw_filled_glow(draw, mw_x - sp(20), mw_y + mw_h // 2,
                      rx=sx(160), ry=sy(220),
                      glow_rgb=(0, 40, 70),
                      bg_rgb=(180, 130, 60),
-                     steps=10)
+                     steps=10,
+                     screen_mid_y=crt_screen_mid_y)
 
     # Window
     win_x0, win_y0 = sx(60), ceiling_y + sy(20)
@@ -1123,7 +1180,7 @@ def generate(skip_fill_light=False):
     font_xs = load_font(11)
     draw.rectangle([0, H - 30, W, H], fill=(20, 12, 8))
     draw.text((10, H - 22),
-              "LUMA & THE GLITCHKIN — Frame 01: The Discovery  |  C47 — sight-line gaze-lock fix v007",
+              "LUMA & THE GLITCHKIN — Frame 01: The Discovery  |  C49 — CRT glow asymmetry fix v008",
               fill=(180, 150, 100), font=font_xs)
 
     # STEP 9: Size rule enforcement (<=1280px — already at 1280x720, no resize needed)

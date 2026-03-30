@@ -6,6 +6,37 @@ Comedy-adventure cartoon. Three worlds: Real World (warm/domestic), Glitch World
 ## Joined
 Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style frames).
 
+## Cycle 49 — Hallway Ceiling Convergence v006 + Batch Path Migrate Reclassify
+
+### School Hallway v006 — Ceiling Convergence (C49)
+- Per Alex Chen C49 brief + docs/perspective-rules.md hallway ceiling spec
+- Added CEIL_JUNCTION color (100,88,72) — darker than WALL_SHADOW for pitch-deck readability
+- **Ceiling-wall junction lines**: 3px CEIL_JUNCTION stroke from near corners to CEIL_FAR points
+  - These are the two strongest perspective lines in a 1-point hallway scene
+  - Reinforced with 2px LINE_DARK structural pass in outline section (was 1px)
+- **Fluorescent fixtures**: VP-compressed spacing using sigmoid-like frac schedule
+  - fixture_fracs = [0.12, 0.28, 0.44, 0.58, 0.70, 0.80, 0.88, 0.93]
+  - Width narrows toward VP: 18% of ceiling width near, 8% far
+  - Shadow line on bottom edge for depth reading
+- QA C49: silhouette PASS, value PASS (min=19 max=237 range=218), warm/cool 34.8 PASS, line_weight outliers=1 PASS, grade WARN (color fidelity pre-existing only)
+
+### Batch Path Migrate Reclassification (C49)
+- Updated LTG_TOOL_batch_path_migrate.py with two new classifications:
+  - **SAFE_FALLBACK**: ImportError fallback defs for output_dir() — the correct migration pattern, no action needed
+  - **SAFE_LITERAL**: string literal paths in lists/calls and advisory messages — cosmetic references
+- Results: 82 NEEDS_REVIEW → 4 NEEDS_REVIEW (70 reclassified as SAFE_FALLBACK, 8 as SAFE_LITERAL)
+- Remaining 4 genuine NEEDS_REVIEW:
+  - 3 BASE-style assignments (fidelity_check_c24, naming_compliance_copier, naming_compliance_copy)
+  - 1 complex script path reference (sb_act1_contact_sheet L105)
+- These 4 need manual migration by their respective tool owners
+
+### Inbox
+- `20260330_2500_c49_assignment.md` from Producer — archived after completing tasks
+- `20260330_2510_c49_hallway_ceiling_convergence.md` from Alex Chen — archived after completing hallway update
+
+### Ideabox
+- Submitted: classroom ceiling convergence (same treatment, asymmetric 2-point for 3/4 camera)
+
 ## Cycle 48 — Kitchen v008 Perspective Fix + Batch Path Migration Apply
 
 ### Kitchen v008 — Furniture Perspective (C48 completion)
@@ -31,7 +62,7 @@ Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style fr
 
 ### VP Spec Migration Strategy (from furniture_vp_spec_c48.md)
 - C48: Kitchen DONE (table, countertop, fridge, chair, cabinets)
-- C49: Living Room v004 (sofa, bookcase, CRT — P1 items)
+- C49: School Hallway v006 (ceiling convergence) DONE + Living Room v004 deferred
 - C50: Tech Den v008 + Classroom v005
 - C51: School Hallway v006 + Luma Study v002
 - C52-53: P2/P3 items across all rooms
@@ -139,6 +170,7 @@ Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style fr
   - C41 fix (v006): in-generator cool bottom pass via numpy Porter-Duff (alpha=130, 60-row graduated transition). Warm/cool 102.9 PASS, line_weight outliers=1 PASS, grade WARN (pre-existing color fidelity only).
 - Glitch Layer: v003
 - School Hallway: **v005 (C46)** — `LTG_ENV_school_hallway.png` — C46 path migration
+- **School Hallway: v006 (C49)** — `LTG_ENV_school_hallway.png` — ceiling convergence pass (3px junction lines, VP-compressed fixtures)
 - **Millbrook Street: v003 (C47)** — `LTG_ENV_millbrook_main_street.png` — value floor fix, cool bottom, final passes, path migration
 - **Living Room**: **v003 (C46)** — `LTG_ENV_grandma_living_room.png` — QA PASS (SF06 aligned, CRT center, warm-left/cool-right staging)
 - **Classroom: FULL REBUILD C41** — `LTG_ENV_classroom_bg.png`

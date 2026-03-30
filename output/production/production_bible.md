@@ -255,38 +255,46 @@ The full visual specification is maintained in the **Style Guide** (`/home/wipka
 
 **This production uses open source tools exclusively.** Proprietary software (Toon Boom Harmony, Adobe After Effects, Photoshop, etc.) is not permitted. If a required tool does not exist in the open source ecosystem, the team will implement it in Python.
 
-### Primary Animation Software
-**OpenToonz** — open source 2D animation tool (used by Studio Ghibli). Primary tool for character animation, rigging, and frame-by-frame work. Runs on Linux, Mac, and Windows.
+### 9A. Pitch Development Pipeline (Current)
 
-### Digital Painting & Background Art
-**Krita** — open source digital painting application. Used for all background paintings, character design sheets, color keys, and style frames. Native support for 16-bit color depth and PSD-compatible layered files.
+The entire pitch package is built by AI agents (Claude) operating programmatically. No GUI applications are used. Every asset — character sheets, style frames, environments, storyboards, color scripts, brand marks — is generated and iterated through Python code.
 
-### Vector Assets
-**Inkscape** — open source vector graphics editor. Used for model sheets, style guides, title cards, graphic UI elements, and any asset that benefits from resolution-independent vector output.
+**Core toolchain:**
+- **Python 3.8+ / Pillow (PIL)** — all image generation, compositing, and batch processing
+- **NumPy** — color math, pixel analysis, Porter-Duff blending
+- **OpenCV (cv2)** — edge detection, perspective analysis, QA tooling
+- **PyTorch / torchvision** — pretrained model QA (object detection on output frames)
 
-### Compositing
-**Natron** — open source compositor (equivalent to Nuke/After Effects). Used for all final compositing, color grading, and output rendering. Blend modes referenced throughout production documents — Screen, Add, Multiply, Overlay, Normal — use **Natron's blend mode terminology**, which follows the industry-standard naming convention consistent across open source compositors.
+**Pitch asset specs:**
+- **Canvas:** Native 1280×720 (16:9). Hard limit: ≤1280px in both dimensions.
+- **Bit depth:** 8-bit PNG (PIL default)
+- **Color space:** sRGB
+- **Version control:** Standard Git (no LFS configured for pitch phase)
 
-### Pipeline Automation & Scripting
-**Python + Pillow/PIL** — image generation, batch processing, and pipeline automation scripts.
-**Python + pycairo / svgwrite** — vector and SVG asset generation.
-**ImageMagick** — CLI batch image processing and format conversion.
+**Pipeline automation (190+ tools in `output/tools/`):**
+- Per-asset Python generators that produce deterministic, re-renderable output
+- QA suite: precritique_qa, render_qa, CI suite, face test gate, color verify, depth temp lint
+- All tools registered in `output/tools/README.md`
 
-All pipeline scripts are tracked in `/home/wipkat/team/output/tools/README.md`. If a required tool does not exist, the team must implement it in Python and register it in that index.
+### 9B. Recommended Production Pipeline (Post-Pitch)
 
-### Delivery & Handoff Format
-- **From OpenToonz:** PNG sequences (per shot, per layer where required)
-- **Final composite:** Assembled in Natron for final color grade and output
-- **Deliverable master:** PNG sequence archive; H.264/H.265 for distribution review cuts
-- **Asset exports for review:** PNG, flattened, at delivery resolution
+The tools below represent a recommended open-source production pipeline for full series production. These are industry-standard applications that a studio could adopt after the pitch is greenlit. **None of these tools are used during pitch development — they are listed here as a production recommendation for buyers.**
 
-### Version Control
-- **Binary assets** (PNG, layered source files, OpenToonz scenes): **Git LFS** (Large File Storage)
-- **Production documents** (.md, .txt, .csv, scripts): **Standard Git**
-- All team members must have Git LFS installed before committing binary files. Committing binaries to standard Git without LFS is a pipeline violation.
+> **Note on agentic production:** The current pitch was built entirely by an AI agent team. After the pitch, there is the option of transitioning this team into a "production mode" where agents drive actual animation and compositing workflows — potentially operating these tools programmatically via their CLI/scripting interfaces, or continuing with the Python/PIL pipeline at higher resolution. How to structure agentic AI in full production is an open question to be decided at that stage, not now. For the pitch phase, the focus is on the assets.
 
-### Bit Depth
-See Section 11 (Production Standards) and the Naming Conventions document for bit depth standards. Short version: **16-bit PNG for all production assets.**
+**Animation:** OpenToonz — open source 2D animation (used by Studio Ghibli). Character animation, rigging, frame-by-frame. Linux/Mac/Windows.
+
+**Digital Painting:** Krita — open source digital painting. Background paintings, character design sheets, color keys. 16-bit color depth, PSD-compatible layers.
+
+**Vector Assets:** Inkscape — open source vector editor. Model sheets, style guides, title cards, resolution-independent assets.
+
+**Compositing:** Natron — open source compositor (Nuke/AE equivalent). Final compositing, color grading, output rendering.
+
+**Production asset specs (full series):**
+- **Delivery resolution:** 1920×1080 (1080p HD) minimum. Artists may work at 2x (3840×2160).
+- **Bit depth:** 16-bit PNG for all production assets
+- **Delivery format:** PNG sequences from OpenToonz; final composite in Natron; H.264/H.265 for review cuts
+- **Version control:** Git LFS for binary assets (PNG, layered sources, OpenToonz scenes). Standard Git for documents and scripts.
 
 ---
 
@@ -308,6 +316,16 @@ This role is a prerequisite for the show entering multi-episode production. It m
 
 ### File Formats
 
+**Pitch phase (current):**
+
+| Asset Type | Format | Notes |
+|---|---|---|
+| All visual assets | PNG (8-bit, sRGB) | 1280×720 native canvas |
+| Production documents | Markdown (.md) | Plain text, version-controlled |
+| Pipeline tools | Python (.py) | Registered in `output/tools/README.md` |
+
+**Full production (post-pitch):**
+
 | Asset Type | Delivery Format | Notes |
 |---|---|---|
 | Character design sheets | PNG (transparent bg) + source file | 300 DPI minimum |
@@ -318,9 +336,8 @@ This role is a prerequisite for the show entering multi-episode production. It m
 | Production documents | Markdown (.md) | Plain text, version-controlled |
 
 ### Resolution Standards
-- **Delivery resolution:** 1920 x 1080 (1080p HD) — all final assets at this resolution or above
-- **Aspect ratio:** 16:9 (widescreen). Safe zones: action safe at 90%, title safe at 80%
-- **Working resolution:** Artists may work at 2x (3840 x 2160) and export down; do not work below delivery resolution
+- **Pitch phase:** 1280×720 native canvas. Hard limit ≤1280px both dimensions. 16:9 aspect ratio.
+- **Full production:** 1920×1080 (1080p HD) delivery minimum. 16:9 widescreen. Safe zones: action safe 90%, title safe 80%. Artists may work at 2x (3840×2160) and export down.
 
 ### Naming Conventions
 

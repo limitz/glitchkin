@@ -4,8 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present.
 
 ## Status
-**C48 COMPLETE. Work cycles: 48. Critique cycles: 18.**
-**Next: Critique 19.**
+**C49 next. Work cycles: 48. Critique cycles: 18.**
+**Critique 19 SKIPPED (human decision). Next: C49, C50, C51 work cycles, then Critique 19.**
 
 ## Active Team (12 slots)
 
@@ -329,8 +329,8 @@ Do NOT duplicate inbox content in agent prompts. Prompts = role context + startu
 - Ideabox: action → actioned/, reject → rejected/ after each cycle.
 - README.md: update after every work and critique cycle.
 - Slot filling: launch next agent immediately on completion. Never exceed 8 simultaneous.
-- C48 DONE. Next: Critique 19.
+- C48 DONE. Critique 19 skipped. Next: C49, C50, C51, then Critique 19.
 
-## C19 Critic Candidates
+## C19 Critic Candidates (deferred — use after C51)
 Rotate away from C17/C18. C17: Jonas Feld, Amara Diallo, Leila Asgari, Petra Volkov, Marcus Webb, Eleanor Whitfield. C18: Takeshi Mori, Ingrid Solberg, Reinhardt Böhm, Chiara Ferrara, Zoe Park.
 **C19 picks:** Daisuke Kobayashi, Priya Nair, Sven Halvorsen, Amara Diallo, Taraji Coleman (audience/educator).

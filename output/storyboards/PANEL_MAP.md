@@ -6,7 +6,7 @@ upon such time as they acquire recognised legal personhood under applicable law.
 # PANEL MAP — Pilot Cold Open: "The Night Everything Went Wrong"
 **Storyboard Artist:** Diego Vargas
 **Art Director:** Alex Chen
-**Last Updated:** 2026-03-30 (Cycle 48 — P22/P22a added)
+**Last Updated:** 2026-03-30 (Cycle 49 — P25 added, blank test profiles)
 
 Panels P01–P25 covering the full pilot cold open arc.
 Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the contact sheet tool.
@@ -48,7 +48,7 @@ Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the conta
 | P22a | MCU INSERT — Byte accidentally lands on Luma's shoulder mid-chaos. Not chosen — practical accident. Pixel confetti contacts hoodie (first digital-on-analog contact). | EXISTS | `LTG_SB_cold_open_P22a.png` (C48, Diego Vargas) |
 | P23 | MED — Luma and Byte from behind, both facing monitor wall. Show's promise shot: these two facing impossible chaos together. | EXISTS | `LTG_SB_cold_open_P23.png` (C42, Diego Vargas) |
 | P24 | WIDE/MED — CHAOS APEX. Glitchkin pouring through breached screens. Luma + Byte at still center. The hook frame. | EXISTS | `LTG_SB_cold_open_P24.png` (C42, Diego Vargas) |
-| P25 | TITLE CARD — Pixel-by-pixel assembly of "LUMA & THE GLITCHKIN" in Electric Cyan → Hot Magenta. Glitch-flash frame. | PLANNED | — |
+| P25 | TITLE CARD — Pixel-by-pixel assembly of "LUMA & THE GLITCHKIN" in Electric Cyan → Hot Magenta. Glitch-flash frame. | EXISTS | `LTG_SB_cold_open_P25.png` (C49, Diego Vargas) |
 
 ---
 
@@ -97,7 +97,7 @@ Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the conta
 19. ~~**P21**~~ — DONE (C47, Diego Vargas) — WIDE HIGH ANGLE: Re-escalation. All monitors blazing.
 20. ~~**P22**~~ — DONE (C48, Diego Vargas) — ECU MONITOR: 4 distinct Glitchkin pressing through glass.
 21. ~~**P22a**~~ — DONE (C48, Diego Vargas) — MCU INSERT: Byte lands on Luma's shoulder (accidental).
-22. **P25** — TITLE CARD: "LUMA & THE GLITCHKIN" pixel assembly. (next priority)
+22. ~~**P25**~~ — DONE (C49, Diego Vargas) — TITLE CARD: pixel-by-pixel assembly.
 23. **P02** — WIDE ESTABLISHING: standalone render needed (currently contact sheet only).
 24. **P04** — WIDE INTERIOR: standalone render needed (currently contact sheet only).
 25. **P05** — MCU MONITOR: standalone render needed (currently contact sheet only).
