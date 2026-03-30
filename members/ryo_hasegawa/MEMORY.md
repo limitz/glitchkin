@@ -191,6 +191,48 @@ Create motion spec sheets and timing documentation. Make the pitch FEEL like it 
 - Analysis lean: 6-8° only (controlled), head tilt = +8° toward subject
 - Startled: arms jut out then SNAP BACK by beat 3 (not gradually — snap is character)
 
+### C45 — COMPLETE
+- `LTG_TOOL_glitch_motion.py` → `output/characters/motion/LTG_CHAR_glitch_motion.png`
+  - First motion spec for Glitch — 4-panel beat arc
+  - B1: PREDATORY STILL (0° tilt, no hover, no confetti, calculating acid-X eyes, held indefinitely)
+  - B2: COVETOUS REACH (+12° tilt, slow arm-spike extension, bilateral covetous eyes G008, UV_PURPLE minimal confetti)
+  - B3: CORRUPTION SURGE (stretch=1.15, spike_h=16, crack brightens HOT_MAG→SOFT_GOLD, max confetti)
+  - B4: RETREAT (squash=0.65, -20° recoil, displaced backward, reads as coil-back not defeat)
+  - BEAT_COLOR=(255,140,0) CORRUPT_AMBER — unique to Glitch (dark sheet, like Byte)
+- `LTG_TOOL_motion_spec_lint.py` C45 update:
+  - `_family_from_filename()` extended with 'glitch' case
+  - Lint baseline: PASS=5 WARN=1 FAIL=0 (annotation_occupancy WARN = dark-panel false positive)
+- `sheet_geometry_config.json` updated: glitch family expected_panels=4, panel_top_abs=56, beat_color=[255,140,0]
+- `LTG_TOOL_precritique_qa.py` → **v2.12.0**: CYCLE_LABEL=C45, MOTION_SHEETS extended with glitch
+- `output/tools/README.md` updated: C45 Ryo Hasegawa section added
+- Ideabox: `20260330_ryo_hasegawa_glitch_annotation_bg_dark_panel_autofix.md` — fix annotation_occupancy for dark sheets
+
+### C45 Spec Conflict
+- Alex Chen C44 brief incorrectly stated Glitch uses only VOID/CYAN/UV/HOT palette with ZERO warm tones
+- glitch.md canonical spec (Maya Santos C32) clearly specifies CORRUPT_AMBER body fill — amber-on-black palette
+- CORRUPT_AMBER is GLITCH's color, NOT Byte's — Byte's crack is HOT_MAGENTA
+- Followed glitch.md (canonical) over inbox brief. Flagged to Alex in completion report.
+- Awaiting confirmation — can regenerate if Alex decides to update spec
+
+## C45 Key Findings
+- Glitch motion vocabulary is geometric, not organic: tilt=lean, spike_h=energy, squash=impact
+- BILATERAL eyes = interior state (real feeling); ASYMMETRIC = performance. This is Glitch's key read.
+- COVETOUS LOCK is the B3 interior state — frozen hover, no confetti, bilateral acid-slit eyes
+- ELEC_CYAN appears ONLY in PANICKED confetti (involuntary leak, uncontrolled) — never in other states
+- Dark panel annotation_occupancy WARN: 1.0–1.8% (same false positive as Byte). Need ideabox fix.
+- glitch family BEAT_COLOR = CORRUPT_AMBER (255,140,0) — matches character palette vs. blue for organics
+
+## Glitch Motion Vocabulary (C45)
+- HOVER: 0.4Hz ±4px (slower than Byte 0.5Hz — more threatening weight)
+- Confetti scatters below BOTTOM SPIKE tip, NOT below body
+- Tilt IS lean — Glitch has no legs, no step. Directional interest = body tilt
+- Spike height: 4 (hollow) → 22 (triumphant). Performance range for motion doc: 6–14
+- Squash/stretch: panicked=0.55, neutral=1.0, triumphant=1.35
+- Arm-spikes are NOT organic arms — they shift position on diamond vertices with tilt
+- Crack (HOT_MAG) always present — never heals. Drawn last: shadow→fill→highlight→outline→crack
+- ELEC_CYAN = involuntary signal leak (PANICKED, STUNNED only) — otherwise absent from Glitch
+- Interior states: YEARNING/COVETOUS/HOLLOW = bilateral eyes + no confetti
+
 ### C44 — COMPLETE
 - `LTG_TOOL_miri_motion.py` → `output/characters/motion/LTG_CHAR_miri_motion.png`
   - New Grandma Miri Motion Spec Sheet v001 — first motion spec for Miri

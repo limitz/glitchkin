@@ -1,6 +1,29 @@
 # Jordan Reed — Memory
 
-## Cycle 44 Deliverables
+## Cycle 44 (second pass) Deliverables
+- `LTG_TOOL_style_frame_05_relationship.py` — SF05 "The Passing" CREATED ✓
+  - Output: `output/color/style_frames/LTG_COLOR_styleframe_sf05.png` (1280×720) ✓
+  - Closes C17 gap: Marcus Webb + Eleanor Whitfield both 74/100, both flagged missing
+    intergenerational Miri+Luma visual
+  - Concept: "CRT as matrilineal heirloom" (Alex ideabox C44)
+  - Scene: Miri seated at kitchen table + Luma standing beside her, pre-dawn morning,
+    both watching CRT through doorway. Neither speaking.
+  - render_qa GRADE: WARN — key targets PASS
+    - Warm/cool separation: 16.7 (PASS ≥12.0)
+    - Value range: min=18 / max=254 (PASS)
+    - Silhouette: distinct | Line weight: 0 outliers PASS
+    - Color fidelity WARN: pre-existing alpha-compositing (same as SF01–SF04)
+  - color_verify: SUNLIT_AMBER delta=1.3° PASS — all 6 canonical colors clear
+  - Face test gate: Miri head_r=38px, Luma head_r=40px — both above sprint threshold,
+    gate not triggered. Full face geometry at pitch fidelity.
+  - Dual-blush: Luma in quiet curiosity (no excited blush) → Pride Override NOT triggered
+    → Miri permanent blush at full 25% opacity (spec per grandma_miri.md)
+  - Miri hairpin note: FLAG 05 (chopstick→hairpin) still pending Alex+Maya confirmation.
+    Variable named `hairpin_col` to future-proof. Visual form identical.
+- Ideabox: `20260330_jordan_reed_sf05_relationship_frame_pattern.md` — quiet frame spec proposal
+- Inbox archived ✓ | Completion report sent to Alex Chen ✓
+
+## Cycle 44 Deliverables (first pass — prior session)
 - `LTG_TOOL_style_frame_02_glitch_storm.py` — NATIVE CANVAS REFACTOR (1920×1080 → 1280×720) ✓
   - Eliminates `img.thumbnail()` LANCZOS pass — root cause of SUNLIT_AMBER LAB ΔE=47.04
   - All hardcoded coords scaled × 2/3 (uniform — same 16:9 aspect ratio, SX = SY = 0.6667)
@@ -16,6 +39,22 @@
 - Inbox archived ✓ | Completion report sent to Alex Chen ✓
 
 ## Cycle 44 Status: COMPLETE
+
+## Cycle 44 Notes (second pass)
+- **Quiet frame value ceiling**: Atmosphere/vignette pass darkens specular highlights below QA
+  threshold. Fix: apply specular dots AFTER atmosphere pass. Specular is immune to vignette
+  when it runs last. (Confirmed: moved to step 11, value ceiling 212→254.)
+- **Dual-blush disambiguation in compositing**: grandma_miri.md "Pride Override" must be checked
+  on EVERY frame containing both characters. Rule: Luma excited blush active → Miri blush drops
+  to 30% of 25% (~7.5% opacity). Luma quiet → Miri blush at full 25%. Check Luma's emotional
+  state before drawing Miri's cheeks.
+- **Priya Shah's relationship brief not yet delivered**: Built SF05 from the story bible and
+  ideabox concept without waiting. If Priya delivers a brief next cycle that contradicts my
+  staging choices (moment, character positions, emotional beat), flag to Alex for decision.
+  The frame is strong but not locked — it can be updated once brief arrives.
+- **Hallway pixel font task**: Already done by Diego Vargas in C44 — not duplicated.
+  Confirmed "MILLBROOK MIDDLE SCHOOL" + "EST 1962" in generator, Priya Shah confirmed
+  canonical school name.
 
 ## Cycle 44 Notes
 - **Native canvas refactor strategy**: When W_src/W_dst = H_src/H_dst (same aspect ratio), ALL

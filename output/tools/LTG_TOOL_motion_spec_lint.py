@@ -14,6 +14,7 @@ Updated: Ryo Hasegawa / Cycle 40 — sheet geometry auto-detection via config
 Updated: Ryo Hasegawa / Cycle 41 — per-family beat color config (timing_colors fix)
 Updated: Ryo Hasegawa / Cycle 43 — per-family annotation_bg_color (annotation_occupancy fix)
 Updated: Ryo Hasegawa / Cycle 44 — _family_from_filename extended with 'miri' family
+Updated: Ryo Hasegawa / Cycle 45 — _family_from_filename extended with 'glitch' family
 Ideabox origin: 20260329_ryo_hasegawa_cg_support_polygon_lint.md (actioned C39)
 
 Checks motion spec sheet PNGs for structural compliance without sending images
@@ -169,6 +170,8 @@ def _family_from_filename(fname):
         return "cosmo"
     if "miri" in fname_lower:
         return "miri"
+    if "glitch" in fname_lower:
+        return "glitch"
     return None
 
 
