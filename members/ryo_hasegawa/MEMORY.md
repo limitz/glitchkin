@@ -421,6 +421,44 @@ Create motion spec sheets and timing documentation. Make the pitch FEEL like it 
 - COSMO_ARM_STYLE elbow_bend_factor=0.10 (lower than default 0.12) — Cosmo's contained motion vocabulary demands less dramatic elbow bend
 - sys.path insert needed for cross-tool imports — shared helper lives in same dir but Python needs explicit path
 
+### C50 — COMPLETE
+- `output/production/gesture_line_library_c50.md` — Gesture line specs for 18 expressions
+  - Luma (6): CURIOUS, DETERMINED, SURPRISED, WORRIED, DELIGHTED, FRUSTRATED
+  - Cosmo (6): AWKWARD, WORRIED, SURPRISED, SKEPTICAL, DETERMINED, FRUSTRATED/DEFEATED
+  - Miri (6): WARM/WELCOMING, SKEPTICAL/AMUSED, CONCERNED, SURPRISED/DELIGHTED, WISE/KNOWING, KNOWING STILLNESS
+  - Each entry: gesture line curve type, anchor offsets (% BH), segment bends, weight split, arm positions, silhouette test
+  - 5 universal weight/balance rules, Byte/Glitch exemption notes
+  - Implementation notes for Maya (offset chain), Rin (leg construction), Ryo (motion sheets)
+  - Minimum body articulation: 9 control points (current=3, full=15)
+  - draw_shoulder_arm v2 API proposal (gesture_anchors dict input)
+- `LTG_TOOL_luma_gesture_prototype.py` → `output/characters/motion/LTG_CHAR_luma_gesture_prototype.png`
+  - Side-by-side: rectangle-first vs gesture-line-first for Luma SURPRISED
+  - Left panel: current approach — straight vertical gesture line, symmetric, FAIL
+  - Right panel: new approach — backward C-curve bezier, 9 anchors, asymmetric arms/legs, weight shift, PASS
+  - Uses cubic bezier for gesture line; body built around sampled anchor points
+- Inbox: 3 messages read and archived (C49 updates, C50 assignments from Producer and Alex Chen)
+- Completion report sent to Alex Chen inbox
+- Ideabox: `20260330_ryo_hasegawa_gesture_line_driven_figure_builder.md`
+
+### C50 Key Findings
+- Current system uses 3 effective control points (cx, ground_y, head_top). Minimum viable = 9 points.
+- Gesture line as bezier works for Luma (organic). Cosmo needs polyline with angular breaks. Miri needs gentle curves with permanent 3-5 deg forward lean baseline.
+- Rectangle-first SURPRISED has identical body to all other expressions. Gesture-first SURPRISED is visually distinct without face.
+- Motion sheets must be rebuilt AFTER expression sheets adopt gesture-first construction. Deprioritized until Maya's prototypes land.
+- Deprioritized: Miri motion spec posture review, Glitch G004 draw-order, draw_shoulder_arm maintenance — all subsumed by gesture system work
+- Reference study (Kipo poster, Owl House turnaround, Hilda walk, expression sheet ref): every professional show uses curved gesture lines even in "neutral" standing poses. No straight verticals anywhere.
+- The expression sheet reference (using-an-expression-sheet.png) confirms: body IS the expression, face confirms it. Our body carries 0% of expression; pro shows carry 60-70%.
+
+## Gesture Line System Summary (C50)
+- Gesture line = single bezier curve from head to weight-bearing foot
+- 9 minimum anchor points: head, neck, shoulder L/R, hip center, hip L/R, weight foot, free foot
+- Body constructed AROUND anchors (not centered on shared cx)
+- Offset chain: hip_cx → torso_cx → head_cx (each offset from previous, not from cx)
+- Weight distribution: weight_leg straighter, free_leg bent, different foot Y positions
+- Contrapposto: shoulder tilt = 60-80% of hip tilt, opposite direction
+- Emotional weight: joy=high CoG, sadness=low CoG, determination=planted
+- Asymmetry rule: no pose has symmetric arms, legs, or feet
+
 ## Startup Sequence
 1. Read docs/image-rules.md (image size limits and image handling)
 2. Read docs/work.md (work startup and delivery rules)

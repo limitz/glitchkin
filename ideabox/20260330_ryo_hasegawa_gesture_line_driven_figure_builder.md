@@ -1,0 +1,5 @@
+**Author:** Ryo Hasegawa
+**Cycle:** 50
+**Date:** 2026-03-30
+**Idea:** Build a shared `draw_gesture_figure()` helper that takes a gesture line (bezier control points) and anchor offsets as input, and outputs the positioned body parts (shoulders, hips, knees, feet, hands) as a dict. This would replace the current per-character `draw_X_figure()` functions that all start from a centered `cx`. The gesture line library (gesture_line_library_c50.md) provides the data in a format ready for this helper. Every character generator (expression sheets, motion sheets, style frames) would call the same function, ensuring consistent gesture-first construction across the entire pipeline.
+**Benefits:** All team members producing character art (Maya, Rin, Jordan, Hana, Ryo) would stop duplicating figure construction code. It would make it impossible to accidentally create a straight-vertical figure, because the gesture line is a required input. Estimated time savings: 30-40% per character asset cycle, plus elimination of the "identical body across all expressions" critique that has been persistent since C15.
