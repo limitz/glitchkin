@@ -1,61 +1,61 @@
 {
   "_description": "Known/pre-existing issues for LTG_TOOL_ci_suite.py --known-issues flag. Add entries here to mark expected WARNs so regressions stand out in CI output.",
-  "_format": "List of {check, file, code, reason, since_cycle} objects. 'file' is basename only. 'code' is the warning code (e.g. W004, G007). Use null for code to match any issue on that file in that check. 'since_cycle' is the cycle label when the entry was added (e.g. 'C39') — used by --warn-stale N to flag suppressions older than N cycles.",
+  "_format": "List of {check, file, code, reason, since_cycle} objects. 'file' is basename only. 'code' is the warning code (e.g. W004, G007). Use null for code to match any issue on that file in that check. 'since_cycle' is the cycle label when the entry was added (e.g. 'C39') \u2014 used by --warn-stale N to flag suppressions older than N cycles.",
   "known_issues": [
     {
       "check": "draw_order_lint",
       "file": "LTG_TOOL_act2_panels_cycle14.py",
       "code": "W004",
-      "reason": "Pattern: img.paste(img_rgba.convert('RGB')) in composite helper — no draw calls follow, false positive. C39 baseline.",
+      "reason": "Pattern: img.paste(img_rgba.convert('RGB')) in composite helper \u2014 no draw calls follow, false positive. C39 baseline.",
       "since_cycle": "C39"
     },
     {
       "check": "draw_order_lint",
       "file": "LTG_TOOL_bg_classroom.py",
       "code": "W004",
-      "reason": "Pattern: Image.alpha_composite() lighting overlay passes — final composites, no draw calls follow. C39 baseline.",
+      "reason": "Pattern: Image.alpha_composite() lighting overlay passes \u2014 final composites, no draw calls follow. C39 baseline.",
       "since_cycle": "C39"
     },
     {
       "check": "draw_order_lint",
       "file": "LTG_TOOL_bg_millbrook_main_street.py",
       "code": "W004",
-      "reason": "Pattern: img.paste(Image.alpha_composite(...)) — final overlay pass, no draw calls follow. C39 baseline.",
+      "reason": "Pattern: img.paste(Image.alpha_composite(...)) \u2014 final overlay pass, no draw calls follow. C39 baseline.",
       "since_cycle": "C39"
     },
     {
       "check": "draw_order_lint",
       "file": "LTG_TOOL_bg_school_hallway.py",
       "code": "W002",
-      "reason": "Pattern: draw.rectangle(fill=..., outline=...) — PIL draws fill+outline in one call; not a real painter violation. C39 baseline.",
+      "reason": "Pattern: draw.rectangle(fill=..., outline=...) \u2014 PIL draws fill+outline in one call; not a real painter violation. C39 baseline.",
       "since_cycle": "C39"
     },
     {
       "check": "draw_order_lint",
       "file": "LTG_TOOL_bg_tech_den.py",
       "code": "W002",
-      "reason": "Pattern: draw.rectangle(fill=..., outline=...) — PIL draws fill+outline in one call; not a real painter violation. C39 baseline.",
+      "reason": "Pattern: draw.rectangle(fill=..., outline=...) \u2014 PIL draws fill+outline in one call; not a real painter violation. C39 baseline.",
       "since_cycle": "C39"
     },
     {
       "check": "draw_order_lint",
       "file": "LTG_TOOL_bodypart_hierarchy.py",
       "code": "W002",
-      "reason": "Annotation/diagnostic overlay rectangles — draw.rectangle with outline only (no fill); not a real painter violation. C39 baseline.",
+      "reason": "Annotation/diagnostic overlay rectangles \u2014 draw.rectangle with outline only (no fill); not a real painter violation. C39 baseline.",
       "since_cycle": "C39"
     },
     {
       "check": "draw_order_lint",
       "file": "LTG_TOOL_logo_asymmetric.py",
       "code": "W004",
-      "reason": "Pattern: img.paste(base_rgba.convert('RGB')) — per-glyph composite in gradient loop, no draw calls follow paste. C39 baseline.",
+      "reason": "Pattern: img.paste(base_rgba.convert('RGB')) \u2014 per-glyph composite in gradient loop, no draw calls follow paste. C39 baseline.",
       "since_cycle": "C39"
     },
     {
       "check": "draw_order_lint",
       "file": "LTG_TOOL_luma_motion.py",
       "code": "W001",
-      "reason": "Annotation text draw in motion spec sheet panel header — text label, not actual head/face element. C39 baseline.",
+      "reason": "Annotation text draw in motion spec sheet panel header \u2014 text label, not actual head/face element. C39 baseline.",
       "since_cycle": "C39"
     },
     {
@@ -69,133 +69,133 @@
       "check": "draw_order_lint",
       "file": "LTG_TOOL_sb_a2_cycle15.py",
       "code": "W004",
-      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline.",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) \u2014 glow pass, no draw calls follow. C39 baseline.",
       "since_cycle": "C39"
     },
     {
       "check": "draw_order_lint",
       "file": "LTG_TOOL_sb_act1_contact_sheet.py",
       "code": "W004",
-      "reason": "Pattern: img.paste(thumb, ...) — thumbnail composite, no draw calls follow. C39 baseline.",
+      "reason": "Pattern: img.paste(thumb, ...) \u2014 thumbnail composite, no draw calls follow. C39 baseline.",
       "since_cycle": "C39"
     },
     {
       "check": "draw_order_lint",
       "file": "LTG_TOOL_sb_panel_a101.py",
       "code": "W004",
-      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline.",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) \u2014 glow pass, no draw calls follow. C39 baseline.",
       "since_cycle": "C39"
     },
     {
       "check": "draw_order_lint",
       "file": "LTG_TOOL_sb_panel_a102.py",
       "code": "W004",
-      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline.",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) \u2014 glow pass, no draw calls follow. C39 baseline.",
       "since_cycle": "C39"
     },
     {
       "check": "draw_order_lint",
       "file": "LTG_TOOL_sb_panel_a103.py",
       "code": "W004",
-      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline.",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) \u2014 glow pass, no draw calls follow. C39 baseline.",
       "since_cycle": "C39"
     },
     {
       "check": "draw_order_lint",
       "file": "LTG_TOOL_sb_panel_a104_kitchen.py",
       "code": "W004",
-      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline.",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) \u2014 glow pass, no draw calls follow. C39 baseline.",
       "since_cycle": "C39"
     },
     {
       "check": "draw_order_lint",
       "file": "LTG_TOOL_sb_panel_a201.py",
       "code": "W004",
-      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline.",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) \u2014 glow pass, no draw calls follow. C39 baseline.",
       "since_cycle": "C39"
     },
     {
       "check": "draw_order_lint",
       "file": "LTG_TOOL_sb_panel_a202.py",
       "code": "W004",
-      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline.",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) \u2014 glow pass, no draw calls follow. C39 baseline.",
       "since_cycle": "C39"
     },
     {
       "check": "draw_order_lint",
       "file": "LTG_TOOL_sb_panel_a204.py",
       "code": "W004",
-      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline.",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) \u2014 glow pass, no draw calls follow. C39 baseline.",
       "since_cycle": "C39"
     },
     {
       "check": "draw_order_lint",
       "file": "LTG_TOOL_sb_panel_a205.py",
       "code": "W004",
-      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline.",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) \u2014 glow pass, no draw calls follow. C39 baseline.",
       "since_cycle": "C39"
     },
     {
       "check": "draw_order_lint",
       "file": "LTG_TOOL_sb_panel_a206_insert.py",
       "code": "W004",
-      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline.",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) \u2014 glow pass, no draw calls follow. C39 baseline.",
       "since_cycle": "C39"
     },
     {
       "check": "draw_order_lint",
       "file": "LTG_TOOL_sb_panel_a207.py",
       "code": "W004",
-      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline.",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) \u2014 glow pass, no draw calls follow. C39 baseline.",
       "since_cycle": "C39"
     },
     {
       "check": "draw_order_lint",
       "file": "LTG_TOOL_sb_panel_a207b.py",
       "code": "W004",
-      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline.",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) \u2014 glow pass, no draw calls follow. C39 baseline.",
       "since_cycle": "C39"
     },
     {
       "check": "draw_order_lint",
       "file": "LTG_TOOL_sb_panel_a208.py",
       "code": "W004",
-      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline.",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) \u2014 glow pass, no draw calls follow. C39 baseline.",
       "since_cycle": "C39"
     },
     {
       "check": "draw_order_lint",
       "file": "LTG_TOOL_sb_pilot_cold_open.py",
       "code": "W004",
-      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline.",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) \u2014 glow pass, no draw calls follow. C39 baseline.",
       "since_cycle": "C39"
     },
     {
       "check": "draw_order_lint",
       "file": "LTG_TOOL_styleframe_discovery.py",
       "code": "W004",
-      "reason": "Pattern: img.paste() on split-composite — ghost overlay and side composites, no draw calls follow. C39 baseline.",
+      "reason": "Pattern: img.paste() on split-composite \u2014 ghost overlay and side composites, no draw calls follow. C39 baseline.",
       "since_cycle": "C39"
     },
     {
       "check": "glitch_spec_lint",
       "file": "LTG_CHAR_byte_motion.py",
       "code": "G003",
-      "reason": "Byte motion sheet is not a Glitch expression sheet — multi-expression check does not apply. C39 baseline FP.",
+      "reason": "Byte motion sheet is not a Glitch expression sheet \u2014 multi-expression check does not apply. C39 baseline FP.",
       "since_cycle": "C39"
     },
     {
       "check": "glitch_spec_lint",
       "file": "LTG_CHAR_byte_motion.py",
       "code": "G005",
-      "reason": "Byte motion sheet has no Glitch body polygon — UV_PURPLE shadow check does not apply. C39 baseline FP.",
+      "reason": "Byte motion sheet has no Glitch body polygon \u2014 UV_PURPLE shadow check does not apply. C39 baseline FP.",
       "since_cycle": "C39"
     },
     {
       "check": "glitch_spec_lint",
       "file": "LTG_CHAR_byte_motion.py",
       "code": "G007",
-      "reason": "Byte motion sheet has no Glitch body polygon — VOID_BLACK outline check does not apply. C39 baseline FP.",
+      "reason": "Byte motion sheet has no Glitch body polygon \u2014 VOID_BLACK outline check does not apply. C39 baseline FP.",
       "since_cycle": "C39"
     },
     {
@@ -307,126 +307,126 @@
       "check": "glitch_spec_lint",
       "file": "LTG_TOOL_glitch_turnaround.py",
       "code": "G007",
-      "reason": "Turnaround uses draw.polygon with outline color variable (not literal VOID_BLACK constant) — linter misses this pattern. C39 baseline FP.",
+      "reason": "Turnaround uses draw.polygon with outline color variable (not literal VOID_BLACK constant) \u2014 linter misses this pattern. C39 baseline FP.",
       "since_cycle": "C39"
     },
     {
       "check": "glitch_spec_lint",
       "file": "LTG_TOOL_style_frame_02_glitch_storm.py",
       "code": "G007",
-      "reason": "SF02 uses Glitch body polygon via procedural_draw lib — direct draw.polygon call absent, linter does not detect library delegation. C39 baseline FP.",
+      "reason": "SF02 uses Glitch body polygon via procedural_draw lib \u2014 direct draw.polygon call absent, linter does not detect library delegation. C39 baseline FP.",
       "since_cycle": "C39"
     },
     {
       "check": "glitch_spec_lint",
       "file": "LTG_TOOL_style_frame_03_other_side.py",
       "code": "G007",
-      "reason": "SF03 uses Glitch body polygon via procedural_draw lib — direct draw.polygon call absent, linter does not detect library delegation. C39 baseline FP.",
+      "reason": "SF03 uses Glitch body polygon via procedural_draw lib \u2014 direct draw.polygon call absent, linter does not detect library delegation. C39 baseline FP.",
       "since_cycle": "C39"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_cold_open_P07.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_cold_open_P09.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_ep05_covetous.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_bg_glitch_layer_encounter.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_bg_glitch_layer_frame.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_bg_glitchlayer_frame.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sf_covetous_glitch.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_style_frame_04_resolution.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_character_lineup.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_precritique_qa.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_bg_grandma_kitchen.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_style_frame_02_glitch_storm.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_style_frame_03_other_side.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_bg_classroom.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_bg_tech_den.py",
       "code": null,
-      "reason": "RESOLVED C46 (Hana Okonkwo): migrated to output_dir() in v007. Entry kept for history — remove next ci_known_issues audit.",
+      "reason": "RESOLVED C46 (Hana Okonkwo): migrated to output_dir() in v007. Entry kept for history \u2014 remove next ci_known_issues audit.",
       "since_cycle": "C44",
       "resolved_cycle": "C46"
     },
@@ -434,357 +434,357 @@
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_bg_school_hallway.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sight_line_diagnostic.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_styleframe_discovery.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_bg_other_side.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_bg_millbrook_main_street.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_bg_luma_study_interior.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_luma_expression_sheet.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_character_face_test.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_act2_panels_cycle14.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_a2_cycle15.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_pilot_cold_open.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_cold_open_P03.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_cold_open_P06.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_cold_open_P08.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_cold_open_P23.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_cold_open_P24.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_bg_glitch_storm_colorfix.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sf_covetous_glitch_c43.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_character_lineup.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_byte_motion.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_luma_motion.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_cosmo_motion.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_miri_motion.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_glitch_motion.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_logo_asymmetric.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_colorkey_glitch_covetous_gen.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_colorkey_glitchstorm_gen.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_panel_a101.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_panel_a102.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_panel_a103.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_panel_a104_kitchen.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_panel_a201.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_panel_a202.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_panel_a204.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_panel_a205.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_panel_a206_insert.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_panel_a207.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_panel_a207b.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_panel_a208.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_act1_contact_sheet.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_glitch_turnaround.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_cosmo_expression_sheet.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_bg_glitch_layer_encounter.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix (duplicate entry guard). Migrate to output_dir() when next touched.",
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix (duplicate entry guard). Migrate to output_dir() when next touched.",
       "since_cycle": "C44"
     },
     {
       "check": "thumbnail_lint",
       "file": "LTG_TOOL_bg_glitch_layer_frame.py",
       "code": null,
-      "reason": "C44 baseline: generator uses 1920x1080 + thumbnail() — SIGNIFICANT REFACTOR NEEDED per Rin C42 audit. Active migration backlog.",
+      "reason": "C44 baseline: generator uses 1920x1080 + thumbnail() \u2014 SIGNIFICANT REFACTOR NEEDED per Rin C42 audit. Active migration backlog.",
       "since_cycle": "C44"
     },
     {
       "check": "thumbnail_lint",
       "file": "LTG_TOOL_bg_glitchlayer_frame.py",
       "code": null,
-      "reason": "C44 baseline: generator uses 1920x1080 + thumbnail() — SIGNIFICANT REFACTOR NEEDED per Rin C42 audit. Active migration backlog.",
+      "reason": "C44 baseline: generator uses 1920x1080 + thumbnail() \u2014 SIGNIFICANT REFACTOR NEEDED per Rin C42 audit. Active migration backlog.",
       "since_cycle": "C44"
     },
     {
       "check": "thumbnail_lint",
       "file": "LTG_TOOL_bg_glitch_storm_colorfix.py",
       "code": null,
-      "reason": "C44 baseline: generator uses 1920x1080 + thumbnail() — SIGNIFICANT REFACTOR NEEDED per Rin C42 audit. Active migration backlog.",
+      "reason": "C44 baseline: generator uses 1920x1080 + thumbnail() \u2014 SIGNIFICANT REFACTOR NEEDED per Rin C42 audit. Active migration backlog.",
       "since_cycle": "C44"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_CHAR_byte_motion.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_CHAR_luma_motion.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_SB_pilot_cold_open.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_byte_cracked_eye_glyph.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_byte_expression_sheet.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
@@ -798,189 +798,189 @@
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_color_qa_c37_runner.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_colorkey_otherside_gen.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_contact_sheet_arc_diff.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_env_grandma_living_room.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_fidelity_check_c24.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_logo.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_luma_act2_standing_pose.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_luma_classroom_pose.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_luma_cold_overlay_swatches.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_naming_compliance_copier.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_naming_compliance_copy.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_project_paths.py",
       "code": null,
-      "reason": "C45 baseline: /home/ occurrences are in module docstring examples and comments explaining migration — not functional hardcoded paths.",
+      "reason": "C45 baseline: /home/ occurrences are in module docstring examples and comments explaining migration \u2014 not functional hardcoded paths.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_act1_full_contact_sheet.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_act2_contact_sheet.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_caption_retrofit.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_cold_open_P10.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_cold_open_P11.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_cold_open_P14.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_cold_open_P15.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_panel_a203.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sf02_fill_light_fix_c35.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sf04_luma_byte_v005.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sf_miri_luma_handoff.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_style_frame_05_relationship.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_styleframe_luma_byte.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_world_type_infer.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "run_c31_qa.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
@@ -1015,7 +1015,7 @@
       "check": "dual_output_check",
       "file": "LTG_TOOL_sb_caption_retrofit.py",
       "code": null,
-      "reason": "Caption retrofit tool rewrites panels in-place by design — same output file as panel generator. Known pattern. C45 baseline.",
+      "reason": "Caption retrofit tool rewrites panels in-place by design \u2014 same output file as panel generator. Known pattern. C45 baseline.",
       "since_cycle": "C45"
     },
     {
@@ -1036,7 +1036,7 @@
       "check": "dual_output_check",
       "file": "LTG_CHAR_byte_motion.py",
       "code": null,
-      "reason": "Legacy alias for LTG_TOOL_byte_motion.py — same output file by design. Deprecation pending. C45 baseline.",
+      "reason": "Legacy alias for LTG_TOOL_byte_motion.py \u2014 same output file by design. Deprecation pending. C45 baseline.",
       "since_cycle": "C45"
     },
     {
@@ -1050,7 +1050,7 @@
       "check": "dual_output_check",
       "file": "LTG_CHAR_luma_motion.py",
       "code": null,
-      "reason": "Legacy alias for LTG_TOOL_luma_motion.py — same output file by design. Deprecation pending. C45 baseline.",
+      "reason": "Legacy alias for LTG_TOOL_luma_motion.py \u2014 same output file by design. Deprecation pending. C45 baseline.",
       "since_cycle": "C45"
     },
     {
@@ -1064,28 +1064,28 @@
       "check": "dual_output_check",
       "file": "LTG_TOOL_sf_covetous_glitch_c43.py",
       "code": null,
-      "reason": "Newer version of sf_covetous_glitch; writes same output as legacy version. Active generator — legacy should be retired. C45 baseline.",
+      "reason": "Newer version of sf_covetous_glitch; writes same output as legacy version. Active generator \u2014 legacy should be retired. C45 baseline.",
       "since_cycle": "C45"
     },
     {
       "check": "dual_output_check",
       "file": "LTG_TOOL_render_lib.py",
       "code": null,
-      "reason": "render_lib writes LTG_ENV_tech_den.png only in test/demo mode — not primary generator; bg_tech_den.py is canonical. FP from demo path. C45 baseline.",
+      "reason": "render_lib writes LTG_ENV_tech_den.png only in test/demo mode \u2014 not primary generator; bg_tech_den.py is canonical. FP from demo path. C45 baseline.",
       "since_cycle": "C45"
     },
     {
       "check": "dual_output_check",
       "file": "LTG_TOOL_warmth_inject.py",
       "code": null,
-      "reason": "warmth_inject writes LTG_ENV_tech_den.png as post-process of bg_tech_den output — same file by design. C45 baseline.",
+      "reason": "warmth_inject writes LTG_ENV_tech_den.png as post-process of bg_tech_den output \u2014 same file by design. C45 baseline.",
       "since_cycle": "C45"
     },
     {
       "check": "dual_output_check",
       "file": "LTG_TOOL_bg_tech_den.py",
       "code": null,
-      "reason": "Canonical tech_den generator; render_lib.py and warmth_inject.py also write this file in demo/post-process mode — by design, not a real conflict. C45 baseline.",
+      "reason": "Canonical tech_den generator; render_lib.py and warmth_inject.py also write this file in demo/post-process mode \u2014 by design, not a real conflict. C45 baseline.",
       "since_cycle": "C45"
     },
     {
@@ -1099,105 +1099,105 @@
       "check": "dual_output_check",
       "file": "LTG_TOOL_sb_pilot_cold_open.py",
       "code": null,
-      "reason": "LTG_SB_pilot_cold_open.py is a legacy alias — same output by design. Non-prefixed file is the deprecated copy. C45 baseline.",
+      "reason": "LTG_SB_pilot_cold_open.py is a legacy alias \u2014 same output by design. Non-prefixed file is the deprecated copy. C45 baseline.",
       "since_cycle": "C45"
     },
     {
       "check": "dual_output_check",
       "file": "LTG_TOOL_byte_expression_sheet.py",
       "code": null,
-      "reason": "sb_a2_cycle15.py copies LTG_CHAR_byte_expression_sheet.png as part of act2 contact sheet assembly — thumbnail copy, not a real dual-output conflict. C45 baseline.",
+      "reason": "sb_a2_cycle15.py copies LTG_CHAR_byte_expression_sheet.png as part of act2 contact sheet assembly \u2014 thumbnail copy, not a real dual-output conflict. C45 baseline.",
       "since_cycle": "C45"
     },
     {
       "check": "dual_output_check",
       "file": "LTG_TOOL_sb_panel_a101.py",
       "code": null,
-      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them \u2014 by design. C45 baseline.",
       "since_cycle": "C45"
     },
     {
       "check": "dual_output_check",
       "file": "LTG_TOOL_sb_panel_a102.py",
       "code": null,
-      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them \u2014 by design. C45 baseline.",
       "since_cycle": "C45"
     },
     {
       "check": "dual_output_check",
       "file": "LTG_TOOL_sb_panel_a103.py",
       "code": null,
-      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them \u2014 by design. C45 baseline.",
       "since_cycle": "C45"
     },
     {
       "check": "dual_output_check",
       "file": "LTG_TOOL_sb_panel_a104_kitchen.py",
       "code": null,
-      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them \u2014 by design. C45 baseline.",
       "since_cycle": "C45"
     },
     {
       "check": "dual_output_check",
       "file": "LTG_TOOL_sb_panel_a201.py",
       "code": null,
-      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them \u2014 by design. C45 baseline.",
       "since_cycle": "C45"
     },
     {
       "check": "dual_output_check",
       "file": "LTG_TOOL_sb_panel_a202.py",
       "code": null,
-      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them \u2014 by design. C45 baseline.",
       "since_cycle": "C45"
     },
     {
       "check": "dual_output_check",
       "file": "LTG_TOOL_sb_panel_a203.py",
       "code": null,
-      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them \u2014 by design. C45 baseline.",
       "since_cycle": "C45"
     },
     {
       "check": "dual_output_check",
       "file": "LTG_TOOL_sb_panel_a204.py",
       "code": null,
-      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them \u2014 by design. C45 baseline.",
       "since_cycle": "C45"
     },
     {
       "check": "dual_output_check",
       "file": "LTG_TOOL_sb_panel_a205.py",
       "code": null,
-      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them \u2014 by design. C45 baseline.",
       "since_cycle": "C45"
     },
     {
       "check": "dual_output_check",
       "file": "LTG_TOOL_sb_panel_a206_insert.py",
       "code": null,
-      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them \u2014 by design. C45 baseline.",
       "since_cycle": "C45"
     },
     {
       "check": "dual_output_check",
       "file": "LTG_TOOL_sb_panel_a207.py",
       "code": null,
-      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them \u2014 by design. C45 baseline.",
       "since_cycle": "C45"
     },
     {
       "check": "dual_output_check",
       "file": "LTG_TOOL_sb_panel_a207b.py",
       "code": null,
-      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them \u2014 by design. C45 baseline.",
       "since_cycle": "C45"
     },
     {
       "check": "dual_output_check",
       "file": "LTG_TOOL_sb_panel_a208.py",
       "code": null,
-      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them \u2014 by design. C45 baseline.",
       "since_cycle": "C45"
     },
     {
@@ -1253,14 +1253,14 @@
       "check": "thumbnail_lint",
       "file": "LTG_CHAR_byte_motion.py",
       "code": null,
-      "reason": "Legacy alias using thumbnail() as final 1280px gate — migration backlog; canonical LTG_TOOL_byte_motion.py also flagged. C45 baseline.",
+      "reason": "Legacy alias using thumbnail() as final 1280px gate \u2014 migration backlog; canonical LTG_TOOL_byte_motion.py also flagged. C45 baseline.",
       "since_cycle": "C45"
     },
     {
       "check": "thumbnail_lint",
       "file": "LTG_CHAR_luma_motion.py",
       "code": null,
-      "reason": "Legacy alias using thumbnail() as final 1280px gate — migration backlog. C45 baseline.",
+      "reason": "Legacy alias using thumbnail() as final 1280px gate \u2014 migration backlog. C45 baseline.",
       "since_cycle": "C45"
     },
     {
@@ -1316,7 +1316,7 @@
       "check": "thumbnail_lint",
       "file": "LTG_TOOL_byte_commitment_rpd_test.py",
       "code": null,
-      "reason": "C45 baseline: analysis QA tool — thumbnail() used for display/output sizing. Whitelisting pending.",
+      "reason": "C45 baseline: analysis QA tool \u2014 thumbnail() used for display/output sizing. Whitelisting pending.",
       "since_cycle": "C45"
     },
     {
@@ -1337,7 +1337,7 @@
       "check": "thumbnail_lint",
       "file": "LTG_TOOL_character_face_test.py",
       "code": null,
-      "reason": "C45 baseline: QA/test tool — uses thumbnail() on multi-expression test sheet for size conformance. Whitelisting pending.",
+      "reason": "C45 baseline: QA/test tool \u2014 uses thumbnail() on multi-expression test sheet for size conformance. Whitelisting pending.",
       "since_cycle": "C45"
     },
     {
@@ -1379,7 +1379,7 @@
       "check": "thumbnail_lint",
       "file": "LTG_TOOL_costume_bg_clash.py",
       "code": null,
-      "reason": "C45 baseline: analysis tool — thumbnail() used for downscaling input images before analysis. Legitimate analysis use; whitelisting pending.",
+      "reason": "C45 baseline: analysis tool \u2014 thumbnail() used for downscaling input images before analysis. Legitimate analysis use; whitelisting pending.",
       "since_cycle": "C45"
     },
     {
@@ -1407,7 +1407,7 @@
       "check": "thumbnail_lint",
       "file": "LTG_TOOL_face_curve_validator.py",
       "code": null,
-      "reason": "C45 baseline: QA tool — uses thumbnail() for display sheet sizing. Whitelisting pending.",
+      "reason": "C45 baseline: QA tool \u2014 uses thumbnail() for display sheet sizing. Whitelisting pending.",
       "since_cycle": "C45"
     },
     {
@@ -1491,14 +1491,14 @@
       "check": "thumbnail_lint",
       "file": "LTG_TOOL_procedural_draw.py",
       "code": null,
-      "reason": "C45 baseline: library utility — thumbnail() used in crop/annotated helpers and demo canvas. Library usage cannot use native canvas directly. Whitelisting pending.",
+      "reason": "C45 baseline: library utility \u2014 thumbnail() used in crop/annotated helpers and demo canvas. Library usage cannot use native canvas directly. Whitelisting pending.",
       "since_cycle": "C45"
     },
     {
       "check": "thumbnail_lint",
       "file": "LTG_TOOL_sb_caption_retrofit.py",
       "code": null,
-      "reason": "C45 baseline: retrofit tool resizes loaded existing PNGs via thumbnail() — resize in-place tool, legitimate use. Whitelisting pending.",
+      "reason": "C45 baseline: retrofit tool resizes loaded existing PNGs via thumbnail() \u2014 resize in-place tool, legitimate use. Whitelisting pending.",
       "since_cycle": "C45"
     },
     {
@@ -1596,7 +1596,7 @@
       "check": "thumbnail_lint",
       "file": "LTG_TOOL_sf02_fill_light_fix_c35.py",
       "code": null,
-      "reason": "C45 baseline: fill light QA tool — thumbnail() on result for display. Analysis/QA use; whitelisting pending.",
+      "reason": "C45 baseline: fill light QA tool \u2014 thumbnail() on result for display. Analysis/QA use; whitelisting pending.",
       "since_cycle": "C45"
     },
     {
@@ -1652,35 +1652,35 @@
       "check": "thumbnail_lint",
       "file": "LTG_TOOL_thumbnail_preview_v001.py",
       "code": null,
-      "reason": "C45 baseline: thumbnail preview utility — thumbnail() is the core feature of this tool. Legitimate use; whitelisting pending.",
+      "reason": "C45 baseline: thumbnail preview utility \u2014 thumbnail() is the core feature of this tool. Legitimate use; whitelisting pending.",
       "since_cycle": "C45"
     },
     {
       "check": "thumbnail_lint",
       "file": "LTG_TOOL_warmth_inject.py",
       "code": null,
-      "reason": "C45 baseline: post-process tool — thumbnail() on result for size conformance. Migration backlog.",
+      "reason": "C45 baseline: post-process tool \u2014 thumbnail() on result for size conformance. Migration backlog.",
       "since_cycle": "C45"
     },
     {
       "check": "thumbnail_lint",
       "file": "LTG_TOOL_warmth_inject_hook.py",
       "code": null,
-      "reason": "C45 baseline: post-process hook — thumbnail() on result for size conformance. Migration backlog.",
+      "reason": "C45 baseline: post-process hook \u2014 thumbnail() on result for size conformance. Migration backlog.",
       "since_cycle": "C45"
     },
     {
       "check": "thumbnail_lint",
       "file": "test_face_lighting.py",
       "code": null,
-      "reason": "C45 baseline: test utility — thumbnail() for display canvas sizing. Whitelisting pending.",
+      "reason": "C45 baseline: test utility \u2014 thumbnail() for display canvas sizing. Whitelisting pending.",
       "since_cycle": "C45"
     },
     {
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_sb_cold_open_P16.py",
       "code": null,
-      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "reason": "C45 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
       "since_cycle": "C45"
     },
     {
@@ -1688,6 +1688,27 @@
       "file": "LTG_TOOL_sb_cold_open_P16.py",
       "code": null,
       "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_cold_open_P17.py",
+      "code": null,
+      "reason": "Diego C46 new panel generator \u2014 hardcoded /home/ path, migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_sb_cold_open_P17.py",
+      "code": null,
+      "reason": "Diego C46 new panel generator \u2014 thumbnail() migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_cold_open_P17.py",
+      "code": null,
+      "reason": "Diego C46 new panel generator \u2014 contact-sheet overwrite pattern, by-design.",
       "since_cycle": "C45"
     }
   ]
