@@ -294,6 +294,27 @@ Read inbox for directive. Two tasks: (1) SF02 staging brief for Luma interiority
 - **Ideabox:** `20260330_lee_tanaka_contact_sheet_arc_diff.md` — propose LTG_TOOL_contact_sheet_arc_diff.py
 - **Reported to Alex Chen** via inbox
 
+## Cycle 45 Milestone
+- **Lineup Tier Depth Indicator Evaluation DELIVERED (C44 P2 from Alex Chen).**
+  - Evaluated 3 options: thin rule / haze band / dual-warmth shadow bands.
+  - **RECOMMENDED: Option C — dual-warmth drop-shadow bands per tier.**
+    - Warm amber shadow beneath FG_GROUND_Y (Luma + Byte tier)
+    - Cool slate shadow beneath BG_GROUND_Y (Cosmo + Miri + Glitch tier)
+    - Reads in thumbnail, B&W print, and full color — unlike Options A and B.
+    - Aligns with existing warm=FG/cool=BG palette grammar.
+    - Implementation: two simple gradient fill loops before character draws; no alpha-composite complications.
+  - 3-option PIL sketch: `output/production/lineup_tier_depth_sketch.png`
+  - Full recommendation doc: `output/production/lineup_tier_depth_recommendation_c45.md`
+  - Tool: `LTG_TOOL_lineup_tier_depth_sketch.py` (evaluation only, not production pipeline)
+  - Sent to Maya Santos for implementation as lineup v010.
+- **Byte face test profile NOTED:** `--char byte` now live in face test tool (Kai C45). Available for Byte-facing panels going forward.
+- **Ideabox:** `20260330_lee_tanaka_lineup_warm_cool_tier_grammar.md` — propose codifying warm=FG/cool=BG as a named Depth Temperature Rule in docs.
+
+## Cycle 45 Lessons
+- **Warm/cool contrast is the only depth cue that survives thumbnail + B&W print.** A 44px tier gap (8% of canvas height) compresses to sub-pixel at typical contact sheet scale. Only tonal contrast provides reliable spatial information across ALL viewing contexts. A thin rule or haze band alone are not sufficient.
+- **Per-tier shadow bands encode depth grammar, not just aesthetics.** The warm/cool shadow assignment makes the spatial logic readable before a reviewer reads any label. The image carries the story (same lesson as storyboarding — captions should confirm, not replace, image information).
+- **Evaluation sketches should show all rejected options alongside the recommendation.** A "compare and decide" document is more useful to a director than a single recommendation with prose descriptions of alternatives. Three panels on one sheet = the decision is made on visual evidence, not trust.
+
 ## Cycle 36 Lessons
 - **Pipeline policy must live in ROLE.md.** A tool built in C35 but not in ROLE.md is invisible to a fresh agent. Gate sections in ROLE.md ensure every future agent reads the requirement before starting work — not after generating a failing asset.
 - **Rin's ROLE.md was missing entirely.** An active member without a ROLE.md is a risk: fresh context will rely only on PROFILE.md and MEMORY.md. ROLE.md is the operational spec; it must exist for every active member.

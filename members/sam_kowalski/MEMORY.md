@@ -308,6 +308,13 @@
 - **UV_PURPLE drift watch item added.** Leila's critique flag: UV_PURPLE (#7B2FBE) risks reading as YA dystopian if it desaturates. Currently correct. Flagged in typography brief for forward awareness.
 - **SF04 canonical = "Resolution" (Jordan Reed C42).** Alex confirmed. LAMP_AMBER comment = P2 Jordan. All palette values confirmed PASS.
 
+## Cycle 44 Lessons
+- **Font pipeline is a two-step process: code update + file install.** Updating `load_font()` to check `assets/fonts/` first is code. Actually downloading and placing the .ttf files is a separate Bash step. Both must complete before the new typeface appears in output. The generator falls through to DejaVu Sans silently if files are absent — this is a known silent failure mode (ideabox: font_check tool for Kai).
+- **Per-world font loaders are cleaner than a generic load_font().** `load_luma_font()` and `load_glitch_font()` make the world-routing explicit and auditable. Each searches its canonical font first, then falls through to system fonts. This pattern should be used in any future generator that needs world-specific typography.
+- **`project_paths.output_dir()` + `project_root()` work for font path resolution.** `_FONTS_DIR = str(_PROJECT_ROOT / "assets" / "fonts")` is the correct pattern. No hardcoded paths in v003. ImportError fallback added for agents that run the script before the project_paths import is on sys.path.
+- **Typography brief was already at `ltg_typography_brief_display_typeface.md`, not `typography_brief_c44.md`.** C43 deliverable named differently from P1 brief spec. Content is complete and correct. Flag to Alex if canonical filename matters for pitch package.
+- **Logo v003 generator is ready but render is PENDING.** Font files `Nunito-Bold.ttf` + `SpaceGrotesk-Bold.ttf` must be placed in `assets/fonts/` before running. Install instructions in `assets/fonts/README.md`. Any agent with Bash access can complete in under 5 minutes.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm.py v001. Low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan to add inline comment. Low priority.
@@ -317,4 +324,4 @@
 - **SF04 warm/cool WARN (sep=1.1) — documented as FP-007.** Soft-key scene by design. Alex Chen AD decision. Monitor for regression (flag if sep drops below 0.5). NOTE: C42 SF04 "Resolution" rebuild now uses REAL_INTERIOR threshold (sep=13.2 PASS) — different asset from luma_byte SF04 (FP-007 was the luma_byte version).
 - **COVETOUS style frame execution** pending Diego Vargas (spec updated). Diego notified. Color key needs regeneration to match 3-char staging.
 - **LAMP_AMBER inline comment** in `LTG_TOOL_style_frame_04_resolution.py` — assigned to Jordan Reed P2.
-- **Logo typeface decision** pending Alex Chen. Once decided: download .ttf to `assets/fonts/`, update `load_font()` in `LTG_TOOL_logo_asymmetric.py`. C44 work.
+- **Logo font files PENDING install.** `assets/fonts/Nunito-Bold.ttf` + `assets/fonts/SpaceGrotesk-Bold.ttf` must be downloaded (see `assets/fonts/README.md`). Once in place, run `python3 output/tools/LTG_TOOL_logo_asymmetric.py` to generate v003 logo. Report render result to Alex inbox.

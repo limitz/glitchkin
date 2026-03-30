@@ -6,11 +6,23 @@
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
 LTG_TOOL_logo_asymmetric.py
-Logo Generator — "Luma & the Glitchkin" — ASYMMETRIC LAYOUT v002
+Logo Generator — "Luma & the Glitchkin" — ASYMMETRIC LAYOUT v003
 
 Art Director: Alex Chen
+Color & Style: Sam Kowalski
 Date: 2026-03-30
-Cycle: 13
+Cycle: 44
+
+Cycle 44 changes (Sam Kowalski — font pipeline + project_paths integration):
+  - Typeface updated: Nunito Bold (Luma/Real World) + Space Grotesk Bold (Glitchkin/Glitch Layer).
+    Alex Chen decision C44. Replaces DejaVu Sans (30-cycle placeholder).
+  - load_font() now checks assets/fonts/ via project_paths.project_root() FIRST,
+    before falling through to system font paths. No hardcoded /home/wipkat/team paths.
+  - Dedicated load_luma_font() and load_glitch_font() functions for per-world typeface routing.
+  - "the" uses Nunito Bold at small size (Real World companion to "Luma").
+  - "&" connector uses Space Grotesk Bold — geometric hinge, carries warm-to-cold gradient.
+  - Layout descriptor updated to v003.
+  - OUTPUT_PATH resolved via project_paths.output_dir().
 
 Cycle 13 changes (Victoria Ashford A- → A grade):
   - "&" connector: warm-to-cold gradient treatment (left half warm orange/amber,
@@ -25,15 +37,30 @@ Prior design:
   - "Glitchkin" smaller + stacked (name broken into two lines), right side
   - Background glow zones and bi-color scan bar
 
-Output: /home/wipkat/team/output/production/LTG_BRAND_logo_asymmetric.png
+Font install: assets/fonts/README.md — download Nunito-Bold.ttf + SpaceGrotesk-Bold.ttf.
+If fonts absent, falls back to system fonts (DejaVu → Liberation → FreeSans).
 """
 
 import os
+import sys
 import random
 import math
 from PIL import Image, ImageDraw, ImageFont
 
-OUTPUT_PATH = "/home/wipkat/team/output/production/LTG_BRAND_logo_asymmetric.png"
+# Project-path resolution (Kai Nakamura, Cycle 44) — no hardcoded /home/wipkat/team
+_THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, _THIS_DIR)
+try:
+    from LTG_TOOL_project_paths import project_root, output_dir, ensure_dir
+    _PROJECT_ROOT = project_root()
+    _FONTS_DIR = str(_PROJECT_ROOT / "assets" / "fonts")
+    OUTPUT_PATH = str(output_dir("production", "LTG_BRAND_logo_asymmetric.png"))
+except ImportError:
+    # Fallback: derive project root from this file's location (output/tools/ → output/ → root)
+    _PROJECT_ROOT = os.path.dirname(os.path.dirname(_THIS_DIR))
+    _FONTS_DIR = os.path.join(_PROJECT_ROOT, "assets", "fonts")
+    OUTPUT_PATH = os.path.join(_PROJECT_ROOT, "output", "production", "LTG_BRAND_logo_asymmetric.png")
+
 W, H = 1200, 480
 
 # Master Palette Colors
@@ -50,8 +77,60 @@ UV_PURPLE       = (123,  47, 190)
 BYTE_TEAL       = (  0, 212, 232)
 
 
+def _try_font(path, size):
+    """Load a truetype font from path at size. Returns None on failure."""
+    if os.path.exists(path):
+        try:
+            return ImageFont.truetype(path, size)
+        except Exception:
+            pass
+    return None
+
+
+def load_luma_font(size=64):
+    """
+    Load the Real World / Luma typeface: Nunito Bold.
+    Checks assets/fonts/ first; falls back to system sans-serif.
+    """
+    candidates = [
+        os.path.join(_FONTS_DIR, "Nunito-Bold.ttf"),
+        # System font fallbacks (generic sans — not Nunito, but better than default)
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+        "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
+    ]
+    for p in candidates:
+        f = _try_font(p, size)
+        if f is not None:
+            return f
+    return ImageFont.load_default()
+
+
+def load_glitch_font(size=64):
+    """
+    Load the Glitch Layer / Glitchkin typeface: Space Grotesk Bold.
+    Checks assets/fonts/ first; falls back to system sans-serif.
+    """
+    candidates = [
+        os.path.join(_FONTS_DIR, "SpaceGrotesk-Bold.ttf"),
+        # System font fallbacks
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+        "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
+    ]
+    for f_path in candidates:
+        f = _try_font(f_path, size)
+        if f is not None:
+            return f
+    return ImageFont.load_default()
+
+
 def load_font(size=64, bold=False):
-    paths = [
+    """
+    Legacy generic font loader — used for the description label and fallback.
+    For logo text, prefer load_luma_font() and load_glitch_font().
+    """
+    candidates = [
         "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if bold else
         "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
         "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf" if bold else
@@ -59,12 +138,10 @@ def load_font(size=64, bold=False):
         "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf" if bold else
         "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
     ]
-    for p in paths:
-        if os.path.exists(p):
-            try:
-                return ImageFont.truetype(p, size)
-            except Exception:
-                pass
+    for p in candidates:
+        f = _try_font(p, size)
+        if f is not None:
+            return f
     return ImageFont.load_default()
 
 
@@ -298,10 +375,12 @@ def generate():
     draw = ImageDraw.Draw(img)
 
     # STEP 2: Load fonts
-    font_luma    = load_font(size=180, bold=True)
-    font_amp     = load_font(size=56,  bold=False)
-    font_the     = load_font(size=38,  bold=False)
-    font_glitch  = load_font(size=72,  bold=True)
+    # C44: Nunito Bold = Real World / Luma. Space Grotesk Bold = Glitch Layer / Glitchkin.
+    # "&" uses Space Grotesk (geometric hinge). "the" uses Nunito (Real World companion).
+    font_luma    = load_luma_font(size=180)   # Nunito Bold — warm, rounded, Real World
+    font_amp     = load_glitch_font(size=56)  # Space Grotesk Bold — "&" hinge between worlds
+    font_the     = load_luma_font(size=38)    # Nunito Bold small — "the" is Real World
+    font_glitch  = load_glitch_font(size=72)  # Space Grotesk Bold — Glitch Layer identity
 
     # STEP 3: Measure text
     luma_bbox   = font_luma.getbbox("Luma")
@@ -416,7 +495,7 @@ def generate():
     except Exception:
         font_desc = ImageFont.load_default()
     draw.text((margin, H - 22),
-              "ASYMMETRIC LAYOUT v002 — Cycle 13 — & gradient + tighter the/Glitchkin gap",
+              "ASYMMETRIC LAYOUT v003 — C44 — Nunito Bold (Luma) + Space Grotesk Bold (Glitchkin)",
               fill=(120, 110, 100), font=font_desc)
 
     img.save(OUTPUT_PATH, "PNG")

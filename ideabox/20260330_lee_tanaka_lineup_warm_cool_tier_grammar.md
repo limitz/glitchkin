@@ -1,0 +1,5 @@
+**Author:** Lee Tanaka
+**Cycle:** 45
+**Date:** 2026-03-30
+**Idea:** Codify warm=FG / cool=BG as an explicit palette grammar rule in `docs/image-rules.md` or a new `docs/depth-grammar.md`. Currently, the warm/cool tonal language exists in individual generator decisions and staging briefs but is not written as a rule that all agents must follow. Making it a named rule ("Depth Temperature Rule: warmer tones read as closer, cooler tones read as farther — applies to shadow bands, ambient fills, and character glow direction") would ensure every new background, lineup, and style frame generator applies the same spatial grammar without a staging brief needed each time.
+**Benefits:** Every background artist (Hana Okonkwo, Jordan Reed) and character artist (Maya Santos, Rin Yamamoto) would have a single-sentence reference that aligns their independent depth decisions. Eliminates the need for staging briefs to re-explain warm=close/cool=far from scratch each cycle. Reduces warm/cool audit failures that currently require post-hoc correction.
