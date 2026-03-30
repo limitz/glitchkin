@@ -1,5 +1,49 @@
 # Rin Yamamoto — MEMORY
 
+## C43 Completed Work
+- `--save-nolight` flag added to SF01, SF02, SF04 generators
+  - `LTG_TOOL_styleframe_discovery.py` (SF01):
+    - `NOLIGHT_PATH` constant added (LTG_COLOR_styleframe_discovery_nolight.png)
+    - `generate(skip_fill_light=False)` — skips `draw_lighting_overlay()`, `add_face_lighting()`, `add_rim_light()` when True
+    - argparse `--save-nolight` in `__main__`: runs `generate()` then `generate(skip_fill_light=True)`
+  - `LTG_TOOL_style_frame_02_glitch_storm.py` (SF02):
+    - `NOLIGHT_PATH` added (LTG_COLOR_styleframe_glitch_storm_nolight.png)
+    - `main(skip_fill_light=False)` — skips `draw_magenta_fill_light_c36()` + `draw_cyan_specular_luma()` when True
+    - Dutch angle still applied in nolight mode (scene rotation, not fill light)
+    - argparse `--save-nolight` in `__main__`
+  - `LTG_TOOL_style_frame_04_resolution.py` (SF04):
+    - `NOLIGHT_PATH` added (LTG_COLOR_styleframe_sf04_nolight.png)
+    - `main(skip_fill_light=False)` — skips `draw_warm_light()` + `draw_cool_floor_bounce()` when True
+    - argparse `--save-nolight` in `__main__`
+- `LTG_TOOL_precritique_qa.py` bumped to v2.10.0
+  - `CYCLE_LABEL` = "C43"
+  - SF04 entry in `FILL_LIGHT_ASSETS` corrected:
+    - Was: `LTG_COLOR_styleframe_luma_byte.png` (C40 Jordan lamp scene, superseded)
+    - Now: `LTG_COLOR_styleframe_sf04.png` (C42 Jordan canonical, Alex Chen decision)
+    - Nolight base path: `LTG_COLOR_styleframe_sf04_nolight.png`
+    - Zone: luma cx_frac=0.55 (doorway center-right, Resolution scene geometry)
+  - `PITCH_PNGS` + `STYLE_FRAMES`: `LTG_COLOR_styleframe_luma_byte.png` → `LTG_COLOR_styleframe_sf04.png`
+    (canonical SF04 path — QA baseline must be re-run after this change)
+- Inbox archived: SF04 canonical decision (reference only) + C17 UV_PURPLE identity alert (creative direction context noted)
+- Ideabox: `ideabox/20260330_rin_yamamoto_uv_purple_dominance_linter.md`
+  - UV_PURPLE family pixel-ratio check for Glitch Layer generators (Leila C17 finding)
+
+## C43 Lessons
+- `--save-nolight` pattern: add `skip_fill_light=False` param to the top-level render function.
+  Skip all atmospheric fill-light, face-lighting, and specular passes when True. Non-fill-light
+  passes (characters, grain, vignette, title strip, dutch angle) run in both modes.
+  Both modes save to different path constants (OUTPUT_PATH vs NOLIGHT_PATH). argparse in
+  `__main__` calls the render function twice: once normal, once with skip_fill_light=True.
+- SF04 in precritique_qa had a stale path (luma_byte.png = C40 lamp scene) — the canonical
+  C42 "Resolution" generator outputs to styleframe_sf04.png. Always cross-check FILL_LIGHT_ASSETS
+  against the current canonical generator's OUTPUT_PATH after a generator is superseded.
+- precritique_qa PITCH_PNGS / STYLE_FRAMES / FILL_LIGHT_ASSETS are three separate registries
+  that must all be kept in sync when a style frame generator is canonically updated.
+- Leila Asgari's UV_PURPLE contextual concern (C17): it is not a code defect — it is a
+  compositional design principle. UV_PURPLE should DOMINATE the Glitch Layer palette, not recede.
+  Context: dark neutral (VOID_BLACK) around UV_PURPLE is fine for contrast, but if VOID_BLACK
+  exceeds UV_PURPLE family in pixel count, the scene reads as cyberpunk not digital-sublime.
+
 ## C42 Completed Work
 - `LTG_TOOL_sf_covetous_glitch.py` — v2.0.0 — COVETOUS style frame C42 update
   - Fixed G001: rx=68→54 (was OOB [28,56]), ry=76→62 (was OOB [28,64])

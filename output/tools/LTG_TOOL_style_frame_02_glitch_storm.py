@@ -50,13 +50,19 @@ All Cycle 22 fixes carried forward:
   - Buildings: storm rim lighting ELEC_CYAN + UV bounce
 
 Output: /home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm.png
-Usage: python3 LTG_TOOL_style_frame_02_glitch_storm.py
+Usage: python3 LTG_TOOL_style_frame_02_glitch_storm.py [--save-nolight]
+
+--save-nolight: also save an unlit base image (no magenta fill light, no cyan
+    specular) as LTG_COLOR_styleframe_glitch_storm_nolight.png alongside the
+    normal composited output. Enables Section 10 (alpha_blend_lint) in
+    precritique_qa.py. Dutch angle is still applied to both outputs.
 """
 
 import os
 import sys
 import math
 import random
+import argparse
 from PIL import Image, ImageDraw, ImageFilter, ImageChops
 
 # Import procedural draw library for add_rim_light
@@ -69,7 +75,8 @@ except ImportError:
     PROCEDURAL_DRAW_AVAILABLE = False
     print("WARNING: LTG_TOOL_procedural_draw not found — rim light passes will use fallback.")
 
-OUTPUT_PATH = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm.png"
+OUTPUT_PATH  = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm.png"
+NOLIGHT_PATH = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_nolight.png"
 # C44: Native 1280×720 — no LANCZOS thumbnail pass
 W, H = 1280, 720
 
@@ -1152,11 +1159,23 @@ def apply_dutch_angle(img, degrees=4.0):
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
-def main():
+def main(skip_fill_light=False):
+    """
+    Render Style Frame 02 — Glitch Storm.
+
+    Args:
+        skip_fill_light (bool): If True, omit the magenta fill light (step 8)
+            and cyan specular (step 9). Used to produce the unlit base image
+            for alpha_blend_lint (Section 10 of precritique_qa). Dutch angle
+            is still applied. Default: False (full render).
+    """
+    out_path = NOLIGHT_PATH if skip_fill_light else OUTPUT_PATH
     print("LTG_TOOL_style_frame_02_glitch_storm.py")
     print("Rendering Style Frame 02 — Glitch Storm (C44 Native Canvas Refactor)...")
     print("  C44: Native 1280×720 — no LANCZOS thumbnail, no post-thumbnail specular restore")
     print("  C44: Eliminates SUNLIT_AMBER LAB ΔE=47.04 color drift (Petra Volkov C17)")
+    if skip_fill_light:
+        print("  [nolight mode] Skipping fill light + specular — generating unlit base")
 
     img = Image.new("RGB", (W, H), VOID_BLACK)
 
@@ -1186,21 +1205,28 @@ def main():
     print("  [7/9] Characters (Luma: face + lean, Cosmo, Byte, + Glitch G007)...")
     img = draw_characters(img)
 
-    print("  [8/9] Magenta fill light (C36: UPPER-RIGHT source, per-char mask)...")
-    img = draw_magenta_fill_light_c36(img, luma_cx, byte_cx, cosmo_cx, char_h)
+    # Steps 8 and 9 are fill-light passes — skipped for nolight base.
+    if skip_fill_light:
+        print("  [8/9] Magenta fill light — SKIPPED (nolight mode)")
+        print("  [9/9] Cyan specular — SKIPPED (nolight mode); applying Dutch angle...")
+    else:
+        print("  [8/9] Magenta fill light (C36: UPPER-RIGHT source, per-char mask)...")
+        img = draw_magenta_fill_light_c36(img, luma_cx, byte_cx, cosmo_cx, char_h)
 
-    print("  [9/9] Cyan specular on Luma + Dutch angle (4.0°)...")
-    img = draw_cyan_specular_luma(img, luma_cx, char_h)
+        print("  [9/9] Cyan specular on Luma + Dutch angle (4.0°)...")
+        img = draw_cyan_specular_luma(img, luma_cx, char_h)
+
     img = apply_dutch_angle(img, degrees=4.0)
 
     # C44: No thumbnail() call — already at target size
     assert img.size[0] <= 1280 and img.size[1] <= 1280, \
         f"Canvas exceeds 1280px limit: {img.size}"
 
-    os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
-    img.save(OUTPUT_PATH, "PNG")
-    print(f"\nSaved: {OUTPUT_PATH}")
-    size_bytes = os.path.getsize(OUTPUT_PATH)
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    img.save(out_path, "PNG")
+    label = "nolight base" if skip_fill_light else "composited"
+    print(f"\nSaved ({label}): {out_path}")
+    size_bytes = os.path.getsize(out_path)
     print(f"File size: {size_bytes:,} bytes ({size_bytes // 1024} KB)")
     print(f"Image size: {img.size[0]}×{img.size[1]}px")
     print("\nFix verification (C44 native canvas refactor):")
@@ -1221,4 +1247,20 @@ def main():
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="LTG_TOOL_style_frame_02_glitch_storm.py — Style Frame 02: Glitch Storm"
+    )
+    parser.add_argument(
+        "--save-nolight",
+        action="store_true",
+        help=(
+            "Also save an unlit base image (no magenta fill light, no cyan specular) "
+            "as LTG_COLOR_styleframe_glitch_storm_nolight.png. Dutch angle is still "
+            "applied. Enables Section 10 (alpha_blend_lint) in precritique_qa.py."
+        ),
+    )
+    args = parser.parse_args()
+
     main()
+    if args.save_nolight:
+        main(skip_fill_light=True)

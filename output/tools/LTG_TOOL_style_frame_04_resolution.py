@@ -43,13 +43,19 @@ OUTPUT:
   1280×720 — ≤ 1280px hard limit
 
 Usage:
-  python3 output/tools/LTG_TOOL_style_frame_04_resolution.py
+  python3 output/tools/LTG_TOOL_style_frame_04_resolution.py [--save-nolight]
+
+--save-nolight: also save an unlit base image (no warm light pass, no cool
+    floor bounce) as LTG_COLOR_styleframe_sf04_nolight.png alongside the
+    normal composited output. Enables Section 10 (alpha_blend_lint) in
+    precritique_qa.py.
 """
 
 import os
 import sys
 import math
 import random
+import argparse
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 _here = os.path.dirname(os.path.abspath(__file__))
@@ -60,7 +66,8 @@ from LTG_TOOL_procedural_draw import (
     get_char_bbox
 )
 
-OUTPUT_PATH = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_sf04.png"
+OUTPUT_PATH  = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_sf04.png"
+NOLIGHT_PATH = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_sf04_nolight.png"
 
 W, H = 1280, 720
 
@@ -907,8 +914,21 @@ def draw_title_strip(img, draw):
     return draw
 
 
-def main():
+def main(skip_fill_light=False):
+    """
+    Render Style Frame 04 — Resolution.
+
+    Args:
+        skip_fill_light (bool): If True, omit warm light (Pass 4) and cool floor
+            bounce (Pass 5). Used to produce the unlit base image for
+            alpha_blend_lint (Section 10 of precritique_qa). All other passes
+            (character, grain, scanline, vignette, title strip) are retained.
+            Default: False (full render).
+    """
+    out_path = NOLIGHT_PATH if skip_fill_light else OUTPUT_PATH
     print(f"[SF04] Drawing Resolution style frame — {W}×{H}")
+    if skip_fill_light:
+        print("[SF04] [nolight mode] Skipping warm light + cool floor bounce")
 
     img  = Image.new("RGB", (W, H), WALL_MID)
     draw = ImageDraw.Draw(img)
@@ -925,13 +945,19 @@ def main():
     print("[SF04] Pass 3: Foreground table...")
     draw = draw_table_foreground(img, draw)
 
-    # Pass 4: Warm light (top half dominant)
-    print("[SF04] Pass 4: Warm light passes...")
-    draw = draw_warm_light(img, draw)
+    # Pass 4: Warm light (top half dominant) — skipped for nolight base
+    if skip_fill_light:
+        print("[SF04] Pass 4: Warm light — SKIPPED (nolight mode)")
+    else:
+        print("[SF04] Pass 4: Warm light passes...")
+        draw = draw_warm_light(img, draw)
 
-    # Pass 5: Cool floor bounce (bottom half — separation)
-    print("[SF04] Pass 5: Cool floor bounce...")
-    draw = draw_cool_floor_bounce(img, draw)
+    # Pass 5: Cool floor bounce (bottom half) — skipped for nolight base
+    if skip_fill_light:
+        print("[SF04] Pass 5: Cool floor bounce — SKIPPED (nolight mode)")
+    else:
+        print("[SF04] Pass 5: Cool floor bounce...")
+        draw = draw_cool_floor_bounce(img, draw)
 
     # Pass 6: Luma character
     print("[SF04] Pass 6: Luma character...")
@@ -956,10 +982,27 @@ def main():
     # Enforce ≤ 1280px hard limit
     img.thumbnail((1280, 1280), Image.LANCZOS)
 
-    os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
-    img.save(OUTPUT_PATH)
-    print(f"[SF04] Saved: {OUTPUT_PATH}  ({img.width}×{img.height})")
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    img.save(out_path)
+    label = "nolight base" if skip_fill_light else "composited"
+    print(f"[SF04] Saved ({label}): {out_path}  ({img.width}×{img.height})")
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="LTG_TOOL_style_frame_04_resolution.py — Style Frame 04: Resolution"
+    )
+    parser.add_argument(
+        "--save-nolight",
+        action="store_true",
+        help=(
+            "Also save an unlit base image (no warm light, no cool floor bounce) "
+            "as LTG_COLOR_styleframe_sf04_nolight.png. All other passes retained. "
+            "Enables Section 10 (alpha_blend_lint) in precritique_qa.py."
+        ),
+    )
+    args = parser.parse_args()
+
     main()
+    if args.save_nolight:
+        main(skip_fill_light=True)

@@ -43,13 +43,18 @@ C29: Procedural quality pass — wobble_polygon, variable_stroke, face_lighting,
 Prior SF01 v005 history: ghost Byte alpha 55->90, rim-light char_cx fix.
 
 Output: /home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery.png
-Usage: python3 LTG_TOOL_styleframe_discovery.py
+Usage: python3 LTG_TOOL_styleframe_discovery.py [--save-nolight]
+
+--save-nolight: also save an unlit base image (no fill-light overlay, no face
+    lighting, no rim light) as LTG_COLOR_styleframe_discovery_nolight.png.
+    Enables Section 10 (alpha_blend_lint) in precritique_qa.py.
 """
 
 import os
 import sys
 import math
 import random
+import argparse
 from PIL import Image, ImageDraw, ImageFont
 
 # Import procedural draw library
@@ -60,7 +65,8 @@ from LTG_TOOL_procedural_draw import (
     add_rim_light, add_face_lighting
 )
 
-OUTPUT_PATH = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery.png"
+OUTPUT_PATH        = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery.png"
+NOLIGHT_PATH       = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_nolight.png"
 
 # Working at 1280x720 — fits <= 1280px rule directly
 W, H = 1280, 720
@@ -975,8 +981,18 @@ def draw_couch(draw, luma_cx, luma_base_y):
               fill=SOFT_GOLD, width=sp(4))
 
 
-def generate():
-    os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
+def generate(skip_fill_light=False):
+    """
+    Generate Style Frame 01 — The Discovery.
+
+    Args:
+        skip_fill_light (bool): If True, omit all fill-light passes (lighting
+            overlay, face lighting, rim light). Used to produce the unlit base
+            image for alpha_blend_lint (Section 10 of precritique_qa).
+            Default: False (full render).
+    """
+    out_path = NOLIGHT_PATH if skip_fill_light else OUTPUT_PATH
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
 
     img = Image.new("RGB", (W, H), WARM_CREAM)
     draw = ImageDraw.Draw(img)
@@ -995,15 +1011,17 @@ def generate():
     draw_couch(draw, luma_cx, luma_base_y)
 
     # STEP 3: Three-light atmospheric overlay (BEFORE characters)
+    # Skipped when skip_fill_light=True — produces unlit base for alpha_blend_lint.
     mw_x = bg_data["mw_x"]; mw_y = bg_data["mw_y"]
     mw_w = bg_data["mw_w"]; mw_h = bg_data["mw_h"]
     lamp_x_pos = sx(int(1920 * 0.40))
     lamp_y_pos = bg_data["ceiling_y"] + sy(18)
     monitor_cx_pos = mw_x + mw_w // 2
     monitor_cy_pos = mw_y + mw_h // 2
-    img = draw_lighting_overlay(img,
-                                lamp_x=lamp_x_pos, lamp_y=lamp_y_pos,
-                                monitor_cx=monitor_cx_pos, monitor_cy=monitor_cy_pos)
+    if not skip_fill_light:
+        img = draw_lighting_overlay(img,
+                                    lamp_x=lamp_x_pos, lamp_y=lamp_y_pos,
+                                    monitor_cx=monitor_cx_pos, monitor_cy=monitor_cy_pos)
     draw = ImageDraw.Draw(img)
 
     # STEP 4: Luma's Body
@@ -1024,28 +1042,32 @@ def generate():
                                        byte_cx_target=emerge_cx)
 
     # STEP 5b: Face lighting — warm lamp from upper-left (domestic real-world scene)
-    add_face_lighting(
-        img,
-        face_center=(head_cx, head_cy),
-        face_radius=(head_r, head_r),
-        light_dir=(-1.0, -1.0),
-        shadow_color=SKIN_SH,
-        highlight_color=SKIN_HL,
-        seed=500,
-    )
-    draw = ImageDraw.Draw(img)
+    # Skipped when skip_fill_light=True — unlit base for alpha_blend_lint.
+    if not skip_fill_light:
+        add_face_lighting(
+            img,
+            face_center=(head_cx, head_cy),
+            face_radius=(head_r, head_r),
+            light_dir=(-1.0, -1.0),
+            shadow_color=SKIN_SH,
+            highlight_color=SKIN_HL,
+            seed=500,
+        )
+        draw = ImageDraw.Draw(img)
 
     # STEP 5c: Rim light — cool CRT teal from right
     # C32 FIX preserved: char_cx=head_cx for character-relative mask
-    add_rim_light(
-        img,
-        threshold=185,
-        light_color=(0, 220, 232),
-        width=sp(3),
-        side="right",
-        char_cx=head_cx,
-    )
-    draw = ImageDraw.Draw(img)
+    # Skipped when skip_fill_light=True — unlit base for alpha_blend_lint.
+    if not skip_fill_light:
+        add_rim_light(
+            img,
+            threshold=185,
+            light_color=(0, 220, 232),
+            width=sp(3),
+            side="right",
+            char_cx=head_cx,
+        )
+        draw = ImageDraw.Draw(img)
 
     # STEP 6: Byte (emerging from CRT)
     luma_hand_x = body_data["hand_cx"]
@@ -1075,10 +1097,28 @@ def generate():
     if img.width > 1280 or img.height > 1280:
         img.thumbnail((1280, 1280), Image.LANCZOS)
 
-    img.save(OUTPUT_PATH, "PNG")
-    print(f"Saved: {OUTPUT_PATH}  ({img.width}x{img.height})")
-    return OUTPUT_PATH
+    img.save(out_path, "PNG")
+    label = "nolight base" if skip_fill_light else "composited"
+    print(f"Saved ({label}): {out_path}  ({img.width}x{img.height})")
+    return out_path
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="LTG_TOOL_styleframe_discovery.py — Style Frame 01: The Discovery"
+    )
+    parser.add_argument(
+        "--save-nolight",
+        action="store_true",
+        help=(
+            "Also save an unlit base image (no fill-light overlay, no face lighting, "
+            "no rim light) as LTG_COLOR_styleframe_discovery_nolight.png alongside the "
+            "normal composited output. Enables Section 10 (alpha_blend_lint) in "
+            "precritique_qa.py."
+        ),
+    )
+    args = parser.parse_args()
+
     generate()
+    if args.save_nolight:
+        generate(skip_fill_light=True)
