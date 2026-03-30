@@ -1,0 +1,5 @@
+**Author:** Priya Shah
+**Cycle:** 43
+**Date:** 2026-03-30
+**Idea:** Amara Diallo's C17 review caught a cross-cultural design error (chopstick accessory on a character with Igbo-Nigerian/Brazilian heritage) that had been locked into the canonical design for many cycles. We should do a one-time cultural audit of all character design documents — not a deep cultural consultancy, just a pass where we read each character's stated background (name, ethnicity where implied) against their visual accessories and environmental artifacts and flag anything that reads as a mismatch. This would catch issues like MIRI-A before they embed further in storyboard and lineup assets. It is a one-session story + design task and could be done by Maya Santos and me in a single cycle.
+**Benefits:** Prevents cross-cultural design errors from accumulating in canonical assets. Cheaper to fix at design doc stage than after storyboards are rendered. Audience critics (Taraji, Amara) will score cultural coherence; getting ahead of this protects critic scores and, more importantly, produces a more honest show.

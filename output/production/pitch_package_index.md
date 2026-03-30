@@ -1209,6 +1209,33 @@ All critical path assets verified on disk. No blocking issues found. The package
 | Motion specs | Luma v002, Byte v003, Cosmo v001 (unchanged) |
 | Story documents | Story Bible v003 PITCH PRIMARY (unchanged) |
 | QA tools | face_curves_caller_audit v1.0.0 (Kai C42), precritique_qa v2.9.0, sight_line_diagnostic v002 (unchanged) |
-| Open items C43 | **P1: Luma v013 body postures** (Maya — RECKLESS/ALARMED/FRUSTRATED/THE NOTICING delivered C41, expression sheet v013 in progress); **P1: COVETOUS generator G001/G004/G008 fix** (Rin); **P1: P07 delivered** (Diego C42 — on disk); P09 panels (Diego — in progress); Luma Study Interior (Hana C42 — ON DISK, no report yet); LAMP_AMBER comment in SF04 generator (Jordan — P2) |
+| Open items C43 | **P1: Luma v013 body postures** (Maya — RECKLESS/ALARMED/FRUSTRATED/THE NOTICING delivered C41, expression sheet v013 in progress); **RESOLVED C43: COVETOUS generator G001/G004/G008 fix** (Rin C42 — PASS); **RESOLVED C43: P07 + P09 + EP05 COVETOUS panels** (Diego C43 — DELIVERED); Luma Study Interior (Hana C42 — ON DISK); LAMP_AMBER comment in SF04 generator (Jordan — P2); SF02 native resolution refactor (Jordan — backlog, significant scope); Byte face test gate gap (Kai C44 — --char byte unsupported) |
+
+---
+
+## Cycle 43 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| COVETOUS style frame v2.0.0 | `output/color/style_frames/LTG_COLOR_sf_covetous_glitch.png` | G001/G004/G008 spec violations FIXED (glitch_spec_lint PASS). Three-character triangulation: Glitch (left, rx=54/ry=62, COVETOUS +12° lean) → Byte (midground, teal barrier, br=26) → Luma (right 30%, hoodie orange + warm skin). Warm zone = Luma's character palette, NOT a light source on Glitch. 1280×720. (Cycle 43 — Rin Yamamoto) |
+| Cold Open P07 | `output/storyboards/panels/LTG_SB_cold_open_P07.png` | Monitor bowing / Byte mid-phase emergence. Dutch 8° CW. Monitor bows convex; distortion rings break outside bezel. Byte: lower half desaturated inside screen, upper half full teal + confetti burst. DETERMINED+ALARMED expression. Arc: TENSE → BREACH (Hot Magenta border). Generator: `output/tools/LTG_TOOL_sb_cold_open_P07.py`. (Cycle 43 — Diego Vargas) |
+| Cold Open P09 | `output/storyboards/panels/LTG_SB_cold_open_P09.png` | Byte floating / SPOTTED. No Dutch tilt (room stabilized). Normal eye iris shifted left toward Luma. Cracked eye: SEARCHING/PROCESSING dots (cyan + magenta, diverged). Gravity ghost: confetti drifts down below Byte. Dotted sight-line annotation. Arc: CURIOUS / FIRST ENCOUNTER (ELEC_CYAN border). Generator: `output/tools/LTG_TOOL_sb_cold_open_P09.py`. (Cycle 43 — Diego Vargas) |
+| EP05 COVETOUS storyboard panel | `output/storyboards/panels/LTG_SB_ep05_covetous.png` | Three-character triangulation (matches C42 spec): Glitch bilateral acid-slit eyes / +12° lean / UV Purple; Byte barrier midground; Luma right zone warm-orange. Glitch NOT warmed by Luma — compositional separation enforced, rule annotation on panel. UV_PURPLE border. Generator: `output/tools/LTG_TOOL_sb_ep05_covetous.py`. (Cycle 43 — Diego Vargas) |
+| Native resolution audit report | `output/production/native_resolution_audit_c42.md` | Full audit: SF02 flagged as SIGNIFICANT REFACTOR NEEDED (1920×1080 + LANCZOS + inlined fill light). 3 ENV generators converted to 1280×720 (glitchlayer_frame, glitch_layer_frame, glitch_layer_encounter). bg_glitch_storm_colorfix flagged (hardcoded geometry, C45+ item). LTG_TOOL_style_frame_01_discovery.py — recommend deprecate (Morgan C44 action). (Cycle 43 — Rin Yamamoto) |
+
+#### Cycle 43 Pitch Package Status (CURRENT)
+
+| Requirement | C43 Status |
+|---|---|
+| **SF04** | "Resolution" CANONICAL — unchanged (Jordan C42) |
+| SF01 / SF02 / SF03 | v006 / v008 / v005 — all PITCH PRIMARY (unchanged) |
+| COVETOUS Glitch style frame | **v2.0.0 SPEC CLEAN** — glitch_spec_lint PASS, three-char triangulation. (Rin C43) |
+| Luma expression sheet | **v012** (face curves integration); **v013 in progress** (Maya — body postures) |
+| Character lineup | **v008 PITCH PRIMARY** (unchanged) |
+| Storyboards — Cold Open | P07 NEW, P09 NEW, EP05 COVETOUS NEW (Diego C43). P06/P08/P23/P24 carried from C42. |
+| Environments | Classroom REBUILT, Tech Den v006, School Hallway v003, Luma Study Interior (all carried) |
+| QA/Pipeline | Native resolution audit COMPLETE. SF02 refactor queued (Jordan C44+). SF04 output dir fix queued (Jordan C44). SF01 dual-generator conflict queued (Morgan C44). Hardcoded paths fix queued (Kai C44). |
+| P0 Open items C44 | **Miri cultural identity decision** (Alex — Maya/Priya/Hana consulted, decision pending); **Miri+Luma relationship asset** (new style frame or key relationship panel — no asset exists yet) |
+| P1 Open items C44 | Hardcoded absolute paths (Kai); SF01 dual-generator conflict (Morgan); SF04 output dir fix (Jordan); Hallway pixel font (Jordan); Logo display typeface (Sam); Classroom + Kitchen pixel font (Hana); Storyboard naming audit (Diego); Byte face test profile (Kai) |
 
 *Updated by Alex Chen, Art Director — Cycles 41–42 — 2026-03-30*

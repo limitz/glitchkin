@@ -9,7 +9,9 @@ Cycle 37. C37 = first work cycle.
 ## What Exists (Story)
 - **Story bible v001**: `output/production/story/story_bible_v001.md` — C37
 - **Story bible v002**: `output/production/story/story_bible_v002.md` — C38
-- **Story bible v003**: `output/production/story/story_bible_v003.md` — C39, CURRENT CANONICAL VERSION
+- **Story bible v003**: `output/production/story/story_bible_v003.md` — C39
+- **Story bible v004**: `output/production/story/story_bible_v004.md` — C43, CURRENT CANONICAL VERSION. Miri cultural heritage documented; Millbrook midwestern specificity established; school name confirmed; FLAG 05 opened (chopstick design error).
+- **Miri cultural identity brief**: `output/production/story/LTG_miri_cultural_identity_brief.md` — C43. Production decision document: Miri's Igbo-Nigerian/Brazilian heritage made explicit; Millbrook midwestern spec; chopstick design error flagged for Alex+Maya; school name confirmed. Primary readers: Alex Chen, Maya Santos, Hana Okonkwo, Diego Vargas.
 - **Glitch appearance guide**: `output/production/story/LTG_glitch_appearance_guide.md` — C39. Staging reference for storyboarders. Covers: entrance (already-there arrival, not dramatic intro), communication (geometric patterns / pixel eye cycles / confetti geometrics / NO English), exit (absence), interior state moments (YEARNING/COVETOUS/HOLLOW — use sparingly, one per act max), Byte-Glitch staging implications.
 - **Glitch voice direction card**: `output/production/story/LTG_glitch_voice_direction.md` — C40. Quick-reference card for directors and animatics artists. Consolidates: pixel eye glyph communication states, bilateral vs. asymmetric eye rule, what Glitch NEVER does (no sound/English/easing), geometric pattern vocabulary, expression staging map, interior state rules.
 - **Pilot episode outline v001**: `output/production/story/pilot_episode_outline_v001.md` — C42. Full pilot scene-by-scene breakdown: pre-credits tag + cold open + Acts 1–3 + tag + stinger. Scene headers match PANEL_MAP.md naming. Character arc anchors table. Visual/tonal notes for directors. Storyboard priorities identified for Acts 1–3 (A1-03, A3-02, A3-04).
@@ -40,7 +42,7 @@ Comedy-adventure. Core: loneliness of perceiving differently, vindication throug
 2. **FLAG 02**: RESOLVED C38. production_bible.md Byte shape language fixed.
 3. **FLAG 03**: RESOLVED C39. Glitch character canonized per Alex Chen decision.
 4. **FLAG 04**: Season 2+ seed — "something older, further in" planted in S1 finale scene. Writers: do not develop. Single ambient beat only.
-5. **FLAG 05**: RESOLVED C40/C41. Voice direction card written; COVETOUS notes delivered to Sam.
+5. **FLAG 05**: OPEN C43. MIRI-A chopstick hair accessory is cross-cultural design error (Igbo-Nigerian/Brazilian heritage). Design fix needed: replace with wooden hairpins. Alex Chen + Maya Santos to action. See LTG_miri_cultural_identity_brief.md.
 
 ## Key Consistency Notes
 - Byte body = OVAL (not chamfered box — retired C8). Fixed in production_bible.md.
@@ -50,6 +52,10 @@ Comedy-adventure. Core: loneliness of perceiving differently, vindication throug
 - Glitch ≠ the Corruption. Glitch is its visible face/instrument. Corruption remains abstract/unseen in S1.
 - "Pixel confetti" near Luma in the Glitch Layer is NOT explained in-world. Intentional mystery.
 - Grandma Miri / Glitch Layer Miri shared name = intentional seed. Visual plant in assets. Pays off Episode 12.
+- Grandma Miri = Igbo-Nigerian / Brazilian-descended. Heritage expressed as texture in her space, not as subject matter.
+- Millbrook = American Midwest (Ohio/Indiana region). Post-war housing, modest former industrial past, real community.
+- School = MILLBROOK MIDDLE SCHOOL (canonical, C43). Diego Vargas notified.
+- MIRI-A chopstick = cross-cultural error. Flagged FLAG 05. Design fix pending Alex Chen + Maya Santos.
 
 ## Pilot Structure (CANONICAL v003)
 - PRE-CREDITS TAG (~30 sec): School, last day of class, dead pixel scene, CUT TO BLACK
@@ -57,6 +63,8 @@ Comedy-adventure. Core: loneliness of perceiving differently, vindication throug
 - ACT 1 PROPER: Morning, Luma/Grandma exchange, Byte erupts through CRT
 
 ## Cycle Lessons
+- C43: When a critic flags a cultural specificity gap, the correct response is a production decision document that (a) answers the story question explicitly, (b) separates story decisions from design decisions, (c) identifies who needs to act on what, and (d) updates the canonical bible immediately. Do not leave cultural questions as open discussion items.
+- C43: Heritage in character design should never be cosmetic. If a surname implies heritage, the story must either commit to it meaningfully (texture in world-building, not subject matter) or change the name. A surname that signals ethnic background without any corresponding story reality is tokenism, and audience critics will catch it.
 - C37: Story/production docs exempt from LTG_ naming. Read ltg_pitch_brief.md FIRST.
 - C38: Cold open decision is design-level, not story. Don't get ahead of Art Director. Social cost scenes work best ~15 sec, not subplots. Byte's commitment beat stronger without words.
 - C39: When Alex sends character decisions with structural story implications, update both the character profile AND the series arc section — they cross-reference each other. Glitch needs staging direction for storyboarders (appearance guide written C39).

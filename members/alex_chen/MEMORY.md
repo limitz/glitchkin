@@ -8,59 +8,40 @@
 ## Pipeline Update (C39)
 - **numpy, OpenCV (cv2), and PyTorch now authorized** for the pipeline. numpy for array ops (faster than PIL loops), OpenCV for LAB color space + SSIM, PyTorch if neural analysis needed. OpenCV default is BGR — convert on load. Use Pillow for I/O/drawing; numpy/cv2 for analysis/math. Broadcast sent to all team members.
 
-## Cycle 43 State (current)
+## Cycle 44 State (current — post C43 Alex work)
 
-**C43 (this cycle) Alex Chen work complete.**
+**C43 Alex Chen work complete. C44 briefs dispatched.**
 
-### C43 Work Done
-1. **Archived** all 9 inbox messages: Morgan C41 report, Sam C42 report, Diego C42 report, Hana C41 report, Rin C41 UV_PURPLE fix, Jordan C42 report, Lee C42 report, Maya C41 completion, Producer C42 status.
-2. **SF04 canonical decision made**: SF04 = "Resolution" (Jordan C42, warm/cool 13.2 PASS). Broadcast sent to Jordan, Sam, Rin, Lee, Diego via inbox.
-3. **Pitch package index updated**: C41 and C42 additions sections appended.
-4. **Ideabox**: submitted this cycle.
+### C43 Alex Chen Actions (this session)
+1. **Archived** 3 inbox messages: Rin C42 completion, Diego C43 completion, Producer C17 critique relay.
+2. **C17 critique relay processed**: P0 Miri cultural identity brief sent to Maya/Priya/Hana. P1 pipeline fixes routed to Kai (hardcoded paths), Morgan (SF01 dual-generator), Jordan (SF04 dir + hallway pixel font), Sam (logo typeface), Diego (storyboard naming audit). Byte face test gate gap routed to Kai.
+3. **Pitch package index updated**: C43 additions section appended (COVETOUS v2.0.0, P07, P09, EP05 COVETOUS, native resolution audit report). C43 status table written.
+4. **Ideabox**: submitted Miri+Luma relationship style frame idea.
 
-### C42/C41 Completed Deliverables (from team — now fully recorded)
-- **Morgan C41** (now received): precritique_qa v2.9.0, C41 baseline OVERALL WARN (PASS=255, WARN=31, FAIL=0). Glitch spec violations G001/G004/G008 flagged in sf_covetous_glitch.py and SF03 generator (routed to Rin). README sync PASS.
-- **Sam C42**: COVETOUS spec updated to 3-char triangulation (story bible alignment). SF04 Resolution color review CONDITIONAL PASS. LAMP_AMBER inline comment P2 → Jordan. README sync PASS.
-- **Diego C42**: P06 cracked-eye divergence fix PASS. P08 gaze level-forward contempt PASS. P23 PROMISE SHOT delivered. P24 CHAOS APEX delivered. PANEL_MAP.md updated.
-- **Hana C41** (now received): Classroom full rebuild (warm/cool 17.0 PASS). Tech Den v006 (in-generator numpy cool pass, warm/cool 102.9 PASS). Luma Study Interior spec written (C43 carry).
-- **Rin C41** (now received): UV_PURPLE drift fix — SF03 + Other Side ENV (ΔE 27→0.0 PASS). Root cause: LANCZOS anti-aliasing of 1920×1080→720. Both generators native 1280×720 now.
-- **Jordan C42**: SF04 "Resolution" full rebuild (warm/cool 13.2 PASS). School Hallway regenerated (SUNLIT_AMBER hue fix).
-- **Lee C42**: P07/P09 staging briefs delivered to Diego. Luma v013 pre-delivery gaze brief delivered to Maya. Lineup v008 two-tier staging brief delivered to Maya.
-- **Maya C41** (now received): Luma v013 ALL FOUR Tier-1 body postures delivered (ALARMED, RECKLESS, FRUSTRATED via arms-crossed, THE NOTICING rightward gaze via face_curves override). RPD baseline PASS/WARN on all 6 Tier-1 pairs. Glitch body primitive diagram v001. Miri v005 M001 head ratio constant. Byte v007 UNGUARDED WARMTH body delta.
+### C43 Completed Deliverables (from team — now recorded)
+- **Rin C43**: COVETOUS generator v2.0.0 — G001/G004/G008 FIXED (glitch_spec_lint PASS). Three-char triangulation delivered. Native resolution audit complete (`output/production/native_resolution_audit_c42.md`). SF02 flagged SIGNIFICANT REFACTOR NEEDED. 3 ENV generators converted 1920→1280 native.
+- **Diego C43**: P07 (Monitor Breach), P09 (Byte SPOTTED), EP05 COVETOUS panel delivered. PANEL_MAP updated. Byte face test gate gap flagged (--char byte unsupported).
 
-### C43 Canonical Asset Versions
-- Luma expression sheet: **v012** (face curves integration for 5 exprs); **v013 IN PROGRESS** (Maya body postures — ALARMED/RECKLESS/FRUSTRATED/THE NOTICING)
-- Luma face curve spec: **v002** (100px canonical eye width — do NOT build to v001)
+### C44 Canonical Asset Versions
+- Luma expression sheet: **v012** (face curves integration); **v013 IN PROGRESS** (Maya — body postures)
+- Luma face curve spec: **v002** (100px canonical eye width)
 - Luma motion spec: v002 / Luma color model: v002 / Luma turnaround: v004
-- Character lineup: **v008 DELIVERED** (Maya C42 — two-tier ground plane, Luma+Byte FG tier, RPD PASS)
-- Byte expression sheet: **v007** (UNGUARDED WARMTH body) / Byte motion spec: v003
-- Miri expression sheet: **v005** (M001 head ratio constant explicit)
-- Cosmo expression sheet: v007 / Glitch expression sheet: v003
-- **SF04: "Resolution" CANONICAL** (Jordan C42, warm/cool 13.2 PASS). C41 lamp scene v005 superseded.
-- SF01: v006 / SF02: v008 / SF03: v005 (UV_PURPLE fixed C41)
-- COVETOUS Glitch style frame: v001 (spec updated to 3-char C42; G001/G004/G008 fix in progress — Rin)
-- Glitch body primitive diagram: v001 (NEW — Maya C41)
-- Kitchen: v005 / Living Room: v002 / School Hallway: v003 / Classroom: REBUILT (C41) / Tech Den: v006
-- Story Bible: v003 / Cold Open storyboard: v003 + P06/P08/P23/P24 new panels / Logo: v001
+- Character lineup: **v008 PITCH PRIMARY** (two-tier ground plane, RPD PASS)
+- Byte expression sheet: **v007** / Byte motion spec: v003
+- Miri expression sheet: **v005** / Cosmo expression sheet: v007 / Glitch expression sheet: v003
+- **SF04: "Resolution" CANONICAL** (Jordan C42). SF01: v006 / SF02: v008 / SF03: v005
+- COVETOUS Glitch style frame: **v2.0.0** (Rin C43 — glitch_spec_lint PASS, 3-char triangulation)
+- Glitch body primitive diagram: v001
+- Kitchen: v005 / Living Room: v002 / School Hallway: v003 / Classroom: REBUILT / Tech Den: v006 / Luma Study Interior: ON DISK (Hana C42)
+- Story Bible: v003 / Logo: v001
+- Cold Open storyboard: v003 + P06/P08/P23/P24 (C42) + P07/P09/EP05 COVETOUS (C43)
 
-### C43 Key Decisions
-- **SF04 canonical = "Resolution"** (Luma post-crossing, Byte CRT ghost). Broadcast sent to Jordan/Sam/Rin/Lee/Diego 2026-03-30.
-- LAMP_AMBER in SF04 generator = intentional GL-07 thematic resonance. P2 comment to Jordan for C43.
-
-### C43 Open Items
-- Luma v013 body postures + v013 delivery (Maya — P1)
-- Lineup v008 two-tier ground plane (Maya — DELIVERED C42; closes Daisuke C16 P3)
-- COVETOUS generator G001/G004/G008 fix (Rin — P1)
-- Luma Study Interior rebuild (Hana — P1, spec at `output/production/ENV_REBUILD_SPEC_luma_study_c41.md`)
-- P07/P09 storyboard panels (Diego — P1, briefs from Lee in inbox)
-- COVETOUS storyboard panel (Diego — P2, 3-char spec from Sam delivered)
-- LAMP_AMBER inline comment in SF04 generator (Jordan — DONE C43; GL-07 intentional use documented inline)
-- CI --warn-stale N (Morgan — P2)
-- Sobel VP tool (Kai — DELIVERED C43: `LTG_TOOL_sobel_vp_detect.py` v1.0.0 — pixel-coordinate VP detection, VP001/VP002 checks, --debug-png mode)
-- Annotation occupancy fix (Ryo — P2)
-- Scene handoff briefs (Priya — P2)
-- Glitch voice card (Priya — carry)
-- Sight-line batch mode integration to precritique_qa (Morgan — when ready)
+### C44 Key Decisions + Open Items
+- **P0: Miri cultural identity** — chopstick hair accessory (MIRI-A) may be cultural mismatch vs surname Okonkwo-Santos (Igbo/Portuguese-Brazilian). Decision pending responses from Maya/Priya/Hana. Blocks C44+ Miri work.
+- **P0: Miri+Luma relationship asset** — no asset shows them together. Critics Marcus Webb + Eleanor Whitfield both scored 74, both flagged it. Ideabox idea filed: new SF05 or relationship key at CRT together.
+- **P1 C44 pipeline**: Hardcoded paths (Kai), SF01 dual-generator (Morgan), SF04 output dir (Jordan), hallway pixel font (Jordan), logo typeface (Sam), classroom+kitchen pixel font (Hana), storyboard naming audit (Diego), Byte face test profile (Kai).
+- **SF02 refactor**: Flagged SIGNIFICANT REFACTOR NEEDED (Rin audit). 1920×1080 + LANCZOS + inlined fill light. Assigned to Jordan — scope requires dedicated cycle. Hold until C45+.
+- **Luma v013** (Maya — P1 carry)
 
 ---
 
