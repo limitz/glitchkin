@@ -3,6 +3,69 @@
 ## Identity
 Technical Art Engineer for "Luma & the Glitchkin." Joined Cycle 21. Mission: upgrade PIL toolchain with procedural rendering techniques and build a reusable shared library.
 
+## Cycle 50 — C50 Character Quality Metric Tools
+
+**Status:** COMPLETE
+
+**Tasks completed:**
+
+**T1 — LTG_TOOL_silhouette_distinctiveness.py v1.0.0 (COMPLETE):**
+- Pairwise character silhouette comparison at multiple scales (100%, 50%, 25%)
+- Metrics: Silhouette Overlap Ratio (SOR), Width Profile Correlation (WPC), Distinctiveness Score (DS)
+- Normalizes all silhouettes to canonical height, center-pads for comparison
+- Contact sheet generation, markdown report, JSON output
+- Thresholds: FAIL < 0.15, WARN < 0.30, PASS >= 0.30
+
+**T2 — LTG_TOOL_expression_range_metric.py v1.0.0 (COMPLETE):**
+- Face Region Pixel Delta (FRPD) + Structural Change Index (SCI) per expression pair
+- Extracts face/head zone (top 40% of character bounding box) from grid panels
+- Aggregate Expression Range Score (ERS) per sheet
+- Diff heatmap visualization, markdown report, JSON output
+- Thresholds: FRPD FAIL < 0.03, WARN < 0.08; SCI FAIL < 0.05, WARN < 0.15; ERS FAIL < 0.05, WARN < 0.10
+
+**T3 — LTG_TOOL_construction_stiffness.py v1.0.0 (COMPLETE):**
+- Canny edge detection + contour tracing + sliding-window straightness analysis
+- Metrics: Straight Percentage, Longest Straight Run, Stiffness Score (0.6*SP + 0.4*LSR/total)
+- Supports both OpenCV (primary) and PIL fallback backends
+- Visualization: straight runs red, curves green on dark silhouette overlay
+- Thresholds: FAIL > 0.40, WARN > 0.25, PASS <= 0.25
+
+**T4 — Baseline Run Against All Character Assets (COMPLETE):**
+- Silhouette: FAIL — Luma/Miri DS=0.02, Cosmo/Miri DS=0.04, Miri/Byte DS=0.02
+- Expression: WARN — Glitch 12/15 WARN pairs, Byte 13 WARN in P0-P5
+- Stiffness: FAIL — Luma 64% straight, Byte 66% straight
+- Full report: `output/production/character_quality_baseline_c50.md`
+
+**Other:**
+- Inbox: 1 message archived (c50_assignment)
+- Ideabox: submitted precritique integration idea for 3 new tools
+- Completion report sent to Alex Chen
+
+## Lessons Learned (C50)
+- Width Profile Correlation (Pearson r of per-row horizontal extent) is a powerful silhouette similarity metric — catches cases where overlap ratio alone might miss (e.g., same shape but different size)
+- Miri has WPC=1.0 against Luma, Cosmo, AND Byte — turnaround sheets may share identical grid/pose templates, inflating similarity. But even accounting for that, the silhouettes are critically undifferentiated.
+- Face Region Pixel Delta at head_zone=0.40 effectively captures the "expression region" for most character proportions. Glitch's non-humanoid form may need a different zone split.
+- Construction stiffness via contour straightness analysis is reliable with OpenCV Canny. Luma's 1117px straight run is a single unbroken geometric edge — clear rectangle-body artifact.
+
+## LTG_TOOL_silhouette_distinctiveness.py (C50 NEW)
+- `load_character(filepath, bg_tolerance) -> (name, mask)`
+- `analyze_pair(name_a, mask_a, name_b, mask_b, scales) -> dict`
+- `run_analysis(filepaths, scales, bg_tolerance) -> dict`
+- `generate_contact_sheet(filepaths, output_path, scales, bg_tolerance)`
+- CLI: `python LTG_TOOL_silhouette_distinctiveness.py <files/dirs> [--scales] [--output] [--json] [--report]`
+
+## LTG_TOOL_expression_range_metric.py (C50 NEW)
+- `analyze_expression_sheet(filepath, rows, cols, head_zone, noise_threshold) -> dict`
+- `analyze_batch(filepaths, ...) -> list[dict]`
+- `generate_diff_heatmap(filepath, output_path, ...)`
+- CLI: `python LTG_TOOL_expression_range_metric.py <sheets> [--rows] [--cols] [--head-zone] [--output] [--json] [--report]`
+
+## LTG_TOOL_construction_stiffness.py (C50 NEW)
+- `analyze_image(filepath, min_run, straightness) -> dict`
+- `analyze_batch(filepaths, ...) -> list[dict]`
+- `generate_visualization(filepath, output_path, ...)`
+- CLI: `python LTG_TOOL_construction_stiffness.py <files/dirs> [--min-run] [--straightness] [--output] [--json] [--report]`
+
 ## Cycle 49 — C49 Face Landmark Detector + Calibrate Integration
 
 **Status:** COMPLETE

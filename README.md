@@ -179,6 +179,7 @@ Three-world palette system:
 - **Ideabox:** 12 ideas actioned C49
 - **Critics panel:** 20 total (15 professionals + 5 audience)
 - **Team:** 12 active
+- **C50 highlights (in progress):** Character quality pivot — silhouette distinctiveness tool, expression range metric, construction stiffness detector. Baseline: silhouette FAIL (Miri identical to 3 characters), stiffness FAIL (Luma/Byte 64-66% straight), Glitch expression WARN. Rendering comparison tool (pycairo vs PIL approaches).
 - **C49 highlights:** Production bible v5.0 (47-cycle debt cleared), production bible pipeline split (pitch vs post-pitch), render_qa v2.2.0 composite warmth gate, depth_temp_lint --discover mode, CI suite v1.9.0 JSON check registry, precritique_qa v2.18.0 sightline validation, multi-char face gate tool, Miri elder posture, CRT glow asymmetry rule + SF01 applied, School Hallway ceiling convergence, P25 title card, sightline pixel PNG mode, face landmark detector, Cosmo motion shoulder_arm integrated
 
 ### Pitch Package Status
