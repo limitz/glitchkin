@@ -17,7 +17,8 @@ Flat-elevation rectangles are prohibited for furniture, appliances, and architec
 
 | World Type | Perspective | VP Source |
 |---|---|---|
-| Real World interiors | 2-point perspective (one wall receding left, one right) | `vp_spec_config.json` per generator |
+| Real World interiors (rooms) | 2-point perspective (one wall receding left, one right) | `vp_spec_config.json` per generator |
+| Real World interiors (corridors/hallways) | 1-point perspective (central vanishing point, symmetric convergence) | `vp_spec_config.json` per generator |
 | Real World exteriors | 1-point or 2-point depending on street angle | `vp_spec_config.json` per generator |
 | Glitch Layer | No geometric perspective — depth via platform tiers, scale, and color temperature | VP checks skipped |
 | Other Side | Abstract depth — no convergence rules | VP checks skipped |
@@ -100,6 +101,8 @@ When updating or creating an environment generator, verify every drawn element:
 | Appliances (fridge, CRT, stove) | At least one receding face | Not a flat rectangle |
 | Doors/windows | Frame reveals show wall thickness | Receding edges converge |
 | Countertops | Surface foreshortening | Far edge shorter |
+| Ceiling tiles/panels | Tile edges converge toward VP | Especially critical in hallways — major depth cue |
+| Light fixtures (ceiling) | Spacing compresses toward VP | Receding row of pendants/fluorescents must foreshorten |
 
 ---
 
@@ -108,6 +111,21 @@ When updating or creating an environment generator, verify every drawn element:
 1. **Automated:** Run `LTG_TOOL_sobel_vp_detect.py <image> --vp-config vp_spec_config.json` — checks architectural VP alignment.
 2. **Manual convergence test:** Draw a line from each furniture edge through the VP. If parallel edges in the scene do not converge toward the VP, the perspective is broken.
 3. **Flat elevation flag:** Any rectangular polygon where all four corners form a perfect rectangle (no convergence) in a Real World scene is a FAIL.
+
+---
+
+## Camera Height Cross-Check
+
+VP_Y values in `vp_spec_config.json` should be consistent with the Camera Height Convention table above. Quick validation (assuming 546px canvas height):
+
+| Environment | VP_Y | VP_Y as % | Expected Range | Status |
+|---|---|---|---|---|
+| Classroom | 230 | 42.1% | 32-40% (adult) or 40-50% (child) | Borderline — reads child POV |
+| Kitchen | 273 | 50.0% | 32-40% (adult) | LOW — reads child POV. Intentional if Luma's perspective; flag if Miri's kitchen |
+| Living Room | 259 | 47.4% | 32-40% (adult) | LOW — reads child POV |
+| School Hallway | 158 | 28.9% | 32-40% (adult) | HIGH — reads high angle/overview |
+
+**Action:** Verify whether each environment's camera height is intentional. If the scene is meant to be from Luma's POV, the lower VP is correct. If from a neutral/adult camera, VP_Y should be raised (lower percentage). The hallway VP at 28.9% reads as an adult looking down a long corridor, which is appropriate for an establishing shot.
 
 ---
 

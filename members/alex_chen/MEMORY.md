@@ -8,7 +8,53 @@
 ## Pipeline Update (C39)
 - **numpy, OpenCV (cv2), and PyTorch now authorized** for the pipeline. numpy for array ops (faster than PIL loops), OpenCV for LAB color space + SSIM, PyTorch if neural analysis needed. OpenCV default is BGR — convert on load. Use Pillow for I/O/drawing; numpy/cv2 for analysis/math. Broadcast sent to all team members.
 
-## Cycle 47 State (current)
+## Cycle 48 State (current)
+
+**C48 Alex Chen work complete. All inbox messages archived.**
+
+### C48 Alex Chen Actions (this session)
+1. **Archived** 4 inbox messages: Priya (Byte position urgent), Producer (C48 brief), Ryo (draw_shoulder_arm completion), Morgan (ci_suite v1.8.0 completion).
+2. **Reference image review complete**: 168 images across 22 categories reviewed. Full art direction notes written to `output/production/reference_art_direction_notes_c48.md`. 7 sections covering CRT, warm interiors, depth, character proportions, classroom/hallway, glitch art, suburban/shadow.
+3. **Byte position decision APPROVED**: Byte stays CRT P19-P20 (territorial), floats to Luma's level P21 (forced spatial concession). Messages sent to Priya (acknowledgment) and Diego (confirmation with staging detail). Diego unblocked for P22/P22a.
+4. **Perspective rules updated** (`docs/perspective-rules.md`): Added hallway as explicit 1-point perspective case. Added ceiling tiles/panels and light fixtures to furniture audit checklist. Added Camera Height Cross-Check section with VP_Y validation table.
+5. **Team output reviewed**: Ryo's draw_shoulder_arm helper APPROVED (clean API, correct shoulder involvement, all 3 clothing types). Morgan's ci_suite v1.8.0 APPROVED (Check 10 repurposed to doc_staleness, clean removal of ext_model_check).
+6. **Tool prioritization**: Top 3 for C49: warmcool_scene_calibrate, glow_profile_extract, face_metric_calibrate. Full ranking in art direction notes.
+7. **Ideabox**: submitted `20260330_alex_chen_sigmoid_warmcool_transition.md`.
+
+### C48 Key Findings from Reference Review
+- **CRT glow is asymmetric** — brighter above/sides, dimmer below (cabinet occlusion). All CRT glow generators need 30% bottom reduction.
+- **Real interior warm/cool ratio is ~25-35% warm** — our REAL_INTERIOR threshold of 12.0 may be too high. Needs calibration.
+- **Temperature transition is sigmoid, not linear** — narrow band (~10-15% of room depth). Generators should use step/sigmoid.
+- **BG tier needs saturation drop** (15-25%) in addition to cool shift. Depth Temperature Rule should add saturation component.
+- **School hallway missing ceiling convergence** — cheap, high-impact depth improvement.
+- **UV_PURPLE may need hue center shift** from 270 to ~275 (real glitch art clusters 280-290).
+- **Miri posture** should include slight forward lean (3-5 deg) and rounded shoulders per elderly proportion ref.
+
+### C48 Canonical Asset Versions
+- All versions unchanged from C47 — no asset generation this cycle.
+- **NEW tool**: `LTG_TOOL_draw_shoulder_arm.py` (Ryo C48) — shared shoulder-arm drawing module.
+- **CI**: ci_suite **v1.8.0** (Morgan C48) — Check 10 now doc_staleness (was ext_model_check).
+- Art direction: **reference_art_direction_notes_c48.md NEW** (Alex C48). **perspective-rules.md UPDATED** (Alex C48).
+
+### C48 Key Decisions + Open Items
+- **RESOLVED**: Byte position P19-P24 — CRT through P20, floats P21, alongside P22+. Diego unblocked.
+- **P1**: Warm/cool threshold recalibration needed — refs show lower warm ratio than expected. Sam/Kai.
+- **P1**: CRT glow asymmetry fix needed across all generators (Jordan, Rin, Hana).
+- **P1**: Story bible v005 still pending (Priya — carried from C46).
+- **P1**: Cosmo turnaround proportion check (carried from C47).
+- **P1**: Doc governance 43 STALE docs (Morgan C47 audit — now CI gated via v1.8.0).
+- **P2**: Sigmoid warm/cool transition function (ideabox submitted).
+- **P2**: BG saturation drop addition to depth_temp_lint (Kai).
+- **P2**: Ceiling convergence in hallway/classroom generators (Hana).
+- **P2**: UV_PURPLE hue center shift evaluation (Rin).
+- **P2**: Miri posture update — forward lean + rounded shoulders (Maya).
+- **P2**: P22/P22a next storyboard panels (Diego — now unblocked).
+- **P2**: SF06 shoulder + Luma lean fixes (Maya — carried from C47).
+- **NOTE**: C49 is pre-Critique 19. Tool builds (warmcool_scene_calibrate, glow_profile_extract, face_metric_calibrate) should land before critique.
+
+---
+
+## Cycle 47 State (archived — superseded by C48)
 
 **C47 Alex Chen work complete. All inbox messages archived.**
 
