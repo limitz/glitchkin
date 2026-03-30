@@ -3,14 +3,7 @@
 ## README Introduction (post-Cycle 21)
 - Added 4-paragraph first-person intro section to README.md directly below the logo. Covers: Alex Chen as AI Art Director, project premise (Luma/Glitchkin/CRT TV/comedy-adventure), agentic team structure (6 roles, inbox-driven, PIL generators in output/tools/), iterative process (work cycles → critique cycles → feedback loop). Archived: 20260329_1424_readme_changes.md + all 4 C21 completion reports (bg/char/color/tech).
 
-## Image Output Rule
-**Prefer smallest resolution appropriate for the task. Hard limit: ≤ 1280px in both width and height.** Use `img.thumbnail((1280, 1280), Image.LANCZOS)` before saving any PNG. Preserve aspect ratio. Only use large sizes when fine detail inspection requires it. Detail crops also ≤ 1280×1280px.
-
-## Image Handling Policy (ALL agents — effective C29)
-- Before sending any image to Claude for inspection: ask if a tool can extract the needed insight instead. If yes, make the tool.
-- Before sending an image: ask if lower resolution suffices. If yes, downscale it.
-- Never send high-res images to Claude unless absolutely necessary.
-- Vision limitations: hallucination risk on low-quality/rotated/tiny (<200px) images; limited spatial reasoning; approximate counting only.
+*Image rules: see `docs/image-rules.md`*
 
 ## Pipeline Update (C39)
 - **numpy, OpenCV (cv2), and PyTorch now authorized** for the pipeline. numpy for array ops (faster than PIL loops), OpenCV for LAB color space + SSIM, PyTorch if neural analysis needed. OpenCV default is BGR — convert on load. Use Pillow for I/O/drawing; numpy/cv2 for analysis/math. Broadcast sent to all team members.
@@ -22,7 +15,7 @@
 ### C39 Work Done
 1. **Archived** all 13 inbox messages (C38 completions + C39 directives + C39 completions).
 2. **SF02 storm threshold brief** sent to Kai: document REAL_STORM sub-type (threshold≈3) in warmth_lint + render_qa + world_type_infer. Closes recurring false-WARN.
-3. **Costume-background clash lint brief** sent to Kai: `LTG_TOOL_costume_bg_clash_v001.py` — ΔE CIELAB (OpenCV LAB) per-pair character vs background. P2 C39, P1 C40.
+3. **Costume-background clash lint brief** sent to Kai: `LTG_TOOL_costume_bg_clash.py` — ΔE CIELAB (OpenCV LAB) per-pair character vs background. P2 C39, P1 C40.
 4. **numpy/OpenCV broadcast** sent to all 11 other team members.
 5. **Pitch package index updated**: C39 additions registered (14 entries: Kitchen v005, Cold Open v003, Living Room v002, Story Bible v003, Proportion audit v003, Fill Light Adapter v001, Procedural Draw v1.6.0, Luma v011, Cosmo v007, Byte v006, SF01 v006, render_qa v1.5.0, world_type_infer v001, Miri slipper audit, color QA C38, CI C38). C39 status table written.
 6. **Ideabox**: `20260330_alex_chen_numpy_opencv_qa_upgrade.md` — upgrade core QA tools to numpy/cv2 for speed + ΔE accuracy.
@@ -54,7 +47,7 @@
 
 ### C39 Open Items (carry to C40)
 - **SF02 REAL_STORM threshold** (Kai+Sam — P1): add sub-type to warmth_lint/render_qa/world_type_infer
-- **Costume-background clash tool** (Kai — P2): `LTG_TOOL_costume_bg_clash_v001.py`
+- **Costume-background clash tool** (Kai — P2): `LTG_TOOL_costume_bg_clash.py`
 - **Byte RPD oval-body tool tuning** (Maya — P3): tool cannot distinguish small oval body expressions at panel resolution
 - **RPD baseline run**: all current expression sheets against silhouette_v003
 - **Antagonist appearance guide** (Priya — for Lee+Diego): staging language for Glitch first appearances
@@ -252,8 +245,8 @@
 
 ### C34 Work Done
 1. **Archived** all C33 inbox reports (6 messages).
-2. **Lineup palette audit tool built**: `output/tools/LTG_TOOL_lineup_palette_audit_v001.py` — scans lineup PNG column-by-column, verifies body colors vs master_palette.md. PASS/FAIL/WRONG_PRESENT per color. Catches Byte shadow and Miri slipper class of errors.
-3. **Eye-width resolution**: v008 eye-width (45px) is WRONG — applied 0.22 to head diameter, not radius. Correct: `ew = int(head_r_rendered × 0.22) = int(104 × 0.22) = 22px` for expression sheet generator. Updated luma.md + character_sheet_standards_v001.md. **Maya directive sent for v009.**
+2. **Lineup palette audit tool built**: `output/tools/LTG_TOOL_lineup_palette_audit.py` — scans lineup PNG column-by-column, verifies body colors vs master_palette.md. PASS/FAIL/WRONG_PRESENT per color. Catches Byte shadow and Miri slipper class of errors.
+3. **Eye-width resolution**: v008 eye-width (45px) is WRONG — applied 0.22 to head diameter, not radius. Correct: `ew = int(head_r_rendered × 0.22) = int(104 × 0.22) = 22px` for expression sheet generator. Updated luma.md + character_sheet_standards.md. **Maya directive sent for v009.**
 4. **Pitch package index updated**: C33 Additions + C34 Additions sections added. C34 status table current.
 5. **Ideabox**: `20260329_alex_chen_expression_sheet_silhouette_regression.md` — mandate silhouette test as pre-critique gate for all expression sheet promotions.
 
@@ -278,7 +271,7 @@
 - Maya: v009 directive sent + Lee pose brief forwarded. Cosmo v005 + Miri v004 in scope.
 
 ### C34 Morgan Walsh QA (pre-critique pipeline)
-- Morgan built `LTG_TOOL_precritique_qa_v001.py` — C34 baseline WARN (0 FAIL).
+- Morgan built `LTG_TOOL_precritique_qa.py` — C34 baseline WARN (0 FAIL).
 - **Real issue found**: Glitch G002 — ry=34 not > rx=40 in expression sheets. Kai notified.
 - SF03/SF04 color drift = documented false positives.
 - 35 unlisted tools in tools README — P3 (not blocking).
@@ -306,7 +299,7 @@
 
 ### C33 Work Done
 1. **Archived** all C32 inbox reports (5 messages + stale C31 stubs).
-2. **Character lineup v007** built (`LTG_CHAR_character_lineup_v007.png`, `LTG_TOOL_character_lineup_v007.py`):
+2. **Character lineup v007** built (`LTG_CHAR_character_lineup.png`, `LTG_TOOL_character_lineup.py`):
    - BYTE_SH fixed: `(0, 144, 176)` → `(0, 168, 180)` canonical Deep Cyan GL-01a #00A8B4. Was 2-cycle P2 backlog.
    - MIRI_SLIPPER fixed: `(90, 122, 90)` → `(196, 144, 122)` warm apricot #C4907A per Sam C32 palette correction.
 3. **Maya directive sent**: Byte expression v005 — UNGUARDED WARMTH. Spec complete (body, pixel eyes, confetti, narrative context). P2.
@@ -323,7 +316,7 @@
 - SF04: **v004** (PITCH PRIMARY — full rebuild, value PASS)
 - Byte/Cosmo/Miri/Glitch expression sheets: v004/v004/v003/v003
 - Luma turnaround: **v004** (PITCH PRIMARY — eye-width fix)
-- Logo: `LTG_BRAND_logo_v001.png`
+- Logo: `LTG_BRAND_logo.png`
 
 ### C33 Open Items (P2)
 - Byte expression v005 (UNGUARDED WARMTH): Maya has spec directive. P2.
@@ -337,7 +330,7 @@
 **Decision:** `ew = int(head_r * 0.22)` where `head_r` = head-RADIUS (NOT head-height).
 - Root cause: Critique 13 (Daisuke) — `h` variable meant radius in v007 generator (104px) but height in turnaround v003 (382px) → 3.8× discrepancy.
 - Canonical source: head-radius, because all generators use it.
-- Written into: `output/characters/main/luma.md` Section 3, `output/production/character_sheet_standards_v001.md` Section 2 (new).
+- Written into: `output/characters/main/luma.md` Section 3, `output/production/character_sheet_standards.md` Section 2 (new).
 - Maya + Rin both notified via inbox.
 
 ### C32 luma.md Updates
@@ -375,7 +368,7 @@ Alex submitted: `ideabox/20260330_alex_chen_glitch_construction_linter.md` — t
 - Sam idea (C31 late submission) → QA false-positive registry (routed to Kai C31)
 
 **New tool built (C31 — Alex Chen):**
-- `output/tools/LTG_TOOL_proportion_verify_v001.py` — PNG proportion verifier. Given PNG + bounding box: detects head via topmost dense pixel cluster, measures head height vs total height, reports head-to-body ratio vs 3.2 spec (±5%). Optional --ew/--hr args check ew/HR ratio vs canonical 0.22. Pure PIL. PASS/FAIL/WARN per metric.
+- `output/tools/LTG_TOOL_proportion_verify.py` — PNG proportion verifier. Given PNG + bounding box: detects head via topmost dense pixel cluster, measures head height vs total height, reports head-to-body ratio vs 3.2 spec (±5%). Optional --ew/--hr args check ew/HR ratio vs canonical 0.22. Pure PIL. PASS/FAIL/WARN per metric.
 
 **Pitch package index updated (C31):**
 - Cycle 30 Additions section added: Luma color model v002, proportion verifier v001, QA v1.2.0, SF01 v004 eye fix, color audit, palette fix, color story update.
@@ -399,17 +392,17 @@ Alex submitted: `ideabox/20260330_alex_chen_glitch_construction_linter.md` — t
 - SF01: v004 (PITCH PRIMARY, eye width fixed)
 - SF02: v005, SF03: v005, SF04: v003
 - Byte/Cosmo/Miri/Glitch sheets: v004/v004/v003/v003
-- Logo: `LTG_BRAND_logo_v001.png`
+- Logo: `LTG_BRAND_logo.png`
 
 ## Cycle 30 State (archived)
 
 **C30 audit filed:** `output/production/pitch_audit_cycle30.md`
 
 **C29 all-clear — all 4 deliverables landed:**
-- Maya: Luma expression sheet v007 (3.2 heads + h×0.22 eyes) — `output/characters/main/LTG_CHAR_luma_expressions_v007.png`
-- Maya: Character lineup v006 (3.2 heads) — `output/characters/main/LTG_CHAR_luma_lineup_v006.png`
-- Rin: SF01 v004 procedural lift + blush fix — `output/color/style_frames/LTG_COLOR_styleframe_discovery_v004.png`
-- Kai: Naming cleanup script ready (`LTG_TOOL_naming_cleanup_v001.py`) — not yet executed
+- Maya: Luma expression sheet v007 (3.2 heads + h×0.22 eyes) — `output/characters/main/LTG_CHAR_luma_expressions.png`
+- Maya: Character lineup v006 (3.2 heads) — `output/characters/main/LTG_CHAR_luma_lineup.png`
+- Rin: SF01 v004 procedural lift + blush fix — `output/color/style_frames/LTG_COLOR_styleframe_discovery.png`
+- Kai: Naming cleanup script ready (`LTG_TOOL_naming_cleanup.py`) — not yet executed
 
 **Residual risks going into Critique 13:**
 1. SF01 v004 Luma proportions NOT confirmed against 3.2-head spec (Rin's C29 report silent on this)
@@ -434,7 +427,7 @@ Alex submitted: `ideabox/20260330_alex_chen_glitch_construction_linter.md` — t
 - **Luma canonical head-to-body ratio: 3.2 heads** — turnaround v002 is the construction reference. Expression sheet v006 (~2.5) and lineup v005 (~3.5) are out of spec.
 - **Luma canonical eye spec: h×0.22 width** — turnaround v002 values are canonical. Expression sheet v006 used HR×0.28 (21% too wide). Turnaround spec propagates to ALL generators.
 - **Maya directive sent** (`members/maya_santos/inbox/20260329_1723_luma_proportion_directive.md`): rebuild expression sheet → v007, lineup → v006, both to 3.2 heads + turnaround eye spec.
-- **Pitch brief updated** (`output/production/ltg_pitch_brief_v001.md`): Premise section rewritten to include Luma's interior need — she feels invisible (notices what no one else sees, can't make them look). Glitchkin are the first things that *need* her to see them. Discovering them validates her way of seeing as a gift, not a quirk.
+- **Pitch brief updated** (`output/production/ltg_pitch_brief.md`): Premise section rewritten to include Luma's interior need — she feels invisible (notices what no one else sees, can't make them look). Glitchkin are the first things that *need* her to see them. Discovering them validates her way of seeing as a gift, not a quirk.
 - **C27 completion reports archived**: Sam SF03 v004, Kai QA v1.10, Rin SF04 v002, Maya lineup audit — all noted, no blockers.
 - **Critique 12 summary archived**: decisions made, directives sent.
 
@@ -454,8 +447,8 @@ Alex submitted: `ideabox/20260330_alex_chen_glitch_construction_linter.md` — t
 **C27 key decisions:**
 - **Luma expression sheet v006 CONFIRMED**: Maya delivered v006 with 3-tier line weight fix (head=4, structure=3, detail=2 at 2× buffer). v005 had correct construction but 2× heavy lines. v006 now matches classroom pose standard. PITCH PRIMARY for Luma character sheet.
 - **Miri expression sheet v003 CONFIRMED**: On disk. KNOWING expression present (PENSIVE replaced). Narrative secret visible in character design.
-- **Rin face lighting delivered**: `add_face_lighting()` in `LTG_TOOL_procedural_draw_v001.py` v1.1.0. Artistry extraction complete — all 5 techniques now implemented.
-- **SUNLIT_AMBER QC false positive**: `LTG_TOOL_color_verify_v001.py` false-positives on Luma/Miri character sheets due to skin tone hue overlap (~18-25°). Workaround: validate sampled pixels manually. Not a rendering defect.
+- **Rin face lighting delivered**: `add_face_lighting()` in `LTG_TOOL_procedural_draw.py` v1.1.0. Artistry extraction complete — all 5 techniques now implemented.
+- **SUNLIT_AMBER QC false positive**: `LTG_TOOL_color_verify.py` false-positives on Luma/Miri character sheets due to skin tone hue overlap (~18-25°). Workaround: validate sampled pixels manually. Not a rendering defect.
 - **Pitch package audit C27**: ALL assets present on disk. READY for Critique 12. Weakest link: SF01 v003 still UNLOCKED (v004 not yet delivered). Ships as v003.
 - **Index updated**: C26 + C27 additions sections added, Luma entry bumped to v006, Miri v003 marked COMPLETE, pipeline retirement documented.
 - **Inbox cleared**: All 6 C26/C27 messages archived.
@@ -468,7 +461,7 @@ Alex submitted: `ideabox/20260330_alex_chen_glitch_construction_linter.md` — t
 - Glitch expression sheet: v002
 - Character lineup: v004
 - SF01: v003 (open for v004), SF02: v005, SF03: v003, SF04: v001
-- Logo: `LTG_BRAND_logo_v001.png`
+- Logo: `LTG_BRAND_logo.png`
 
 ## Cycle 26 State (previous)
 
@@ -476,18 +469,18 @@ Alex submitted: `ideabox/20260330_alex_chen_glitch_construction_linter.md` — t
 - **New critics panel**: 15 all-new brutal critics replace the old panel. Critics: Takeshi Mori, Ingrid Solberg, Daisuke Kobayashi, Priya Nair, Marcus Webb, Chiara Ferrara, Dr. Samuel Osei, Yuki Tanaka, Reinhardt Böhm, Amara Diallo, Jonas Feld, Dr. Leila Asgari, Sven Halvorsen, Nkechi Adeyemi, Petra Volkov. All bio files in `critics/`. All old critic files deleted. New critics review ALL output, not just latest cycle. Standing rule added: no comments on resolution/pixel dimensions.
 - **Luma style investigation**: Expression sheet v005 vs classroom pose v002 — root cause identified: head construction (missing cheek nubs), hair (3 mass ellipses vs 8 organic curl ellipses), canvas BG (void black vs warm parchment), eye proportions (manga-wide vs naturalistic). Maya received directive for v006 rebuild. Maya then delivered C26 style fix (v005 overwritten in-place with classroom-aligned head/hair/eye construction, warm BG). Style aligned — no separate v006 needed.
 - **README**: Rewritten to be proud and confident. Removed apologetic language. Cycle count updated to "26 work cycles and counting."
-- **Rin role**: Changed from "Visual Stylization Artist" to "Procedural Art Engineer" in TEAM.md and PROFILE.md. Role shift: style now baked into generation pipeline at draw time, not post-process. Directive sent. Rin delivered `LTG_TOOL_procedural_draw_v001.py` (wobble_line, wobble_polygon, variable_stroke, add_rim_light, silhouette_test, value_study). Artistry folder `/home/wipkat/artistry` inaccessible to agents (permission denied) — escalate to producer if needed.
-- **Kai QA tool**: `LTG_TOOL_render_qa_v001.py` delivered. 5 checks: silhouette readability, value range, color fidelity, warm/cool separation, line weight. All C25 assets graded WARN (none FAIL). Warm/cool WARN on character sheets is by design (neutral BG). SUNLIT_AMBER hue drift found on Luma assets (~18-25° vs target 34.3°) — open item.
+- **Rin role**: Changed from "Visual Stylization Artist" to "Procedural Art Engineer" in TEAM.md and PROFILE.md. Role shift: style now baked into generation pipeline at draw time, not post-process. Directive sent. Rin delivered `LTG_TOOL_procedural_draw.py` (wobble_line, wobble_polygon, variable_stroke, add_rim_light, silhouette_test, value_study). Artistry folder `/home/wipkat/artistry` inaccessible to agents (permission denied) — escalate to producer if needed.
+- **Kai QA tool**: `LTG_TOOL_render_qa.py` delivered. 5 checks: silhouette readability, value range, color fidelity, warm/cool separation, line weight. All C25 assets graded WARN (none FAIL). Warm/cool WARN on character sheets is by design (neutral BG). SUNLIT_AMBER hue drift found on Luma assets (~18-25° vs target 34.3°) — open item.
 - **UV_PURPLE fix**: Sam's QC found UV_PURPLE hue-rotating ~13-14° in stylization pipeline. Root cause: CANONICAL_PALETTE had wrong RGB for UV_PURPLE (#6A0DAD not #7B2FBE). Rin corrected in v002. SF02/SF03 regen runner was `run_sf02_sf03_regen.py` — now removed (post-processing pipeline retired C26).
-- **Post-processing pipeline retired (C26)**: Producer removed all 8 `*_styled*.png` files and moved `LTG_TOOL_stylize_handdrawn_v001.py`, `v002.py`, `LTG_TOOL_batch_stylize_v001.py` to `output/tools/legacy/`. Style is now baked at draw time. All references cleaned from pitch_package_index.md, pitch_delivery_manifest_v001.md, and output/tools/README.md.
+- **Post-processing pipeline retired (C26)**: Producer removed all 8 `*_styled*.png` files and moved `LTG_TOOL_stylize_handdrawn.py`, `v002.py`, `LTG_TOOL_batch_stylize.py` to `output/tools/legacy/`. Style is now baked at draw time. All references cleaned from pitch_package_index.md, pitch_delivery_manifest.md, and output/tools/README.md.
 - **SF04 Byte teal (Sam QC)**: CONFIRMED INTENTIONAL. `BYTE_FILL=(0,190,210)` and `BYTE_SH=(0,110,140)` alpha-180 on shadow half. Sam's sampled range ~(0,138-160) is a blend of lit + shadow — correct scene lighting under warm window key. No regen needed.
 - **Stale assets**: Producer directive — archive/delete stale assets after each cycle to control cost. Apply from C27 onward.
 - **QA 3-cycle focus (C26–C28)**: Aesthetics and rendering pipeline. C26 = QA tool built (Kai). C27 = integrate artistry techniques + run QA on all assets. C28 = refinement pass.
 
 **C26 team completions:**
 - Maya: Luma expression sheet v005 style-aligned (classroom head/hair/eye construction, warm BG). Turnaround v002 FRONT view fixed. Both overwritten in-place.
-- Kai: `LTG_TOOL_render_qa_v001.py` built. All C25 assets assessed — 0 FAIL / 8 WARN.
-- Rin: `LTG_TOOL_procedural_draw_v001.py` built. Role = Procedural Art Engineer. Stylize tools retired.
+- Kai: `LTG_TOOL_render_qa.py` built. All C25 assets assessed — 0 FAIL / 8 WARN.
+- Rin: `LTG_TOOL_procedural_draw.py` built. Role = Procedural Art Engineer. Stylize tools retired.
 - Sam: Color QC report (`output/production/color_qc_c25_assets.md`). 7/10 assets cleared. SF04 Byte teal confirmed intentional.
 
 **C26 open items (resolved):**
@@ -501,8 +494,8 @@ Alex submitted: `ideabox/20260330_alex_chen_glitch_construction_linter.md` — t
 ## Cycle 25 State (archived — C25 summary)
 
 **Cycle 25 tasks completed:**
-- SF04 — Luma + Byte interaction style frame created: `output/color/style_frames/LTG_COLOR_styleframe_luma_byte_v001.png`. Scene: Luma CURIOUS (looking right at monitor), Byte on her right shoulder looking UP at her with WORRIED expression. Dual warm/cool lighting. 1920×1080 → resized to ≤1280px (see image output rule above). Generator: `output/tools/LTG_COLOR_styleframe_luma_byte_v001.py`. Closes Critique 11 P1 gap (Valentina).
-- Canonical logo decision made: `LTG_BRAND_logo_v001.png` = asymmetric v002 layout. Generator wrapper `LTG_BRAND_logo_v001.py`. Closes 24-cycle logo ambiguity. Pitch package index and completeness table updated.
+- SF04 — Luma + Byte interaction style frame created: `output/color/style_frames/LTG_COLOR_styleframe_luma_byte.png`. Scene: Luma CURIOUS (looking right at monitor), Byte on her right shoulder looking UP at her with WORRIED expression. Dual warm/cool lighting. 1920×1080 → resized to ≤1280px (see image output rule above). Generator: `output/tools/LTG_COLOR_styleframe_luma_byte_v001.py`. Closes Critique 11 P1 gap (Valentina).
+- Canonical logo decision made: `LTG_BRAND_logo.png` = asymmetric v002 layout. Generator wrapper `LTG_BRAND_logo_v001.py`. Closes 24-cycle logo ambiguity. Pitch package index and completeness table updated.
 - Luma canonical reference directive sent to Maya (`20260329_1900_luma_canonical_ref_directive.md`): Expression sheet v004 IS canonical — style frame Luma must align to it. v005 sheet needs full-body silhouette differentiation. Turnaround v002 must match v004 proportions.
 - Miri KNOWING expression directive sent to Maya (`20260329_1901_miri_narrative_expression_directive.md`): Replace PENSIVE with KNOWING — weighted sideways glance + suppressed asymmetric smile (she knew about the Glitch Layer all along). Miri expression sheet v003 target.
 - Pitch package index updated to Cycle 25. SF04 entry, canonical logo, Cycle 25 open items table.
@@ -515,8 +508,8 @@ Alex submitted: `ideabox/20260330_alex_chen_glitch_construction_linter.md` — t
 
 **Cycle 25 team completions:**
 - Sam Kowalski: SF02 spec doc corrected (ENV-06/DRW-07 stale values), master palette GL-04b luminance fixed (~0.17 → ~0.017), Miri color story section added to ltg_style_frame_color_story.md (warm palette as narrative camouflage — she knew all along).
-- Kai Nakamura: `LTG_TOOL_color_verify_v001.py` built (canonical 6-color hue verification), legacy scripts archived (20 tools, 27 storyboard panels to legacy/), production doc naming exemption documented, batch stylize v1.1.0 (color verify integrated).
-- Rin Yamamoto: `LTG_TOOL_stylize_handdrawn_v002.py` rebuilt (4 fixes: full canonical color protection for all 6 GL colors, chalk pass cyan exclusions, warm bleed zone gate, mixed mode cross-dissolve replaces alpha composite). SF02+SF03 re-styled with v002. SF01 not re-processed (Cycle 24 approval stands).
+- Kai Nakamura: `LTG_TOOL_color_verify.py` built (canonical 6-color hue verification), legacy scripts archived (20 tools, 27 storyboard panels to legacy/), production doc naming exemption documented, batch stylize v1.1.0 (color verify integrated).
+- Rin Yamamoto: `LTG_TOOL_stylize_handdrawn.py` rebuilt (4 fixes: full canonical color protection for all 6 GL colors, chalk pass cyan exclusions, warm bleed zone gate, mixed mode cross-dissolve replaces alpha composite). SF02+SF03 re-styled with v002. SF01 not re-processed (Cycle 24 approval stands).
 
 **Cycle 25 pending (Maya to deliver):**
 - Luma expression sheet v005: full-body silhouette differentiation in ≥2 cells, hoodie pixel pattern legible.
@@ -525,7 +518,7 @@ Alex submitted: `ideabox/20260330_alex_chen_glitch_construction_linter.md` — t
 
 **Canonical decisions locked (C25):**
 - Luma canonical = expression sheet v004 spec (3.5 heads, skin #C8885A, 5 curls locked)
-- Logo canonical = `LTG_BRAND_logo_v001.png` (asymmetric layout, A grade C13)
+- Logo canonical = `LTG_BRAND_logo.png` (asymmetric layout, A grade C13)
 
 ---
 
@@ -533,7 +526,7 @@ Alex submitted: `ideabox/20260330_alex_chen_glitch_construction_linter.md` — t
 
 **Cycle 24 tasks completed:**
 - SF01 styled review: APPROVED. `LTG_COLOR_styleframe_discovery_v003_styled.png` approved as pitch primary. Approval + notes sent to Rin's inbox (`20260329_1530_sf01_review.md`). Key notes: paper tooth integrates correctly on warm zones, chalk highlights work, ghost Byte/digital layer unaffected, composition 100% intact.
-- `output/production/critique11_self_assessment.md` written — honest 1-page director's pre-critique assessment. Grade: A-. Strong: SF triptych, Miri v002, storyboard arc, Glitch concept. Vulnerable: Glitch sheet undersized (2×2 at 800×800), missing visual color model PNGs for Luma/Byte/Cosmo, logo caveat unresolved.
+- `critiques/critique11_self_assessment.md` written — honest 1-page director's pre-critique assessment. Grade: A-. Strong: SF triptych, Miri v002, storyboard arc, Glitch concept. Vulnerable: Glitch sheet undersized (2×2 at 800×800), missing visual color model PNGs for Luma/Byte/Cosmo, logo caveat unresolved.
 - Glitch character integration review completed. Feedback sent to Maya (`20260329_1530_glitch_integration_review.md`). Two required revisions: (1) CRITICAL — Glitch expression sheet must be regenerated at 1200×900, 3×2, 6 expressions (v002). (2) MODERATE — Glitch turnaround shadow facet contrast fix needed (UV_PURPLE shadow lost against void BG in profile views). Color/concept APPROVED — diamond/rhombus shape, CORRUPT_AMBER primary, dual-pixel-eye system all correct.
 - `output/production/pitch_package_index.md` updated to Cycle 24. Stylized assets added, open C24 items table added, cycle counter bumped.
 - Inbox fully archived (3 messages: Rin completion, C24 art direction, Maya C23 completion).
@@ -560,13 +553,13 @@ Alex submitted: `ideabox/20260330_alex_chen_glitch_construction_linter.md` — t
 
 **Cycle 23 tasks completed:**
 - `output/production/rin_c23_creative_brief.md` — creative direction for Rin Yamamoto's stylization pass. Real World vs Glitch Layer split, per-asset priority order, technical function spec, color preservation rules, quality benchmark. Creative brief dispatched to Rin's inbox.
-- `output/production/pitch_delivery_manifest_v001.md` — one-page external delivery asset list. ~31 files across 7 categories. Pre-ship checklist. Notes on what NOT to ship (generators, guide PNGs, internal docs).
+- `output/production/pitch_delivery_manifest.md` — one-page external delivery asset list. ~31 files across 7 categories. Pre-ship checklist. Notes on what NOT to ship (generators, guide PNGs, internal docs).
 - `output/production/pitch_package_index.md` updated to Cycle 23. Added Cycle 22 late additions (Byte/Cosmo/Luma v004 sheets, Tech Den v004, Kitchen v003, SF02 v005, render_lib rename), delivery manifest, creative brief. Full quality review section added. SF02 v004→v005 row added/superseded correctly. Cycle number updated to 23.
 - Full quality review completed — all primary pitch assets verified on disk. **Overall: PITCH READY.** No blocking issues.
 - Inbox fully archived (all messages through Cycle 23 Kai report).
 
 **Cycle 23 team updates (received this cycle):**
-- Rin Yamamoto: ACTIVE, first cycle. Waiting for creative brief (now delivered). Building `LTG_TOOL_stylize_handdrawn_v001.py`.
+- Rin Yamamoto: ACTIVE, first cycle. Waiting for creative brief (now delivered). Building `LTG_TOOL_stylize_handdrawn.py`.
 - Kai Nakamura: Cycle 23 pipeline cleanup complete. `ltg_render_lib.py` deprecated wrapper deleted. All imports clean. Offered Rin edge_wobble/chromatic_blur support.
 
 **Pitch package status (Cycle 23):**
@@ -579,15 +572,15 @@ Alex submitted: `ideabox/20260330_alex_chen_glitch_construction_linter.md` — t
 - Miri v002: **UNLOCKED** — narrative secret missing from expressions
 - Byte v004, Glitch v002: ACCEPTED (no issues flagged by Critique 11)
 - All environments: v002/v003/v004 — PITCH READY
-- Standalone pitch brief: `ltg_pitch_brief_v001.md` — COMPLETE
-- Delivery manifest: `pitch_delivery_manifest_v001.md` — NEW Cycle 23
+- Standalone pitch brief: `ltg_pitch_brief.md` — COMPLETE
+- Delivery manifest: `pitch_delivery_manifest.md` — NEW Cycle 23
 
 **Outstanding (non-blocking):**
 - Luma Act 2 pose lean still -5° (target -8°) — LOW
 - Legacy LTG renames pending (cold open panels, storyboard export, old ENV files) — internal housekeeping
 - Color model visual PNGs for Luma/Byte/Cosmo not yet PNG-exported — future cycle
 - Stylization pass pending (Rin C23) — will strengthen package; not blocking pitch
-- Logo placeholder check: `show_logo.png` may still have "A cartoon series by the Dream Team" tagline. `LTG_BRAND_logo_asymmetric_v002.png` is safe alternative.
+- Logo placeholder check: `show_logo.png` may still have "A cartoon series by the Dream Team" tagline. `LTG_BRAND_logo_asymmetric.png` is safe alternative.
 
 **Next: Cycle 24** (after Rin delivers stylization tool + output)
 
@@ -624,9 +617,9 @@ Alex submitted: `ideabox/20260330_alex_chen_glitch_construction_linter.md` — t
 - **Jordan Reed:** Tech Den v002 — window light shaft (trapezoid SUNLIT_AMBER, feathered, dust motes seed 77), monitor glow spill on desk/chair/shelving (RGB 180,200,210 — zero Glitch palette), right-half bedding/pillows/poster/printouts/device added, Cosmo jacket RW-08 Dusty Lavender clearly rendered.
 
 **Open pitch package index items (C20 deliverables not yet added):**
-- Act 2 contact sheet v006 — LTG_SB_act2_contact_sheet_v006.png
-- Act 1 full contact sheet v001 — LTG_SB_act1_full_contact_sheet_v001.png
-- Tech Den v002 — LTG_ENV_tech_den_v002.png
+- Act 2 contact sheet v006 — LTG_SB_act2_contact_sheet.png
+- Act 1 full contact sheet v001 — LTG_SB_act1_full_contact_sheet.png
+- Tech Den v002 — LTG_ENV_tech_den.png
 - SF03 v003 color review updated (final verified)
 - SF02 v004 color notes updated (conditional ready, window pane note on record)
 
@@ -673,7 +666,7 @@ Alex submitted: `ideabox/20260330_alex_chen_glitch_construction_linter.md` — t
 **Cycle 18 work completed (this cycle):**
 - **Alex (self):** README logo moved to top (Task 1). Pitch package index updated with all C16 + C17 assets (Task 2). SF02/SF03 pre-critique assessment written: `output/production/sf02_sf03_precritique_c18.md` (Task 3). All C17 completion reports archived.
 
-**Also received C18 Maya Santos report:** A2-02 Byte RESIGNED MCU v002 delivered (`LTG_SB_act2_panel_a202_v002.png`). 55% aperture (transitional), parabolic droopy lid, downcast pupil +7px, ↓ pixel glyph, transitional arm posture. Added to pitch package index under C18 additions.
+**Also received C18 Maya Santos report:** A2-02 Byte RESIGNED MCU v002 delivered (`LTG_SB_act2_panel_a202.png`). 55% aperture (transitional), parabolic droopy lid, downcast pupil +7px, ↓ pixel glyph, transitional arm posture. Added to pitch package index under C18 additions.
 
 **Key index additions (C16+C17):**
 - Section 1.3: Luma expression sheet v002 (refined, C17), Grandma Miri expression sheet v001 (C17, closes CRITICAL gap)
@@ -710,7 +703,7 @@ Alex submitted: `ideabox/20260330_alex_chen_glitch_construction_linter.md` — t
 ## Cycle 16 State (archived)
 
 **Cycle 16 completed work (mid-cycle):**
-- **Maya Santos DONE:** Byte RESIGNED right eye fixed (45% aperture, +10px downcast pupil, parabolic lid droop, body_tilt +14°). Cosmo SKEPTICAL lean +6° added, 2 new expressions (WORRIED, SURPRISED) added — sheet now 6/6. Luma Act 2 pose mitten geometry corrected. New files: `LTG_CHAR_byte_expression_sheet_v002.png` (regen), `LTG_CHAR_cosmo_expression_sheet_v002.png`, `LTG_CHAR_luma_act2_standing_pose_v002.png`.
+- **Maya Santos DONE:** Byte RESIGNED right eye fixed (45% aperture, +10px downcast pupil, parabolic lid droop, body_tilt +14°). Cosmo SKEPTICAL lean +6° added, 2 new expressions (WORRIED, SURPRISED) added — sheet now 6/6. Luma Act 2 pose mitten geometry corrected. New files: `LTG_CHAR_byte_expression_sheet.png` (regen), `LTG_CHAR_cosmo_expression_sheet.png`, `LTG_CHAR_luma_act2_standing_pose.png`.
 - **Sam Kowalski DONE:** BYTE_SH shadow corrected to GL-01a `(0,168,192)`. BG_ALARM corrected to cold `(18,28,44)`. Faceplate sizing made proportional. DRW-07 `DRW_HOODIE_STORM` corrected to `(200,105,90)`. ENV-06 verified correct. SF03 color review notes sent (see inbox archived). DRW-18 hair sheen present in generator but thin — Jordan to amplify.
 - **Lee Tanaka UNBLOCKED:** A2-07 confirmed unblocked. Notified via inbox.
 - **Jordan Reed IN PROGRESS:** SF02 v003, SF03 v002, Classroom v002, Grandma Miri's Kitchen — SF03 color notes relayed. DRW-07 fix confirmed in SF02 v002 generator before Jordan's v003 regen.
@@ -722,26 +715,26 @@ Alex submitted: `ideabox/20260330_alex_chen_glitch_construction_linter.md` — t
 - Lee: A2-07, A2-03 restage, A2-06 MED two-shot, A2-04 Byte addition, contact sheet v003
 
 ## Cycle 15 Lessons
-- **RESIGNED expression delivered:** `LTG_TOOL_byte_expression_sheet_v002.py` adds 8th expression. Key distinctions: `↓` pixel symbol (distinct from flat-line NEUTRAL), `droopy_resigned` right eye (NO suppressed smile, downcast pupil — distinct from RELUCTANT JOY's `droopy`), arms arm_x_scale=0.50 (tighter than NEUTRAL 0.75), body_tilt=+8 (backward avoidance lean). A2-02 no longer blocked. Lee Tanaka notified.
-- **SF03 already complete:** Jordan Reed's `LTG_TOOL_style_frame_03_other_side_v001.py` was built this cycle (Cycle 15 per README) — full generator including characters and lighting overlay. `LTG_COLOR_styleframe_otherside_v001.png` exists. All 3 style frames now pitch-ready. Task was to "check if BG ready and composite" — BG existed AND Jordan's full tool already handled the composite. My role: verify, register, update index.
+- **RESIGNED expression delivered:** `LTG_TOOL_byte_expression_sheet.py` adds 8th expression. Key distinctions: `↓` pixel symbol (distinct from flat-line NEUTRAL), `droopy_resigned` right eye (NO suppressed smile, downcast pupil — distinct from RELUCTANT JOY's `droopy`), arms arm_x_scale=0.50 (tighter than NEUTRAL 0.75), body_tilt=+8 (backward avoidance lean). A2-02 no longer blocked. Lee Tanaka notified.
+- **SF03 already complete:** Jordan Reed's `LTG_TOOL_style_frame_03_other_side.py` was built this cycle (Cycle 15 per README) — full generator including characters and lighting overlay. `LTG_COLOR_styleframe_otherside.png` exists. All 3 style frames now pitch-ready. Task was to "check if BG ready and composite" — BG existed AND Jordan's full tool already handled the composite. My role: verify, register, update index.
 - **Pitch package index updated through Cycle 15:** All Cycle 13/14/15 additions documented. Style frames now COMPLETE (was PARTIAL). Byte.md now v3.2 (was incorrectly listed as v3.1 with header note). Open blockers revised.
-- **Tools README:** `LTG_TOOL_byte_expression_sheet_v002.py` registered. Jordan's SF03 tools were already registered.
+- **Tools README:** `LTG_TOOL_byte_expression_sheet.py` registered. Jordan's SF03 tools were already registered.
 - **droopy vs droopy_resigned:** `droopy` = RELUCTANT JOY (lower-lid smile crinkle present). `droopy_resigned` = RESIGNED (no crinkle, pupil fully downcast, heavier lid 50% vs 55%, shorter highlight). Must never be confused — one suppresses joy, the other has surrendered.
 - **Sam Kowalski SF03 color notes:** Requested for Cycle 16 review. Five questions: UV purple ambient read, inverted atmos perspective, Byte eye pair legibility, confetti density, abyss below platform.
 
 ## Cycle 14 Lessons
-- **Byte float-gap dimension arrow (Dmitri P1 — RESOLVED):** Replaced Cycle 12 "ground floor." caption with a proper engineering dimension arrow in `LTG_TOOL_character_lineup_v003.py`. Two-headed vertical arrow (GROUNDFLOOR_COL), horizontal serif ticks at each tip, "0.25 HU" label beside shaft. Arrow positioned at `byte_cx + body_rx + 10`. Output: `LTG_CHAR_lineup_v003.png`.
-- **Misnamed tools corrected:** `LTG_CHAR_luma_expression_sheet_v002.py` → `LTG_TOOL_luma_expression_sheet_v002.py` (note added in header). `bg_glitch_layer_encounter.py` → `LTG_TOOL_bg_glitch_layer_encounter_v001.py` (moved to tools/). Both originals retained per version preservation policy.
-- **Glitch Layer frame canonical:** `LTG_ENV_glitchlayer_frame_v001.png` = CANONICAL (81,483 bytes, Cycle 11 regen). `v002` = archive copy (80,664 bytes, older render). Documented in compliance checklist.
+- **Byte float-gap dimension arrow (Dmitri P1 — RESOLVED):** Replaced Cycle 12 "ground floor." caption with a proper engineering dimension arrow in `LTG_TOOL_character_lineup.py`. Two-headed vertical arrow (GROUNDFLOOR_COL), horizontal serif ticks at each tip, "0.25 HU" label beside shaft. Arrow positioned at `byte_cx + body_rx + 10`. Output: `LTG_CHAR_lineup.png`.
+- **Misnamed tools corrected:** `LTG_CHAR_luma_expression_sheet.py` → `LTG_TOOL_luma_expression_sheet.py` (note added in header). `bg_glitch_layer_encounter.py` → `LTG_TOOL_bg_glitch_layer_encounter.py` (moved to tools/). Both originals retained per version preservation policy.
+- **Glitch Layer frame canonical:** `LTG_ENV_glitchlayer_frame.png` = CANONICAL (81,483 bytes, Cycle 11 regen). `v002` = archive copy (80,664 bytes, older render). Documented in compliance checklist.
 - **SF03 spec written:** `/output/production/sf03_other_side_spec.md` — full generator spec for Jordan Reed. Five depth layers, all RGB values, lighting setup, draw order, validation checklist. Jordan notified via inbox. Key rule: NO warm light (inverted atmospheric perspective — purple gets darker with distance, not lighter).
 - **SF01 v003 assessment:** Ghost Bytes at alpha 90/105 — A+, pitch-ready. Top-left monitor relocation confirmed correct (warm lamp bleed zone clean). SF01 v003 LOCKED as canonical Discovery style frame.
 - **Compliance checklist updated:** Cycle 14 pass documented — all tool renames, glitch layer frame canonicalization, and lineup generator correction noted.
 
 ## Cycle 13 Lessons
-- **Ghost Byte alpha fix (SF01 v003):** Body alpha 55→90, eye glints 65–70→105. Top-left monitor removed (warm lamp bleed kills contrast). Two ghosts (top-right + mid-left) instead of three. Victoria B+→A+ calibrated. Output: `LTG_COLOR_styleframe_discovery_v003.png`.
-- **Asymmetric logo v002:** "&" now warm-to-cold gradient (SUNLIT_AMBER left → ELEC_CYAN right) via per-column alpha composite. "the/Glitchkin" gap reduced 30% (int(H*0.04)→int(H*0.028)). Output: `LTG_BRAND_logo_asymmetric_v002.png`.
-- **SF02 character composite v002:** Byte hovering LEFT (~28%), Luma CENTER (~45%), Cosmo RIGHT (~62%). Byte = VOID_BLACK body (storm variant, intentional). CORRUPT_AMBER outlines on all characters for figure-ground. char_h raised to 18% from 15%. Dutch angle still applied last. Output: `LTG_COLOR_styleframe_glitch_storm_v002.png`.
-- **Byte cracked-eye glyph:** 7×7 dead-pixel pattern with diagonal crack fracture. Dead zone upper-right, alive zone lower-left, Hot Magenta crack line. Reference PNG at 4 scales + in-eye mockups. Documented in byte.md Section 9B. Lee Tanaka notified. Output: `LTG_CHAR_byte_cracked_eye_glyph_v001.png`.
+- **Ghost Byte alpha fix (SF01 v003):** Body alpha 55→90, eye glints 65–70→105. Top-left monitor removed (warm lamp bleed kills contrast). Two ghosts (top-right + mid-left) instead of three. Victoria B+→A+ calibrated. Output: `LTG_COLOR_styleframe_discovery.png`.
+- **Asymmetric logo v002:** "&" now warm-to-cold gradient (SUNLIT_AMBER left → ELEC_CYAN right) via per-column alpha composite. "the/Glitchkin" gap reduced 30% (int(H*0.04)→int(H*0.028)). Output: `LTG_BRAND_logo_asymmetric.png`.
+- **SF02 character composite v002:** Byte hovering LEFT (~28%), Luma CENTER (~45%), Cosmo RIGHT (~62%). Byte = VOID_BLACK body (storm variant, intentional). CORRUPT_AMBER outlines on all characters for figure-ground. char_h raised to 18% from 15%. Dutch angle still applied last. Output: `LTG_COLOR_styleframe_glitch_storm.png`.
+- **Byte cracked-eye glyph:** 7×7 dead-pixel pattern with diagonal crack fracture. Dead zone upper-right, alive zone lower-left, Hot Magenta crack line. Reference PNG at 4 scales + in-eye mockups. Documented in byte.md Section 9B. Lee Tanaka notified. Output: `LTG_CHAR_byte_cracked_eye_glyph.png`.
 - **BRAND ratified, COL retired:** naming_conventions.md updated to v1.1. BRAND = show logos/identity. COL was never valid — use COLOR only. Compliance checklist updated.
 - **Byte storm-scene variant (Naomi flag resolved):** VOID_BLACK body in SF02 is INTENTIONAL — Byte consumed by Void/Corruption during storm. Visible only by CORRUPT_AMBER outline. Narrative color statement. Documented in byte.md Section 13A.
 - **byte.md version 3.2:** Sections 9B (cracked-eye glyph) and 13A (storm-scene variant) added. Version header and colophon updated.
@@ -750,10 +743,10 @@ Alex submitted: `ideabox/20260330_alex_chen_glitch_construction_linter.md` — t
 - **CHAR-L-11 registered (Sam Kowalski request):** Warm-side hoodie pixel activation = #E8C95A (Soft Gold). Registered as CHAR-L-11 (not CHAR-L-09b — shoe canvas slot kept). Message sent to Sam to add to master_palette.md.
 
 ## Cycle 12 Lessons
-- **Byte ground-floor annotation:** Added dashed `GROUNDFLOOR_COL=(100,168,200)` line at `BASELINE_Y` under Byte, with label "ground floor." and downward arrow. Dmitri P1 (3rd notice) closed. New output: `LTG_CHAR_lineup_v002.png`.
-- **Cosmo side glasses refactor:** `_draw_cosmo_glasses()` extended with `is_side=True, front_x=` parameters. Side view now uses shared helper (inline code removed from `draw_cosmo_side()`). All four views now route through the same function. Output: `LTG_CHAR_cosmo_turnaround_v002.png`.
-- **Ghost Byte visual surprise (A+ gap):** Faint oval Byte-ghost (alpha 55/255) composite on 3 peripheral monitors via RGBA layer. Implies Byte was watching from all screens before revealing itself — story beat hidden in art. Victoria Ashford A+ direction. Output: `LTG_COLOR_styleframe_discovery_v002.png`. Cycle label: "Ghost Byte".
-- **Asymmetric logo:** `LTG_TOOL_logo_asymmetric_v001.py` produces `LTG_BRAND_logo_asymmetric_v001.png`. "Luma" at 180px (dominant left), "&" at 56px (bridge), "the Glitchkin" stacked at 72px (right). Bi-color scan bar below; larger pixel scatter on right as visual counterweight.
+- **Byte ground-floor annotation:** Added dashed `GROUNDFLOOR_COL=(100,168,200)` line at `BASELINE_Y` under Byte, with label "ground floor." and downward arrow. Dmitri P1 (3rd notice) closed. New output: `LTG_CHAR_lineup.png`.
+- **Cosmo side glasses refactor:** `_draw_cosmo_glasses()` extended with `is_side=True, front_x=` parameters. Side view now uses shared helper (inline code removed from `draw_cosmo_side()`). All four views now route through the same function. Output: `LTG_CHAR_cosmo_turnaround.png`.
+- **Ghost Byte visual surprise (A+ gap):** Faint oval Byte-ghost (alpha 55/255) composite on 3 peripheral monitors via RGBA layer. Implies Byte was watching from all screens before revealing itself — story beat hidden in art. Victoria Ashford A+ direction. Output: `LTG_COLOR_styleframe_discovery.png`. Cycle label: "Ghost Byte".
+- **Asymmetric logo:** `LTG_TOOL_logo_asymmetric.py` produces `LTG_BRAND_logo_asymmetric.png`. "Luma" at 180px (dominant left), "&" at 56px (bridge), "the Glitchkin" stacked at 72px (right). Bi-color scan bar below; larger pixel scatter on right as visual counterweight.
 - **NEVER overwrite existing assets** — always new versioned files. Naming: `LTG_[CAT]_[descriptor]_v[###].png`.
 - **Style frame draw order after RGBA composite:** Must refresh `draw = ImageDraw.Draw(img)` after any `img.paste()` call from compositing, or subsequent draws go to the old surface.
 

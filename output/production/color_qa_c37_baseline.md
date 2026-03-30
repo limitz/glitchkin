@@ -1,13 +1,13 @@
 # Color QA Baseline — Cycle 37
 **Author:** Sam Kowalski (Color & Style Artist)
 **Date:** 2026-03-30
-**Tool versions:** LTG_TOOL_palette_warmth_lint_v004.py v4.0.0 · LTG_TOOL_render_qa_v001.py v1.4.0
+**Tool versions:** LTG_TOOL_palette_warmth_lint.py v4.0.0 · LTG_TOOL_render_qa.py v1.4.0
 
 ---
 
 ## 1. Warmth Lint v004 — Master Palette
 
-**Command:** `python LTG_TOOL_palette_warmth_lint_v004.py output/color/palettes/master_palette.md --no-auto-world-type`
+**Command:** `python LTG_TOOL_palette_warmth_lint.py output/color/palettes/master_palette.md --no-auto-world-type`
 
 | Prefixes | Entries Checked | Violations | Result |
 |---|---|---|---|
@@ -82,7 +82,7 @@ Warm/cool is SKIPPED for character sheet asset type — these have uniform neutr
 
 ## 5. New Environment — Grandma Living Room v001 (Hana Okonkwo, C37)
 
-**Asset:** `LTG_ENV_grandma_living_room_v001.png`
+**Asset:** `LTG_ENV_grandma_living_room.png`
 **World type:** REAL (inferred from `grandma` keyword)
 **Warm/cool threshold:** 20.0 PIL units
 

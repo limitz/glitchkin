@@ -13,8 +13,8 @@ When a QA tool flags an asset, check this registry FIRST before investigating as
 
 ## FP-001 — SF03 UV_PURPLE gradient median pull
 
-**Asset:** `LTG_COLOR_styleframe_otherside_v005.png`
-**Tool:** `LTG_TOOL_color_verify_v002.py`
+**Asset:** `LTG_COLOR_styleframe_otherside.png`
+**Tool:** `LTG_TOOL_color_verify.py`
 **Color:** UV_PURPLE (GL-04, #7B2FBE, hue 271.9°)
 **Reported delta:** Δ9.2°
 **Status:** DOCUMENTED FALSE POSITIVE — accepted C23; re-confirmed C31/C34/C35.
@@ -32,8 +32,8 @@ has n=132 pixels (second-largest) — the color IS present and correct.
 
 ## FP-002 — SUNLIT_AMBER skin-tone hit on character sheets
 
-**Assets:** `LTG_CHAR_luma_expressions_v007.png` (and all Luma/Miri expression sheets)
-**Tool:** `LTG_TOOL_color_verify_v002.py`
+**Assets:** `LTG_CHAR_luma_expressions.png` (and all Luma/Miri expression sheets)
+**Tool:** `LTG_TOOL_color_verify.py`
 **Color:** SUNLIT_AMBER (RW-03, #D4923A, hue 34.3°)
 **Reported delta:** varies (Δ6-10°)
 **Status:** DOCUMENTED FALSE POSITIVE — accepted C26; confirmed C30/C31/C32/C34/C35.
@@ -52,8 +52,8 @@ SUNLIT_AMBER is present — this is correct for character model sheets.
 
 ## FP-003 — SF03 SUNLIT_AMBER skin/hoodie hit
 
-**Asset:** `LTG_COLOR_styleframe_otherside_v005.png`
-**Tool:** `LTG_TOOL_color_verify_v002.py`
+**Asset:** `LTG_COLOR_styleframe_otherside.png`
+**Tool:** `LTG_TOOL_color_verify.py`
 **Color:** SUNLIT_AMBER (RW-03, #D4923A, hue 34.3°)
 **Reported delta:** Δ9.3° (found 25.0°)
 **Status:** DOCUMENTED FALSE POSITIVE — accepted C26; confirmed C30/C31/C32/C34/C35.
@@ -67,8 +67,8 @@ confirmed in generator and QA checks.
 
 ## FP-004 — SF04 SUNLIT_AMBER compositing artifact
 
-**Asset:** `LTG_COLOR_styleframe_luma_byte_v004.png`
-**Tool:** `LTG_TOOL_color_verify_v002.py`
+**Asset:** `LTG_COLOR_styleframe_luma_byte.png`
+**Tool:** `LTG_TOOL_color_verify.py`
 **Color:** SUNLIT_AMBER (RW-03, #D4923A, hue 34.3°)
 **Reported delta:** Δ15.7° (found 18.6°)
 **Status:** DOCUMENTED FALSE POSITIVE — accepted C35 (Alex Chen art director decision,
@@ -83,7 +83,7 @@ confirmed in generator and QA checks.
    from a wrong source color.
 
 **Generator source color:** `SUNLIT_AMBER = (212, 146, 58)` at line 69 of
-`LTG_TOOL_styleframe_luma_byte_v004.py` — matches canonical RW-03 #D4923A exactly.
+`LTG_TOOL_styleframe_luma_byte.py` — matches canonical RW-03 #D4923A exactly.
 The source constant is correct; the drift is compositing only.
 
 **Note:** SUNLIT_AMBER is also unused in direct draw calls (the lamp uses `(255,200,80)`
@@ -94,8 +94,8 @@ See comment added to generator in C35.
 
 ## FP-005 — SF04 Byte Teal below canonical luminance
 
-**Asset:** `LTG_COLOR_styleframe_luma_byte_v004.png`
-**Tool:** `LTG_TOOL_color_verify_v002.py`
+**Asset:** `LTG_COLOR_styleframe_luma_byte.png`
+**Tool:** `LTG_TOOL_color_verify.py`
 **Color:** BYTE_TEAL (GL-01b, #00D4E8)
 **Status:** SCENE-LIGHTING EXCEPTION — accepted C33 (Alex Chen art director decision,
 `output/color/palettes/master_palette.md` QA Scene-Lighting Exceptions section).
@@ -109,7 +109,7 @@ The QA tool samples at canonical saturation and misses the shadowed version.
 ## FP-006 — Warm/cool separation on single-dominant-temperature style frames
 
 **Assets:** All 4 pitch style frames (SF01, SF02, SF03, SF04)
-**Tool:** `LTG_TOOL_render_qa_v001.py` (check D — `_check_warm_cool()`)
+**Tool:** `LTG_TOOL_render_qa.py` (check D — `_check_warm_cool()`)
 **Reported separation:** SF01=17.9, SF02=6.5, SF03=3.0, SF04=1.1
 **Status:** RESOLVED C39 — SF01, SF02, SF03 all PASS. SF04 also PASS (see below).
 
@@ -130,7 +130,7 @@ a vertical split. The metric cannot distinguish "intentionally warm frame" from 
 1. REAL_STORM sub-type added: filenames matching `glitch_storm`, `sf02`, or `storm` keywords
    now use threshold=3. SF02 (sep=6.5) → REAL_STORM → **PASS**. Implements ideabox
    `20260330_sam_kowalski_render_qa_real_threshold_split.md`.
-2. World-type inference in render_qa upgraded to prefer `LTG_TOOL_world_type_infer_v001`
+2. World-type inference in render_qa upgraded to prefer `LTG_TOOL_world_type_infer`
    (standalone) over embedded warmth_lint_v004 rules. This fixes SF04 "luma_byte" inference —
    world_type_infer_v001 has the "luma_byte" → REAL rule that was missing from warmth_lint_v004.
    SF04 world_type now "REAL", threshold=12 → sep=1.1 → still WARN (acceptable — soft-key by design).
@@ -139,14 +139,14 @@ a vertical split. The metric cannot distinguish "intentionally warm frame" from 
 Alex Chen's Art Director decision. Not a production blocker. FP-007 submitted to track this
 as a distinct accepted WARN state.
 
-**Tools:** `LTG_TOOL_world_type_infer_v001.py` (C38) + `render_qa v1.6.0` (C39).
+**Tools:** `LTG_TOOL_world_type_infer.py` (C38) + `render_qa v1.6.0` (C39).
 
 ---
 
 ## FP-007 — SF04 warm/cool WARN — soft-key scene by design
 
-**Asset:** `LTG_COLOR_styleframe_luma_byte_v004.png`
-**Tool:** `LTG_TOOL_render_qa_v001.py` (check D — warm/cool)
+**Asset:** `LTG_COLOR_styleframe_luma_byte.png`
+**Tool:** `LTG_TOOL_render_qa.py` (check D — warm/cool)
 **Reported separation:** 1.1 PIL units
 **Status:** ACCEPTED WARN — Alex Chen Art Director decision. See master_palette.md
 QA Scene-Lighting Exceptions section (C33 notation).

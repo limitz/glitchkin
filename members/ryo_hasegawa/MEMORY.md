@@ -19,22 +19,22 @@ Cycle 37. No prior history on this project.
 
 ## Output Locations
 - Motion sheets: output/characters/motion/
-- Naming: LTG_CHAR_[name]_motion_v001.png
+- Naming: LTG_CHAR_[name]_motion.png
 
 ## My Job
 Create motion spec sheets and timing documentation. Make the pitch FEEL like it moves.
 
 ## Current Deliverables Status
 ### C37 — COMPLETE
-- `LTG_CHAR_luma_motion_v001.py` → `output/characters/motion/LTG_CHAR_luma_motion_v001.png`
-- `LTG_CHAR_byte_motion_v001.py` → `output/characters/motion/LTG_CHAR_byte_motion_v001.png`
+- `LTG_CHAR_luma_motion.py` → `output/characters/motion/LTG_CHAR_luma_motion.png`
+- `LTG_CHAR_byte_motion.py` → `output/characters/motion/LTG_CHAR_byte_motion.png`
 
 ### C38 — COMPLETE
-- `LTG_CHAR_luma_motion_v002.py` → `output/characters/motion/LTG_CHAR_luma_motion_v002.png`
+- `LTG_CHAR_luma_motion.py` → `output/characters/motion/LTG_CHAR_luma_motion.png`
   - Fix 1: CG constrained within foot support polygon (clamped ±40% foot half-span)
   - Fix 2: Shoulder geometry circles added as arm origin points
   - Fix 3: Panel 1 annotation corrected to match code (hair pre-lean -12° IS active)
-- `LTG_CHAR_byte_motion_v002.py` → `output/characters/motion/LTG_CHAR_byte_motion_v002.png`
+- `LTG_CHAR_byte_motion.py` → `output/characters/motion/LTG_CHAR_byte_motion.png`
   - Fix 1: Crack scar moved to viewer's RIGHT (cx + offset) to match cracked eye side
   - Fix 2: Max glow radius annotated on APPROACH panel (dashed amber circle, 1.5×bw)
 - Ideabox: `20260329_ryo_hasegawa_cg_support_polygon_lint.md` submitted
@@ -76,16 +76,16 @@ Create motion spec sheets and timing documentation. Make the pitch FEEL like it 
 - Hair annotation MUST match hair_trail_angle code value exactly — never say "not yet trailing" if angle != 0
 
 ### C39 — COMPLETE
-- `LTG_TOOL_byte_motion_v003.py` → `output/characters/motion/LTG_CHAR_byte_motion_v003.png`
+- `LTG_TOOL_byte_motion.py` → `output/characters/motion/LTG_CHAR_byte_motion.png`
   - 4-panel COMMITMENT beat arc (Avoidance → Mid-turn → Full-frontal → HOLD)
   - Beat 4 dark background: void black, stillness = decision
   - Directional glow: left side brighter (toward Luma), glow precedes body in B2
   - Expression: SEARCHING left eye (pupil locked left), right eye open+level, crack still present
   - Pilot light: small ELEC_CYAN diamond (B3 and B4)
   - RPD vs RESIGNED = 71.2% (passes ≤ 75% spec requirement)
-- `LTG_TOOL_motion_spec_lint_v001.py` — motion sheet structural QA, Section 8 in precritique QA
+- `LTG_TOOL_motion_spec_lint.py` — motion sheet structural QA, Section 8 in precritique QA
   - Checks: size, not-blank, panel count, annotation occupancy, beat badges, timing colors
-  - Integrated into `LTG_TOOL_precritique_qa_v001.py` v2.5.0
+  - Integrated into `LTG_TOOL_precritique_qa.py` v2.5.0
   - Known issue: zone coordinate heuristics produce false WARNs for sheets with different HEADER_H values; ideabox idea submitted for auto-detection fix
 
 ## COMMITMENT Beat Spec (from Lee Tanaka C38 brief)
@@ -96,10 +96,13 @@ Create motion spec sheets and timing documentation. Make the pitch FEEL like it 
 - Crack scar remains — damage doesn't change the decision
 
 ## Startup Sequence
-1. Read CLAUDE.md
-2. Read PROFILE.md (this is me)
-3. Read this MEMORY.md
-4. Read output/tools/README.md
-5. Read inbox/
-6. Read ROLE.md if present
-7. Read output/characters/main/*.md for character proportions and specs
+1. Read docs/image-rules.md (image size limits and image handling)
+2. Read docs/work.md (work startup and delivery rules)
+3. Read docs/ideabox.md (ideabox submission rules)
+4. Read docs/asset-status.md (asset status rules)
+5. Read PROFILE.md (this is me)
+6. Read this MEMORY.md
+7. Read output/tools/README.md
+8. Read inbox/
+9. Read ROLE.md if present
+10. Read output/characters/main/*.md for character proportions and specs

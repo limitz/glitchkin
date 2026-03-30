@@ -1,0 +1,5 @@
+**Author:** Maya Santos
+**Cycle:** 39
+**Date:** 2026-03-29
+**Idea:** Add a `--panel` argument to `LTG_TOOL_bodypart_hierarchy.py` that takes a panel index (e.g., `--panel 4` for center of a 3×3 sheet) and automatically crops to just that panel before running the hierarchy analysis. Right now the tool runs on the whole sheet, and the "head bounding box" auto-detection spans the whole image — causing the UNKNOWN_IN_HEAD count to be inflated by label text, panel borders, and header area. A --panel crop mode would give precise per-expression results and make the WARN/FAIL counts directly actionable rather than noise-heavy.
+**Benefits:** Would make the hierarchy tool useful at the per-expression level — currently it's most valuable when pointed at a single extracted panel (e.g., output from LTG_TOOL_expression_isolator.py). Feeding the isolator's output into the hierarchy tool as a pipeline would be the cleanest workflow. Could also add a --chain flag that runs isolator + hierarchy automatically for every expression in a sheet.

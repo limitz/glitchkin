@@ -97,7 +97,7 @@ The current sprint geometry has Luma's torso as a centered ellipse with symmetri
 
 - At `char_h = int(H * 0.18) = 194px` (at 1080H), head_r ≈ 23px.
 - Face drawing must happen at head_r scale. Eyes at ~4px radius. Single-pixel brows. These are achievable.
-- Reference: `_draw_luma()` in `LTG_TOOL_style_frame_02_glitch_storm_v005.py` (lines 592–660 of the source in `output/color/style_frames/`) — the face section is missing and needs to be added.
+- Reference: `_draw_luma()` in `LTG_TOOL_style_frame_02_glitch_storm.py` (lines 592–660 of the source in `output/color/style_frames/`) — the face section is missing and needs to be added.
 - Do NOT add face elements that crowd the head ellipse — at 23px head radius, limit to: 2 eyes, 2 brows (lines), 1 mouth mark. That is sufficient for a readable expression.
 
 ---
@@ -115,7 +115,7 @@ The current sprint geometry has Luma's torso as a centered ellipse with symmetri
 
 ## Deliverable
 
-Rin: implement these changes as `LTG_TOOL_style_frame_02_glitch_storm_v006.py`. Output: `LTG_COLOR_styleframe_glitch_storm_v006.png`.
+Rin: implement these changes as `LTG_TOOL_style_frame_02_glitch_storm.py`. Output: `LTG_COLOR_styleframe_glitch_storm.png`.
 
 The face drawing sub-function should be extracted as `_draw_luma_face_sprint(draw, cx, head_cy, head_r)` called within `_draw_luma()` after the head ellipse fill. This keeps the sprint face isolated and revisable without touching body geometry.
 

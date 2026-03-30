@@ -41,4 +41,4 @@ Marcus reviews all output for conceptual integrity — character designs, enviro
 
 ## Workflow
 
-Before beginning your critique, read and follow the Critic Workflow in `CLAUDE.md` (located at the project root `/home/wipkat/team/CLAUDE.md`). It contains the Image Handling and Critics sections that govern image inspection and critique format.
+Before beginning your critique, read `docs/image-rules.md` (image size limits and handling) and `docs/critic-workflow.md` (critique standards and format).

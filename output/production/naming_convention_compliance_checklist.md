@@ -86,7 +86,7 @@ When in doubt — one primary category. If the file is genuinely two things (e.g
 | `byte.md` | `LTG_CHAR_byte_designsheet_v001.md` |
 | `byte_expressions.png` | `LTG_CHAR_byte_expressions_v001.png` |
 | `frame01_house_interior.png` | `LTG_ENV_lumas_house_int_v001.png` |
-| `style_frame_01_rendered.png` | `LTG_COLOR_styleframe_discovery_v001.png` |
+| `style_frame_01_rendered.png` | `LTG_COLOR_styleframe_discovery.png` |
 | `master_palette.md` | `LTG_COLOR_palette_master_v002.md` |
 | `production_bible.md` | `LTG_PROD_production_bible_v003.md` |
 | `panel_p01_exterior.png` | `LTG_SB_ep01_cold_open_p01_v001.png` |
@@ -130,52 +130,52 @@ The existing output folder contains files named under the pre-convention system.
 LTG-compliant copies created alongside legacy originals (originals untouched):
 
 **Character Turnarounds (CHAR):**
-- `luma_turnaround.png` → `LTG_CHAR_luma_turnaround_v001.png` ✓
-- `byte_turnaround.png` → `LTG_CHAR_byte_turnaround_v001.png` ✓
-- `cosmo_turnaround.png` → `LTG_CHAR_cosmo_turnaround_v001.png` ✓
-- `miri_turnaround.png` → `LTG_CHAR_miri_turnaround_v001.png` ✓
+- `luma_turnaround.png` → `LTG_CHAR_luma_turnaround.png` ✓
+- `byte_turnaround.png` → `LTG_CHAR_byte_turnaround.png` ✓
+- `cosmo_turnaround.png` → `LTG_CHAR_cosmo_turnaround.png` ✓
+- `miri_turnaround.png` → `LTG_CHAR_miri_turnaround.png` ✓
 
 **Style Frames (COLOR):**
-- `style_frame_01_rendered.png` → `LTG_COLOR_styleframe_discovery_v001.png` ✓
-- Style Frame 02 BG newly created: `LTG_COLOR_styleframe_glitch_storm_v001.png` ✓
+- `style_frame_01_rendered.png` → `LTG_COLOR_styleframe_discovery.png` ✓
+- Style Frame 02 BG newly created: `LTG_COLOR_styleframe_glitch_storm.png` ✓
 
 **Color Model Swatches (COLOR):**
-- `luma_swatches.png` → `LTG_COLOR_luma_color_model_swatches_v001.png` ✓
-- `byte_swatches.png` → `LTG_COLOR_byte_color_model_swatches_v001.png` ✓
-- `cosmo_swatches.png` → `LTG_COLOR_cosmo_color_model_swatches_v001.png` ✓
-- `grandma_miri_swatches.png` → `LTG_COLOR_grandma_miri_color_model_swatches_v001.png` ✓
+- `luma_swatches.png` → `LTG_COLOR_luma_color_model_swatches.png` ✓
+- `byte_swatches.png` → `LTG_COLOR_byte_color_model_swatches.png` ✓
+- `cosmo_swatches.png` → `LTG_COLOR_cosmo_color_model_swatches.png` ✓
+- `grandma_miri_swatches.png` → `LTG_COLOR_grandma_miri_color_model_swatches.png` ✓
 
 **Character Supporting Assets (CHAR):**
-- `character_lineup.png` → `LTG_CHAR_character_lineup_v001.png` ✓
+- `character_lineup.png` → `LTG_CHAR_character_lineup.png` ✓
 
 **Environment Assets (ENV):**
-- `glitch_layer_layout.png` → `LTG_ENV_glitchlayer_layout_v001.png` ✓ (layouts/)
-- `bg_glitch_layer_encounter.png` → `LTG_ENV_glitchlayer_encounter_v001.png` ✓
-- `LTG_ENV_glitchlayer_frame_v001.png` — CANONICAL (81483 bytes, regenerated Cycle 11)
-- `LTG_ENV_glitchlayer_frame_v002.png` — NOTE: copied from legacy `glitch_layer_frame.png`
+- `glitch_layer_layout.png` → `LTG_ENV_glitchlayer_layout.png` ✓ (layouts/)
+- `bg_glitch_layer_encounter.png` → `LTG_ENV_glitchlayer_encounter.png` ✓
+- `LTG_ENV_glitchlayer_frame.png` — CANONICAL (81483 bytes, regenerated Cycle 11)
+- `LTG_ENV_glitchlayer_frame.png` — NOTE: copied from legacy `glitch_layer_frame.png`
   (80664 bytes, older render). v001 is canonical — higher byte count confirms it is the newer regeneration.
 
 **Color Key Thumbnails (COLOR) — Sam Kowalski Cycle 12 pass (2026-03-30):**
-- `key01_sunny_afternoon.png` → `LTG_COLOR_colorkey_sunny_afternoon_v001.png` ✓
-- `key02_nighttime_glitch.png` → `LTG_COLOR_colorkey_nighttime_glitch_v001.png` ✓
-- `key03_glitch_layer_entry.png` → `LTG_COLOR_colorkey_glitchlayer_entry_v001.png` ✓
-- `key04_quiet_moment.png` → `LTG_COLOR_colorkey_quiet_moment_v001.png` ✓
-- NEW: `LTG_COLOR_colorkey_glitchstorm_v001.png` — SF02 Glitch Storm key (no legacy source, new file) ✓
+- `key01_sunny_afternoon.png` → `LTG_COLOR_colorkey_sunny_afternoon.png` ✓
+- `key02_nighttime_glitch.png` → `LTG_COLOR_colorkey_nighttime_glitch.png` ✓
+- `key03_glitch_layer_entry.png` → `LTG_COLOR_colorkey_glitchlayer_entry.png` ✓
+- `key04_quiet_moment.png` → `LTG_COLOR_colorkey_quiet_moment.png` ✓
+- NEW: `LTG_COLOR_colorkey_glitchstorm.png` — SF02 Glitch Storm key (no legacy source, new file) ✓
 **Character Color Model Swatches (COL) — Sam Kowalski Cycle 12 pass (2026-03-30):**
 Note: Jordan Reed created LTG_COLOR_*_color_model_swatches_v001.png versions above.
 Sam Kowalski created LTG_COL_*_colormodel_v001.png variants per Priority 2 task spec.
 Both exist for cross-reference; use Jordan Reed's LTG_COLOR_ versions as canonical.
-- `luma_swatches.png` → `LTG_COL_luma_colormodel_v001.png` ✓ (secondary alias)
-- `byte_swatches.png` → `LTG_COL_byte_colormodel_v001.png` ✓ (secondary alias)
-- `cosmo_swatches.png` → `LTG_COL_cosmo_colormodel_v001.png` ✓ (secondary alias)
-- `grandma_miri_swatches.png` → `LTG_COL_miri_colormodel_v001.png` ✓ (secondary alias)
+- `luma_swatches.png` → `LTG_COL_luma_colormodel.png` ✓ (secondary alias)
+- `byte_swatches.png` → `LTG_COL_byte_colormodel.png` ✓ (secondary alias)
+- `cosmo_swatches.png` → `LTG_COL_cosmo_colormodel.png` ✓ (secondary alias)
+- `grandma_miri_swatches.png` → `LTG_COL_miri_colormodel.png` ✓ (secondary alias)
 
 **Storyboard Panels — COMPLETE (Jordan Reed, Cycle 13, 2026-03-30):**
 All 26 storyboard panels (panels 01–25, including 22a, plus contact sheet) have LTG-compliant copies.
 Files confirmed in `/home/wipkat/team/output/storyboards/panels/`:
-- `LTG_SB_coldopen_panel_01_v001.png` through `LTG_SB_coldopen_panel_25_v001.png` ✓ (26 panels)
-- `LTG_SB_coldopen_panel_22a_v001.png` ✓ (insert panel)
-- `LTG_SB_coldopen_contactsheet_v001.png` ✓ (contact sheet)
+- `LTG_SB_coldopen_panel_01.png` through `LTG_SB_coldopen_panel_25.png` ✓ (26 panels)
+- `LTG_SB_coldopen_panel_22a.png` ✓ (insert panel)
+- `LTG_SB_coldopen_contactsheet.png` ✓ (contact sheet)
 Status: DONE. No panels outstanding.
 
 **LTG_COL_* Category Note (flagged to Alex Chen for ratification):**
@@ -188,36 +188,36 @@ Do not use `COL` as a category code until Alex Chen ratifies it.
 - All legacy background layout and environment PNGs not yet LTG-named
 - color_model .md documents (CHAR category, not yet addressed)
 - `naming_conventions.md` and `naming_convention_compliance_checklist.md` themselves (PROD rename irony — flag to Alex Chen)
-- `LTG_CHAR_luma_expression_sheet_v002.py` — misnamed script in tools/; should be `LTG_TOOL_*` (see tools/README.md)
+- `LTG_CHAR_luma_expression_sheet.py` — misnamed script in tools/; should be `LTG_TOOL_*` (see tools/README.md)
 - `bg_glitch_layer_encounter.py` — misplaced in environments/, belongs in tools/ as `LTG_TOOL_*` (see tools/README.md)
 
 **Tools created Cycle 12 (TOOL):**
-- `LTG_TOOL_naming_compliance_copier_v001.py` — copies legacy assets to LTG-named versions
-- `LTG_TOOL_naming_compliance_copier_v002.py` — ENV pass
-- `LTG_TOOL_naming_compliance_copy_v001.py` — alternate compliance copy tool (consolidation review pending)
-- `LTG_TOOL_style_frame_02_glitch_storm_v001.py` — Style Frame 02 BG + characters generator
-- `LTG_TOOL_colorkey_glitchstorm_gen_v001.py` — SF02 color key thumbnail (Sam Kowalski)
-- `LTG_TOOL_logo_asymmetric_v001.py` — asymmetric show logo generator
+- `LTG_TOOL_naming_compliance_copier.py` — copies legacy assets to LTG-named versions
+- `LTG_TOOL_naming_compliance_copier.py` — ENV pass
+- `LTG_TOOL_naming_compliance_copy.py` — alternate compliance copy tool (consolidation review pending)
+- `LTG_TOOL_style_frame_02_glitch_storm.py` — Style Frame 02 BG + characters generator
+- `LTG_TOOL_colorkey_glitchstorm_gen.py` — SF02 color key thumbnail (Sam Kowalski)
+- `LTG_TOOL_logo_asymmetric.py` — asymmetric show logo generator
 
 **Tools created Cycle 13 (TOOL):**
-- `LTG_TOOL_bg_glitch_storm_colorfix_v001.py` — BG-only Glitch Storm with corrected TERRACOTTA_CYAN_LIT=(150,172,162); outputs `LTG_ENV_glitch_storm_bg_v001.png` (Jordan Reed)
+- `LTG_TOOL_bg_glitch_storm_colorfix.py` — BG-only Glitch Storm with corrected TERRACOTTA_CYAN_LIT=(150,172,162); outputs `LTG_ENV_glitch_storm_bg.png` (Jordan Reed)
 
 **Cycle 14 Compliance Pass (Alex Chen, Art Director, 2026-03-29):**
 
 **Glitch Layer Frame Version Clarification — CANONICAL:**
-- `LTG_ENV_glitchlayer_frame_v001.png` — **CANONICAL** (81,483 bytes). Regenerated in Cycle 11 by Jordan Reed. Higher byte count = richer render content. This is the reference frame for all production use.
-- `LTG_ENV_glitchlayer_frame_v002.png` — **ARCHIVE COPY ONLY** (80,664 bytes). Copied from legacy `glitch_layer_frame.png`. Smaller file size confirms it is the older render. Do NOT use v002 as the canonical source — use v001 only.
+- `LTG_ENV_glitchlayer_frame.png` — **CANONICAL** (81,483 bytes). Regenerated in Cycle 11 by Jordan Reed. Higher byte count = richer render content. This is the reference frame for all production use.
+- `LTG_ENV_glitchlayer_frame.png` — **ARCHIVE COPY ONLY** (80,664 bytes). Copied from legacy `glitch_layer_frame.png`. Smaller file size confirms it is the older render. Do NOT use v002 as the canonical source — use v001 only.
 - Rule: If both files are present, v001 is canonical. Do not delete v002 (version preservation policy), but mark it in any file browser or handoff with "ARCHIVE — see v001."
 
 **Misnamed tools corrected (Cycle 14):**
-- `LTG_CHAR_luma_expression_sheet_v002.py` → compliant copy created: `LTG_TOOL_luma_expression_sheet_v002.py` ✓
+- `LTG_CHAR_luma_expression_sheet.py` → compliant copy created: `LTG_TOOL_luma_expression_sheet.py` ✓
   (Original CHAR-named file retained for backward compatibility; do not create new CHAR-named scripts)
-- `bg_glitch_layer_encounter.py` (in environments/) → compliant copy created: `LTG_TOOL_bg_glitch_layer_encounter_v001.py` in tools/ ✓
+- `bg_glitch_layer_encounter.py` (in environments/) → compliant copy created: `LTG_TOOL_bg_glitch_layer_encounter.py` in tools/ ✓
   (Original in environments/ retained unchanged per version preservation policy)
 
 **Lineup generator corrected (Cycle 14):**
-- `character_lineup_generator.py` → LTG-compliant generator: `LTG_TOOL_character_lineup_v003.py` ✓
-  Output: `LTG_CHAR_lineup_v003.png` — replaces Cycle 12 "ground floor." caption with proper engineering dimension arrow for Byte's float gap (0.25 HU).
+- `character_lineup_generator.py` → LTG-compliant generator: `LTG_TOOL_character_lineup.py` ✓
+  Output: `LTG_CHAR_lineup.png` — replaces Cycle 12 "ground floor." caption with proper engineering dimension arrow for Byte's float gap (0.25 HU).
 
 ---
 

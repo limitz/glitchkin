@@ -1,7 +1,7 @@
 """
 run_c31_qa.py
 =============
-C31 QA runner for Sam Kowalski — runs LTG_TOOL_render_qa_v001.py on all
+C31 QA runner for Sam Kowalski — runs LTG_TOOL_render_qa.py on all
 pitch-primary assets for Critique 13.
 
 Assets:
@@ -28,25 +28,25 @@ TOOLS_DIR = Path(__file__).parent
 if str(TOOLS_DIR) not in sys.path:
     sys.path.insert(0, str(TOOLS_DIR))
 
-from LTG_TOOL_render_qa_v001 import qa_report, qa_summary_report
+from LTG_TOOL_render_qa import qa_report, qa_summary_report
 
 ROOT = Path("/home/wipkat/team")
 
 ASSETS = [
     # Style frames
-    (ROOT / "output/color/style_frames/LTG_COLOR_styleframe_discovery_v004.png",     "style_frame",    "SF01 v004"),
-    (ROOT / "output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v005.png",  "style_frame",    "SF02 v005"),
-    (ROOT / "output/color/style_frames/LTG_COLOR_styleframe_otherside_v005.png",     "style_frame",    "SF03 v005"),
-    (ROOT / "output/color/style_frames/LTG_COLOR_styleframe_luma_byte_v003.png",     "style_frame",    "SF04 v003"),
+    (ROOT / "output/color/style_frames/LTG_COLOR_styleframe_discovery.png",     "style_frame",    "SF01 v004"),
+    (ROOT / "output/color/style_frames/LTG_COLOR_styleframe_glitch_storm.png",  "style_frame",    "SF02 v005"),
+    (ROOT / "output/color/style_frames/LTG_COLOR_styleframe_otherside.png",     "style_frame",    "SF03 v005"),
+    (ROOT / "output/color/style_frames/LTG_COLOR_styleframe_luma_byte.png",     "style_frame",    "SF04 v003"),
     # Character sheets
-    (ROOT / "output/characters/main/LTG_CHAR_luma_expressions_v007.png",             "character_sheet","Luma expr v007"),
-    (ROOT / "output/characters/main/turnarounds/LTG_CHAR_luma_turnaround_v003.png",  "character_sheet","Luma turnaround v003"),
-    (ROOT / "output/characters/color_models/LTG_COLOR_luma_color_model_v002.png",    "color_model",    "Luma color model v002"),
-    (ROOT / "output/characters/main/LTG_CHAR_byte_expression_sheet_v004.png",        "character_sheet","Byte expr sheet v004"),
-    (ROOT / "output/characters/main/LTG_CHAR_cosmo_expression_sheet_v004.png",       "character_sheet","Cosmo expr sheet v004"),
-    (ROOT / "output/characters/main/LTG_CHAR_grandma_miri_expression_sheet_v003.png","character_sheet","Miri expr sheet v003"),
-    (ROOT / "output/characters/main/LTG_CHAR_glitch_expression_sheet_v003.png",      "character_sheet","Glitch expr sheet v003"),
-    (ROOT / "output/characters/main/LTG_CHAR_luma_lineup_v006.png",                  "character_sheet","Character lineup v006"),
+    (ROOT / "output/characters/main/LTG_CHAR_luma_expressions.png",             "character_sheet","Luma expr v007"),
+    (ROOT / "output/characters/main/turnarounds/LTG_CHAR_luma_turnaround.png",  "character_sheet","Luma turnaround v003"),
+    (ROOT / "output/characters/color_models/LTG_COLOR_luma_color_model.png",    "color_model",    "Luma color model v002"),
+    (ROOT / "output/characters/main/LTG_CHAR_byte_expression_sheet.png",        "character_sheet","Byte expr sheet v004"),
+    (ROOT / "output/characters/main/LTG_CHAR_cosmo_expression_sheet.png",       "character_sheet","Cosmo expr sheet v004"),
+    (ROOT / "output/characters/main/LTG_CHAR_grandma_miri_expression_sheet.png","character_sheet","Miri expr sheet v003"),
+    (ROOT / "output/characters/main/LTG_CHAR_glitch_expression_sheet.png",      "character_sheet","Glitch expr sheet v003"),
+    (ROOT / "output/characters/main/LTG_CHAR_luma_lineup.png",                  "character_sheet","Character lineup v006"),
 ]
 
 results = []

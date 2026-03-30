@@ -17,7 +17,7 @@ The face test gate closes this gap.
 
 ## Tool
 
-**`output/tools/LTG_TOOL_character_face_test_v001.py`**
+**`output/tools/LTG_TOOL_character_face_test.py`**
 
 - Renders 6–8 expression variants at sprint scale (head_r configurable, default 23)
 - Left sub-panel: actual scale. Right sub-panel: 3× zoom.
@@ -60,7 +60,7 @@ This gate is mandatory for all team members who produce or modify character-face
 ## How to Run
 
 ```bash
-python output/tools/LTG_TOOL_character_face_test_v001.py --char luma --head-r 23
+python output/tools/LTG_TOOL_character_face_test.py --char luma --head-r 23
 ```
 
 Output saved to: `output/production/LTG_TOOL_face_test_[char]_r[N]_v[###].png`

@@ -18,7 +18,7 @@ These three sentences are the complete pitch for the show's visual grammar. Ever
 
 ## SF01 — Discovery
 
-**Source file:** `LTG_COLOR_styleframe_discovery_v004.png` *(v004 is pitch primary as of C29 — Rin Yamamoto procedural quality lift + blush correction)*
+**Source file:** `LTG_COLOR_styleframe_discovery.png` *(v004 is pitch primary as of C29 — Rin Yamamoto procedural quality lift + blush correction)*
 **Palette:** Warm Real World + first appearance of Electric Cyan
 
 ### What It Communicates
@@ -41,7 +41,7 @@ The tension is not danger. It is wonder. The cyan does not feel wrong here — i
 
 ## SF02 — Glitch Storm
 
-**Source file:** `LTG_COLOR_styleframe_glitch_storm_v005.png`
+**Source file:** `LTG_COLOR_styleframe_glitch_storm.png`
 **Palette:** GL-06c STORM_CONFETTI_BLUE dominant key, warm amber window glow fighting from below
 
 ### What It Communicates
@@ -66,7 +66,7 @@ The Corrupted Amber outline on Byte (GL-07, `#FF8C00` = 255, 140, 0) in this fra
 
 ## SF03 — The Other Side
 
-**Source file:** `LTG_COLOR_styleframe_otherside_v005.png` *(v005 is pitch primary — C28 update)*
+**Source file:** `LTG_COLOR_styleframe_otherside.png` *(v005 is pitch primary — C28 update)*
 **Previous primary:** v003 (superseded). v005 corrects UV_PURPLE_DARK: the deep void zones of the Glitch Layer now read as true deep digital purple (#3A1060, 72% saturation) rather than grey-purple. The alien coldness is restored.
 **Palette:** UV Purple ambient, Electric Cyan (Byte's glow), Hot Magenta (Byte's cracked eye), Void Black
 
@@ -96,7 +96,7 @@ The color story has a direction. Every step takes Luma further from the warmth t
 
 ## SF04 — Luma & Byte
 
-**Source file:** `LTG_COLOR_styleframe_luma_byte_v003.png` *(v003 is pitch primary — C28 update)*
+**Source file:** `LTG_COLOR_styleframe_luma_byte.png` *(v003 is pitch primary — C28 update)*
 
 ### C28 Fixes and Their Narrative Meaning
 
@@ -198,7 +198,7 @@ This creates a deliberate color ambiguity: to a first-time viewer, Miri's palett
 - Style Guide Color System: `output/production/style_guide.md`
 - Cycle 23 palette audit: `output/color/palettes/LTG_COLOR_palette_audit_c23.md`
 - Cycle 23 SF final check: `output/color/style_frames/LTG_COLOR_sf_final_check_c23.md`
-- Glitch color model: `output/characters/color_models/LTG_COLOR_glitch_color_model_v001.png`
+- Glitch color model: `output/characters/color_models/LTG_COLOR_glitch_color_model.png`
 - Cycle 24 stylization fidelity report: `output/color/LTG_COLOR_stylization_fidelity_report_c24.md`
 
 ---
@@ -211,4 +211,4 @@ This creates a deliberate color ambiguity: to a first-time viewer, Miri's palett
 
 *Cycle 29 update (Sam Kowalski, 2026-03-29): SF03 updated — v005 is pitch primary; UV_PURPLE_DARK corrected to true deep digital purple (#3A1060). SF04 section added — v003 is pitch primary; documents the three C28 fixes (blush, Byte canonical teal, directional rim light) and their narrative meaning. SF02 palette line updated — DATA_BLUE renamed to GL-06c STORM_CONFETTI_BLUE (#0A4F8C); GL-06c note added explaining this as deliberate atmospheric depth value registered in C28. Glitch character section updated — interior desire expressions (YEARNING, COVETOUS, HOLLOW) documented with bilateral eye-color rule.*
 
-*Cycle 30 update (Sam Kowalski, 2026-03-29): SF01 source file reference corrected from v003 to v004 (Rin Yamamoto C29 procedural quality lift + blush correction is pitch primary). Color audit C30 complete — all four pitch frames verified via LTG_TOOL_color_verify_v001.py; SF01/SF02 cleared; SF03/SF04 tool failures are documented false positives (gradient edge pixels and warm-orange family radius overlap). See LTG_COLOR_audit_c30_preCritique13.md for full analysis.*
+*Cycle 30 update (Sam Kowalski, 2026-03-29): SF01 source file reference corrected from v003 to v004 (Rin Yamamoto C29 procedural quality lift + blush correction is pitch primary). Color audit C30 complete — all four pitch frames verified via LTG_TOOL_color_verify.py; SF01/SF02 cleared; SF03/SF04 tool failures are documented false positives (gradient edge pixels and warm-orange family radius overlap). See LTG_COLOR_audit_c30_preCritique13.md for full analysis.*

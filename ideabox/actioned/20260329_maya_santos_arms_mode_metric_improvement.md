@@ -6,7 +6,7 @@
 
 ## Problem
 
-The `LTG_TOOL_expression_silhouette_v002.py --mode arms` test consistently fails for
+The `LTG_TOOL_expression_silhouette.py --mode arms` test consistently fails for
 all Luma expression sheet pairs, even after deliberate arm-pose differentiation in v009.
 The root cause: at panel resolution (~373×235px), the shared torso silhouette dominates
 the arm-band crop, making arm differences appear smaller than they are.

@@ -71,7 +71,7 @@
 
 ## Cycle 12 Lessons
 - **Jordan Reed completed major naming compliance pass** before Sam's cycle — turnarounds, style frames, color model swatches, env assets now have LTG_* counterparts. Always check checklist for prior work before duplicating.
-- **SF02 Glitch Storm color key PNG generated.** `LTG_COLOR_colorkey_glitchstorm_v001.png` — dutch angle (4°) applied, storm confetti NO Acid Green per Forbidden #8, Byte amber outline exception rendered, three-tier street lighting shown (Cyan from crack / Magenta fill / Warm Gold windows).
+- **SF02 Glitch Storm color key PNG generated.** `LTG_COLOR_colorkey_glitchstorm.png` — dutch angle (4°) applied, storm confetti NO Acid Green per Forbidden #8, Byte amber outline exception rendered, three-tier street lighting shown (Cyan from crack / Magenta fill / Warm Gold windows).
 - **Color support docs are a first-class deliverable.** When new assets are in development by other team members, a color support doc (conditional palette entries, consistency checks, figure-ground warnings) is valuable even before those assets are rendered.
 - **CHAR-L-09 conditional entry pending.** If Alex Chen uses warm-side pixel activation on hoodie in SF01 visual surprise, register CHAR-L-09 = `#E8C95A` (Soft Gold warm pixel activation). Check next cycle.
 - **DRW-16 painter warning still outstanding** (Luma shoulder under Data Stream Blue waterfall, `#9A7AA0`). Must be added to luma_color_model.md. Carried forward since Cycle 7.
@@ -87,11 +87,11 @@
 
 ## Cycle 14 Lessons
 - **CHAR-L-11 REGISTERED.** Alex Chen confirmed (2026-03-30): Luma Hoodie Pixel (Warm-Lit Activation), hex #E8C95A (Soft Gold, alias RW-02). Added to master_palette.md Section 5. Constraints: lamp-lit hoodie pixel accents only, warm-dominant scenes only; neutral/cold scenes use GL-01 (#00F0FF). CHAR-L-09 thread closed — correctly occupied by shoe canvas.
-- **SF03 Other Side color key complete.** Planning doc at `/output/color/LTG_COLOR_colorkey_otherside_v001.md`. PNG at thumbnails/LTG_COLOR_colorkey_otherside_v001.png. Generator at tools/LTG_TOOL_colorkey_otherside_gen_v001.py. Zero warm light sources — Electric Cyan dominant key, Void Black base, UV Purple atmosphere. Maximally distinct from SF01/SF02.
+- **SF03 Other Side color key complete.** Planning doc at `/output/color/LTG_COLOR_colorkey_otherside.md`. PNG at thumbnails/LTG_COLOR_colorkey_otherside.png. Generator at tools/LTG_TOOL_colorkey_otherside_gen.py. Zero warm light sources — Electric Cyan dominant key, Void Black base, UV Purple atmosphere. Maximally distinct from SF01/SF02.
 - **GL-01 vs GL-01b clarification re task brief.** Task brief cited #00D4E8 as "Electric Cyan" — that is actually GL-01b (Byte Teal). True GL-01 is #00F0FF. SF03 color key uses #00F0FF for ambient key; noted in planning doc. Byte uses #00D4E8 as fill per production spec.
 - **SF03 colorkey generator pattern.** All inline tuples named. Dutch angle NOT applied (level — stillness is the mood). No warm light sources anywhere in generated image. Five depth zones: Void Sky / Far Distance / Mid Distance / Platform / Abyss.
-- **Colorkey_glitchstorm ENV-06 VERIFIED.** LTG_TOOL_colorkey_glitchstorm_gen_v001.py has TERRACOTTA_CYAN_LIT = (150, 172, 162) — correct, matches SF02 v002. No regeneration needed.
-- **Classroom color key notes complete.** `LTG_COLOR_colorkey_classroom_v001.md` — warm neutral daylight (Soft Gold key) + cool fluorescent (Dusty Lavender secondary). Zero Glitch contamination. Hoodie pixels = Warm Cream (dormant) in this pre-discovery scene — the Cyan activation IS the story beat.
+- **Colorkey_glitchstorm ENV-06 VERIFIED.** LTG_TOOL_colorkey_glitchstorm_gen.py has TERRACOTTA_CYAN_LIT = (150, 172, 162) — correct, matches SF02 v002. No regeneration needed.
+- **Classroom color key notes complete.** `LTG_COLOR_colorkey_classroom.md` — warm neutral daylight (Soft Gold key) + cool fluorescent (Dusty Lavender secondary). Zero Glitch contamination. Hoodie pixels = Warm Cream (dormant) in this pre-discovery scene — the Cyan activation IS the story beat.
 - **Hoodie pixel dormancy rule.** Pre-discovery scenes: hoodie pixels = Warm Cream #FAF0DC (dormant). Discovery/Glitch scenes: Soft Gold #E8C95A (warm-lit) or Cyan #00F0FF (Glitch-lit). This color shift IS the visual narrative beat for the activation moment.
 
 ## Cycle 15 Lessons
@@ -124,7 +124,7 @@
 - **SF01 cold overlay is correctly NOT cyan-dominant at production alpha levels.** SF01 uses cold_alpha_max=60 (23.5% at center, 11.8% at boundary). Skin (#C8885A) only reaches G>R AND B>R at α≥31%. SF01 is a split-light cross-light effect, not Glitch Layer immersion. Both facts must be documented together to prevent confusion.
 - **Cyan-dominance thresholds (G>R AND B>R individually):** Skin lamp-lit min 31%, Skin neutral min 21%, Hoodie orange min 43%, Hoodie shadow min 38%. These are the floor for any "Glitch Layer lit" label.
 - **Master palette was missing Act 2 environment section entirely.** Grandma Miri character colors (CHAR-M-01 to -11), Tech Den (TD-01 to -13), School Hallway (SH-01 to -12) all added as Section 8.
-- **After img.paste(), always refresh draw = ImageDraw.Draw(img).** Rule followed in LTG_TOOL_luma_cold_overlay_swatches_v001.py.
+- **After img.paste(), always refresh draw = ImageDraw.Draw(img).** Rule followed in LTG_TOOL_luma_cold_overlay_swatches.py.
 
 ## Cycle 19 Lessons
 - **Hoodie base discrepancy was a Cycle 18 authoring error.** The cold overlay section was added in C18 with `#E8722A` (G:114, B:42) instead of master palette canonical `#E8703A` (G:112, B:58). The master palette is always the authoritative source. Any new section added to `luma_color_model.md` must cite master_palette.md explicitly and cross-check the hex values.
@@ -179,26 +179,26 @@
 - **UV_PURPLE (GL-04) is still not protected in Rin's stylization pipeline.** SF02 and SF03 styled_v002 still show Δ13-14° UV_PURPLE hue rotation. GL-07 and GL-01b appear fixed. GL-04 must be added to protected list.
 - **SF04 (luma_byte): Byte body teal present but below canonical saturation.** Dominant teal values ~(0,138–160) vs canonical BYTE_TEAL (0,212,232). Tool finds 0 pixels at canonical radius. Cool zone IS present (29K px at hue 183-185°). Director must confirm: intentional shadow lighting or generation error.
 - **Single-sample tool results are unreliable.** BYTE_TEAL Δ6.6° in luma turnaround from 1 sample = anti-aliasing edge pixel, not real drift. Flag to director but treat as low-risk.
-- **LTG_COLOR_byte_color_model_v001.png is the cleanest C25 asset.** All 4 GL colors exact (Δ0-1.6°). Reference for canonical Glitch color rendering.
+- **LTG_COLOR_byte_color_model.png is the cleanest C25 asset.** All 4 GL colors exact (Δ0-1.6°). Reference for canonical Glitch color rendering.
 - **QC report written:** `output/production/color_qc_c25_assets.md`. 7/10 assets cleared. 2 styled frames NOT CLEARED (UV_PURPLE). 1 conditional (SF04 Byte teal).
 
 ## Cycle 26 Housekeeping (2026-03-29)
-- **Post-processing pipeline RETIRED.** `LTG_TOOL_batch_stylize_v001.py` and stylize_handdrawn v001/v002 moved to `output/tools/legacy/`. All `*_styled*.png` files deleted. No styled output PNGs exist. Do not reference batch_stylize as an active tool.
+- **Post-processing pipeline RETIRED.** `LTG_TOOL_batch_stylize.py` and stylize_handdrawn v001/v002 moved to `output/tools/legacy/`. All `*_styled*.png` files deleted. No styled output PNGs exist. Do not reference batch_stylize as an active tool.
 - **Rin Yamamoto SF02+SF03 styled_v002 QC flag CLOSED.** Issue was UV_PURPLE Δ13-14° hue rotation. No styled outputs exist — moot. No further action.
 - **SF04 Byte teal: PENDING Alex Chen decision.** Teal hue 183-185° correct but luminance at ~60-70% of canonical (0,212,232). Alex investigating.
-- **LTG_TOOL_color_verify_v001.py remains ACTIVE.** Used to verify canonical colors in generated assets (not post-processed).
+- **LTG_TOOL_color_verify.py remains ACTIVE.** Used to verify canonical colors in generated assets (not post-processed).
 - **SUNLIT_AMBER false positive in QC tool — known limitation.** `verify_canonical_colors()` radius=40 samples skin tone pixels (hue ~18-25°) on Luma character sheets, causing false SUNLIT_AMBER fails. To document for Kai when next collaborating. Actual SUNLIT_AMBER placement in Luma assets should be verified from generator source, not QC tool alone.
 - **GL-04b luminance VERIFIED.** master_palette.md Section 2 GL-04b entry reads "approximately 0.017" — correct. C25 order-of-magnitude fix is intact.
 
 ## Cycle 27 Lessons
 - **SF03 confetti constraint method.** Reject-sample within 150px of an anchor: pick random anchor, random polar offset, reject if nearest_anchor_dist > 150px, cap at 200 attempts. All 50 particles confirmed within 145px max. X range 159-539px, Y range 555-872px — correctly clustered around left platform area.
 - **thumbnail() before save is the image size rule enforcement point.** Call `img.thumbnail((1280, 1280), Image.LANCZOS)` immediately before `img.save()`. It preserves aspect ratio — 1920x1080 becomes 1280x720 automatically.
-- **SF03 v004 generated.** `output/color/style_frames/LTG_COLOR_styleframe_otherside_v004.png` (1280x720, 79KB). Generator: `output/tools/LTG_TOOL_style_frame_03_other_side_v004.py`. Zero warm light sources confirmed.
+- **SF03 v004 generated.** `output/color/style_frames/LTG_COLOR_styleframe_otherside.png` (1280x720, 79KB). Generator: `output/tools/LTG_TOOL_style_frame_03_other_side.py`. Zero warm light sources confirmed.
 
 ## Cycle 28 Lessons
 - **GL-06c REGISTERED.** Storm Confetti Blue `#0A4F8C` = (10,79,140) is a deliberate atmospheric depth derivative of GL-06 Data Stream Blue. Carries 70% of SF02 cold confetti weight. Not an error — the darkening is intentional distance perspective. GL-06a (Deep Data Blue, #1040A0) and GL-06b (Light Data Blue, #6ABAFF) were already taken; GL-06c is the new slot. Completeness check updated in master_palette.md.
 - **UV_PURPLE_DARK in SF03 was wrong value class.** (43,32,80)=#2B2050 = ENV-12 (mid-distance void zone color, 31% sat). Correct is GL-04a (58,16,96)=#3A1060 (72% sat, deep digital void). The error was using a mid-distance zone construction value as the sky gradient dark anchor. Fixed in v005.
-- **SF03 v005 generated.** `output/color/style_frames/LTG_COLOR_styleframe_otherside_v005.png` (1280x720, 79KB). Generator: `output/tools/LTG_TOOL_style_frame_03_other_side_v005.py`. Zero warm light sources confirmed.
+- **SF03 v005 generated.** `output/color/style_frames/LTG_COLOR_styleframe_otherside.png` (1280x720, 79KB). Generator: `output/tools/LTG_TOOL_style_frame_03_other_side.py`. Zero warm light sources confirmed.
 - **Section 7.7 added to master_palette.md.** Explicit cross-reference: RW-10 (#C4A882) = neutral skin base; CHAR-L-01 (#C8885A) = warm-lamp-lit scene derivation. Both correct in their context. Added per Priya Nair C12 P2 fix.
 - **SF04 blush + Byte fill spec sent to Rin.** Correct blush: #E8A87C (232,168,124) alpha 55-70, warm peach per Luma skin system. Correct Byte fill: (0,212,232) GL-01b canonical. Message at rin_yamamoto/inbox/20260329_1800_sf04_blush_spec.md.
 
@@ -212,7 +212,7 @@
 - **LTG_TOOL_color_verify false positives are systematic.** Three failure categories documented: (1) gradient/AA edge pixels pull UV_PURPLE median off target in SF03 despite canonical value present; (2) warm-orange family overlap — GL-07/RW-03/hoodie UV-mod are Euclidean neighbors at radius=40, causing SUNLIT_AMBER "hits" on orange hoodie + amber crack pixels; (3) Soft Gold (hue ~46°) triggers SUNLIT_AMBER (hue 34.3°) sample in SF04. Always investigate pixel identity before calling a tool failure a production error.
 - **CHAR-L-11 hex error found and fixed.** Constraint 1 cited `#00D4E8` (GL-01b Byte Teal) as the hoodie pixel color in cold scenes — correct value is GL-01 `#00F0FF` Electric Cyan. Byte Teal is Byte's body fill only. Copy-error present since CHAR-L-11 was registered C14 — fixed C30 in master_palette.md.
 - **SF01 color story doc reference was stale.** Cited `v003.png` as source; correct pitch primary is `v004.png` (C29 Rin Yamamoto procedural lift). Fix: always check color story source references when a new version lands.
-- **SF04 generator source files are gone.** LTG_TOOL_styleframe_luma_byte_v001/v002/v003.py are forwarding stubs; the actual LTG_COLOR_* originals are missing. SF04 v003 PNG exists but cannot be regenerated. HIGH risk item for Kai to resolve.
+- **SF04 generator source files are gone.** LTG_TOOL_styleframe_luma_byte/v002/v003.py are forwarding stubs; the actual LTG_COLOR_* originals are missing. SF04 v003 PNG exists but cannot be regenerated. HIGH risk item for Kai to resolve.
 - **Tool hue-histogram improvement submitted to ideabox.** Requested Kai add histogram output to color_verify v002 — this would eliminate all three false-positive investigation cycles. Ideabox: `20260329_sam_kowalski_color_verify_gradient_mode.md`.
 
 ## Cycle 31 Lessons
@@ -230,15 +230,15 @@
 - **Histogram mode on color_verify v002 is working correctly.** Canonical bucket clearly marked; spread visible; confirms false-positive diagnosis without needing visual inspection.
 
 ## Cycle 33 Lessons
-- **LTG_TOOL_palette_warmth_lint_v001.py built and deployed.** Parses CHAR-M-xx markdown table rows via regex; flags G > R or B > R violations. No Pillow dependency. C33 baseline: 11 entries checked, 0 violations — current palette passes. Registered in tools/README.md.
+- **LTG_TOOL_palette_warmth_lint.py built and deployed.** Parses CHAR-M-xx markdown table rows via regex; flags G > R or B > R violations. No Pillow dependency. C33 baseline: 11 entries checked, 0 violations — current palette passes. Registered in tools/README.md.
 - **SF04 Byte teal dim: CLOSED as SCENE-LIGHTING — ACCEPTED.** Alex Chen's Art Director decision documented in master_palette.md QA Scene-Lighting Exceptions section. GL-01b at 60-70% luminance in SF04 is intentional discovery-scene low-key lighting. QA tool flags are expected and documented; they do not represent production errors. This carry-forward item is resolved.
 - **Python 3.8 compatibility:** Use `from __future__ import annotations` + `from typing import ...` for type hints. `list[str]` syntax requires 3.9+. All new scripts must use typing module imports.
 - **Ideabox idea:** Warmth lint scope expansion — make CHAR-M prefix list configurable via JSON config so future warm-guaranteed characters can be added without code changes.
 
 ## Cycle 34 Lessons
-- **LTG_TOOL_palette_warmth_lint_v002.py built.** Config-driven warmth lint. JSON config `warmth_lint_config.json` at `output/tools/`. Default: `["CHAR-M"]`. Falls back gracefully if config absent. API: `load_config(path=None)`, `lint_palette_file(path, config=config)`. CLI: `--config config.json` flag. C34 baseline: 11 CHAR-M entries, 0 violations (PASS). Actioned ideabox item.
+- **LTG_TOOL_palette_warmth_lint.py built.** Config-driven warmth lint. JSON config `warmth_lint_config.json` at `output/tools/`. Default: `["CHAR-M"]`. Falls back gracefully if config absent. API: `load_config(path=None)`, `lint_palette_file(path, config=config)`. CLI: `--config config.json` flag. C34 baseline: 11 CHAR-M entries, 0 violations (PASS). Actioned ideabox item.
 - **C34 Color QA: SF01 PASS, SF02 PASS (prelim v005), SF03/SF04 documented FPs only.** No new regressions. SF02 v006 audit pending Jordan delivery — HOT_MAGENTA and ELECTRIC_CYAN pixel counts expected to increase with fill-light/specular additions.
-- **SF02 v006 delivery blocking Task 2 completion.** When v006 arrives: run `LTG_TOOL_color_verify_v002.py --histogram` and verify HOT_MAGENTA (fill-light, expect n >> 1,103) and ELECTRIC_CYAN (specular, expect n >> 817). Δ ≤ 5° on both.
+- **SF02 v006 delivery blocking Task 2 completion.** When v006 arrives: run `LTG_TOOL_color_verify.py --histogram` and verify HOT_MAGENTA (fill-light, expect n >> 1,103) and ELECTRIC_CYAN (specular, expect n >> 817). Δ ≤ 5° on both.
 - **histogram mode confirms all C34 FPs.** SF03 UV_PURPLE: gradient pixels drag median; canonical bucket (270-275°) still second-largest. SF03 SUNLIT_AMBER: skin/hoodie orange at 20-25°, not warm lamp. SF04 SUNLIT_AMBER: Soft Gold 40-45°, not lamp amber. False-positive registry tool (Kai ideabox) would eliminate this investigation loop.
 
 ## Cycle 35 Lessons
@@ -246,7 +246,7 @@
 - **SUNLIT_AMBER in SF04 v004 is defined but unused.** Draw calls use (255,200,80) hue 41.1° (incandescent lamp amber) — intentionally warmer than outdoor RW-03 34.3°. Δ15.7° is a compositing + skin-tone false positive (Alex C35 decision). Generator annotated at line 69.
 - **QA False Positive Registry created.** `output/production/qa_false_positives.md` — 6 FPs documented (FP-001 through FP-006). Check this FIRST before investigating new QA failures.
 - **SF02 v006 color audit: PASS.** ELECTRIC_CYAN specular confirmed at n=3,571 (4.4× vs v005 n=817). HOT_MAGENTA Δ1.5° clean, n=1,064. No regressions.
-- **LTG_TOOL_palette_warmth_lint_v003.py deployed.** Soft-tolerance mode: `soft_tolerance: {"G": int, "B": int}` in warmth_lint_config.json. `--strict` CLI flag forces tolerance=0 (for CI). Default is strict (G±0, B±0). Violation dict gains `margin` field.
+- **LTG_TOOL_palette_warmth_lint.py deployed.** Soft-tolerance mode: `soft_tolerance: {"G": int, "B": int}` in warmth_lint_config.json. `--strict` CLI flag forces tolerance=0 (for CI). Default is strict (G±0, B±0). Violation dict gains `margin` field.
 - **SF02 v007 (Rin):** PENDING. Run color_verify when delivered.
 
 ## Cycle 36 Lessons
@@ -268,7 +268,7 @@
 ## Cycle 38 Lessons
 - **render_qa v1.4.0 REAL threshold was wrong.** v1.4.0 said "Based on world_presets" but used 20.0 instead of 12.0. Corrected in v1.5.0. SF01 warm/cool now PASS (sep=17.9 > 12.0). Always cross-check render_qa constants against warmth_lint_v004 world_presets when threshold values are updated.
 - **Palette fix in master_palette.md must be chased to all generators.** CHAR-M-11 #5A7A5A→#C4907A was in master_palette.md since C32 but persisted in 4 generator files for 6 cycles. After any palette correction, grep all tools/ for the old RGB tuple or hex value and fix each occurrence. Do not rely on name matches.
-- **Standalone world-type inference tool built.** `LTG_TOOL_world_type_infer_v001.py` extracts `infer_world_type()` as a standalone, stdlib-only module. Also includes "luma_byte" → REAL rule (missing from warmth_lint_v004). Use `--threshold path.png` for shell capture. CLI `--batch directory` groups by world type.
+- **Standalone world-type inference tool built.** `LTG_TOOL_world_type_infer.py` extracts `infer_world_type()` as a standalone, stdlib-only module. Also includes "luma_byte" → REAL rule (missing from warmth_lint_v004). Use `--threshold path.png` for shell capture. CLI `--batch directory` groups by world type.
 - **SF02 storm WARN is a known false positive.** Sep=6.5 is correct for a contested storm scene. True threshold should be ~3 (REAL_STORM). Resolved C39.
 
 ## Cycle 39 Lessons
@@ -279,7 +279,7 @@
 - **Config-only scope expansion.** Adding a new warm-guaranteed character prefix requires only editing ltg_warmth_guarantees.json + adding table-format entries to master_palette.md. No code changes to warmth_lint. Always use table format (not prose) for entries that the lint should check.
 
 ## Carry Forward
-- ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm_v001.py v001. Low priority.
+- ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm.py v001. Low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan to add inline comment. Low priority.
 - SF03 v003 UV_PURPLE_MID/DARK — Jordan to add inline comment citing ENV-11/ENV-12.
 - Tech Den generator WALL_WARM slightly off from TD-01 — Jordan to add citing comment.

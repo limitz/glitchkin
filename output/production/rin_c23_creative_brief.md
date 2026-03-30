@@ -3,7 +3,7 @@
 **To:** Rin Yamamoto, Visual Stylization Artist
 **From:** Alex Chen, Art Director
 **Date:** 2026-03-29
-**Re:** Hand-drawn stylization treatment — `LTG_TOOL_stylize_handdrawn_v001.py`
+**Re:** Hand-drawn stylization treatment — `LTG_TOOL_stylize_handdrawn.py`
 
 ---
 
@@ -66,15 +66,15 @@ SF02 is the boundary event — both worlds in collision. Use a zone-based approa
 ## Asset Targets for This Cycle
 
 **Primary (must deliver rendered output):**
-1. `LTG_COLOR_styleframe_glitch_storm_v005.png` — SF02 with mixed Real/Glitch treatment
-2. `LTG_COLOR_styleframe_otherside_v003.png` — SF03 with full Glitch Layer treatment
+1. `LTG_COLOR_styleframe_glitch_storm.png` — SF02 with mixed Real/Glitch treatment
+2. `LTG_COLOR_styleframe_otherside.png` — SF03 with full Glitch Layer treatment
 
 **Secondary (apply if time and quality allow):**
-3. `LTG_COLOR_styleframe_discovery_v003.png` — SF01 with full Real World treatment. Note: SF01 is LOCKED A+ — apply very conservatively. The stylization must not degrade what's already pitch-perfect. If in doubt, deliver a test version and flag it for my review before committing.
-4. `LTG_ENV_grandma_kitchen_v003.png` — The kitchen is the show's most "hand-drawn-looking" environment by design. Real World treatment only. Good test case for the paper grain and warm edge bleed.
+3. `LTG_COLOR_styleframe_discovery.png` — SF01 with full Real World treatment. Note: SF01 is LOCKED A+ — apply very conservatively. The stylization must not degrade what's already pitch-perfect. If in doubt, deliver a test version and flag it for my review before committing.
+4. `LTG_ENV_grandma_kitchen.png` — The kitchen is the show's most "hand-drawn-looking" environment by design. Real World treatment only. Good test case for the paper grain and warm edge bleed.
 
 **Output naming convention:** append `_styled` to the source filename before the version extension. Example:
-- Source: `LTG_COLOR_styleframe_glitch_storm_v005.png`
+- Source: `LTG_COLOR_styleframe_glitch_storm.png`
 - Stylized output: `LTG_COLOR_styleframe_glitch_storm_v005_styled.png`
 
 All stylized outputs go to the same directory as their source.
@@ -83,7 +83,7 @@ All stylized outputs go to the same directory as their source.
 
 ## Technical Spec
 
-**Tool to build:** `output/tools/LTG_TOOL_stylize_handdrawn_v001.py`
+**Tool to build:** `output/tools/LTG_TOOL_stylize_handdrawn.py`
 
 **Function signature (recommended):**
 ```python
@@ -100,7 +100,7 @@ def stylize(
 - PIL/Pillow only (primary), NumPy allowed for noise field generation
 - Must produce identical output for identical inputs + seed
 - No external data files — all textures must be procedurally generated
-- Compatible with `LTG_TOOL_render_lib_v001.py` (Kai Nakamura's library). Import from there if any shared primitives apply.
+- Compatible with `LTG_TOOL_render_lib.py` (Kai Nakamura's library). Import from there if any shared primitives apply.
 - All outputs at the same pixel dimensions as input — no scaling
 - Must handle both 1920×1080 and 1280×720 inputs
 

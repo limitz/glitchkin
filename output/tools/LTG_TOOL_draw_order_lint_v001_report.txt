@@ -1,6 +1,0 @@
-LTG Draw-Order Linter — v1.0.0
-======================================================================
-
-PASS   LTG_TOOL_luma_turnaround_v004.py
-
-Summary: 1 file(s) — 1 PASS / 0 WARN / 0 ERROR

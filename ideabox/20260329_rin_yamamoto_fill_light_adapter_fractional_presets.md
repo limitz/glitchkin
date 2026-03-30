@@ -1,0 +1,5 @@
+**Author:** Rin Yamamoto
+**Cycle:** 39
+**Date:** 2026-03-29
+**Idea:** The new `LTG_TOOL_fill_light_adapter.py` provides fractional character position configs (FillLightConfig with pos_mode="fractional"). The Glitch Storm preset factory `make_glitch_storm_fill_configs()` is a good pattern — but we only have one scene preset. Every scene in the show that has fill lighting will need its own config set. A "scene fill presets" registry file (`LTG_fill_light_presets.json` or similar) could enumerate all scenes (SF01, SF02, SF03, SF04) with their standard fractional character positions, fill light colors, and source directions. Any generator could load its scene's preset by name instead of hard-coding positions. This would also make it trivially easy to update a fill light direction across all renders if the lighting spec changes.
+**Benefits:** Centralizes fill light specs for all scenes. Eliminates repeated definition of character positions in each generator. Makes lighting spec changes a single-file edit. Would benefit Jordan Reed (background generators), Maya Santos (character generators), and anyone building future style frames.

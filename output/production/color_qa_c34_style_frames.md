@@ -2,7 +2,7 @@
 
 **Author:** Sam Kowalski
 **Date:** 2026-03-29
-**Tool:** LTG_TOOL_color_verify_v002.py v2.0.0 (histogram mode)
+**Tool:** LTG_TOOL_color_verify.py v2.0.0 (histogram mode)
 **Assets evaluated:** 4 style frames (pitch primaries)
 
 ---
@@ -11,7 +11,7 @@
 
 **SF02 v006 NOT YET DELIVERED by Jordan Reed.**
 Task 2 run is **preliminary** — performed on SF02 v005
-(LTG_COLOR_styleframe_glitch_storm_v005.png).
+(LTG_COLOR_styleframe_glitch_storm.png).
 Results for v006 must be re-run when Jordan delivers.
 Expected new colours to verify: HOT_MAGENTA #FF2D6B (fill light), ELECTRIC_CYAN #00F0FF (specular).
 
@@ -32,7 +32,7 @@ Expected new colours to verify: HOT_MAGENTA #FF2D6B (fill light), ELECTRIC_CYAN 
 
 ---
 
-### SF01 — LTG_COLOR_styleframe_discovery_v005.png
+### SF01 — LTG_COLOR_styleframe_discovery.png
 
 **Overall: PASS**
 
@@ -49,7 +49,7 @@ Expected new colours to verify: HOT_MAGENTA #FF2D6B (fill light), ELECTRIC_CYAN 
 
 ---
 
-### SF02 — LTG_COLOR_styleframe_glitch_storm_v005.png  *(PRELIMINARY — v006 pending)*
+### SF02 — LTG_COLOR_styleframe_glitch_storm.png  *(PRELIMINARY — v006 pending)*
 
 **Overall: PASS**
 
@@ -71,7 +71,7 @@ Expected new colours to verify: HOT_MAGENTA #FF2D6B (fill light), ELECTRIC_CYAN 
 
 ---
 
-### SF03 — LTG_COLOR_styleframe_otherside_v005.png
+### SF03 — LTG_COLOR_styleframe_otherside.png
 
 **Overall: FAIL (2 items) — both are documented false positives**
 
@@ -88,7 +88,7 @@ Expected new colours to verify: HOT_MAGENTA #FF2D6B (fill light), ELECTRIC_CYAN 
 
 ---
 
-### SF04 — LTG_COLOR_styleframe_luma_byte_v004.png
+### SF04 — LTG_COLOR_styleframe_luma_byte.png
 
 **Overall: FAIL (1 item) — known pre-existing issue**
 
@@ -129,8 +129,8 @@ Note: SF03/SF04 flip from WARN to FAIL in this run due to histogram mode providi
 ## SF02 v006 Addendum — Cycle 35 Color Audit
 
 **Date:** 2026-03-29
-**Tool:** LTG_TOOL_color_verify_v002.py --histogram
-**Asset:** `output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v006.png`
+**Tool:** LTG_TOOL_color_verify.py --histogram
+**Asset:** `output/color/style_frames/LTG_COLOR_styleframe_glitch_storm.png`
 
 | Color | Status | Δ Hue | n pixels | Notes |
 |-------|--------|-------|----------|-------|

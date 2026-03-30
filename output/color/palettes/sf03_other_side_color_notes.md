@@ -261,7 +261,7 @@ Terracotta fragment) — not light-source colors. The rule holds.
 
 ## 5 — Color System Cross-Reference for Jordan Reed (Background Generator)
 
-Jordan: the following master palette constants should be used in `LTG_TOOL_style_frame_03_other_side_v001.py`.
+Jordan: the following master palette constants should be used in `LTG_TOOL_style_frame_03_other_side.py`.
 Map these to module-level named constants matching the pattern in SF01/SF02 generators.
 
 ```python

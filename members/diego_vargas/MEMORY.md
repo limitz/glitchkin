@@ -20,7 +20,7 @@ Cycle 37. No prior history on this project.
 - VOID_BLACK = (10, 10, 20) — deep digital space
 - SUNLIT_AMB = (212, 146, 58) — Real World warm midtone
 - WARM_CREAM = (250, 240, 220) — Real World primary light
-- **LUMA_HOODIE = (230, 100, 26) = #E6641A — CANONICAL ORANGE** (was wrongly slate blue in C37)
+- **LUMA_HOODIE = (232, 112, 58) = #E8703A — CANONICAL ORANGE** (per master_palette.md — was wrongly slate blue in C37)
 
 ## Key Assets Relevant to Boarding
 - Style Frames: output/color/style_frames/ (SF01–SF04)
@@ -29,17 +29,17 @@ Cycle 37. No prior history on this project.
 - Story context: check output/production/ for any story bible or pitch notes
 
 ## My Work
-- **LTG_SB_pilot_cold_open_v001.py** — C37 original (6-panel contact sheet, had hoodie/W004 bugs)
-- **LTG_SB_pilot_cold_open_v002.py** — C38 fixed version
-  - Output: output/storyboards/LTG_SB_pilot_cold_open_v002.png (1136×630px)
+- **LTG_SB_pilot_cold_open.py** — C37 original (6-panel contact sheet, had hoodie/W004 bugs)
+- **LTG_SB_pilot_cold_open.py** — C38 fixed version
+  - Output: output/storyboards/LTG_SB_pilot_cold_open.png (1136×630px)
   - All P1 critic/staging fixes applied (see below)
 
 ## C38 Panel State
 - **v002 done**: hoodie orange, W004 fixed, P3 polys, P4 direction, P6 brow/lid/catch fixed
 
 ## C39 Storyboard — v003 DELIVERED
-- Output: `output/storyboards/LTG_SB_pilot_cold_open_v003.png` (1136×630px)
-- Generator: `output/tools/LTG_TOOL_sb_pilot_cold_open_v003.py`
+- Output: `output/storyboards/LTG_SB_pilot_cold_open.png` (1136×630px)
+- Generator: `output/tools/LTG_TOOL_sb_pilot_cold_open.py`
 - **Cold open canon confirmed**: night / Grandma's den — AUTHORITATIVE (Alex Chen)
 - **NEW P01**: Exterior night shot — residential neighborhood, Luma's house, one upstairs window lit.
   Street lamp (sodium glow), tree silhouette (L), parked car (R BG), moon upper-right.
@@ -57,18 +57,18 @@ Cycle 37. No prior history on this project.
   - ARC_COMMIT = (60, 200, 140) border color (warm-cool blend for threshold beat)
 
 ## Lessons Learned — Cycle 37
-- Existing panel tools (LTG_TOOL_sb_panel_a101_v001.py pattern) use PW=800, PANEL_H=600 with separate caption bar — solid reference for next panels
+- Existing panel tools (LTG_TOOL_sb_panel_a101.py pattern) use PW=800, PANEL_H=600 with separate caption bar — solid reference for next panels
 - Contact sheets use THUMB thumbnails + COLS/ROWS grid layout with caption bars and arc-color outline borders
 - Font loading uses DejaVuSans paths — always include fallback to load_default()
 - add_glow() pattern is additive alpha composite — never darkens, good for CRT glow effects
 - P6 expression "THE NOTICING": asymmetric brow (wonder left / apprehension right) + cyan iris catch is the key visual grammar for the pitch emotional core
 - At contact sheet thumbnail scale (~360×220px per panel), only major staging and silhouette reads — details need standalone panels for critique
 - ARC color border system: warm amber=QUIET, curious cyan=CURIOUS/DISCOVERY, magenta=TENSE, bright cyan=CORE/PITCH-BEAT
-- Image size rule enforced: use img.thumbnail((1280, 1280), Image.LANCZOS) before save
+- *Image rules: see `docs/image-rules.md`*
 
 ## Lessons Learned — Cycle 38
 - **Always verify character color spec before submitting** — LUMA_HOODIE must be (230,100,26) canonical orange. Never guess; check production_bible.md or character sheets.
-- **W004 rule**: after ANY img.paste() or sheet.paste() call, immediately add `draw = ImageDraw.Draw(img)` — stale draw object is a code defect even if output appears correct
+- *W004 / PIL draw context rule: `docs/pil-standards.md`*
 - **Glitchkin pixel shapes**: ALL formation pixels must be 4-7 sided irregular polygons via draw_irregular_poly() — no rectangles. Applies to pixel clusters AND pixel trails (Cycle 11 standard).
 - **P4 intrusion directionality**: "cyan bleeds in" requires a visible SOURCE POINT (where on the screen) + a directional VECTOR (which way it travels toward character). Ambient glow alone is insufficient.
 - **P6 brow differential**: left brow apex must be ≥8px (target 10-12px) above right brow line at MCU scale. Measure in pixel coords: le_cy-36 vs re_cy-22 gap should be ≥8.

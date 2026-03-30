@@ -1,42 +1,42 @@
 # LTG Render QA Report — Cycle 27
 
 **Generated:** 2026-03-29  
-**Tool:** LTG_TOOL_render_qa_v001.py v1.1.0  
+**Tool:** LTG_TOOL_render_qa.py v1.1.0  
 **Total assets evaluated:** 29
 
 ## Summary
 
 | File | Asset Type | Silhouette | Value Range | Color Fidelity | Warm/Cool | Line Weight | Grade |
 |------|-----------|-----------|-------------|----------------|-----------|-------------|-------|
-| LTG_CHAR_luma_expression_sheet_v006.png | character_sheet | distinct | PASS | WARN | SKIP | PASS | **WARN** |
-| LTG_CHAR_byte_expression_sheet_v004.png | character_sheet | distinct | PASS | PASS | SKIP | PASS | PASS |
-| LTG_CHAR_cosmo_expression_sheet_v004.png | character_sheet | distinct | PASS | PASS | SKIP | PASS | PASS |
-| LTG_CHAR_grandma_miri_expression_sheet_v003.png | character_sheet | distinct | PASS | WARN | SKIP | PASS | **WARN** |
-| LTG_CHAR_glitch_expression_sheet_v002.png | character_sheet | distinct | PASS | PASS | SKIP | WARN | **WARN** |
-| LTG_CHAR_lineup_v004.png | character_sheet | blob | PASS | WARN | SKIP | PASS | **FAIL** |
-| LTG_CHAR_luma_turnaround_v002.png | character_sheet | distinct | PASS | WARN | SKIP | PASS | **WARN** |
-| LTG_CHAR_byte_turnaround_v001.png | character_sheet | distinct | PASS | PASS | SKIP | PASS | PASS |
-| LTG_CHAR_cosmo_turnaround_v002.png | character_sheet | distinct | PASS | PASS | SKIP | PASS | PASS |
-| LTG_CHAR_miri_turnaround_v001.png | character_sheet | distinct | PASS | PASS | SKIP | WARN | **WARN** |
-| LTG_CHAR_glitch_turnaround_v002.png | character_sheet | ambiguous | WARN | WARN | SKIP | PASS | **WARN** |
-| LTG_COLOR_luma_color_model_v001.png | color_model | distinct | PASS | WARN | SKIP | PASS | **WARN** |
-| LTG_COLOR_byte_color_model_v001.png | color_model | distinct | PASS | PASS | SKIP | PASS | PASS |
-| LTG_COLOR_cosmo_color_model_v001.png | color_model | distinct | PASS | PASS | SKIP | PASS | PASS |
-| LTG_COLOR_grandma_miri_color_model_v001.png | color_model | distinct | PASS | WARN | SKIP | PASS | **WARN** |
-| LTG_COLOR_glitch_color_model_v001.png | color_model | distinct | PASS | WARN | SKIP | WARN | **WARN** |
-| LTG_COLOR_styleframe_discovery_v003.png | style_frame | distinct | PASS | PASS | WARN | PASS | **WARN** |
-| LTG_COLOR_styleframe_glitch_storm_v005.png | style_frame | distinct | PASS | PASS | WARN | PASS | **WARN** |
-| LTG_COLOR_styleframe_otherside_v003.png | style_frame | distinct | PASS | WARN | WARN | PASS | **WARN** |
-| LTG_COLOR_styleframe_luma_byte_v001.png | style_frame | distinct | PASS | WARN | WARN | PASS | **WARN** |
-| LTG_ENV_tech_den_v004.png | environment | distinct | WARN | PASS | WARN | PASS | **WARN** |
-| LTG_ENV_school_hallway_v002.png | environment | distinct | WARN | WARN | PASS | PASS | **WARN** |
-| LTG_ENV_millbrook_main_street_v002.png | environment | distinct | WARN | PASS | PASS | PASS | **WARN** |
-| LTG_ENV_classroom_bg_v002.png | environment | blob | PASS | WARN | WARN | WARN | **FAIL** |
-| LTG_ENV_grandma_kitchen_v003.png | environment | distinct | WARN | PASS | WARN | WARN | **WARN** |
-| LTG_ENV_other_side_bg_v002.png | environment | distinct | PASS | WARN | WARN | PASS | **WARN** |
-| LTG_ENV_glitchlayer_frame_v003.png | environment | distinct | PASS | PASS | WARN | PASS | **WARN** |
-| LTG_ENV_glitch_storm_bg_v001.png | environment | distinct | PASS | PASS | WARN | PASS | **WARN** |
-| LTG_ENV_lumashome_study_interior_v001.png | environment | distinct | PASS | PASS | WARN | PASS | **WARN** |
+| LTG_CHAR_luma_expression_sheet.png | character_sheet | distinct | PASS | WARN | SKIP | PASS | **WARN** |
+| LTG_CHAR_byte_expression_sheet.png | character_sheet | distinct | PASS | PASS | SKIP | PASS | PASS |
+| LTG_CHAR_cosmo_expression_sheet.png | character_sheet | distinct | PASS | PASS | SKIP | PASS | PASS |
+| LTG_CHAR_grandma_miri_expression_sheet.png | character_sheet | distinct | PASS | WARN | SKIP | PASS | **WARN** |
+| LTG_CHAR_glitch_expression_sheet.png | character_sheet | distinct | PASS | PASS | SKIP | WARN | **WARN** |
+| LTG_CHAR_lineup.png | character_sheet | blob | PASS | WARN | SKIP | PASS | **FAIL** |
+| LTG_CHAR_luma_turnaround.png | character_sheet | distinct | PASS | WARN | SKIP | PASS | **WARN** |
+| LTG_CHAR_byte_turnaround.png | character_sheet | distinct | PASS | PASS | SKIP | PASS | PASS |
+| LTG_CHAR_cosmo_turnaround.png | character_sheet | distinct | PASS | PASS | SKIP | PASS | PASS |
+| LTG_CHAR_miri_turnaround.png | character_sheet | distinct | PASS | PASS | SKIP | WARN | **WARN** |
+| LTG_CHAR_glitch_turnaround.png | character_sheet | ambiguous | WARN | WARN | SKIP | PASS | **WARN** |
+| LTG_COLOR_luma_color_model.png | color_model | distinct | PASS | WARN | SKIP | PASS | **WARN** |
+| LTG_COLOR_byte_color_model.png | color_model | distinct | PASS | PASS | SKIP | PASS | PASS |
+| LTG_COLOR_cosmo_color_model.png | color_model | distinct | PASS | PASS | SKIP | PASS | PASS |
+| LTG_COLOR_grandma_miri_color_model.png | color_model | distinct | PASS | WARN | SKIP | PASS | **WARN** |
+| LTG_COLOR_glitch_color_model.png | color_model | distinct | PASS | WARN | SKIP | WARN | **WARN** |
+| LTG_COLOR_styleframe_discovery.png | style_frame | distinct | PASS | PASS | WARN | PASS | **WARN** |
+| LTG_COLOR_styleframe_glitch_storm.png | style_frame | distinct | PASS | PASS | WARN | PASS | **WARN** |
+| LTG_COLOR_styleframe_otherside.png | style_frame | distinct | PASS | WARN | WARN | PASS | **WARN** |
+| LTG_COLOR_styleframe_luma_byte.png | style_frame | distinct | PASS | WARN | WARN | PASS | **WARN** |
+| LTG_ENV_tech_den.png | environment | distinct | WARN | PASS | WARN | PASS | **WARN** |
+| LTG_ENV_school_hallway.png | environment | distinct | WARN | WARN | PASS | PASS | **WARN** |
+| LTG_ENV_millbrook_main_street.png | environment | distinct | WARN | PASS | PASS | PASS | **WARN** |
+| LTG_ENV_classroom_bg.png | environment | blob | PASS | WARN | WARN | WARN | **FAIL** |
+| LTG_ENV_grandma_kitchen.png | environment | distinct | WARN | PASS | WARN | WARN | **WARN** |
+| LTG_ENV_other_side_bg.png | environment | distinct | PASS | WARN | WARN | PASS | **WARN** |
+| LTG_ENV_glitchlayer_frame.png | environment | distinct | PASS | PASS | WARN | PASS | **WARN** |
+| LTG_ENV_glitch_storm_bg.png | environment | distinct | PASS | PASS | WARN | PASS | **WARN** |
+| LTG_ENV_lumashome_study_interior.png | environment | distinct | PASS | PASS | WARN | PASS | **WARN** |
 
 **Results:** 6 PASS / 21 WARN / 2 FAIL
 
@@ -44,7 +44,7 @@
 
 ## Detailed Results
 
-### LTG_CHAR_luma_expression_sheet_v006.png
+### LTG_CHAR_luma_expression_sheet.png
 *Asset type: character_sheet*
 
 **Overall Grade:** WARN
@@ -70,7 +70,7 @@
 
 ---
 
-### LTG_CHAR_byte_expression_sheet_v004.png
+### LTG_CHAR_byte_expression_sheet.png
 *Asset type: character_sheet*
 
 **Overall Grade:** PASS
@@ -93,7 +93,7 @@
 
 ---
 
-### LTG_CHAR_cosmo_expression_sheet_v004.png
+### LTG_CHAR_cosmo_expression_sheet.png
 *Asset type: character_sheet*
 
 **Overall Grade:** PASS
@@ -116,7 +116,7 @@
 
 ---
 
-### LTG_CHAR_grandma_miri_expression_sheet_v003.png
+### LTG_CHAR_grandma_miri_expression_sheet.png
 *Asset type: character_sheet*
 
 **Overall Grade:** WARN
@@ -142,7 +142,7 @@
 
 ---
 
-### LTG_CHAR_glitch_expression_sheet_v002.png
+### LTG_CHAR_glitch_expression_sheet.png
 *Asset type: character_sheet*
 
 **Overall Grade:** WARN
@@ -169,7 +169,7 @@
 
 ---
 
-### LTG_CHAR_lineup_v004.png
+### LTG_CHAR_lineup.png
 *Asset type: character_sheet*
 
 **Overall Grade:** FAIL
@@ -198,7 +198,7 @@
 
 ---
 
-### LTG_CHAR_luma_turnaround_v002.png
+### LTG_CHAR_luma_turnaround.png
 *Asset type: character_sheet*
 
 **Overall Grade:** WARN
@@ -224,7 +224,7 @@
 
 ---
 
-### LTG_CHAR_byte_turnaround_v001.png
+### LTG_CHAR_byte_turnaround.png
 *Asset type: character_sheet*
 
 **Overall Grade:** PASS
@@ -247,7 +247,7 @@
 
 ---
 
-### LTG_CHAR_cosmo_turnaround_v002.png
+### LTG_CHAR_cosmo_turnaround.png
 *Asset type: character_sheet*
 
 **Overall Grade:** PASS
@@ -270,7 +270,7 @@
 
 ---
 
-### LTG_CHAR_miri_turnaround_v001.png
+### LTG_CHAR_miri_turnaround.png
 *Asset type: character_sheet*
 
 **Overall Grade:** WARN
@@ -297,7 +297,7 @@
 
 ---
 
-### LTG_CHAR_glitch_turnaround_v002.png
+### LTG_CHAR_glitch_turnaround.png
 *Asset type: character_sheet*
 
 **Overall Grade:** WARN
@@ -326,7 +326,7 @@
 
 ---
 
-### LTG_COLOR_luma_color_model_v001.png
+### LTG_COLOR_luma_color_model.png
 *Asset type: color_model*
 
 **Overall Grade:** WARN
@@ -352,7 +352,7 @@
 
 ---
 
-### LTG_COLOR_byte_color_model_v001.png
+### LTG_COLOR_byte_color_model.png
 *Asset type: color_model*
 
 **Overall Grade:** PASS
@@ -375,7 +375,7 @@
 
 ---
 
-### LTG_COLOR_cosmo_color_model_v001.png
+### LTG_COLOR_cosmo_color_model.png
 *Asset type: color_model*
 
 **Overall Grade:** PASS
@@ -398,7 +398,7 @@
 
 ---
 
-### LTG_COLOR_grandma_miri_color_model_v001.png
+### LTG_COLOR_grandma_miri_color_model.png
 *Asset type: color_model*
 
 **Overall Grade:** WARN
@@ -424,7 +424,7 @@
 
 ---
 
-### LTG_COLOR_glitch_color_model_v001.png
+### LTG_COLOR_glitch_color_model.png
 *Asset type: color_model*
 
 **Overall Grade:** WARN
@@ -452,7 +452,7 @@
 
 ---
 
-### LTG_COLOR_styleframe_discovery_v003.png
+### LTG_COLOR_styleframe_discovery.png
 *Asset type: style_frame*
 
 **Overall Grade:** WARN
@@ -479,7 +479,7 @@
 
 ---
 
-### LTG_COLOR_styleframe_glitch_storm_v005.png
+### LTG_COLOR_styleframe_glitch_storm.png
 *Asset type: style_frame*
 
 **Overall Grade:** WARN
@@ -506,7 +506,7 @@
 
 ---
 
-### LTG_COLOR_styleframe_otherside_v003.png
+### LTG_COLOR_styleframe_otherside.png
 *Asset type: style_frame*
 
 **Overall Grade:** WARN
@@ -534,7 +534,7 @@
 
 ---
 
-### LTG_COLOR_styleframe_luma_byte_v001.png
+### LTG_COLOR_styleframe_luma_byte.png
 *Asset type: style_frame*
 
 **Overall Grade:** WARN
@@ -562,7 +562,7 @@
 
 ---
 
-### LTG_ENV_tech_den_v004.png
+### LTG_ENV_tech_den.png
 *Asset type: environment*
 
 **Overall Grade:** WARN
@@ -591,7 +591,7 @@
 
 ---
 
-### LTG_ENV_school_hallway_v002.png
+### LTG_ENV_school_hallway.png
 *Asset type: environment*
 
 **Overall Grade:** WARN
@@ -619,7 +619,7 @@
 
 ---
 
-### LTG_ENV_millbrook_main_street_v002.png
+### LTG_ENV_millbrook_main_street.png
 *Asset type: environment*
 
 **Overall Grade:** WARN
@@ -646,7 +646,7 @@
 
 ---
 
-### LTG_ENV_classroom_bg_v002.png
+### LTG_ENV_classroom_bg.png
 *Asset type: environment*
 
 **Overall Grade:** FAIL
@@ -679,7 +679,7 @@
 
 ---
 
-### LTG_ENV_grandma_kitchen_v003.png
+### LTG_ENV_grandma_kitchen.png
 *Asset type: environment*
 
 **Overall Grade:** WARN
@@ -710,7 +710,7 @@
 
 ---
 
-### LTG_ENV_other_side_bg_v002.png
+### LTG_ENV_other_side_bg.png
 *Asset type: environment*
 
 **Overall Grade:** WARN
@@ -738,7 +738,7 @@
 
 ---
 
-### LTG_ENV_glitchlayer_frame_v003.png
+### LTG_ENV_glitchlayer_frame.png
 *Asset type: environment*
 
 **Overall Grade:** WARN
@@ -765,7 +765,7 @@
 
 ---
 
-### LTG_ENV_glitch_storm_bg_v001.png
+### LTG_ENV_glitch_storm_bg.png
 *Asset type: environment*
 
 **Overall Grade:** WARN
@@ -792,7 +792,7 @@
 
 ---
 
-### LTG_ENV_lumashome_study_interior_v001.png
+### LTG_ENV_lumashome_study_interior.png
 *Asset type: environment*
 
 **Overall Grade:** WARN

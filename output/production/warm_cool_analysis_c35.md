@@ -3,7 +3,7 @@
 **Author:** Sam Kowalski, Color & Style Artist
 **Date:** 2026-03-29
 **Scope:** All 4 pitch-primary style frames + SF04 SUNLIT_AMBER drift (Priya C14 P1, Nkechi C14)
-**Tool:** LTG_TOOL_render_qa_v001.py (`_check_warm_cool()`), LTG_TOOL_color_verify_v002.py (--histogram)
+**Tool:** LTG_TOOL_render_qa.py (`_check_warm_cool()`), LTG_TOOL_color_verify.py (--histogram)
 
 ---
 
@@ -138,12 +138,12 @@ Per hue distribution and canonical color audit:
 ## 4. SF04 SUNLIT_AMBER Drift Analysis (Nkechi C14 — Δ15.7°)
 
 ### 4a. The reading
-The `LTG_TOOL_color_verify_v002.py --histogram` run on SF04 v004 finds:
+The `LTG_TOOL_color_verify.py --histogram` run on SF04 v004 finds:
 - SUNLIT_AMBER: target=34.3°, found=18.6°, Δ15.7°, n=6,752 px at 15-20° bucket.
 
 ### 4b. Is this drift in the generator source colors?
 
-Examining `LTG_TOOL_styleframe_luma_byte_v004.py`:
+Examining `LTG_TOOL_styleframe_luma_byte.py`:
 
 ```
 SUNLIT_AMBER = (212, 146, 58)   # defined at line 69 — canonical RW-03 #D4923A = CORRECT
@@ -224,7 +224,7 @@ in `ltg_style_frame_color_story.md`. The 4 WARN grades on warm/cool are systemat
 positives of the same class as the UV_PURPLE and SUNLIT_AMBER false positives.
 
 ### Recommendation C — SF04 generator note
-Add a comment to `LTG_TOOL_styleframe_luma_byte_v004.py` line 69 and the lamp draw call
+Add a comment to `LTG_TOOL_styleframe_luma_byte.py` line 69 and the lamp draw call
 noting that `(255,200,80)` is an intentional incandescent lamp amber distinct from canonical
 RW-03 SUNLIT_AMBER. Register unused `SUNLIT_AMBER` constant or remove it.
 
@@ -232,7 +232,7 @@ RW-03 SUNLIT_AMBER. Register unused `SUNLIT_AMBER` constant or remove it.
 
 ## 6. SF02 v006 Color Audit (Task from C34 inbox)
 
-**Run:** `LTG_TOOL_color_verify_v002.py --histogram` on `LTG_COLOR_styleframe_glitch_storm_v006.png`
+**Run:** `LTG_TOOL_color_verify.py --histogram` on `LTG_COLOR_styleframe_glitch_storm.png`
 
 | Color | Status | Δ Hue | n pixels | Notes |
 |-------|--------|-------|----------|-------|
@@ -270,8 +270,8 @@ Per C35 directive: Rin Yamamoto's v007 delivery is pending this cycle.
 
 **Status: PENDING.** When v007 is delivered, run:
 ```
-python3 output/tools/LTG_TOOL_color_verify_v002.py \
-  output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v007.png --histogram
+python3 output/tools/LTG_TOOL_color_verify.py \
+  output/color/style_frames/LTG_COLOR_styleframe_glitch_storm.png --histogram
 ```
 Expected: All canonical colors from v006 remain stable. If Rin adds procedural draw elements,
 verify no hue drift on CORRUPT_AMBER (GL-07, most vulnerable to stylization errors) and no

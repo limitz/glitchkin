@@ -27,23 +27,23 @@ BASE = "/home/wipkat/team/output"
 ASSETS = [
     (
         "SF02 — Glitch Storm",
-        f"{BASE}/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v005.png",
+        f"{BASE}/color/style_frames/LTG_COLOR_styleframe_glitch_storm.png",
         f"{BASE}/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v005_styled.png",
     ),
     (
         "SF03 — Other Side",
-        f"{BASE}/color/style_frames/LTG_COLOR_styleframe_otherside_v003.png",
+        f"{BASE}/color/style_frames/LTG_COLOR_styleframe_otherside.png",
         f"{BASE}/color/style_frames/LTG_COLOR_styleframe_otherside_v003_styled.png",
     ),
     (
         "SF01 — Discovery",
-        f"{BASE}/color/style_frames/LTG_COLOR_styleframe_discovery_v003.png",
+        f"{BASE}/color/style_frames/LTG_COLOR_styleframe_discovery.png",
         f"{BASE}/color/style_frames/LTG_COLOR_styleframe_discovery_v003_styled.png",
     ),
     (
         "Kitchen — Grandma",
-        f"{BASE}/backgrounds/environments/LTG_ENV_grandma_kitchen_v003.png",
-        f"{BASE}/backgrounds/environments/LTG_ENV_grandma_kitchen_v003_styled.png",
+        f"{BASE}/backgrounds/environments/LTG_ENV_grandma_kitchen.png",
+        f"{BASE}/backgrounds/environments/LTG_ENV_grandma_kitchen_styled.png",
     ),
 ]
 

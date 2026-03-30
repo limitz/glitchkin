@@ -48,9 +48,9 @@ This document establishes the single canonical file naming system for all produc
 
 **Cycle 13 category ratification notes (Alex Chen, Art Director):**
 
-**`BRAND` — RATIFIED.** `LTG_BRAND_*` is the correct category for show logos, title cards, lockups, and brand identity assets. These are distinct from `PROD` (production administration documents) and `COLOR` (color scripts / palettes). `LTG_BRAND_logo_asymmetric_v001.png` and subsequent logo assets use this code correctly. Added to spec.
+**`BRAND` — RATIFIED.** `LTG_BRAND_*` is the correct category for show logos, title cards, lockups, and brand identity assets. These are distinct from `PROD` (production administration documents) and `COLOR` (color scripts / palettes). `LTG_BRAND_logo_asymmetric.png` and subsequent logo assets use this code correctly. Added to spec.
 
-**`COL` — RETIRED. Use `COLOR`.** `LTG_COL_*` files created by Sam Kowalski (e.g., `LTG_COL_luma_colormodel_v001.png`) used a non-approved shorthand. `COL` is not a valid category code and never was. The canonical code is `COLOR`. The `LTG_COLOR_*_color_model_swatches_v001.png` versions created by Jordan Reed are the correct replacements. Any `LTG_COL_*` files should be treated as non-compliant — do not create new files with `COL` prefix. Existing `LTG_COL_*` files will be addressed in the batch reconciliation pass. Do not rename them individually.
+**`COL` — RETIRED. Use `COLOR`.** `LTG_COL_*` files created by Sam Kowalski (e.g., `LTG_COL_luma_colormodel.png`) used a non-approved shorthand. `COL` is not a valid category code and never was. The canonical code is `COLOR`. The `LTG_COLOR_*_color_model_swatches_v001.png` versions created by Jordan Reed are the correct replacements. Any `LTG_COL_*` files should be treated as non-compliant — do not create new files with `COL` prefix. Existing `LTG_COL_*` files will be addressed in the batch reconciliation pass. Do not rename them individually.
 
 ---
 

@@ -331,7 +331,7 @@ output/
 
 **CRITICAL SPEC VIOLATION — SF03: Byte Body Fill = Void Black**
 
-During Critique 9, Naomi Bridges identified that the SF03 v002 generator (`LTG_TOOL_style_frame_03_other_side_v002.py`) contained `BYTE_BODY = (10, 10, 20)` — Void Black — instead of the specified `(0, 212, 232)` GL-01b Byte Teal. This caused Byte's entire body to be invisible against the UV Purple ambient background, rendering the character undetectable in the frame. The violation was present since SF03 was first built and went undetected across multiple cycles and critique passes.
+During Critique 9, Naomi Bridges identified that the SF03 v002 generator (`LTG_TOOL_style_frame_03_other_side.py`) contained `BYTE_BODY = (10, 10, 20)` — Void Black — instead of the specified `(0, 212, 232)` GL-01b Byte Teal. This caused Byte's entire body to be invisible against the UV Purple ambient background, rendering the character undetectable in the frame. The violation was present since SF03 was first built and went undetected across multiple cycles and critique passes.
 
 **Canonical spec (permanent record):**
 - Byte body fill = **GL-01b Byte Teal `(0, 212, 232)` / `#00D4E8`** — always, in all scenes, including Glitch Layer environments

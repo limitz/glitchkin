@@ -4,8 +4,8 @@
 **Author:** Alex Chen, Art Director
 **Date:** 2026-03-29
 **Cycle:** 14
-**File assessed:** `LTG_COLOR_styleframe_discovery_v003.png`
-**Generator reviewed:** `LTG_TOOL_style_frame_01_discovery_v003.py`
+**File assessed:** `LTG_COLOR_styleframe_discovery.png`
+**Generator reviewed:** `LTG_TOOL_style_frame_01_discovery.py`
 
 ---
 

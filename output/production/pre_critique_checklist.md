@@ -21,7 +21,7 @@ All items marked **(REQUIRED)** must PASS before promotion. Items marked **(WARN
 
 ### 1. Silhouette Full-Mode Test (REQUIRED)
 
-Run `LTG_TOOL_expression_silhouette_v002.py` in `--mode full` on the expression sheet PNG.
+Run `LTG_TOOL_expression_silhouette.py` in `--mode full` on the expression sheet PNG.
 
 **Requirement:** No pair may exceed **88% similarity** (lower is more distinct).
 
@@ -35,7 +35,7 @@ Document the worst pair score in your completion report.
 
 ### 2. Silhouette Arms-Mode Diagnostic (WARN — diagnostic only, not a gate)
 
-Run `LTG_TOOL_expression_silhouette_v002.py` in `--mode arms --center-mask 0.36` as a supplemental diagnostic.
+Run `LTG_TOOL_expression_silhouette.py` in `--mode arms --center-mask 0.36` as a supplemental diagnostic.
 
 This mode is **not a hard gate** (C34 finding: torso dominates arm band at panel resolution). Use it to identify which arms are most similar and target those for further differentiation.
 
@@ -61,7 +61,7 @@ Each expression must have a distinctly different primary arm pose. Check against
 
 ### 4. Line Weight Standards (REQUIRED)
 
-Verify the output PNG conforms to the 3-tier line weight system (per `character_sheet_standards_v001.md` Section 6):
+Verify the output PNG conforms to the 3-tier line weight system (per `character_sheet_standards.md` Section 6):
 
 | Tier | Expected output width | Check |
 |---|---|---|
@@ -73,7 +73,7 @@ Silhouette must visibly outweigh interior structure. If both appear the same wei
 
 ### 5. Eye-Width Canonical Formula (REQUIRED)
 
-If the character uses the `ew = int(head_r_rendered × 0.22)` formula (Luma, Cosmo, Miri), confirm the generator uses the correct value from `character_sheet_standards_v001.md` Section 2.
+If the character uses the `ew = int(head_r_rendered × 0.22)` formula (Luma, Cosmo, Miri), confirm the generator uses the correct value from `character_sheet_standards.md` Section 2.
 
 **Never apply 0.22 to head-diameter or head-height.** Document the `head_r_rendered` value used and the resulting `ew` in your completion report.
 
@@ -81,12 +81,12 @@ If the character uses the `ew = int(head_r_rendered × 0.22)` formula (Luma, Cos
 
 All expression labels in the output PNG must:
 - Be ALL CAPS
-- Conform to label format rules in `character_sheet_standards_v001.md` Section 1
+- Conform to label format rules in `character_sheet_standards.md` Section 1
 - Match the `EXPR_LABELS` dict in the generator source exactly
 
 ### 7. Canvas and Grid Standards (REQUIRED)
 
-Verify against `character_sheet_standards_v001.md` Section 5:
+Verify against `character_sheet_standards.md` Section 5:
 - Canvas: 1200×900 (or documented exception)
 - Output PNG: ≤ 1280px in both dimensions
 - Background: near-void dark `(28, 20, 14)` or character-specific equivalent
@@ -128,7 +128,7 @@ This checklist is mandatory from **Cycle 35 onward** for all expression sheet pr
 
 Alex Chen will reject any completion report that does not include this checklist summary. Critics regularly flag silhouette and line weight issues — these must be caught before critique, not during.
 
-The silhouette test tool is: `output/tools/LTG_TOOL_expression_silhouette_v002.py`
+The silhouette test tool is: `output/tools/LTG_TOOL_expression_silhouette.py`
 
 ---
 

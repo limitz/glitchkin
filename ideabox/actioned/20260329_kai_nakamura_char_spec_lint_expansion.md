@@ -5,7 +5,7 @@
 **Cycle:** 34
 
 ## Problem
-`LTG_TOOL_char_spec_lint_v001.py` was hand-coded: I manually read luma.md,
+`LTG_TOOL_char_spec_lint.py` was hand-coded: I manually read luma.md,
 cosmo.md, and grandma_miri.md, extracted the key numbers, and wrote individual
 check functions for each. This means:
 - Adding a new character requires hand-coding new check functions
@@ -14,7 +14,7 @@ check functions for each. This means:
 - The linter can silently drift out of sync with the spec without anyone noticing
 
 ## Idea
-Build `LTG_TOOL_spec_extractor_v001.py` — a tool that parses character spec .md
+Build `LTG_TOOL_spec_extractor.py` — a tool that parses character spec .md
 files and auto-generates check functions for `char_spec_lint`:
 
 1. **Numeric table extraction:** Scan tables in .md files for rows with numeric

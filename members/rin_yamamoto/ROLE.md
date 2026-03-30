@@ -21,7 +21,7 @@
 - Python PIL/Pillow — all generators scripted, style integrated at draw time
 - Variable stroke weight: three-tier line weight system (anchor/structure/detail)
 - Volumetric face lighting, wobble paths, organic noise fields
-- LTG naming conventions: `LTG_TOOL_gen_[descriptor]_v[###].py`
+- LTG naming conventions: `LTG_TOOL_gen_[descriptor].py`
 - Coordinates with Kai Nakamura on render lib; receives staging briefs from Lee Tanaka
 
 ---
@@ -42,14 +42,8 @@
 - Style is integrated at generation time — NOT layered on as post-pass (except legacy assets)
 - Silhouette-first: outline mass and silhouette designed before fill and detail
 - Organic line: wobble, jitter, or Bezier perturbation on all straight edges
-- NEVER overwrite existing assets — always new versioned file (e.g., v002 → v003)
-- Canvas: 1280×720 for environments; 1920×1080 for style frames (hard max ≤ 1280px each axis)
+- *Versioning rules: `docs/pil-standards.md`*
+- Canvas: 1280×720 for environments and style frames (≤ 1280px hard limit — see `docs/image-rules.md`)
 
-## Mandatory Face Test Gate (MANDATORY from C36 — Lee Tanaka / Producer directive)
-
-Before exporting any asset that contains character faces at sprint scale: run `LTG_TOOL_character_face_test_v001.py` on the output.
-
-- **FAIL = do not submit.** Fix face geometry until the test passes.
-- **WARN = fix or document.** If you cannot fix, include the WARN output in your completion report with explanation.
-
-See `output/production/face_test_gate_policy.md` for full policy rationale and usage instructions.
+## Face Test Gate
+*Mandatory from C36. Full rules: `docs/face-test-gate.md`*

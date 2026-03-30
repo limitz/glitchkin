@@ -31,9 +31,9 @@ the primary deficit. Two consecutive cycles confirmed.
 
 ---
 
-## 2. Face Legibility Tool Results (LTG_TOOL_character_face_test_v001.py)
+## 2. Face Legibility Tool Results (LTG_TOOL_character_face_test.py)
 
-Tool output: `output/production/LTG_TOOL_face_test_luma_r23_v001.png`
+Tool output: `output/production/LTG_TOOL_face_test_luma_r23.png`
 Run parameters: `--char luma --head-r 23 --variants 6 --scale 3`
 
 | Variant             | Result | Notes |
@@ -72,7 +72,7 @@ v007 is acceptable if ALL of the following are true:
 **Technical:**
 - [ ] Image ≤ 1280×1280px (W=1920 > limit — MUST use thumbnail() or render at 1280W max)
 - [ ] Luma char_cx hardcoded for rim light (not full-frame bbox result)
-- [ ] Output saved as `LTG_COLOR_styleframe_glitch_storm_v007.png`
+- [ ] Output saved as `LTG_COLOR_styleframe_glitch_storm.png`
 
 **Hard failure conditions (any = reject):**
 - No face drawn (NEUTRAL baseline = FAIL, same as v004/v005/v006)
@@ -83,7 +83,7 @@ v007 is acceptable if ALL of the following are true:
 
 ## 4. What Lee Will Do When v007 Is Delivered
 
-1. Run `LTG_TOOL_expression_silhouette_v002.py` on a Luma-cropped region of the PNG
+1. Run `LTG_TOOL_expression_silhouette.py` on a Luma-cropped region of the PNG
 2. Check silhouette similarity score between NEUTRAL (no face) and v007 face variants
 3. If score < 0.72 (passes WARN threshold in --arms mode), the face is differentiating the
    silhouette — acceptable

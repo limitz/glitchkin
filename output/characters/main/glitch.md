@@ -34,7 +34,7 @@ LEFT---CX,CY---RIGHT
        BOT
 ```
 
-In code (see `LTG_TOOL_glitch_expression_sheet_v003.py`, `diamond_pts()`):
+In code (see `LTG_TOOL_glitch_expression_sheet.py`, `diamond_pts()`):
 
 ```python
 top   = (cx + int(rx * 0.15 * sin(tilt)), cy - ry_eff + int(rx * 0.15 * cos(tilt)))
@@ -51,7 +51,7 @@ left  = (cx - int(rx * cos(-tilt)),       cy - int(rx * 0.2 * sin(-tilt)))
 - Bottom vertex sits slightly lower than the geometric midpoint: `cy + ry * 1.15`
 - Top vertex has a slight forward lean at non-zero tilt: the `0.15 * sin(tilt)` offset
 
-**Turnaround reference (`LTG_TOOL_glitch_turnaround_v002.py`, `diamond_pts_2d()`):**
+**Turnaround reference (`LTG_TOOL_glitch_turnaround.py`, `diamond_pts_2d()`):**
 ```python
 top   = (cx + int(rx * 0.1 * sin(tilt)), cy - ry)
 right = (cx + rx,                         cy + int(rx * 0.1))
@@ -409,7 +409,7 @@ This is the ONLY case where cyan appears in Glitch's confetti.
 
 ## 9. View-by-View Turnaround Rules
 
-Reference: `LTG_TOOL_glitch_turnaround_v002.py`
+Reference: `LTG_TOOL_glitch_turnaround.py`
 
 ### FRONT view
 - Full diamond, symmetric, UV_PURPLE shadow offset (+3,+4)
@@ -485,11 +485,11 @@ To reproduce Glitch in any new generator:
 
 | Generator | Version | Purpose |
 |---|---|---|
-| `LTG_TOOL_glitch_expression_sheet_v001.py` | C23 | 4 expressions, 2×2 grid (legacy) |
-| `LTG_TOOL_glitch_expression_sheet_v002.py` | C24 | 6 expressions, 3×2 grid |
-| `LTG_TOOL_glitch_expression_sheet_v003.py` | C28 | 9 expressions (3×3), interior desire states added |
-| `LTG_TOOL_glitch_turnaround_v001.py` | C23 | 4-view turnaround, v001 shadow issue |
-| `LTG_TOOL_glitch_turnaround_v002.py` | C24 | Shadow fix — BACK/SIDE use CORRUPT_AMB_SH |
+| `LTG_TOOL_glitch_expression_sheet.py` | C23 | 4 expressions, 2×2 grid (legacy) |
+| `LTG_TOOL_glitch_expression_sheet.py` | C24 | 6 expressions, 3×2 grid |
+| `LTG_TOOL_glitch_expression_sheet.py` | C28 | 9 expressions (3×3), interior desire states added |
+| `LTG_TOOL_glitch_turnaround.py` | C23 | 4-view turnaround, v001 shadow issue |
+| `LTG_TOOL_glitch_turnaround.py` | C24 | Shadow fix — BACK/SIDE use CORRUPT_AMB_SH |
 
 ---
 

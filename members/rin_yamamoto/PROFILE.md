@@ -31,13 +31,13 @@ Rin's philosophy: "The computer should feel embarrassed to have made it."
 - **Color bleed & chromatic softening**: hue shift at edges, soft value transitions — computed during draw, not as filter pass
 
 ### Legacy / Post-Processing (retained for existing assets)
-- `LTG_TOOL_stylize_handdrawn_v002.py` — post-process stylization for legacy PNGs
+- `LTG_TOOL_stylize_handdrawn.py` — post-process stylization for legacy PNGs
 - Can apply stylization as final compositing pass on existing assets when pipeline integration is not possible
 
 ### Pipeline Integration
 - Co-develops core rendering infrastructure with Kai Nakamura
 - Writes `LTG_TOOL_gen_*` modules with style baked in (not `LTG_TOOL_stylize_*` post-passes for new work)
-- Compatible with `LTG_TOOL_render_lib_v001.py`
+- Compatible with `LTG_TOOL_render_lib.py`
 
 ### Tools
 - Python PIL/Pillow (primary)

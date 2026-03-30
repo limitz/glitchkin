@@ -10,25 +10,25 @@
 
 | File | Luma Context | head_r expr | ew expr | ew/HR ratio | Status |
 |------|-------------|-------------|---------|-------------|--------|
-| `LTG_TOOL_style_frame_01_discovery_v003.py` | Luma: organic style | `head_r = p(72)` | `ew  = p(18)` | 0.2500 | **WARN** |
-| `LTG_TOOL_style_frame_02_glitch_storm_v001.py` | Luma: sprint pose, no eyes (canonical N/A) | `head_r = int(h * 0.12)` | `—` | — | **N/A** |
-| `LTG_TOOL_style_frame_02_glitch_storm_v002.py` | Luma: sprint pose, no eyes (canonical N/A) | `head_r  = int(h * 0.12)` | `—` | — | **N/A** |
-| `LTG_TOOL_style_frame_02_glitch_storm_v003.py` | Luma: sprint pose, no eyes (canonical N/A) | `head_r  = int(h * 0.12)` | `—` | — | **N/A** |
-| `LTG_TOOL_style_frame_02_glitch_storm_v004.py` | Luma: sprint pose, no eyes (canonical N/A) | `head_r  = int(h * 0.12)` | `—` | — | **N/A** |
-| `LTG_TOOL_style_frame_02_glitch_storm_v005.py [stub → LTG_TOOL_style_frame_02_glitch_storm_v005.py]` | Luma: sprint pose, no eyes (canonical N/A) | `—` | `—` | — | **N/A** |
-| `LTG_TOOL_style_frame_02_glitch_storm_v006.py` | Luma: sprint pose, no eyes (canonical N/A) | `head_r  = int(h * 0.12)` | `—` | — | **N/A** |
-| `LTG_TOOL_style_frame_02_glitch_storm_v007.py` | Luma with eyes | `head_r  = int(h * 0.12)` | `—` | — | **N/A (no ew found)** |
-| `LTG_TOOL_style_frame_03_other_side_v001.py` | Luma: pixel-art style (organic spec N/A) | `—` | `eye_w = max(4, head_w // 4)` | — | **N/A** |
-| `LTG_TOOL_style_frame_03_other_side_v002.py` | Luma: pixel-art style (organic spec N/A) | `—` | `eye_w = max(4, head_w // 4)` | — | **N/A** |
-| `LTG_TOOL_style_frame_03_other_side_v003.py` | Luma: pixel-art style (organic spec N/A) | `—` | `eye_w = max(4, head_w // 4)` | — | **N/A** |
-| `LTG_TOOL_style_frame_03_other_side_v004.py` | Luma: pixel-art style (organic spec N/A) | `—` | `eye_w = max(4, head_w // 4)` | — | **N/A** |
-| `LTG_TOOL_style_frame_03_other_side_v005.py` | Luma: pixel-art style (organic spec N/A) | `—` | `eye_w = max(4, head_w // 4)` | — | **N/A** |
-| `LTG_TOOL_styleframe_discovery_v004.py` | Luma: organic style | `head_r = p(72)` | `ew  = int(head_r * 0.22)` | 0.2200 | **PASS** |
-| `LTG_TOOL_styleframe_discovery_v005.py` | Luma: organic style | `head_r = p(72)` | `ew = int(head_r * 0.22)` | 0.2200 | **PASS** |
-| `LTG_TOOL_styleframe_luma_byte_v001.py` | Luma: organic style | `—` | `—` | — | **N/A (no ew found)** |
-| `LTG_TOOL_styleframe_luma_byte_v002.py` | Luma: organic style | `—` | `—` | — | **N/A (no ew found)** |
-| `LTG_TOOL_styleframe_luma_byte_v003.py` | Luma: organic style | `—` | `—` | — | **N/A (no ew found)** |
-| `LTG_TOOL_styleframe_luma_byte_v004.py` | Luma: organic style | `—` | `ew = int(head_r * 0.22)` | 0.2200 | **PASS** |
+| `LTG_TOOL_style_frame_01_discovery.py` | Luma: organic style | `head_r = p(72)` | `ew  = p(18)` | 0.2500 | **WARN** |
+| `LTG_TOOL_style_frame_02_glitch_storm.py` | Luma: sprint pose, no eyes (canonical N/A) | `head_r = int(h * 0.12)` | `—` | — | **N/A** |
+| `LTG_TOOL_style_frame_02_glitch_storm.py` | Luma: sprint pose, no eyes (canonical N/A) | `head_r  = int(h * 0.12)` | `—` | — | **N/A** |
+| `LTG_TOOL_style_frame_02_glitch_storm.py` | Luma: sprint pose, no eyes (canonical N/A) | `head_r  = int(h * 0.12)` | `—` | — | **N/A** |
+| `LTG_TOOL_style_frame_02_glitch_storm.py` | Luma: sprint pose, no eyes (canonical N/A) | `head_r  = int(h * 0.12)` | `—` | — | **N/A** |
+| `LTG_TOOL_style_frame_02_glitch_storm.py [stub → LTG_TOOL_style_frame_02_glitch_storm.py]` | Luma: sprint pose, no eyes (canonical N/A) | `—` | `—` | — | **N/A** |
+| `LTG_TOOL_style_frame_02_glitch_storm.py` | Luma: sprint pose, no eyes (canonical N/A) | `head_r  = int(h * 0.12)` | `—` | — | **N/A** |
+| `LTG_TOOL_style_frame_02_glitch_storm.py` | Luma with eyes | `head_r  = int(h * 0.12)` | `—` | — | **N/A (no ew found)** |
+| `LTG_TOOL_style_frame_03_other_side.py` | Luma: pixel-art style (organic spec N/A) | `—` | `eye_w = max(4, head_w // 4)` | — | **N/A** |
+| `LTG_TOOL_style_frame_03_other_side.py` | Luma: pixel-art style (organic spec N/A) | `—` | `eye_w = max(4, head_w // 4)` | — | **N/A** |
+| `LTG_TOOL_style_frame_03_other_side.py` | Luma: pixel-art style (organic spec N/A) | `—` | `eye_w = max(4, head_w // 4)` | — | **N/A** |
+| `LTG_TOOL_style_frame_03_other_side.py` | Luma: pixel-art style (organic spec N/A) | `—` | `eye_w = max(4, head_w // 4)` | — | **N/A** |
+| `LTG_TOOL_style_frame_03_other_side.py` | Luma: pixel-art style (organic spec N/A) | `—` | `eye_w = max(4, head_w // 4)` | — | **N/A** |
+| `LTG_TOOL_styleframe_discovery.py` | Luma: organic style | `head_r = p(72)` | `ew  = int(head_r * 0.22)` | 0.2200 | **PASS** |
+| `LTG_TOOL_styleframe_discovery.py` | Luma: organic style | `head_r = p(72)` | `ew = int(head_r * 0.22)` | 0.2200 | **PASS** |
+| `LTG_TOOL_styleframe_luma_byte.py` | Luma: organic style | `—` | `—` | — | **N/A (no ew found)** |
+| `LTG_TOOL_styleframe_luma_byte.py` | Luma: organic style | `—` | `—` | — | **N/A (no ew found)** |
+| `LTG_TOOL_styleframe_luma_byte.py` | Luma: organic style | `—` | `—` | — | **N/A (no ew found)** |
+| `LTG_TOOL_styleframe_luma_byte.py` | Luma: organic style | `—` | `ew = int(head_r * 0.22)` | 0.2200 | **PASS** |
 
 ---
 
@@ -50,4 +50,4 @@
 - **SF04 (luma_byte):** Latest version is v003. Stubs redirect to LTG_COLOR_* source files.
 - Files marked as stubs were resolved to their actual source for analysis.
 
-*Generated by `LTG_TOOL_proportion_audit_v001.py` — Cycle 31*
+*Generated by `LTG_TOOL_proportion_audit.py` — Cycle 31*

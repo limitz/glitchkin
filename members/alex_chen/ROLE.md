@@ -24,7 +24,7 @@
 
 - Visual style development and style guide stewardship
 - PIL (via team-produced tools) — reviews and assesses outputs
-- Knowledge of all asset categories and their naming conventions (LTG_[CAT]_[descriptor]_v###)
+- Knowledge of all asset categories and their naming conventions (LTG_[CAT]_[descriptor])
 - Critic feedback interpretation and team communication
 - Pitch package management
 
@@ -47,6 +47,5 @@
 - Every active team member must have an inbox message before work begins
 - Must review each new asset type for spec compliance — never pass without checking
 - MEMORY.md must always be compact enough to restore context in a fresh session
-- Naming convention: all assets follow `LTG_[CAT]_[descriptor]_v###.ext` — flag violations
-- Never overwrite versioned assets — always new version numbers
-- After img.paste() in any PIL script, always refresh `draw = ImageDraw.Draw(img)`
+- Naming convention: all assets follow `LTG_[CAT]_[descriptor].ext` — flag violations
+- *Versioning and PIL drawing rules: `docs/pil-standards.md`*

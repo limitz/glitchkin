@@ -22,7 +22,7 @@
 - Perspective construction: single-point, two-point, atmospheric haze
 - Lighting systems: dual-temperature (warm/cool), three-source setup
 - Style frame compositing: characters + BG + lighting overlay in one generator
-- Canvas spec: 1280×720 for environments; 1920×1080 for style frames
+- Canvas spec: 1280×720 for environments and style frames (≤ 1280px hard limit — see `docs/image-rules.md`)
 
 ---
 
@@ -40,7 +40,7 @@
 ## Standards
 
 - **ZERO Glitch palette in real-world environments** — no Electric Cyan, UV Purple, or Void Black in Millbrook settings
-- **After any `img.paste()` call, immediately refresh:** `draw = ImageDraw.Draw(img)` — failure to do this causes subsequent draws to go to the stale surface (a confirmed production bug)
+- *PIL drawing rules: `docs/pil-standards.md`*
 - **Byte body = GL-01b (0,212,232) Byte Teal** — NEVER use (10,10,20) Void Black as Byte body fill. This was a C9 critical violation.
 - **TERRACOTTA_CYAN_LIT = (150,172,162)** — G>R AND B>R both required. A "warm grey" reading (G<R) is a spec violation (ENV-06).
 - Cyan-lit surfaces: both G>R AND B>R must hold individually — meeting one channel is not sufficient
@@ -48,11 +48,5 @@
 - Power lines: catenary sag via parabolic curve; varied weight (main cable 3px, span wires 1px)
 - Style frame window glow: per-window downward trapezoid cone at alpha 90–110 (NOT 160–180)
 
-## Mandatory Face Test Gate (MANDATORY from C36 — Lee Tanaka / Producer directive)
-
-Before exporting any asset that contains character faces at sprint scale: run `LTG_TOOL_character_face_test_v001.py` on the output.
-
-- **FAIL = do not submit.** Fix face geometry until the test passes.
-- **WARN = fix or document.** If you cannot fix, include the WARN output in your completion report with explanation.
-
-See `output/production/face_test_gate_policy.md` for full policy rationale and usage instructions.
+## Face Test Gate
+*Mandatory from C36. Full rules: `docs/face-test-gate.md`*

@@ -1,0 +1,537 @@
+#!/usr/bin/env python3
+"""
+LTG_TOOL_motion_spec_lint.py
+===================================
+Motion Spec Sheet Linter for "Luma & the Glitchkin."
+
+Author: Ryo Hasegawa / Cycle 39
+Ideabox origin: 20260329_ryo_hasegawa_cg_support_polygon_lint.md (actioned C39)
+
+Checks motion spec sheet PNGs for structural compliance without sending images
+to Claude (pixel-analysis only — no vision API cost).
+
+Checks performed:
+  1. Image dimensions ≤ 1280px in both axes           [FAIL if violated]
+  2. Panel count — expected 3 or 4 panels             [WARN if unexpected]
+  3. Annotation text zones — pixel occupancy heuristic
+     Samples the top-annotation zone (rows 30–100 of each panel) and the
+     bottom label zone (last 40 rows of each panel) for non-background
+     pixel density. Low density → annotation may be missing.  [WARN]
+  4. Beat-count numbers present — looks for pixel clusters in the
+     beat-badge zone (top-left corner of each panel, ~30×25px area).  [WARN]
+  5. Timing label colors — checks that BEAT_COLOR (cyan family) pixels
+     appear in the annotation zone of at least 50% of panels.          [WARN]
+  6. Overall structure — verifies image is not solid single color.     [FAIL]
+
+Usage:
+  python3 LTG_TOOL_motion_spec_lint.py path/to/motion_sheet.png
+          [--panels 4]          # expected panel count (3 or 4)
+          [--pass-threshold 0.70]  # occupancy fraction threshold for WARN
+
+  Or import and call:
+    from LTG_TOOL_motion_spec_lint import lint_motion_spec, format_report
+
+Exit codes:
+  0 — All PASS
+  1 — One or more WARN (no FAILs)
+  2 — One or more FAIL
+
+Integration:
+  Used as Section 8 in LTG_TOOL_precritique_qa.py.
+"""
+
+import sys
+import os
+import argparse
+from pathlib import Path
+
+try:
+    from PIL import Image
+    import numpy as np
+    HAS_NUMPY = True
+except ImportError:
+    HAS_NUMPY = False
+
+try:
+    from PIL import Image
+    HAS_PIL = True
+except ImportError:
+    HAS_PIL = False
+
+
+# ---------------------------------------------------------------------------
+# Constants
+# ---------------------------------------------------------------------------
+
+# Background color approximate ranges (annotation panels use light gray background)
+ANNOT_BG_MIN = (200, 200, 200)
+ANNOT_BG_MAX = (255, 255, 255)
+
+# Void/dark panel backgrounds (Beat 4 in Byte motion)
+DARK_BG_MAX = (60, 60, 80)
+
+# BEAT_COLOR family (cyan annotation text in motion sheets).
+# BEAT_COLOR = (0, 190, 215), ELEC_CYAN = (0, 240, 255), BYTE_TEAL = (0, 212, 232)
+# Widen range to catch all cyan-family annotation colors.
+BEAT_CYAN_MIN = (0, 140, 150)
+BEAT_CYAN_MAX = (120, 255, 255)
+
+# Beat-badge zone (top-left of each panel)
+BADGE_W = 32
+BADGE_H = 28
+BADGE_PAD = 4
+
+# Annotation zone (below header area, top portion of each panel).
+# LTG motion sheets have a HEADER_H=44px global header + PAD=12px above panel,
+# so panels start around y=56. The annotation zone within each panel
+# starts ~30px in from the top of the panel.
+# We sample in absolute y coords: panels start at ~56, annot text at ~80–180.
+ANNOT_ZONE_ABS_Y_START = 82
+ANNOT_ZONE_ABS_Y_END = 230
+
+# Label zone (bottom of each panel)
+LABEL_ZONE_H = 42
+
+# Panel detection parameters
+MIN_PANEL_SEPARATION_FRACTION = 0.05   # dark column gap at least 5% of width
+PANEL_EDGE_DARK_THRESHOLD = 60         # pixel value below this is "dark gap"
+
+# Occupancy threshold for annotation WARN
+OCCUPANCY_WARN_THRESHOLD = 0.04        # < 4% non-BG pixels → WARN
+
+
+# ---------------------------------------------------------------------------
+# Core pixel analysis helpers
+# ---------------------------------------------------------------------------
+
+def _load_image(path: str):
+    """Load image and return PIL Image, or raise."""
+    if not HAS_PIL:
+        raise ImportError("Pillow (PIL) is required for motion spec lint.")
+    return Image.open(path).convert("RGB")
+
+
+def _pixel_in_range(pixel, lo, hi):
+    """Check if RGB pixel is within lo/hi bounds (inclusive)."""
+    return all(lo[i] <= pixel[i] <= hi[i] for i in range(3))
+
+
+def _is_bg_pixel(pixel):
+    """True if pixel looks like annotation panel background (light gray/white)."""
+    return _pixel_in_range(pixel, ANNOT_BG_MIN, ANNOT_BG_MAX)
+
+
+def _is_dark_bg_pixel(pixel):
+    """True if pixel is dark background (void/commitment panel)."""
+    return all(pixel[i] <= DARK_BG_MAX[i] for i in range(3))
+
+
+def _is_cyan_pixel(pixel):
+    """True if pixel is in the BEAT_COLOR cyan family."""
+    return _pixel_in_range(pixel, BEAT_CYAN_MIN, BEAT_CYAN_MAX)
+
+
+def _is_any_bg(pixel):
+    return _is_bg_pixel(pixel) or _is_dark_bg_pixel(pixel)
+
+
+def _count_non_bg(img_crop):
+    """Count non-background pixels in a cropped PIL image."""
+    w, h = img_crop.size
+    count = 0
+    px = img_crop.load()
+    for y in range(h):
+        for x in range(w):
+            if not _is_any_bg(px[x, y]):
+                count += 1
+    return count, w * h
+
+
+def _count_cyan(img_crop):
+    """Count BEAT_COLOR cyan-family pixels in a cropped PIL image."""
+    w, h = img_crop.size
+    count = 0
+    px = img_crop.load()
+    for y in range(h):
+        for x in range(w):
+            if _is_cyan_pixel(px[x, y]):
+                count += 1
+    return count, w * h
+
+
+def _detect_panels(img, expected_cols):
+    """
+    Detect panel columns by looking for vertical dark-gap columns.
+    Returns list of (x_start, x_end) tuples for each panel column.
+
+    Falls back to even division if detection fails.
+    """
+    w, h = img.size
+    px = img.load()
+    mid_y = h // 2
+
+    # Build column darkness profile using middle row of image
+    col_dark = []
+    for x in range(w):
+        total = sum(px[x, mid_y])
+        col_dark.append(total < 3 * PANEL_EDGE_DARK_THRESHOLD)
+
+    # Find gap columns (dark bands)
+    gaps = []
+    in_gap = False
+    gap_start = 0
+    for x, is_dark in enumerate(col_dark):
+        if is_dark and not in_gap:
+            in_gap = True
+            gap_start = x
+        elif not is_dark and in_gap:
+            in_gap = False
+            gap_w = x - gap_start
+            if gap_w >= 2:
+                gaps.append((gap_start, x - 1))
+
+    # Build panel regions from gaps
+    regions = []
+    prev_end = 0
+    for gx0, gx1 in gaps:
+        if gx0 > prev_end + 10:
+            regions.append((prev_end, gx0 - 1))
+        prev_end = gx1 + 1
+    if prev_end < w - 10:
+        regions.append((prev_end, w - 1))
+
+    # Filter to non-trivial regions
+    min_panel_w = w // (expected_cols * 2)
+    regions = [(x0, x1) for x0, x1 in regions if (x1 - x0) >= min_panel_w]
+
+    if len(regions) == expected_cols:
+        return regions
+
+    # Fallback: even division
+    panel_w = w // expected_cols
+    return [(i * panel_w, (i + 1) * panel_w - 1) for i in range(expected_cols)]
+
+
+# ---------------------------------------------------------------------------
+# Lint checks
+# ---------------------------------------------------------------------------
+
+def check_image_size(img):
+    """Check 1: Dimensions ≤ 1280px."""
+    w, h = img.size
+    ok = w <= 1280 and h <= 1280
+    return {
+        "check": "image_size",
+        "grade": "PASS" if ok else "FAIL",
+        "detail": f"{w}×{h} px" + ("" if ok else " — EXCEEDS 1280px hard limit"),
+    }
+
+
+def check_not_solid(img):
+    """Check 6: Image is not a solid single color."""
+    w, h = img.size
+    # Sample 200 pixels from corners and center
+    sample_pts = [
+        (0, 0), (w-1, 0), (0, h-1), (w-1, h-1), (w//2, h//2),
+        (w//4, h//4), (3*w//4, h//4), (w//4, 3*h//4), (3*w//4, 3*h//4),
+        (w//3, h//2), (2*w//3, h//2),
+    ]
+    px = img.load()
+    unique = set()
+    for (x, y) in sample_pts:
+        xc = min(x, w - 1)
+        yc = min(y, h - 1)
+        unique.add(px[xc, yc])
+    ok = len(unique) >= 3
+    return {
+        "check": "not_solid",
+        "grade": "PASS" if ok else "FAIL",
+        "detail": f"{len(unique)} unique colors in sample" + ("" if ok else " — image may be blank"),
+    }
+
+
+def check_panel_count(img, expected_panels, panels):
+    """Check 2: Detected panel count matches expected."""
+    found = len(panels)
+    ok = found == expected_panels
+    grade = "PASS" if ok else "WARN"
+    return {
+        "check": "panel_count",
+        "grade": grade,
+        "detail": f"Expected {expected_panels} panels, detected {found}",
+    }
+
+
+def check_annotation_occupancy(img, panels, threshold=OCCUPANCY_WARN_THRESHOLD):
+    """
+    Check 3: Each panel's annotation zone has sufficient non-BG pixel density.
+    Uses absolute y-coordinates to account for LTG motion sheet header (44px).
+    """
+    w, h = img.size
+    results = []
+    any_warn = False
+
+    for i, (x0, x1) in enumerate(panels):
+        y0 = ANNOT_ZONE_ABS_Y_START
+        y1 = min(ANNOT_ZONE_ABS_Y_END, h - LABEL_ZONE_H - 2)
+        if y1 <= y0:
+            continue
+        crop = img.crop((x0, y0, x1, y1))
+        non_bg, total = _count_non_bg(crop)
+        occ = non_bg / max(total, 1)
+        ok = occ >= threshold
+        if not ok:
+            any_warn = True
+        results.append(f"P{i+1}: {occ:.1%} occupancy" + ("" if ok else " — WARN low"))
+
+    return {
+        "check": "annotation_occupancy",
+        "grade": "WARN" if any_warn else "PASS",
+        "detail": "  |  ".join(results) if results else "no panels found",
+    }
+
+
+def check_beat_badge_zones(img, panels):
+    """
+    Check 4: Each panel should have a beat-badge (colored block, top-left corner).
+    Looks for non-BG pixels in the badge area.
+    LTG motion sheets have header at y=0..55, panels start at ~y=56.
+    Badge within panel is at panel_top + ~4..30px, so absolute y ~ 60..86.
+    """
+    w, h = img.size
+    results = []
+    any_warn = False
+    # Panel tops in LTG motion sheets: HEADER_H=44 + PAD=12 = 56
+    PANEL_TOP_ABS = 56
+
+    for i, (x0, x1) in enumerate(panels):
+        bx0 = x0 + BADGE_PAD
+        bx1 = min(x0 + BADGE_PAD + BADGE_W, x1)
+        by0 = PANEL_TOP_ABS + BADGE_PAD
+        by1 = PANEL_TOP_ABS + BADGE_PAD + BADGE_H
+        if bx1 <= bx0 or by1 >= h:
+            results.append(f"P{i+1}: skip (out of bounds)")
+            continue
+        crop = img.crop((bx0, by0, bx1, by1))
+        non_bg, total = _count_non_bg(crop)
+        occ = non_bg / max(total, 1)
+        ok = occ >= 0.15   # badge should be at least 15% colored
+        if not ok:
+            any_warn = True
+        results.append(f"P{i+1}: {occ:.1%}" + ("" if ok else " — WARN no badge")  )
+
+    return {
+        "check": "beat_badges",
+        "grade": "WARN" if any_warn else "PASS",
+        "detail": "beat badge occupancy  " + "  |  ".join(results),
+    }
+
+
+def check_timing_colors(img, panels):
+    """
+    Check 5: BEAT_COLOR cyan pixels should appear in annotation zone of ≥50% of panels.
+    Uses absolute y-coordinates (same as check_annotation_occupancy).
+    """
+    w, h = img.size
+    panels_with_cyan = 0
+
+    for x0, x1 in panels:
+        y0 = ANNOT_ZONE_ABS_Y_START
+        y1 = min(ANNOT_ZONE_ABS_Y_END, h - LABEL_ZONE_H - 2)
+        if y1 <= y0:
+            continue
+        crop = img.crop((x0, y0, x1, y1))
+        cyan_count, total = _count_cyan(crop)
+        if cyan_count / max(total, 1) >= 0.005:   # 0.5% of zone is cyan
+            panels_with_cyan += 1
+
+    n = len(panels)
+    frac = panels_with_cyan / max(n, 1)
+    ok = frac >= 0.50
+    return {
+        "check": "timing_colors",
+        "grade": "PASS" if ok else "WARN",
+        "detail": f"BEAT_COLOR cyan in {panels_with_cyan}/{n} panels ({frac:.0%})",
+    }
+
+
+# ---------------------------------------------------------------------------
+# Main lint function
+# ---------------------------------------------------------------------------
+
+def lint_motion_spec(path: str, expected_panels: int = None,
+                     occupancy_threshold: float = OCCUPANCY_WARN_THRESHOLD) -> dict:
+    """
+    Lint a motion spec sheet PNG.
+
+    Args:
+        path: Path to the PNG file.
+        expected_panels: Expected number of panels. If None, auto-detect
+                         (3 for Luma, 4 for Byte COMMITMENT sheet).
+        occupancy_threshold: Minimum annotation occupancy fraction (default 0.04).
+
+    Returns:
+        dict with keys:
+            file, width, height, overall (PASS/WARN/FAIL), checks (list of dicts),
+            pass, warn, fail
+    """
+    result = {
+        "file": str(path),
+        "width": 0,
+        "height": 0,
+        "overall": "ERROR",
+        "checks": [],
+        "pass": 0,
+        "warn": 0,
+        "fail": 0,
+        "flagged": [],
+        "missing": [],
+    }
+
+    if not os.path.exists(path):
+        result["overall"] = "ERROR"
+        result["missing"].append(str(path))
+        result["checks"].append({
+            "check": "file_exists",
+            "grade": "FAIL",
+            "detail": f"File not found: {path}",
+        })
+        result["fail"] = 1
+        return result
+
+    try:
+        img = _load_image(path)
+    except Exception as e:
+        result["overall"] = "ERROR"
+        result["checks"].append({
+            "check": "file_load",
+            "grade": "FAIL",
+            "detail": f"Cannot open image: {e}",
+        })
+        result["fail"] = 1
+        return result
+
+    result["width"] = img.width
+    result["height"] = img.height
+
+    # Determine expected panel count
+    if expected_panels is None:
+        # Heuristic: if filename contains 'luma' → 3, 'byte' → 4, else ask
+        fname = os.path.basename(path).lower()
+        if "luma" in fname:
+            expected_panels = 3
+        elif "byte" in fname and "v003" in fname:
+            expected_panels = 4
+        elif "byte" in fname:
+            expected_panels = 3  # v001/v002 were 3 panels
+        else:
+            expected_panels = 3  # conservative default
+
+    # --- Run checks ---
+    checks = []
+
+    # C1: image size
+    checks.append(check_image_size(img))
+
+    # C6: not solid
+    checks.append(check_not_solid(img))
+
+    # Detect panels
+    panels = _detect_panels(img, expected_panels)
+
+    # C2: panel count
+    checks.append(check_panel_count(img, expected_panels, panels))
+
+    # C3: annotation occupancy
+    checks.append(check_annotation_occupancy(img, panels, threshold=occupancy_threshold))
+
+    # C4: beat badge zones
+    checks.append(check_beat_badge_zones(img, panels))
+
+    # C5: timing colors
+    checks.append(check_timing_colors(img, panels))
+
+    # --- Tally ---
+    grade_order = {"FAIL": 2, "WARN": 1, "PASS": 0, "ERROR": 3}
+    worst = "PASS"
+    for c in checks:
+        g = c["grade"]
+        if grade_order.get(g, 0) > grade_order.get(worst, 0):
+            worst = g
+        if g == "PASS":
+            result["pass"] += 1
+        elif g == "WARN":
+            result["warn"] += 1
+            result["flagged"].append(f"WARN: {c['check']}: {c['detail']}")
+        elif g in ("FAIL", "ERROR"):
+            result["fail"] += 1
+            result["flagged"].append(f"FAIL: {c['check']}: {c['detail']}")
+
+    result["overall"] = worst
+    result["checks"] = checks
+    return result
+
+
+# ---------------------------------------------------------------------------
+# Format report
+# ---------------------------------------------------------------------------
+
+def format_report(results: list) -> str:
+    """
+    Format a list of lint_motion_spec() results as a readable text block.
+    """
+    lines = ["## Motion Spec Lint — LTG_TOOL_motion_spec_lint", ""]
+    total_pass = total_warn = total_fail = 0
+
+    for r in results:
+        fname = os.path.basename(r["file"])
+        overall = r["overall"]
+        size_str = f"{r['width']}×{r['height']}" if r["width"] else "N/A"
+        lines.append(f"### {fname}  [{overall}]  ({size_str})")
+        for c in r["checks"]:
+            icon = {"PASS": "✓", "WARN": "⚠", "FAIL": "✗", "ERROR": "✗"}.get(c["grade"], "?")
+            lines.append(f"  {icon} [{c['grade']:4s}] {c['check']}: {c['detail']}")
+        lines.append("")
+        total_pass += r["pass"]
+        total_warn += r["warn"]
+        total_fail += r["fail"]
+
+    lines.append(f"**Totals — PASS: {total_pass}  WARN: {total_warn}  FAIL: {total_fail}**")
+    return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Lint a motion spec sheet PNG for structural compliance.")
+    parser.add_argument("paths", nargs="+", help="Path(s) to motion sheet PNG(s)")
+    parser.add_argument("--panels", type=int, default=None,
+                        help="Expected panel count (3 or 4). Auto-detected if omitted.")
+    parser.add_argument("--pass-threshold", type=float, default=OCCUPANCY_WARN_THRESHOLD,
+                        help="Min annotation occupancy fraction for WARN (default 0.04)")
+    parser.add_argument("--json", action="store_true", help="Output JSON instead of text")
+    args = parser.parse_args()
+
+    results = []
+    for p in args.paths:
+        r = lint_motion_spec(p, expected_panels=args.panels,
+                             occupancy_threshold=args.pass_threshold)
+        results.append(r)
+
+    if args.json:
+        import json
+        print(json.dumps(results, indent=2))
+    else:
+        print(format_report(results))
+
+    # Exit code
+    worst = max(r["overall"] for r in results)
+    code_map = {"PASS": 0, "WARN": 1, "FAIL": 2, "ERROR": 2}
+    sys.exit(code_map.get(worst, 2))
+
+
+if __name__ == "__main__":
+    main()

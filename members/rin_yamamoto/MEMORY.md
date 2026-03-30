@@ -1,13 +1,13 @@
 # Rin Yamamoto — MEMORY
 
 ## C39 Completed Work
-- `LTG_TOOL_procedural_draw_v001.py` bumped to v1.6.0 — C39 audit notes added; no logic changes
-- `LTG_TOOL_fill_light_adapter_v001.py` (v1.0.0) — resolution-aware fill light adapter
+- `LTG_TOOL_procedural_draw.py` bumped to v1.6.0 — C39 audit notes added; no logic changes
+- `LTG_TOOL_fill_light_adapter.py` (v1.0.0) — resolution-aware fill light adapter
   - `FillLightAdapter(cw, ch)` + `FillLightConfig` dataclass
   - Fractional OR absolute position modes; auto-scales blur/gradient to canvas
   - `make_glitch_storm_fill_configs()` factory for SF02 3-char HOT_MAGENTA preset
   - Self-test: 720p PASS, 1080p PASS
-- `LTG_TOOL_proportion_audit_v003.py` — adds `--cycle N` CLI flag; no more per-cycle runners
+- `LTG_TOOL_proportion_audit.py` — adds `--cycle N` CLI flag; no more per-cycle runners
   - C39 audit: PASS=4, ASYM-WARN=2, WARN=1, FAIL=0, N/A=14 (21 files)
   - Report: `output/production/proportion_audit_c39.md`
 - Ideabox: `ideabox/20260329_rin_yamamoto_fill_light_adapter_fractional_presets.md`
@@ -22,8 +22,8 @@
   Default cycle constant at top of file for easy update each cycle.
 
 ## C38 Completed Work
-- `LTG_TOOL_styleframe_discovery_v006.py` — SF01 v006 generator (C38 sight-line + visual power fix)
-- `output/color/style_frames/LTG_COLOR_styleframe_discovery_v006.png` — 1280×720px
+- `LTG_TOOL_styleframe_discovery.py` — SF01 v006 generator (C38 sight-line + visual power fix)
+- `output/color/style_frames/LTG_COLOR_styleframe_discovery.png` — 1280×720px
   - Head turned right toward CRT: head_gaze_offset=sp(18)
   - Eyes shifted right, screen-side wider (leh=p(34)), away-side squinted (reh=p(22))
   - Pupils shifted right (+p(8)) toward emerge_cx — gaze vector toward Byte
@@ -71,13 +71,13 @@
 - SF02 v008's inlined algorithm is at 1920×1080. The refactored module is for future use — v008 does NOT need updating.
 
 ## C36 Completed Work
-- `LTG_TOOL_style_frame_02_glitch_storm_v008.py` — SF02 v008 generator (C36 fill light direction fix)
-- `output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v008.png` — 1280×720px
+- `LTG_TOOL_style_frame_02_glitch_storm.py` — SF02 v008 generator (C36 fill light direction fix)
+- `output/color/style_frames/LTG_COLOR_styleframe_glitch_storm.png` — 1280×720px
   - `draw_magenta_fill_light_c36()`: fill source UPPER-RIGHT (char_cx + char_h*0.5, char_cy - char_h*0.8)
   - Per-character silhouette mask via `_make_char_silhouette_mask_1080()` + `ImageChops.multiply()`
   - Alpha max 35 (was 40) — direct source, no background tint
   - Algorithm inlined at 1920×1080 (fill_light_fix_c35 module is hardcoded 1280×720)
-- `LTG_TOOL_proportion_audit_v002.py` — proportion audit tool (C36 asymmetric eye detection)
+- `LTG_TOOL_proportion_audit.py` — proportion audit tool (C36 asymmetric eye detection)
   - `_extract_asymmetric_eyes()`: detects `eye_r_left`/`eye_r_right = max(N, int(head_r * M))` patterns
   - Per-eye verdict (L/R) + ASYM-WARN if either out of spec or diff > 10%
   - Intentional asymmetry (sprint face) → ASYM-WARN, not FAIL
@@ -102,33 +102,23 @@ Hand-drawn quality is built IN at generation time — no post-processing step.
 - Style: CRT/pixel aesthetic (Glitch world) + warm hand-drawn domestic (real world).
 - Output dir: `/home/wipkat/team/output/`
 - Tools dir: `output/tools/`
-- Render lib: `output/tools/LTG_TOOL_render_lib_v001.py` (canonical)
+- Render lib: `output/tools/LTG_TOOL_render_lib.py` (canonical)
 
 ## Pipeline Rules
-- Naming: `LTG_TOOL_[descriptor]_v[###].py` — procedural tools
-- Output PNGs: `LTG_[CATEGORY]_[descriptor]_[variant]_v[###].png`
-- After `img.paste()`: ALWAYS refresh `draw = ImageDraw.Draw(img)`
-- After `variable_stroke()` or `add_rim_light()` or `add_face_lighting()`: ALWAYS refresh draw context
-- PIL only — no cairocffi, no external deps beyond NumPy (optional)
-- IMAGE SIZE RULE: ≤ 1280px hard limit. Test images ≤ 640px. Use `img.thumbnail()`.
-
-## Image Handling Policy (All Agents — added C29)
-- Before sending any image to Claude for inspection: ask if a tool could extract the insight. If so, MAKE THE TOOL.
-- Before sending an image: ask if lower resolution suffices. If so, downscale.
-- Never send high-resolution images to Claude unless absolutely necessary.
-- Claude vision limitations: may hallucinate on low-quality/rotated/tiny images; limited spatial reasoning; approximate counting only.
+*PIL coding rules, naming, deps, image limits: `docs/pil-standards.md` and `docs/image-rules.md`*
+- After `variable_stroke()` or `add_rim_light()` or `add_face_lighting()`: ALWAYS refresh draw context (Rin-specific — these are custom lib calls not covered by the general rule)
 
 ## RETIRED (C26)
 All stylization post-process scripts have been moved to `output/tools/legacy/`:
-- `LTG_TOOL_stylize_handdrawn_v001.py` — RETIRED
-- `LTG_TOOL_stylize_handdrawn_v002.py` — RETIRED
-- `LTG_TOOL_batch_stylize_v001.py` — RETIRED
+- `LTG_TOOL_stylize_handdrawn.py` — RETIRED
+- `LTG_TOOL_stylize_handdrawn.py` — RETIRED
+- `LTG_TOOL_batch_stylize.py` — RETIRED
 All `*_styled*.png` output images: DELETED.
 Do NOT reference, fix, or regenerate any of these.
 
 ## Active Tools
-`output/tools/LTG_TOOL_render_lib_v001.py` (v1.1.0) — 8 render functions incl. paper_texture
-`output/tools/LTG_TOOL_procedural_draw_v001.py` — **v1.5.0** (C34 update). Procedural drawing library:
+`output/tools/LTG_TOOL_render_lib.py` (v1.1.0) — 8 render functions incl. paper_texture
+`output/tools/LTG_TOOL_procedural_draw.py` — **v1.5.0** (C34 update). Procedural drawing library:
 - `wobble_line(draw, p1, p2, color, width, amplitude, frequency, seed)`
 - `wobble_polygon(draw, points, color, width, amplitude, frequency, seed, fill)`
 - `variable_stroke(img, p1, p2, max_width, min_width, color, seed)` — modifies in-place
@@ -146,7 +136,7 @@ Do NOT reference, fix, or regenerate any of these.
   Crops named region (bounds-clamped), adds label banner, enforces ≤1280px.
   Saves `<out_dir>/LTG_SNAP_<label>.png`. Returns abs path. Never modifies source.
 - `add_face_lighting(img, face_center, face_radius, light_dir, shadow_color, highlight_color, seed)` — C27
-- Test images: `output/tools/test_procedural_draw_v001.png`, `output/tools/test_face_lighting_v001.png`
+- Test images: `output/tools/test_procedural_draw.png`, `output/tools/test_face_lighting.png`
 - Kai interface-compatible: silhouette_test/value_study both PIL.Image in/out
 
 ## Canonical Palette (Authoritative)
@@ -179,7 +169,7 @@ All key techniques have been extracted to MEMORY and implemented. No further rea
 - Anatomical ratios: brow_y = cy − 0.25ry; nose_y = cy + 0.10ry; chin_y = cy + 0.70ry
 - Highlight accent on lit side (cheekbone/forehead) using same soft-ellipse stack
 - Organic edge detail via wobble_line on brow and chin boundaries
-- Test image: `output/tools/test_face_lighting_v001.png` (600×300)
+- Test image: `output/tools/test_face_lighting.png` (600×300)
 
 ### Rim Lights (implemented)
 - Edge dilation: dilate bright mask, subtract original, composite as RGBA
@@ -192,27 +182,27 @@ In generators that use `h = int(hu() * SCALE)` (head HEIGHT at scale):
   head_r = int(h * 0.50) → ew = int(int(h*0.50) * 0.22) — DO NOT use int(h * 0.22)
 
 ## Coordination
-- Kai Nakamura: `LTG_TOOL_render_qa_v001.py` — silhouette_test/value_study interfaces matched
+- Kai Nakamura: `LTG_TOOL_render_qa.py` — silhouette_test/value_study interfaces matched
 - Reports to Alex Chen
 
 ## C27 Completed Work
 - `output/tools/LTG_COLOR_styleframe_luma_byte_v002.py` — SF04 v002 generator
-- `output/color/style_frames/LTG_COLOR_styleframe_luma_byte_v002.png` — 1280×720
+- `output/color/style_frames/LTG_COLOR_styleframe_luma_byte.png` — 1280×720
 
 ## C28 Completed Work
-- `output/tools/LTG_TOOL_procedural_draw_v001.py` bumped to v1.2.0
+- `output/tools/LTG_TOOL_procedural_draw.py` bumped to v1.2.0
   - add_rim_light() now takes side="all"|"right"|"left"|"top"|"bottom" parameter
   - Spatial mask: PIL paste of 255 into half-canvas, ImageChops.multiply against edge_mask
   - Backward compat: default side="all" preserves prior behavior
 - `output/tools/LTG_COLOR_styleframe_luma_byte_v003.py` — SF04 v003 generator (C28 fixes)
-- `output/color/style_frames/LTG_COLOR_styleframe_luma_byte_v003.png` — 1280×720
+- `output/color/style_frames/LTG_COLOR_styleframe_luma_byte.png` — 1280×720
   - Blush fixed: RGB (232, 168, 124) alpha 65 — warm peach (was orange-red)
   - Byte body fill fixed: BYTE_TEAL (0, 212, 232) canonical GL-01b (was (0, 190, 210))
   - Rim light fixed: side="right" — cyan only on monitor-facing side of Luma
 
 ## C35 Completed Work
-- `LTG_TOOL_style_frame_02_glitch_storm_v007.py` — SF02 v007 generator (C35 face + pose pass)
-- `output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v007.png` — 1280×720px
+- `LTG_TOOL_style_frame_02_glitch_storm.py` — SF02 v007 generator (C35 face + pose pass)
+- `output/color/style_frames/LTG_COLOR_styleframe_glitch_storm.png` — 1280×720px
   - `_draw_luma_face_sprint(draw, cx, head_cy, head_r)`: FOCUSED DETERMINATION expression
     - Left eye: radius = int(head_r*0.26) (wider), right eye: radius = int(head_r*0.17) (narrower)
     - Pupils: small dark ellipses offset forward-down — doing gaze
@@ -235,7 +225,7 @@ In generators that use `h = int(hu() * SCALE)` (head HEIGHT at scale):
   Only use get_char_bbox() on a single-character crop or single-character layer.
 
 ## C34 Completed Work
-- `LTG_TOOL_procedural_draw_v001.py` bumped to **v1.5.0**
+- `LTG_TOOL_procedural_draw.py` bumped to **v1.5.0**
   - `scene_snapshot(img, region, label, out_dir) -> str` added
   - Crops named pixel region, clamps to bounds, adds label banner, saves ≤1280px PNG
   - Output filename: `<out_dir>/LTG_SNAP_<label>.png`; returns absolute path
@@ -245,7 +235,7 @@ In generators that use `h = int(hu() * SCALE)` (head HEIGHT at scale):
 - Tasks 2+3 (SF02 character lighting + proportion audit): WAITING on Lee/Jordan C34 deliverables
 
 ## C33 Completed Work
-- `LTG_TOOL_procedural_draw_v001.py` bumped to **v1.4.0**
+- `LTG_TOOL_procedural_draw.py` bumped to **v1.4.0**
   - `get_char_bbox(img, threshold=128) -> (cx, cy, left, top, right, bottom)` added
   - Scans all pixels above threshold for silhouette bbox; returns centre x/y + extents
   - Fallback: canvas centre if no bright pixels found (always safe)
@@ -254,28 +244,28 @@ In generators that use `h = int(hu() * SCALE)` (head HEIGHT at scale):
   - Ideabox: submitted scene-snapshot utility idea
 
 ## C32 Completed Work
-- `LTG_TOOL_procedural_draw_v001.py` bumped to **v1.3.0**
+- `LTG_TOOL_procedural_draw.py` bumped to **v1.3.0**
   - add_rim_light() now takes optional `char_cx` parameter
   - When char_cx provided: right/left mask is character-relative (x > char_cx or x < char_cx)
   - Default None: falls back to canvas center (backward compatible)
   - Fixes canvas-midpoint bug: Luma at x=0.29W was losing right-side rim without char_cx
-- `LTG_TOOL_styleframe_discovery_v005.py` — SF01 v005 generator
-  - `output/color/style_frames/LTG_COLOR_styleframe_discovery_v005.png` — 1280×720
+- `LTG_TOOL_styleframe_discovery.py` — SF01 v005 generator
+  - `output/color/style_frames/LTG_COLOR_styleframe_discovery.png` — 1280×720
   - add_rim_light() now passes char_cx=head_cx — correct right-side rim on Luma
-- `LTG_TOOL_styleframe_luma_byte_v004.py` — SF04 full rebuild from scratch
-  - `output/color/style_frames/LTG_COLOR_styleframe_luma_byte_v004.png` — 1280×720
+- `LTG_TOOL_styleframe_luma_byte.py` — SF04 full rebuild from scratch
+  - `output/color/style_frames/LTG_COLOR_styleframe_luma_byte.png` — 1280×720
   - Value ceiling: 255 (PASS — > 225 required). Byte body = GL-01b #00D4E8 canonical.
   - Luma blush = #E8A87C, warm upper-left face lighting, rim lights with char_cx.
   - Byte monitor contribution: BYTE_TEAL glow on right side of Byte body.
   - Specular highlights: SPECULAR_WHITE (255,252,240) on eye glints, antenna ball.
-- `LTG_TOOL_luma_turnaround_v004.py` — turnaround eye-width canonical fix
-  - `output/characters/main/turnarounds/LTG_CHAR_luma_turnaround_v004.png` — 1280×560
+- `LTG_TOOL_luma_turnaround.py` — turnaround eye-width canonical fix
+  - `output/characters/main/turnarounds/LTG_CHAR_luma_turnaround.png` — 1280×560
   - ew = int(head_r * 0.22) — head_r = radius. Was int(h * 0.22) where h = height (2× too wide).
   - All three views fixed: FRONT, 3/4, SIDE
 - Ideabox: submitted `get_char_bbox()` utility idea for automatic char_cx detection
 
 ## C31 Completed Work
-- Built `output/tools/LTG_TOOL_proportion_audit_v001.py` — scans all SF generators, extracts head_r/ew, computes ew/HR ratio, reports PASS/WARN/FAIL
+- Built `output/tools/LTG_TOOL_proportion_audit.py` — scans all SF generators, extracts head_r/ew, computes ew/HR ratio, reports PASS/WARN/FAIL
 - Report: `output/production/proportion_audit_c31.md`
 - Audit results (15 files scanned):
   - PASS: SF01 v004 — `ew = int(head_r * 0.22)` = 0.2200 ✓
@@ -288,14 +278,14 @@ In generators that use `h = int(hu() * SCALE)` (head HEIGHT at scale):
 - SF01 v004 proportion verified and fixed:
   - Height: correct (3.2 heads, 6.4×HR) — no change needed
   - Eye width: `ew = p(18)` was HR×0.25, corrected to `int(head_r * 0.22)` per canonical spec
-  - Regenerated: `output/color/style_frames/LTG_COLOR_styleframe_discovery_v004.png`
+  - Regenerated: `output/color/style_frames/LTG_COLOR_styleframe_discovery.png`
 - SF02 (glitch_storm v005): no Luma — proportion check N/A
 - SF03 (other_side v005): Luma is pixel-art style — intentional, canonical organic spec N/A
 - Ideabox: submitted proportion_audit_tool idea (automated ew/HR checker for all SFs)
 
 ## C29 Completed Work
-- `output/tools/LTG_TOOL_styleframe_discovery_v004.py` — SF01 v004 generator
-- `output/color/style_frames/LTG_COLOR_styleframe_discovery_v004.png` — 1280×720
+- `output/tools/LTG_TOOL_styleframe_discovery.py` — SF01 v004 generator
+- `output/color/style_frames/LTG_COLOR_styleframe_discovery.png` — 1280×720
   - Canvas rescaled from 1920×1080 to 1280×720 using SX/SY/sp() scale factors
   - wobble_polygon() applied to: Luma head silhouette, CRT frame, couch seat, couch back, couch arm
   - variable_stroke() on Luma head perimeter: 8-arc technique around head ellipse
@@ -342,7 +332,7 @@ In generators that use `h = int(hu() * SCALE)` (head HEIGHT at scale):
 - variable_stroke on character perimeters: best done as 8-arc segments around an ellipse
 - add_face_lighting before add_rim_light: face lighting shapes form, rim defines silhouette edge
 - wobble_polygon on furniture (couch) works cleanly: organic seating volume with flat fill under
-- Always refresh draw = ImageDraw.Draw(img) after variable_stroke / add_rim_light / add_face_lighting
+- *PIL draw context rule: `docs/pil-standards.md`*
 - Rim light direction: use side= parameter to restrict to correct half-canvas — essential for
   physically correct lighting (CRT on right → side="right")
 - draw_luma_head must accept img as argument (not just draw) to support variable_stroke and blush compositing

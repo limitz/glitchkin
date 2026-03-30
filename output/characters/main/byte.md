@@ -569,7 +569,7 @@ For medium shots, each symbol is re-drawn on a **3x3 pixel grid** — the minimu
 
 **Added:** Alex Chen, Art Director — Cycle 13, 2026-03-30
 **Required for:** Lee Tanaka storyboard panel A2-07 and any production art showing Byte's cracked eye
-**Reference asset:** `LTG_CHAR_byte_cracked_eye_glyph_v001.png`
+**Reference asset:** `LTG_CHAR_byte_cracked_eye_glyph.png`
 
 ### Design Intent
 
@@ -622,7 +622,7 @@ The physical crack runs **upper-right to lower-left** across the eye bezel. This
 
 ### Panel A2-07 Specific Note
 
-In storyboard panel A2-07 (Lee Tanaka), Byte's cracked eye should display the **dead-pixel glyph with no active expression symbol** — the scene context implies Byte is suppressing/offline briefly. The crack is fully visible. See `LTG_CHAR_byte_cracked_eye_glyph_v001.png` for full reference at 1×, 4×, 8×, 16× scale and in-eye mockups.
+In storyboard panel A2-07 (Lee Tanaka), Byte's cracked eye should display the **dead-pixel glyph with no active expression symbol** — the scene context implies Byte is suppressing/offline briefly. The crack is fully visible. See `LTG_CHAR_byte_cracked_eye_glyph.png` for full reference at 1×, 4×, 8×, 16× scale and in-eye mockups.
 
 ---
 
@@ -1004,7 +1004,7 @@ Reading Byte as a solid black silhouette:
 ## 13A. STORM-SCENE COLOR VARIANT — VOID_BLACK BODY FILL
 
 **Decision logged:** Alex Chen, Art Director — Cycle 13, 2026-03-30
-**Context:** Style Frame 02 "Glitch Storm" (LTG_COLOR_styleframe_glitch_storm_v002.png)
+**Context:** Style Frame 02 "Glitch Storm" (LTG_COLOR_styleframe_glitch_storm.png)
 **Flag raised by:** Naomi Bridges, Color Theory Specialist (Cycle 12 critique C12-6)
 
 ### The Issue

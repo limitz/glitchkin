@@ -2,7 +2,7 @@
 
 **File:** `luma_expression_sheet.png`
 **Version:** v2.0 (Cycle 12)
-**Generator:** `LTG_CHAR_luma_expression_sheet_v002.py`
+**Generator:** `LTG_CHAR_luma_expression_sheet.py`
 **Date:** 2026-03-29
 **Designer:** Maya Santos
 

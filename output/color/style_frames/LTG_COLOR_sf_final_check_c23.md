@@ -2,14 +2,14 @@
 **Author:** Sam Kowalski, Color & Style Artist
 **Date:** 2026-03-29
 **Cycle:** 23
-**Assets reviewed:** SF02 v005 (`LTG_TOOL_style_frame_02_glitch_storm_v005.py`) and SF03 v003 (`LTG_TOOL_style_frame_03_other_side_v003.py`)
+**Assets reviewed:** SF02 v005 (`LTG_TOOL_style_frame_02_glitch_storm.py`) and SF03 v003 (`LTG_TOOL_style_frame_03_other_side.py`)
 
 ---
 
 ## SF02 v005 — "Glitch Storm"
 
-**Generator:** `/home/wipkat/team/output/color/style_frames/LTG_TOOL_style_frame_02_glitch_storm_v005.py`
-**Output:** `LTG_COLOR_styleframe_glitch_storm_v005.png`
+**Generator:** `/home/wipkat/team/output/color/style_frames/LTG_TOOL_style_frame_02_glitch_storm.py`
+**Output:** `LTG_COLOR_styleframe_glitch_storm.png`
 **Status after Cycle 22 fix pass:** PITCH READY
 
 ---
@@ -81,8 +81,8 @@ win_colors = [(*SOFT_GOLD, 115), (*WARM_CREAM, 110)]
 
 ## SF03 v003 — "The Other Side"
 
-**Generator:** `/home/wipkat/team/output/tools/LTG_TOOL_style_frame_03_other_side_v003.py`
-**Output:** `LTG_COLOR_styleframe_otherside_v003.png`
+**Generator:** `/home/wipkat/team/output/tools/LTG_TOOL_style_frame_03_other_side.py`
+**Output:** `LTG_COLOR_styleframe_otherside.png`
 **Status after Cycle 19 fix pass and Cycle 20 final verification:** PITCH READY
 
 ---
@@ -119,7 +119,7 @@ CRITICAL RULES (unchanged from v001/v002):
 
 ### Check 2 — Classroom = Zero Glitch Palette (Color Story Implication)
 
-**Context:** The brief note "classroom = zero Glitch palette" references the color story principle established in `LTG_COLOR_colorkey_classroom_v001.md` — the pre-discovery classroom scene has zero Glitch contamination, and hoodie pixels are Warm Cream (dormant), not Electric Cyan (activated). This rule governs the classroom color key, not SF03.
+**Context:** The brief note "classroom = zero Glitch palette" references the color story principle established in `LTG_COLOR_colorkey_classroom.md` — the pre-discovery classroom scene has zero Glitch contamination, and hoodie pixels are Warm Cream (dormant), not Electric Cyan (activated). This rule governs the classroom color key, not SF03.
 
 **SF03 relationship:** SF03 IS the Glitch Layer. The Glitch palette dominates by definition. The "zero classroom Glitch" rule means: in scenes depicting Millbrook Middle School (pre-Glitch discovery), no GL-xx colors appear. SF03 and the classroom are opposite ends of the story's color arc.
 
@@ -200,7 +200,7 @@ BYTE_BODY          = (0,  212, 232)   # GL-01b Byte Teal — was (10,10,20) WRON
 
 **Status as of Cycle 23 (2026-03-29): PENDING DELIVERY.**
 
-Alex Chen's creative brief (`output/production/rin_c23_creative_brief.md`) specifies a hand-drawn stylization pass for SF02 v005 and SF03 v003, plus optional SF01 and grandma kitchen. The tool `LTG_TOOL_stylize_handdrawn_v001.py` has not yet been created, and no `_styled.png` output files are present in the output directories.
+Alex Chen's creative brief (`output/production/rin_c23_creative_brief.md`) specifies a hand-drawn stylization pass for SF02 v005 and SF03 v003, plus optional SF01 and grandma kitchen. The tool `LTG_TOOL_stylize_handdrawn.py` has not yet been created, and no `_styled.png` output files are present in the output directories.
 
 **Color fidelity review plan (for when Rin delivers):**
 

@@ -30,7 +30,7 @@ in the original vs. styled versions for the following canonical palette targets:
 ---
 
 ### Asset 1: SF02 — Glitch Storm
-**Files:** `LTG_COLOR_styleframe_glitch_storm_v005.png` vs `_v005_styled.png`
+**Files:** `LTG_COLOR_styleframe_glitch_storm.png` vs `_v005_styled.png`
 **Size:** 1920×1080px (MATCH)
 
 #### GL-07 CORRUPT_AMBER — FLAG
@@ -73,7 +73,7 @@ Not present in SF02 original. Expected — UV Purple is the Other Side (SF03) at
 ---
 
 ### Asset 2: SF03 — Other Side
-**Files:** `LTG_COLOR_styleframe_otherside_v003.png` vs `_v003_styled.png`
+**Files:** `LTG_COLOR_styleframe_otherside.png` vs `_v003_styled.png`
 **Size:** 1920×1080px (MATCH)
 
 #### GL-07 CORRUPT_AMBER — FLAG (Critical)
@@ -119,7 +119,7 @@ Not expected in SF03 — correct. Zero warm light sources in this scene.
 ---
 
 ### Asset 3: SF01 — Discovery
-**Files:** `LTG_COLOR_styleframe_discovery_v003.png` vs `_v003_styled.png`
+**Files:** `LTG_COLOR_styleframe_discovery.png` vs `_v003_styled.png`
 **Size:** 1920×1080px (MATCH)
 
 #### GL-07 CORRUPT_AMBER — PASS (with notation)
@@ -166,7 +166,7 @@ Not present in SF01 original. Expected — Discovery scene is Real World.
 ---
 
 ### Asset 4: Kitchen — Grandma
-**Files:** `LTG_ENV_grandma_kitchen_v003.png` vs `_v003_styled.png`
+**Files:** `LTG_ENV_grandma_kitchen.png` vs `_v003_styled.png`
 **Size:** 1920×1080px (MATCH)
 
 #### GL-07 CORRUPT_AMBER — SKIP
@@ -227,7 +227,7 @@ This is the signature of a hue rotation (or hue-shift color grading filter) appl
 
 ## Glitch Character Color Model Verification
 
-**File:** `output/characters/color_models/LTG_COLOR_glitch_color_model_v001.png`
+**File:** `output/characters/color_models/LTG_COLOR_glitch_color_model.png`
 **Generator:** `output/tools/LTG_CHAR_glitch_color_model_v001.py`
 
 Reviewed generator source code for canonical value compliance:

@@ -20,25 +20,25 @@ naming migration (Cycles 12–22) but were never removed.
 
 | Legacy file | LTG equivalent |
 |---|---|
-| `bg_glitch_layer_frame.py` | `LTG_TOOL_bg_glitch_layer_frame_v001.py` (+ v003) |
-| `bg_house_interior_frame01.py` | `LTG_TOOL_bg_grandma_kitchen_v001.py` (+ later versions) |
-| `bg_layout_generator.py` | `LTG_TOOL_bg_tech_den_v001.py`, `LTG_TOOL_bg_other_side_v001.py`, etc. |
-| `byte_expressions_generator.py` | `LTG_TOOL_byte_expression_sheet_v002.py` (+ later versions) |
-| `character_lineup_generator.py` | `LTG_TOOL_character_lineup_v003.py` |
-| `character_turnaround_generator.py` | `LTG_TOOL_miri_turnaround_v001.py` (and related turnaround tools) |
-| `color_key_generator.py` | `LTG_TOOL_colorkey_glitchstorm_gen_v001.py`, `LTG_TOOL_colorkey_otherside_gen_v001.py` |
-| `color_swatch_generator.py` | `LTG_TOOL_glitch_color_model_v001.py` (and related color model tools) |
-| `contact_sheet_generator.py` | `LTG_TOOL_sb_act1_contact_sheet_v001.py` (+ later versions) |
-| `logo_generator.py` | `LTG_TOOL_logo_asymmetric_v001.py` (+ v002) |
-| `luma_expression_sheet_generator.py` | `LTG_TOOL_luma_expression_sheet_v002.py` (+ later versions) |
-| `luma_face_generator.py` | `LTG_TOOL_luma_expression_sheet_v002.py` |
-| `panel_chaos_generator.py` | `LTG_TOOL_sb_panel_a207_v001.py` (and other panel tools) |
-| `panel_interior_generator.py` | `LTG_TOOL_sb_panel_a104_kitchen_v001.py` (and other panel tools) |
-| `proportion_diagram.py` | Character sheets (`LTG_TOOL_luma_expression_sheet_v004.py`, etc.) |
-| `silhouette_generator.py` | `LTG_TOOL_luma_act2_standing_pose_v001.py` (and pose tools) |
-| `storyboard_panel_generator.py` | `LTG_TOOL_sb_panel_a101_v001.py` (and all `LTG_TOOL_sb_panel_*` tools) |
-| `storyboard_pitch_export_generator.py` | `LTG_TOOL_sb_act2_contact_sheet_v006.py` (pitch export) |
-| `style_frame_01_rendered.py` | `LTG_TOOL_style_frame_01_discovery_v003.py` |
+| `bg_glitch_layer_frame.py` | `LTG_TOOL_bg_glitch_layer_frame.py` (+ v003) |
+| `bg_house_interior_frame01.py` | `LTG_TOOL_bg_grandma_kitchen.py` (+ later versions) |
+| `bg_layout_generator.py` | `LTG_TOOL_bg_tech_den.py`, `LTG_TOOL_bg_other_side.py`, etc. |
+| `byte_expressions_generator.py` | `LTG_TOOL_byte_expression_sheet.py` (+ later versions) |
+| `character_lineup_generator.py` | `LTG_TOOL_character_lineup.py` |
+| `character_turnaround_generator.py` | `LTG_TOOL_miri_turnaround.py` (and related turnaround tools) |
+| `color_key_generator.py` | `LTG_TOOL_colorkey_glitchstorm_gen.py`, `LTG_TOOL_colorkey_otherside_gen.py` |
+| `color_swatch_generator.py` | `LTG_TOOL_glitch_color_model.py` (and related color model tools) |
+| `contact_sheet_generator.py` | `LTG_TOOL_sb_act1_contact_sheet.py` (+ later versions) |
+| `logo_generator.py` | `LTG_TOOL_logo_asymmetric.py` (+ v002) |
+| `luma_expression_sheet_generator.py` | `LTG_TOOL_luma_expression_sheet.py` (+ later versions) |
+| `luma_face_generator.py` | `LTG_TOOL_luma_expression_sheet.py` |
+| `panel_chaos_generator.py` | `LTG_TOOL_sb_panel_a207.py` (and other panel tools) |
+| `panel_interior_generator.py` | `LTG_TOOL_sb_panel_a104_kitchen.py` (and other panel tools) |
+| `proportion_diagram.py` | Character sheets (`LTG_TOOL_luma_expression_sheet.py`, etc.) |
+| `silhouette_generator.py` | `LTG_TOOL_luma_act2_standing_pose.py` (and pose tools) |
+| `storyboard_panel_generator.py` | `LTG_TOOL_sb_panel_a101.py` (and all `LTG_TOOL_sb_panel_*` tools) |
+| `storyboard_pitch_export_generator.py` | `LTG_TOOL_sb_act2_contact_sheet.py` (pitch export) |
+| `style_frame_01_rendered.py` | `LTG_TOOL_style_frame_01_discovery.py` |
 | `style_frame_generator.py` | All `LTG_TOOL_style_frame_*` tools |
 
 ---

@@ -10,7 +10,7 @@ CHAR-M-11 (Miri House Slippers) was corrected in **Cycle 32** in `master_palette
 - **Old value:** `#5A7A5A` Deep Sage (R:90, G:122, B:90) — G>R violation of Miri's warm-palette guarantee
 - **New value:** `#C4907A` Dusty Warm Apricot (R:196, G:144, B:122) — R>G>B, warm family confirmed
 
-The C32 fix was propagated to `LTG_TOOL_character_lineup_v007.py` (noted in file header). However, all other Miri-specific generator scripts and the spec doc retained the wrong value. This C38 audit identifies and corrects all remaining instances.
+The C32 fix was propagated to `LTG_TOOL_character_lineup.py` (noted in file header). However, all other Miri-specific generator scripts and the spec doc retained the wrong value. This C38 audit identifies and corrects all remaining instances.
 
 ---
 
@@ -38,34 +38,34 @@ Slippers are visible in all kitchen/den/living room scenes. Slipper color correc
 - **After C38:** `#C4907A` Dusty Warm Apricot — **CORRECTED**
 - **Rule added:** Shadow companion `#A06A50` documented; correction history noted
 
-### LTG_TOOL_grandma_miri_expression_sheet_v004.py (CURRENT)
+### LTG_TOOL_grandma_miri_expression_sheet.py (CURRENT)
 - **Before C38:** `SLIPPER = (90, 122, 90)` — **WRONG**
 - **After C38:** `SLIPPER = (196, 144, 122)` — **CORRECTED**
-- **PNG regenerated:** `LTG_CHAR_grandma_miri_expression_sheet_v004.png` ✓
+- **PNG regenerated:** `LTG_CHAR_grandma_miri_expression_sheet.png` ✓
 
-### LTG_TOOL_grandma_miri_expression_sheet_v003.py (historical)
+### LTG_TOOL_grandma_miri_expression_sheet.py (historical)
 - **Before C38:** `SLIPPER = (90, 122, 90)` — **WRONG**
 - **After C38:** `SLIPPER = (196, 144, 122)` — **CORRECTED** (historical; PNG not regenerated)
 
-### LTG_TOOL_miri_turnaround_v001.py
+### LTG_TOOL_miri_turnaround.py
 - **Before C38:** `SLIPPER = (90, 122, 90)` — **WRONG**
 - **After C38:** `SLIPPER = (196, 144, 122)` — **CORRECTED**
-- **PNG regenerated:** `LTG_CHAR_miri_turnaround_v001.png` ✓
+- **PNG regenerated:** `LTG_CHAR_miri_turnaround.png` ✓
 
-### LTG_TOOL_grandma_miri_color_model_v001.py
+### LTG_TOOL_grandma_miri_color_model.py
 - **Before C38:** `SLIPPER_UPPER = (90, 122, 90)`, swatch label `"#5A7A5A"` — **WRONG**
 - **After C38:** `SLIPPER_UPPER = (196, 144, 122)`, swatch label `"#C4907A"` — **CORRECTED**
-- **PNG regenerated:** `LTG_COLOR_grandma_miri_color_model_v001.png` ✓
+- **PNG regenerated:** `LTG_COLOR_grandma_miri_color_model.png` ✓
 
-### LTG_TOOL_character_lineup_v007.py (CURRENT)
+### LTG_TOOL_character_lineup.py (CURRENT)
 - **CHAR-M-11:** `MIRI_SLIPPER = (196, 144, 122)` — **ALREADY CORRECT** (C33 fix in place)
 - No changes needed.
 
-### LTG_TOOL_character_lineup_v006.py / v005.py / v003.py / v004.py (historical)
+### LTG_TOOL_character_lineup.py / v005.py / v003.py / v004.py (historical)
 - All use `MIRI_SLIPPER = (90, 122, 90)` — **WRONG** (historical, superseded by v007)
 - Not corrected — historical files, not the current pitch reference
 
-### LTG_TOOL_grandma_miri_expression_sheet_v002.py (historical)
+### LTG_TOOL_grandma_miri_expression_sheet.py (historical)
 - `SLIPPER = (90, 122, 90)` — **WRONG** (historical, superseded by v003/v004)
 - Not corrected — historical file
 
@@ -98,4 +98,4 @@ The old Deep Sage (#5A7A5A) would have read as a warm/cool conflict in all envir
 
 **Any generator drawing Grandma Miri's lower body must use `#C4907A` / (196, 144, 122) for slipper upper fill.**
 
-Run `LTG_TOOL_palette_warmth_lint_v004.py` before submitting any Miri generator to verify CHAR-M entries. The lint tool will catch G>R or B>R violations on all CHAR-M entries.
+Run `LTG_TOOL_palette_warmth_lint.py` before submitting any Miri generator to verify CHAR-M entries. The lint tool will catch G>R or B>R violations on all CHAR-M entries.

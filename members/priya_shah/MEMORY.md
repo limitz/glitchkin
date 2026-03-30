@@ -11,7 +11,7 @@ Cycle 37. C37 = first work cycle.
 - **Story bible v002**: `output/production/story/story_bible_v002.md` — C38
 - **Story bible v003**: `output/production/story/story_bible_v003.md` — C39, CURRENT CANONICAL VERSION
 - Character design docs: `output/characters/main/` (luma.md, byte.md, cosmo.md, glitch.md — no separate grandma_miri.md, she's in production_bible.md)
-- Pitch brief: `output/production/ltg_pitch_brief_v001.md` — emotional core document, essential reading
+- Pitch brief: `output/production/ltg_pitch_brief.md` — emotional core document, essential reading
 - Production bible: `output/production/production_bible.md` — canonical world/character overview (Byte shape fix applied C38)
 - FX spec cold open: `output/production/fx_spec_cold_open.md` — very detailed; pilot cold open FX already specified
 
@@ -48,11 +48,11 @@ Comedy-adventure. Core: loneliness of perceiving differently, vindication throug
 
 ## Pilot Structure (CANONICAL v003)
 - PRE-CREDITS TAG (~30 sec): School, last day of class, dead pixel scene, CUT TO BLACK
-- COLD OPEN (~90 sec): Night, Grandma's house, CRT on, face in static, THE NOTICING. Visual ref: `LTG_SB_pilot_cold_open_v003.png` (Diego's board)
+- COLD OPEN (~90 sec): Night, Grandma's house, CRT on, face in static, THE NOTICING. Visual ref: `LTG_SB_pilot_cold_open.png` (Diego's board)
 - ACT 1 PROPER: Morning, Luma/Grandma exchange, Byte erupts through CRT
 
 ## Cycle Lessons
-- C37: Story/production docs exempt from LTG_ naming. Read ltg_pitch_brief_v001.md FIRST.
+- C37: Story/production docs exempt from LTG_ naming. Read ltg_pitch_brief.md FIRST.
 - C38: Cold open decision is design-level, not story. Don't get ahead of Art Director. Social cost scenes work best ~15 sec, not subplots. Byte's commitment beat stronger without words.
 - C39: When Alex sends character decisions with structural story implications, update both the character profile AND the series arc section — they cross-reference each other. Glitch needs staging direction for storyboarders (see ideabox idea submitted C39).
 

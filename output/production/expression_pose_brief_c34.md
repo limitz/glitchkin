@@ -9,7 +9,7 @@
 
 ## The Problem
 
-Maya's `LTG_TOOL_expression_silhouette_v001.py` C33 baseline run returned:
+Maya's `LTG_TOOL_expression_silhouette.py` C33 baseline run returned:
 
 | Sheet | Result | Max Similarity |
 |-------|--------|----------------|
@@ -49,7 +49,7 @@ Each expression should use a different hook. No two expressions should share the
 ## Luma — Expression Pose Vocabulary
 
 **Current sheet: v008 — 7 expressions (THE NOTICING + 6 legacy)**
-**Tool:** `LTG_TOOL_luma_expression_sheet_v008.py`
+**Tool:** `LTG_TOOL_luma_expression_sheet.py`
 
 ### THE NOTICING (v008 anchor) — STATUS: CORRECTLY DIFFERENTIATED
 - Silhouette hook: right arm bent to chin. Body upright, wide stance.
@@ -111,7 +111,7 @@ Each expression should use a different hook. No two expressions should share the
 ## Cosmo — Expression Pose Vocabulary
 
 **Current sheet: v003 — 6 expressions: THOUGHTFUL, SKEPTICAL, DELIGHTED, AWKWARD, WORRIED, SURPRISED**
-**Tool:** `LTG_TOOL_cosmo_expression_sheet_v003.py`
+**Tool:** `LTG_TOOL_cosmo_expression_sheet.py`
 **C33 baseline: 96% similarity — worst of the three sheets**
 
 Cosmo's design challenge: he is taller, thinner, more contained than Luma. His body naturally generates fewer wide silhouette changes. The fix is to assign him poses that exploit his proportions (long arms, tall frame) for distinct shapes.
@@ -167,7 +167,7 @@ Cosmo's design challenge: he is taller, thinner, more contained than Luma. His b
 ## Grandma Miri — Expression Pose Vocabulary
 
 **Current sheet: v003 — 6 expressions: WARM/WELCOMING, NOSTALGIC/WISTFUL, CONCERNED, SURPRISED/DELIGHTED, WISE/KNOWING, KNOWING STILLNESS**
-**Tool:** `LTG_TOOL_grandma_miri_expression_sheet_v003.py`
+**Tool:** `LTG_TOOL_grandma_miri_expression_sheet.py`
 **C33 baseline: 94% (v002 tested) — second worst**
 
 Miri's design challenge: she is older, rounder, moves less dramatically than Luma or Cosmo. Her expressiveness is in gesture, not in sweeping body motion. The fix: assign each expression a distinct gesture that reads in silhouette at her scale.
@@ -223,11 +223,11 @@ Miri's design challenge: she is older, rounder, moves less dramatically than Lum
 
 ## Implementation Notes for Maya
 
-1. **Test the changes with `LTG_TOOL_expression_silhouette_v001.py` after each sheet.** Target: PASS at 85% threshold. At minimum: no pair above 90%.
+1. **Test the changes with `LTG_TOOL_expression_silhouette.py` after each sheet.** Target: PASS at 85% threshold. At minimum: no pair above 90%.
 
-2. **Run `LTG_TOOL_render_qa_v001.py` on the output sheet.** Use `asset_type="character_sheet"` to suppress false-positive warm/cool WARN.
+2. **Run `LTG_TOOL_render_qa.py` on the output sheet.** Use `asset_type="character_sheet"` to suppress false-positive warm/cool WARN.
 
-3. **Name the outputs:** `LTG_CHAR_luma_expressions_v009.png`, `LTG_CHAR_cosmo_expression_sheet_v005.png`, `LTG_CHAR_grandma_miri_expression_sheet_v004.png`. Generators: increment version numbers.
+3. **Name the outputs:** `LTG_CHAR_luma_expressions.png`, `LTG_CHAR_cosmo_expression_sheet.png`, `LTG_CHAR_grandma_miri_expression_sheet.png`. Generators: increment version numbers.
 
 4. **Priority order:**
    - Luma: DELIGHTED (arms-up is most urgent — currently no expression uses the overhead arm hook), SURPRISED (backward lean + raised arms), FRUSTRATED (one-sided fling)

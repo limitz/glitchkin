@@ -12,27 +12,27 @@
 
 | File | Luma Context | head_r expr | ew / eye_r expr | L/R ratio | Status |
 |------|-------------|-------------|-----------------|-----------|--------|
-| `LTG_TOOL_style_frame_01_discovery_v003.py` | Luma: organic style | `head_r = p(72)` | `ew  = p(18)` | 0.2500 | **WARN** |
-| `LTG_TOOL_style_frame_02_glitch_storm_v001.py` | Luma: sprint pose, no eyes (canonical N/A) | `head_r = int(h * 0.12)` | `—` | — | **N/A** |
-| `LTG_TOOL_style_frame_02_glitch_storm_v002.py` | Luma: sprint pose, no eyes (canonical N/A) | `head_r  = int(h * 0.12)` | `—` | — | **N/A** |
-| `LTG_TOOL_style_frame_02_glitch_storm_v003.py` | Luma: sprint pose, no eyes (canonical N/A) | `head_r  = int(h * 0.12)` | `—` | — | **N/A** |
-| `LTG_TOOL_style_frame_02_glitch_storm_v004.py` | Luma: sprint pose, no eyes (canonical N/A) | `head_r  = int(h * 0.12)` | `—` | — | **N/A** |
-| `LTG_TOOL_style_frame_02_glitch_storm_v005.py [stub → LTG_TOOL_style_frame_02_glitch_storm_v005.py]` | Luma: sprint pose, no eyes (canonical N/A) | `—` | `—` | — | **N/A** |
-| `LTG_TOOL_style_frame_02_glitch_storm_v006.py` | Luma: sprint pose, no eyes (canonical N/A) | `head_r  = int(h * 0.12)` | `—` | — | **N/A** |
-| `LTG_TOOL_style_frame_02_glitch_storm_v007.py` | Luma: sprint face with eyes (asymmetric) | `head_r  = int(h * 0.12)` | `L:eye_r_left  = max(2, int(head_r * 0.26)) / R:eye_r_righ...` | L:0.2600 / R:0.1700 | **ASYM-WARN** |
-| `LTG_TOOL_style_frame_02_glitch_storm_v008.py` | Luma: sprint face with eyes (asymmetric) | `head_r  = int(h * 0.12)` | `L:eye_r_left  = max(2, int(head_r * 0.26)) / R:eye_r_righ...` | L:0.2600 / R:0.1700 | **ASYM-WARN** |
-| `LTG_TOOL_style_frame_03_other_side_v001.py` | Luma: pixel-art style (organic spec N/A) | `—` | `eye_w = max(4, head_w // 4)` | — | **N/A** |
-| `LTG_TOOL_style_frame_03_other_side_v002.py` | Luma: pixel-art style (organic spec N/A) | `—` | `eye_w = max(4, head_w // 4)` | — | **N/A** |
-| `LTG_TOOL_style_frame_03_other_side_v003.py` | Luma: pixel-art style (organic spec N/A) | `—` | `eye_w = max(4, head_w // 4)` | — | **N/A** |
-| `LTG_TOOL_style_frame_03_other_side_v004.py` | Luma: pixel-art style (organic spec N/A) | `—` | `eye_w = max(4, head_w // 4)` | — | **N/A** |
-| `LTG_TOOL_style_frame_03_other_side_v005.py` | Luma: pixel-art style (organic spec N/A) | `—` | `eye_w = max(4, head_w // 4)` | — | **N/A** |
-| `LTG_TOOL_styleframe_discovery_v004.py` | Luma: organic style | `head_r = p(72)` | `ew  = int(head_r * 0.22)` | 0.2200 | **PASS** |
-| `LTG_TOOL_styleframe_discovery_v005.py` | Luma: organic style | `head_r = p(72)` | `ew = int(head_r * 0.22)` | 0.2200 | **PASS** |
-| `LTG_TOOL_styleframe_discovery_v006.py` | Luma: organic style | `head_r = p(72)` | `ew = int(head_r * 0.22)` | 0.2200 | **PASS** |
-| `LTG_TOOL_styleframe_luma_byte_v001.py` | Luma: organic style | `—` | `—` | — | **N/A (no ew found)** |
-| `LTG_TOOL_styleframe_luma_byte_v002.py` | Luma: organic style | `—` | `—` | — | **N/A (no ew found)** |
-| `LTG_TOOL_styleframe_luma_byte_v003.py` | Luma: organic style | `—` | `—` | — | **N/A (no ew found)** |
-| `LTG_TOOL_styleframe_luma_byte_v004.py` | Luma: organic style | `—` | `ew = int(head_r * 0.22)` | 0.2200 | **PASS** |
+| `LTG_TOOL_style_frame_01_discovery.py` | Luma: organic style | `head_r = p(72)` | `ew  = p(18)` | 0.2500 | **WARN** |
+| `LTG_TOOL_style_frame_02_glitch_storm.py` | Luma: sprint pose, no eyes (canonical N/A) | `head_r = int(h * 0.12)` | `—` | — | **N/A** |
+| `LTG_TOOL_style_frame_02_glitch_storm.py` | Luma: sprint pose, no eyes (canonical N/A) | `head_r  = int(h * 0.12)` | `—` | — | **N/A** |
+| `LTG_TOOL_style_frame_02_glitch_storm.py` | Luma: sprint pose, no eyes (canonical N/A) | `head_r  = int(h * 0.12)` | `—` | — | **N/A** |
+| `LTG_TOOL_style_frame_02_glitch_storm.py` | Luma: sprint pose, no eyes (canonical N/A) | `head_r  = int(h * 0.12)` | `—` | — | **N/A** |
+| `LTG_TOOL_style_frame_02_glitch_storm.py [stub → LTG_TOOL_style_frame_02_glitch_storm.py]` | Luma: sprint pose, no eyes (canonical N/A) | `—` | `—` | — | **N/A** |
+| `LTG_TOOL_style_frame_02_glitch_storm.py` | Luma: sprint pose, no eyes (canonical N/A) | `head_r  = int(h * 0.12)` | `—` | — | **N/A** |
+| `LTG_TOOL_style_frame_02_glitch_storm.py` | Luma: sprint face with eyes (asymmetric) | `head_r  = int(h * 0.12)` | `L:eye_r_left  = max(2, int(head_r * 0.26)) / R:eye_r_righ...` | L:0.2600 / R:0.1700 | **ASYM-WARN** |
+| `LTG_TOOL_style_frame_02_glitch_storm.py` | Luma: sprint face with eyes (asymmetric) | `head_r  = int(h * 0.12)` | `L:eye_r_left  = max(2, int(head_r * 0.26)) / R:eye_r_righ...` | L:0.2600 / R:0.1700 | **ASYM-WARN** |
+| `LTG_TOOL_style_frame_03_other_side.py` | Luma: pixel-art style (organic spec N/A) | `—` | `eye_w = max(4, head_w // 4)` | — | **N/A** |
+| `LTG_TOOL_style_frame_03_other_side.py` | Luma: pixel-art style (organic spec N/A) | `—` | `eye_w = max(4, head_w // 4)` | — | **N/A** |
+| `LTG_TOOL_style_frame_03_other_side.py` | Luma: pixel-art style (organic spec N/A) | `—` | `eye_w = max(4, head_w // 4)` | — | **N/A** |
+| `LTG_TOOL_style_frame_03_other_side.py` | Luma: pixel-art style (organic spec N/A) | `—` | `eye_w = max(4, head_w // 4)` | — | **N/A** |
+| `LTG_TOOL_style_frame_03_other_side.py` | Luma: pixel-art style (organic spec N/A) | `—` | `eye_w = max(4, head_w // 4)` | — | **N/A** |
+| `LTG_TOOL_styleframe_discovery.py` | Luma: organic style | `head_r = p(72)` | `ew  = int(head_r * 0.22)` | 0.2200 | **PASS** |
+| `LTG_TOOL_styleframe_discovery.py` | Luma: organic style | `head_r = p(72)` | `ew = int(head_r * 0.22)` | 0.2200 | **PASS** |
+| `LTG_TOOL_styleframe_discovery.py` | Luma: organic style | `head_r = p(72)` | `ew = int(head_r * 0.22)` | 0.2200 | **PASS** |
+| `LTG_TOOL_styleframe_luma_byte.py` | Luma: organic style | `—` | `—` | — | **N/A (no ew found)** |
+| `LTG_TOOL_styleframe_luma_byte.py` | Luma: organic style | `—` | `—` | — | **N/A (no ew found)** |
+| `LTG_TOOL_styleframe_luma_byte.py` | Luma: organic style | `—` | `—` | — | **N/A (no ew found)** |
+| `LTG_TOOL_styleframe_luma_byte.py` | Luma: organic style | `—` | `ew = int(head_r * 0.22)` | 0.2200 | **PASS** |
 
 ---
 
@@ -58,4 +58,4 @@
 - **ASYM-WARN** is informational — asymmetric eyes may be intentional (e.g. FOCUSED DETERMINATION expression).
   Flag to Art Director if asymmetry looks accidental or extreme.
 
-*Generated by `LTG_TOOL_proportion_audit_v002.py` — Cycle 36*
+*Generated by `LTG_TOOL_proportion_audit.py` — Cycle 36*

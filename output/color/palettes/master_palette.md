@@ -262,7 +262,7 @@ These are not freestanding palette colors — they are the documented results of
 - **HSL:** approx. (9°, 50%, 57%) — 50% saturation. Exceeds background building walls (ENV-06 saturation ~28%) per character-over-background saturation rule.
 - **Cycle 13 correction (Sam Kowalski — Naomi C12-3):** Prior value `#C07A70` RGB(192,122,112) calculated HSL saturation ≈39% — however background building walls (ENV-06 after correction) have saturation ~28%, and prior ENV-06 `#9A8C8A` had only ~5% saturation. With the ENV-06 correction, the saturation differential was marginal. Fix: increase DRW-07 saturation to min 40%. New value RGB(200,105,90) achieves ~50% saturation — clear margin above corrected ENV-06 background. Orange material identity retained.
 - **Scene use:** Style Frame 02 storm sequence. Luma's front-facing hoodie surface (storm key angle).
-- **Cross-reference:** Updated in `LTG_TOOL_style_frame_02_glitch_storm_v001.py` and `LTG_TOOL_colorkey_glitchstorm_gen_v001.py` (Cycle 13).
+- **Cross-reference:** Updated in `LTG_TOOL_style_frame_02_glitch_storm.py` and `LTG_TOOL_colorkey_glitchstorm_gen.py` (Cycle 13).
 
 ### DRW-08 — Storm-Modified Skin (Cyan key)
 - **Hex:** `#6AB4AE`
@@ -400,15 +400,15 @@ Flat hex values for environment surfaces under specific lighting conditions. Est
 ### ENV-06 — Terracotta Under Cyan Key (Corrected Cycle 13)
 - **Hex:** `#96ACA2`
 - **RGB:** 150, 172, 162
-- **Cycle 13 correction (Jordan Reed / Naomi C12-1):** The prior value `#9A8C8A` RGB(154,140,138) was arithmetically wrong — R channel dominated (154 > G:140 > B:138), making the wall read WARMER on the cyan-lit face than on the shadow face. This is the opposite of how cyan key light behaves. Correct derivation requires G > R and B near/above R on any cyan-lit face. New value RGB(150,172,162): G=172 > R=150, B=162 > R=150 — correctly signals cool (cyan) lighting. Implemented in `LTG_TOOL_colorkey_glitchstorm_gen_v001.py` (Cycle 13).
-- **NOTE for Jordan Reed:** The SF02 background generator (`LTG_TOOL_style_frame_02_glitch_storm_v001.py`) still uses the old value `TERRA_CYAN_LIT = (154, 140, 138)`. Update to `(150, 172, 162)` (#96ACA2) on next pass.
+- **Cycle 13 correction (Jordan Reed / Naomi C12-1):** The prior value `#9A8C8A` RGB(154,140,138) was arithmetically wrong — R channel dominated (154 > G:140 > B:138), making the wall read WARMER on the cyan-lit face than on the shadow face. This is the opposite of how cyan key light behaves. Correct derivation requires G > R and B near/above R on any cyan-lit face. New value RGB(150,172,162): G=172 > R=150, B=162 > R=150 — correctly signals cool (cyan) lighting. Implemented in `LTG_TOOL_colorkey_glitchstorm_gen.py` (Cycle 13).
+- **NOTE for Jordan Reed:** The SF02 background generator (`LTG_TOOL_style_frame_02_glitch_storm.py`) still uses the old value `TERRA_CYAN_LIT = (154, 140, 138)`. Update to `(150, 172, 162)` (#96ACA2) on next pass.
 - **Naomi reference formula (35% cyan wash, for verification):** R: 199×0.65+0×0.35=129, G: 91×0.65+240×0.35=143, B: 57×0.65+255×0.35=126 → RGB(129,143,126). Both formulas agree on the direction: G>R, B≈R. The implemented value RGB(150,172,162) has a stronger cyan influence (~40% mix) and is acceptable.
 
 ### ENV-03 — Warm Window Spill (Canonical Alpha)
 - **Hex:** `#4A3A2A`
 - **RGB:** 74, 58, 42
-- **Canonical warm spill alpha:** **40/255 (~16%)** — used in `LTG_TOOL_style_frame_02_glitch_storm_v001.py` (gradient falloff, max 40).
-- **Cycle 13 alignment (Sam Kowalski — Naomi C12-2):** The color key generator (`LTG_TOOL_colorkey_glitchstorm_gen_v001.py`) previously used a flat alpha of 150/255 (~59%) for this same scene value. This was misaligned with the SF02 bg script. Both scripts now use alpha 40 (~16%). Rationale: warm window spill in a storm night scene is a subtle background light, not a dominant source — 16% is correct. 59% would overpower the dominant cyan key from the crack.
+- **Canonical warm spill alpha:** **40/255 (~16%)** — used in `LTG_TOOL_style_frame_02_glitch_storm.py` (gradient falloff, max 40).
+- **Cycle 13 alignment (Sam Kowalski — Naomi C12-2):** The color key generator (`LTG_TOOL_colorkey_glitchstorm_gen.py`) previously used a flat alpha of 150/255 (~59%) for this same scene value. This was misaligned with the SF02 bg script. Both scripts now use alpha 40 (~16%). Rationale: warm window spill in a storm night scene is a subtle background light, not a dominant source — 16% is correct. 59% would overpower the dominant cyan key from the crack.
 - **This is the same ENV-03 entry as in the table above — this note adds the canonical alpha specification.**
 
 ### ENV-07 — Dark Warm Wood
@@ -620,7 +620,7 @@ The Glitch palette is an invader. These colors do not belong to the natural worl
 - **Derivation:** GL-06 (#2B7FFF) desaturated and darkened by approximately 45% to represent atmospheric depth recession within the storm. This is not an error or a substitute for GL-06 — it is the same blue family seen through storm atmosphere and distance haze. Registered in Cycle 28 per Priya Nair critique (C12).
 - **Shadow companion:** `#06304A` (near-void confetti shadow — implicit, construction value only)
 - **Use-case notes:** Storm scene (SF02) confetti generation only. The 70/20/10 split (Storm Confetti Blue / Void Black / Electric Cyan) creates the cold threat of the storm. At full saturation GL-06 reads too vibrant for distance atmosphere — GL-06c is the correct atmospheric derivative. **Do not substitute GL-06 for GL-06c in the storm generator:** GL-06 reads as close-field data structure, not storm distance.
-- **Source file:** `output/tools/LTG_TOOL_style_frame_02_glitch_storm_v004.py` constant `DATA_BLUE`.
+- **Source file:** `output/tools/LTG_TOOL_style_frame_02_glitch_storm.py` constant `DATA_BLUE`.
 - **Pairs with:** GL-01 (Electric Cyan — near-field accent confetti), GL-05 (Void Black — weight/depth confetti)
 - **Avoid using:** As a data structure color (use GL-06), as a character color, as any Real World sky or water color.
 
@@ -1201,7 +1201,7 @@ Formal documentation of inline color values used in `style_frame_01_rendered.py`
 
 ### CHAR-L Hoodie Warmth Guarantee Table
 
-**Production rule:** Every palette entry for Luma's hoodie system must remain "unambiguously warm" — R must be the dominant channel (within soft_tolerance). This table is the machine-readable source for `LTG_TOOL_palette_warmth_lint_v004.py` and the CI warmth gate. Entries are listed here in addition to their prose definitions above. If a value changes in the prose section, it must also be updated here.
+**Production rule:** Every palette entry for Luma's hoodie system must remain "unambiguously warm" — R must be the dominant channel (within soft_tolerance). This table is the machine-readable source for `LTG_TOOL_palette_warmth_lint.py` and the CI warmth gate. Entries are listed here in addition to their prose definitions above. If a value changes in the prose section, it must also be updated here.
 
 | Code | Name | Hex | RGB | Notes |
 |---|---|---|---|---|
@@ -1209,7 +1209,7 @@ Formal documentation of inline color values used in `style_frame_01_rendered.py`
 | CHAR-L-08 | Luma Hoodie Underside (Lavender Ambient) | `#B36250` | (179, 98, 80) | Ambient-lit underside. 70/30 blend of HOODIE_SHADOW + DUSTY_LAVENDER. R>G>B — warm guarantee preserved despite lavender influence. |
 | CHAR-L-11 | Luma Hoodie Pixel (Warm-Lit Activation) | `#E8C95A` | (232, 201, 90) | Warm-lit pixel accents only. Alias of RW-02 Soft Gold. R>G>B — warm guarantee. |
 
-*Cycle 36 addition (Sam Kowalski — 2026-03-30): CHAR-L hoodie warmth guarantee table added. These entries are now machine-checked by `LTG_TOOL_palette_warmth_lint_v004.py` with prefix "CHAR-L" when `ltg_warmth_guarantees.json` is active. Only these three hoodie-specific entries appear in table format; all other CHAR-L entries (skin, jeans, shoes) remain in prose format and are intentionally excluded from the warmth lint (jeans = blue, shoes = near-white — not warm-guaranteed).*
+*Cycle 36 addition (Sam Kowalski — 2026-03-30): CHAR-L hoodie warmth guarantee table added. These entries are now machine-checked by `LTG_TOOL_palette_warmth_lint.py` with prefix "CHAR-L" when `ltg_warmth_guarantees.json` is active. Only these three hoodie-specific entries appear in table format; all other CHAR-L entries (skin, jeans, shoes) remain in prose format and are intentionally excluded from the warmth lint (jeans = blue, shoes = near-white — not warm-guaranteed).*
 
 ---
 
@@ -1412,14 +1412,14 @@ Lighting key: Overhead fluorescent — cool, flat, even, slightly greenish. No d
 *Cycle 8 revision: Section 6 added (Environment / Props — couch PROP-01/02/03, cable PROP-04/05/06, neutral grey PROP-07 deprecated/replaced); CHAR-L-08 placeholder added (hoodie underside, lavender ambient).*
 *Cycle 9 revision: Section 7 added (Skin Color System — two-tier system, CHAR-C-01 for Cosmo, warm/cool skin tables, Fiona critique resolution); PROP-07 finalized (CABLE_NEUTRAL_PLUM, #504064); CHAR-L-08 finalized (#B06040, HOODIE_AMBIENT); CHAR-L-09/10 added (Luma shoe canvas/sole per Naomi Bridges Cycle 8 feedback).*
 *Cycle 10 revision: CHAR-L-08 hex corrected from #B06040 (176,96,64) to #B36250 (179,98,80) — blue channel arithmetic error resolved (Naomi Bridges C9-5). Glitch Layer depth-tier construction values documented in comment block (Naomi C9-1). luma_color_model.md cross-reference confirmed present in both documents.*
-*Cycle 13 revision (Sam Kowalski — 2026-03-30): C10-1 RESOLVED — cold overlay boundary arithmetic for SF01 documented in Section 1B (prior comment was wrong: alpha at 80px boundary is 30/11.8%, not near-zero). DRW-16 RESOLVED — painter warning for shoulder-under-Data-Stream-Blue-waterfall expanded and cross-referenced to luma_color_model.md. DRW-07 saturation corrected: #C07A70 → #C8695A (RGB 200,105,90), HSL saturation raised from ~39% to ~50% (Naomi C12-3). ENV-06 corrected: #9A8C8A (warm-dominant grey, wrong) → #96ACA2 (G>R, B>R, correctly cyan-lit) per Jordan Reed / Naomi C12-1. ENV-03 warm spill canonical alpha documented: 40/255 (~16%) — aligned LTG_TOOL_colorkey_glitchstorm_gen_v001.py from prior 150 to 40 (Naomi C12-2). CHAR-L-09 warm pixel activation: pending Alex Chen confirmation (message sent 2026-03-30 14:00).*
+*Cycle 13 revision (Sam Kowalski — 2026-03-30): C10-1 RESOLVED — cold overlay boundary arithmetic for SF01 documented in Section 1B (prior comment was wrong: alpha at 80px boundary is 30/11.8%, not near-zero). DRW-16 RESOLVED — painter warning for shoulder-under-Data-Stream-Blue-waterfall expanded and cross-referenced to luma_color_model.md. DRW-07 saturation corrected: #C07A70 → #C8695A (RGB 200,105,90), HSL saturation raised from ~39% to ~50% (Naomi C12-3). ENV-06 corrected: #9A8C8A (warm-dominant grey, wrong) → #96ACA2 (G>R, B>R, correctly cyan-lit) per Jordan Reed / Naomi C12-1. ENV-03 warm spill canonical alpha documented: 40/255 (~16%) — aligned LTG_TOOL_colorkey_glitchstorm_gen.py from prior 150 to 40 (Naomi C12-2). CHAR-L-09 warm pixel activation: pending Alex Chen confirmation (message sent 2026-03-30 14:00).*
 *Cycle 14 revision (Sam Kowalski — 2026-03-30): CHAR-L-11 added — Luma Hoodie Pixel (Warm-Lit Activation), hex #E8C95A (Soft Gold, alias RW-02). Registered per Alex Chen Art Director confirmation. Constraints: lamp-lit hoodie pixel accents only, warm-dominant scenes only; neutral/cold scenes use GL-01 (#00D4E8). CHAR-L-09 warm pixel activation thread CLOSED — correctly occupied by shoe canvas; CHAR-L-11 is the warm pixel entry.*
 *Cycle 15 revision (Sam Kowalski — 2026-03-29): DRW-18 added — Luma Hair Base (Glitch Layer), hex #1A0F0A (26,15,10); derived from Deep Cocoa #3B2820 under UV Purple ambient. ENV-13 added — Far Structure Edge (Void-Scale), hex #211136 (33,17,54); derived as 20% UV Purple over Void Black; used for SF03 megastructure silhouettes at far-void distance. Source: SF03 Other Side spec color audit (sf03_other_side_color_notes.md).*
 *Cycle 21 revision (Sam Kowalski — 2026-03-30): Palette Status section added (final Critique 10 audit).*
 *Cycle 30 revision (Sam Kowalski — 2026-03-29): CHAR-L-11 Constraint 1 hex error corrected — prior text cited `#00D4E8` (GL-01b Byte Teal) for neutral/cold-scene hoodie pixel accents; correct value is GL-01 Electric Cyan `#00F0FF`. Byte Teal is Byte's body fill only and must never appear as a hoodie pixel color.*
 *Cycle 32 revision (Sam Kowalski — 2026-03-30): CHAR-L-11 cross-reference corrected — cross-ref line cited `#00D4E8` (GL-01b Byte Teal) for cold-scene hoodie pixels; correct is GL-01 `#00F0FF` Electric Cyan (Priya Nair C13 P1). CHAR-M-11 Miri House Slippers corrected — `#5A7A5A` Deep Sage (cool-neutral green, G>R) replaced with `#C4907A` Dusty Warm Apricot (R>G>B, warm family) per Priya Nair C13 P2; Deep Sage contradicted Miri warm-palette guarantee in color story. DRW-18 warmth clarification — added HSL lightness note (7%); warmth of R:26>G:15>B:10 is theoretically present but functionally imperceptible at this luminance; DRW-18 does NOT contribute visual warmth to SF03; warm values in SF03 are hoodie orange and skin only. Color story doc updated with same clarification.*
 *Review cycle: Update after each critic feedback pass.*
-*Cycle 33 revision (Sam Kowalski — 2026-03-30): QA Scene-Lighting Exceptions section added — SF04 Byte teal dim documented as SCENE-LIGHTING — ACCEPTED per Alex Chen Art Director decision (C32 directive). GL-01b in SF04 at ~60-70% canonical luminance is intentional discovery-scene low-key lighting, not a generation error. LTG_TOOL_palette_warmth_lint_v001.py created and registered in tools README — catches G>R or B>R violations in all CHAR-M entries (actioned ideabox: warmth linter). C33 baseline: 11 CHAR-M entries, 0 violations.*
+*Cycle 33 revision (Sam Kowalski — 2026-03-30): QA Scene-Lighting Exceptions section added — SF04 Byte teal dim documented as SCENE-LIGHTING — ACCEPTED per Alex Chen Art Director decision (C32 directive). GL-01b in SF04 at ~60-70% canonical luminance is intentional discovery-scene low-key lighting, not a generation error. LTG_TOOL_palette_warmth_lint.py created and registered in tools README — catches G>R or B>R violations in all CHAR-M entries (actioned ideabox: warmth linter). C33 baseline: 11 CHAR-M entries, 0 violations.*
 
 ---
 
@@ -1464,7 +1464,7 @@ These are the show's foundational colors. Every generator, color key, and painte
 | CHAR-L-11 | Hoodie Pixel (Warm-Lit) | `#E8C95A` | Alias of RW-02; production pixel-grid render not yet verified in OpenToonz; Pillow script uses gradient approximation only |
 | DRW-13b | Cool Skin Highlight (Glitch Layer) | `#8A6A7A` | Added Cycle 2; no rendering in any generator to date — derived spec only |
 | RW-NSM | Moon Ambient | `#C8BFD8` | No rendering yet; referenced in spec only |
-| TD-10/TD-11 | Monitor Screen / Glow | `#C8D4E0` / `#B8C8D4` | Close-but-not-identical variants appear in LTG_TOOL_bg_tech_den_v002.py (MON_GLOW_BRIGHT 200,218,240 and MON_GLOW_MID 180,200,210). Needs alignment pass. |
+| TD-10/TD-11 | Monitor Screen / Glow | `#C8D4E0` / `#B8C8D4` | Close-but-not-identical variants appear in LTG_TOOL_bg_tech_den.py (MON_GLOW_BRIGHT 200,218,240 and MON_GLOW_MID 180,200,210). Needs alignment pass. |
 | CHAR-M-04 | Miri Permanent Blush | `#D4956B` | Opacity-feel spec (25%) in grandma_miri_color_model.md not yet translated to a flat alpha render constant |
 | CHAR-C-01 | Cosmo Skin Base | `#D9C09A` | In character spec; no rendered SF or generator has used this value directly yet |
 | SH-01 through SH-12 | School Hallway palette | various | Documented in Section 8.3; no rendered generator exists for hallway environment yet |
@@ -1473,7 +1473,7 @@ These are the show's foundational colors. Every generator, color key, and painte
 
 ### NAMED GAPS (Missing documentation — action required)
 
-1. **`UV_PURPLE_MID (42,26,64)` and `UV_PURPLE_DARK (43,32,80)` in LTG_TOOL_style_frame_03_other_side_v003.py** — These are construction values for the SF03 void sky gradient, sitting between GL-08 Void Black and GL-04a Deep Digital Void. They are not registered anywhere in the master palette. **Disposition:** These are legitimate atmospheric construction gradients. They should be documented as GL-04c (UV Purple Mid-Dark, #2A1A40 approx.) and GL-04d (UV Purple Near-Void, #2B2050 approx.) — or mapped to the existing ENV-11/ENV-12 entries if those match. Cross-check against ENV-11 `#2A1A40` (42,26,64 ≈ match) and ENV-12 `#2B2050` (43,32,80 ≈ match). **Likely already covered by ENV-11 and ENV-12; Jordan Reed to confirm and add cross-reference comment to the script.**
+1. **`UV_PURPLE_MID (42,26,64)` and `UV_PURPLE_DARK (43,32,80)` in LTG_TOOL_style_frame_03_other_side.py** — These are construction values for the SF03 void sky gradient, sitting between GL-08 Void Black and GL-04a Deep Digital Void. They are not registered anywhere in the master palette. **Disposition:** These are legitimate atmospheric construction gradients. They should be documented as GL-04c (UV Purple Mid-Dark, #2A1A40 approx.) and GL-04d (UV Purple Near-Void, #2B2050 approx.) — or mapped to the existing ENV-11/ENV-12 entries if those match. Cross-check against ENV-11 `#2A1A40` (42,26,64 ≈ match) and ENV-12 `#2B2050` (43,32,80 ≈ match). **Likely already covered by ENV-11 and ENV-12; Jordan Reed to confirm and add cross-reference comment to the script.**
 
 2. **`CIRCUIT_TRACE_DIM (0,192,204)` in SF03 v003** — A dim circuit-trace color between GL-01a Deep Cyan and GL-01 Electric Cyan. Not registered. **Disposition:** Scene-specific construction value acceptable without registration if commented in the script (already is). Low priority.
 
@@ -1481,7 +1481,7 @@ These are the show's foundational colors. Every generator, color key, and painte
 
 4. **`LUMA_SHOE (220,215,200)` in SF03 v003** — Slightly lighter/cooler than CHAR-L-09 Warm Cream `#FAF0DC` (250,240,220). Under UV ambient the shoe canvas shifts slightly. Not registered. **Disposition:** Low priority; construction value. Add inline comment in script citing CHAR-L-09 parent and UV ambient modification.
 
-5. **`LTG_TOOL_bg_tech_den_v002.py` — Multiple new construction values** — WALL_WARM, SUNLIT_AMBER (note: different from master palette RW-03 `#D4923A`), CART_YELLOW/RED/GREY/BLUE, component colors, bedding colors. These are scene-specific prop construction values. **Disposition:** Section 8 covers the canonical Tech Den palette (TD-01 through TD-13). The bg_tech_den generator has additional scene-dressing props that are acceptable as construction values provided the canonical surfaces (walls, floor, CRT) match the Section 8 entries. CRT_CASING and CRT_SHADOW match exactly; wall/floor tones are close but the bg generator uses slightly different values (WALL_WARM 240,228,200 vs TD-01 232,216,184). Jordan Reed should add a comment in the generator noting the variance and citing TD-01.
+5. **`LTG_TOOL_bg_tech_den.py` — Multiple new construction values** — WALL_WARM, SUNLIT_AMBER (note: different from master palette RW-03 `#D4923A`), CART_YELLOW/RED/GREY/BLUE, component colors, bedding colors. These are scene-specific prop construction values. **Disposition:** Section 8 covers the canonical Tech Den palette (TD-01 through TD-13). The bg_tech_den generator has additional scene-dressing props that are acceptable as construction values provided the canonical surfaces (walls, floor, CRT) match the Section 8 entries. CRT_CASING and CRT_SHADOW match exactly; wall/floor tones are close but the bg generator uses slightly different values (WALL_WARM 240,228,200 vs TD-01 232,216,184). Jordan Reed should add a comment in the generator noting the variance and citing TD-01.
 
 ---
 
@@ -1506,11 +1506,11 @@ Outstanding from Section 8: School Hallway has no rendered generator yet. This i
 
 ### QA SCENE-LIGHTING EXCEPTIONS
 
-These are cases where a QA tool (e.g. `LTG_TOOL_render_qa_v001.py` or `LTG_TOOL_color_verify_v002.py`) will flag a value that does NOT represent a production error. Each entry is tagged `SCENE-LIGHTING — ACCEPTED` and must not trigger a production fix request.
+These are cases where a QA tool (e.g. `LTG_TOOL_render_qa.py` or `LTG_TOOL_color_verify.py`) will flag a value that does NOT represent a production error. Each entry is tagged `SCENE-LIGHTING — ACCEPTED` and must not trigger a production fix request.
 
 | Asset | QA Flag | Canonical Value | Scene Value | Reason | Status | Decision |
 |---|---|---|---|---|---|---|
-| `LTG_COLOR_styleframe_luma_byte_v004.png` (SF04) | GL-01b BYTE_TEAL below canonical | `#00D4E8` (0,212,232) | Dominant teal at ~(0,138–160), hue 183-185° | SF04 is Luma's first entry into the Glitch Layer — dramatic low-key discovery lighting. Byte exists within his environment at reduced luminance (60-70% of canonical). This is **intentional scene lighting**, not a generation error. Byte's hue is correct; only luminance is reduced. | SCENE-LIGHTING — ACCEPTED | Alex Chen, Art Director — Cycle 33 (2026-03-30) |
+| `LTG_COLOR_styleframe_luma_byte.png` (SF04) | GL-01b BYTE_TEAL below canonical | `#00D4E8` (0,212,232) | Dominant teal at ~(0,138–160), hue 183-185° | SF04 is Luma's first entry into the Glitch Layer — dramatic low-key discovery lighting. Byte exists within his environment at reduced luminance (60-70% of canonical). This is **intentional scene lighting**, not a generation error. Byte's hue is correct; only luminance is reduced. | SCENE-LIGHTING — ACCEPTED | Alex Chen, Art Director — Cycle 33 (2026-03-30) |
 
 **Rule:** A `SCENE-LIGHTING — ACCEPTED` exception does not prevent the underlying canonical value from being updated in the generator if/when the scene lighting intent changes. It prevents QA tools from treating the existing rendered state as a production failure requiring immediate correction.
 

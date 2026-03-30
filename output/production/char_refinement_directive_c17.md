@@ -133,10 +133,10 @@ Design and generate a 3×2 expression sheet for Miri. Required expressions:
 ### ASSIGNMENT 2 (Priority 2): Line Weight Audit and Fix Pass
 
 **Review all existing character tools for line weight implementation:**
-- `LTG_TOOL_byte_expression_sheet_v002.py`
-- `LTG_TOOL_cosmo_expression_sheet_v001.py`
-- `LTG_TOOL_luma_expression_sheet_v002.py` (or v003)
-- `LTG_TOOL_luma_act2_standing_pose_v001.py`
+- `LTG_TOOL_byte_expression_sheet.py`
+- `LTG_TOOL_cosmo_expression_sheet.py`
+- `LTG_TOOL_luma_expression_sheet.py` (or v003)
+- `LTG_TOOL_luma_act2_standing_pose.py`
 
 **For each tool, verify and enforce:**
 - Silhouette / outline lines: 3px
@@ -155,7 +155,7 @@ If regeneration is needed to implement this, regenerate the PNG and note the cha
 
 ### ASSIGNMENT 3 (Priority 3): Luma Act 2 Pose Forward Lean Fix
 
-The -5° forward lean in `LTG_TOOL_luma_act2_standing_pose_v001.py` is architecturally present but imperceptible in output. Increase to -8° and propagate the lean through all limb origin points (shoulder attachment, hip attachment) so it reads as a genuine body lean rather than a head offset. Regenerate `LTG_CHAR_luma_act2_standing_pose_v003.png`.
+The -5° forward lean in `LTG_TOOL_luma_act2_standing_pose.py` is architecturally present but imperceptible in output. Increase to -8° and propagate the lean through all limb origin points (shoulder attachment, hip attachment) so it reads as a genuine body lean rather than a head offset. Regenerate `LTG_CHAR_luma_act2_standing_pose_v003.png`.
 
 ---
 

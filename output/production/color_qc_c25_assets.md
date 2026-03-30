@@ -1,7 +1,7 @@
 # Color QC Report — Cycle 25 Assets
 **Prepared by:** Sam Kowalski, Color & Style Artist
 **Date:** 2026-03-29
-**Tool:** `LTG_TOOL_color_verify_v001.py` (Kai Nakamura, Cycle 25)
+**Tool:** `LTG_TOOL_color_verify.py` (Kai Nakamura, Cycle 25)
 **Cycle:** 26
 
 ---
@@ -10,14 +10,14 @@
 
 | Asset | Colors Found | FAIL (>5° drift) | WARN (>3° drift) | Overall |
 |---|---|---|---|---|
-| LTG_COLOR_luma_color_model_v001.png | BYTE_TEAL, HOT_MAGENTA, ELECTRIC_CYAN, SUNLIT_AMBER* | — | — | **PASS** (see note) |
-| LTG_COLOR_byte_color_model_v001.png | BYTE_TEAL, UV_PURPLE, HOT_MAGENTA, ELECTRIC_CYAN | — | — | **PASS** |
-| LTG_COLOR_cosmo_color_model_v001.png | none | — | — | **PASS** (no canonical colors) |
-| LTG_CHAR_luma_expression_sheet_v005.png | BYTE_TEAL, HOT_MAGENTA, ELECTRIC_CYAN, SUNLIT_AMBER* | — | — | **PASS** (see note) |
-| LTG_CHAR_luma_turnaround_v002.png | BYTE_TEAL, HOT_MAGENTA, ELECTRIC_CYAN, SUNLIT_AMBER* | BYTE_TEAL (Δ6.6°) | — | **WARN** |
-| LTG_CHAR_cosmo_turnaround_v002.png | none | — | — | **PASS** (no canonical colors) |
-| LTG_CHAR_grandma_miri_expression_sheet_v003.png | SUNLIT_AMBER* | — | — | **PASS** (see note) |
-| LTG_COLOR_styleframe_luma_byte_v001.png | SUNLIT_AMBER* (hue shift) | — | — | **WARN — Byte absent** |
+| LTG_COLOR_luma_color_model.png | BYTE_TEAL, HOT_MAGENTA, ELECTRIC_CYAN, SUNLIT_AMBER* | — | — | **PASS** (see note) |
+| LTG_COLOR_byte_color_model.png | BYTE_TEAL, UV_PURPLE, HOT_MAGENTA, ELECTRIC_CYAN | — | — | **PASS** |
+| LTG_COLOR_cosmo_color_model.png | none | — | — | **PASS** (no canonical colors) |
+| LTG_CHAR_luma_expression_sheet.png | BYTE_TEAL, HOT_MAGENTA, ELECTRIC_CYAN, SUNLIT_AMBER* | — | — | **PASS** (see note) |
+| LTG_CHAR_luma_turnaround.png | BYTE_TEAL, HOT_MAGENTA, ELECTRIC_CYAN, SUNLIT_AMBER* | BYTE_TEAL (Δ6.6°) | — | **WARN** |
+| LTG_CHAR_cosmo_turnaround.png | none | — | — | **PASS** (no canonical colors) |
+| LTG_CHAR_grandma_miri_expression_sheet.png | SUNLIT_AMBER* | — | — | **PASS** (see note) |
+| LTG_COLOR_styleframe_luma_byte.png | SUNLIT_AMBER* (hue shift) | — | — | **WARN — Byte absent** |
 | LTG_COLOR_styleframe_glitch_storm_v005_styled_v002.png | all 6 canonical colors | UV_PURPLE (Δ13.0°) | — | **FLAG — hue rotation artifact** |
 | LTG_COLOR_styleframe_otherside_v003_styled_v002.png | all 6 canonical colors | UV_PURPLE (Δ14.1°), SUNLIT_AMBER (Δ6.1°) | — | **FLAG — hue rotation artifact** |
 
@@ -33,7 +33,7 @@
 
 ## Per-Asset Detail
 
-### 1. LTG_COLOR_luma_color_model_v001.png
+### 1. LTG_COLOR_luma_color_model.png
 **Tool result:** overall_pass=False (SUNLIT_AMBER Δ15.7° flagged)
 **Actual verdict: PASS**
 
@@ -48,7 +48,7 @@ Note: BYTE_TEAL and ELECTRIC_CYAN both found (1,081 samples each) — this is ex
 
 ---
 
-### 2. LTG_COLOR_byte_color_model_v001.png
+### 2. LTG_COLOR_byte_color_model.png
 **Tool result:** overall_pass=True
 **Actual verdict: PASS — CLEAN**
 
@@ -63,7 +63,7 @@ Best result in the batch. All four canonical Glitch colors present and exact.
 
 ---
 
-### 3. LTG_COLOR_cosmo_color_model_v001.png
+### 3. LTG_COLOR_cosmo_color_model.png
 **Tool result:** overall_pass=True (all not_found)
 **Actual verdict: PASS**
 
@@ -71,7 +71,7 @@ No canonical Glitch or lamp-amber colors appear in Cosmo's color model — corre
 
 ---
 
-### 4. LTG_CHAR_luma_expression_sheet_v005.png
+### 4. LTG_CHAR_luma_expression_sheet.png
 **Tool result:** overall_pass=False (SUNLIT_AMBER Δ9.2° flagged)
 **Actual verdict: PASS**
 
@@ -86,7 +86,7 @@ ELECTRIC_CYAN at Δ3.5° is within threshold but worth noting. BYTE_TEAL (2.6°)
 
 ---
 
-### 5. LTG_CHAR_luma_turnaround_v002.png
+### 5. LTG_CHAR_luma_turnaround.png
 **Tool result:** overall_pass=False
 **Actual verdict: WARNING — BYTE_TEAL minor drift**
 
@@ -101,7 +101,7 @@ ELECTRIC_CYAN at Δ3.5° is within threshold but worth noting. BYTE_TEAL (2.6°)
 
 ---
 
-### 6. LTG_CHAR_cosmo_turnaround_v002.png
+### 6. LTG_CHAR_cosmo_turnaround.png
 **Tool result:** overall_pass=True (all not_found)
 **Actual verdict: PASS**
 
@@ -109,7 +109,7 @@ No canonical colors present. Correct for a warm-palette character.
 
 ---
 
-### 7. LTG_CHAR_grandma_miri_expression_sheet_v003.png
+### 7. LTG_CHAR_grandma_miri_expression_sheet.png
 **Tool result:** overall_pass=False (SUNLIT_AMBER Δ16.2° flagged)
 **Actual verdict: PASS**
 
@@ -121,7 +121,7 @@ The 120 "near-SUNLIT_AMBER" pixels in Miri's sheet are her skin tone CHAR-M-01 (
 
 ---
 
-### 8. LTG_COLOR_styleframe_luma_byte_v001.png (SF04)
+### 8. LTG_COLOR_styleframe_luma_byte.png (SF04)
 **Tool result:** overall_pass=False (SUNLIT_AMBER Δ12.2° flagged)
 **Actual verdict: WARNING — Byte body absent from frame; warm+cool zones present but teal not at canonical saturation**
 
@@ -188,10 +188,10 @@ Both styled frames (SF02 v005_styled_v002 and SF03 v003_styled_v002) fail UV_PUR
 This was flagged as a Carry Forward from Cycle 24 — these v002 re-renders were supposed to fix the hue rotation but UV_PURPLE is still compromised. GL-04 must be added to the protected-color list in the stylization pipeline.
 
 ### WARNING — SF04 Byte Body Below Canonical Saturation
-Byte's teal fill in `LTG_COLOR_styleframe_luma_byte_v001.png` is present but reads at dark-teal luminance (~0,138–160,147–170) rather than canonical BYTE_TEAL (#00D4E8 = 0,212,232). If unintentional, Byte's body needs to be regenerated at canonical fill luminance. If intentional (scene lighting), document in the scene spec.
+Byte's teal fill in `LTG_COLOR_styleframe_luma_byte.png` is present but reads at dark-teal luminance (~0,138–160,147–170) rather than canonical BYTE_TEAL (#00D4E8 = 0,212,232). If unintentional, Byte's body needs to be regenerated at canonical fill luminance. If intentional (scene lighting), document in the scene spec.
 
 ### MINOR — Luma Turnaround BYTE_TEAL (single-sample)
-`LTG_CHAR_luma_turnaround_v002.png` BYTE_TEAL drift Δ6.6° from a single anti-aliasing pixel. Low production risk. Director to confirm whether Byte appears in this turnaround and whether the turnaround needs re-verification.
+`LTG_CHAR_luma_turnaround.png` BYTE_TEAL drift Δ6.6° from a single anti-aliasing pixel. Low production risk. Director to confirm whether Byte appears in this turnaround and whether the turnaround needs re-verification.
 
 ---
 
@@ -199,14 +199,14 @@ Byte's teal fill in `LTG_COLOR_styleframe_luma_byte_v001.png` is present but rea
 
 | Asset | Status |
 |---|---|
-| LTG_COLOR_luma_color_model_v001.png | CLEARED |
-| LTG_COLOR_byte_color_model_v001.png | CLEARED — cleanest result |
-| LTG_COLOR_cosmo_color_model_v001.png | CLEARED |
-| LTG_CHAR_luma_expression_sheet_v005.png | CLEARED |
-| LTG_CHAR_luma_turnaround_v002.png | CLEARED with minor note |
-| LTG_CHAR_cosmo_turnaround_v002.png | CLEARED |
-| LTG_CHAR_grandma_miri_expression_sheet_v003.png | CLEARED |
-| LTG_COLOR_styleframe_luma_byte_v001.png | CONDITIONAL — Byte body teal needs director confirmation |
+| LTG_COLOR_luma_color_model.png | CLEARED |
+| LTG_COLOR_byte_color_model.png | CLEARED — cleanest result |
+| LTG_COLOR_cosmo_color_model.png | CLEARED |
+| LTG_CHAR_luma_expression_sheet.png | CLEARED |
+| LTG_CHAR_luma_turnaround.png | CLEARED with minor note |
+| LTG_CHAR_cosmo_turnaround.png | CLEARED |
+| LTG_CHAR_grandma_miri_expression_sheet.png | CLEARED |
+| LTG_COLOR_styleframe_luma_byte.png | CONDITIONAL — Byte body teal needs director confirmation |
 | LTG_COLOR_styleframe_glitch_storm_v005_styled_v002.png | NOT CLEARED — UV_PURPLE hue drift |
 | LTG_COLOR_styleframe_otherside_v003_styled_v002.png | NOT CLEARED — UV_PURPLE hue drift |
 

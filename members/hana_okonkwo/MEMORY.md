@@ -7,12 +7,12 @@ Comedy-adventure cartoon. Three worlds: Real World (warm/domestic), Glitch World
 Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style frames).
 
 ## Existing Environments (as of C39)
-- Kitchen (Grandma's): v004 — `output/backgrounds/environments/LTG_ENV_grandma_kitchen_v004.png`
-- Tech Den: v004 + warminjected — `LTG_ENV_tech_den_v004_warminjected.png`
+- Kitchen (Grandma's): v004 — `output/backgrounds/environments/LTG_ENV_grandma_kitchen.png`
+- Tech Den: v004 + warminjected — `LTG_ENV_tech_den_warminjected.png`
 - Glitch Layer: v003
-- School Hallway: **v003** (C38 figure-ground pass) — `LTG_ENV_school_hallway_v003.png` — QA WARN (pre-existing color fidelity WARN, value range PASS)
+- School Hallway: **v003** (C38 figure-ground pass) — `LTG_ENV_school_hallway.png` — QA WARN (pre-existing color fidelity WARN, value range PASS)
 - Millbrook Street: v002
-- **Living Room (C39)**: **v002** — `LTG_ENV_grandma_living_room_v002.png` — QA PASS
+- **Living Room (C39)**: **v002** — `LTG_ENV_grandma_living_room.png` — QA PASS
   - C39 addition: diamond-crystal figurine at (438, 328), top shelf of bookcase, secondary visual plant connecting Grandma Miri / Glitch Layer elder Miri and diamond body geometry. Warm amber catch-light only. No GL palette.
 
 ## Key Palette References
@@ -21,11 +21,11 @@ Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style fr
 - World presets: REAL (warm, SUNLIT_AMBER key), GLITCH (HOT_MAGENTA + ELECTRIC_CYAN), OTHER_SIDE (cool, zero warm)
 
 ## QA Pipeline
-- `LTG_TOOL_render_qa_v001.py` (v1.4.0) — always run before submitting
-  - REAL world warm/cool threshold = **20 PIL units** (NOT 12 — that was an old spec)
+- `LTG_TOOL_render_qa.py` (v1.6.0) — always run before submitting
+  - REAL world warm/cool threshold: **REAL_INTERIOR = 12**, **REAL_STORM = 3** (C39 split — was 20 in v1.4.0, 12 flat in v1.5.0)
   - Value floor ≤30, value ceiling ≥225, range ≥150
-- `LTG_TOOL_warmth_inject_v001.py` — fixes warm/cool failures (auto mode)
-- `LTG_TOOL_palette_warmth_lint_v004.py --world-type [REAL|GLITCH|OTHER_SIDE]`
+- `LTG_TOOL_warmth_inject.py` — fixes warm/cool failures (auto mode)
+- `LTG_TOOL_palette_warmth_lint.py --world-type [REAL|GLITCH|OTHER_SIDE]`
 
 ## Lessons Learned (C38)
 
@@ -33,7 +33,7 @@ Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style fr
 - Always check costume colors against background fills before generating. Identical or near-identical values cause character merge.
 - LOCKER_LAV in v002 was identical to Cosmo's cardigan RW-08 (168,155,191). Zero value separation = invisible character.
 - Fix: push background fills LIGHTER than character costume values (≥20 value unit separation minimum).
-- `LTG_TOOL_bg_school_hallway_v003.py`: LOCKER_LAV → (216,208,190), LOCKER_SAGE → (154,178,148)
+- `LTG_TOOL_bg_school_hallway.py`: LOCKER_LAV → (216,208,190), LOCKER_SAGE → (154,178,148)
 - Character-ground value band: Shadow Plum (RW-09) at alpha 22 on near-wall character zone provides secondary backing.
 
 ### Value Floor Fix (Deep Shadows)
@@ -81,9 +81,12 @@ Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style fr
 Design and build new environment generators. Maintain existing ones. Expand pitch coverage.
 
 ## Startup Sequence
-1. Read CLAUDE.md
-2. Read PROFILE.md
-3. Read this MEMORY.md
-4. Read output/tools/README.md
-5. Read inbox/
-6. Read ROLE.md if present
+1. Read docs/image-rules.md (image size limits and image handling)
+2. Read docs/work.md (work startup and delivery rules)
+3. Read docs/ideabox.md (ideabox submission rules)
+4. Read docs/asset-status.md (asset status rules)
+5. Read PROFILE.md
+6. Read this MEMORY.md
+7. Read output/tools/README.md
+8. Read inbox/
+9. Read ROLE.md if present

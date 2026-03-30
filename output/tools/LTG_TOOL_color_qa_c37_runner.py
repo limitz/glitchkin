@@ -4,7 +4,7 @@ LTG_TOOL_color_qa_c37_runner.py
 C37 QA Baseline runner — Sam Kowalski (Color & Style Artist)
 Runs render_qa v1.4.0 (world-type-aware) on all C37 pitch-primary assets.
 Also runs warmth lint v004 on master_palette.md.
-Also evaluates LTG_ENV_grandma_living_room_v001.png (Hana Okonkwo, C37).
+Also evaluates LTG_ENV_grandma_living_room.png (Hana Okonkwo, C37).
 
 Saves results to output/production/color_qa_c37_baseline.md
 
@@ -24,8 +24,8 @@ if str(TOOLS_DIR) not in sys.path:
     sys.path.insert(0, str(TOOLS_DIR))
 
 # ─── imports ─────────────────────────────────────────────────────────────────
-from LTG_TOOL_render_qa_v001 import qa_report, __version__ as RQA_VERSION
-from LTG_TOOL_palette_warmth_lint_v004 import (
+from LTG_TOOL_render_qa import qa_report, __version__ as RQA_VERSION
+from LTG_TOOL_palette_warmth_lint import (
     lint_palette_file, load_config, __version__ as LINT_VERSION
 )
 
@@ -37,21 +37,21 @@ PROD_DIR = BASE_DIR / "output" / "production"
 
 # Pitch-primary style frames (current canonical versions)
 PITCH_STYLE_FRAMES = [
-    SF_DIR / "LTG_COLOR_styleframe_discovery_v005.png",       # SF01 (Rin procedural lift)
-    SF_DIR / "LTG_COLOR_styleframe_glitch_storm_v008.png",    # SF02 (current)
-    SF_DIR / "LTG_COLOR_styleframe_otherside_v005.png",       # SF03 (current)
-    SF_DIR / "LTG_COLOR_styleframe_luma_byte_v004.png",       # SF04 (current)
+    SF_DIR / "LTG_COLOR_styleframe_discovery.png",       # SF01 (Rin procedural lift)
+    SF_DIR / "LTG_COLOR_styleframe_glitch_storm.png",    # SF02 (current)
+    SF_DIR / "LTG_COLOR_styleframe_otherside.png",       # SF03 (current)
+    SF_DIR / "LTG_COLOR_styleframe_luma_byte.png",       # SF04 (current)
 ]
 
 # Character assets (primary pitch versions)
 PITCH_CHAR_ASSETS = [
-    BASE_DIR / "output" / "characters" / "main" / "LTG_CHAR_character_lineup_v007.png",
-    BASE_DIR / "output" / "characters" / "color_models" / "LTG_COLOR_luma_color_model_v002.png",
-    BASE_DIR / "output" / "characters" / "color_models" / "LTG_COLOR_byte_color_model_v001.png",
+    BASE_DIR / "output" / "characters" / "main" / "LTG_CHAR_character_lineup.png",
+    BASE_DIR / "output" / "characters" / "color_models" / "LTG_COLOR_luma_color_model.png",
+    BASE_DIR / "output" / "characters" / "color_models" / "LTG_COLOR_byte_color_model.png",
 ]
 
 # New C37 environment (Hana Okonkwo)
-LIVING_ROOM_ENV = ENV_DIR / "LTG_ENV_grandma_living_room_v001.png"
+LIVING_ROOM_ENV = ENV_DIR / "LTG_ENV_grandma_living_room.png"
 
 # Master palette path
 MASTER_PALETTE = BASE_DIR / "output" / "color" / "palettes" / "master_palette.md"
@@ -106,7 +106,7 @@ def build_report(sf_results, char_results, living_room_result, warmth_lint_resul
     lines.append("# Color QA Baseline — Cycle 37")
     lines.append("**Author:** Sam Kowalski (Color & Style Artist)")
     lines.append("**Date:** 2026-03-30")
-    lines.append(f"**Tool versions:** LTG_TOOL_palette_warmth_lint_v004.py v{LINT_VERSION} · LTG_TOOL_render_qa_v001.py v{RQA_VERSION}")
+    lines.append(f"**Tool versions:** LTG_TOOL_palette_warmth_lint.py v{LINT_VERSION} · LTG_TOOL_render_qa.py v{RQA_VERSION}")
     lines.append("")
     lines.append("---")
     lines.append("")
@@ -222,7 +222,7 @@ def build_report(sf_results, char_results, living_room_result, warmth_lint_resul
     lines.append("")
 
     if living_room_result.get("_missing"):
-        lines.append("**MISSING** — LTG_ENV_grandma_living_room_v001.png not found.")
+        lines.append("**MISSING** — LTG_ENV_grandma_living_room.png not found.")
         lines.append("Cannot run QA. Block Hana Okonkwo until file is delivered.")
     else:
         lr = living_room_result

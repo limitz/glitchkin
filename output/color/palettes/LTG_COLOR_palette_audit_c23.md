@@ -54,8 +54,8 @@ All GL entries present and numbered sequentially:
 ### GL-01b — Byte Teal
 
 **Master palette:** `#00D4E8` = RGB(0, 212, 232)
-**SF03 v003 generator (`LTG_TOOL_style_frame_03_other_side_v003.py`):** `BYTE_BODY = (0, 212, 232)` — line 80
-**SF02 v005 generator (`LTG_TOOL_style_frame_02_glitch_storm_v005.py`):** `BYTE_TEAL = (0, 212, 232)` — line 77
+**SF03 v003 generator (`LTG_TOOL_style_frame_03_other_side.py`):** `BYTE_BODY = (0, 212, 232)` — line 80
+**SF02 v005 generator (`LTG_TOOL_style_frame_02_glitch_storm.py`):** `BYTE_TEAL = (0, 212, 232)` — line 77
 
 **VERIFIED. Canonical value matches all production generators.**
 
@@ -94,7 +94,7 @@ From Palette Status section (Cycle 21 audit):
 | **Gap 2:** `CIRCUIT_TRACE_DIM (0,192,204)` in SF03 v003 | Acceptable construction value with inline comment. No registration needed. Confirmed. |
 | **Gap 3:** `JEANS_BASE (38,61,90)` in SF03 v003 | **RESOLVED (Cycle 22).** Documented under CHAR-L-05. |
 | **Gap 4:** `LUMA_SHOE (220,215,200)` in SF03 v003 | Low priority construction value. UV-ambient shift of CHAR-L-09. Jordan to add inline comment on next pass. |
-| **Gap 5:** `LTG_TOOL_bg_tech_den_v002.py` construction variances | Jordan to add inline comment noting variance from TD-01. Acceptable. |
+| **Gap 5:** `LTG_TOOL_bg_tech_den.py` construction variances | Jordan to add inline comment noting variance from TD-01. Acceptable. |
 
 **No new named gaps identified in Cycle 23.**
 
@@ -102,7 +102,7 @@ From Palette Status section (Cycle 21 audit):
 
 ## Section 4 — New Cycle 23 Generator Check (SF02 v005)
 
-`LTG_TOOL_style_frame_02_glitch_storm_v005.py` was created in Cycle 22. Full inline constant audit:
+`LTG_TOOL_style_frame_02_glitch_storm.py` was created in Cycle 22. Full inline constant audit:
 
 | Constant | Value | Palette Match | Disposition |
 |---|---|---|---|

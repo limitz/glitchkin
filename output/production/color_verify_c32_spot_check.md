@@ -1,7 +1,7 @@
 # Color Verify C32 Spot-Check Report
 
 **Run by:** Sam Kowalski — Cycle 32 — 2026-03-30
-**Tool:** LTG_TOOL_color_verify_v002.py with histogram=True
+**Tool:** LTG_TOOL_color_verify.py with histogram=True
 **Purpose:** Post-fix verification after C32 palette corrections
   - CHAR-L-11 cross-ref: #00D4E8 → #00F0FF
   - CHAR-M-11 slippers: #5A7A5A Deep Sage → #C4907A Warm Apricot

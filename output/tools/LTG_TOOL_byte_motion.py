@@ -1,0 +1,693 @@
+"""
+LTG_TOOL_byte_motion.py
+Ryo Hasegawa / Cycle 39
+Motion Spec Sheet — BYTE v003: COMMITMENT Beat (4-Beat Arc)
+
+Adds COMMITMENT beat arc to Byte's motion vocabulary.
+Brief source: Lee Tanaka (C38), Taraji Coleman critique C15.
+
+4-Beat Arc:
+  Beat 1: Avoidance — back angled, high float, arms pinned, glow dim/neutral
+  Beat 2: Mid-turn — 45° to Luma's axis, glow begins shifting toward her
+  Beat 3: Full-frontal arrival — float drops, arms open, glow fully directional
+  Beat 4: HOLD 8–12 frames — the hold IS the commitment
+
+Key differentiators from other states:
+  RESIGNED:         angled away, high+back, arms pinned, dim/neutral glow
+  RELUCTANT JOY:    angled, mid-height, slightly out arms, even glow
+  UNGUARDED WARMTH: toward, low, floating high arms, bilateral warm glow
+  COMMITMENT:       full frontal, eye-level with Luma, out-not-reaching arms,
+                    directional glow (toward Luma side)
+
+Canvas: 1280×720 (≤1280 hard limit)
+Output: output/characters/motion/LTG_CHAR_byte_motion.png
+"""
+
+from PIL import Image, ImageDraw, ImageFilter
+import os
+import math
+import random
+
+# --- CANONICAL COLORS ---
+BYTE_TEAL        = (  0, 212, 232)   # GL-01b — canonical body fill
+BYTE_OUTLINE     = ( 30,  50,  55)   # dark teal-black outline
+ELEC_CYAN        = (  0, 240, 255)   # glow / highlights
+VOID_BLACK       = ( 10,  10,  20)   # deep void
+HOT_MAGENTA      = (255,  45, 107)   # crack / right eye
+CORRUPT_AMBER    = (200, 122,  32)   # accent
+UV_PURPLE        = (123,  47, 190)   # shadow
+SOFT_GOLD        = (232, 201,  90)   # left eye (warm/organic)
+ANNOTATION_BG    = (230, 240, 245)   # cool-tinted panel background
+PANEL_BORDER     = (140, 175, 185)
+LABEL_BG         = ( 15,  30,  40)
+LABEL_TEXT       = (230, 245, 248)
+LINE_COLOR       = BYTE_OUTLINE
+MOTION_ARROW     = (255,  45, 107)   # hot magenta for arrows
+BEAT_COLOR       = (  0, 190, 215)   # cyan for beat text
+ACCENT_DASH      = (150, 175, 185)
+COMMITMENT_COL   = (  0, 240, 255)   # bright cyan — COMMITMENT highlight
+HOLD_COL         = (232, 201,  90)   # warm gold — HOLD beat annotation
+DIRECTIONAL_COL  = (  0, 240, 200)   # teal-green — directional glow arc
+
+# --- CANVAS ---
+W, H = 1280, 720
+COLS, ROWS = 4, 1   # 4 panels for 4-beat arc
+PAD = 12
+HEADER_H = 44
+PANEL_W = (W - PAD * (COLS + 1)) // COLS
+PANEL_H = H - PAD * 2 - HEADER_H
+
+
+# ------------------------------------------------------------------ helpers
+
+def panel_origin(col):
+    x = PAD + col * (PANEL_W + PAD)
+    y = PAD + HEADER_H
+    return x, y
+
+
+def draw_arrow(draw, x0, y0, x1, y1, color=MOTION_ARROW, width=2, head=8):
+    draw.line([(x0, y0), (x1, y1)], fill=color, width=width)
+    angle = math.atan2(y1 - y0, x1 - x0)
+    for da in (-0.42, 0.42):
+        ax = x1 - head * math.cos(angle + da)
+        ay = y1 - head * math.sin(angle + da)
+        draw.line([(x1, y1), (int(ax), int(ay))], fill=color, width=width)
+
+
+def draw_glow_directional(img, cx, cy, radius, color, alpha_max=80, direction='left'):
+    """
+    Add a directional glow — brighter on one side to simulate
+    Byte's ELEC_CYAN glow brightening toward Luma's position.
+    direction: 'left' = glow on left side, 'right' = right side, 'even' = bilateral
+    """
+    glow = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    gd = ImageDraw.Draw(glow)
+    r, g, b = color
+    for step in range(4):
+        r_step = radius - step * (radius // 5)
+        if r_step <= 0:
+            continue
+        if direction == 'even':
+            a_step = int(alpha_max * 0.5) - step * (int(alpha_max * 0.5) // 4)
+        else:
+            a_step = alpha_max - step * (alpha_max // 4)
+        if a_step <= 0:
+            continue
+        gd.ellipse([cx - r_step, cy - r_step, cx + r_step, cy + r_step],
+                   fill=(r, g, b, a_step))
+
+    if direction in ('left', 'right'):
+        # Mask out the non-directional side
+        mask = Image.new("L", img.size, 0)
+        md = ImageDraw.Draw(mask)
+        if direction == 'left':
+            md.rectangle([0, 0, cx, img.height], fill=255)
+        else:
+            md.rectangle([cx, 0, img.width, img.height], fill=255)
+        glow.putalpha(mask)
+
+    glow = glow.filter(ImageFilter.GaussianBlur(radius=radius // 3))
+    img_rgba = img.convert("RGBA")
+    img_rgba = Image.alpha_composite(img_rgba, glow)
+    return img_rgba.convert("RGB")
+
+
+def draw_pixel_confetti(draw, cx, cy, count=8, spread=22, color=BYTE_TEAL, seed=7):
+    rng = random.Random(seed)
+    for _ in range(count):
+        px = cx + rng.randint(-spread, spread)
+        py = cy + rng.randint(-spread // 2, spread // 2)
+        sz = rng.randint(2, 4)
+        alpha_col = tuple(min(255, c + rng.randint(-30, 30)) for c in color)
+        draw.rectangle([px, py, px + sz, py + sz], fill=alpha_col)
+
+
+def draw_pixel_diamond(draw, cx, cy, size=5, color=ELEC_CYAN):
+    """Small diamond pixel symbol — COMMITMENT beat indicator ('pilot light')."""
+    pts = [(cx, cy - size), (cx + size, cy), (cx, cy + size), (cx - size, cy)]
+    draw.polygon(pts, fill=color)
+
+
+def draw_byte_commitment(img, draw, cx, cy, bw, bh,
+                         tilt_deg=0,
+                         arm_phase='pinned',      # 'pinned','mid','open'
+                         eye_phase='avoidance',   # 'avoidance','searching','commitment'
+                         glow_level=0,            # 0=none,1=dim,2=directional,3=full
+                         float_level='high',      # 'high','mid','eye_level'
+                         antenna_lean=0,          # degrees forward (+) or back (-)
+                         ghost=False,
+                         ghost_alpha=0.3):
+    """
+    Draw Byte in a specific COMMITMENT beat state.
+
+    arm_phase:
+      'pinned'  — arms tucked close to body (RESIGNED/avoidance)
+      'mid'     — 45° transition, arms starting to open
+      'open'    — out but not reaching (arm_x_scale ~0.65-0.70)
+
+    eye_phase:
+      'avoidance'  — left eye droopy/dim, right eye closed/lid heavy
+      'searching'  — left eye pupil locked toward Luma (left), right eye lid level, crack visible
+      'commitment' — SEARCHING left + right eye open+level, crack present, warmth mouth
+
+    glow_level:
+      0 — no glow
+      1 — dim even glow (neutral)
+      2 — directional glow toward Luma (left side brightening)
+      3 — full directional glow (bright left side, commitment state)
+
+    float_level (for annotation reference, affects y-label only — caller positions cy):
+      'high', 'mid', 'eye_level'
+
+    antenna_lean: positive = forward (toward Luma), negative = lagging back
+    """
+    s = bw / 30
+    actual_bw = bw
+    actual_bh = bh
+    tilt_rad = math.radians(tilt_deg)
+    tx = int(math.sin(tilt_rad) * actual_bh)
+
+    body_col = BYTE_TEAL
+    out_col = LINE_COLOR
+    if ghost:
+        body_col = tuple(int(c * ghost_alpha + 240 * (1 - ghost_alpha)) for c in BYTE_TEAL)
+        out_col = tuple(int(c * ghost_alpha + 210 * (1 - ghost_alpha)) for c in LINE_COLOR)
+
+    # --- DIRECTIONAL GLOW ---
+    if not ghost and glow_level >= 2:
+        glow_r = int(bw * (0.8 + glow_level * 0.4))
+        glow_a = 50 + glow_level * 15
+        glow_a = min(85, glow_a)
+        img = draw_glow_directional(img, cx + tx // 2, cy, glow_r, ELEC_CYAN,
+                                    alpha_max=glow_a,
+                                    direction='left' if glow_level >= 2 else 'even')
+        draw = ImageDraw.Draw(img)
+    elif not ghost and glow_level == 1:
+        # dim even glow
+        glow_lyr = Image.new("RGBA", img.size, (0, 0, 0, 0))
+        gd = ImageDraw.Draw(glow_lyr)
+        r_g = int(bw * 0.7)
+        gd.ellipse([cx - r_g, cy - r_g, cx + r_g, cy + r_g],
+                   fill=(ELEC_CYAN[0], ELEC_CYAN[1], ELEC_CYAN[2], 30))
+        glow_lyr = glow_lyr.filter(ImageFilter.GaussianBlur(radius=r_g // 3))
+        img_rgba = img.convert("RGBA")
+        img_rgba = Image.alpha_composite(img_rgba, glow_lyr)
+        img = img_rgba.convert("RGB")
+        draw = ImageDraw.Draw(img)
+
+    lw = max(2, int(2.2 * s))
+
+    # --- BODY OVAL ---
+    draw.ellipse([cx - actual_bw + tx, cy - actual_bh,
+                  cx + actual_bw + tx, cy + actual_bh],
+                 fill=body_col, outline=out_col, width=lw)
+
+    # HOT_MAGENTA crack scar — viewer's RIGHT (cx + offset)
+    if not ghost:
+        crack_x = cx + int(actual_bw * 0.55) + tx
+        crack_y = cy - int(actual_bh * 0.3)
+        draw.line([(crack_x, crack_y),
+                   (crack_x - int(6 * s), crack_y + int(8 * s)),
+                   (crack_x - int(3 * s), crack_y + int(14 * s))],
+                  fill=HOT_MAGENTA, width=max(1, lw - 1))
+
+    # --- ANTENNA ---
+    ant_bx = cx + int(actual_bw * 0.2) + tx
+    ant_by = cy - actual_bh
+    ant_lean_rad = math.radians(antenna_lean)
+    ant_len = int(12 * s)
+    # negative lean_rad = backward (away), positive = forward (toward Luma)
+    ant_dx = int(math.sin(ant_lean_rad) * ant_len)
+    ant_tip_x = ant_bx + ant_dx
+    ant_tip_y = ant_by - int(math.cos(ant_lean_rad) * ant_len)
+    ant_col = out_col if ghost else LINE_COLOR
+    draw.line([(ant_bx, ant_by), (ant_tip_x, ant_tip_y)],
+              fill=ant_col, width=lw - 1)
+    draw.ellipse([ant_tip_x - int(3 * s), ant_tip_y - int(3 * s),
+                  ant_tip_x + int(3 * s), ant_tip_y + int(3 * s)],
+                 fill=SOFT_GOLD if not ghost else body_col,
+                 outline=ant_col, width=max(1, lw - 1))
+
+    # --- ARMS ---
+    limb_len = int(20 * s)
+    limb_w = int(7 * s)
+    tip_r = int(4 * s)
+
+    if arm_phase == 'pinned':
+        # Arms pinned close — RESIGNED style
+        arm_configs = [
+            (-int(actual_bw * 0.55) + tx, -int(actual_bh * 0.2),
+             -int(actual_bw * 0.65) + tx, -int(actual_bh * 0.45)),
+            ( int(actual_bw * 0.55) + tx, -int(actual_bh * 0.2),
+              int(actual_bw * 0.65) + tx, -int(actual_bh * 0.45)),
+        ]
+    elif arm_phase == 'mid':
+        # Mid-transition arms — opening at 45° to body axis
+        arm_configs = [
+            (-int(actual_bw * 0.60) + tx, -int(actual_bh * 0.2),
+             -int(actual_bw * 0.82) + tx, -int(actual_bh * 0.35)),
+            ( int(actual_bw * 0.60) + tx, -int(actual_bh * 0.2),
+              int(actual_bw * 0.82) + tx, -int(actual_bh * 0.35)),
+        ]
+    else:  # 'open'
+        # Arms out but not reaching — commitment position
+        # arm_x_scale ~0.65-0.70 (wider than pinned, not as high as UNGUARDED WARMTH)
+        arm_configs = [
+            (-int(actual_bw * 0.65) + tx, -int(actual_bh * 0.2),
+             -int(actual_bw * 1.05) + tx, -int(actual_bh * 0.3)),
+            ( int(actual_bw * 0.65) + tx, -int(actual_bh * 0.2),
+              int(actual_bw * 1.05) + tx, -int(actual_bh * 0.3)),
+        ]
+
+    arm_col = body_col if ghost else BYTE_TEAL
+    for (bx, by, ex, ey) in arm_configs:
+        draw.line([(cx + bx, cy + by), (cx + ex, cy + ey)],
+                  fill=arm_col, width=limb_w)
+        draw.line([(cx + bx, cy + by), (cx + ex, cy + ey)],
+                  fill=out_col, width=lw)
+        draw.ellipse([cx + ex - tip_r, cy + ey - tip_r,
+                      cx + ex + tip_r, cy + ey + tip_r],
+                     fill=arm_col, outline=out_col, width=lw - 1)
+
+    # --- LEGS ---
+    leg_configs = [
+        (-int(actual_bw * 0.35) + tx, int(actual_bh * 0.6),
+         -int(actual_bw * 0.45) + tx, int(actual_bh * 0.6) + limb_len),
+        ( int(actual_bw * 0.35) + tx, int(actual_bh * 0.6),
+          int(actual_bw * 0.45) + tx, int(actual_bh * 0.6) + limb_len),
+    ]
+    for (bx, by, ex, ey) in leg_configs:
+        draw.line([(cx + bx, cy + by), (cx + ex, cy + ey)],
+                  fill=arm_col, width=limb_w)
+        draw.line([(cx + bx, cy + by), (cx + ex, cy + ey)],
+                  fill=out_col, width=lw)
+        draw.ellipse([cx + ex - tip_r, cy + ey - tip_r,
+                      cx + ex + tip_r, cy + ey + tip_r],
+                     fill=arm_col, outline=out_col, width=lw - 1)
+
+    # pixel confetti below legs
+    if not ghost:
+        bottom_y = cy + int(actual_bh * 0.6) + limb_len + tip_r
+        draw_pixel_confetti(draw, cx + tx // 2, bottom_y + 8,
+                            count=6, spread=actual_bw, seed=77)
+
+    # --- FACE ---
+    eye_gap = int(actual_bw * 0.42)
+    eye_y = cy - int(actual_bh * 0.1)
+    pixel_sz = max(2, int(4 * s))
+
+    if eye_phase == 'avoidance':
+        # Left eye dim/droopy (RESIGNED style)
+        for ey_off in range(3):
+            for ex_off in range(3):
+                if ey_off == 2 and ex_off == 1:
+                    col = (130, 100, 40)  # dim gold — droopy
+                else:
+                    col = (20, 40, 45)
+                draw.rectangle([cx - eye_gap + tx + ex_off * pixel_sz,
+                                 eye_y + ey_off * pixel_sz,
+                                 cx - eye_gap + tx + ex_off * pixel_sz + pixel_sz - 1,
+                                 eye_y + ey_off * pixel_sz + pixel_sz - 1],
+                                fill=col)
+        # Right eye heavy lid (RESIGNED — lid closes over most of eye)
+        for ey_off in range(3):
+            for ex_off in range(3):
+                if ey_off == 0:
+                    col = out_col  # heavy lid bar on top
+                elif ey_off == 0 and ex_off == 2:
+                    col = HOT_MAGENTA
+                else:
+                    col = (20, 40, 45)  # mostly dark — closed-ish
+                draw.rectangle([cx + eye_gap + tx + ex_off * pixel_sz - pixel_sz,
+                                 eye_y + ey_off * pixel_sz,
+                                 cx + eye_gap + tx + ex_off * pixel_sz,
+                                 eye_y + ey_off * pixel_sz + pixel_sz - 1],
+                                fill=col)
+
+    elif eye_phase in ('searching', 'commitment'):
+        # Left eye: SEARCHING — pupil locked toward Luma (left direction)
+        for ey_off in range(3):
+            for ex_off in range(3):
+                if ey_off == 1 and ex_off == 0:
+                    col = SOFT_GOLD   # pupil shifted LEFT (toward Luma)
+                elif (ey_off == 1 or ex_off == 0) and not (ey_off == 1 and ex_off == 0):
+                    col = (60, 50, 15)  # dim surround
+                else:
+                    col = (20, 40, 45)
+                draw.rectangle([cx - eye_gap + tx + ex_off * pixel_sz,
+                                 eye_y + ey_off * pixel_sz,
+                                 cx - eye_gap + tx + ex_off * pixel_sz + pixel_sz - 1,
+                                 eye_y + ey_off * pixel_sz + pixel_sz - 1],
+                                fill=col)
+        # Right eye: crack present, lid LEVEL (not droopy), eye open
+        for ey_off in range(3):
+            for ex_off in range(3):
+                if ey_off == 0 and ex_off == 2:
+                    col = HOT_MAGENTA   # crack pixel still present
+                elif ey_off == 0:
+                    col = ELEC_CYAN     # top row — lid level, not heavy
+                else:
+                    col = ELEC_CYAN
+                draw.rectangle([cx + eye_gap + tx + ex_off * pixel_sz - pixel_sz,
+                                 eye_y + ey_off * pixel_sz,
+                                 cx + eye_gap + tx + ex_off * pixel_sz,
+                                 eye_y + ey_off * pixel_sz + pixel_sz - 1],
+                                fill=col)
+
+    # --- MOUTH ---
+    mouth_y = cy + int(actual_bh * 0.35)
+    mouth_w = int(actual_bw * 0.5)
+    mouth_col = out_col if ghost else LINE_COLOR
+
+    if eye_phase == 'avoidance':
+        # Flat-line or slight down (RESIGNED)
+        draw.line([(cx - mouth_w + tx, mouth_y),
+                   (cx + mouth_w + tx, mouth_y)],
+                  fill=mouth_col, width=lw - 1)
+    else:
+        # WARMTH mouth (barely-there upward arc) — quiet, not performed
+        draw.arc([cx - mouth_w + tx, mouth_y - int(actual_bh * 0.10),
+                  cx + mouth_w + tx, mouth_y + int(actual_bh * 0.10)],
+                 start=200, end=340,
+                 fill=mouth_col, width=lw - 1)
+
+    # --- COMMITMENT PILOT LIGHT (diamond pixel symbol) ---
+    if eye_phase == 'commitment' and not ghost:
+        diamond_cy = cy + int(actual_bh * 0.6)
+        draw_pixel_diamond(draw, cx + tx, diamond_cy + 6, size=4, color=ELEC_CYAN)
+
+    return img, draw
+
+
+def draw_panel_bg(img, draw, col, beat_num, title, subtitle=""):
+    px, py = panel_origin(col)
+    bg_col = (22, 32, 40) if beat_num == 4 else ANNOTATION_BG
+
+    # Beat 4 (HOLD) gets dark background — commitment/stillness
+    draw.rectangle([px, py, px + PANEL_W, py + PANEL_H], fill=bg_col, outline=PANEL_BORDER, width=1)
+
+    # Beat number badge
+    badge_col = HOLD_COL if beat_num == 4 else BEAT_COLOR
+    badge_txt_col = LABEL_BG if beat_num == 4 else LABEL_TEXT
+    draw.rectangle([px + 4, py + 4, px + 28, py + 22],
+                   fill=badge_col)
+    draw.text((px + 8, py + 6), f"B{beat_num}", fill=badge_txt_col)
+
+    # Title bar at bottom
+    title_bg = (40, 55, 65) if beat_num == 4 else LABEL_BG
+    draw.rectangle([px, py + PANEL_H - 32, px + PANEL_W, py + PANEL_H],
+                   fill=title_bg)
+    draw.text((px + 6, py + PANEL_H - 26), title, fill=LABEL_TEXT)
+    if subtitle:
+        draw.text((px + 6, py + PANEL_H - 14), subtitle,
+                  fill=HOLD_COL if beat_num == 4 else ACCENT_DASH)
+
+    return px, py, bg_col
+
+
+# ------------------------------------------------------------------ BEAT PANELS
+
+def draw_beat1_avoidance(img, draw):
+    """Beat 1: Avoidance — back angled, high float, arms pinned, glow dim/neutral."""
+    col = 0
+    px, py, bg = draw_panel_bg(img, draw, col, 1, "AVOIDANCE",
+                                 "back angled · high float · arms pinned")
+
+    cx = px + PANEL_W // 2
+    cy = py + PANEL_H // 2 - 30  # high float
+
+    bw, bh = 30, 26
+    # Body angled 35° AWAY from Luma (Luma is to the left — Byte angles right/away)
+    tilt = 20  # positive = lean right (away from Luma on left)
+
+    img, draw = draw_byte_commitment(
+        img, draw, cx, cy, bw, bh,
+        tilt_deg=tilt,
+        arm_phase='pinned',
+        eye_phase='avoidance',
+        glow_level=1,     # dim, neutral
+        float_level='high',
+        antenna_lean=-8,  # antenna lagging back
+    )
+
+    # Float height marker
+    floor_y = py + PANEL_H - 60
+    draw.line([(cx - 40, floor_y), (cx + 40, floor_y)],
+              fill=ACCENT_DASH, width=1)
+    draw.text((cx + 44, floor_y - 5), "EYE-LEVEL\nREF", fill=ACCENT_DASH)
+    draw_arrow(draw, cx + 38, cy, cx + 38, floor_y - 4,
+               color=ACCENT_DASH, width=1, head=5)
+    draw.text((cx + 42, cy + (floor_y - cy) // 2 - 5),
+              "HIGH\nFLOAT", fill=ACCENT_DASH)
+
+    # Directional arrow showing body angle (away)
+    draw_arrow(draw, cx - 10, cy - bh - 20, cx + 25, cy - bh - 20,
+               color=(180, 100, 100), width=2, head=7)
+    draw.text((px + 6, py + 30), "← Luma direction", fill=(180, 100, 100))
+    draw.text((px + 6, py + 42), "Body turns AWAY", fill=(180, 100, 100))
+
+    # Timing annotation
+    ty = py + 30
+    draw.text((px + 6, ty + 15), "float: HIGH + BACK", fill=ACCENT_DASH)
+    draw.text((px + 6, ty + 27), "glow: DIM / neutral", fill=ACCENT_DASH)
+    draw.text((px + 6, ty + 39), "arms: PINNED", fill=ACCENT_DASH)
+    draw.text((px + 6, ty + 51), "antenna: lagging −8°", fill=ACCENT_DASH)
+
+    return img, draw
+
+
+def draw_beat2_midturn(img, draw):
+    """Beat 2: Mid-turn — 45° to Luma's axis, glow beginning to shift left."""
+    col = 1
+    px, py, bg = draw_panel_bg(img, draw, col, 2, "MID-TURN",
+                                 "45° turn · glow shifts before body")
+
+    cx = px + PANEL_W // 2
+    cy = py + PANEL_H // 2 - 15  # mid height
+
+    bw, bh = 30, 26
+    # Body at 45° (still angled but rotating toward Luma)
+    tilt = 8   # reduced lean — mid-turn
+
+    img, draw = draw_byte_commitment(
+        img, draw, cx, cy, bw, bh,
+        tilt_deg=tilt,
+        arm_phase='mid',
+        eye_phase='searching',
+        glow_level=2,      # directional — glow already pointing toward Luma
+        float_level='mid',
+        antenna_lean=2,    # antenna just beginning to turn forward
+    )
+
+    # Ghost of Beat 1 (avoidance, faded)
+    img, draw = draw_byte_commitment(
+        img, draw, cx - 55, cy - 10, bw, bh,
+        tilt_deg=20,
+        arm_phase='pinned',
+        eye_phase='avoidance',
+        glow_level=0,
+        float_level='high',
+        antenna_lean=-8,
+        ghost=True, ghost_alpha=0.2,
+    )
+    draw.text((cx - 75, cy - bh - 25), "B1\nghost", fill=(160, 170, 175))
+
+    # Rotation arc arrow
+    arc_cx = cx + PANEL_W // 3
+    draw_arrow(draw, cx - 35, cy - bh - 15, cx, cy - bh - 15,
+               color=COMMITMENT_COL, width=2, head=7)
+    draw.text((cx - 28, cy - bh - 30), "45° rotation in progress", fill=COMMITMENT_COL)
+
+    # CRITICAL NOTE: glow precedes body
+    draw.text((px + 6, py + 30), "GLOW PRECEDES BODY:", fill=DIRECTIONAL_COL)
+    draw.text((px + 6, py + 42), "light already toward Luma", fill=DIRECTIONAL_COL)
+    draw.text((px + 6, py + 54), "body still catching up", fill=ACCENT_DASH)
+    draw.text((px + 6, py + 70), "glow: DIRECTIONAL L", fill=DIRECTIONAL_COL)
+    draw.text((px + 6, py + 82), "r=18–22px, alpha 50–70", fill=ACCENT_DASH)
+
+    return img, draw
+
+
+def draw_beat3_arrival(img, draw):
+    """Beat 3: Full-frontal arrival — float drops to eye-level, arms open, glow full directional."""
+    col = 2
+    px, py, bg = draw_panel_bg(img, draw, col, 3, "FULL-FRONTAL ARRIVAL",
+                                 "eye-level · arms open · glow MAX")
+
+    cx = px + PANEL_W // 2
+    floor_y = py + PANEL_H - 80  # eye-level reference line
+    cy = floor_y - 30            # Byte at eye-level (descended from HIGH float)
+
+    bw, bh = 30, 26
+    # Full frontal — no tilt
+    tilt = -3  # slight forward lean (-3° to -4° per spec)
+
+    img, draw = draw_byte_commitment(
+        img, draw, cx, cy, bw, bh,
+        tilt_deg=tilt,
+        arm_phase='open',
+        eye_phase='commitment',
+        glow_level=3,      # fully directional — max
+        float_level='eye_level',
+        antenna_lean=4,    # antenna forward: attention engaged
+    )
+
+    # Eye-level reference line
+    draw.line([(px + 4, floor_y), (px + PANEL_W - 4, floor_y)],
+              fill=COMMITMENT_COL, width=1)
+    draw.text((px + 6, floor_y + 2), "LUMA EYE-LEVEL", fill=COMMITMENT_COL)
+
+    # Height descent arrow (from B1 high position)
+    draw_arrow(draw, cx + bw + 16, py + PANEL_H // 4, cx + bw + 16, cy,
+               color=MOTION_ARROW, width=2, head=7)
+    draw.text((cx + bw + 20, py + PANEL_H // 4 + 8), "descend\nto eye-level", fill=MOTION_ARROW)
+
+    # Arm spread annotation
+    left_arm_x = cx - int(bw * 1.05)
+    right_arm_x = cx + int(bw * 1.05)
+    arm_y = cy - int(bh * 0.3)
+    draw.line([(left_arm_x - 6, arm_y - 10), (right_arm_x + 6, arm_y - 10)],
+              fill=COMMITMENT_COL, width=1)
+    draw.text((cx - 30, arm_y - 22), "OUT · NOT REACHING", fill=COMMITMENT_COL)
+
+    # Glow label
+    draw.text((px + 6, py + 30), "GLOW: FULLY DIRECTIONAL", fill=DIRECTIONAL_COL)
+    draw.text((px + 6, py + 42), "r=20–24px, alpha 70–85", fill=ACCENT_DASH)
+    draw.text((px + 6, py + 54), "toward-Luma side only", fill=DIRECTIONAL_COL)
+    draw.text((px + 6, py + 70), "forward lean: −3° to −4°", fill=ACCENT_DASH)
+    draw.text((px + 6, py + 82), "antenna: +3–5° forward", fill=ACCENT_DASH)
+    draw.text((px + 6, py + 94), "CRACK STILL PRESENT", fill=HOT_MAGENTA)
+    draw.text((px + 6, py + 106), "damage doesn't change decision", fill=HOT_MAGENTA)
+
+    return img, draw
+
+
+def draw_beat4_hold(img, draw):
+    """Beat 4: HOLD 8–12 frames — the hold IS the commitment."""
+    col = 3
+    px, py, bg = draw_panel_bg(img, draw, col, 4, "HOLD  (8–12 FRAMES)",
+                                 "stillness = commitment")
+
+    cx = px + PANEL_W // 2
+    floor_y = py + PANEL_H - 80
+    cy = floor_y - 30
+
+    bw, bh = 30, 26
+    tilt = -3
+
+    # Draw on dark background — use panel as is (bg is dark)
+    # Draw 3 ghost holds to show stillness / no movement
+    for ghost_offset, ghost_a in [(-18, 0.12), (0, 1.0), (18, 0.12)]:
+        is_main = ghost_offset == 0
+        img, draw = draw_byte_commitment(
+            img, draw, cx + ghost_offset, cy, bw, bh,
+            tilt_deg=tilt,
+            arm_phase='open',
+            eye_phase='commitment',
+            glow_level=3 if is_main else 0,
+            float_level='eye_level',
+            antenna_lean=4,
+            ghost=not is_main,
+            ghost_alpha=ghost_a,
+        )
+
+    # HOLD marker lines (still character = still lines)
+    hold_y_top = cy - bh - 18
+    hold_y_bot = cy + bh + 45
+    draw.line([(px + 10, hold_y_top), (px + PANEL_W - 10, hold_y_top)],
+              fill=HOLD_COL, width=1)
+    draw.line([(px + 10, hold_y_bot), (px + PANEL_W - 10, hold_y_bot)],
+              fill=HOLD_COL, width=1)
+
+    # Frame count annotation
+    draw.text((px + PANEL_W // 2 - 28, hold_y_top - 14),
+              "8–12 FRAMES", fill=HOLD_COL)
+    draw.text((px + PANEL_W // 2 - 22, hold_y_bot + 4),
+              "NO MOVEMENT", fill=HOLD_COL)
+
+    # Eye-level reference
+    draw.line([(px + 4, floor_y), (px + PANEL_W - 4, floor_y)],
+              fill=COMMITMENT_COL, width=1)
+    draw.text((px + 6, floor_y + 2), "LUMA EYE-LEVEL", fill=COMMITMENT_COL)
+
+    # Still character annotation text
+    draw.text((px + 6, py + 30), "STILL CHAR = DECISION", fill=HOLD_COL)
+    draw.text((px + 6, py + 42), "hold is the statement", fill=LABEL_TEXT)
+    draw.text((px + 6, py + 54), "no anticipation", fill=ACCENT_DASH)
+    draw.text((px + 6, py + 66), "no micro-oscillation", fill=ACCENT_DASH)
+    draw.text((px + 6, py + 78), "float STOPS here", fill=(200, 220, 225))
+    draw.text((px + 6, py + 94), "pilot light: ◆ cyan", fill=ELEC_CYAN)
+    draw.text((px + 6, py + 106), "(not a graphic stmnt —", fill=ACCENT_DASH)
+    draw.text((px + 6, py + 118), " just present, not leaving)", fill=ACCENT_DASH)
+
+    return img, draw
+
+
+# ------------------------------------------------------------------ SHEET FRAME
+
+def draw_comparison_table(draw, img_w, y_start):
+    """
+    Bottom strip: compact comparison table distinguishing COMMITMENT from other states.
+    """
+    pass  # Table is in the panel annotations; redundant at this size
+
+
+def build_sheet():
+    img = Image.new("RGB", (W, H), VOID_BLACK)
+    draw = ImageDraw.Draw(img)
+
+    # --- HEADER ---
+    draw.rectangle([0, 0, W, HEADER_H], fill=(20, 28, 38))
+    draw.text((PAD + 2, 8), "BYTE  ·  MOTION SPEC v003  ·  COMMITMENT BEAT ARC",
+              fill=LABEL_TEXT)
+    draw.text((PAD + 2, 22),
+              "Ryo Hasegawa / C39  |  brief: Lee Tanaka C38  |  trigger: Taraji critique C15",
+              fill=ACCENT_DASH)
+
+    # --- FOUR BEAT PANELS ---
+    img, draw = draw_beat1_avoidance(img, draw)
+    img, draw = draw_beat2_midturn(img, draw)
+    img, draw = draw_beat3_arrival(img, draw)
+    img, draw = draw_beat4_hold(img, draw)
+
+    # --- INTER-PANEL BEAT TRANSITION ARROWS ---
+    for col in range(3):
+        px1, py1 = panel_origin(col)
+        px2, py2 = panel_origin(col + 1)
+        mid_y = py1 + PANEL_H // 2
+        draw_arrow(draw,
+                   px1 + PANEL_W + 1, mid_y,
+                   px2 - 2, mid_y,
+                   color=COMMITMENT_COL, width=2, head=8)
+
+    # --- BOTTOM COMPARISON NOTE (one-liner differentiator) ---
+    note = ("COMMITMENT vs others: full-frontal + eye-level + directional glow  "
+            "— all three together are unambiguous  "
+            "| RESIGNED: angled away/high/pinned/dim  "
+            "| RELUCTANT JOY: angled/mid/slight-out/even  "
+            "| UNGUARDED WARMTH: toward/low/floating-HIGH/bilateral")
+    # draw at footer
+    note_y = H - 14
+    draw.text((PAD, note_y), note, fill=(130, 160, 170))
+
+    # --- SIZE CHECK ---
+    assert img.width <= 1280 and img.height <= 1280, \
+        f"Image size {img.width}×{img.height} exceeds 1280px limit"
+
+    return img
+
+
+def main():
+    out_dir = os.path.join(os.path.dirname(__file__), "..", "characters", "motion")
+    os.makedirs(out_dir, exist_ok=True)
+    out_path = os.path.join(out_dir, "LTG_CHAR_byte_motion.png")
+
+    img = build_sheet()
+    img.thumbnail((1280, 1280))
+    img.save(out_path)
+    print(f"Saved: {out_path}  ({img.width}×{img.height})")
+
+
+if __name__ == "__main__":
+    main()

@@ -4,7 +4,7 @@
 **Author:** Alex Chen, Art Director
 **Date:** 2026-03-30
 **Cycle:** 36
-**Subject:** Does `LTG_TOOL_draw_order_lint_v002.py` incorrectly flag back-pose draw order in turnaround generators?
+**Subject:** Does `LTG_TOOL_draw_order_lint.py` incorrectly flag back-pose draw order in turnaround generators?
 
 ---
 
@@ -20,11 +20,11 @@
 
 All 5 turnaround generators were linted with both v001 and v002:
 
-- `LTG_TOOL_luma_turnaround_v004.py` — PASS (v001 and v002)
-- `LTG_TOOL_cosmo_turnaround_v002.py` — PASS (v002)
-- `LTG_TOOL_miri_turnaround_v001.py` — PASS (v002)
-- `LTG_TOOL_glitch_turnaround_v002.py` — PASS (v002)
-- `LTG_TOOL_luma_turnaround_v004.py` — PASS (v002)
+- `LTG_TOOL_luma_turnaround.py` — PASS (v001 and v002)
+- `LTG_TOOL_cosmo_turnaround.py` — PASS (v002)
+- `LTG_TOOL_miri_turnaround.py` — PASS (v002)
+- `LTG_TOOL_glitch_turnaround.py` — PASS (v002)
+- `LTG_TOOL_luma_turnaround.py` — PASS (v002)
 
 No warnings in any file. The Producer's concern is valid in principle — but the current generators are not triggering it.
 

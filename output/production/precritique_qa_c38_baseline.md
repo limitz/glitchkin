@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-29
 **Run by:** Morgan Walsh (Pipeline Automation Specialist)
-**Tool:** LTG_TOOL_precritique_qa_v001.py v2.3.0
+**Tool:** LTG_TOOL_precritique_qa.py v2.3.0
 **Full report:** output/production/precritique_qa_c38.md
 
 ---

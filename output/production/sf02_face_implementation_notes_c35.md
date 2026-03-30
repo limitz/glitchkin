@@ -207,7 +207,7 @@ The minimum acceptable face change (from the brief, confirmed):
 At head_r=23, the three-element face (2 eyes + 2 brow lines + 1 mouth mark) is achievable
 and sufficient. Do not add more elements — at this scale, crowding destroys readability.
 
-After generating v007, Lee will run `LTG_TOOL_expression_silhouette_v002.py` on a Luma
+After generating v007, Lee will run `LTG_TOOL_expression_silhouette.py` on a Luma
 crop to validate the expression reads at this scale.
 
 ---

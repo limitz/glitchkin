@@ -1,0 +1,5 @@
+**Author:** Sam Kowalski
+**Cycle:** 39
+**Date:** 2026-03-29
+**Idea:** Add Cosmo's warm accent colours (CHAR-C hoodie? jacket warm highlights?) to the warmth lint guarantees JSON as a soft-tolerance check. Cosmo's palette is primarily cool (dusty lavender jacket, jeans) but has warm skin tones that should remain warm. Currently no CHAR-C warmth check exists. The configurable prefix system in warmth_lint_v004/v005 means this is a config-only change — just add `"CHAR-C"` to `ltg_warmth_guarantees.json` warm_prefixes and add the hoodie/skin entries to master_palette.md in table format. The critical constraint: only the entries we want to enforce as warm should be in table format (same pattern as CHAR-L). This would catch any inadvertent cool-drift on Cosmo's skin in future character sheet updates.
+**Benefits:** Priya Nair (Color Script Supervisor) — prevents skin-tone drift on Cosmo across cycles without manual inspection. Maya Santos — catches bad palette entries at generation time before critique. Jordan Reed — warm skin entries verified before they propagate into BG composites. Zero code change required — config update only.

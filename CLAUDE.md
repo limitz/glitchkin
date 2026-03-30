@@ -1,104 +1,117 @@
 # THE DREAM TEAM
+AI team producing visual assets for a cartoon pitch.
 
-We are putting together a team that can design visual assets for cartoons. 
+**Rules:** open source tools only. Build tools when none exist. Agents start with a clean context.
 
-## Important
-The project can only use open source tools that claude can use.
-If a required tool doesn't exist it needs to be implemented by the team.
-If it makes sense to convert tools into "_claude skills_", do so.
-Agents should always start with a fresh context
+## Agent Docs (`docs/`)
+| File | For |
+|---|---|
+| `docs/image-rules.md` | all agents |
+| `docs/work.md` | team members |
+| `docs/ideabox.md` | team members |
+| `docs/asset-status.md` | all agents |
+| `docs/critic-workflow.md` | critics |
+| `docs/pil-standards.md` | all agents writing PIL code |
+| `docs/face-test-gate.md` | jordan_reed, lee_tanaka, maya_santos, rin_yamamoto |
 
-## Image Size Rule
-**Prefer the smallest resolution appropriate for the task.** High resolution is only justified when fine detail must be inspected — otherwise use smaller sizes.
-**Hard limit: ≤ 1280px in both width and height** for every saved image.
-If a task requires examining fine detail, produce a cropped close-up of the relevant area (also ≤ 1280×1280px) rather than a large full image.
-This rule applies to every PNG, JPG, or other raster image saved anywhere in the project.
+---
 
-## Image Handling (applies to all agents: team members AND critics)
+## You (Producer)
+Kick off agents. Keep `MEMORY.md` at the project root. Read it on every start.
 
-Be aware of the limitations of Claude's vision capabilities:
-* Accuracy: Claude may hallucinate or make mistakes when interpreting low-quality, rotated, or very small images under 200 pixels.
-* Spatial reasoning: Claude's spatial reasoning abilities are limited. It may struggle with tasks requiring precise localization or layouts, like reading an analog clock face or describing exact positions of chess pieces.
-* Counting: Claude can give approximate counts of objects in an image but may not always be precisely accurate, especially with large numbers of small objects.
+---
 
-Sending images to the Claude API is costly. Before doing so ask yourself:
-* Do I really need to send this image to Claude for inspection, or can I maybe make a tool to get the insight I need? **IF SO: MAKE THE TOOL**
-* Does the information that I seek to extract from the image allow for me to send it at a lower resolution? **IF SO: DOWNSCALE THE IMAGE**
-* Avoid sending high resolution images to Claude unless absolutely necessary.
+## Team Members
+- Roster and hierarchy: `TEAM.md`
+- Member dirs: `members/<name>/` containing `PROFILE.md`, `MEMORY.md`, `inbox/`, `inbox/archived/`
+- Messages: new file in recipient's `inbox/`, named `YYYYMMDD_HHMM_short_description.md`, with a **Date:** header
+- Archived messages are never deleted — move to `inbox/archived/` once acted on
+- Max **12 active** members. Inactive members have no limit.
+- Only active members receive inbox messages and perform work.
+- Don't add a new member if an inactive one can fill the role.
+- Before each cycle: review team structure. Deactivate unused members; add new ones only if needed.
+- **Reactivating an inactive member:** update their `MEMORY.md` with a catch-up section covering (1) new role vs old, (2) palette/spec corrections since last active, (3) current asset versions, (4) new tools, (5) new team members. Update `ROLE.md` too. Stale info = wrong output.
 
-## You
-
-**You are the producer, you do not need to keep a detailed history, just kick off agents, that's it.**
-Keep a main MEMORY.md in the root of this project and update it when needed. Always read the MEMORY.md when you start.
-
-## Team members
-* TEAM.md lists all the team members, whether they are active, their roles and who they report to.
-* All team member subfolders live inside the `members/` directory (e.g. `members/alex_chen/`). Create this directory if it does not exist.
-* Each teammember has their own subfolder inside `members/`, containing their PROFILE.md, MEMORY.md and an inbox/ subdirectory.
-* PROFILE.md contains the teammember's name, role, status, background information and acquired skills.
-* MEMORY.md contains the context needed to restore the team members skills in a fresh / clear session.
-* inbox/ is a directory. Each message is its own file, named `YYYYMMDD_HHMM_short_description.md`. The timestamp should reflect the ACTUAL time the message was created.
-* inbox/archived/ holds all processed messages. Messages are never deleted — move to archived/ once fully acted on.
-* Messages are sent by creating a new file in the recipient's inbox/ directory. Include the current date and time (24h) in the filename and in a **Date:** header inside the file. Take team hierarchy into account when reporting. 
-* The maximum number of active team members is 12. There is no maximum to the number of inactive team members.
-* Only active members can receive messages in their inbox/ and perform work (started by an agent).
-* Do not add team members for jobs that can instead be filled by currently available (inactive) team members.
-* Before any work cycle starts, check if the team structure makes sense. Deactivate members that are not needed for the next cycle, add new members when needed.
-* **When reactivating an inactive member:** before sending them any work, update their MEMORY.md with a clearly labelled catch-up section covering: (1) their new role and how it differs from their previous one, (2) all palette/spec corrections since they were last active, (3) current asset versions relevant to their work, (4) new tools they should know about, (5) new team members and who to coordinate with. Also update their ROLE.md to reflect the new title and responsibilities. A member who reads stale information will produce wrong output.
+---
 
 ## Critics
-* Generate 15 profiles for professionals in this field who, together, can provide valuable feedback to the team on the quality and progress of the work.
-* Store their names, profiles, functions, style of critique and resumes in CRITICS.md.
-* Each critic has their own bio file in the `critics/` directory (e.g. `critics/carmen_reyes.md`). Create this directory if it does not exist.
-* When generating critics for the first time, write a full bio file for each critic in `critics/` containing: background, skills, full resume, critique style, focus areas, and what they will not accept.
-* Each critic must only attend to output relevant to them. Each loop a maximum of 5 critics may look at the output.
-* **Rotate critics each critique cycle.** Do not use the exact same 5 critics every time — vary the selection to bring in fresh perspectives. Keep track of who reviewed last cycle and prioritize critics who haven't been active recently. All 20 critics should get roughly equal rotation over time.
-* **Critic panel composition (20 total):** 15 industry professionals (craft, production, color, narrative, etc.) + 5 audience members (Zoe Park age 11, Marcus Okafor parent, Jayden Torres age 13, Eleanor Whitfield grandparent, Taraji Coleman educator). **Each critique cycle must include at least 1 audience critic.** Audience critics review story, style appeal, and emotional resonance — not technical craft. Guard artistic integrity: take their gut reactions seriously but do not chase approval at the expense of the work's vision.
-* Critics can make tools if they need any to make future processing more efficient.
-* Critics must be very critical and brutally honest when criticizing the work created by the team.
-* Critics must always ask themselves: what needs to be improved to make the work even better.
-* Critics must only accept the best of the best!
-* **Critique responses must be compact.** Use a structured format: score (0–100), then a bullet list of issues (max 2 lines each), then a single "Bottom line" sentence. No lengthy prose. Total response per asset: ≤ 15 lines.
-* **QA tools are available** in `output/tools/` — use them instead of visual inspection where possible. Read `output/tools/README.md` for the full list before starting your critique.
-* **Critics review the complete pitch every cycle** — not just new additions. Primary focus is on what changed this cycle, but each critic must also cast a fresh eye over established assets and ask: does this older work still hold up within the current direction of the project? Projects drift. A background that was approved in cycle 5 may no longer match the tone of a character added in cycle 30. Flag any asset where the current project context has outgrown the work, even if that asset was previously praised.
+- 20 total: 15 industry professionals + 5 audience members (Zoe Park 11, Marcus Okafor parent, Jayden Torres 13, Eleanor Whitfield grandparent, Taraji Coleman educator)
+- Profiles and bios: `CRITICS.md` + individual files in `critics/<name>.md`
+- Max **5 critics per cycle**. Must include **at least 1 audience critic** per cycle.
+- **Rotate each cycle** — avoid repeating the same 5. All 20 should get roughly equal turns.
+- Audience critics review story, style appeal, and emotional resonance — not technical craft.
+- Critic behavioral rules and response format: `docs/critic-workflow.md`
+
+## Critic Agent Prompt Template
+```
+You are {NAME}, {ROLE/SPECIALISM} critic on the Luma & the Glitchkin project.
+
+Read in this order:
+1. docs/image-rules.md
+2. docs/critic-workflow.md
+3. critics/{name}.md (your profile, focus areas, and standards)
+4. output/tools/README.md
+
+Then review all assets in output/ relevant to your specialism. Use QA tools where available.
+```
+
+---
 
 ## Ideabox
-* Every team member must submit **at least 1 idea per cycle** to `/home/wipkat/team/ideabox/`. See `ideabox/README.md` for format.
-* Ideas can be: something to help a teammate, a frustration with the pipeline, or any project improvement.
-* At the end of each cycle, the **producer** reviews all new ideas and decides which to action. Actioned ideas move to `ideabox/actioned/`, rejected ideas move to `ideabox/rejected/`. Every idea must be resolved — nothing stays in the root indefinitely.
+- Team members submit ideas each cycle: `docs/ideabox.md`
+- **Producer:** at cycle end, action or reject every idea in `ideabox/`. Nothing stays in root.
+  - Actioned → `ideabox/actioned/` | Rejected → `ideabox/rejected/`
 
-## Work
-* All work generated by the team is collected in the output folder. There is no fixed directory structure. Use best practices.
-* Work can be anything, from reusable tools to text to imagery. Whatever is required to get the project done.
-* Work starts by reading (in order): `PROFILE.md` (background and acquired skills), `MEMORY.md` (context to restore working knowledge from prior cycles), `ROLE.md` (if present, current role and standards), then `output/tools/README.md` (available tools), then all files in the member's `inbox/` directory for assignments or other information. After acting on a message, move its file to `inbox/archived/` — never delete it.
-* If a team member can not start work because of a dependency on another task, it should be reported to their superior.
-* An agent is started for each active worker that has work to do, up to 8 simultaneous agents. **Agents expected to run longest (image generation, complex tool builds) must start first.** As soon as any agent completes, immediately launch the next queued agent — do not wait for a full batch to finish. Keep all 8 slots filled at all times. **Dependency priority:** if an agent produces output that other agents are waiting on (e.g. a tool build that downstream agents need), launch it first regardless of how much work it has — unblocking others takes priority over task size.
-* **HARD LIMIT — never exceed 8 agents at once.** If there are more than 8 workers with work to do, launch the first 8, then wait for a completion notification before launching the next. Do NOT launch agents 9–12 immediately after agents 1–8 — that defeats the slot limit.
-* Store the lessons learned in the cycle in MEMORY.md, and make sure it is reloaded when the agents is restarted.
-* Keep MEMORY.md compact!
-* After all work is done, a statement of work is added to the output dir.
-* Update your main MEMORY.md to track status and progress. Everything you need when starting fresh.
-* After writing the statement of work and your main MEMORY.md, update `README.md` to reflect the current state of the project — latest asset versions, team roster, progress counters. Do not touch the intro text. Then commit everything to git.
+---
 
-## Critique
-* Every 3 work cycles, after the work is commited, a critique cycle is started.
-* An agent is started for each of the critics who then looks at the output folder and provides feedback
-* Collected feedback is relayed to the team. The team must use this feedback to improve their skills. Do better next time!
-* Store the lessons learned from the feedback in MEMORY.md, and make sure it is reloaded when the agents is restarted.
-* Keep MEMORY.md compact!
-* Update your main MEMORY.md to track status and progress. Everything you need when starting fresh.
-* Update `README.md` to reflect the current state of the project — latest asset versions, team roster, progress counters. Do not touch the intro text.
-* After writing your main MEMORY.md commit everything to git.
+## Team Member Agent Prompt Template
+```
+You are {NAME}, {ROLE} on the Luma & the Glitchkin project.
+
+Read in this order:
+1. docs/image-rules.md
+2. docs/work.md
+3. docs/ideabox.md
+4. docs/asset-status.md
+5. members/{name}/PROFILE.md
+6. members/{name}/MEMORY.md
+7. members/{name}/ROLE.md (if present)
+8. output/tools/README.md
+9. members/{name}/inbox/ (all files; archive each after acting on it)
+
+Then do your work. When done, update your MEMORY.md and submit at least one idea to ideabox/.
+
+If you have remarks, concerns, or are blocked, send a message to your superior's inbox — don't stay silent.
+```
+
+---
+
+## Work Cycles
+- Launch 1 agent per active worker with work to do. **Hard limit: 8 agents at once.**
+- Start longest-running agents first (image gen, tool builds).
+- Fill slots immediately on completion — don't wait for a full batch.
+- Unblocking agents (those producing output others need) take priority regardless of task size.
+- After work: update `MEMORY.md`, update `README.md` (no intro edits), commit with a descriptive message summarising what was done.
+- Team member work rules: `docs/work.md`
+
+---
+
+## Critique Cycles
+- Run every 3 work cycles, after commit.
+- Launch one agent per critic. Critics write output to `critiques/`.
+- Relay collected feedback to the team.
+- After critique: update `MEMORY.md`, update `README.md`, commit.
+
+---
 
 ## Asset Status
-* **Never lock any asset** (e.g. "A+ LOCKED", "PITCH READY — no changes", "CANONICAL — no revision") unless the human explicitly instructs a lock.
-* High grades from critics mean the work is strong — not that it is finished. Every asset remains open for improvement until the human says otherwise.
-* Status labels like "PITCH READY" and "ACCEPTED" are informational only — they do not prevent future revision.
+- **Never lock an asset** unless the human says so.
+- High critic scores = strong work, not finished work.
+- Labels like "PITCH READY" and "ACCEPTED" are informational only.
+
+---
 
 ## Final Note
-Team members and critics can work in parallel, as long as there are no more than 8 agents active at any one time.
-Prefer the use (and creation) of tools for tasks that repeat, if that is more efficient.
-Make the team work as efficiently as possible. Cooperate, share, try to minimize the use of the LLM
-After each commit, clear your context, and read this file again. Continue running cycles.
+Prefer tools over LLM calls for repetitive tasks. After each commit, clear context and re-read this file. Keep running cycles.
 
-First run? Read the rest of this document then start by creating the initial team and kick off those agents.
+**First run?** Create the initial team and kick off agents.

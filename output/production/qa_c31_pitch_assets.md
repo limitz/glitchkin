@@ -1,25 +1,25 @@
 # LTG Render QA Report — Cycle 27
 
 **Generated:** 2026-03-29  
-**Tool:** LTG_TOOL_render_qa_v001.py v1.2.0  
+**Tool:** LTG_TOOL_render_qa.py v1.2.0  
 **Total assets evaluated:** 12
 
 ## Summary
 
 | File | Asset Type | Silhouette | Value Range | Color Fidelity | Warm/Cool | Line Weight | Grade |
 |------|-----------|-----------|-------------|----------------|-----------|-------------|-------|
-| LTG_COLOR_styleframe_discovery_v004.png | style_frame | distinct | PASS | PASS | WARN | PASS | **WARN** |
-| LTG_COLOR_styleframe_glitch_storm_v005.png | style_frame | distinct | PASS | PASS | WARN | PASS | **WARN** |
-| LTG_COLOR_styleframe_otherside_v005.png | style_frame | distinct | PASS | WARN | WARN | PASS | **WARN** |
-| LTG_COLOR_styleframe_luma_byte_v003.png | style_frame | ambiguous | WARN | WARN | WARN | PASS | **WARN** |
-| LTG_CHAR_luma_expressions_v007.png | character_sheet | distinct | PASS | WARN | SKIP | PASS | **WARN** |
-| LTG_CHAR_luma_turnaround_v003.png | character_sheet | distinct | PASS | WARN | SKIP | PASS | **WARN** |
-| LTG_COLOR_luma_color_model_v002.png | color_model | distinct | PASS | WARN | SKIP | PASS | **WARN** |
-| LTG_CHAR_byte_expression_sheet_v004.png | character_sheet | distinct | PASS | PASS | SKIP | PASS | PASS |
-| LTG_CHAR_cosmo_expression_sheet_v004.png | character_sheet | distinct | PASS | PASS | SKIP | PASS | PASS |
-| LTG_CHAR_grandma_miri_expression_sheet_v003.png | character_sheet | distinct | PASS | WARN | SKIP | PASS | **WARN** |
-| LTG_CHAR_glitch_expression_sheet_v003.png | character_sheet | distinct | PASS | PASS | SKIP | PASS | PASS |
-| LTG_CHAR_luma_lineup_v006.png | character_sheet | distinct | PASS | WARN | SKIP | PASS | **WARN** |
+| LTG_COLOR_styleframe_discovery.png | style_frame | distinct | PASS | PASS | WARN | PASS | **WARN** |
+| LTG_COLOR_styleframe_glitch_storm.png | style_frame | distinct | PASS | PASS | WARN | PASS | **WARN** |
+| LTG_COLOR_styleframe_otherside.png | style_frame | distinct | PASS | WARN | WARN | PASS | **WARN** |
+| LTG_COLOR_styleframe_luma_byte.png | style_frame | ambiguous | WARN | WARN | WARN | PASS | **WARN** |
+| LTG_CHAR_luma_expressions.png | character_sheet | distinct | PASS | WARN | SKIP | PASS | **WARN** |
+| LTG_CHAR_luma_turnaround.png | character_sheet | distinct | PASS | WARN | SKIP | PASS | **WARN** |
+| LTG_COLOR_luma_color_model.png | color_model | distinct | PASS | WARN | SKIP | PASS | **WARN** |
+| LTG_CHAR_byte_expression_sheet.png | character_sheet | distinct | PASS | PASS | SKIP | PASS | PASS |
+| LTG_CHAR_cosmo_expression_sheet.png | character_sheet | distinct | PASS | PASS | SKIP | PASS | PASS |
+| LTG_CHAR_grandma_miri_expression_sheet.png | character_sheet | distinct | PASS | WARN | SKIP | PASS | **WARN** |
+| LTG_CHAR_glitch_expression_sheet.png | character_sheet | distinct | PASS | PASS | SKIP | PASS | PASS |
+| LTG_CHAR_luma_lineup.png | character_sheet | distinct | PASS | WARN | SKIP | PASS | **WARN** |
 
 **Results:** 3 PASS / 9 WARN / 0 FAIL
 
@@ -27,7 +27,7 @@
 
 ## Detailed Results
 
-### LTG_COLOR_styleframe_discovery_v004.png
+### LTG_COLOR_styleframe_discovery.png
 *Asset type: style_frame*
 
 **Overall Grade:** WARN
@@ -54,7 +54,7 @@
 
 ---
 
-### LTG_COLOR_styleframe_glitch_storm_v005.png
+### LTG_COLOR_styleframe_glitch_storm.png
 *Asset type: style_frame*
 
 **Overall Grade:** WARN
@@ -81,7 +81,7 @@
 
 ---
 
-### LTG_COLOR_styleframe_otherside_v005.png
+### LTG_COLOR_styleframe_otherside.png
 *Asset type: style_frame*
 
 **Overall Grade:** WARN
@@ -109,7 +109,7 @@
 
 ---
 
-### LTG_COLOR_styleframe_luma_byte_v003.png
+### LTG_COLOR_styleframe_luma_byte.png
 *Asset type: style_frame*
 
 **Overall Grade:** WARN
@@ -140,7 +140,7 @@
 
 ---
 
-### LTG_CHAR_luma_expressions_v007.png
+### LTG_CHAR_luma_expressions.png
 *Asset type: character_sheet*
 
 **Overall Grade:** WARN
@@ -166,7 +166,7 @@
 
 ---
 
-### LTG_CHAR_luma_turnaround_v003.png
+### LTG_CHAR_luma_turnaround.png
 *Asset type: character_sheet*
 
 **Overall Grade:** WARN
@@ -192,7 +192,7 @@
 
 ---
 
-### LTG_COLOR_luma_color_model_v002.png
+### LTG_COLOR_luma_color_model.png
 *Asset type: color_model*
 
 **Overall Grade:** WARN
@@ -218,7 +218,7 @@
 
 ---
 
-### LTG_CHAR_byte_expression_sheet_v004.png
+### LTG_CHAR_byte_expression_sheet.png
 *Asset type: character_sheet*
 
 **Overall Grade:** PASS
@@ -241,7 +241,7 @@
 
 ---
 
-### LTG_CHAR_cosmo_expression_sheet_v004.png
+### LTG_CHAR_cosmo_expression_sheet.png
 *Asset type: character_sheet*
 
 **Overall Grade:** PASS
@@ -264,7 +264,7 @@
 
 ---
 
-### LTG_CHAR_grandma_miri_expression_sheet_v003.png
+### LTG_CHAR_grandma_miri_expression_sheet.png
 *Asset type: character_sheet*
 
 **Overall Grade:** WARN
@@ -290,7 +290,7 @@
 
 ---
 
-### LTG_CHAR_glitch_expression_sheet_v003.png
+### LTG_CHAR_glitch_expression_sheet.png
 *Asset type: character_sheet*
 
 **Overall Grade:** PASS
@@ -313,7 +313,7 @@
 
 ---
 
-### LTG_CHAR_luma_lineup_v006.png
+### LTG_CHAR_luma_lineup.png
 *Asset type: character_sheet*
 
 **Overall Grade:** WARN

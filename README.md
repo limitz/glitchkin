@@ -1,6 +1,6 @@
 # Luma & the Glitchkin
 
-![Logo](output/production/LTG_BRAND_logo_asymmetric_v002.png)
+![Logo](output/production/LTG_BRAND_logo_asymmetric.png)
 > *A cartoon pitch by AI agents, built entirely with open source tools.*
 
 ---
@@ -23,61 +23,61 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 
 ### SF01 — Discovery (v006)
 *C38: Sight-line fixed — Luma's gaze now locked on Byte, open-palm reach replaces pointing, forward lean. Right brow DOUBT VARIANT kink corrected.*
-![SF01 Discovery](output/color/style_frames/LTG_COLOR_styleframe_discovery_v006.png)
+![SF01 Discovery](output/color/style_frames/LTG_COLOR_styleframe_discovery.png)
 
 ### SF02 — Glitch Storm (v008)
 *C36: Fill light direction corrected (upper-right, matching storm crack position), per-character silhouette mask applied — no background bleed.*
-![SF02 Glitch Storm](output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v008.png)
+![SF02 Glitch Storm](output/color/style_frames/LTG_COLOR_styleframe_glitch_storm.png)
 
 ### SF03 — The Other Side (v005)
 *The Glitch Layer. UV_PURPLE_DARK saturation corrected. Zero warm light — UV ambient only.*
-![SF03 The Other Side](output/color/style_frames/LTG_COLOR_styleframe_otherside_v005.png)
+![SF03 The Other Side](output/color/style_frames/LTG_COLOR_styleframe_otherside.png)
 
 ### SF04 — Luma + Byte (v004)
 *The core relationship. Byte teal at reduced luminance — intentional dual-lighting blend.*
-![SF04 Luma and Byte](output/color/style_frames/LTG_COLOR_styleframe_luma_byte_v004.png)
+![SF04 Luma and Byte](output/color/style_frames/LTG_COLOR_styleframe_luma_byte.png)
 
 ---
 
 ## Characters
 
 ### Full Lineup (v007 — Byte shadow + Miri slipper fixes)
-![Character Lineup](output/characters/main/LTG_CHAR_character_lineup_v007.png)
+![Character Lineup](output/characters/main/LTG_CHAR_character_lineup.png)
 
 ### Luma — Expression Sheet (v011)
 *C38: Right eye squint fixed (top lid drops). DOUBT VARIANT added — disagreeing eyes, corrugator kink, backward lean. Chin-forward thrust for visual power.*
-![Luma Expressions](output/characters/main/LTG_CHAR_luma_expressions_v011.png)
+![Luma Expressions](output/characters/main/LTG_CHAR_luma_expressions.png)
 
 ### Luma — Turnaround (v004 — construction master, 3.2 heads)
-![Luma Turnaround](output/characters/main/turnarounds/LTG_CHAR_luma_turnaround_v004.png)
+![Luma Turnaround](output/characters/main/turnarounds/LTG_CHAR_luma_turnaround.png)
 
 ### Luma — Color Model (v002)
-![Luma Color Model](output/characters/color_models/LTG_COLOR_luma_color_model_v002.png)
+![Luma Color Model](output/characters/color_models/LTG_COLOR_luma_color_model.png)
 
 ### Byte — Expression Sheet (v006)
 *C38: Silhouette gate run, worst-pair RPD fixed.*
-![Byte Expressions](output/characters/main/LTG_CHAR_byte_expression_sheet_v006.png)
+![Byte Expressions](output/characters/main/LTG_CHAR_byte_expression_sheet.png)
 
 ### Byte — Turnaround (v001)
-![Byte Turnaround](output/characters/main/turnarounds/LTG_CHAR_byte_turnaround_v001.png)
+![Byte Turnaround](output/characters/main/turnarounds/LTG_CHAR_byte_turnaround.png)
 
 ### Cosmo — Expression Sheet (v007)
 *C38: SKEPTICAL arm geometry fixed — both arms now read outside body silhouette.*
-![Cosmo Expressions](output/characters/main/LTG_CHAR_cosmo_expression_sheet_v007.png)
+![Cosmo Expressions](output/characters/main/LTG_CHAR_cosmo_expression_sheet.png)
 
 ### Cosmo — Turnaround (v002)
-![Cosmo Turnaround](output/characters/main/turnarounds/LTG_CHAR_cosmo_turnaround_v002.png)
+![Cosmo Turnaround](output/characters/main/turnarounds/LTG_CHAR_cosmo_turnaround.png)
 
 ### Grandma Miri — Expression Sheet (v004)
 *C35: WELCOMING (wide-open arms), SURPRISED/DELIGHTED (hand-to-cheek asymmetric hook) per Lee's brief.*
-![Grandma Miri Expressions](output/characters/main/LTG_CHAR_grandma_miri_expression_sheet_v004.png)
+![Grandma Miri Expressions](output/characters/main/LTG_CHAR_grandma_miri_expression_sheet.png)
 
 ### Glitch — Expression Sheet (v003 — interior states: YEARNING / COVETOUS / HOLLOW)
 *Bilateral eyes = genuine feeling. Destabilized right eye = performance mode.*
-![Glitch Expressions](output/characters/main/LTG_CHAR_glitch_expression_sheet_v003.png)
+![Glitch Expressions](output/characters/main/LTG_CHAR_glitch_expression_sheet.png)
 
 ### Glitch — Turnaround (v002)
-![Glitch Turnaround](output/characters/main/turnarounds/LTG_CHAR_glitch_turnaround_v002.png)
+![Glitch Turnaround](output/characters/main/turnarounds/LTG_CHAR_glitch_turnaround.png)
 
 ---
 
@@ -85,28 +85,28 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 
 ### Grandma's Kitchen (v004)
 *C35: Value floor 62→20, warm/cool separation 1.7→32.95, Miri-specific spatial identity added.*
-![Kitchen](output/backgrounds/environments/LTG_ENV_grandma_kitchen_v004.png)
+![Kitchen](output/backgrounds/environments/LTG_ENV_grandma_kitchen.png)
 
 ### Tech Den — Cosmo's Workspace (v004 warminjected)
 *C36: Warm/cool separation fixed 7.9→23.2 PASS via new warmth inject utility.*
-![Tech Den](output/backgrounds/environments/LTG_ENV_tech_den_v004_warminjected.png)
+![Tech Den](output/backgrounds/environments/LTG_ENV_tech_den_warminjected.png)
 
 ### The Other Side — Glitch Layer (v003)
-![Other Side BG](output/backgrounds/environments/LTG_ENV_glitchlayer_frame_v003.png)
+![Other Side BG](output/backgrounds/environments/LTG_ENV_glitchlayer_frame.png)
 
 ### Millbrook Street (v002)
-![Millbrook Street](output/backgrounds/environments/LTG_ENV_millbrook_main_street_v002.png)
+![Millbrook Street](output/backgrounds/environments/LTG_ENV_millbrook_main_street.png)
 
 ### School Hallway (v003)
 *C38: Figure-ground fix — locker lavender was identical to Cosmo's cardigan. Remapped for ~34-unit value separation.*
-![School Hallway](output/backgrounds/environments/LTG_ENV_school_hallway_v003.png)
+![School Hallway](output/backgrounds/environments/LTG_ENV_school_hallway.png)
 
 ---
 
 ## Brand
 
 ### Logo (v001 — canonical)
-![Logo](output/production/LTG_BRAND_logo_v001.png)
+![Logo](output/production/LTG_BRAND_logo.png)
 
 ---
 

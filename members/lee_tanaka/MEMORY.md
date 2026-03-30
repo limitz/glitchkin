@@ -69,15 +69,15 @@
 - **P15 right arm FIXED (Cycle 12):** Endpoint moved from `body_top + 18` to `body_top + 10` — true horizontal flung arm read. Carmen flagged this in Cycle 11 brief as the last geometric imprecision.
 - **LTG naming compliance COMPLETE:** All 26 panels + contact sheet now have `LTG_SB_coldopen_panel_[##]_v001.png` compliant copies in `/output/storyboards/panels/`. P22a uses `panel_22a_v001.png`.
 - **Contact sheet version updated to Cycle 12.** Module docstrings updated in both `panel_chaos_generator.py` (now says "Cycle 11" in docstring, "Cycle 12" in print) and `contact_sheet_generator.py`.
-- **Act 2 thumbnail plan created:** `/output/storyboards/act2_thumbnail_plan_v001.md` — 8 Act 1 beats + 8 Act 2 escalation beats with shot types, emotional temperatures, and production notes.
+- **Act 2 thumbnail plan created:** `/output/storyboards/act2_thumbnail_plan.md` — 8 Act 1 beats + 8 Act 2 escalation beats with shot types, emotional temperatures, and production notes.
 - **Cold open storyboard: PITCH-READY. No open issues.** All Carmen feedback from Cycles 9–11 closed.
 
 ## Cycle 13 Milestone
-- **P13 SCREAM FIXED:** Mouth changed from small circle (24×14px) to tall yell oval (52×32px, jaw drops far below chin). Tongue added (pale pink fill, lower 40% of mouth aperture). Brows changed from arcs to SHARP SPIKE LINES (two-line ^ shape per brow, high above eye). Body recoils: torso tilted backward, weight shifted. Generator: `LTG_TOOL_cycle13_panel_fixes_v001.py`.
+- **P13 SCREAM FIXED:** Mouth changed from small circle (24×14px) to tall yell oval (52×32px, jaw drops far below chin). Tongue added (pale pink fill, lower 40% of mouth aperture). Brows changed from arcs to SHARP SPIKE LINES (two-line ^ shape per brow, high above eye). Body recoils: torso tilted backward, weight shifted. Generator: `LTG_TOOL_cycle13_panel_fixes.py`.
 - **P15 ARM URGENCY FIXED:** Right arm endpoint extended from `luma_cx + 52` (~287px) to `luma_cx + 125` (~360px). Arm now strains toward frame edge. Hand blob added at extended tip. Urgency annotation updated.
 - **P03 CRT FRAMING FIXED:** Monitor fills near-full frame (10px margin vs original 50px margin). CRT curvature, screen reflections, power LED all added. Pixel and pulse rings now centered on screen (not floating in void). Creates strong contrast punch vs P04 wide room reveal.
 - **P08 HIGH ANGLE / P09 EYE LEVEL differentiated:** P08 `floor_y` moved from 0.70 to 0.62 (camera looks down at Byte — diminishes him in first real-world moment). P09 remains at 0.76 (true eye level — camera equals Byte's floating height — he's now decisive/present). Annotation text updated in both panels with color-coded labels.
-- **Act 2 plan v002 created:** `/output/storyboards/act2_thumbnail_plan_v002.md` — all Carmen notes incorporated. A2-02 reframed as Byte MCU. A1-04 near-miss added. A2-05b Cosmo app setup panel added. A2-06 INSERT panel added. Pixel confetti note added to production notes.
+- **Act 2 plan v002 created:** `/output/storyboards/act2_thumbnail_plan.md` — all Carmen notes incorporated. A2-02 reframed as Byte MCU. A1-04 near-miss added. A2-05b Cosmo app setup panel added. A2-06 INSERT panel added. Pixel confetti note added to production notes.
 - **Byte glyph dependency flagged to Alex Chen:** Message at `/home/wipkat/team/members/alex_chen/inbox/20260330_1500_byte_dead_pixel_glyph_design_needed.md`. A2-02 and A2-07 are blocked until design is resolved.
 - **New LTG v002 files:** panel_03, 08, 09, 13, 15 all have v002 copies. Contact sheet v002 generated.
 
@@ -95,12 +95,12 @@
 
 ## Cycle 14 Milestone
 - **Byte cracked-eye glyph unblocked:** Alex Chen delivered glyph design (Section 9B, byte.md v3.2). Full 7×7 dead-pixel grid in code: DEAD=#0A0A18, DIM=#005064, MID=#00A8B4, CRACK=Hot Magenta #FF2D6B, BRIGHT=#C8FFFF. Crack overlay = Void Black diagonal on top of everything.
-- **4 Act 2 panels GENERATED:** Generator: `LTG_TOOL_act2_panels_cycle14_v001.py`
+- **4 Act 2 panels GENERATED:** Generator: `LTG_TOOL_act2_panels_cycle14.py`
   - A1-04: Classroom near-miss — board text readable, Luma eyes up toward "BINARY SYSTEMS," Byte napping in eraser tray, dotted cyan sight-line shows gaze path, "almost..." annotation
   - A2-02: Byte MCU — 150×120px body fills frame, cracked eye 42×32px (full glyph rendered), Luma ~20% background weight, warm amber bg, cyan glow corona, desaturation ring at feet
   - A2-05b: Cosmo street MCU — phone screen with GLITCH FREQ app (waveform + freq readout), pixel confetti + GLITCH SIGNAL near streetlight, confident pre-failure pose
   - A2-06: Phone screen INSERT — full-frame static crash, horizontal scan bars, displacement artifacts, X crash symbol, APP TERMINATED, pixel confetti, no Cosmo visible
-- **Act 2 contact sheet generated:** `LTG_SB_act2_contactsheet_v001.png` — 2×2 layout, arc reads classroom→vulnerability→setup→crash
+- **Act 2 contact sheet generated:** `LTG_SB_act2_contactsheet.png` — 2×2 layout, arc reads classroom→vulnerability→setup→crash
 
 ## Cycle 14 Lessons
 - **Cracked eye glyph at MCU scale (42×32px): full 7×7 grid is legible and emotionally potent.** CRACK color (Hot Magenta) reads even before audience recognizes the grid. The chip in the upper-right corner of the bezel adds physicality at large size.
@@ -109,13 +109,13 @@
 - **Background Luma at 20% weight**: desaturate the skin toward warm neutral (200→190), reduce outline contrast, avoid dark frame lines. She reads as present without competing with Byte's cracked eye.
 
 ## Cycle 15 Milestone
-- **3 Act 2 panels generated:** Generator: `LTG_TOOL_sb_a2_cycle15_v001.py`
+- **3 Act 2 panels generated:** Generator: `LTG_TOOL_sb_a2_cycle15.py`
   - A2-03: Cosmo SKEPTICAL — arms crossed, one brow raised (viewer right = his left), flat deadpan mouth, glasses 9°, full body wide/medium shot, annotation callouts
   - A2-04: Investigation montage — 2×2 grid of vignettes (TV search, under furniture, desk examine, clue found). Glowing cyan clue in BR vignette. Pixel confetti on TV glitch and clue discovery.
   - A2-07: BLOCKED placeholder — production block panel with ghost Byte silhouette, dependency listed clearly
-- **Act 2 contact sheet v002 generated:** `LTG_SB_act2_contact_sheet_v002.png` — 7 panels, 2-row layout, arc labels NEAR-MISS→VULNERABLE→SKEPTICAL→INVESTIGATING→DETERMINED→FAILURE→BLOCKED
-- **act2/panels/ directory created** with LTG naming: LTG_SB_a2_02_v001.png through _a2_07_v001.png
-- **STILL BLOCKED: A2-07** — needs `LTG_CHAR_byte_expression_sheet_v002.png` with RESIGNED expression
+- **Act 2 contact sheet v002 generated:** `LTG_SB_act2_contact_sheet.png` — 7 panels, 2-row layout, arc labels NEAR-MISS→VULNERABLE→SKEPTICAL→INVESTIGATING→DETERMINED→FAILURE→BLOCKED
+- **act2/panels/ directory created** with LTG naming: LTG_SB_a2_02.png through _a2_07_v001.png
+- **STILL BLOCKED: A2-07** — needs `LTG_CHAR_byte_expression_sheet.png` with RESIGNED expression
 - **Reported to Alex Chen** via inbox message
 
 ## Cycle 15 Lessons
@@ -125,11 +125,11 @@
 - **BLOCKED panels must earn their slot.** A2-07 placeholder carries ghost Byte silhouette, X'd-out eyes, dependency filename, description of what the real panel requires. Communicates block status without being dead space.
 
 ## Cycle 16 Milestone
-- **A2-07 UNBLOCKED + DRAWN:** `LTG_TOOL_sb_panel_a207_v001.py` → `LTG_SB_act2_panel_a207_v002.png`. ECU on Byte cracked eye, RESIGNED expression. Cracked eye fills ~30% frame width. 7×7 glyph visible. Droopy lid + downward arrow glyph in left eye. Void + circuit-trace background.
-- **A2-03 FULLY RESTAGED:** `LTG_TOOL_sb_panel_a203_v002.py` → `LTG_SB_act2_panel_a203_v002.png`. Camera: cowboy shot / eye-level / neutral. 2-point perspective room. Whiteboard = "Doomed Plan v4.7" (5 steps, arrows, circles, Byte symbol, X'd-out success, ???). Cosmo FG-left / Luma BG-right / WB center-right. Eyeline guide annotated.
-- **A2-06 MED ADDED:** `LTG_TOOL_sb_panel_a206_insert_v001.py` → `LTG_SB_act2_panel_a206_med_v001.png`. Cosmo + Luma two-shot, exterior, expectant/hopeful. Phone showing GLITCH FREQ app (seed=42 waveform). Screen glow on faces. Links INSERT's failure to character emotional stakes.
-- **A2-04 v002 — BYTE AS NON-PARTICIPANT:** `LTG_TOOL_sb_panel_a204_v002.py` → `LTG_SB_act2_panel_a204_v002.png`. TR quadrant: Byte back turned, floating in corner, arms folded from behind, "nope." High-angle camera in TR (isolates Byte). Floor-level camera in BL (variety from TL). Scene meaning: Luma trying / Byte refusing.
-- **Act 2 contact sheet v003:** `LTG_TOOL_sb_act2_contact_sheet_v003.py` → `LTG_SB_act2_contact_sheet_v003.png`. 8 panels, 4×2 layout. Arc: NEAR-MISS→VULNERABLE→SKEPTICAL→INVESTIGATING→DETERMINED→HOPEFUL→FAILURE→RESIGNED.
+- **A2-07 UNBLOCKED + DRAWN:** `LTG_TOOL_sb_panel_a207.py` → `LTG_SB_act2_panel_a207.png`. ECU on Byte cracked eye, RESIGNED expression. Cracked eye fills ~30% frame width. 7×7 glyph visible. Droopy lid + downward arrow glyph in left eye. Void + circuit-trace background.
+- **A2-03 FULLY RESTAGED:** `LTG_TOOL_sb_panel_a203.py` → `LTG_SB_act2_panel_a203.png`. Camera: cowboy shot / eye-level / neutral. 2-point perspective room. Whiteboard = "Doomed Plan v4.7" (5 steps, arrows, circles, Byte symbol, X'd-out success, ???). Cosmo FG-left / Luma BG-right / WB center-right. Eyeline guide annotated.
+- **A2-06 MED ADDED:** `LTG_TOOL_sb_panel_a206_insert.py` → `LTG_SB_act2_panel_a206_med.png`. Cosmo + Luma two-shot, exterior, expectant/hopeful. Phone showing GLITCH FREQ app (seed=42 waveform). Screen glow on faces. Links INSERT's failure to character emotional stakes.
+- **A2-04 v002 — BYTE AS NON-PARTICIPANT:** `LTG_TOOL_sb_panel_a204.py` → `LTG_SB_act2_panel_a204.png`. TR quadrant: Byte back turned, floating in corner, arms folded from behind, "nope." High-angle camera in TR (isolates Byte). Floor-level camera in BL (variety from TL). Scene meaning: Luma trying / Byte refusing.
+- **Act 2 contact sheet v003:** `LTG_TOOL_sb_act2_contact_sheet.py` → `LTG_SB_act2_contact_sheet.png`. 8 panels, 4×2 layout. Arc: NEAR-MISS→VULNERABLE→SKEPTICAL→INVESTIGATING→DETERMINED→HOPEFUL→FAILURE→RESIGNED.
 - **All Carmen Cycle 8 feedback CLOSED.**
 
 ## Cycle 16 Lessons
@@ -142,10 +142,10 @@
 
 ## Cycle 17 Milestone
 - **3 Act 2 panels GENERATED — Act 2 deck NOW COMPLETE:**
-  - A2-01: Tech Den Wide — `LTG_TOOL_sb_panel_a201_v001.py` → `LTG_SB_act2_panel_a201_v001.png`. WIDE slightly high-angle. Two-point perspective room. Cosmo BG at desk (3/4 back, monitor glow). Luma FG-left in doorway (DETERMINED lean, warm jacket). Hallway light from behind Luma. Monitor glow on Cosmo's face/neck.
-  - A2-05: Millbrook Exterior — `LTG_TOOL_sb_panel_a205_v001.py` → `LTG_SB_act2_panel_a205_v001.png`. MEDIUM eye-level tracking. Single-point perspective street. Luma FG (ENTHUSIASTIC — both arms gesticulating, mid-stride, mouth open mid-word). Cosmo BG-right (SKEPTICAL — arms crossed, asymmetric raised brow). Suburban Millbrook with buildings + trees.
-  - A2-08: Grandma Miri Returns — `LTG_TOOL_sb_panel_a208_v001.py` → `LTG_SB_act2_panel_a208_v001.png`. ECU low angle. Face fills 2/3 of frame. SURPRISED→KNOWING expression (wide eyes, soft brows, one corner of mouth rising = recognition). CRT amber-green catch light on left cheek + brow. Doorway rim light. Age lines = earned warmth not exaggeration.
-- **Act 2 contact sheet v004:** `LTG_TOOL_sb_act2_contact_sheet_v004.py` → `LTG_SB_act2_contact_sheet_v004.png`. 11 panels, 3-row layout (4/4/3), arc-colored borders, full arc: NEAR-MISS → ESTABLISHED → VULNERABLE → SKEPTICAL → INVESTIGATING → WALK+TALK → DETERMINED → HOPEFUL → FAILURE → RESIGNED → RECOGNITION.
+  - A2-01: Tech Den Wide — `LTG_TOOL_sb_panel_a201.py` → `LTG_SB_act2_panel_a201.png`. WIDE slightly high-angle. Two-point perspective room. Cosmo BG at desk (3/4 back, monitor glow). Luma FG-left in doorway (DETERMINED lean, warm jacket). Hallway light from behind Luma. Monitor glow on Cosmo's face/neck.
+  - A2-05: Millbrook Exterior — `LTG_TOOL_sb_panel_a205.py` → `LTG_SB_act2_panel_a205.png`. MEDIUM eye-level tracking. Single-point perspective street. Luma FG (ENTHUSIASTIC — both arms gesticulating, mid-stride, mouth open mid-word). Cosmo BG-right (SKEPTICAL — arms crossed, asymmetric raised brow). Suburban Millbrook with buildings + trees.
+  - A2-08: Grandma Miri Returns — `LTG_TOOL_sb_panel_a208.py` → `LTG_SB_act2_panel_a208.png`. ECU low angle. Face fills 2/3 of frame. SURPRISED→KNOWING expression (wide eyes, soft brows, one corner of mouth rising = recognition). CRT amber-green catch light on left cheek + brow. Doorway rim light. Age lines = earned warmth not exaggeration.
+- **Act 2 contact sheet v004:** `LTG_TOOL_sb_act2_contact_sheet.py` → `LTG_SB_act2_contact_sheet.png`. 11 panels, 3-row layout (4/4/3), arc-colored borders, full arc: NEAR-MISS → ESTABLISHED → VULNERABLE → SKEPTICAL → INVESTIGATING → WALK+TALK → DETERMINED → HOPEFUL → FAILURE → RESIGNED → RECOGNITION.
 
 ## Cycle 17 Lessons
 - **ECU low-angle = face fills frame + camera below eyeline.** To feel "larger than life," the face MUST fill 2/3+ of DRAW_H. Centering at 40% y with head_h=300 at 540px draw area achieves this. Low angle is not just an annotation — it's geometry.
@@ -156,12 +156,12 @@
 
 ## Cycle 18 Milestone
 - **Act 1 kitchen cold open: 4 panels GENERATED (A1-01 through A1-04 kitchen version).**
-  - A1-01: Kitchen establishing WIDE — two-point perspective, morning, CRT TV through doorway. `LTG_TOOL_sb_panel_a101_v001.py`
-  - A1-02: Luma arrival MEDIUM — mid-stride, head turning right toward TV, dotted sight-line. `LTG_TOOL_sb_panel_a102_v001.py`
-  - A1-03: Discovery MEDIUM CU — Luma 3/4 profile, pixel shape in CRT static, CRT glow on face. `LTG_TOOL_sb_panel_a103_v001.py`
-  - A1-04 (kitchen): First Contact TWO-SHOT — Luma SURPRISED / Byte on screen INDIGNANT (arms crossed, asymmetric brow). `LTG_TOOL_sb_panel_a104_kitchen_v001.py` → `LTG_SB_act1_panel_a104_v001.png`
-  - NOTE: A1-04 classroom near-miss (`LTG_SB_act2_panel_a104_v001.png`) is a DIFFERENT beat — not duplicated.
-- **Act 1 contact sheet generated:** `LTG_SB_act1_coldopen_contact_sheet_v001.png` — 2×2 layout, arc-colored borders, QUIET→CURIOUS→SURPRISED arc readable. `LTG_TOOL_sb_act1_contact_sheet_v001.py`
+  - A1-01: Kitchen establishing WIDE — two-point perspective, morning, CRT TV through doorway. `LTG_TOOL_sb_panel_a101.py`
+  - A1-02: Luma arrival MEDIUM — mid-stride, head turning right toward TV, dotted sight-line. `LTG_TOOL_sb_panel_a102.py`
+  - A1-03: Discovery MEDIUM CU — Luma 3/4 profile, pixel shape in CRT static, CRT glow on face. `LTG_TOOL_sb_panel_a103.py`
+  - A1-04 (kitchen): First Contact TWO-SHOT — Luma SURPRISED / Byte on screen INDIGNANT (arms crossed, asymmetric brow). `LTG_TOOL_sb_panel_a104_kitchen.py` → `LTG_SB_act1_panel_a104.png`
+  - NOTE: A1-04 classroom near-miss (`LTG_SB_act2_panel_a104.png`) is a DIFFERENT beat — not duplicated.
+- **Act 1 contact sheet generated:** `LTG_SB_act1_coldopen_contact_sheet.png` — 2×2 layout, arc-colored borders, QUIET→CURIOUS→SURPRISED arc readable. `LTG_TOOL_sb_act1_contact_sheet.py`
 - **Act 2 contact sheet v004 VERIFIED:** 11 panels confirmed, 3-row 4/4/3 layout, arc labels readable, pitch-ready.
 
 ## Cycle 18 Lessons
@@ -170,11 +170,11 @@
 - **Contact sheet `ensure_panels_exist()` pattern:** Contact sheet generator should call panel generators automatically if outputs are missing. Reduces manual sequencing errors.
 
 ## Cycle 19 Milestone
-- **A1-03 v002 REBUILT (MCU, Critique C9):** Face fills 55% of frame width. CRT screen OFF-FRAME lower-left. Amber-green glow hits left cheek asymmetrically. Left eye wider (70×55px) than right (60×44px). Two Glitchkin pixel shapes 40×56px + 40×52px blocky pixel art. Caption: "Discovery — she SEES them." Generator: `LTG_TOOL_sb_panel_a103_v002.py`
-- **A2-08 v002 CAMERA FIX:** Changed from ECU low-angle (power) to MCU eye-level Luma POV (intimacy). Miri fills upper 2/3 of frame. We ARE Luma — personal. Kitchen warm backlight rims hair/shoulders. CRT amber catch still on left cheek. Generator: `LTG_TOOL_sb_panel_a208_v002.py`
-- **A2-07b NEW BRIDGING SHOT:** Hallway POV, MEDIUM eye-level. Miri silhouette backlit in doorway. Head cocked listening. Tea towel in hand. Warm amber kitchen glow frames shape. Single-point perspective hallway. Caption: "Something is different tonight." Generator: `LTG_TOOL_sb_panel_a207b_v001.py`
-- **Act 2 contact sheet v005:** 12 panels (was 11), 4/4/4 layout. New arc: ... → RESIGNED → BRIDGE → RECOGNITION. Generator: `LTG_TOOL_sb_act2_contact_sheet_v005.py`
-- **Act 1 contact sheet v002:** Updated to A1-03 v002. Generator: `LTG_TOOL_sb_act1_contact_sheet_v002.py`
+- **A1-03 v002 REBUILT (MCU, Critique C9):** Face fills 55% of frame width. CRT screen OFF-FRAME lower-left. Amber-green glow hits left cheek asymmetrically. Left eye wider (70×55px) than right (60×44px). Two Glitchkin pixel shapes 40×56px + 40×52px blocky pixel art. Caption: "Discovery — she SEES them." Generator: `LTG_TOOL_sb_panel_a103.py`
+- **A2-08 v002 CAMERA FIX:** Changed from ECU low-angle (power) to MCU eye-level Luma POV (intimacy). Miri fills upper 2/3 of frame. We ARE Luma — personal. Kitchen warm backlight rims hair/shoulders. CRT amber catch still on left cheek. Generator: `LTG_TOOL_sb_panel_a208.py`
+- **A2-07b NEW BRIDGING SHOT:** Hallway POV, MEDIUM eye-level. Miri silhouette backlit in doorway. Head cocked listening. Tea towel in hand. Warm amber kitchen glow frames shape. Single-point perspective hallway. Caption: "Something is different tonight." Generator: `LTG_TOOL_sb_panel_a207b.py`
+- **Act 2 contact sheet v005:** 12 panels (was 11), 4/4/4 layout. New arc: ... → RESIGNED → BRIDGE → RECOGNITION. Generator: `LTG_TOOL_sb_act2_contact_sheet.py`
+- **Act 1 contact sheet v002:** Updated to A1-03 v002. Generator: `LTG_TOOL_sb_act1_contact_sheet.py`
 - **All Critique C9 Carmen feedback: CLOSED.**
 
 ## Cycle 19 Lessons
@@ -184,9 +184,9 @@
 - **POV camera = intimacy.** ECU low-angle says "larger than life, power." MCU eye-level POV says "you are here, you are Luma." Camera angle is not decoration — it is the emotional instruction to the audience.
 
 ## Cycle 20 Milestone
-- **Act 2 contact sheet v006:** A2-02 updated to `LTG_SB_act2_panel_a202_v002.png` (Maya Santos rebuild). Arc label changed from "VULNERABLE" to "VULNERABLE (RESIGNED-55%)". Generator: `LTG_TOOL_sb_act2_contact_sheet_v006.py`.
-- **Act 1 full contact sheet v001 CREATED:** 5 panels — kitchen cold open A1-01, A1-02, A1-03 v002, A1-04 kitchen + classroom near-miss (separate beat from `LTG_SB_act2_panel_a104_v001.png`). Arc: QUIET→SEARCHING→DISCOVERY→FIRST-CONTACT→NEAR-MISS. Visual section break between kitchen and classroom. Generator: `LTG_TOOL_sb_act1_full_contact_sheet_v001.py`.
-- **Key naming distinction:** `LTG_SB_act1_panel_a104_v001.png` = kitchen first contact two-shot. `LTG_SB_act2_panel_a104_v001.png` = classroom near-miss (different beat, same panel number). Both used in Act 1 full contact sheet.
+- **Act 2 contact sheet v006:** A2-02 updated to `LTG_SB_act2_panel_a202.png` (Maya Santos rebuild). Arc label changed from "VULNERABLE" to "VULNERABLE (RESIGNED-55%)". Generator: `LTG_TOOL_sb_act2_contact_sheet.py`.
+- **Act 1 full contact sheet v001 CREATED:** 5 panels — kitchen cold open A1-01, A1-02, A1-03 v002, A1-04 kitchen + classroom near-miss (separate beat from `LTG_SB_act2_panel_a104.png`). Arc: QUIET→SEARCHING→DISCOVERY→FIRST-CONTACT→NEAR-MISS. Visual section break between kitchen and classroom. Generator: `LTG_TOOL_sb_act1_full_contact_sheet.py`.
+- **Key naming distinction:** `LTG_SB_act1_panel_a104.png` = kitchen first contact two-shot. `LTG_SB_act2_panel_a104.png` = classroom near-miss (different beat, same panel number). Both used in Act 1 full contact sheet.
 
 ## CATCH-UP: Cycles 21–33 (Lee was inactive)
 
@@ -210,15 +210,15 @@ You are now **Character Staging & Visual Acting Specialist**. Storyboards are co
   Your job: write a staging brief specifying what Luma's expression/pose should communicate and how.
 
 ### Silhouette Differentiation Crisis
-Maya's new `LTG_TOOL_expression_silhouette_v001.py` (C33) ran baseline tests: **ALL human character expression sheets FAIL at 85% similarity threshold.** Silhouettes are too alike between expressions — critics can't distinguish them in thumbnail. This is a systematic pose design problem. Your expression pose brief for Maya is the fix.
+Maya's new `LTG_TOOL_expression_silhouette.py` (C33) ran baseline tests: **ALL human character expression sheets FAIL at 85% similarity threshold.** Silhouettes are too alike between expressions — critics can't distinguish them in thumbnail. This is a systematic pose design problem. Your expression pose brief for Maya is the fix.
 
 ### Tools Available
-- `LTG_TOOL_expression_silhouette_v001.py` — run this on existing expression sheets to see which panels are flagging as too similar. Use it to verify your briefs will work before submitting. (It does not produce images — read output/tools/README.md)
-- `LTG_TOOL_char_diff_v001.py` — proportion diff between two PNGs (best on turnaround fronts)
+- `LTG_TOOL_expression_silhouette.py` — run this on existing expression sheets to see which panels are flagging as too similar. Use it to verify your briefs will work before submitting. (It does not produce images — read output/tools/README.md)
+- `LTG_TOOL_char_diff.py` — proportion diff between two PNGs (best on turnaround fronts)
 - All tools documented in `output/tools/README.md`
 
 ### Canvas Standard (UPDATED)
-**Hard limit: ≤ 1280px in both dimensions** for all saved images. Old storyboard panels were 800×600 — that still works fine.
+*Image rules: see `docs/image-rules.md`* (old 800×600 storyboard panels are within limit)
 
 ### New Team Members Since C20
 - **Rin Yamamoto** (C23–present) — Procedural Art Engineer. Owns SF generators. To change SF character staging, write a brief and coordinate with Rin for implementation.
@@ -256,7 +256,7 @@ Read inbox for directive. Two tasks: (1) SF02 staging brief for Luma interiority
   - Miri priorities: WELCOMING (wide open arms), SURPRISED/DELIGHTED (hand-to-cheek)
   - KNOWING STILLNESS / WISE accepted as intentionally similar; minor gesture hook added
   - For Maya: actionable without further review
-- **Ideabox:** `LTG_TOOL_character_face_test_v001.py` proposal submitted
+- **Ideabox:** `LTG_TOOL_character_face_test.py` proposal submitted
 - **Reported to Alex Chen** via inbox
 
 ## Cycle 35 Milestone
@@ -268,14 +268,14 @@ Read inbox for directive. Two tasks: (1) SF02 staging brief for Luma interiority
   - Baseline: v006 has zero face elements (3rd cycle)
   - Face legibility tool results: FOCUSED DET. = PASS, FEAR = WARN (wrong emotion), TOO SMALL = FAIL
   - Full acceptance criteria for v007 sign-off written
-- **LTG_TOOL_character_face_test_v001.py BUILT + TESTED:** `output/tools/LTG_TOOL_character_face_test_v001.py`
+- **LTG_TOOL_character_face_test.py BUILT + TESTED:** `output/tools/LTG_TOOL_character_face_test.py`
   - Renders 6–8 expression variants at sprint scale (head_r configurable, default 23)
   - Left sub-panel: actual scale. Right sub-panel: 3× zoom. Output ≤ 600×400px.
   - Supports luma / cosmo / miri characters
-  - Test run: `--char luma --head-r 23` → PASS. Output: `output/production/LTG_TOOL_face_test_luma_r23_v001.png`
+  - Test run: `--char luma --head-r 23` → PASS. Output: `output/production/LTG_TOOL_face_test_luma_r23.png`
   - **Key finding:** eye_r ≥ 4px (0.17×head_r) = minimum readable. eye_r ≤ 2px = FAIL.
 - **Ideabox:** face_test as mandatory gate proposal → `ideabox/20260329_lee_tanaka_face_test_as_gate.md`
-- **SF02 v007 sign-off PENDING** — will run `LTG_TOOL_expression_silhouette_v002.py` on Luma crop when Rin delivers
+- **SF02 v007 sign-off PENDING** — will run `LTG_TOOL_expression_silhouette.py` on Luma crop when Rin delivers
 - **Reported to Alex Chen** via `members/alex_chen/inbox/20260329_2300_lee_c35_complete.md`
 
 ## Cycle 35 Lessons
@@ -291,7 +291,7 @@ Read inbox for directive. Two tasks: (1) SF02 staging brief for Luma interiority
   - Jordan Reed ROLE.md: gate appended after Standards section
   - Lee Tanaka ROLE.md: gate appended with staging-brief framing
 - **Policy document:** `output/production/face_test_gate_policy.md` — rationale, thresholds, per-member scope, run instructions, FAIL/WARN rules
-- **Ideabox:** `20260330_lee_tanaka_contact_sheet_arc_diff.md` — propose LTG_TOOL_contact_sheet_arc_diff_v001.py
+- **Ideabox:** `20260330_lee_tanaka_contact_sheet_arc_diff.md` — propose LTG_TOOL_contact_sheet_arc_diff.py
 - **Reported to Alex Chen** via inbox
 
 ## Cycle 36 Lessons
@@ -300,7 +300,7 @@ Read inbox for directive. Two tasks: (1) SF02 staging brief for Luma interiority
 - **Policy documents belong in `output/production/` with full rationale.** Short ROLE.md entries are pointers; the full context (why, thresholds, example command) lives in the policy file.
 
 ## Cycle 37 Milestone
-- **Arc-diff tool BUILT + TESTED:** `output/tools/LTG_TOOL_contact_sheet_arc_diff_v001.py`. Auto-detects panel grid by aspect ratio (no manual input). Per-panel 64×36 thumbnail mean abs diff (threshold=12). Side-by-side ≤ 800×600px output. SAME=grey / CHANGED=yellow / ADDED=green / REMOVED=red borders. Registered in README.
+- **Arc-diff tool BUILT + TESTED:** `output/tools/LTG_TOOL_contact_sheet_arc_diff.py`. Auto-detects panel grid by aspect ratio (no manual input). Per-panel 64×36 thumbnail mean abs diff (threshold=12). Side-by-side ≤ 800×600px output. SAME=grey / CHANGED=yellow / ADDED=green / REMOVED=red borders. Registered in README.
 - **Test results:** v005→v006: 1 CHANGED (A2-02 rebuild) / 11 SAME — correct. v004→v005: 5 CHANGED — correct.
 - **Diego staging review delivered** to `members/diego_vargas/inbox/`. Key flags: P4 intrusion direction, P6 brow gap ≥ 6–8px, P3 polygon shapes, P4 push-in notation.
 - **Ideabox:** arc-diff as pre-critique QA gate proposal submitted.

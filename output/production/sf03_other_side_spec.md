@@ -7,10 +7,10 @@
 **Status:** APPROVED — unblocks Jordan Reed to build generator next cycle
 **References:**
 - `output/color/style_frames/style_frame_03_other_side.md` (full frame spec — primary source)
-- `output/tools/LTG_TOOL_style_frame_01_discovery_v003.py` (SF01 generator pattern to follow)
-- `output/tools/LTG_TOOL_style_frame_02_glitch_storm_v001.py` (SF02 generator pattern)
-- `output/color/style_frames/LTG_COLOR_styleframe_discovery_v003.png` (SF01 rendered output)
-- `output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_v002.png` (SF02 rendered output)
+- `output/tools/LTG_TOOL_style_frame_01_discovery.py` (SF01 generator pattern to follow)
+- `output/tools/LTG_TOOL_style_frame_02_glitch_storm.py` (SF02 generator pattern)
+- `output/color/style_frames/LTG_COLOR_styleframe_discovery.png` (SF01 rendered output)
+- `output/color/style_frames/LTG_COLOR_styleframe_glitch_storm.png` (SF02 rendered output)
 - `output/color/style_frames/compositions/frame03_other_side_composition.png` (rough composition)
 
 ---
@@ -18,8 +18,8 @@
 ## Purpose of This Document
 
 This spec translates the full artistic spec in `style_frame_03_other_side.md` into a precise
-technical brief for Jordan Reed to build `LTG_TOOL_style_frame_03_other_side_v001.py`.
-The generator must produce `LTG_COLOR_styleframe_otherside_v001.png` at 1920×1080.
+technical brief for Jordan Reed to build `LTG_TOOL_style_frame_03_other_side.py`.
+The generator must produce `LTG_COLOR_styleframe_otherside.png` at 1920×1080.
 
 All color values are from `master_palette.md`. No ad-hoc colors are permitted.
 Where a color is not in the master palette, it is specified as a derived RGB tuple with derivation noted.
@@ -30,7 +30,7 @@ Where a color is not in the master palette, it is specified as a derived RGB tup
 
 - **Size:** 1920 × 1080 (16:9, standard production canvas — matches SF01 and SF02)
 - **Color mode:** RGB (convert RGBA composites back to RGB before save, per pipeline standard)
-- **Output path:** `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_otherside_v001.png`
+- **Output path:** `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_otherside.png`
 
 ---
 
@@ -343,7 +343,7 @@ This is the opposite of the Real World, and it must be deliberate and consistent
 ## Output File
 
 ```
-/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_otherside_v001.png
+/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_otherside.png
 ```
 
 **Naming note:** "otherside" (one word, no hyphen) per LTG naming convention (lowercase, underscores only).
@@ -352,7 +352,7 @@ This is the opposite of the Real World, and it must be deliberate and consistent
 
 ## Generator Script Spec
 
-**File:** `LTG_TOOL_style_frame_03_other_side_v001.py`
+**File:** `LTG_TOOL_style_frame_03_other_side.py`
 **Location:** `/home/wipkat/team/output/tools/`
 
 **Structure to follow (based on SF01/SF02 generator pattern):**
@@ -410,6 +410,6 @@ This is the opposite of the Real World, and it must be deliberate and consistent
 ---
 
 *Alex Chen — Art Director — Cycle 14 — 2026-03-29*
-*This spec unblocks Jordan Reed to build `LTG_TOOL_style_frame_03_other_side_v001.py` next cycle.*
+*This spec unblocks Jordan Reed to build `LTG_TOOL_style_frame_03_other_side.py` next cycle.*
 *Source of truth for artistic intent: `style_frame_03_other_side.md` (Sam Kowalski, primary spec).*
 *This document translates that intent into generator implementation specifics.*

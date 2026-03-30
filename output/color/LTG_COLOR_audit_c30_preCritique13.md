@@ -18,7 +18,7 @@
 
 ## Tool Run — Full Results
 
-Tool: `LTG_TOOL_color_verify_v001.py` | Tolerance: max_delta_hue = 5°
+Tool: `LTG_TOOL_color_verify.py` | Tolerance: max_delta_hue = 5°
 
 ### SF01 v004 — Discovery
 
@@ -124,7 +124,7 @@ BYTE_TEAL, ELECTRIC_CYAN, and all other GL colors show 0 pixels within radius=40
 
 This is the **PENDING ALEX CHEN DECISION** from Carry Forward: intentional scene lighting (Byte receiving soft indirect lamp light, reducing his teal to a dimmer register) vs. generation error.
 
-**Additionally: the SF04 generator source is missing.** `LTG_TOOL_styleframe_luma_byte_v001/v002/v003.py` are all forwarding stubs that reference `LTG_COLOR_styleframe_luma_byte_v001/v002/v003.py` — the original source files. Those originals are not on disk. The PNG was generated from them but the generators cannot be re-run. **This is a production risk: SF04 v003 cannot be regenerated if a fix is required.**
+**Additionally: the SF04 generator source is missing.** `LTG_TOOL_styleframe_luma_byte/v002/v003.py` are all forwarding stubs that reference `LTG_COLOR_styleframe_luma_byte_v001/v002/v003.py` — the original source files. Those originals are not on disk. The PNG was generated from them but the generators cannot be re-run. **This is a production risk: SF04 v003 cannot be regenerated if a fix is required.**
 
 **Verdict: SUNLIT_AMBER FAIL is FALSE POSITIVE — CLEARED. BYTE_TEAL ABSENCE IS AN OUTSTANDING CONCERN.**
 

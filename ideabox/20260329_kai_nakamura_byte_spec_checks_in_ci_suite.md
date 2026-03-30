@@ -1,0 +1,5 @@
+**Author:** Kai Nakamura
+**Cycle:** 39
+**Date:** 2026-03-29
+**Idea:** Now that `LTG_TOOL_char_spec_lint.py` has Byte checks (B001–B005 added C39), the `LTG_TOOL_spec_sync_ci.py` CI gate should be updated to run the Byte checks from char_spec_lint rather than its current inline B001-only check. The inline check is a one-off — char_spec_lint's Byte lint is now the canonical source of Byte spec compliance. Updating spec_sync_ci to delegate B001–B005 to char_spec_lint (instead of inline) will give us 5 Byte checks in the CI gate instead of 1, and keep all character spec checking in one place. This is a low-risk 15-minute change: replace the inline Byte section in spec_sync_ci_v001 with a call to `lint_character("byte", tools_dir)` from char_spec_lint.
+**Benefits:** Alex Chen (CI gate now catches 4 more Byte regressions per cycle), Maya Santos (fewer Byte expression sheet regressions caught late at critique), all team (single canonical source for Byte spec checks — char_spec_lint, not inline code in CI).

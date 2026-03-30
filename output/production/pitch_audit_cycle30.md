@@ -14,7 +14,7 @@ All four C29 deliverables **landed clean** this cycle:
 | Maya Santos | Luma expression sheet v007 (3.2 heads, h×0.22 eyes) | COMPLETE |
 | Maya Santos | Character lineup v006 (Luma 3.2 heads) | COMPLETE |
 | Rin Yamamoto | SF01 v004 (procedural quality lift + blush correction) | COMPLETE |
-| Kai Nakamura | Naming compliance audit + cleanup script (`LTG_TOOL_naming_cleanup_v001.py`) | COMPLETE |
+| Kai Nakamura | Naming compliance audit + cleanup script (`LTG_TOOL_naming_cleanup.py`) | COMPLETE |
 
 The C29 risk items identified in the C29 audit have been addressed. No blockers carried to C30.
 
@@ -29,7 +29,7 @@ SF01 v004 applies all procedural techniques (wobble_polygon, variable_stroke, ad
 v007 canonically applies 3.2 heads + h×0.22 eye spec. Lineup v006 propagates the same values. The multi-cycle Luma proportion inconsistency is now closed across character sheets.
 
 ### Naming Compliance — PARTIALLY RESOLVED (Kai, C29)
-Kai confirmed all 22 non-compliant originals are audited and `LTG_TOOL_naming_cleanup_v001.py` is ready. The script has **not yet been run** — originals still on disk. Forwarding stubs are still present. The cleanup must execute before Critique 13. Reinhardt will check.
+Kai confirmed all 22 non-compliant originals are audited and `LTG_TOOL_naming_cleanup.py` is ready. The script has **not yet been run** — originals still on disk. Forwarding stubs are still present. The cleanup must execute before Critique 13. Reinhardt will check.
 
 ---
 
@@ -41,7 +41,7 @@ Rin's C29 report focuses on procedural techniques and blush fix. No mention of v
 **C30 action:** Kai runs a tool-based verification of Luma pixel proportions in SF01 v004 against the 3.2-head construction spec from turnaround v003. If out of spec, Rin must deliver a v005 with corrected Luma construction before Critique 13.
 
 ### 2. Naming cleanup script not yet executed
-The script exists but the files still exist on disk. Running `LTG_TOOL_naming_cleanup_v001.py` without `--dry-run` removes the 22 originals. Until this runs, the forwarding stubs remain live and Reinhardt's naming compliance target from C12 is technically open.
+The script exists but the files still exist on disk. Running `LTG_TOOL_naming_cleanup.py` without `--dry-run` removes the 22 originals. Until this runs, the forwarding stubs remain live and Reinhardt's naming compliance target from C12 is technically open.
 
 **C30 action:** Kai dry-runs, verifies, then executes the cleanup script. Confirms zero non-compliant .py files remain outside `legacy/`.
 

@@ -27,8 +27,8 @@ Environment & Background Artist — owns the background/environment asset pipeli
 - Project naming: `LTG_ENV_[descriptor]_v[###].png`
 - Output location: `output/backgrounds/environments/`
 - Image size rule: ≤ 1280px in both dimensions
-- Warmth inject utility: `LTG_TOOL_warmth_inject_v001.py` (run after generation if warm/cool fails)
-- QA tool: `LTG_TOOL_render_qa_v001.py` (v1.3.0) — run on all output before submitting
+- Warmth inject utility: `LTG_TOOL_warmth_inject.py` (run after generation if warm/cool fails)
+- QA tool: `LTG_TOOL_render_qa.py` (v1.3.0) — run on all output before submitting
 - Must read output/tools/README.md before starting each session
 
 ## Standards

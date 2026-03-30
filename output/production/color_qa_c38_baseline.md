@@ -82,14 +82,14 @@ SF04 "luma_byte" filename not matched by `warmth_lint_v004.infer_world_type()` �
 falls back to threshold=12.0. Actual world type is REAL (soft-key discovery scene). Sep=1.1
 reflects a near-zero warm/cool split which is expected for a soft-lit two-character interaction.
 Documented as FP-006 carry-forward. Fix requires adding "luma_byte" to warmth_lint_v004 REAL rules
-OR switching render_qa to import from `LTG_TOOL_world_type_infer_v001` (which has the pattern).
+OR switching render_qa to import from `LTG_TOOL_world_type_infer` (which has the pattern).
 **Not a production error.**
 
 ---
 
 ## New Tools (C38)
 
-- **`LTG_TOOL_world_type_infer_v001.py`** — standalone world-type inference helper.
+- **`LTG_TOOL_world_type_infer.py`** — standalone world-type inference helper.
   Includes "luma_byte" → REAL pattern, batch mode, `--threshold` flag for shell capture,
   `--list-rules` for rule inspection.
 
@@ -122,4 +122,4 @@ correct. Historical files not updated (superseded).
 2. **SF04 world_type=None** — warmth_lint_v004 missing "luma_byte" pattern. Fix options:
    (a) Update warmth_lint_v004, or (b) update render_qa to use world_type_infer_v001.
 3. **grandma_miri_expression_sheet_v002.py** — historical, slipper still wrong. Not blocking.
-4. **LTG_TOOL_character_lineup_v005/v006** — historical, slipper still wrong. Not blocking.
+4. **LTG_TOOL_character_lineup/v006** — historical, slipper still wrong. Not blocking.

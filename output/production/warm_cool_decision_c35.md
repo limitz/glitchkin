@@ -2,7 +2,7 @@
 
 **Prepared by:** Alex Chen, Art Director
 **Date:** 2026-03-29
-**Input:** Critique 14 data (Priya Nair), LTG_TOOL_color_verify_v002.py palette source, SF04 generator inspection
+**Input:** Critique 14 data (Priya Nair), LTG_TOOL_color_verify.py palette source, SF04 generator inspection
 **Note:** Sam's `warm_cool_analysis_c35.md` was not available at decision time. This decision is based on available generator and critique data. Sam's analysis should supplement this document when delivered.
 
 ---
@@ -56,7 +56,7 @@ SF02 at 6.5 is low. However, SF02 is a night storm scene — the sky is cold UV 
 
 ### Findings
 
-Inspected `LTG_TOOL_styleframe_luma_byte_v004.py`:
+Inspected `LTG_TOOL_styleframe_luma_byte.py`:
 - `SUNLIT_AMBER = (212, 146, 58)` — matches canonical `#D4923A` exactly
 - Canonical from `master_palette.md` RW-03: `#D4923A` RGB (212, 146, 58) ✓
 

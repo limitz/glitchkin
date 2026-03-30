@@ -1,13 +1,13 @@
 # Color QA Baseline — Cycle 36
 **Author:** Sam Kowalski (Color & Style Artist)
 **Date:** 2026-03-30
-**Tool versions:** LTG_TOOL_palette_warmth_lint_v004.py · LTG_TOOL_render_qa_v001.py (v1.3.0)
+**Tool versions:** LTG_TOOL_palette_warmth_lint.py · LTG_TOOL_render_qa.py (v1.3.0)
 
 ---
 
 ## 1. Warmth Lint v004 — Master Palette
 
-**Command:** `python LTG_TOOL_palette_warmth_lint_v004.py output/color/palettes/master_palette.md --no-auto-world-type`
+**Command:** `python LTG_TOOL_palette_warmth_lint.py output/color/palettes/master_palette.md --no-auto-world-type`
 
 | Prefixes | Entries Checked | Violations | Result |
 |---|---|---|---|
@@ -28,9 +28,9 @@ Thresholds available via `--world-threshold-only` for Kai Nakamura's render_qa C
 
 | World Type | warm_cool_threshold | Command |
 |---|---|---|
-| REAL | 12 | `python LTG_TOOL_palette_warmth_lint_v004.py --world-type REAL --world-threshold-only` |
-| GLITCH | 3 | `python LTG_TOOL_palette_warmth_lint_v004.py --world-type GLITCH --world-threshold-only` |
-| OTHER_SIDE | 0 | `python LTG_TOOL_palette_warmth_lint_v004.py --world-type OTHER_SIDE --world-threshold-only` |
+| REAL | 12 | `python LTG_TOOL_palette_warmth_lint.py --world-type REAL --world-threshold-only` |
+| GLITCH | 3 | `python LTG_TOOL_palette_warmth_lint.py --world-type GLITCH --world-threshold-only` |
+| OTHER_SIDE | 0 | `python LTG_TOOL_palette_warmth_lint.py --world-type OTHER_SIDE --world-threshold-only` |
 
 The GLITCH and OTHER_SIDE advisories on the full master_palette.md are **expected** — the palette contains entries for all three worlds. The world-type check is designed for per-scene generator files, not the master palette document.
 
@@ -68,7 +68,7 @@ The render_qa `_check_warm_cool()` tests top-half vs. bottom-half median hue sep
 
 ## 5. New Tool: ltg_warmth_guarantees.json
 
-Created at `output/tools/ltg_warmth_guarantees.json`. This file is now the primary config source for `LTG_TOOL_palette_warmth_lint_v004.py`. Contents:
+Created at `output/tools/ltg_warmth_guarantees.json`. This file is now the primary config source for `LTG_TOOL_palette_warmth_lint.py`. Contents:
 - `warm_prefixes`: `["CHAR-M", "CHAR-L"]`
 - `soft_tolerance`: `{"G": 0, "B": 0}` (strict)
 - `world_presets`: REAL (threshold=12), GLITCH (threshold=3), OTHER_SIDE (threshold=0)
@@ -93,7 +93,7 @@ All three entries pass warmth guarantee: R is dominant channel in all cases.
 
 ## 7. Open Items / Carry Forward
 
-- **Kai Nakamura to integrate `--world-type` into `LTG_TOOL_render_qa_v001.py`**: Use `LTG_TOOL_palette_warmth_lint_v004.py --world-type X --world-threshold-only` to get per-world threshold. Suggested: `render_qa --world-type OTHER_SIDE` should set `_WARM_COOL_MIN_SEPARATION=0` (disabled) for SF03/SF04.
+- **Kai Nakamura to integrate `--world-type` into `LTG_TOOL_render_qa.py`**: Use `LTG_TOOL_palette_warmth_lint.py --world-type X --world-threshold-only` to get per-world threshold. Suggested: `render_qa --world-type OTHER_SIDE` should set `_WARM_COOL_MIN_SEPARATION=0` (disabled) for SF03/SF04.
 - **SF03 color fidelity FAIL** remains documented FP-003 (UV_PURPLE gradient AA median pull). Not a production error.
 - **SF04 pre-existing issues** (ambiguous silhouette grade, Byte teal below canonical, max brightness 198) — carried from C31. Alex Chen decision pending on any revisions.
 - **Luma expression sheet filename**: Does not match "expression_sheet" pattern in render_qa inference — warm/cool check incorrectly runs. Low priority; could alias `_expressions_` in inference rules.

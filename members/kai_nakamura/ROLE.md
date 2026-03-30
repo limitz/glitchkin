@@ -28,9 +28,8 @@
 
 ## Critical Standards
 
-- Open source only: Python + PIL/Pillow + numpy
+- Open source only — see `docs/pil-standards.md` for authorized deps, draw context rules, and naming
 - All procedural elements: seeded RNG for reproducibility
 - Shared library must be backward-compatible
-- After img.paste(), always refresh `draw = ImageDraw.Draw(img)`
 - Document all public functions with docstrings
 - Current status: Active — Cycle 21

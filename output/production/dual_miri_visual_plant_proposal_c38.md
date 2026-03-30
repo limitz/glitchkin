@@ -34,8 +34,8 @@ The plant must be:
 ## Asset Candidates
 
 ### Candidate A — Grandma Kitchen (RECOMMENDED)
-**Asset:** `LTG_ENV_grandma_kitchen_v004.png`
-**Generator:** `LTG_TOOL_bg_grandma_kitchen_v004.py`
+**Asset:** `LTG_ENV_grandma_kitchen.png`
+**Generator:** `LTG_TOOL_bg_grandma_kitchen.py`
 
 The Grandma Miri kitchen is the strongest candidate because:
 1. It is the scene where "everything begins" — the CRT doorway is already present
@@ -61,8 +61,8 @@ will be precisely the anchor the emotional payoff needs.
 ---
 
 ### Candidate B — Grandma Living Room
-**Asset:** `LTG_ENV_grandma_living_room_v001.png`
-**Generator:** `LTG_TOOL_env_grandma_living_room_v001.py`
+**Asset:** `LTG_ENV_grandma_living_room.png`
+**Generator:** `LTG_TOOL_env_grandma_living_room.py`
 
 The living room has less narrative weight in the pitch package — it is not the scene where
 discovery happens. A plant here would be less meaningful in hindsight.
@@ -73,8 +73,8 @@ in the same approach as Candidate A.
 ---
 
 ### Candidate C — SF01 Discovery (v005)
-**Asset:** `LTG_COLOR_styleframe_discovery_v005.png`
-**Generator:** `LTG_TOOL_styleframe_discovery_v005.py`
+**Asset:** `LTG_COLOR_styleframe_discovery.png`
+**Generator:** `LTG_TOOL_styleframe_discovery.py`
 
 SF01 is the strongest NARRATIVE candidate because it is already being revised for C38
 (Ingrid's sight-line fix — Lee Tanaka Brief 3 to Rin Yamamoto). If we are rebuilding

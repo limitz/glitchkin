@@ -1,7 +1,7 @@
 # Jordan Reed — Memory
 
 ## Cycle 39 Deliverables
-- `LTG_TOOL_bg_grandma_kitchen_v005.py` → `LTG_ENV_grandma_kitchen_v005.png` (1280×720) GENERATED ✓
+- `LTG_TOOL_bg_grandma_kitchen.py` → `LTG_ENV_grandma_kitchen.png` (1280×720) GENERATED ✓
   - Dual-Miri visual plant: handwritten "MIRI" label on cream paper scrap on fridge lower door
   - Label position: x=906–946, y=461–477 (right-center of lower fridge door, near travel magnets)
   - Real World palette only: AGED_CREAM paper, LINE_DARK ink, warm amber magnet pip
@@ -39,16 +39,16 @@
 - **Alex cold open decision** is the P1 blocker for both tasks.
 
 ## Cycle 37 Deliverables
-- `LTG_TOOL_warmth_inject_hook_v001.py` — shared hook module for the --check-warmth pipeline
+- `LTG_TOOL_warmth_inject_hook.py` — shared hook module for the --check-warmth pipeline
   - API: `run_warmth_hook(out_path, enabled=True) → str|None`
   - Uses `importlib.util` dynamic import — no sys.path manipulation
   - Returns `_warminjected.png` path if injection applied, else None
 - Added `--check-warmth` flag to 4 env generators (all syntax-checked, no runtime needed):
-  - `LTG_TOOL_bg_tech_den_v004.py` — `if __name__ == "__main__"` block updated
-  - `LTG_TOOL_bg_school_hallway_v002.py` — `if __name__ == "__main__"` block updated
-  - `LTG_TOOL_bg_millbrook_main_street_v002.py` — `if __name__ == "__main__"` block updated
-  - `LTG_TOOL_bg_grandma_kitchen_v004.py` — `if __name__ == "__main__"` block updated
-- Registered `LTG_TOOL_warmth_inject_hook_v001.py` in `output/tools/README.md` ✓
+  - `LTG_TOOL_bg_tech_den.py` — `if __name__ == "__main__"` block updated
+  - `LTG_TOOL_bg_school_hallway.py` — `if __name__ == "__main__"` block updated
+  - `LTG_TOOL_bg_millbrook_main_street.py` — `if __name__ == "__main__"` block updated
+  - `LTG_TOOL_bg_grandma_kitchen.py` — `if __name__ == "__main__"` block updated
+- Registered `LTG_TOOL_warmth_inject_hook.py` in `output/tools/README.md` ✓
 - SF02 v008 review: code review (no rerun needed) — fill light direction CORRECT (upper-right),
   per-character silhouette masks present, char_cx from geometry constants (not bbox).
   OBSERVATION: Dutch angle + LANCZOS downscale post-specular-restore is solid. One thing
@@ -65,11 +65,11 @@
 - **Hook pattern documentation for Hana**: key 3 steps — import run_warmth_hook, add --check-warmth argparse, call run_warmth_hook(out_path, enabled=args.check_warmth) after .save(). Documented in README and hook module docstring.
 
 ## Cycle 36 Deliverables
-- `LTG_TOOL_warmth_inject_v001.py` — warm/cool post-process inject utility
+- `LTG_TOOL_warmth_inject.py` — warm/cool post-process inject utility
   - Modes: `warm` (SUNLIT_AMBER top half), `cool` (COOL_FILL bottom half), `auto`
   - Iterates alpha in steps of 10 (base 40, max 80) until QA passes or cap
   - Applied to Tech Den v004: separation 7.9 → 23.2 (PASS via cool bottom pass)
-  - Output: `LTG_ENV_tech_den_v004_warminjected.png`
+  - Output: `LTG_ENV_tech_den_warminjected.png`
   - School Hallway v002 (76.2) and Millbrook Street v002 (45.5) already passing
 - Registered in `output/tools/README.md` (Script Index + Last updated header)
 - Ideabox: `20260330_jordan_reed_warmth_inject_generator_hook.md`
@@ -84,7 +84,7 @@
 - **QA warm/cool measures top/bottom halves**: always split overlay by top/bottom (not left/right). Already learned C35 but now it informed tool design: inject must target the correct half.
 
 ## Cycle 35 Deliverables
-- `LTG_TOOL_bg_grandma_kitchen_v004.py` → `LTG_ENV_grandma_kitchen_v004.png` (1280×720) GENERATED ✓
+- `LTG_TOOL_bg_grandma_kitchen.py` → `LTG_ENV_grandma_kitchen.png` (1280×720) GENERATED ✓
   - Fix 1: Deep shadow pass (LAST in pipeline) — DEEP_COCOA + NEAR_BLACK_WARM. QA value floor: 62→20 (PASS)
   - Fix 2: Dual temperature — SUNLIT_AMBER top half (alpha 55), CRT_COOL_SPILL=(0,130,148) bottom half (alpha 90). QA warm/cool: 1.7→32.95 (PASS)
   - Fix 3: Miri-specific details (rose mug, knitting bag, apron, travel magnets, medicine bottles, calendar)
@@ -106,7 +106,7 @@
 - **SF02 fill light**: upper-right source (not lower-left). Per-character silhouette mask via `ImageChops.multiply()` on alpha channel is the production-efficient approach.
 
 ## Cycle 34 Deliverables
-- `LTG_TOOL_style_frame_02_glitch_storm_v006.py` → `LTG_COLOR_styleframe_glitch_storm_v006.png` (1280×720) GENERATED ✓
+- `LTG_TOOL_style_frame_02_glitch_storm.py` → `LTG_COLOR_styleframe_glitch_storm.png` (1280×720) GENERATED ✓
   - Fix C34-1: HOT_MAGENTA (#FF2D6B) fill light — radial gradient overlay, alpha max 40, per-character zone at lower-left
   - Fix C34-2: ELEC_CYAN specular on Luma via add_rim_light(side="right", threshold=180, width=2) + get_char_bbox()
   - Post-thumbnail specular dots: value ceiling max=179→246 (QA PASS)
@@ -121,14 +121,14 @@
 - **get_char_bbox() for multi-character frames**: In SF02 with 3 characters, the detected bbox cx averages across all bright regions — may not isolate Luma alone. Sanity-check: if `abs(detected_cx - known_luma_cx) < W*0.25` use it, else fall back. This worked correctly for v006.
 - **Magenta fill vs rim**: HOT_MAGENTA fill light = volumetric scatter from ground-level, NOT a rim. Implement as radial gradient centered at lower-left of character zone. Alpha max 40 reads as atmosphere; higher reads as competing lighting source.
 - **add_rim_light threshold=180**: Targets only the brightest pixels (hair highlights, skin specular). threshold=128 (default) catches mid-tone hoodie and body, muddying the effect. threshold=180 gives clean specular-only application.
-- **SF02 current version**: v006 (`LTG_COLOR_styleframe_glitch_storm_v006.png`)
+- **SF02 current version**: v006 (`LTG_COLOR_styleframe_glitch_storm.png`)
 
 ## Cycle 22 Deliverables
-- `LTG_TOOL_bg_tech_den_v004.py` → `LTG_ENV_tech_den_v004.png` (GENERATED ✓)
+- `LTG_TOOL_bg_tech_den.py` → `LTG_ENV_tech_den.png` (GENERATED ✓)
   - Fix 1a: Shaft apex at (WIN_X1-10, WIN_Y0+20) ≈ (105, 265); base at (10, 407) + (210, 390) — lands ON desk, 200px wide, max_alpha=150
   - Fix 1b: Three separate gaussian_glow() calls: CRT1 (x≈180, alpha 65), CRT2 (x≈420, alpha 58), FP (x≈645, alpha 52) — each hotspots its own desk zone
   - DESK_TOP_Y=395 is defined AFTER shaft section in function — shaft coords must use literal values, not variable references
-- `LTG_TOOL_bg_grandma_kitchen_v003.py` → `LTG_ENV_grandma_kitchen_v003.png` (GENERATED ✓)
+- `LTG_TOOL_bg_grandma_kitchen.py` → `LTG_ENV_grandma_kitchen.png` (GENERATED ✓)
   - Fix 2a: draw_upper_wall_texture() extended to left + right wall polygons via PIL polygon mask. Side alpha: 8/10 (vs back wall 12/15). lw_mask / rw_mask approach works cleanly.
   - Fix 2b: draw_floor_tiles() disabled (no-op). draw_floor_linoleum_overlay() rewritten with perspective-correct grid: horizontal rows non-linear spacing, vertical lines converge from (vp_x, floor_top_y) to bottom edge. Single floor system.
 - Inbox archived ✓ | Completion report sent to Alex Chen ✓
@@ -143,7 +143,7 @@
 - **Bash IS available in this session**: generator scripts can self-execute via `python3 output/tools/SCRIPTNAME.py`. PNGs are generated directly.
 
 ## Cycle 21 Deliverables
-- `LTG_TOOL_bg_grandma_kitchen_v002.py` → `LTG_ENV_grandma_kitchen_v002.png` (SCRIPT READY — needs `python3` execution)
+- `LTG_TOOL_bg_grandma_kitchen.py` → `LTG_ENV_grandma_kitchen.png` (SCRIPT READY — needs `python3` execution)
   - Floor linoleum grid: flat 60×60px tile grid (2px, alpha 25, warm brown), worn-path trapezoid (buff, alpha 20, doorway→stove)
   - Upper wall texture: horizontal stripes 12px height, alpha 12–15, alternating warm cream/buff, upper 50% of back wall
   - CRT glow enhanced: primary radius 80 (was 60), second ambient ring radius 80–130 alpha 8, floor spill radius 70 alpha 28
@@ -160,7 +160,7 @@
 - **Bash unavailable in session**: generator script cannot self-execute. Always flag to producer when output PNG hasn't been generated.
 
 ## Cycle 20 Deliverables
-- `LTG_TOOL_bg_tech_den_v002.py` → `LTG_ENV_tech_den_v002.png`
+- `LTG_TOOL_bg_tech_den.py` → `LTG_ENV_tech_den.png`
   - Window light shaft: SUNLIT_AMBER (212,172,100) trapezoid, feathered edges (GaussianBlur r=18), 15 dust motes (alpha 60–80)
   - Monitor glow spill: RGB(180,200,210) alpha 38–50 on desk, chair, shelves
   - Right half: duvet polygon, 2 pillows, blanket fold, device on mattress, poster + 2 printouts above bed
@@ -177,18 +177,18 @@
 - **Bedding polygon**: use polygon() not rectangle() for duvet — gives organic "crumpled" silhouette. Add 2–3 crease lines via lerp_color(DUVET, LINE_DARK, 0.2–0.3).
 
 ## Cycle 19 Deliverables
-- `LTG_TOOL_style_frame_03_other_side_v003.py` → `LTG_COLOR_styleframe_otherside_v003.png`
+- `LTG_TOOL_style_frame_03_other_side.py` → `LTG_COLOR_styleframe_otherside.png`
   - CRITICAL fix: BYTE_BODY = (0,212,232) GL-01b Byte Teal (was (10,10,20) Void Black — invisible)
   - Eye radius min 15px (was ~10px) — both eyes readable
   - Void Black slash removed from magenta eye — clean read
-- `LTG_TOOL_style_frame_02_glitch_storm_v004.py` → `LTG_COLOR_styleframe_glitch_storm_v004.png`
+- `LTG_TOOL_style_frame_02_glitch_storm.py` → `LTG_COLOR_styleframe_glitch_storm.png`
   - Damaged storefront window: frame + dividers + cracked panes + impact cracks + debris scatter
   - Real window glow: warm amber (200,160,80) trapezoid cones below each lit window, alpha 90-110
-- `LTG_TOOL_bg_school_hallway_v002.py` → `LTG_ENV_school_hallway_v002.png`
+- `LTG_TOOL_bg_school_hallway.py` → `LTG_ENV_school_hallway.png`
   - Black top band fixed: image init to CEIL_TILE, ceiling poly from y=0
   - Human evidence: backpack 80×120px+, coat hooks + jacket, notice board with colored papers
   - Camera lowered: VP_CY H*0.40 → H*0.22 (–18%), taller more institutional space
-- `LTG_TOOL_bg_millbrook_main_street_v002.py` → `LTG_ENV_millbrook_main_street_v002.png`
+- `LTG_TOOL_bg_millbrook_main_street.py` → `LTG_ENV_millbrook_main_street.png`
   - Power lines: 3px main cable + 1px spans + catenary parabolic sag + lighter color
   - Road plane: full ROAD_ASPHALT solid + double-yellow center line + crosswalk stripes near end
 - README.md updated ✓ | Inbox archived ✓ | Completion report sent to Alex Chen ✓
@@ -196,7 +196,7 @@
 ## Cycle 19 Status: COMPLETE
 
 ## Cycle 18 Deliverables
-- `LTG_TOOL_bg_millbrook_main_street_v001.py` → `LTG_ENV_millbrook_main_street_v001.png`
+- `LTG_TOOL_bg_millbrook_main_street.py` → `LTG_ENV_millbrook_main_street.png`
   - Millbrook Main Street daytime exterior for A2-05 (walk-and-talk)
   - Afternoon sun upper-right, long left shadows, local storefronts with hand-painted signs and awnings
   - Sidewalk: cracked concrete, tree root bumps, street trees (autumn coloring)
@@ -210,21 +210,21 @@
 You are now **Style Frame Art Specialist**. Environments are done. Focus: SF01–SF04 refinement, especially SF02 lighting.
 
 ### Current Style Frame Versions
-- SF01 Discovery: **v005** (`LTG_COLOR_styleframe_discovery_v005.png`) — rim light char_cx fix applied C32
-- SF02 Glitch Storm: **v005** (`LTG_COLOR_styleframe_glitch_storm_v005.png`) — **P2: missing magenta fill light + cyan specular on characters (flagged 2 cycles by critics)**
-- SF03 Other Side: **v005** (`LTG_COLOR_styleframe_otherside_v005.png`) — zero warm light; UV ambient only; Luma = intentional pixel-art silhouette
-- SF04 Luma + Byte: **v004** (`LTG_COLOR_styleframe_luma_byte_v004.png`) — rebuilt C32; Byte teal at reduced luminance = intentional dual-lighting
+- SF01 Discovery: **v005** (`LTG_COLOR_styleframe_discovery.png`) — rim light char_cx fix applied C32
+- SF02 Glitch Storm: **v005** (`LTG_COLOR_styleframe_glitch_storm.png`) — **P2: missing magenta fill light + cyan specular on characters (flagged 2 cycles by critics)**
+- SF03 Other Side: **v005** (`LTG_COLOR_styleframe_otherside.png`) — zero warm light; UV ambient only; Luma = intentional pixel-art silhouette
+- SF04 Luma + Byte: **v004** (`LTG_COLOR_styleframe_luma_byte.png`) — rebuilt C32; Byte teal at reduced luminance = intentional dual-lighting
 
 ### Canvas Standard (UPDATED)
-**Hard limit: ≤ 1280px in both width and height.** This applies to ALL saved images including style frames. Use `img.thumbnail((1280,1280), Image.LANCZOS)` before saving. Old ROLE.md said 1920×1080 — that is superseded.
+*Image rules: see `docs/image-rules.md`* (supersedes old ROLE.md 1920×1080 standard)
 
 ### New Tools Available (read output/tools/README.md for full list)
-- `LTG_TOOL_procedural_draw_v001.py` **v1.4.0** — CRITICAL for your work:
+- `LTG_TOOL_procedural_draw.py` **v1.4.0** — CRITICAL for your work:
   - `add_rim_light(img, side, char_cx)` — character-relative rim light. Pass `char_cx` explicitly (NOT canvas midpoint, which was the C13 bug). Use `get_char_bbox()` to compute it.
   - `get_char_bbox(img, threshold=128)` — returns `(cx, cy, left, top, right, bottom)` from silhouette
-- `LTG_TOOL_render_lib_v001.py` v1.1.0 — shared render utilities (gaussian_glow etc.)
-- `LTG_TOOL_render_qa_v001.py` v1.2.0 — auto-downscales + QA check; run on all outputs
-- `LTG_TOOL_color_verify_v002.py` — color compliance check with hue histogram mode
+- `LTG_TOOL_render_lib.py` v1.1.0 — shared render utilities (gaussian_glow etc.)
+- `LTG_TOOL_render_qa.py` v1.2.0 — auto-downscales + QA check; run on all outputs
+- `LTG_TOOL_color_verify.py` — color compliance check with hue histogram mode
 
 ### Palette Corrections Since C22
 - **CHAR-L-11 Constraint 1 = #00F0FF Electric Cyan** (was cited as #00D4E8 — copy error fixed C30)

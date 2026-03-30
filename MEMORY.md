@@ -47,7 +47,7 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 - **SF04 Luma+Byte**: v004
 
 ### Logo
-- **LTG_BRAND_logo_v001.png** — DECIDED C25
+- **LTG_BRAND_logo.png** — DECIDED C25
 
 ### Characters
 - Luma: **expr v011 NEW C38** (right eye squint fixed top-lid-drops, DOUBT VARIANT slot 7, chin-forward thrust), turnaround v004, color model v002
@@ -128,20 +128,20 @@ SF01 warm/cool: PASS (17.8 > REAL_INTERIOR threshold 12.0).
 - REAL_INTERIOR warm/cool threshold = 12.0 (render_qa v1.5.0)
 
 ## Shared Library (updated C38)
-`LTG_TOOL_render_qa_v001.py` — **v1.5.0 C38**. REAL_INTERIOR threshold 12.0
-`LTG_TOOL_precritique_qa_v001.py` — **v2.3.0 C38**
-`LTG_TOOL_world_type_infer_v001.py` — **NEW C38**. Standalone world-type inference
-`LTG_TOOL_ci_suite_v001.py` — C37 (suppression fix C38 via json)
-`LTG_TOOL_spec_sync_ci_v001.py` — C38 (G002 suppression added)
+`LTG_TOOL_render_qa.py` — **v1.5.0 C38**. REAL_INTERIOR threshold 12.0
+`LTG_TOOL_precritique_qa.py` — **v2.3.0 C38**
+`LTG_TOOL_world_type_infer.py` — **NEW C38**. Standalone world-type inference
+`LTG_TOOL_ci_suite.py` — C37 (suppression fix C38 via json)
+`LTG_TOOL_spec_sync_ci.py` — C38 (G002 suppression added)
 `glitch_spec_suppressions.json` — **C38** (G002 docstring FP added)
-`LTG_TOOL_luma_motion_v001.py` / `LTG_TOOL_byte_motion_v001.py` / `LTG_TOOL_pilot_cold_open_v001.py` — renamed from CHAR/SB prefixes C38
-`LTG_TOOL_contact_sheet_arc_diff_v001.py` — C37
-`LTG_TOOL_warmth_inject_hook_v001.py` — C37
-`LTG_TOOL_draw_order_lint_v002.py` — v2.1.0 C37
-`LTG_TOOL_glitch_spec_lint_v001.py` — v1.2.0 C37
-`LTG_TOOL_expression_silhouette_v003.py` — C37
+`LTG_TOOL_luma_motion.py` / `LTG_TOOL_byte_motion.py` / `LTG_TOOL_pilot_cold_open.py` — renamed from CHAR/SB prefixes C38
+`LTG_TOOL_contact_sheet_arc_diff.py` — C37
+`LTG_TOOL_warmth_inject_hook.py` — C37
+`LTG_TOOL_draw_order_lint.py` — v2.1.0 C37
+`LTG_TOOL_glitch_spec_lint.py` — v1.2.0 C37
+`LTG_TOOL_expression_silhouette.py` — C37
 `LTG_TOOL_sf02_fill_light_fix_c35.py` — C37
-`LTG_TOOL_proportion_audit_v002.py` — C36
+`LTG_TOOL_proportion_audit.py` — C36
 
 ## Agent Prompt Design
 Do NOT duplicate inbox content in agent prompts. Prompts = role context + startup sequence only.
