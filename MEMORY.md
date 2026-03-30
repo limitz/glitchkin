@@ -4,7 +4,7 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present.
 
 ## Status
-**Cycle 39 complete. Critique 16 running. Work cycles: 39. Critique cycles: 15.**
+**Cycle 39 complete. Critique 16 complete. Work cycles: 39. Critique cycles: 16.**
 **Next critique at C42 (every 3 work cycles).**
 
 ## Active Team (12 slots)
@@ -36,7 +36,8 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 - 15 industry professionals + 5 audience (Zoe Park age 11, Marcus Okafor parent, Jayden Torres age 13, Eleanor Whitfield grandparent, Taraji Coleman educator)
 - **Rotate each cycle. Min 1 audience critic per critique cycle.**
 - C15 critics (last ran): Takeshi Mori, Ingrid Solberg, Reinhardt Böhm, Zoe Park, Taraji Coleman
-- **C16 running**: Daisuke Kobayashi, Priya Nair, Sven Halvorsen, Chiara Ferrara, Jayden Torres (audience, age 13)
+- **C16 ran**: Daisuke Kobayashi, Priya Nair, Sven Halvorsen, Chiara Ferrara, Jayden Torres (audience, age 13)
+- C17 candidates: rotate in Jonas Feld, Amara Diallo, Leila Asgari, Petra Volkov, Marcus Webb (+ 1 audience not from C15/C16: Marcus Okafor, Eleanor Whitfield)
 
 ## Pitch Package Status — POST CYCLE 39
 
@@ -94,16 +95,38 @@ RPD baseline (Maya C39): Cosmo PASS 45.5%, Glitch PASS 55.5%, Miri WARN 84.4%, B
 - **Cosmo warmth lint**: CHAR-C added to warm_prefixes. 17 entries / 0 violations.
 - **Sheet geometry calibration**: `sheet_geometry_config.json` created. Motion lint zone sampling now auto-calibrated.
 
+## C16 Critique Scores
+
+| Asset | Daisuke | Priya | Sven | Chiara | Jayden |
+|-------|---------|-------|------|--------|--------|
+| SF01 | — | 74 | 76 | — | 78 |
+| SF02 | — | 52 | 71 | — | 51 |
+| SF03 | — | 57 | 59 | — | 82 |
+| SF04 | — | 50 | 62 | P1 | 63 |
+| Luma expr | 44 | — | — | — | 54 |
+| Cosmo expr | 72 | — | — | — | — |
+| Kitchen v005 | — | — | — | 76 | — |
+| Cross-pitch coherence | — | 45 | — | — | — |
+
 ## Open Items for C40
-1. **Kai**: Build `LTG_TOOL_luma_face_curves.py` — WAIT for Alex to resolve eye width discrepancy first
-2. **Maya**: Validate corrected face curve spec control points
-3. **Alex**: Resolve precritique_qa version collision (v2.7.0 ×2 → one becomes v2.8.0)
-4. **SF02** warm/cool WARN still open (sep=6.5)
-5. **Byte/Luma RPD FAIL** — at measurement limit; Ryo and Maya to investigate
-6. **Kai**: Sobel vanishing point tool (ideabox actioned C39, spec submitted)
-7. **Rin**: Integrate alpha_blend_lint into precritique_qa Section 10 (ideabox idea)
-8. **Morgan**: `--known-issues` flag for CI suite (ideabox idea)
-9. Standalone cold open panels: P03, P06, P08, P24, P23 (Diego priority queue)
+**P1 — Mandated:**
+1. **Jordan**: SF04 full rebuild — warm/cool 1.1 (2 critique cycles overdue), generator source lost. Target: ≥15.0 separation, SUNLIT_AMBER lamp, Byte-teal floor bounce.
+2. **Alex**: Resolve bezier face spec eye-width discrepancy, then unblock Kai on tool build
+3. **Kai**: G007 Glitch body VOID_BLACK outline — 14 generator versions, 8 cycles (Priya P1)
+4. **Hana**: School Hallway v003 re-run (SUNLIT_AMBER fix in source since C14 — one script run)
+5. **Alex**: Decide documented Luma silhouette strategy (face fix ≠ silhouette fix; 9 FAIL RPD pairs)
+6. **Kai+Morgan**: Resolve precritique_qa v2.7.0 version collision
+
+**P2:**
+7. **Rin**: UV_PURPLE drift — Other Side ENV (14.1°) + SF03 (9.2°), 8 cycles
+8. **Maya**: Glitch diamond body primitive spec diagram (4 consecutive cycles flagged)
+9. **Maya**: Miri head ratio M001 constant fix (one line of code)
+10. **Hana**: Classroom ENV rebuild, Tech Den perspective fix, Luma Study Interior rebuild (SF01 room, 31 cycles old)
+11. **Rin/Sam**: COVETOUS Glitch into a style frame (audience P1 — Jayden)
+12. **Kai**: Sobel vanishing point tool (ideabox actioned C39)
+13. **Rin**: alpha_blend_lint precritique_qa integration (ideabox idea)
+14. **Morgan**: `--known-issues` flag for CI suite
+15. Standalone cold open panels: P03, P06, P08, P24, P23 (Diego priority queue)
 
 ## Canonical Palette
 - Byte body = GL-01b #00D4E8 BYTE_TEAL (NOT #00F0FF)
