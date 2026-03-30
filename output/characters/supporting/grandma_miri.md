@@ -8,13 +8,13 @@ upon such time as they acquire recognised legal personhood under applicable law.
 
 **Designer:** Maya Santos
 **Date:** 2026-03-29
-**Version:** 1.2 (Cycle 9 — MIRI-A Locked)
+**Version:** 1.3 (Cycle 44 — Wooden Hairpin Rename)
 **Status:** CANONICAL — MIRI-A selected. MIRI-B variant retired.
 
 **Cycle 9 Lock Note:** After Cycle 8 critic review (Dmitri Volkov, Grade A-), MIRI-A is the
 confirmed canonical Miri design for pitch package and production.
-- **MIRI-A (canonical):** Tall bun + chopstick pair + wide cardigan (inv-trapezoid shoulders) + soldering iron.
-  Bun-chopstick crown passes squint test at thumbnail. Wide settled cardigan anchors ensemble
+- **MIRI-A (canonical):** Tall bun + wooden hairpins + wide cardigan (inv-trapezoid shoulders) + soldering iron.
+  Bun-and-hairpin crown passes squint test at thumbnail. Wide settled cardigan anchors ensemble
   against Luma's kinetic A-line. Three design-language decisions communicate narrative.
 - **MIRI-B (retired):** Rounded curls + tech apron. Strong alternate design but circuit-pocket
   dots too small to register; MIRI-A selected for silhouette certainty and stronger narrative.
@@ -414,3 +414,6 @@ She is, simply, the person Luma is going to become. And Luma, someday, will real
 
 *Document Version 1.1 — Maya Santos, Character Designer*
 *Cycle 3 revisions: Canonical line color locked to Deep Cocoa (#3B2820) — supersedes previous Warm Dark Brown (#4A2810) reference, now matches all other human characters in the show. Added dual-blush disambiguation rule ("Pride Override") for frames where Miri and excited Luma appear together — Miri's permanent blush fades to 30% opacity during these frames as a character tell.*
+
+*Document Version 1.3 — Maya Santos, Character Designer — Cycle 44*
+*C44 cultural identity correction (Alex Chen P0, FLAG 05): "chopstick pair" replaced with "wooden hairpins" throughout. Dark-stained wood, round cross-section, slightly tapered toward tip. Color unchanged: (92, 58, 32) dark warm wood brown. Silhouette and geometry unchanged. This update was flagged by Amara Diallo (C17) and confirmed by Story (Priya Shah C43 FLAG 05).*

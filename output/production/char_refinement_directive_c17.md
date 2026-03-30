@@ -48,7 +48,7 @@ Every character asset — turnaround view, expression sheet, scene pose, lineup 
 - Luma: 3.5 head height, 5 curl count (locked), A-line hoodie trapezoid, mitten hands (no finger detail ever)
 - Cosmo: 4.0 head height, glasses tilt 7° neutral (never 0°), glasses frame thickness 0.06x head width, notebook always present
 - Byte: oval body (no cube/chamfer references), 10×10px hover particles, float gap = 0.25 head units, RESIGNED uses droopy_resigned lower lid (NOT reduced aperture only)
-- Miri: 3.2 head height, MIRI-A canonical (bun + chopstick pair + wide cardigan + soldering iron), crow's feet always present
+- Miri: 3.2 head height, MIRI-A canonical (bun + wooden hairpins + wide cardigan + soldering iron), crow's feet always present
 
 **Check for consistency across all assets currently in output/characters/. Any deviation from the above is a defect to be logged and fixed.**
 
@@ -124,7 +124,7 @@ Design and generate a 3×2 expression sheet for Miri. Required expressions:
 6. **SKEPTICAL / AMUSED** — One eyebrow arched (left, viewer's right — the more mobile brow). Closed-mouth slight smirk, corner curling upward. Head tilted back very slightly. Body: upright, arms settled — she is not leaning away (she is not defensive), she is simply watching. This must be read as warm skepticism, not cold judgment.
 
 **Construction rules for the sheet:**
-- Use MIRI-A design: bun + chopstick pair + wide cardigan + soldering iron prop
+- Use MIRI-A design: bun + wooden hairpins + wide cardigan + soldering iron prop
 - Body construction: 3.2 head height, weathered-rectangle torso, slightly wider shoulders than head (1.1x)
 - Crow's feet at outer eye corners — 50% line weight, always present
 - Smile lines front-face — 40% line weight, always present
@@ -188,7 +188,7 @@ The following are non-negotiable. Any asset deviating from these is a defect:
 | Byte | Float gap | 0.25 head units clearance above surface |
 | Byte | Hover particles | 10×10px. No exceptions. |
 | Byte | RESIGNED right eye | droopy_resigned lower lid (parabolic sag, NOT just reduced aperture) |
-| Miri | Design | MIRI-A only. Bun + chopstick pair + cardigan + soldering iron. |
+| Miri | Design | MIRI-A only. Bun + wooden hairpins + cardigan + soldering iron. |
 | Miri | Eye aging marks | Crow's feet always present at 50% line weight |
 | Miri | Cheek tone | #D4956B always at 25% opacity (not situational like Luma's blush) |
 

@@ -801,7 +801,7 @@ def draw_cosmo_back(draw, cx, base_y):
 # ══════════════════════════════════════════════════════════════════════════════
 # MIRI TURNAROUND VIEWS
 # Miri (MIRI-A — CANONICAL): 3.2 heads tall, sturdy and warm.
-# Defining elements: tall oval bun + V-pair chopsticks, wide inverted-flare cardigan,
+# Defining elements: tall oval bun + V-pair wooden hairpins, wide inverted-flare cardigan,
 # soldering iron held at side. Silver hair. Terracotta rust cardigan.
 # ══════════════════════════════════════════════════════════════════════════════
 
@@ -811,7 +811,7 @@ def _miri_head_unit():
 
 
 def draw_miri_front(draw, cx, base_y):
-    """Miri — front view. Bun + chopsticks prominent above head.
+    """Miri — front view. Bun + wooden hairpins prominent above head.
     Wide cardigan (inverted-flare trapezoid). Soldering iron on right side.
     """
     hu = _miri_head_unit()
@@ -828,7 +828,7 @@ def draw_miri_front(draw, cx, base_y):
     draw.ellipse([bun_cx - bun_rx, bun_cy - bun_ry,
                   bun_cx + bun_rx, bun_cy + bun_ry], fill=SILHOUETTE)
 
-    # CHOPSTICKS — V-pair spikes piercing bun
+    # WOODEN HAIRPINS — V-pair spikes piercing bun [C44: renamed from CHOPSTICKS]
     draw.polygon([(bun_cx - int(hu*0.22), bun_cy - bun_ry - int(hu*0.55)),
                   (bun_cx - int(hu*0.14), bun_cy - bun_ry - int(hu*0.55)),
                   (bun_cx - int(hu*0.06), bun_cy + bun_ry - int(hu*0.12)),
@@ -886,7 +886,7 @@ def draw_miri_front(draw, cx, base_y):
 
 
 def draw_miri_three_quarter(draw, cx, base_y):
-    """Miri — 3/4 view. Bun + chopstick pair visible (near side fuller).
+    """Miri — 3/4 view. Bun + wooden hairpin pair visible (near side fuller).
     Cardigan near shoulder wider. Soldering iron + bag visible at near side.
     """
     hu = _miri_head_unit()
@@ -906,7 +906,7 @@ def draw_miri_three_quarter(draw, cx, base_y):
     draw.ellipse([bun_cx - bun_rx_near - int(hu*0.06), bun_cy - int(bun_ry*0.5),
                   bun_cx - int(bun_rx_near*0.4), bun_cy + int(bun_ry*0.4)], fill=SILHOUETTE)
 
-    # CHOPSTICKS — V-pair visible, near chopstick fully shown
+    # WOODEN HAIRPINS — V-pair visible, near hairpin fully shown
     draw.polygon([(bun_cx - int(hu*0.20), bun_cy - bun_ry - int(hu*0.55)),
                   (bun_cx - int(hu*0.12), bun_cy - bun_ry - int(hu*0.55)),
                   (bun_cx - int(hu*0.05), bun_cy + bun_ry - int(hu*0.12)),
@@ -961,7 +961,7 @@ def draw_miri_three_quarter(draw, cx, base_y):
 
 def draw_miri_side(draw, cx, base_y):
     """Miri — side (profile) view. Bun reads as tall oval behind/above head.
-    One chopstick visible in profile. Cardigan reads as a wide wedge.
+    One wooden hairpin visible in profile. Cardigan reads as a wide wedge.
     Soldering iron extends forward from right hand.
     """
     hu = _miri_head_unit()
@@ -977,7 +977,7 @@ def draw_miri_side(draw, cx, base_y):
     draw.ellipse([bun_cx - bun_rx, bun_cy - bun_ry,
                   bun_cx + bun_rx, bun_cy + bun_ry], fill=SILHOUETTE)
 
-    # One chopstick visible in profile (near one, pointing upward at angle)
+    # One wooden hairpin visible in profile (near one, pointing upward at angle)
     draw.polygon([(bun_cx - int(hu*0.08), bun_cy - bun_ry - int(hu*0.52)),
                   (bun_cx - int(hu*0.02), bun_cy - bun_ry - int(hu*0.52)),
                   (bun_cx + int(hu*0.04), bun_cy + bun_ry - int(hu*0.10)),
@@ -1029,7 +1029,7 @@ def draw_miri_side(draw, cx, base_y):
 
 
 def draw_miri_back(draw, cx, base_y):
-    """Miri — back view. Bun + chopstick pair from behind — distinctive silhouette hook.
+    """Miri — back view. Bun + wooden hairpin pair from behind — distinctive silhouette hook.
     Plain cardigan back. No bag (on right side, hidden). No soldering iron.
     """
     hu = _miri_head_unit()
@@ -1037,7 +1037,7 @@ def draw_miri_back(draw, cx, base_y):
     hy = base_y - h
     r = int(hu * 0.46)
 
-    # BUN from back — same oval profile, chopsticks V-pair visible above bun
+    # BUN from back — same oval profile, wooden hairpins V-pair visible above bun
     bun_cx = cx + int(hu * 0.05)
     bun_cy = hy - int(hu * 0.32)
     bun_rx = int(hu * 0.38)

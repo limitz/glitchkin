@@ -172,11 +172,12 @@ def draw_byte(draw, cx, base_y):
 
 def draw_miri(draw, cx, base_y):
     """Miri — VARIANT A (neutral stance).
-    Design hook: WIDE BUN WITH CHOPSTICK PAIR (tall stacked bun + two spikes).
+    Design hook: WIDE BUN WITH WOODEN HAIRPIN PAIR (tall stacked bun + two spikes).
     Wide cardigan silhouette: trapezoid, wider at shoulder than hip (inverted-flare).
     Prop: soldering iron held at side (small spike from right hand).
     Bag stays as secondary contour element.
-    Communicates: grandmotherly warmth (wide cardigan) + maker/hacker (soldering iron, bun-chopsticks).
+    Communicates: grandmotherly warmth (wide cardigan) + maker/hacker (soldering iron, bun+wooden-hairpins).
+    [C44: "chopstick" renamed to "wooden hairpins" in all active tools — this is legacy code, comment only.]
     """
     hu = HEAD_UNIT
     h = int(3.2 * hu)
@@ -191,14 +192,14 @@ def draw_miri(draw, cx, base_y):
     bun_ry = int(hu * 0.46)        # taller bun — vertical emphasis
     draw.ellipse([bun_cx - bun_rx, bun_cy - bun_ry,
                   bun_cx + bun_rx, bun_cy + bun_ry], fill=SILHOUETTE)
-    # CHOPSTICKS — two thin spikes piercing the bun at slight angles (V-pair)
-    # Left chopstick: angled left and upward
+    # WOODEN HAIRPINS — two thin spikes piercing the bun at slight angles (V-pair) [C44: renamed from chopstick]
+    # Left hairpin: angled left and upward
     draw.polygon([(bun_cx - int(hu*0.22), bun_cy - bun_ry - int(hu*0.58)),
                   (bun_cx - int(hu*0.14), bun_cy - bun_ry - int(hu*0.58)),
                   (bun_cx - int(hu*0.06), bun_cy + bun_ry - int(hu*0.12)),
                   (bun_cx - int(hu*0.13), bun_cy + bun_ry - int(hu*0.12))],
                  fill=SILHOUETTE)
-    # Right chopstick: angled right and upward
+    # Right hairpin: angled right and upward
     draw.polygon([(bun_cx + int(hu*0.14), bun_cy - bun_ry - int(hu*0.52)),
                   (bun_cx + int(hu*0.22), bun_cy - bun_ry - int(hu*0.52)),
                   (bun_cx + int(hu*0.13), bun_cy + bun_ry - int(hu*0.12)),
@@ -606,14 +607,14 @@ def draw_byte_action(draw, cx, base_y):
 
 def draw_miri_action(draw, cx, base_y):
     """Miri (Variant A) — action: leaning forward with soldering iron raised, examining something.
-    Bun+chopsticks silhouette is visible even in leaning pose.
+    Bun+wooden-hairpins silhouette is visible even in leaning pose.
     """
     hu = HEAD_UNIT
     h = int(3.2 * hu)
     hy = base_y - h + int(hu * 0.12)  # slightly raised (lean)
     r  = int(hu * 0.46)
 
-    # BUN + CHOPSTICKS (tilted forward slightly with head lean)
+    # BUN + WOODEN HAIRPINS (tilted forward slightly with head lean)
     lean = int(hu * 0.18)
     bun_cx = cx + int(hu * 0.06) + lean
     bun_cy = hy - int(hu * 0.30)
@@ -805,7 +806,7 @@ def generate(output_path):
 
     # NEUTRAL_BASE is the ground line for neutral row.
     # Tallest character is Cosmo at 4.0 * HEAD_UNIT (~320px).
-    # Miri chopsticks (MIRI-A) add ~HU*0.58 above bun — set headroom above clip threshold.
+    # Miri wooden hairpins (MIRI-A) add ~HU*0.58 above bun — set headroom above clip threshold.
     NEUTRAL_BASE = 420
     # ACTION row: characters are roughly same height, allow same headroom.
     # Cycle 9: Byte action pose is a mid-flight leap — body raised jump_h above base.
@@ -826,7 +827,7 @@ def generate(output_path):
     except:
         font = font_title = font_col = font_note = ImageFont.load_default()
 
-    # MIRI-A is the canonical Miri (Cycle 9 lock: bun+chopsticks+cardigan+soldering-iron).
+    # MIRI-A is the canonical Miri (Cycle 9 lock: bun+wooden-hairpins+cardigan+soldering-iron).
     # MIRI-B (curls+apron) is retired — no longer shown on silhouette sheet.
     col_labels    = ["LUMA", "COSMO", "BYTE", "MIRI"]
     neutral_drawers = [draw_luma, draw_cosmo, draw_byte, draw_miri]
@@ -837,7 +838,7 @@ def generate(output_path):
                "LUMA & THE GLITCHKIN — Silhouette Sheet — Neutral + Action — Cycle 9",
                fill=(30, 20, 15), font=font_title)
     draw2.text((16, H2 - 24),
-               "MIRI: bun+chopsticks+cardigan+soldering-iron (MIRI-A — CANONICAL, locked Cycle 9)  |  "
+               "MIRI: bun+wooden-hairpins+cardigan+soldering-iron (MIRI-A — CANONICAL, locked Cycle 9)  |  "
                "BYTE: mid-flight leap pose",
                fill=(80, 70, 60), font=font_note)
 

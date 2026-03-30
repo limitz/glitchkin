@@ -15,7 +15,7 @@ Full color rendering with 3-tier line weight:
   Interior structure: 2px output
   Detail (crow's feet, smile lines, knit): 1px output
 
-Character: MIRI-A canonical — bun + crossed chopstick pair + A-line cardigan + round glasses
+Character: MIRI-A canonical — bun + crossed wooden hairpins + A-line cardigan + round glasses
 Height: 3.2 heads (compact, rooted). Reference: ~1.25× Luma's perceived height at same scale.
 
 Output: output/characters/main/turnarounds/LTG_CHAR_miri_turnaround.png
@@ -50,8 +50,8 @@ PANTS_HL    = (222,201, 168)   # #DEC9A8 Light Linen
 SLIPPER     = (196, 144, 122)  # C38 FIX: #C4907A Dusty Warm Apricot (was #5A7A5A Deep Sage — G>R violated Miri warm-palette guarantee; per master_palette.md CHAR-M-11 C32)
 SLIPPER_LN  = (250,240, 220)   # #FAF0DC Warm Cream lining
 SLIPPER_SOL = ( 90, 56,  32)   # #5A3820 Warm Dark Brown sole
-CHOPSTICK   = (180,120,  60)   # warm bamboo tone
-CHOPSTICK_SH= (120, 80,  30)   # chopstick shadow side
+HAIRPIN     = (180,120,  60)   # wooden hairpin — warm wood tone (C44: renamed from CHOPSTICK)
+HAIRPIN_SH  = (120, 80,  30)   # wooden hairpin shadow side (C44: renamed from CHOPSTICK_SH)
 LINE        = ( 59, 40,  32)   # #3B2820 Deep Cocoa — canonical silhouette line
 CANVAS_BG   = (252,248, 242)   # warm off-white background
 PANEL_BG    = (244,238, 228)   # very slightly tinted panel
@@ -471,15 +471,15 @@ def draw_miri_front(draw, cx, base_y):
     # Chopstick 1 (top-left to bottom-right)
     draw.line([cs_cx - int(cs_len*0.45), cs_cy - int(cs_len*0.55),
                cs_cx + int(cs_len*0.45), cs_cy + int(cs_len*0.45)],
-              fill=CHOPSTICK, width=cs_w)
+              fill=HAIRPIN, width=cs_w)
     # Chopstick 2 (top-right to bottom-left)
     draw.line([cs_cx + int(cs_len*0.45), cs_cy - int(cs_len*0.55),
                cs_cx - int(cs_len*0.45), cs_cy + int(cs_len*0.45)],
-              fill=CHOPSTICK, width=cs_w)
+              fill=HAIRPIN, width=cs_w)
     # Chopstick shadow lines
     draw.line([cs_cx - int(cs_len*0.45) + int(SCALE), cs_cy - int(cs_len*0.55) + int(SCALE),
                cs_cx + int(cs_len*0.45) + int(SCALE), cs_cy + int(cs_len*0.45) + int(SCALE)],
-              fill=CHOPSTICK_SH, width=DL())
+              fill=HAIRPIN_SH, width=DL())
 
     # Front hair wisps (2-3 escaping strands at temples)
     wisp_y = head_top_y + int(hr * 0.60)
@@ -509,7 +509,7 @@ def draw_miri_front(draw, cx, base_y):
 def draw_miri_three_quarter(draw, cx, base_y):
     """
     3/4 VIEW — slight right rotation (character turns left, showing right cheek to viewer).
-    Bun + chopstick stack clearly visible from this angle.
+    Bun + wooden hairpin stack clearly visible from this angle.
     Glasses bridge visible.
     A-line cardigan silhouette reads.
     Near side (right of frame) is wider; far side compressed.
@@ -716,7 +716,7 @@ def draw_miri_three_quarter(draw, cx, base_y):
     draw.line([eye_far + int(gl_r*0.65), eye_y - gl_r//2,
                eye_far + int(gl_r*0.65) + int(hr*0.28), eye_y], fill=gl_col, width=gl_w)
 
-    # BUN (3/4 — bun+chopstick stack clearly visible)
+    # BUN (3/4 — bun+wooden hairpin stack clearly visible)
     bun_cx2 = hcx + int(hr * 0.45)   # bun further toward back from 3/4 angle
     bun_cy  = head_top_y - int(hr * 0.45)
     bun_rx  = int(hr * 0.68)
@@ -732,10 +732,10 @@ def draw_miri_three_quarter(draw, cx, base_y):
     cs_len = int(hr * 1.05)
     draw.line([cs_cx2 - int(cs_len*0.40), cs_cy2 - int(cs_len*0.60),
                cs_cx2 + int(cs_len*0.40), cs_cy2 + int(cs_len*0.40)],
-              fill=CHOPSTICK, width=int(3*SCALE))
+              fill=HAIRPIN, width=int(3*SCALE))
     draw.line([cs_cx2 + int(cs_len*0.40), cs_cy2 - int(cs_len*0.55),
                cs_cx2 - int(cs_len*0.35), cs_cy2 + int(cs_len*0.45)],
-              fill=CHOPSTICK, width=int(3*SCALE))
+              fill=HAIRPIN, width=int(3*SCALE))
     # Front wisp
     wisp_y = head_top_y + int(hr * 0.65)
     draw.line([hcx - hw + int(hr*0.15), wisp_y,
@@ -931,10 +931,10 @@ def draw_miri_side(draw, cx, base_y):
     # In side view: one stick appears as near-vertical, one as diagonal
     draw.line([cs_cxs - int(hr*0.20), cs_cys - int(hr*0.80),
                cs_cxs + int(hr*0.20), cs_cys + int(hr*0.50)],
-              fill=CHOPSTICK, width=int(3*SCALE))
+              fill=HAIRPIN, width=int(3*SCALE))
     draw.line([cs_cxs - int(hr*0.55), cs_cys - int(hr*0.40),
                cs_cxs + int(hr*0.55), cs_cys + int(hr*0.20)],
-              fill=CHOPSTICK, width=int(3*SCALE))
+              fill=HAIRPIN, width=int(3*SCALE))
 
     # Hair hairline at forehead (slight line)
     draw.arc([hcx - int(hr*0.90), head_top_y + int(hr*0.05),
@@ -950,7 +950,7 @@ def draw_miri_side(draw, cx, base_y):
 
 def draw_miri_back(draw, cx, base_y):
     """
-    BACK VIEW — back of bun (show chopstick pair crossed), cardigan back, overall silhouette.
+    BACK VIEW — back of bun (show wooden hairpin pair crossed), cardigan back, overall silhouette.
     Face not visible.
     """
     H   = int(hu() * SCALE)
@@ -1058,7 +1058,7 @@ def draw_miri_back(draw, cx, base_y):
               cx + int(hw*0.85), head_top_y + int(hr*1.10)],
              0, 180, fill=HAIR_SH, width=DL())
 
-    # --- BUN (back view — most prominent view: full bun face + crossing chopsticks)
+    # --- BUN (back view — most prominent view: full bun face + crossing wooden hairpins)
     bun_cx = cx
     bun_cy = head_top_y - int(hr * 0.30)
     bun_rx = int(hr * 0.72)
@@ -1078,23 +1078,23 @@ def draw_miri_back(draw, cx, base_y):
               bun_cx + int(bun_rx*0.45), bun_cy - int(bun_ry*0.10)],
              200, 340, fill=HAIR_HL, width=DL())
 
-    # CHOPSTICKS — back view: X crossing clearly visible
+    # WOODEN HAIRPINS — back view: X crossing clearly visible
     cs_cx = bun_cx
     cs_cy = bun_cy
     cs_len = int(hr * 1.15)
     # Stick 1 (\ direction)
     draw.line([cs_cx - int(cs_len*0.50), cs_cy - int(cs_len*0.60),
                cs_cx + int(cs_len*0.50), cs_cy + int(cs_len*0.50)],
-              fill=CHOPSTICK, width=int(3*SCALE))
+              fill=HAIRPIN, width=int(3*SCALE))
     # Stick 2 (/ direction)
     draw.line([cs_cx + int(cs_len*0.50), cs_cy - int(cs_len*0.60),
                cs_cx - int(cs_len*0.50), cs_cy + int(cs_len*0.50)],
-              fill=CHOPSTICK, width=int(3*SCALE))
+              fill=HAIRPIN, width=int(3*SCALE))
     # Stick shadows
     for sdx, sdy in [(int(SCALE), int(SCALE))]:
         draw.line([cs_cx - int(cs_len*0.50) + sdx, cs_cy - int(cs_len*0.60) + sdy,
                    cs_cx + int(cs_len*0.50) + sdx, cs_cy + int(cs_len*0.50) + sdy],
-                  fill=CHOPSTICK_SH, width=DL())
+                  fill=HAIRPIN_SH, width=DL())
 
     # Escaping strands at neck/temples (back view)
     wisp_y = head_top_y + int(hr * 0.70)

@@ -1,6 +1,44 @@
 # Maya Santos — Memory
 
-## Cycle 44 — P0 Miri Chopstick Brief (Impact Assessment — Awaiting Alex Confirmation)
+## Cycle 44 — P0 Hairpin Rename + SF06 "The Hand-Off" (COMPLETE)
+
+### P0 — Miri Wooden Hairpin Rename
+- Brief: Alex Chen inbox `20260330_1500_c44_miri_hairpin_and_relationship_frame.md` — ARCHIVED
+- Decision: "wooden hairpins" (always the full phrase). Color (92, 58, 32) unchanged. Geometry unchanged.
+- Atomic update executed across all 6 active files:
+  1. `LTG_TOOL_grandma_miri_expression_sheet.py` → **v006** (`chop_x1/chop_x2` → `hairpin_x1/hairpin_x2`)
+  2. `LTG_TOOL_character_lineup.py` → **v009** (`chopstick_col` → `hairpin_col`)
+  3. `LTG_TOOL_miri_turnaround.py` (`CHOPSTICK` → `HAIRPIN`, `CHOPSTICK_SH` → `HAIRPIN_SH`)
+  4. `LTG_TOOL_char_spec_lint.py` — Already data-driven (C45 Kai). Token config accepts both hairpin+chopstick. No change.
+  5. `output/characters/supporting/grandma_miri.md` → v1.3 ("wooden hairpins" throughout)
+  6. `output/production/char_refinement_directive_c17.md` (3 occurrences updated)
+- Legacy file comments updated: silhouette_generator.py, character_turnaround_generator.py, character_lineup_generator.py
+- All 3 active Miri PNGs regenerated (expression sheet v006, turnaround, lineup v009)
+- Face gate after regen: same as C41 baseline — no regression
+- Notifications sent: Alex Chen + Priya Shah (FLAG 05 closure)
+- **KNOWN PRE-EXISTING ISSUE:** char_spec_lint looks for `LTG_TOOL_grandma_miri_expression_sheet_v*.py` but file has no version suffix — Kai Nakamura should fix this pattern mismatch.
+
+### P1 — SF06 "The Hand-Off"
+- New generator: `output/tools/LTG_TOOL_sf_miri_luma_handoff.py`
+- Output: `output/color/style_frames/LTG_COLOR_sf_miri_luma_handoff.png` (1280×720px)
+- Composition: Miri (L, WARM ATTENTION, hand toward CRT) + CRT (C, screen on) + Luma (R, ATTENTIVE CURIOSITY, forward lean)
+- Setting: living room (cold-open setting). Real World palette only.
+- Warm/cool: SUNLIT_AMBER left / CRT_COOL_SPILL right
+- Face gate: Luma PASS (FOCUSED DET. / DETERMINED+ / EYES ONLY). Miri visual inspection only.
+- Note: Jordan Reed's SF05 "The Passing" (kitchen, doorway view) is complementary — different angle of same relationship. Both are valid and distinct.
+- Reported complete to Alex Chen.
+
+### Ideabox C44
+- Submitted: `ideabox/20260330_maya_santos_sf_relationship_face_gate.md`
+  Idea: multi-character style frame face gate mode for LTG_TOOL_character_face_test.py (checks both faces in a style frame at actual in-frame scale)
+
+---
+
+## Cycle 44 (previous) — P0 Miri Chopstick Brief (Impact Assessment — Superseded by above)
+
+### Task: Miri Cultural Identity — Design Impact Assessment (now COMPLETE)
+- Inbox: `20260330_2400_p0_miri_cultural_identity_brief.md` (Alex Chen) — ARCHIVED
+- Issue: MIRI-A canonical chopstick hair accessory is cross-cultural error (Igbo-Nigerian/Brazilian character). Flagged by Amara Diallo C17. Story brief by Priya Shah C43.
 
 ### Task: Miri Cultural Identity — Design Impact Assessment
 - Inbox: `20260330_2400_p0_miri_cultural_identity_brief.md` (Alex Chen) — ARCHIVED

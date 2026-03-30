@@ -401,7 +401,8 @@ def draw_cosmo_lineup(draw, cx, base_y, h):
 
 def draw_miri_lineup(draw, cx, base_y, h):
     """Miri (MIRI-A canonical) at lineup height h, in color.
-    Bun + chopsticks, terracotta rust cardigan, soldering iron.
+    Bun + wooden hairpins, terracotta rust cardigan, soldering iron.
+    [C44: "chopstick" renamed to "wooden hairpins" in all active tools — this is legacy code, comment only.]
     """
     hu = h / 3.2
     hy = base_y - h
@@ -419,7 +420,7 @@ def draw_miri_lineup(draw, cx, base_y, h):
     draw.arc([bun_cx - bun_rx + 4, bun_cy, bun_cx + bun_rx - 4, bun_cy + bun_ry],
              start=0, end=180, fill=(168, 152, 140), width=2)
 
-    # CHOPSTICKS (warm espresso color)
+    # WOODEN HAIRPINS — warm espresso color [C44: "chopstick" → "wooden hairpins" in all active tools; legacy code unchanged]
     chopstick_col = (92, 58, 32)
     draw.polygon([(bun_cx - int(hu*0.22), bun_cy - bun_ry - int(hu*0.55)),
                   (bun_cx - int(hu*0.14), bun_cy - bun_ry - int(hu*0.55)),

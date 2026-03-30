@@ -7,6 +7,12 @@
 """
 LTG_TOOL_character_lineup.py
 Character Lineup Generator — Luma & the Glitchkin
+Cycle 44 / v009: Miri wooden hairpin rename (P0 cultural identity correction).
+
+Cycle 44 changes (Maya Santos, C44):
+  - draw_miri_lineup(): renamed chopstick_col → hairpin_col; accessory is now
+    "wooden hairpins" per design correction. No geometry or color change.
+
 Cycle 42 / v008: Two-tier ground plane staging (Lee Tanaka brief C42).
 
 Cycle 42 changes (Maya Santos, Character Designer):
@@ -570,17 +576,18 @@ def draw_miri_lineup(draw, cx, base_y, h):
     draw.arc([bun_cx - bun_rx + 4, bun_cy, bun_cx + bun_rx - 4, bun_cy + bun_ry],
              start=0, end=180, fill=(168, 152, 140), width=2)
 
-    chopstick_col = (92, 58, 32)
+    # WOODEN HAIRPINS — pair of dark-stained wooden hairpins piercing the bun (C44 rename from chopstick)
+    hairpin_col = (92, 58, 32)  # wooden hairpins — dark warm wood brown
     draw.polygon([(bun_cx - int(hu*0.22), bun_cy - bun_ry - int(hu*0.55)),
                   (bun_cx - int(hu*0.14), bun_cy - bun_ry - int(hu*0.55)),
                   (bun_cx - int(hu*0.06), bun_cy + bun_ry - int(hu*0.12)),
                   (bun_cx - int(hu*0.13), bun_cy + bun_ry - int(hu*0.12))],
-                 fill=chopstick_col, outline=LINE_COL, width=1)
+                 fill=hairpin_col, outline=LINE_COL, width=1)
     draw.polygon([(bun_cx + int(hu*0.14), bun_cy - bun_ry - int(hu*0.50)),
                   (bun_cx + int(hu*0.22), bun_cy - bun_ry - int(hu*0.50)),
                   (bun_cx + int(hu*0.13), bun_cy + bun_ry - int(hu*0.12)),
                   (bun_cx + int(hu*0.06), bun_cy + bun_ry - int(hu*0.12))],
-                 fill=chopstick_col, outline=LINE_COL, width=1)
+                 fill=hairpin_col, outline=LINE_COL, width=1)
 
     draw.ellipse([cx - r, hy, cx + r, hy + int(hu)],
                  fill=MIRI_SKIN, outline=LINE_COL, width=2)

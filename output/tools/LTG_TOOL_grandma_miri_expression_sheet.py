@@ -6,8 +6,13 @@
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
 LTG_TOOL_grandma_miri_expression_sheet.py
-Grandma Miri Expression Sheet — v005 M001 HEAD RATIO CONSTANT
-"Luma & the Glitchkin" — Cycle 41 / Maya Santos
+Grandma Miri Expression Sheet — v006 Wooden Hairpin Rename (P0 C44)
+"Luma & the Glitchkin" — Cycle 44 / Maya Santos
+
+v006 CHANGES (C44 — Alex Chen P0 — cultural identity correction):
+  - Renamed draw_hair_bun() vars: chop_x1/chop_x2 → hairpin_x1/hairpin_x2.
+    Accessory is now "wooden hairpins" per design correction (replaces chopstick pair).
+    No drawing logic change — geometry, color (92, 58, 32), and silhouette unchanged.
 
 v005 CHANGES (C41 — Daisuke Kobayashi C16 P3 — M001 spec lint WARN fix):
   - Added `MIRI_HEAD_RATIO = 3.2` as an explicit canonical constant.
@@ -200,11 +205,11 @@ def draw_hair_bun(draw, cx, cy):
                   bun_cx + int(bun_rx * 0.60), bun_cy + bun_ry], fill=HAIR_SH)
     arc_draw(draw, bun_cx - int(bun_rx * 0.15), bun_cy - int(bun_ry * 0.30),
              int(bun_rx * 0.50), int(bun_ry * 0.36), 200, 330, HAIR_HL, width=3)
-    chop_x1 = bun_cx - int(bun_rx * 0.32)
-    chop_x2 = bun_cx + int(bun_rx * 0.26)
-    draw.line([(chop_x1, bun_cy - bun_ry - 10), (chop_x1 + 7, bun_cy + bun_ry + 6)],
+    hairpin_x1 = bun_cx - int(bun_rx * 0.32)
+    hairpin_x2 = bun_cx + int(bun_rx * 0.26)
+    draw.line([(hairpin_x1, bun_cy - bun_ry - 10), (hairpin_x1 + 7, bun_cy + bun_ry + 6)],
               fill=LINE, width=3)
-    draw.line([(chop_x2, bun_cy - bun_ry - 8), (chop_x2 + 7, bun_cy + bun_ry + 4)],
+    draw.line([(hairpin_x2, bun_cy - bun_ry - 8), (hairpin_x2 + 7, bun_cy + bun_ry + 4)],
               fill=LINE, width=3)
     for pts in [
         bezier3((cx - int(HR*0.84), cy - ry + 8), (cx - int(HR*0.76), cy - int(ry*0.44)),

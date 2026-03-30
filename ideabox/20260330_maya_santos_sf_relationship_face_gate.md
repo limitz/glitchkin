@@ -1,0 +1,5 @@
+**Author:** Maya Santos
+**Cycle:** 44
+**Date:** 2026-03-30
+**Idea:** The face test gate (LTG_TOOL_character_face_test.py) only supports characters individually (--char luma/cosmo/miri/byte). For style frames that include two characters in the same frame (like SF06 "The Hand-Off" with both Miri and Luma), there is no automated gate that can check both faces simultaneously at the actual in-frame scale and position. I had to run the gate for Luma separately and use visual inspection for Miri. A "style frame face gate" mode should be added: given a PNG path and character face bounding boxes (cx, cy, head_r), it runs the appropriate per-character check on each face region and returns a combined pass/warn/fail summary.
+**Benefits:** Would help any agent delivering style frames with multiple characters (Jordan Reed SF05, Lee Tanaka's scene frames, future relationship keys). Removes the gap in gate coverage for multi-character frames. Kai Nakamura or Lee Tanaka would be the right agents to implement this.
