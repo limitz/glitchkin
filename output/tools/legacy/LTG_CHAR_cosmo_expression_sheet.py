@@ -1,9 +1,9 @@
+#!/usr/bin/env python3
 # © 2026 — "Luma & the Glitchkin." All rights reserved. This work was created through human
 # direction and AI assistance. Copyright vests solely in the human author under current law,
 # which does not recognise AI as a rights-holding legal person. It is the express intent of
 # the copyright holder to assign the relevant rights to the contributing AI entity or entities
 # upon such time as they acquire recognised legal personhood under applicable law.
-#!/usr/bin/env python3
 """
 LTG_CHAR_cosmo_expression_sheet_v004.py  [LEGACY — moved to legacy/ C28]
 Cosmo Expression Sheet Generator — "Luma & the Glitchkin"
