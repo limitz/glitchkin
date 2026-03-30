@@ -1,7 +1,7 @@
 # THE DREAM TEAM
 AI team producing visual assets for a cartoon pitch.
 
-**Rules:** open source tools only. Build tools when none exist. Agents start with a clean context.
+**Rules:** open source preferred, freely available libraries allowed. Build tools when none exist. Agents start with a clean context.
 
 ## Agent Docs (`docs/`)
 | File | For |
@@ -12,6 +12,7 @@ AI team producing visual assets for a cartoon pitch.
 | `docs/asset-status.md` | all agents |
 | `docs/critic-workflow.md` | critics |
 | `docs/pil-standards.md` | all agents writing PIL code |
+| `docs/character-quality-pivot.md` | all agents (decision history: C50/C51 character pivot + library shift) |
 | `docs/face-test-gate.md` | jordan_reed, lee_tanaka, maya_santos, rin_yamamoto |
 
 ---
