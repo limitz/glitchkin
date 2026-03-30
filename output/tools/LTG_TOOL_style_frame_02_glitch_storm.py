@@ -561,8 +561,104 @@ def draw_storefront(img):
 
 # ── Layer 6: Characters ───────────────────────────────────────────────────────
 
+def _draw_glitch_storm(img, cx, cy, body_h):
+    """
+    Draw Glitch hovering in the storm sky near the crack (upper-right mid-ground).
+    G007 FIX (C40): Glitch diamond body drawn with VOID_BLACK outline=width 3 as spec §2.2.
+    Glitch is the source of the storm — it hovers near the crack at mid-distance scale.
+    body_h: vertical half-extent of the diamond (equivalent to ry in the expression sheet).
+    """
+    import math
+    overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    od = ImageDraw.Draw(overlay)
+
+    rx = int(body_h * 0.88)   # horizontal half-extent (ry > rx: taller than wide)
+    ry = body_h
+    tilt_deg = 8               # slight tilt — Glitch is never perfectly upright
+    angle = math.radians(tilt_deg)
+
+    # Diamond body points (spec §2.1 formula)
+    top   = (cx + int(rx * 0.15 * math.sin(angle)),  cy - ry + int(rx * 0.15 * math.cos(angle)))
+    right = (cx + int(rx * math.cos(-angle)),          cy + int(rx * 0.2 * math.sin(-angle)))
+    bot   = (cx - int(rx * 0.15 * math.sin(angle)),  cy + int(ry * 1.15))
+    left  = (cx - int(rx * math.cos(-angle)),          cy - int(rx * 0.2 * math.sin(-angle)))
+    pts = [top, right, bot, left]
+
+    # UV_PURPLE shadow offset (+3, +4)
+    sh_pts = [(x + 3, y + 4) for x, y in pts]
+    od.polygon(sh_pts, fill=(*UV_PURPLE, 200))
+
+    # Main body fill — CORRUPT_AMBER
+    od.polygon(pts, fill=(*CORRUPT_AMBER, 240))
+
+    # Highlight facet
+    ctr = (cx, cy - ry // 4)
+    mid_tl = ((top[0] + left[0]) // 2, (top[1] + left[1]) // 2)
+    od.polygon([top, ctr, mid_tl], fill=(*((255, 185, 80)), 220))  # CORRUPT_AMB_HL
+
+    # G007 SPEC: VOID_BLACK outline on body polygon — width=3
+    od.polygon(pts, outline=(*VOID_BLACK, 255), width=3)
+
+    # HOT_MAG crack (drawn AFTER body fill — spec §2.3)
+    cs = (cx - rx // 2, cy - ry // 3)
+    ce = (cx + rx // 3, cy + ry // 2)
+    od.line([cs, ce], fill=(*HOT_MAGENTA, 230), width=2)
+    mid_c = ((cs[0] + ce[0]) // 2, (cs[1] + ce[1]) // 2)
+    od.line([mid_c, (cx + rx // 2, cy - ry // 4)], fill=(*HOT_MAGENTA, 200), width=1)
+
+    # Top spike (spec §3.1)
+    spike_h = max(4, ry // 2)
+    sx = cx + int(rx * 0.15 * math.sin(angle))
+    cy_top = top[1]
+    spike_pts = [
+        (sx - spike_h // 2, cy_top),
+        (sx - spike_h,      cy_top - spike_h),
+        (sx,                cy_top - spike_h * 2),
+        (sx + spike_h,      cy_top - spike_h),
+        (sx + spike_h // 2, cy_top),
+    ]
+    od.polygon(spike_pts, fill=(*CORRUPT_AMBER, 240))
+    od.polygon(spike_pts, outline=(*VOID_BLACK, 255), width=2)
+    od.line([(sx, cy_top - spike_h * 2), (sx, cy_top - spike_h * 2 - max(2, ry // 8))],
+            fill=(*HOT_MAGENTA, 220), width=2)
+
+    # Pixel eyes — simple 2-cell pixel grid at this scale
+    eye_cell = max(2, rx // 5)
+    face_cy = cy - ry // 6
+    # Left eye (viewer's right): CORRUPT_AMBER_HL tint (hostile calculating state)
+    le_cx = cx - rx // 3
+    od.rectangle([le_cx - eye_cell, face_cy - eye_cell, le_cx + eye_cell, face_cy + eye_cell],
+                 fill=(*UV_PURPLE, 230))
+    od.rectangle([le_cx - eye_cell // 2, face_cy - eye_cell // 2,
+                  le_cx + eye_cell // 2, face_cy + eye_cell // 2],
+                 fill=(*ACID_GREEN, 255))  # MISCHIEVOUS state — it's causing the storm
+    # Right eye: match left for bilateral storm state
+    re_cx = cx + rx // 3
+    od.rectangle([re_cx - eye_cell, face_cy - eye_cell, re_cx + eye_cell, face_cy + eye_cell],
+                 fill=(*UV_PURPLE, 230))
+    od.rectangle([re_cx - eye_cell // 2, face_cy - eye_cell // 2,
+                  re_cx + eye_cell // 2, face_cy + eye_cell // 2],
+                 fill=(*ACID_GREEN, 255))
+
+    # ACID_GREEN particle confetti near Glitch (spec §confetti: Glitchkin confetti
+    # stays close to the Glitchkin, NOT intermingled with storm confetti)
+    rng_gc = random.Random(77)
+    for _ in range(6):
+        px = cx + rng_gc.randint(-rx * 2, rx * 2)
+        py = cy + rng_gc.randint(-ry * 2, ry * 2)
+        ps = rng_gc.randint(2, 4)
+        od.rectangle([px, py, px + ps, py + ps], fill=(*ACID_GREEN, 180))
+
+    img = alpha_paste(img, overlay)
+    draw = ImageDraw.Draw(img)  # refresh after alpha_composite  # noqa: F841
+    return img
+
+
 def draw_characters(img):
-    """Character layout — sprinting left-to-right across frame."""
+    """Character layout — sprinting left-to-right across frame.
+    C40 G007 FIX: _draw_glitch_storm() added — Glitch now appears in SF02 with
+    canonical VOID_BLACK body outline (spec §2.2, G007 compliance).
+    """
     horizon_y = int(H * 0.58)
     ground_y  = horizon_y + int((H - horizon_y) * 0.12)
     char_h = int(H * 0.18)
@@ -576,6 +672,13 @@ def draw_characters(img):
 
     cosmo_cx = int(W * 0.62)
     cosmo_foot_y = ground_y + 14
+
+    # Glitch — hovering near the crack (upper-right mid-ground, ~x=78%, y=32%)
+    # At mid-distance scale: ~50% of char_h. VOID_BLACK outline per spec §2.2.
+    glitch_cx = int(W * 0.78)
+    glitch_cy = int(H * 0.32)
+    glitch_body_h = int(char_h * 0.50)  # ry (vertical half-extent)
+    img = _draw_glitch_storm(img, glitch_cx, glitch_cy, glitch_body_h)
 
     img = _draw_luma(img, luma_cx, luma_foot_y, char_h)
     img = _draw_cosmo(img, cosmo_cx, cosmo_foot_y, char_h)
@@ -1157,7 +1260,7 @@ def main():
     print("  [6/10] Damaged storefront window (cracks, missing panes, debris)...")
     img = draw_storefront(img)
 
-    print("  [7/10] Characters (Luma: face + lean, Cosmo, Byte)...")
+    print("  [7/10] Characters (Luma: face + lean, Cosmo, Byte, + Glitch G007 fix)...")
     img = draw_characters(img)
 
     print("  [8/10] Magenta fill light (C36: UPPER-RIGHT source, per-char mask)...")

@@ -1,5 +1,26 @@
 # Jordan Reed — Memory
 
+## Cycle 41 Deliverables
+- `LTG_TOOL_sf04_luma_byte_v005.py` → `output/tools/` CREATED ✓
+  - Output: `output/color/style_frames/LTG_SF_luma_byte_v005.png` (1280×720) ✓
+  - render_qa GRADE: WARN — all target metrics PASS
+    - Warm/cool separation: 1.1→36.6 (FAIL→PASS, target ≥15.0)
+    - Value ceiling: 255 (PASS ≥225)
+    - Value floor: 10 (PASS ≤30)
+    - Silhouette: distinct
+  - Color fidelity WARN is pre-existing (same as v004) — structural issue with alpha compositing
+- Ideabox: `20260330_jordan_reed_warmcool_test_in_generator.md`
+- README.md updated ✓ | Inbox archived ✓ | Completion report sent to Alex Chen ✓
+
+## Cycle 41 Status: COMPLETE
+
+## Cycle 41 Notes
+- **SF04 warm/cool fix strategy**: SUNLIT_AMBER canonical (212,146,58) lamp halo alpha 90 dominates top half. BYTE_TEAL (0,212,232) floor bounce wash alpha 85 dominates bottom half. C35 lesson applies: "cool must be stronger to dominate warm floor — asymmetric alphas required."
+- **Color fidelity WARN is inherent**: Alpha compositing canonical colors over warm base wall creates intermediate pixels that fall "near" palette entries in RGB radius but fail LAB ΔE. Pre-existing issue across all 4 style frames. Not fixable without changing render approach.
+- **SUNLIT_AMBER canonical = (212,146,58) #D4923A**: render_qa uses this. Brief said "canonical #FF8C00" but that's CORRUPT_AMBER (GL-07). Lamp halo uses (212,146,58) for color fidelity; lamp bulb center uses (255,252,240) SPECULAR_WHITE for value ceiling.
+- **New output filename**: `LTG_SF_luma_byte_v005.png` (brief-specified path). Old `LTG_COLOR_styleframe_luma_byte.png` unchanged (v004 lives there).
+- **Face test gate**: Not triggered at pitch scale (head_r=42px). Sprint scale threshold = 20-25px per face_test tool docs.
+
 ## Cycle 40 Deliverables
 - `LTG_TOOL_pixel_font_v001.py` → `output/tools/` CREATED ✓
   - `draw_pixel_text(draw, x, y, text, color, scale=1)` — A–Z, 0–9, space

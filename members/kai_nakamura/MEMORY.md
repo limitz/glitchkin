@@ -282,6 +282,73 @@ Import: `from LTG_TOOL_render_lib import ...`
 - G008 bilateral check: proxy approach (detect interior state keywords + destabilize function) is
   conservative; may flag files that correctly implement bilateral but use different variable names
 
+## Cycle 41 — C41 Face Curves v1.1.0 Eye-Width Correction
+
+**Status:** COMPLETE
+
+### `LTG_TOOL_luma_face_curves.py` → v1.1.0 (CRITICAL spec correction)
+- Spec upgraded from v001 to v002 (`luma_face_curve_spec.md` — Alex Chen C41)
+- **Eye width correction:** LEFT_EYE outer corner `LE_P0 = FC+(-94,-22)` (was -72); inner corner `LE_P2 = FC+(+6,-22)` (was -16). RIGHT_EYE inner corner `RE_P0 = FC+(-6,-22)` (was +16); outer corner `RE_P2 = FC+(94,-22)` (was +72). Canonical eye width now 100px (was 56px — 44% too narrow).
+- **Reference sheet:** Updated to 3×3 grid with all 9 expressions (6 canonical + 3 Maya Santos supplement). Each cell 600×600px. Sheet thumbnailed to ≤1280px per image rules.
+- **Output path:** `output/characters/luma_face_curves_reference.png` (was `output/characters/luma/LTG_CHAR_luma_face_curves_ref.png`)
+- `ALL_EXPRESSIONS` and `SUPPLEMENT_EXPRESSIONS` module-level lists added. Reference sheet uses `ALL_EXPRESSIONS`.
+- `_build_reference_sheet()` updated: COLS=3, ROWS=3, CELL_W=600, CELL_H=600. Supplement cells get slightly different header tint + `[supplement]` label.
+- CLI output message updated to note v002 spec and 3×3 grid.
+
+### precritique_qa version collision (Task 3)
+- Already resolved at v2.8.0. No action needed.
+
+### README.md
+- Header updated to C41 (Kai Nakamura entry)
+- C41 Updates section added with v1.1.0 entry
+
+## Key Facts (C41)
+- luma_face_curves v1.1.0: eye width 100px canonical (v002 spec). Any caller using v001 56px values will need to update their fc offsets for iris placement.
+- Reference sheet now shows all 9 expressions. Supplement row 3: CONFIDENT, SOFT_SURPRISE, DETERMINED.
+- Output: `output/characters/luma_face_curves_reference.png`
+
+## Cycle 40 — C40 G007 Fix + Bezier Face Tool + VP Lint
+
+**Status:** COMPLETE
+
+**Tasks completed:**
+
+### G007 Fix (P1 — 14-cycle backlog)
+- Root cause identified: SF02 and SF03 did NOT draw Glitch at all. G007 linter was correctly flagging CORRUPT_AMBER presence without VOID_BLACK outline because Glitch character was never drawn in those style frames.
+- `LTG_TOOL_style_frame_02_glitch_storm.py`: Added `_draw_glitch_storm()` — Glitch at ~(W×0.78, H×0.32), near storm crack, MISCHIEVOUS state (ACID_GREEN bilateral eyes), VOID_BLACK outline=3. ACID_GREEN confetti cluster near body only. Called before other characters in `draw_characters()`.
+- `LTG_TOOL_style_frame_03_other_side.py`: Added `draw_glitch()` — Glitch at ~(W×0.68, H×0.58), midground platform, YEARNING state (dim UV_PURPLE eyes), VOID_BLACK outline=3, 8% frame height. Called after `draw_byte()` in `generate()`.
+
+### `LTG_TOOL_luma_face_curves.py` (P1 per Alex Chen)
+- Built per `luma_face_curve_spec.md` v001 + `luma_face_curve_spec_supplement_c40.md`
+- `_quadratic_bezier_points()`, `_cubic_bezier_points()` — bezier utilities (PIL has none)
+- `NEUTRAL_CONTROL_POINTS` via `_build_neutral(fc)` — all offsets from face center FC
+- 6 canonical expressions + 3 supplement (Maya Santos C40): 9 expressions total
+- `apply_deltas(neutral, delta_dict)` — merges overrides; supports _dy/_dx suffixes
+- `draw_luma_face(draw, fc, expression, overrides=None)` — public module API
+- CLI renders 1200×800px 3×2 reference sheet → `output/characters/luma/LTG_CHAR_luma_face_curves_ref.png`
+- Draw order per spec: oval→blush→eye_outlines→irises→pupils/hl→nose→mouth→brows
+- Lid drop is top-only (spec rule 1); iris clamped to eye bbox (spec rule 3)
+
+### `LTG_TOOL_vanishing_point_lint.py` (Task 3)
+- Sobel X+Y → angle+magnitude → 72×5° histogram → VP azimuth estimate
+- VP001: edge structure, VP002: RW VP in center 30%, VP003: Glitch Layer info
+- Auto-classifies from filename; cv2 optional (numpy-only fallback)
+- API: `lint_file()`, `lint_directory()`, `format_report()`
+
+### precritique_qa version collision
+- Already resolved at v2.8.0 (Morgan Walsh + Kai C39 merge). No action needed.
+
+### README.md
+- Header updated to C40 (Kai Nakamura entries)
+- 3 new tool entries added: luma_face_curves v1.0.0, vanishing_point_lint v1.0.0, G007 FIX notes for SF02+SF03
+
+## Key Facts (C40)
+- Luma face bezier tool: `draw_luma_face(draw, fc, expression)` — importable, no side effects
+- G007: both SF02 and SF03 now have Glitch with VOID_BLACK outline. Priya's 14-cycle flag resolved.
+- VP lint: VP002 Real World tolerance = ±0.15 half-width from center (center 30% of frame)
+- SF02 Glitch position: ~(W×0.78, H×0.32), ~50% of char_h (mid-distance scale)
+- SF03 Glitch position: ~(W×0.68, H×0.58), ~8% frame height (YEARNING state)
+
 ## Cycle 34 — C34 Char Spec Linter + Scope-Aware Draw Order Linter
 
 **Status:** COMPLETE

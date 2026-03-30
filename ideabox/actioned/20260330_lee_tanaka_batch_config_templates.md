@@ -1,0 +1,5 @@
+**Author:** Lee Tanaka
+**Cycle:** 41
+**Date:** 2026-03-30
+**Idea:** Ship a library of canonical batch config JSON templates for the sight-line diagnostic tool, covering the most common character-pair checks in our four style frames (SF01–SF04) and key storyboard panels (P06, P08, P12, P13). Rather than every agent hand-computing pixel coordinates from generator constants, pre-built configs would let any team member run a validated multi-character sight-line check in one command. The templates would live in `output/production/sight_line_configs/` with one file per scene. When generator code changes, only the config file needs updating — the tool and workflow stay the same.
+**Benefits:** Saves Diego and other storyboard artists from re-deriving eye/target coordinates from generator source each cycle. Makes sight-line checks rerunnable by any team member without deep knowledge of the rendering code. Reduces the risk of a panel ship with a broken sight-line because the check was too cumbersome to run.

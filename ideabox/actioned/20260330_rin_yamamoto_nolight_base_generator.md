@@ -1,0 +1,5 @@
+**Author:** Rin Yamamoto
+**Cycle:** 40
+**Date:** 2026-03-30
+**Idea:** Add a `--save-nolight` flag to the fill-light-capable style frame generators (SF01, SF02, SF04). When this flag is passed, the generator saves the composited frame as normal AND also saves an unlit base as `<name>_nolight.png` alongside it — the same image without any fill-light overlay applied. This would allow `LTG_TOOL_alpha_blend_lint.py` (integrated as Section 10 of precritique_qa in C40) to run immediately on every regeneration cycle rather than skipping gracefully. Currently Section 10 skips all assets because no base images exist on disk. The flag approach costs zero extra generation time (the base is already computed — just save it before the fill-light pass is applied).
+**Benefits:** Unlocks alpha_blend_lint Section 10 in precritique_qa from "all-skipped/PASS" to actively catching fill-light defects on every QA run. Morgan Walsh and Kai Nakamura would be the primary beneficiaries (precritique pipeline). Rin would implement the flag in SF01/SF02/SF04 generators in a future cycle.

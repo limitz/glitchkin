@@ -666,6 +666,81 @@ def draw_byte(draw, cx, cy, h):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Glitch (G007 FIX — C40)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def draw_glitch(draw, cx, cy, body_h):
+    """
+    Draw Glitch on the midground platform in its native environment (The Other Side).
+    G007 FIX (C40): Glitch diamond body drawn with VOID_BLACK outline=width 3 per spec §2.2.
+    In SF03, Glitch is in its home — YEARNING/still state. Subdued spike, quiet eyes.
+    cx, cy: body center. body_h: vertical half-extent (ry).
+    """
+    rx = int(body_h * 0.88)   # horizontal half-extent (ry > rx: taller than wide)
+    ry = body_h
+    tilt_deg = 3               # nearly upright but still slightly wrong
+    angle = math.radians(tilt_deg)
+
+    # Diamond body points (spec §2.1 formula)
+    top   = (cx + int(rx * 0.15 * math.sin(angle)),  cy - ry + int(rx * 0.15 * math.cos(angle)))
+    right = (cx + int(rx * math.cos(-angle)),          cy + int(rx * 0.2 * math.sin(-angle)))
+    bot   = (cx - int(rx * 0.15 * math.sin(angle)),  cy + int(ry * 1.15))
+    left  = (cx - int(rx * math.cos(-angle)),          cy - int(rx * 0.2 * math.sin(-angle)))
+    pts = [top, right, bot, left]
+
+    # UV_PURPLE shadow offset (+3, +4) — spec §2.2
+    sh_pts = [(x + 3, y + 4) for x, y in pts]
+    draw.polygon(sh_pts, fill=UV_PURPLE)
+
+    # Main body fill — CORRUPT_AMBER
+    draw.polygon(pts, fill=CORRUPT_AMBER)
+
+    # Highlight facet — upper-left triangle
+    ctr = (cx, cy - ry // 4)
+    mid_tl = ((top[0] + left[0]) // 2, (top[1] + left[1]) // 2)
+    CORRUPT_AMB_HL = (255, 185, 80)
+    draw.polygon([top, ctr, mid_tl], fill=CORRUPT_AMB_HL)
+
+    # G007 SPEC §2.2: VOID_BLACK outline on body polygon — width=3
+    draw.polygon(pts, outline=VOID_BLACK, width=3)
+
+    # HOT_MAG crack drawn AFTER body fill (spec §2.3 stacking order)
+    cs = (cx - rx // 2, cy - ry // 3)
+    ce = (cx + rx // 3, cy + ry // 2)
+    draw.line([cs, ce], fill=HOT_MAGENTA, width=2)
+    mid_c = ((cs[0] + ce[0]) // 2, (cs[1] + ce[1]) // 2)
+    draw.line([mid_c, (cx + rx // 2, cy - ry // 4)], fill=HOT_MAGENTA, width=1)
+
+    # Top spike — YEARNING state: subdued (spike_h=6 equiv at this scale)
+    spike_h = max(3, ry // 5)
+    sx = cx + int(rx * 0.15 * math.sin(angle))
+    cy_top = top[1]
+    spike_pts = [
+        (sx - spike_h // 2, cy_top),
+        (sx - spike_h,      cy_top - spike_h),
+        (sx,                cy_top - spike_h * 2),
+        (sx + spike_h,      cy_top - spike_h),
+        (sx + spike_h // 2, cy_top),
+    ]
+    draw.polygon(spike_pts, fill=CORRUPT_AMBER)
+    draw.polygon(spike_pts, outline=VOID_BLACK, width=2)
+    draw.line([(sx, cy_top - spike_h * 2), (sx, cy_top - spike_h * 2 - max(2, ry // 10))],
+              fill=HOT_MAGENTA, width=2)
+
+    # Pixel eyes — YEARNING state: UV_PURPLE dim glow (both bilateral, soft)
+    eye_cell = max(2, rx // 5)
+    face_cy = cy - ry // 6
+    for eye_cx in [cx - rx // 3, cx + rx // 3]:
+        draw.rectangle([eye_cx - eye_cell, face_cy - eye_cell,
+                        eye_cx + eye_cell, face_cy + eye_cell],
+                       fill=UV_PURPLE)
+        # Dim center — the YEARNING "watching" glow
+        draw.rectangle([eye_cx - eye_cell // 2, face_cy - eye_cell // 2,
+                        eye_cx + eye_cell // 2, face_cy + eye_cell // 2],
+                       fill=(80, 30, 140))  # dim UV — not full ACID_GREEN, just watching
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Confetti (draw LAST)
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -802,6 +877,14 @@ def generate(output_path):
     byte_cy = int(H * 0.62)
     byte_h  = int(H * 0.07)
     draw_byte(draw, byte_cx, byte_cy, byte_h)
+
+    print("Character: Glitch (G007 FIX C40 — VOID_BLACK outline, YEARNING state, midground)...")
+    # Glitch on midground platform at right of frame — native to this world.
+    # Mid-distance scale: ~8% of frame height. YEARNING state — still, watching Luma.
+    glitch_cx = int(W * 0.68)
+    glitch_cy = int(H * 0.58)
+    glitch_body_h = int(H * 0.08)  # ry (vertical half-extent)
+    draw_glitch(draw, glitch_cx, glitch_cy, glitch_body_h)
 
     print("Confetti (seed=77, ambient, no warm colors)...")
     draw = draw_confetti(draw)

@@ -18,11 +18,12 @@ Tools chained (in order):
   6. LTG_TOOL_glitch_spec_lint.py    — Glitchkin generator spec validation
   7. LTG_TOOL_readme_sync.py     — README Script Index completeness audit
   8. LTG_TOOL_motion_spec_lint.py — Motion spec sheet structural checks (Ryo Hasegawa C39)
-  9. Delta Report                     — compare current run vs last run (qa_baseline_last.json)
- 10. Arc-Diff Gate (informational)    — contact sheet version diff (Lee Tanaka C38 ideabox idea)
-     LTG_TOOL_contact_sheet_arc_diff.compare_contact_sheets(). Compares current and prior
-     contact sheet versions. CHANGED > 3: NOTE listing changed panels. REMOVED > 0: WARN.
-     Does not affect overall PASS/WARN/FAIL score — informational gate only.
+  9. Delta Report + Arc-Diff Gate (informational) — delta vs last run; contact sheet version diff
+     (Lee Tanaka C38 ideabox). LTG_TOOL_contact_sheet_arc_diff.compare_contact_sheets().
+     CHANGED > 3: NOTE. REMOVED > 0: WARN. Informational only — does not affect overall score.
+ 10. Alpha Blend Lint (scored)       — fill-light composition defect detection (Rin Yamamoto C40)
+     LTG_TOOL_alpha_blend_lint.lint_alpha_blend(). Requires unlit base (*_nolight.png) alongside
+     composited. FLAT_FILL = FAIL. LOW_SIGNAL = WARN. Skips gracefully when base absent.
 
 Output:
     output/production/precritique_qa_c<NN>.md
@@ -35,6 +36,19 @@ Exit codes:
 
 Author: Morgan Walsh (Pipeline Automation Specialist)
 Created: Cycle 34 — 2026-03-29
+Version: 2.8.0 (C40 Morgan Walsh + Kai Nakamura: merges two parallel v2.7.0 branches.
+              Morgan Walsh v2.7.0: arc-diff pairs loaded from arc_diff_config.json at startup;
+              falls back to hardcoded constant if JSON absent — backwards compatible.
+              Kai Nakamura v2.7.0: numpy batch pixel scans; LAB ΔE color verify via cv2;
+              run_color_verify() uses _check_color_fidelity_lab() from render_qa v2.0.0.
+              CYCLE_LABEL updated to C40.)
+Version: 2.8.0 (C40 Rin Yamamoto: alpha_blend_lint Section 10 added — fill-light composition
+              defect detection. Runs LTG_TOOL_alpha_blend_lint.lint_alpha_blend() on assets
+              that have both a composited image and an unlit base registered in
+              FILL_LIGHT_ASSETS. Lazy-loaded; skips gracefully when base is absent or cv2
+              unavailable. Section 10 is scored (PASS/WARN/FAIL affects overall grade).
+              FLAT_FILL = FAIL, LOW_SIGNAL = WARN, PASS = PASS. If all assets skip
+              (no bases on disk), overall = PASS.)
 Version: 2.7.0 (C39 Morgan Walsh: arc-diff pairs now loaded from arc_diff_config.json at startup;
               falls back to hardcoded constant if JSON absent — backwards compatible.)
 Version: 2.7.0 (C39 Kai Nakamura: numpy batch pixel scans; LAB ΔE color verify.
@@ -72,7 +86,7 @@ PALETTE_MD  = REPO_ROOT / "output" / "color" / "palettes" / "master_palette.md"
 BASELINE_JSON = TOOLS_DIR / "qa_baseline_last.json"
 
 # Cycle label — update each cycle
-CYCLE_LABEL = "C39"
+CYCLE_LABEL = "C40"
 
 if str(TOOLS_DIR) not in sys.path:
     sys.path.insert(0, str(TOOLS_DIR))
@@ -93,6 +107,26 @@ from PIL import Image
 
 # Arc-diff tool: loaded lazily to avoid import errors if Pillow not installed yet
 _arc_diff_mod = None
+# Alpha-blend-lint tool: loaded lazily (requires cv2; skips gracefully if absent)
+_alpha_blend_lint_mod = None
+
+def _load_alpha_blend_lint():
+    """Lazily import LTG_TOOL_alpha_blend_lint. Returns module or None."""
+    global _alpha_blend_lint_mod
+    if _alpha_blend_lint_mod is not None:
+        return _alpha_blend_lint_mod
+    try:
+        spec = _importlib_util.spec_from_file_location(
+            "LTG_TOOL_alpha_blend_lint",
+            str(TOOLS_DIR / "LTG_TOOL_alpha_blend_lint.py"),
+        )
+        mod = _importlib_util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        _alpha_blend_lint_mod = mod
+        return mod
+    except Exception:
+        return None
+
 
 def _load_arc_diff():
     """Lazily import LTG_TOOL_contact_sheet_arc_diff. Returns module or None."""
@@ -207,6 +241,62 @@ def _load_arc_diff_pairs():
 
 
 ARC_DIFF_PAIRS = _load_arc_diff_pairs()
+
+# ---------------------------------------------------------------------------
+# Fill-light assets for Section 10 — alpha_blend_lint
+# ---------------------------------------------------------------------------
+# Each entry:
+#   (label, composited_path, base_path, zones)
+#
+#   label           : human-readable name for report
+#   composited_path : rendered style frame with fill light applied
+#   base_path       : unlit base image (same composition, no fill light overlay)
+#                     If base_path does not exist on disk the asset is SKIPPED.
+#   zones           : list of zone dicts compatible with lint_alpha_blend() API:
+#                     {"label", "cx_frac", "cy_frac", "src_dx_frac", "src_dy_frac"}
+#
+# Convention: base images are named <original_stem>_nolight<suffix>.
+# When a generator produces an unlit base (e.g. for QA), register it here.
+# Skipping is not a defect — only flag when base is present.
+
+SF_DIR = OUTPUT_DIR / "color" / "style_frames"
+
+FILL_LIGHT_ASSETS = [
+    (
+        "SF01 Discovery (Luma — warm lamp fill)",
+        SF_DIR / "LTG_COLOR_styleframe_discovery.png",
+        SF_DIR / "LTG_COLOR_styleframe_discovery_nolight.png",
+        [
+            # Luma: fill from upper-left warm lamp
+            {"label": "luma", "cx_frac": 0.29, "cy_frac": 0.55,
+             "src_dx_frac": -0.5, "src_dy_frac": -0.8},
+        ],
+    ),
+    (
+        "SF02 Glitch Storm (Luma/Byte/Cosmo — HOT_MAGENTA fill)",
+        SF_DIR / "LTG_COLOR_styleframe_glitch_storm.png",
+        SF_DIR / "LTG_COLOR_styleframe_glitch_storm_nolight.png",
+        [
+            {"label": "luma",  "cx_frac": 0.45, "cy_frac": 0.65,
+             "src_dx_frac": 0.5, "src_dy_frac": -0.8},
+            {"label": "byte",  "cx_frac": 0.28, "cy_frac": 0.60,
+             "src_dx_frac": 0.5, "src_dy_frac": -0.8},
+            {"label": "cosmo", "cx_frac": 0.62, "cy_frac": 0.65,
+             "src_dx_frac": 0.5, "src_dy_frac": -0.8},
+        ],
+    ),
+    (
+        "SF04 Luma+Byte (fill light adapter — SF04 scene preset)",
+        SF_DIR / "LTG_COLOR_styleframe_luma_byte.png",
+        SF_DIR / "LTG_COLOR_styleframe_luma_byte_nolight.png",
+        [
+            {"label": "luma", "cx_frac": 0.35, "cy_frac": 0.60,
+             "src_dx_frac": 0.5, "src_dy_frac": -0.8},
+            {"label": "byte", "cx_frac": 0.65, "cy_frac": 0.58,
+             "src_dx_frac": -0.5, "src_dy_frac": -0.8},
+        ],
+    ),
+]
 
 
 # ---------------------------------------------------------------------------
@@ -944,6 +1034,123 @@ def run_arc_diff_gate() -> list:
     return results
 
 
+def run_alpha_blend_lint() -> dict:
+    """
+    Section 10 — Alpha Blend Lint (Rin Yamamoto, Cycle 40).
+
+    Runs LTG_TOOL_alpha_blend_lint.lint_alpha_blend() on each asset registered
+    in FILL_LIGHT_ASSETS that has a base (unlit) image present on disk.
+
+    Scoring per zone:
+        FLAT_FILL  → counts as FAIL (fill gradient not radial — defect)
+        LOW_SIGNAL → counts as WARN (subtle fill; may be intentional)
+        PASS       → counts as PASS
+
+    If no base images are available (all skipped), overall = PASS.
+
+    Returns:
+        {
+            "overall"  : "PASS" | "WARN" | "FAIL",
+            "pass"     : int,
+            "warn"     : int,
+            "fail"     : int,
+            "skipped"  : int,
+            "per_asset": list of per-asset result dicts
+        }
+    """
+    abl_mod = _load_alpha_blend_lint()
+
+    pass_count = 0
+    warn_count = 0
+    fail_count = 0
+    skipped    = 0
+    per_asset  = []
+
+    for label, comp_path, base_path, zones in FILL_LIGHT_ASSETS:
+        asset_entry = {
+            "label":      label,
+            "composited": str(comp_path),
+            "base":       str(base_path),
+            "skipped":    False,
+            "skip_reason": None,
+            "zones":      [],
+        }
+
+        # Graceful skip: base not on disk
+        if not base_path.exists():
+            asset_entry["skipped"] = True
+            asset_entry["skip_reason"] = f"Base image not found: {base_path.name}"
+            skipped += 1
+            per_asset.append(asset_entry)
+            continue
+
+        # Graceful skip: composited not on disk
+        if not comp_path.exists():
+            asset_entry["skipped"] = True
+            asset_entry["skip_reason"] = f"Composited image not found: {comp_path.name}"
+            skipped += 1
+            per_asset.append(asset_entry)
+            continue
+
+        # Module unavailable (e.g. cv2 not installed)
+        if abl_mod is None:
+            asset_entry["skipped"] = True
+            asset_entry["skip_reason"] = "alpha_blend_lint module unavailable (cv2 required)"
+            skipped += 1
+            per_asset.append(asset_entry)
+            continue
+
+        # Run lint
+        try:
+            results = abl_mod.lint_alpha_blend(
+                composited_path=str(comp_path),
+                base_path=str(base_path),
+                zones=zones,
+            )
+        except Exception as exc:
+            asset_entry["skipped"] = True
+            asset_entry["skip_reason"] = f"lint_alpha_blend() exception: {exc}"
+            skipped += 1
+            per_asset.append(asset_entry)
+            continue
+
+        for zone_r in results:
+            verdict = zone_r.get("verdict", "PASS").upper()
+            zone_entry = {
+                "zone":    zone_r.get("label", "?"),
+                "verdict": verdict,
+            }
+            if verdict == "FLAT_FILL":
+                fail_count += 1
+                zone_entry["msg"] = "FLAT_FILL — fill contribution has no radial falloff (defect)"
+            elif verdict == "LOW_SIGNAL":
+                warn_count += 1
+                zone_entry["msg"] = "LOW_SIGNAL — fill contribution below noise floor (advisory)"
+            else:
+                pass_count += 1
+                zone_entry["msg"] = "PASS — radial falloff detected"
+            asset_entry["zones"].append(zone_entry)
+
+        per_asset.append(asset_entry)
+
+    # Overall grade: PASS if all skipped, otherwise worst of zone verdicts
+    if fail_count > 0:
+        overall = "FAIL"
+    elif warn_count > 0:
+        overall = "WARN"
+    else:
+        overall = "PASS"
+
+    return {
+        "overall":   overall,
+        "pass":      pass_count,
+        "warn":      warn_count,
+        "fail":      fail_count,
+        "skipped":   skipped,
+        "per_asset": per_asset,
+    }
+
+
 # ---------------------------------------------------------------------------
 # Report builder
 # ---------------------------------------------------------------------------
@@ -958,6 +1165,7 @@ def build_report(
     readme_sync_res,
     motion_spec_res,
     arc_diff_results: list,
+    alpha_blend_res: dict,
     delta: dict,
     run_ts: str,
 ) -> str:
@@ -1016,7 +1224,7 @@ def build_report(
         f"# Pre-Critique QA Report — {CYCLE_LABEL}",
         "",
         f"**Run date:** {run_ts}",
-        f"**Script:** LTG_TOOL_precritique_qa.py v2.4.0",
+        f"**Script:** LTG_TOOL_precritique_qa.py v2.8.0",
         "",
         "---",
         "",
@@ -1197,7 +1405,44 @@ def build_report(
 
     lines.append("---")
     lines.append("")
-    lines.append("*Generated by LTG_TOOL_precritique_qa.py v2.6.0 — Morgan Walsh (arc-diff gate S9 + lineup suppression expansion C39)*")
+
+    # Section 10: Alpha Blend Lint
+    abl_badge = _grade_line(alpha_blend_res["overall"])
+    lines.append(f"## 10. Alpha Blend Lint — Fill-Light Composition — {abl_badge}")
+    lines.append("")
+    lines.append(
+        "_Checks fill-light blending quality on composited style frames. "
+        "Requires unlit base images (`*_nolight.png`) alongside composited outputs. "
+        "FLAT_FILL = FAIL (no radial falloff). LOW_SIGNAL = WARN (fill too subtle). "
+        "Assets skip gracefully when base is absent — not a defect._"
+    )
+    lines.append("")
+    lines.append(
+        f"PASS: {alpha_blend_res['pass']}  "
+        f"WARN: {alpha_blend_res['warn']}  "
+        f"FAIL: {alpha_blend_res['fail']}  "
+        f"Skipped: {alpha_blend_res['skipped']}"
+    )
+    lines.append("")
+
+    for asset in alpha_blend_res.get("per_asset", []):
+        lines.append(f"### {asset['label']}")
+        if asset.get("skipped"):
+            lines.append(f"  - *SKIP — {asset.get('skip_reason', 'no base available')}*")
+        else:
+            for zone in asset.get("zones", []):
+                verdict = zone["verdict"]
+                badge_v = _grade_line(verdict) if verdict in ("PASS", "WARN", "FAIL") else verdict
+                lines.append(f"  - Zone `{zone['zone']}`: {badge_v} — {zone.get('msg', '')}")
+        lines.append("")
+
+    if not alpha_blend_res.get("per_asset"):
+        lines.append("_No fill-light assets registered._")
+        lines.append("")
+
+    lines.append("---")
+    lines.append("")
+    lines.append("*Generated by LTG_TOOL_precritique_qa.py v2.8.0 — Rin Yamamoto (C40: alpha_blend_lint Section 10)*")
 
     return "\n".join(lines)
 
@@ -1250,11 +1495,11 @@ def main():
     else:
         print(f"      → {readme_sync_res['overall']} (OK={readme_sync_res['pass']}, UNLISTED/GHOST={readme_sync_res['warn']}, disk={readme_sync_res.get('disk_total','?')}, listed={readme_sync_res.get('listed_total','?')})")
 
-    print("[8/9] Running Motion Spec Lint on motion sheets...")
+    print("[8/10] Running Motion Spec Lint on motion sheets...")
     motion_spec_res = run_motion_spec_lint()
     print(f"      → {motion_spec_res['overall']} (PASS={motion_spec_res['pass']}, WARN={motion_spec_res['warn']}, FAIL={motion_spec_res['fail']}, MISSING={len(motion_spec_res['missing'])})")
 
-    print("[9/9] Running Arc-Diff Gate on contact sheet pairs...")
+    print("[9/10] Running Arc-Diff Gate on contact sheet pairs...")
     arc_diff_results = run_arc_diff_gate()
     for ad in arc_diff_results:
         sev = ad["severity"]
@@ -1263,6 +1508,10 @@ def main():
         else:
             msgs = "; ".join(m[:80] for m in ad.get("messages", [])[:2])
             print(f"      → {ad['label']}: {sev} — {msgs}")
+
+    print("[10/10] Running Alpha Blend Lint on fill-light assets...")
+    alpha_blend_res = run_alpha_blend_lint()
+    print(f"      → {alpha_blend_res['overall']} (PASS={alpha_blend_res['pass']}, WARN={alpha_blend_res['warn']}, FAIL={alpha_blend_res['fail']}, SKIP={alpha_blend_res['skipped']})")
 
     # Build snapshot and compute delta
     current_snapshot = _make_snapshot(
@@ -1288,6 +1537,7 @@ def main():
         readme_sync_res,
         motion_spec_res,
         arc_diff_results,
+        alpha_blend_res,
         delta,
         run_ts,
     )
@@ -1307,6 +1557,7 @@ def main():
         glitch_lint_res["overall"],
         readme_sync_res["overall"],
         motion_spec_res["overall"],
+        alpha_blend_res["overall"],
     )
 
     print(f"[precritique_qa] OVERALL: {overall}")

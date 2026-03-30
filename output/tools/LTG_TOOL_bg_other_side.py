@@ -3,6 +3,7 @@
 LTG_TOOL_bg_other_side.py
 "Luma & the Glitchkin" — SF03 "Other Side" Background Only (Compositing Export)
 Artist: Jordan Reed | Cycle 15
+UV_PURPLE_DARK fix: Rin Yamamoto | Cycle 40
 
 Based on LTG_TOOL_style_frame_03_other_side.py.
 This version strips characters and footer bar — pure compositing background.
@@ -10,6 +11,12 @@ Follows the sf03_other_side_spec.md color + depth spec (Cycle 15 spec-compliant 
 
 Replaces: LTG_ENV_other_side_bg.png (Cycle 14 pre-spec version used grid floor approach)
 Output:   LTG_ENV_other_side_bg.png
+
+C40 FIX (Rin Yamamoto):
+  UV_PURPLE_DARK SATURATION — Was (43, 32, 80) = #2B2050 = 31% saturation.
+  Corrected to GL-04a (58, 16, 96) = #3A1060 = 72% saturation.
+  Matches the same fix applied to LTG_TOOL_style_frame_03_other_side.py at C28.
+  This eliminates the 14.1° UV_PURPLE hue drift flagged since C16.
 
 CRITICAL RULES (inherited from style frame generator):
   - NO WARM LIGHT. Warmth in pigment only (Real World debris fragments).
@@ -38,7 +45,7 @@ DARK_ACID       = (26,  168,   0)
 DEEP_CYAN       = (0,   168, 180)
 HOT_MAGENTA     = (255,  45, 107)
 UV_PURPLE_MID   = (42,   26,  64)
-UV_PURPLE_DARK  = (43,   32,  80)
+UV_PURPLE_DARK  = (58,   16,  96)   # GL-04a #3A1060 — 72% sat. Was (43,32,80)=#2B2050 31% sat (C40 fix)
 FAR_EDGE        = (33,   17,  54)
 SLAB_TOP        = (26,   40,  56)
 SLAB_FACE       = (10,   20,  32)
@@ -335,6 +342,8 @@ def generate(output_path):
     draw = draw_confetti(draw)
     # No characters, no footer bar — pure compositing background
 
+    # Hard limit: ≤ 1280px in both dimensions (docs/image-rules.md)
+    img.thumbnail((1280, 1280), Image.LANCZOS)
     img.save(output_path)
     import os
     file_size = os.path.getsize(output_path)

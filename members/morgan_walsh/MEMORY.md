@@ -6,6 +6,21 @@ Pipeline Automation Specialist. Core mandate: reduce LLM token cost by maximisin
 ## Joined
 C34 (first active cycle).
 
+## C40 Work Done
+- Upgraded `LTG_TOOL_ci_suite.py` → **v1.1.0**: `--known-issues PATH` flag added.
+  - `load_known_issues(path) → dict` exported for programmatic use.
+  - `run_suite()` gains optional `known_issues` parameter; per-check `known_count` in result.
+  - `format_suite_report()` shows total known count in OVERALL line with explanatory note.
+  - Auto-discovers `ci_known_issues.json` in tools-dir if flag not specified.
+  - `_is_known()` and `_annotate_details_with_known()` helpers added.
+- Created `output/tools/ci_known_issues.json`: 26 W004 draw-order FPs + 12 Glitch spec lint FPs from C39 baseline seeded.
+  - W004 FPs: img.paste/alpha_composite composite patterns with no following draw calls (advisory, not real bugs).
+  - G005/G006/G007 FPs: non-Glitch files containing GL color constants (byte motion, color_verify, fidelity_check, bg generators, character_face_test, etc.).
+- Merged `LTG_TOOL_precritique_qa.py` → **v2.8.0**: resolves version collision between Morgan v2.7.0 (arc_diff JSON config) and Kai v2.7.0 (LAB ΔE color verify). Both changes confirmed present in single file. CYCLE_LABEL updated C39→C40. Report header/footer version strings updated.
+- Updated README.md: v1.1.0 ci_suite entry, ci_known_issues.json entry, v2.8.0 precritique_qa entry, last-updated header.
+- Archived 1 inbox message.
+- Ideabox: ci_known_issues stale-tracking / `--warn-stale N` idea submitted.
+
 ## Operating Rule
 Build tools, not prompts. Use existing LTG_TOOL_* where possible. Extend before creating new. Report PASS/FAIL counts — not prose.
 

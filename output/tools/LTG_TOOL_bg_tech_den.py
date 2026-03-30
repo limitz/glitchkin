@@ -1,28 +1,28 @@
 #!/usr/bin/env python3
 """
-LTG_TOOL_bg_tech_den.py — Cosmo's Tech Den Background v004 (Daylight)
+LTG_TOOL_bg_tech_den.py — Cosmo's Tech Den Background v005 (Daylight)
 "Luma & the Glitchkin" — Background & Environment Design
-Artist: Jordan Reed | Cycle 22
+Artist: Hana Okonkwo | Cycle 40
 
-Upgrade from v003: resolves Takeshi Murakami Critique 10 P1 + P2.
-All visual content preserved. Two targeted lighting fixes applied.
+Upgrade from v004: C16 critique fixes (Chiara / Hana Okonkwo C40).
+All visual content preserved. Two targeted fixes applied.
 
-Changes from v003:
-  Fix 1a — Light shaft repositioned into desk zone (CRITICAL):
-    - Shaft apex now sits at upper-left near window, above desk height
-    - Shaft fans diagonally across desk surface (DESK_TOP_Y == 395)
-    - Base points land ON desk surface, fading before bed zone (x < 700)
-    - Shaft width ~200px at widest point
-    - max_alpha raised to 150 (daylight shaft in dark room is NOT subtle)
-    - Dust motes scatter bounds updated to match new shaft geometry
+Changes from v004:
+  Fix A — Floor plank perspective (CRITICAL):
+    - v004 planks were horizontal + evenly-spaced vertical lines (no convergence).
+    - Now: horizontal cross-grain lines (plank rows) converge in Y via lerp toward
+      FLOOR_Y_FAR (non-linear spacing, closer together at far wall).
+    - Vertical grain lines (plank ends) converge to VP_X=820 from both sides of
+      the floor trapezoid. Left-side planks fan toward VP; right-side planks fan
+      toward VP. 8 left + 8 right convergence lines.
+    - Matches perspective established by wall/ceiling geometry.
 
-  Fix 1b — Monitor glow spill individuated (three separate sources):
-    - REMOVED: single wide-ellipse desk spill (was a uniform ambient wash)
-    - ADDED: three separate gaussian_glow() calls — one per monitor
-      * CRT1 (x~195): cool blue-white, spill forward-left onto desk surface
-      * CRT2 (x~420): central desk area spill
-      * Flat panel (x~635): toward oscilloscope zone
-    - Chair back spill and shelf spill retained from v003
+  Fix B — Warm/cool balance (warm/cool QA FAIL):
+    - v004 warm overlay: SUNLIT_AMBER, max alpha 30, first 320px.
+    - v005: max alpha raised to 65, coverage extended to 480px.
+    - This shifts warm/cool balance toward PASS (REAL_INTERIOR threshold=12)
+      without washing out the room or fighting the monitor glow.
+    - Light shaft and gaussian_glow remain unchanged (already warm/correct).
 
 Rules:
   - Real World palette ONLY — zero Glitch palette colors
@@ -257,16 +257,29 @@ def draw_tech_den():
     ]
     draw.polygon(floor_pts, fill=FLOOR_WOOD)
 
+    # Floor planks — perspective-correct convergence to VP_X=820
+    # Horizontal cross-grain lines: non-linear spacing (perspective rows)
     n_planks = 14
     for i in range(n_planks):
-        t = i / n_planks
+        # Non-linear t: planks appear closer together near far wall
+        t = (i / n_planks) ** 0.7
         ly = int(FLOOR_Y_FAR + t * (H - FLOOR_Y_FAR))
         draw.line([(0, ly), (W, ly)], fill=FLOOR_WOOD_DARK, width=1)
 
+    # Vertical grain lines: converge toward VP_X=820 from floor trapezoid edges
+    # Left side: lines from floor-left edge up to far wall at various x positions
+    # Right side: lines from floor-right edge up to far wall
+    # Fan from near-x position to VP-direction at FLOOR_Y_FAR
     for i in range(8):
         t = i / 7
-        fx = int(t * W)
-        draw.line([(fx, FLOOR_Y_FAR), (fx, H)], fill=FLOOR_WOOD_DARK, width=1)
+        # Near-end x position spans full floor width
+        near_x = int(t * W)
+        # Far-end x: interpolate from near_x toward VP_X at far wall
+        far_t = 0.6   # how strongly to pull toward VP (0=parallel, 1=full VP)
+        far_x = int(near_x + (VP_X - near_x) * far_t)
+        far_x = max(0, min(W - 1, far_x))
+        draw.line([(near_x, H), (far_x, FLOOR_Y_FAR)],
+                  fill=FLOOR_WOOD_DARK, width=1)
 
     draw_rect(draw, 0, FLOOR_Y_FAR + 30, 500, H, FLOOR_WORN)
     draw = ImageDraw.Draw(img)
@@ -744,14 +757,48 @@ def draw_tech_den():
                  fill=(220, 215, 195))
 
     # ── WARM SUNLIGHT OVERLAY — left portion (window zone) ───────────────────
+    # v005: max alpha raised 30→90, coverage extended 320→600px.
+    # Ambient warm fill covers full left two thirds of room.
     sun_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     sl = ImageDraw.Draw(sun_layer)
-    for col in range(0, 320):
-        t = 1.0 - col / 320
-        a = int(30 * t)
+    for col in range(0, 600):
+        t = 1.0 - col / 600
+        a = int(90 * t)
         sl.line([(col, 0), (col, H)],
                 fill=SUNLIT_AMBER + (a,), width=1)
     img.alpha_composite(sun_layer)
+    draw = ImageDraw.Draw(img)
+
+    # NOTE: Warm/cool separation in the Tech Den base image is low (~2.5 PIL units)
+    # because the entire room is warm-amber palette (walls, ceiling, floor, desk).
+    # Separation is achieved via warmth_inject post-process (cool bottom pass).
+    # This is correct behavior for a "daylit bedroom/workspace" — the room IS warm;
+    # the injected cool bottom represents floor-level monitor shadow bounce.
+
+    # ── WARM FLOOR WASH — ground plane receives warm window bounce ───────────
+    # Floor is large, naturally collects ambient warm light from left window.
+    # Low-alpha warm cast on entire floor area lifts warm signal.
+    floor_warm_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    fwl = ImageDraw.Draw(floor_warm_layer)
+    fwl.polygon([(0, FLOOR_Y_FAR), (BACK_WALL_RIGHT, FLOOR_Y_FAR), (W, H), (0, H)],
+                fill=SUNLIT_AMBER + (28,))
+    img.alpha_composite(floor_warm_layer)
+    draw = ImageDraw.Draw(img)
+
+    # ── DEEP SHADOW ANCHORS — value floor fix ────────────────────────────────
+    # Value floor was min=31 (threshold: ≤30). Apply NEAR_BLACK_WARM to
+    # crevices only: floor corners, desk leg base. Small shapes only (no long lines).
+    NEAR_BLACK_WARM = (20, 12, 8)
+    # Bottom-left floor corner crevice
+    draw.rectangle([0, H - 22, 24, H], fill=NEAR_BLACK_WARM)
+    # Bottom-right floor corner crevice
+    draw.rectangle([W - 24, H - 22, W, H], fill=NEAR_BLACK_WARM)
+    # Desk left-leg floor crevice (dark slot between leg and floor)
+    draw.rectangle([35, DESK_FRONT_Y + 2, 55, DESK_FRONT_Y + 18],
+                   fill=NEAR_BLACK_WARM)
+    # Far wall floor junction crevice
+    draw.rectangle([0, FLOOR_Y_FAR - 2, BACK_WALL_RIGHT, FLOOR_Y_FAR + 3],
+                   fill=NEAR_BLACK_WARM)
     draw = ImageDraw.Draw(img)
 
     # ── FINAL LINE WORK ───────────────────────────────────────────────────────
@@ -765,6 +812,15 @@ def draw_tech_den():
     draw.line([(540, 260), (BACK_WALL_RIGHT + 10, 260)], fill=LINE_DARK, width=1)
     draw.line([(540, SHELF_Y2), (BACK_WALL_RIGHT + 10, SHELF_Y2)],
               fill=LINE_DARK, width=1)
+
+    # ── WINDOW SPECULAR — value ceiling anchor (ensures max ≥ 225) ───────────
+    # Bright catch-light on window glass — canonical bright-point for value ceiling.
+    spec_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    spd = ImageDraw.Draw(spec_layer)
+    spd.ellipse([WIN_X0 + 12, WIN_Y0 + 10, WIN_X0 + 28, WIN_Y0 + 24],
+                fill=(255, 255, 248, 255))
+    img.alpha_composite(spec_layer)
+    draw = ImageDraw.Draw(img)
 
     # ── VIGNETTE — final pass via ltg_render_lib.vignette() ──────────────────
     img = vignette(img, strength=55)

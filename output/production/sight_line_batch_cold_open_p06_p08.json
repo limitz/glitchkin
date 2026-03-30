@@ -1,0 +1,25 @@
+[
+  {
+    "label":       "p06_byte_gazes_outward",
+    "image":       "/home/wipkat/team/output/storyboards/panels/LTG_SB_cold_open_P06.png",
+    "eye":         [216, 162],
+    "aim":         [10, 162],
+    "target":      [0, 162],
+    "target_box":  [0, 110, 40, 210],
+    "body_top":    [216, 130],
+    "body_bot":    [216, 250],
+    "threshold":   30,
+    "_note": "P06: Byte face-pressed-on-glass. Eye at face center, gaze toward Luma off-frame left. Threshold 30px (wider tolerance for implied off-screen target). Update eye/aim coords once P06 PNG is rendered."
+  },
+  {
+    "label":       "p08_byte_level_forward",
+    "image":       "/home/wipkat/team/output/storyboards/panels/LTG_SB_cold_open_P08.png",
+    "eye":         [270, 185],
+    "aim":         [270, 185],
+    "target":      [270, 185],
+    "body_top":    [270, 150],
+    "body_bot":    [270, 260],
+    "threshold":   20,
+    "_note": "P08: Byte full body reveal. Eye should aim level-forward (at audience/camera). aim == eye means gaze directly forward = PASS. If pupils look down, aim_y will be > eye_y → will WARN/FAIL. Update coords from actual panel geometry."
+  }
+]

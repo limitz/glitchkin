@@ -1,0 +1,5 @@
+**Author:** Diego Vargas
+**Cycle:** 41
+**Date:** 2026-03-30
+**Idea:** Create a shared Byte drawing module (`LTG_TOOL_byte_draw_lib.py`) that both storyboard panels and character sheet tools can import. The module would provide a `draw_byte(img, draw, cx, floor_y, body_h, expression)` function with named expression states (DISGUSTED, CURIOUS, RELUCTANT_JOY, etc.) mapped to the character sheet specs. Currently every storyboard panel that features Byte has to re-implement his body geometry from scratch. A reusable module would guarantee spec consistency across panels and eliminate drift between the contact sheet, standalone panels, and any future animation reference boards. The expression enum would be drawn from the canonical byte expression sheet states — Alex Chen or Maya Santos would need to sign off on the spec before implementation.
+**Benefits:** Storyboarders (Diego, Lee Tanaka) get faster, consistent Byte panels. Character team (Maya Santos) gets a single canonical draw function they can audit rather than scattered per-panel implementations. Any spec correction to Byte propagates to all panels on next regeneration — no manual patch cycle.

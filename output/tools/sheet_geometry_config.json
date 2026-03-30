@@ -11,7 +11,10 @@
       "expected_panels": 4,
       "sheet_w": 1280,
       "sheet_h": 720,
-      "_source": "LTG_CHAR_luma_motion.png"
+      "_source": "LTG_CHAR_luma_motion.png",
+      "beat_color": [80, 120, 200],
+      "beat_color_tolerance": 40,
+      "_beat_color_note": "BEAT_COLOR=(80,120,200) from LTG_TOOL_luma_motion.py — blue family, not cyan"
     },
     "byte": {
       "header_h": 56,
@@ -22,7 +25,10 @@
       "expected_panels": 4,
       "sheet_w": 1280,
       "sheet_h": 720,
-      "_source": "LTG_CHAR_byte_motion.png"
+      "_source": "LTG_CHAR_byte_motion.png",
+      "beat_color": [0, 190, 215],
+      "beat_color_tolerance": 50,
+      "_beat_color_note": "BEAT_COLOR=(0,190,215) from LTG_TOOL_byte_motion.py — cyan family (ELEC_CYAN adjacent)"
     },
     "cosmo": {
       "header_h": 44,
@@ -33,7 +39,10 @@
       "expected_panels": 3,
       "sheet_w": 1280,
       "sheet_h": 720,
-      "_source": "placeholder \u2014 no Cosmo sheet yet"
+      "_source": "placeholder \u2014 no Cosmo sheet yet",
+      "beat_color": null,
+      "beat_color_tolerance": 40,
+      "_beat_color_note": "TBD — no Cosmo motion sheet yet; null falls back to legacy cyan-family range"
     }
   }
 }

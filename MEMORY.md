@@ -4,8 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present.
 
 ## Status
-**Cycle 39 complete. Critique 16 complete. Work cycles: 39. Critique cycles: 16.**
-**Next critique at C42 (every 3 work cycles).**
+**Cycle 40 complete. Critique 16 complete. Work cycles: 40. Critique cycles: 16.**
+**Next critique at C42 (every 3 work cycles — C42 is next).**
 
 ## Active Team (12 slots)
 
@@ -39,38 +39,46 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 - **C16 ran**: Daisuke Kobayashi, Priya Nair, Sven Halvorsen, Chiara Ferrara, Jayden Torres (audience, age 13)
 - C17 candidates: rotate in Jonas Feld, Amara Diallo, Leila Asgari, Petra Volkov, Marcus Webb (+ 1 audience not from C15/C16: Marcus Okafor, Eleanor Whitfield)
 
-## Pitch Package Status — POST CYCLE 39
+## Pitch Package Status — POST CYCLE 40
 
 ### Style Frames
-- **SF01 Discovery**: v006 (sight-line fixed, gaze on Byte, reaching palm, DOUBT VARIANT brow)
+- **SF01 Discovery**: v006
 - **SF02 Glitch Storm**: v008
-- **SF03 Other Side**: v005
-- **SF04 Luma+Byte**: v004
+- **SF03 Other Side**: v005 (UV_PURPLE confirmed canonical C40)
+- **SF04 Luma+Byte: v005 NEW C40** — full rebuild, warm/cool 36.6 (was 1.1), SUNLIT_AMBER lamp, Byte-teal floor bounce
+- **SF05 COVETOUS Glitch: v001 NEW C40** (Rin) — new frame; Glitch large/covetous, Byte tiny at right, zero warm light
 
 ### Logo
 - **LTG_BRAND_logo.png** — DECIDED C25
 
 ### Characters
 - Luma: expr v011 C38, turnaround v004, color model v002
-  - **Face Curve Spec NEW C39** (`output/production/luma_face_curve_spec.md`) — 10 bezier/ellipse curves, 6 expression deltas (RECKLESS, THE_NOTICING, THE_NOTICING_DOUBT, WORRIED, ALARMED, FRUSTRATED) + supplement CONFIDENT/SOFT_SURPRISE/DETERMINED. ⚠️ Eye width discrepancy — spec 56px vs generator ~100px — MUST RESOLVE before tool build.
-- Byte: expr v006 C38, turnaround v001, color model v001
+  - **Face Curve Spec v002 C40** — eye width corrected to 100px (was 56px). Silhouette strategy: Hybrid — RECKLESS/ALARMED/FRUSTRATED/THE_NOTICING need body postures; other pairs face-only OK.
+  - **`LTG_TOOL_luma_face_curves.py` v1.1.0 C40** — all 9 expressions, corrected control points, 3×3 reference sheet
+  - **`LTG_TOOL_face_curve_validator.py` C40** — all 10 expressions PASS
+  - v012 pending (Tier 1 body postures — Maya C41)
+- Byte: expr v006 C38, turnaround v001, color model v001. UNGUARDED WARMTH body spec written C40 (Sam) — Maya to implement C41
 - Cosmo: expr v007 C38
-- Miri: expr v004 C38 (slipper #C4907A)
-- Glitch: expr v003
+- Miri: **expr v005 C40** (M001 head ratio constant fixed)
+- Glitch: expr v003. Diamond body primitive spec written C40 (Maya). G007 outline — ambiguous (VOID_BLACK vs non-black); Alex to clarify C41.
 - Character lineup: v007
 
 ### Environments
-- **Kitchen: v005 NEW C39** (MIRI fridge label — Dual-Miri plant gag established)
-- Tech Den: v004_warminjected
+- **Kitchen: v005 C39** (MIRI fridge label)
+- **Tech Den: v005_warminjected C40** (VP fix, floor convergence corrected, warm/cool 100.8 PASS)
 - Glitch Layer: v003
-- **School Hallway: v003 NEW C38** (figure-ground fix — locker vs Cosmo cardigan)
+- **School Hallway: v004 C40** (SUNLIT_AMBER hue regenerated — was never re-run after C14 fix)
 - Millbrook Street: v002
 - Living Room: v001
+- **Other Side: C40** (UV_PURPLE drift fixed — 8-cycle backlog cleared, now 0.4° delta)
+- Classroom: rebuild spec written C40 → execute C41 (Hana)
+- Luma Study Interior: rebuild spec written C40 → execute C41 (Hana)
 
 ### Storyboards
-- **Cold Open: v003 NEW C39** (P01 neighborhood context, P12 two-shot, P13 mirror composition confirmed)
+- **Cold Open: v003 C39** (night/den canonical)
+- **Standalone panels NEW C40**: P03 (first pixel/CRT), P06 (Byte face at glass), P08 (Byte full reveal — "The flesh dimension.")
 - Canon: Night/Grandma's den. School/daytime = pre-credits Act 1 tag.
-- **PANEL_MAP.md NEW C39** — P01–P25 with beat descriptions + status
+- **PANEL_MAP.md C40** — P03/P06/P08 now EXISTS; P24/P23 next
 
 ### Story
 - **Story Bible: v003 NEW C39** (cold open = night/den canonical, Glitch = Corruption's avatar)
@@ -108,25 +116,22 @@ RPD baseline (Maya C39): Cosmo PASS 45.5%, Glitch PASS 55.5%, Miri WARN 84.4%, B
 | Kitchen v005 | — | — | — | 76 | — |
 | Cross-pitch coherence | — | 45 | — | — | — |
 
-## Open Items for C40
-**P1 — Mandated:**
-1. **Jordan**: SF04 full rebuild — warm/cool 1.1 (2 critique cycles overdue), generator source lost. Target: ≥15.0 separation, SUNLIT_AMBER lamp, Byte-teal floor bounce.
-2. **Alex**: Resolve bezier face spec eye-width discrepancy, then unblock Kai on tool build
-3. **Kai**: G007 Glitch body VOID_BLACK outline — 14 generator versions, 8 cycles (Priya P1)
-4. **Hana**: School Hallway v003 re-run (SUNLIT_AMBER fix in source since C14 — one script run)
-5. **Alex**: Decide documented Luma silhouette strategy (face fix ≠ silhouette fix; 9 FAIL RPD pairs)
-6. **Kai+Morgan**: Resolve precritique_qa v2.7.0 version collision
+## Open Items for C41
+**P1:**
+1. **Maya**: Luma v012 — Tier 1 body postures (RECKLESS, ALARMED, FRUSTRATED, THE NOTICING); Byte UNGUARDED WARMTH body delta
+2. **Alex**: Clarify G007 — is Glitch body outline VOID_BLACK or non-black? Unblocks Kai
+3. **Kai**: G007 Glitch body outline fix (pending Alex G007 clarification) + Sobel vanishing point tool
+4. **Hana**: Classroom ENV rebuild + Luma Study Interior rebuild (specs written C40)
+5. **Kai**: Stale v001 56px eye control points audit — update all caller generators to v002 spec
 
 **P2:**
-7. **Rin**: UV_PURPLE drift — Other Side ENV (14.1°) + SF03 (9.2°), 8 cycles
-8. **Maya**: Glitch diamond body primitive spec diagram (4 consecutive cycles flagged)
-9. **Maya**: Miri head ratio M001 constant fix (one line of code)
-10. **Hana**: Classroom ENV rebuild, Tech Den perspective fix, Luma Study Interior rebuild (SF01 room, 31 cycles old)
-11. **Rin/Sam**: COVETOUS Glitch into a style frame (audience P1 — Jayden)
-12. **Kai**: Sobel vanishing point tool (ideabox actioned C39)
-13. **Rin**: alpha_blend_lint precritique_qa integration (ideabox idea)
-14. **Morgan**: `--known-issues` flag for CI suite
-15. Standalone cold open panels: P03, P06, P08, P24, P23 (Diego priority queue)
+6. **Diego**: Cold open panels P24, P23 (P03/P06/P08 done)
+7. **Rin**: `--save-nolight` flag for SF01/SF02/SF04 generators (enables alpha_blend_lint Section 10)
+8. **Morgan**: CI `--warn-stale N` auto-age flag (ideabox C40)
+9. **Lee**: Sight-line batch config template library (ideabox C40)
+10. **Diego**: Byte expression reuse module `LTG_TOOL_byte_draw_lib.py` (ideabox C40)
+11. **Sam**: Threshold composition validator tool (ideabox C40)
+12. **Kai**: Face curves integration — update Luma expression generators to use module API
 
 ## Canonical Palette
 - Byte body = GL-01b #00D4E8 BYTE_TEAL (NOT #00F0FF)
@@ -163,11 +168,20 @@ RPD baseline (Maya C39): Cosmo PASS 45.5%, Glitch PASS 55.5%, Miri WARN 84.4%, B
 - Python 3.8 compat: `from __future__ import annotations`
 - REAL_INTERIOR warm/cool threshold = 12.0 (render_qa v2.0.0)
 
-## Shared Library (updated C39)
+## Shared Library (updated C40)
 `LTG_TOOL_render_qa.py` — **v2.0.0 C39**. numpy/cv2 LAB ΔE, comparison report CLI
-`LTG_TOOL_precritique_qa.py` — **v2.7.0 C39** ⚠️ VERSION COLLISION — resolve C40
+`LTG_TOOL_precritique_qa.py` — **v2.8.0 C40**. arc_diff JSON config + LAB ΔE + Section 10 alpha_blend_lint (Morgan+Kai+Rin)
+`LTG_TOOL_ci_suite.py` — **v1.1.0 C40**. `--known-issues` flag; `ci_known_issues.json` seeded (Morgan)
 `LTG_TOOL_palette_warmth_lint.py` — **v6.0.0 C39**. numpy vectorized
 `LTG_TOOL_spec_sync_ci.py` — **v1.1.0 C39**. Byte CI delegates to char_spec_lint (B001–B005)
+`LTG_TOOL_luma_face_curves.py` — **v1.1.0 C40** (Kai). All 9 expressions, corrected 100px eye width
+`LTG_TOOL_face_curve_validator.py` — **NEW C40** (Maya). Validates all 10 expressions; all PASS
+`LTG_TOOL_sight_line_diagnostic.py` — **v002 C40** (Lee). `--batch config.json` mode
+`LTG_TOOL_motion_spec_lint.py` — **C40** (Ryo). Per-family beat color config; Luma timing WARN→PASS
+`LTG_TOOL_sf04_luma_byte_v005.py` — **NEW C40** (Jordan). SF04 generator; warm/cool 36.6
+`LTG_TOOL_sf_covetous_glitch.py` — **NEW C40** (Rin). SF05 COVETOUS generator
+`LTG_TOOL_bg_other_side.py` — **C40** (Rin). UV_PURPLE corrected to GL-04a
+`LTG_TOOL_bg_tech_den.py` — **v005 C40** (Hana). VP floor fix, warm/cool 100.8 PASS
 `LTG_TOOL_fill_light_adapter.py` — **v1.1.0 C39**. Scene registry loading
 `LTG_fill_light_presets.json` — **NEW C39**. SF01–SF04 standard configs
 `arc_diff_config.json` — **NEW C39**. External arc-diff pair config

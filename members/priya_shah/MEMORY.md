@@ -10,7 +10,8 @@ Cycle 37. C37 = first work cycle.
 - **Story bible v001**: `output/production/story/story_bible_v001.md` — C37
 - **Story bible v002**: `output/production/story/story_bible_v002.md` — C38
 - **Story bible v003**: `output/production/story/story_bible_v003.md` — C39, CURRENT CANONICAL VERSION
-- **Glitch appearance guide**: `output/production/story/LTG_glitch_appearance_guide.md` — C39, NEW. Staging reference for storyboarders. Covers: entrance (already-there arrival, not dramatic intro), communication (geometric patterns / pixel eye cycles / confetti geometrics / NO English), exit (absence), interior state moments (YEARNING/COVETOUS/HOLLOW — use sparingly, one per act max), Byte-Glitch staging implications.
+- **Glitch appearance guide**: `output/production/story/LTG_glitch_appearance_guide.md` — C39. Staging reference for storyboarders. Covers: entrance (already-there arrival, not dramatic intro), communication (geometric patterns / pixel eye cycles / confetti geometrics / NO English), exit (absence), interior state moments (YEARNING/COVETOUS/HOLLOW — use sparingly, one per act max), Byte-Glitch staging implications.
+- **Glitch voice direction card**: `output/production/story/LTG_glitch_voice_direction.md` — C40. Quick-reference card for directors and animatics artists. Consolidates: pixel eye glyph communication states, bilateral vs. asymmetric eye rule, what Glitch NEVER does (no sound/English/easing), geometric pattern vocabulary, expression staging map, interior state rules.
 - Character design docs: `output/characters/main/` (luma.md, byte.md, cosmo.md, glitch.md — no separate grandma_miri.md, she's in production_bible.md)
 - Pitch brief: `output/production/ltg_pitch_brief.md` — emotional core document, essential reading
 - Production bible: `output/production/production_bible.md` — canonical world/character overview (Byte shape fix applied C38)
@@ -37,7 +38,7 @@ Comedy-adventure. Core: loneliness of perceiving differently, vindication throug
 2. **FLAG 02**: RESOLVED C38. production_bible.md Byte shape language fixed.
 3. **FLAG 03**: RESOLVED C39. Glitch character canonized per Alex Chen decision.
 4. **FLAG 04**: Season 2+ seed — "something older, further in" planted in S1 finale scene. Writers: do not develop. Single ambient beat only.
-5. **FLAG 05 [NEW]**: No flag — all open items resolved. Next work: episode 2–4 loglines or pilot script Act 1 (if assigned). Await C40 brief.
+5. **FLAG 05**: RESOLVED C40/C41. Voice direction card written; COVETOUS notes delivered to Sam.
 
 ## Key Consistency Notes
 - Byte body = OVAL (not chamfered box — retired C8). Fixed in production_bible.md.
@@ -58,6 +59,8 @@ Comedy-adventure. Core: loneliness of perceiving differently, vindication throug
 - C38: Cold open decision is design-level, not story. Don't get ahead of Art Director. Social cost scenes work best ~15 sec, not subplots. Byte's commitment beat stronger without words.
 - C39: When Alex sends character decisions with structural story implications, update both the character profile AND the series arc section — they cross-reference each other. Glitch needs staging direction for storyboarders (appearance guide written C39).
 - C39 cont'd: Antagonist appearance guides work best as DO/DON'T tables + beat-by-beat sequence. Reference character's interior state system explicitly — the bilateral vs. asymmetric eye rule is the key to making Glitch read as a character, not a set piece. Always cite the canonical design doc (glitch.md) in the preamble so the guide is portable without duplication.
+- C40/C41: Voice direction cards work best as quick-reference tables — directors and animatics artists need scannable information, not prose. Separate performance expressions from interior states clearly; the bilateral/asymmetric eye rule is the most load-bearing communication rule Glitch has and must be prominent. Carry-over tasks should still be completed in the cycle they arrive; brief was written as intended.
+- C41: Narrative notes for color artists should clearly answer the four questions the brief specifies (what is being coveted / where in structure / first appearance or reveal / staging of who is present) without inventing new narrative. Cross-reference canonical docs (glitch.md, appearance guide, story bible) precisely by section number so the color artist can go deeper if needed.
 
 ## Startup Sequence
 1. Read ROLE.md (if exists)

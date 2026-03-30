@@ -285,6 +285,14 @@
 - **C40 warmth lint baseline: 17 entries, 0 violations.** Was 14 in C36 (11 CHAR-M + 3 CHAR-L hoodie). Now 17 (11 CHAR-M + 3 CHAR-L hoodie + 3 CHAR-C skin). All pass.
 - **OpenCV/numpy now authorized.** Alex Chen broadcast (C40 inbox). LAB ΔE is the correct perceptual distance metric for skin-tone vs. lamp-amber discrimination — would eliminate SUNLIT_AMBER false-positive class entirely. Ideabox idea submitted for Kai Nakamura to implement in color_verify v003.
 
+## Cycle 41 Lessons
+- **COVETOUS color key: separation is the premise.** The entire power of the COVETOUS Glitch style frame is that Glitch can see the Real World warmth (RW-02 Soft Gold in right 25%) but is not touched by it. The warm zone must stay entirely in the right 25% — zero contact with Glitch's pixel zone. This is not a lighting note; it is the narrative of the scene. Generator enforces this compositionally.
+- **Threshold scenes need a composition validator.** Any scene at a Glitch Layer / Real World boundary requires a tool check to confirm warm-zone and cool-zone do not bleed onto the wrong character. Ideabox submitted: threshold_composition_tool.
+- **Interior state rules must be enforced in generator code.** COVETOUS bilateral eyes (both `[[5,5,5],[0,5,0],[0,0,0]]`) are an interior state rule from glitch.md §6.3. The generator draws both eyes identically. Never let performance-mode eye construction bleed into interior state expressions.
+- **Body-pose delta must be legible in silhouette, not just color.** UNGUARDED WARMTH must read as open in RPD silhouette alone. Bilateral symmetric arm raise + low float + toe-in lower limbs = correct target. If the RPD test can't see it, the audience can't feel it.
+- **Arm height asymmetry prevents false TRIUMPHANT read.** For UNGUARDED WARMTH: `arm_l_dy=-14`, `arm_r_dy=-16` (not both -14). Two-point asymmetry between arms prevents the perfectly-symmetric-raised-arms reading of TRIUMPHANT, while both remaining in the "high float" range.
+- **Lower float height = commitment/presence for Byte.** Byte signals presence by floating lower (closer to the ground). Float clearance reduction is the physical gesture of "I am staying here." Use this differentiator in any pose requiring settled openness vs. guarded hovering.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm.py v001. Low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan to add inline comment. Low priority.
@@ -292,3 +300,4 @@
 - Tech Den generator WALL_WARM slightly off from TD-01 — Jordan to add citing comment.
 - TD-10/TD-11 monitor glow alignment — Jordan to compare bg_tech_den_v002.py values vs canonical Section 8 entries. Medium priority.
 - **SF04 warm/cool WARN (sep=1.1) — documented as FP-007.** Soft-key scene by design. Alex Chen AD decision. Monitor for regression (flag if sep drops below 0.5).
+- **COVETOUS style frame execution** pending Jordan Reed or Diego Vargas. Spec at `output/production/glitch_covetous_styleframe_spec.md`, color key at `output/color/color_keys/LTG_COLOR_colorkey_glitch_covetous.png`.

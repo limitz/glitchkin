@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 LTG_TOOL_sight_line_diagnostic.py
-Sight-Line Diagnostic Tool — Cycle 39
+Sight-Line Diagnostic Tool — Cycle 39 (batch mode: Cycle 41)
 Lee Tanaka, Character Staging & Visual Acting Specialist
 
 Given a style frame or environment PNG, computes the sight-line from a
@@ -69,12 +69,47 @@ Batch / module usage:
     v006 (fixed): eye=(429,427), aim=(923,239)  → ray goes to Byte → PASS
     v005 (broken): eye=(400,422), aim=(700,422)  → ray goes forward, misses Byte → WARN/FAIL
 
+Batch mode (Cycle 41):
+  python3 LTG_TOOL_sight_line_diagnostic.py --batch config.json [--output-dir /path]
+  Reads a JSON config listing multiple check specs. Runs all checks, saves per-check
+  annotated PNGs for WARN/FAIL cases, and writes a summary report.
+
+  JSON config format:
+  [
+    {
+      "label":       "p06_byte_luma",          // short identifier (used in filenames)
+      "image":       "/path/to/panel.png",     // source image
+      "eye":         [cx, cy],                 // eye origin
+      "aim":         [ax, ay],                 // gaze direction point (optional)
+      "target":      [tx, ty],                 // intended subject centre
+      "target_box":  [x0, y0, x1, y1],        // optional bounding box
+      "body_top":    [bx, by],                 // optional shoulder point
+      "body_bot":    [bx, by],                 // optional hip/feet point
+      "threshold":   15                        // optional miss threshold in px
+    },
+    ...
+  ]
+
+  If "aim" is omitted, gaze is assumed to go directly to target (miss ~0, will PASS).
+  If "threshold" is omitted, uses global DEFAULT_THRESHOLD (15px).
+
+  Summary report is printed to stdout and written to:
+    <output_dir>/LTG_BATCH_sightline_summary.txt
+
+  Annotated PNGs are saved ONLY for WARN and FAIL cases (to limit output volume).
+  PASS results are included in the summary but no PNG is saved by default.
+  Use --batch-save-all to save PNGs for all results including PASS.
+
+  Exit code: 0 if all PASS, 1 if any WARN or FAIL.
+
 BUILT-IN TESTS:
   python3 LTG_TOOL_sight_line_diagnostic.py --self-test
   python3 LTG_TOOL_sight_line_diagnostic.py --sf01-test
+  python3 LTG_TOOL_sight_line_diagnostic.py --batch-self-test
 """
 
 import argparse
+import json
 import math
 import os
 import sys
@@ -368,6 +403,261 @@ def run_sight_line_check(
     }
 
 
+# ── Batch mode ────────────────────────────────────────────────────────────────
+
+def run_batch(config_path, output_dir=OUTPUT_DIR_DEFAULT, save_all=False):
+    """
+    Run multiple sight-line checks from a JSON config file.
+
+    Parameters
+    ----------
+    config_path : str   Path to JSON config file (list of check specs).
+    output_dir  : str   Directory for annotated PNGs and summary report.
+    save_all    : bool  If True, save PNGs even for PASS results.
+                        Default: only WARN/FAIL get PNGs.
+
+    Returns
+    -------
+    dict: {
+        'results': list of per-check result dicts (each has all run_sight_line_check keys
+                   plus 'label', 'image_path'),
+        'n_pass':  int,
+        'n_warn':  int,
+        'n_fail':  int,
+        'all_pass': bool,
+        'summary_path': str,   path to written summary .txt
+    }
+    """
+    if not os.path.isfile(config_path):
+        raise FileNotFoundError(f"Batch config not found: {config_path}")
+
+    with open(config_path, "r") as fh:
+        specs = json.load(fh)
+
+    if not isinstance(specs, list):
+        raise ValueError("Batch config must be a JSON array of check spec objects.")
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    results = []
+    n_pass = n_warn = n_fail = 0
+
+    print(f"\n── Batch sight-line run: {len(specs)} check(s) ──────────────────────")
+
+    for i, spec in enumerate(specs):
+        label      = spec.get("label", f"check_{i:03d}")
+        image_path = spec.get("image")
+        eye_xy     = tuple(spec["eye"])
+        target_xy  = tuple(spec["target"])
+        aim_xy     = tuple(spec["aim"])       if "aim"        in spec else None
+        target_box = tuple(spec["target_box"]) if "target_box" in spec else None
+        body_top   = tuple(spec["body_top"])  if "body_top"   in spec else None
+        body_bot   = tuple(spec["body_bot"])  if "body_bot"   in spec else None
+        threshold  = int(spec.get("threshold", DEFAULT_THRESHOLD))
+
+        print(f"\n  [{i+1}/{len(specs)}] {label}")
+
+        if not image_path:
+            print(f"    SKIP — 'image' field missing in spec.")
+            result = {
+                "label":        label,
+                "image_path":   None,
+                "status":       "SKIP",
+                "miss_px":      None,
+                "gaze_angle_deg": None,
+                "output_path":  None,
+                "message":      "SKIP — no image specified",
+            }
+            results.append(result)
+            continue
+
+        if not os.path.isfile(image_path):
+            print(f"    SKIP — image not found: {image_path}")
+            result = {
+                "label":        label,
+                "image_path":   image_path,
+                "status":       "SKIP",
+                "miss_px":      None,
+                "gaze_angle_deg": None,
+                "output_path":  None,
+                "message":      f"SKIP — image not found: {image_path}",
+            }
+            results.append(result)
+            continue
+
+        # Always save on first pass; delete PASS output afterward if not save_all
+        r = run_sight_line_check(
+            image_path  = image_path,
+            eye_xy      = eye_xy,
+            aim_xy      = aim_xy,
+            target_xy   = target_xy,
+            target_box  = target_box,
+            body_top_xy = body_top,
+            body_bot_xy = body_bot,
+            threshold   = threshold,
+            label       = label,
+            output_dir  = output_dir,
+            save        = True,
+        )
+
+        # Remove PASS PNGs unless caller wants all saved
+        if not save_all and r["status"] == "PASS" and r.get("output_path") and os.path.isfile(r["output_path"]):
+            try:
+                os.remove(r["output_path"])
+                r["output_path"] = None
+            except OSError:
+                pass
+
+        r["label"]      = label
+        r["image_path"] = image_path
+        results.append(r)
+
+        if r["status"] == "PASS":
+            n_pass += 1
+        elif r["status"] == "WARN":
+            n_warn += 1
+        elif r["status"] == "FAIL":
+            n_fail += 1
+
+    # ── Summary report ─────────────────────────────────────────────────────────
+    lines = [
+        "LTG Batch Sight-Line Diagnostic — Summary",
+        f"Config: {config_path}",
+        f"Run: {len(specs)} checks | PASS: {n_pass} | WARN: {n_warn} | FAIL: {n_fail}",
+        "",
+        f"{'#':<4}  {'Label':<30}  {'Status':<6}  {'Miss':>8}  {'Angle':>8}  Notes",
+        "-" * 75,
+    ]
+    for i, r in enumerate(results):
+        status   = r.get("status", "?")
+        miss     = f"{r['miss_px']:.1f}px"   if r.get("miss_px")         is not None else "—"
+        angle    = f"{r['gaze_angle_deg']:.1f}°" if r.get("gaze_angle_deg") is not None else "—"
+        saved    = f"  → {r['output_path']}" if r.get("output_path") else ""
+        lines.append(f"  {i+1:<3}  {r.get('label','?'):<30}  {status:<6}  {miss:>8}  {angle:>8}{saved}")
+
+    lines += [
+        "",
+        "WARN/FAIL details:",
+    ]
+    has_issues = False
+    for r in results:
+        if r.get("status") in ("WARN", "FAIL"):
+            has_issues = True
+            lines.append(f"  [{r['status']}] {r.get('label','?')}: {r.get('message','')}")
+            if r.get("output_path"):
+                lines.append(f"         annotated PNG → {r['output_path']}")
+    if not has_issues:
+        lines.append("  (none)")
+
+    summary_text = "\n".join(lines) + "\n"
+    print("\n" + summary_text)
+
+    summary_path = os.path.join(output_dir, "LTG_BATCH_sightline_summary.txt")
+    with open(summary_path, "w") as fh:
+        fh.write(summary_text)
+    print(f"Summary written: {summary_path}")
+
+    return {
+        "results":      results,
+        "n_pass":       n_pass,
+        "n_warn":       n_warn,
+        "n_fail":       n_fail,
+        "all_pass":     (n_fail == 0 and n_warn == 0),
+        "summary_path": summary_path,
+    }
+
+
+def _batch_self_test(output_dir=OUTPUT_DIR_DEFAULT):
+    """
+    Build a synthetic batch config and run it through run_batch().
+    Uses temporary image files; verifies PASS/WARN/FAIL counts.
+    """
+    import tempfile
+
+    W_T, H_T = 640, 360
+    TARGET = (440, 200)
+    TARGET_BOX = (420, 180, 460, 220)
+
+    # Build 3 synthetic PNGs (same as _self_test cases)
+    cases = [
+        ("batch_pass", (100, 200), (440, 200)),
+        ("batch_warn", (100, 200), (640, 225)),
+        ("batch_fail", (100, 200), (640, 290)),
+    ]
+
+    tmp_paths = []
+    config_entries = []
+
+    for label, eye_xy, aim_xy in cases:
+        img = Image.new("RGB", (W_T, H_T), (28, 22, 40))
+        d = ImageDraw.Draw(img)
+        tx, ty = TARGET
+        d.ellipse([tx - 30, ty - 40, tx + 30, ty + 40], fill=(0, 100, 130),
+                  outline=(0, 200, 220), width=2)
+        d.text((8, 8), f"BATCH SYNTHETIC: {label.upper()}", fill=(160, 160, 180),
+               font=_load_font(11))
+        tmp = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
+        img.save(tmp.name)
+        tmp.close()
+        tmp_paths.append(tmp.name)
+        config_entries.append({
+            "label":      label,
+            "image":      tmp.name,
+            "eye":        list(eye_xy),
+            "aim":        list(aim_xy),
+            "target":     list(TARGET),
+            "target_box": list(TARGET_BOX),
+            "threshold":  DEFAULT_THRESHOLD,
+        })
+
+    # Write config JSON to a temp file
+    cfg_tmp = tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False)
+    json.dump(config_entries, cfg_tmp)
+    cfg_tmp.close()
+
+    print("\n── Batch self-test ───────────────────────────────────────────────")
+    print(f"Config: {cfg_tmp.name}")
+    summary = run_batch(cfg_tmp.name, output_dir=output_dir, save_all=False)
+
+    # Clean up temp source files
+    for p in tmp_paths:
+        try:
+            os.unlink(p)
+        except OSError:
+            pass
+    try:
+        os.unlink(cfg_tmp.name)
+    except OSError:
+        pass
+
+    expected = {"batch_pass": "PASS", "batch_warn": "WARN", "batch_fail": "FAIL"}
+    all_ok = True
+    print("\n── Batch self-test results ───────────────────────────────────────")
+    for r in summary["results"]:
+        exp = expected.get(r["label"], "?")
+        got = r["status"]
+        ok  = (got == exp)
+        mark = "OK" if ok else "UNEXPECTED"
+        print(f"  [{mark}] {r['label']}: expected {exp}, got {got}")
+        if not ok:
+            all_ok = False
+
+    expected_counts = (1, 1, 1)  # pass, warn, fail
+    got_counts = (summary["n_pass"], summary["n_warn"], summary["n_fail"])
+    if expected_counts != got_counts:
+        print(f"  [UNEXPECTED] counts: expected {expected_counts}, got {got_counts}")
+        all_ok = False
+    else:
+        print(f"  [OK] counts: PASS={summary['n_pass']}, WARN={summary['n_warn']}, FAIL={summary['n_fail']}")
+
+    if all_ok:
+        print("  All batch self-tests PASSED.")
+    else:
+        print("  Some batch self-tests produced unexpected results.")
+
+    return all_ok
+
+
 # ── Self-test (synthetic images, no style frame required) ─────────────────────
 
 def _self_test(output_dir=OUTPUT_DIR_DEFAULT):
@@ -585,22 +875,29 @@ def _run_sf01_tests(output_dir=OUTPUT_DIR_DEFAULT):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="LTG Sight-Line Diagnostic Tool v001 — Cycle 39",
+        description="LTG Sight-Line Diagnostic Tool v002 — Cycle 39/41",
     )
-    parser.add_argument("--image",       type=str)
-    parser.add_argument("--eye",         type=int, nargs=2, metavar=("CX", "CY"))
-    parser.add_argument("--aim",         type=int, nargs=2, metavar=("AX", "AY"),
+    parser.add_argument("--image",           type=str)
+    parser.add_argument("--eye",             type=int, nargs=2, metavar=("CX", "CY"))
+    parser.add_argument("--aim",             type=int, nargs=2, metavar=("AX", "AY"),
                         help="Gaze aim direction point (defaults to --target)")
-    parser.add_argument("--target",      type=int, nargs=2, metavar=("TX", "TY"))
-    parser.add_argument("--target-box",  type=int, nargs=4, metavar=("X0", "Y0", "X1", "Y1"))
-    parser.add_argument("--body-top",    type=int, nargs=2, metavar=("BX", "BY"))
-    parser.add_argument("--body-bot",    type=int, nargs=2, metavar=("BX", "BY"))
-    parser.add_argument("--threshold",   type=int, default=DEFAULT_THRESHOLD)
-    parser.add_argument("--label",       type=str, default="check")
-    parser.add_argument("--output-dir",  type=str, default=OUTPUT_DIR_DEFAULT)
-    parser.add_argument("--no-save",     action="store_true")
-    parser.add_argument("--self-test",   action="store_true")
-    parser.add_argument("--sf01-test",   action="store_true")
+    parser.add_argument("--target",          type=int, nargs=2, metavar=("TX", "TY"))
+    parser.add_argument("--target-box",      type=int, nargs=4, metavar=("X0", "Y0", "X1", "Y1"))
+    parser.add_argument("--body-top",        type=int, nargs=2, metavar=("BX", "BY"))
+    parser.add_argument("--body-bot",        type=int, nargs=2, metavar=("BX", "BY"))
+    parser.add_argument("--threshold",       type=int, default=DEFAULT_THRESHOLD)
+    parser.add_argument("--label",           type=str, default="check")
+    parser.add_argument("--output-dir",      type=str, default=OUTPUT_DIR_DEFAULT)
+    parser.add_argument("--no-save",         action="store_true")
+    parser.add_argument("--self-test",       action="store_true")
+    parser.add_argument("--sf01-test",       action="store_true")
+    # Batch mode (Cycle 41)
+    parser.add_argument("--batch",           type=str, metavar="CONFIG_JSON",
+                        help="Run batch mode from a JSON config file.")
+    parser.add_argument("--batch-save-all",  action="store_true",
+                        help="In batch mode, save annotated PNGs for PASS results too.")
+    parser.add_argument("--batch-self-test", action="store_true",
+                        help="Run the synthetic batch self-test.")
 
     args = parser.parse_args()
 
@@ -612,9 +909,22 @@ def main():
         _run_sf01_tests(output_dir=args.output_dir)
         sys.exit(0)
 
+    if args.batch_self_test:
+        ok = _batch_self_test(output_dir=args.output_dir)
+        sys.exit(0 if ok else 1)
+
+    if args.batch:
+        summary = run_batch(
+            config_path = args.batch,
+            output_dir  = args.output_dir,
+            save_all    = args.batch_save_all,
+        )
+        sys.exit(0 if summary["all_pass"] else 1)
+
     if not args.image or not args.eye or not args.target:
         parser.print_help()
-        print("\nERROR: --image, --eye, and --target are required.", file=sys.stderr)
+        print("\nERROR: --image, --eye, and --target are required (or use --batch CONFIG).",
+              file=sys.stderr)
         sys.exit(1)
 
     result = run_sight_line_check(

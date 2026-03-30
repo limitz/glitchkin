@@ -116,6 +116,61 @@ Create key-beat storyboard panels for the pitch. Establish visual grammar for ac
 - `20260330_diego_vargas_standalone_panel_priority_queue.md`
   — Priority queue so Alex Chen can direct standalone panel renders by critique value
 
+## Cycle 41 — Delivered
+
+### Standalone Cold Open Panels — P03, P06, P08
+Producer brief (C40 inbox): render standalone panels per priority queue.
+All three P1 priorities complete.
+
+- **P03** — `LTG_TOOL_sb_cold_open_P03.py` → `output/storyboards/panels/LTG_SB_cold_open_P03.png`
+  - CU Object shot. Hero CRT prop. Static. Single ELEC_CYAN pixel lower-right.
+  - First Glitch Palette moment in episode. Arc: CURIOUS. Cyan border.
+  - 800×600px. add_glow() pulse halo on pixel. Analog static texture with scanlines.
+
+- **P06** — `LTG_TOOL_sb_cold_open_P06.py` → `output/storyboards/panels/LTG_SB_cold_open_P06.png`
+  - CU Monitor Screen. Byte's face pressed flat against glass from inside.
+  - FIRST APPEARANCE OF BYTE. Expression: DISGUSTED / RELUCTANT CURIOSITY.
+  - Normal eye right: 70% aperture squint (assessment not aggression).
+  - Cracked eye left: SEARCHING/PROCESSING (3 dots, cyan/magenta alternating).
+  - Mouth: horizontal flat grimace, corners OUTWARD (disgust not snarl). Pixel teeth.
+  - Confetti escaping at hand-press contact points. Screen distortion rings.
+  - Arc: DISCOVERY. Cyan border.
+
+- **P08** — `LTG_TOOL_sb_cold_open_P08.py` → `output/storyboards/panels/LTG_SB_cold_open_P08.png`
+  - MED shot. Byte full body reveal — first time in real world.
+  - Camera at Byte's eye level (~6" off floor) — camera validates him at tiny scale.
+  - Body: inverted teardrop, stubby arms/legs. Head barely above cable bundles.
+  - Desaturation ring at feet (digital nature bleaching analogue floor).
+  - Pixel confetti still drifting. CRT in BG returning to static (defocused).
+  - Dialogue annotated: "Ugh." / "The flesh dimension."
+  - Arc: TENSE. Hot magenta border.
+
+- PANEL_MAP.md updated: P03, P06, P08 status changed PLANNED → EXISTS.
+- Brief message archived to inbox/archived/.
+
+### Lessons Learned — Cycle 41
+- **Standalone panel format**: 800×600px total (540px draw area + 60px caption bar),
+  same as Lee Tanaka / A-series panel pattern. Arc-color border reads well.
+- **Byte at tiny scale**: body_h ≈ 28% of DRAW_H gives "barely above cable bundles"
+  read. Head-above-cables requires cable height close to body_h. Pixel artifacts
+  as floating rectangles above the character read well without trail polygon paths.
+- **Static texture**: draw per-pixel scatter with RNG (w*h//12 points) + scan lines
+  every 3px + phosphor band every 18px. Tinted variant (STATIC_CYAN) for Glitch
+  contamination zones.
+- **Byte face-press-on-glass**: face_r = 28% of min(PW,DRAW_H) gives quarter-screen
+  fill for the face — pitch-legible. Processing dots read better than fine crack
+  detail at this scale.
+- **Desat ring**: ellipse with floor-perspective foreshortening (rh = 35% of rw)
+  reads as ground plane ring from low camera angle.
+- **Naming from brief**: brief specified `LTG_SB_cold_open_P03.png` (underscores +
+  "cold_open_P"). Existing panels in dir use `LTG_SB_coldopen_panel_03.png`.
+  Followed the brief naming since these are new standalone tools.
+
+### Ideabox Submitted — Cycle 41
+- `20260330_diego_vargas_byte_expression_reuse_module.md`
+  — Shared `LTG_TOOL_byte_draw_lib.py` module for canonical Byte body drawing
+  across all storyboard panels, keyed to named expression states.
+
 ## Startup Sequence
 1. Read ROLE.md if present
 2. Read this MEMORY.md

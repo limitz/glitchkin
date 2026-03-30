@@ -1,7 +1,7 @@
 # PANEL MAP — Pilot Cold Open: "The Night Everything Went Wrong"
 **Storyboard Artist:** Diego Vargas
 **Art Director:** Alex Chen
-**Last Updated:** 2026-03-30 (Cycle 39)
+**Last Updated:** 2026-03-30 (Cycle 41)
 
 Panels P01–P25 covering the full pilot cold open arc.
 Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the contact sheet tool.
@@ -20,12 +20,12 @@ Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the conta
 |-------|-----------------|--------|-----------------------|
 | P01 | EXTERIOR NIGHT — Residential neighborhood, Luma's house with single warm upstairs window. Grounds audience before we enter. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
 | P02 | WIDE ESTABLISHING — Luma enters Grandma's tech den. Character intro via sleeping position, snacks, notebook. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
-| P03 | CU MONITOR — Hero CRT prop, static. One cyan pixel appears in lower-right corner. First Glitch Palette in episode. | PLANNED | — |
+| P03 | CU MONITOR — Hero CRT prop, static. One cyan pixel appears in lower-right corner. First Glitch Palette in episode. | EXISTS | `LTG_SB_cold_open_P03.png` (C41, Diego Vargas) |
 | P04 | WIDE INTERIOR — Full tech den revealed. Glitch bleeds into warm room. MCU push-in, cyan intrusion has directional source point. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
 | P05 | MCU MONITOR — Camera inside shelf looking out. Pixel cluster growing (8–12 cyan pixels). Luma's blurred warm form in BG. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
-| P06 | CU MONITOR SCREEN — Byte's face pressed against glass from inside. Disgust/curious expression. First appearance of Byte. | PLANNED | — |
+| P06 | CU MONITOR SCREEN — Byte's face pressed against glass from inside. Disgust/curious expression. First appearance of Byte. | EXISTS | `LTG_SB_cold_open_P06.png` (C41, Diego Vargas) |
 | P07 | MED WIDE — Monitor bulging, Dutch tilt 8° CW. Low angle. Byte phases through screen. Warm room invaded by cyan. | PLANNED | — |
-| P08 | MED — Byte full character reveal, standing in real world. Pixel confetti drifting. "The flesh dimension." | PLANNED | — |
+| P08 | MED — Byte full character reveal, standing in real world. Pixel confetti drifting. "The flesh dimension." | EXISTS | `LTG_SB_cold_open_P08.png` (C41, Diego Vargas) |
 | P09 | MED WIDE — Byte floating (18" off floor), spots Luma on couch. Cracked eye scans her. Cautious approach begins. | PLANNED | — |
 | P10 | OTS — Byte's POV looking at Luma's sleeping face. Byte in FG silhouette (cool), Luma in BG (warm). Cyan glow on her cheek. | PLANNED | — |
 | P11 | ECU — Luma's closed eyes. Cyan glow on face. Long hold on nothing happening. Then brow twitches. Eyes SNAP open. | PLANNED | — |
@@ -71,8 +71,8 @@ Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the conta
 ---
 
 ## Next Priorities (Standalone Panels Needed)
-1. **P03** — First pixel / CRT hero prop (pitch-critical: first Glitch Palette moment)
-2. **P06** — Byte's face reveal (expression spec very detailed in ep01_cold_open.md — pitch-critical)
-3. **P08** — Byte full character reveal in real world ("The flesh dimension")
+1. ~~**P03**~~ — DONE (C41, Diego Vargas)
+2. ~~**P06**~~ — DONE (C41, Diego Vargas)
+3. ~~**P08**~~ — DONE (C41, Diego Vargas)
 4. **P24** — Chaos apex / hook frame (pitch-critical: strongest hook for commissioning)
 5. **P23** — Promise shot: backs to camera (show's thematic thesis in one image)

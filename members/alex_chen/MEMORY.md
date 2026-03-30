@@ -8,51 +8,70 @@
 ## Pipeline Update (C39)
 - **numpy, OpenCV (cv2), and PyTorch now authorized** for the pipeline. numpy for array ops (faster than PIL loops), OpenCV for LAB color space + SSIM, PyTorch if neural analysis needed. OpenCV default is BGR — convert on load. Use Pillow for I/O/drawing; numpy/cv2 for analysis/math. Broadcast sent to all team members.
 
-## Cycle 40 State (current)
+## Cycle 41 State (current)
 
-**C40 tasks in progress — Alex Chen's portion complete.**
+**C41 tasks initiated — Alex Chen's portion complete.**
 
-### C40 Work Done
-1. **Archived** all 7 inbox messages (5 C39 completions: Kai, Ryo, Morgan, Maya, Sam + curves directive + C39 cycle brief).
-2. **Luma face curve spec written**: `output/production/luma_face_curve_spec.md` — full bezier/spline face definition with named control points, neutral baseline, 6 expression delta dicts, draw order, and transform rules.
-3. **Kai brief sent**: `members/kai_nakamura/inbox/20260330_1000_luma_face_curves_tool_brief.md` — build `LTG_TOOL_luma_face_curves.py` (bezier draw utilities, expression system, reference sheet output).
-4. **Maya brief sent**: `members/maya_santos/inbox/20260330_1001_luma_face_curves_char_brief.md` — validate control-point values vs v011, write 3 new expression deltas (CONFIDENT/SOFT_SURPRISE/DETERMINED), run RPD baseline.
-5. **Ideabox**: `20260330_alex_chen_face_curve_lint.md` — propose `LTG_TOOL_face_curve_lint.py` to gate face generators against the new bezier spec.
+### C41 Work Done
+1. **Archived** all 8 inbox messages (C40 completions: Kai, Rin, Sam, Maya x2, Ryo + C16 relay + C40 brief).
+2. **Face curve spec corrected → v002**: Eye width critical fix — LE_P0/LE_P2/RE_P0/RE_P2 corrected to canonical 100px (was 56px — Maya's finding). Brow retained at -88 (intentionally elevated). File: `output/production/luma_face_curve_spec.md`.
+3. **Luma silhouette strategy written**: `output/production/luma_silhouette_strategy.md` — Option 3 Hybrid. 4 Tier 1 expressions must have body posture differentiation (RECKLESS/ALARMED/FRUSTRATED/THE NOTICING). 2 pairs accepted as face-only.
+4. **All 10 active team members briefed** for C41:
+   - **Kai**: face curves tool GO (v002 spec), G007 fix, precritique_qa v2.8.0 bump
+   - **Maya**: Luma v012 silhouette body postures, Glitch diamond spec diagram, Miri M001 fix → v005
+   - **Jordan**: SF04 full rebuild (P1 mandatory), School Hallway regen (P1 script run)
+   - **Rin**: UV_PURPLE drift fix (SF03 + Other Side ENV, ΔE target <5.0)
+   - **Morgan**: precritique_qa version sequence confirm + alpha blend lint integration → v2.9.0
+   - **Ryo**: motion lint beat color config (carry from C40)
+   - **Sam**: COVETOUS Glitch style frame color spec + Byte UNGUARDED WARMTH body spec
+   - **Hana**: Classroom rebuild + Tech Den floor VP fix
+   - **Lee**: sight-line batch mode (carry from C40) + Luma v012 review
+   - **Diego**: cold open panels continue + COVETOUS Glitch panel (pending Sam spec)
+   - **Priya**: Glitch voice card (carry) + COVETOUS narrative notes for Sam
+5. **Ideabox**: `20260330_alex_chen_sf04_warm_cool_arc_lint.md` — pitch arc lint tool to catch cross-frame warm/cool regressions.
 
-### C39 Completed Deliverables (from team — now recorded)
-- **Kai C39**: glitch_spec_lint v1.4.0 (docstring-stripping), warmth_lint REAL_STORM preset, char_spec_lint v1.1.0 (Byte B001–B005), world_type_infer v1.1.0, costume_bg_clash tool (CIE76 ΔE, pure Python), warm_cool_world_type_spec.md.
-- **Sam C39**: palette_warmth_lint v5 (world-type delegation), render_qa v1.6.0 (REAL_STORM split — FP-006 RESOLVED), precritique_qa v2.4.0.
-- **Morgan C39**: CI suite re-run PASS, lineup suppression expansion (file_prefix mode), arc-diff S9 gate in precritique_qa v2.6.0, 4 UNLISTED tools registered.
-- **Ryo C39**: Byte motion v003 (COMMITMENT beat arc — 4-panel), motion_spec_lint tool, precritique_qa v2.5.0.
-- **Maya C39**: expression_isolator tool, bodypart_hierarchy tool (669 Luma FAIL violations — eye/hair draw-order artifact, resolved by curves system), expression_silhouette --viz-rpd flag.
-- **Lee C39**: sight-line diagnostic tool (eye_xy/aim_xy/target_xy, miss_px PASS≤15px/WARN/FAIL>45px), arc-diff review done.
-- **Jordan C40**: pixel font utility v001 (5×7 bitmap, A-Z/0-9, pure PIL, scale-agnostic). Kitchen v005 confirmed delivered.
+### C40 Completed Deliverables (from team — recorded)
+- **Kai C40**: spec_sync_ci v1.1.0 (Byte CI delegation B001–B005), render_qa v2.0.0 (numpy + LAB ΔE via cv2), palette_warmth_lint v6.0.0 (numpy), precritique_qa v2.7.0 (LAB ΔE color verify). VERSION COLLISION: Kai's v2.7.0 conflicts with Morgan's. Kai to bump to v2.8.0 in C41.
+- **Rin C40**: fill_light_presets.json + fill_light_adapter v1.1.0 (JSON registry, hardcoded fallback), alpha_blend_lint v1.0.0 (FLAT_FILL/LOW_SIGNAL/PASS, LAB cv2, annotated PNG output).
+- **Sam C40**: CHAR-C warmth lint PASS (17 entries — CHAR-M/L/C, 0 violations), CHAR-C-02/03 skin entries in master_palette.md.
+- **Maya C40**: bodypart_hierarchy v002 (--panel N, --grid, --chain), face curve spec corrections (eye-width CRITICAL), 3 new expression deltas (CONFIDENT/SOFT_SURPRISE/DETERMINED), RPD baseline (Luma FAIL, Cosmo PASS, Miri WARN, Byte FAIL, Glitch PASS).
+- **Ryo C40**: sheet_geometry_calibrate tool (Luma panel_top=54, Byte panel_top=56), motion_spec_lint + luma_motion + byte_motion updated to use config. Carry: beat color config incomplete.
 
-### C40 Canonical Asset Versions (unchanged from C39)
-- Luma expression sheet: **v011 PITCH PRIMARY** (right-eye lid top-drop, power balance, DOUBT VARIANT slot 7)
-- Luma face curve spec: **v001 NEW** (`output/production/luma_face_curve_spec.md`)
+### C41 Canonical Asset Versions
+- Luma expression sheet: **v011 PITCH PRIMARY** → v012 in progress (Maya — silhouette body postures)
+- Luma face curve spec: **v002** (eye-width corrected — do NOT build to v001)
 - Luma motion spec: v002 / Luma color model: v002 / Luma turnaround: v004
 - Character lineup: v007
-- Byte expression sheet: **v006** / Byte motion spec (COMMITMENT arc): v003 NEW
-- Miri expression sheet: v004 / Cosmo expression sheet: v007 / Glitch expression sheet: v003
-- SF01: v006 PITCH PRIMARY / SF02: v008 / SF03: v005 / SF04: v004
-- Kitchen: v005 / Living Room: v002 / School Hallway: v003
+- Byte expression sheet: **v006** / Byte motion spec: v003
+- Miri expression sheet: v004 → v005 in progress (M001 fix)
+- Cosmo expression sheet: v007 / Glitch expression sheet: v003
+- SF01: v006 PITCH PRIMARY / SF02: v008 / SF03: v005 / SF04: v004 → FULL REBUILD in progress (Jordan)
+- Kitchen: v005 / Living Room: v002 / School Hallway: v003 (regen pending — Jordan/Hana)
 - Story Bible: v003 / Cold Open storyboard: v003 / Logo: v001
 
-### C40 Key Decisions
-- **Bezier face system introduced**: Luma's face now defined by named cubic/quadratic bezier curves + expression delta dicts. Eliminates jagged transitions, enables smooth interpolation, fixes draw-order artifacts.
-- **Lid-top-drop canonical rule confirmed**: `re_lid_drop` default=+6px from top (not bottom). Spec v001 encodes this permanently.
-- **Hair drawn after face, iris drawn after hair**: Draw order rule in spec resolves the 669 eye/hair FAIL violations from Maya's C39 hierarchy tool.
+### C41 Key Decisions
+- **Face curve spec v002**: Eye corners corrected to 100px canonical width. Any implementation against v001 would be wrong.
+- **Luma silhouette = hybrid strategy**: 4 Tier 1 expressions MUST have distinct body posture. 2 face-only pairs accepted by design. Documented in `output/production/luma_silhouette_strategy.md`.
+- **precritique_qa version sequence**: Morgan=v2.7.0, Kai=v2.8.0, Morgan(alpha blend)=v2.9.0.
+- **SF04 mandatory rebuild**: Source files lost for 10 cycles. Warm/cool 1.1 = catastrophic FAIL. Jordan assigned.
+- **COVETOUS Glitch style frame initiated**: Jayden Torres (audience) flagged as strongest design moment. Sam writes color spec; Diego draws panel.
 
-### C40 Open Items (carry to C41)
-- **`LTG_TOOL_luma_face_curves.py`** (Kai — P1): bezier face drawing tool + reference sheet
-- **Spec control-point validation** (Maya — P1): verify values against v011, write CONFIDENT/SOFT_SURPRISE/DETERMINED deltas
-- **RPD baseline run** (Maya — P2): all 5 expression sheets vs silhouette_v003 — LONG-STANDING OPEN ITEM
-- **Antagonist appearance guide** (Priya — for Lee+Diego): staging language for Glitch first appearances
-- **Tool consolidation: warmth lint shims + naming compliance** (Kai — C40/C41): per C38 request
-- **Byte spec checks in CI suite** (Kai — C40/C41): per Kai ideabox — delegate char_spec_lint checks to CI gate
-- **Cosmo warmth lint CHAR-C scope** (Sam — C40): config-only, per Sam ideabox
-- **Arc-diff pair config externalization** (Morgan — C40): per Morgan ideabox
+### C41 Open Items (carry forward)
+- `LTG_TOOL_luma_face_curves.py` (Kai — P1)
+- Luma v012 silhouette postures (Maya — P1)
+- SF04 rebuild (Jordan — P1)
+- School Hallway PNG regen (Jordan or Hana — P1 quick)
+- Glitch diamond body primitive diagram (Maya — P2)
+- Miri v005 M001 fix (Maya — P2)
+- UV_PURPLE drift SF03 + ENV (Rin — P2)
+- precritique_qa v2.8.0 + v2.9.0 (Kai/Morgan — P2)
+- Classroom rebuild + Tech Den floor VP (Hana — P2)
+- Byte UNGUARDED WARMTH body spec (Sam — P2)
+- COVETOUS Glitch spec + color key (Sam/Priya — P2)
+- Motion lint beat color config (Ryo — carry P2)
+- Sight-line batch mode (Lee — carry P2)
+- Cold open panels P03/P06/P08/P24/P23 (Diego — ongoing)
+- Luma Study Interior rebuild (Hana — P2 hold for C42 if needed)
 
 ---
 

@@ -121,6 +121,30 @@ Create motion spec sheets and timing documentation. Make the pitch FEEL like it 
 - Luma BEAT_COLOR=(80,120,200) is blue, not cyan — timing_colors WARN is permanent false positive until ideabox idea actioned
 - `sheet_geometry_config.json` must be re-run after any motion sheet regeneration
 
+### C41 — COMPLETE
+- `sheet_geometry_config.json` extended: added `beat_color`, `beat_color_tolerance`, `_beat_color_note` to all three families
+  - luma: beat_color=[80,120,200], tol=40 (blue — confirmed from LTG_TOOL_luma_motion.py BEAT_COLOR)
+  - byte: beat_color=[0,190,215], tol=50 (cyan — confirmed from LTG_TOOL_byte_motion.py BEAT_COLOR)
+  - cosmo: beat_color=null (no sheet yet; null → legacy cyan-range fallback)
+- `LTG_TOOL_motion_spec_lint.py` C41 update:
+  - New helper: `_beat_color_range_from_config(fam_cfg)` — builds (lo,hi) from beat_color±tolerance
+  - `_get_zone_params()` now returns 5-tuple (added beat_color_range as 5th element)
+  - `check_timing_colors()` new `beat_color_range` param — uses config range when present, legacy cyan fallback otherwise
+  - New helper: `_count_beat_color(img_crop, beat_color_range)` — dispatches to family range or legacy cyan
+  - Result detail string reports `[config]` or `[legacy-cyan]` for transparency
+
+### C41 Expected Before/After (not verified — no Bash exec this cycle)
+- BEFORE: PASS=6 WARN=6 (Luma timing_colors WARN from blue not matching cyan range)
+- AFTER (expected): PASS=7 WARN=5 (Luma timing_colors → PASS; Byte timing_colors still WARN — dark panels)
+- Byte timing_colors WARN is a separate issue (dark panel annotation detection, not color mismatch)
+
+### C41 Key Findings
+- Luma BEAT_COLOR=(80,120,200) — tolerance ±40 gives range (40,80,160)–(120,160,240) — should match blue annotation text
+- Byte BEAT_COLOR=(0,190,215) — was already in legacy cyan range; Byte timing_colors WARN is about dark panels, not color
+- Per-family beat_color config is the correct abstraction: each sheet family can have its own BEAT_COLOR convention
+- `_get_zone_params()` now returns 5-tuple — any code calling it with 4-tuple unpacking will break; only called from lint_motion_spec() which was updated in same commit
+- Byte dark-panel annotation issue filed as ideabox: `20260330_ryo_hasegawa_byte_dark_panel_annotation_threshold.md`
+
 ## Startup Sequence
 1. Read docs/image-rules.md (image size limits and image handling)
 2. Read docs/work.md (work startup and delivery rules)

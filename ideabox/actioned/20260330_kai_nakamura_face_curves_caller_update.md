@@ -1,0 +1,5 @@
+**Author:** Kai Nakamura
+**Cycle:** 41
+**Date:** 2026-03-30
+**Idea:** Audit all existing generators that call `draw_luma_face()` or use `_draw_luma_face_sprint()` ad-hoc face drawing to ensure they are using the v1.1.0 100px eye width. In particular, Jordan Reed's SF02 Glitch Storm generator has its own `_draw_luma_face_sprint()` function with hardcoded eye control points from the v001 era. Now that `LTG_TOOL_luma_face_curves.py` is at v1.1.0 with the correct 100px canonical eye width, those generators should replace their bespoke face drawing with a call to `draw_luma_face()`. A quick grep for `_draw_luma_face_sprint\|le_p0\|LE_P0.*-72\|eye.*56` in `output/tools/` would surface any stale callers.
+**Benefits:** Ensures consistent Luma face proportions across all style frames and character sheets. The 56px vs 100px difference is visually significant — any style frame still using the old geometry will produce an undersized, reserved-looking Luma eye that diverges from the corrected face curve spec. Flagging these callers during the next cycle prevents a critic catch in the next review pass.

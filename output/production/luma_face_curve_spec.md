@@ -75,12 +75,12 @@ Type: Closed cubic bezier (4 control points — wide teardrop)
 Points: `LE_P0` (left extent), `LE_P1` (top), `LE_P2` (right extent), `LE_P3` (bottom)
 Neutral baseline:
 ```
-LE_P0 = FC + (-72, -22)   # outer corner
+LE_P0 = FC + (-94, -22)   # outer corner
 LE_P1 = FC + (-44, -44)   # top center
-LE_P2 = FC + (-16, -22)   # inner corner
+LE_P2 = FC + (  6, -22)   # inner corner
 LE_P3 = FC + (-44,  -8)   # bottom center
 ```
-Eye width (P0→P2 distance): **56px** canonical. Lid-top asymmetry controlled by `le_lid_drop`: 0=neutral, positive=lid descends from top (drowsy/THE NOTICING read), negative=lid lifts (wide alarm).
+Eye width (P0→P2 distance): **100px** canonical. Corrected C41 from 56px — Maya Santos cross-reference vs v011 generator (EW_CANON=45px half-width at 2x, scaled to spec canvas: ~99px). The 56px value was ~44% narrower than Luma's canonical eye width and would have produced an undersized, reserved-looking eye. Lid-top asymmetry controlled by `le_lid_drop`: 0=neutral, positive=lid descends from top (drowsy/THE NOTICING read), negative=lid lifts (wide alarm).
 Fill: EYE_WHITE. Outline: 3px OUTLINE_BLACK.
 
 ---
@@ -90,9 +90,9 @@ Type: Closed cubic bezier (4 control points)
 Points: `RE_P0`, `RE_P1`, `RE_P2`, `RE_P3`
 Neutral baseline (mirrored):
 ```
-RE_P0 = FC + ( 16, -22)   # inner corner
+RE_P0 = FC + ( -6, -22)   # inner corner
 RE_P1 = FC + ( 44, -44)   # top center
-RE_P2 = FC + ( 72, -22)   # outer corner
+RE_P2 = FC + ( 94, -22)   # outer corner
 RE_P3 = FC + ( 44,  -8)   # bottom center
 ```
 Right eye has the **lid-top-drop** (C39 canonical fix): `re_lid_drop` default = +6px (lid descends from top, not bottom). This is the canonical Luma right-eye read — sleepy-curious, not alarmed.
@@ -295,7 +295,11 @@ The tool must:
 
 ## Versioning
 
-This spec is v001. Control-point values may be tuned in future cycles. All changes must be reflected in the delta table above.
+This spec is **v002** (updated C41 — eye-width critical correction).
+
+**Change log:**
+- v001 (C40): Initial bezier face spec with all 6 expression delta dicts
+- v002 (C41): CRITICAL — Eye outer/inner corners corrected to 100px canonical width (was 56px). LEFT_EYE LE_P0 changed from FC+(−72,−22) to FC+(−94,−22); LE_P2 from FC+(−16,−22) to FC+(+6,−22). RIGHT_EYE RE_P0 from FC+(+16,−22) to FC+(−6,−22); RE_P2 from FC+(+72,−22) to FC+(+94,−22). Brow LB_P1 retained at FC+(−38,−88) — intentionally more elevated than v011 generator (~79px) for a more expressive reckless read in the curves implementation.
 
 ---
-*Alex Chen, Art Director — C40*
+*Alex Chen, Art Director — C40/C41*

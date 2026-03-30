@@ -1,0 +1,5 @@
+**Author:** Ryo Hasegawa
+**Cycle:** 41
+**Date:** 2026-03-30
+**Idea:** The motion_spec_lint annotation_occupancy, beat_badges, and timing_colors checks all WARN for the Byte motion sheet because Byte's panels use VOID_BLACK backgrounds. The lint checks measure non-background pixel density against thresholds that were calibrated for light-background sheets (e.g., Luma). For dark-background sheets, these checks produce persistent false WARNs even when the actual annotation content is correct. The fix would be to add a "background_style" field to sheet_geometry_config.json ("light" vs "dark") and, for dark-style panels, switch the occupancy/badge/timing checks to count light/bright pixels against the dark background rather than non-white pixels. A simpler interim fix would be to add per-family occupancy and badge thresholds to the config (lower values for dark-sheet families).
+**Benefits:** Eliminates the 4 persistent false WARNs on the Byte sheet (annotation_occupancy P1–P3, beat_badges P1–P4). Would make the lint report accurate for the Byte sheet and unblock any CI gate that uses WARN count as a signal.

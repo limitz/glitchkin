@@ -1,0 +1,288 @@
+{
+  "_description": "Known/pre-existing issues for LTG_TOOL_ci_suite.py --known-issues flag. Add entries here to mark expected WARNs so regressions stand out in CI output.",
+  "_format": "List of {check, file, code, reason} objects. 'file' is basename only. 'code' is the warning code (e.g. W004, G007). Use null for code to match any issue on that file in that check.",
+  "known_issues": [
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_act2_panels_cycle14.py",
+      "code": "W004",
+      "reason": "Pattern: img.paste(img_rgba.convert('RGB')) in composite helper — no draw calls follow, false positive. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_bg_classroom.py",
+      "code": "W004",
+      "reason": "Pattern: Image.alpha_composite() lighting overlay passes — final composites, no draw calls follow. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_bg_millbrook_main_street.py",
+      "code": "W004",
+      "reason": "Pattern: img.paste(Image.alpha_composite(...)) — final overlay pass, no draw calls follow. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_bg_school_hallway.py",
+      "code": "W002",
+      "reason": "Pattern: draw.rectangle(fill=..., outline=...) — PIL draws fill+outline in one call; not a real painter violation. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_bg_tech_den.py",
+      "code": "W002",
+      "reason": "Pattern: draw.rectangle(fill=..., outline=...) — PIL draws fill+outline in one call; not a real painter violation. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_bodypart_hierarchy.py",
+      "code": "W002",
+      "reason": "Annotation/diagnostic overlay rectangles — draw.rectangle with outline only (no fill); not a real painter violation. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_logo_asymmetric.py",
+      "code": "W004",
+      "reason": "Pattern: img.paste(base_rgba.convert('RGB')) — per-glyph composite in gradient loop, no draw calls follow paste. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_luma_motion.py",
+      "code": "W001",
+      "reason": "Annotation text draw in motion spec sheet panel header — text label, not actual head/face element. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_procedural_draw.py",
+      "code": "W004",
+      "reason": "Library utility functions use img.paste() for compositing; callers rebuild draw object. No stale-draw risk in practice. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_sb_a2_cycle15.py",
+      "code": "W004",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_sb_act1_contact_sheet.py",
+      "code": "W004",
+      "reason": "Pattern: img.paste(thumb, ...) — thumbnail composite, no draw calls follow. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_sb_panel_a101.py",
+      "code": "W004",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_sb_panel_a102.py",
+      "code": "W004",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_sb_panel_a103.py",
+      "code": "W004",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_sb_panel_a104_kitchen.py",
+      "code": "W004",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_sb_panel_a201.py",
+      "code": "W004",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_sb_panel_a202.py",
+      "code": "W004",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_sb_panel_a204.py",
+      "code": "W004",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_sb_panel_a205.py",
+      "code": "W004",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_sb_panel_a206_insert.py",
+      "code": "W004",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_sb_panel_a207.py",
+      "code": "W004",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_sb_panel_a207b.py",
+      "code": "W004",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_sb_panel_a208.py",
+      "code": "W004",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_sb_pilot_cold_open.py",
+      "code": "W004",
+      "reason": "Pattern: img.paste(Image.alpha_composite(base, glow).convert('RGB')) — glow pass, no draw calls follow. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_style_frame_01_discovery.py",
+      "code": "W004",
+      "reason": "Pattern: img.paste() on split-composite — ghost overlay and side composites, no draw calls follow. C39 baseline."
+    },
+    {
+      "check": "draw_order_lint",
+      "file": "LTG_TOOL_styleframe_discovery.py",
+      "code": "W004",
+      "reason": "Pattern: img.paste() on split-composite — ghost overlay and side composites, no draw calls follow. C39 baseline."
+    },
+    {
+      "check": "glitch_spec_lint",
+      "file": "LTG_CHAR_byte_motion.py",
+      "code": "G003",
+      "reason": "Byte motion sheet is not a Glitch expression sheet — multi-expression check does not apply. C39 baseline FP."
+    },
+    {
+      "check": "glitch_spec_lint",
+      "file": "LTG_CHAR_byte_motion.py",
+      "code": "G005",
+      "reason": "Byte motion sheet has no Glitch body polygon — UV_PURPLE shadow check does not apply. C39 baseline FP."
+    },
+    {
+      "check": "glitch_spec_lint",
+      "file": "LTG_CHAR_byte_motion.py",
+      "code": "G007",
+      "reason": "Byte motion sheet has no Glitch body polygon — VOID_BLACK outline check does not apply. C39 baseline FP."
+    },
+    {
+      "check": "glitch_spec_lint",
+      "file": "LTG_TOOL_bg_glitch_storm_colorfix.py",
+      "code": "G005",
+      "reason": "Background-only ENV generator; contains CORRUPT_AMBER storm confetti color but no Glitch character body polygon. C39 baseline FP."
+    },
+    {
+      "check": "glitch_spec_lint",
+      "file": "LTG_TOOL_bg_glitch_storm_colorfix.py",
+      "code": "G007",
+      "reason": "Background-only ENV generator; contains CORRUPT_AMBER storm confetti color but no Glitch character body polygon. C39 baseline FP."
+    },
+    {
+      "check": "glitch_spec_lint",
+      "file": "LTG_TOOL_bg_other_side.py",
+      "code": "G007",
+      "reason": "Background-only ENV generator; contains GL color constants but no Glitch character body polygon. C39 baseline FP."
+    },
+    {
+      "check": "glitch_spec_lint",
+      "file": "LTG_TOOL_byte_motion.py",
+      "code": "G003",
+      "reason": "Byte motion sheet (LTG_TOOL_ canonical); not a Glitch expression sheet. C39 baseline FP."
+    },
+    {
+      "check": "glitch_spec_lint",
+      "file": "LTG_TOOL_byte_motion.py",
+      "code": "G005",
+      "reason": "Byte motion sheet; no Glitch body polygon. C39 baseline FP."
+    },
+    {
+      "check": "glitch_spec_lint",
+      "file": "LTG_TOOL_byte_motion.py",
+      "code": "G007",
+      "reason": "Byte motion sheet; no Glitch body polygon. C39 baseline FP."
+    },
+    {
+      "check": "glitch_spec_lint",
+      "file": "LTG_TOOL_character_face_test.py",
+      "code": "G003",
+      "reason": "Face-lighting test utility; not a Glitch generator. C39 baseline FP."
+    },
+    {
+      "check": "glitch_spec_lint",
+      "file": "LTG_TOOL_character_face_test.py",
+      "code": "G005",
+      "reason": "Face-lighting test utility; no Glitch body polygon. C39 baseline FP."
+    },
+    {
+      "check": "glitch_spec_lint",
+      "file": "LTG_TOOL_character_face_test.py",
+      "code": "G006",
+      "reason": "Face-lighting test utility; skin tone color tuples in test fixture trigger organic-fill check. C39 baseline FP."
+    },
+    {
+      "check": "glitch_spec_lint",
+      "file": "LTG_TOOL_character_face_test.py",
+      "code": "G007",
+      "reason": "Face-lighting test utility; no Glitch body polygon. C39 baseline FP."
+    },
+    {
+      "check": "glitch_spec_lint",
+      "file": "LTG_TOOL_color_verify.py",
+      "code": "G005",
+      "reason": "Color verification utility; contains palette color tuples that trigger G005 numeric match. C39 baseline FP."
+    },
+    {
+      "check": "glitch_spec_lint",
+      "file": "LTG_TOOL_color_verify.py",
+      "code": "G007",
+      "reason": "Color verification utility; contains VOID_BLACK constant but no draw.polygon call. C39 baseline FP."
+    },
+    {
+      "check": "glitch_spec_lint",
+      "file": "LTG_TOOL_fidelity_check_c24.py",
+      "code": "G005",
+      "reason": "Fidelity check utility; palette color tuples trigger G005. C39 baseline FP."
+    },
+    {
+      "check": "glitch_spec_lint",
+      "file": "LTG_TOOL_fidelity_check_c24.py",
+      "code": "G007",
+      "reason": "Fidelity check utility; VOID_BLACK constant but no draw.polygon. C39 baseline FP."
+    },
+    {
+      "check": "glitch_spec_lint",
+      "file": "LTG_TOOL_glitch_color_model.py",
+      "code": "G006",
+      "reason": "Color model swatch sheet; SOFT_GOLD swatch (200,160,80) triggers organic-fill check but is an intentional swatch label. C39 baseline FP."
+    },
+    {
+      "check": "glitch_spec_lint",
+      "file": "LTG_TOOL_glitch_turnaround.py",
+      "code": "G007",
+      "reason": "Turnaround uses draw.polygon with outline color variable (not literal VOID_BLACK constant) — linter misses this pattern. C39 baseline FP."
+    },
+    {
+      "check": "glitch_spec_lint",
+      "file": "LTG_TOOL_style_frame_02_glitch_storm.py",
+      "code": "G007",
+      "reason": "SF02 uses Glitch body polygon via procedural_draw lib — direct draw.polygon call absent, linter does not detect library delegation. C39 baseline FP."
+    },
+    {
+      "check": "glitch_spec_lint",
+      "file": "LTG_TOOL_style_frame_03_other_side.py",
+      "code": "G007",
+      "reason": "SF03 uses Glitch body polygon via procedural_draw lib — direct draw.polygon call absent, linter does not detect library delegation. C39 baseline FP."
+    }
+  ]
+}

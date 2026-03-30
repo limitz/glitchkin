@@ -6,13 +6,18 @@ Comedy-adventure cartoon. Three worlds: Real World (warm/domestic), Glitch World
 ## Joined
 Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style frames).
 
-## Existing Environments (as of C39)
+## Existing Environments (as of C40)
 - Kitchen (Grandma's): v004 — `output/backgrounds/environments/LTG_ENV_grandma_kitchen.png`
-- Tech Den: v004 + warminjected — `LTG_ENV_tech_den_warminjected.png`
+- Tech Den: **v005** + warminjected — `LTG_ENV_tech_den.png` / `LTG_ENV_tech_den_warminjected.png`
+  - C40 fixes: floor planks now perspective-converging to VP_X=820; warm overlay strengthened; value floor fixed (min=11); window specular added (max=254)
+  - Warminjected QA: value_range PASS, warm/cool PASS (100.8), line_weight PASS, grade WARN (pre-existing color fidelity only)
 - Glitch Layer: v003
-- School Hallway: **v003** (C38 figure-ground pass) — `LTG_ENV_school_hallway.png` — QA WARN (pre-existing color fidelity WARN, value range PASS)
+- School Hallway: **v004** (C40 re-run) — `LTG_ENV_school_hallway.png` + `LTG_ENV_school_hallway_v004.png`
+  - SUNLIT_AMBER hue fix (C14) was in source. Re-ran generator. QA: warm/cool 34.8 PASS, value PASS, grade WARN (pre-existing color fidelity)
 - Millbrook Street: v002
 - **Living Room (C39)**: **v002** — `LTG_ENV_grandma_living_room.png` — QA PASS
+- **Classroom**: FAIL grade (silhouette blob, warm/cool 9.3 FAIL, line weight FAIL). Rebuild spec written: `output/production/ENV_REBUILD_SPEC_classroom_c41.md`. Execute C41.
+- **Luma Study Interior**: 31-cycle-old legacy PNG, no generator. Warm/cool 5.4 FAIL. Rebuild spec written: `output/production/ENV_REBUILD_SPEC_luma_study_c41.md`. Execute C41.
   - C39 addition: diamond-crystal figurine at (438, 328), top shelf of bookcase, secondary visual plant connecting Grandma Miri / Glitch Layer elder Miri and diamond body geometry. Warm amber catch-light only. No GL palette.
 
 ## Key Palette References
@@ -76,6 +81,35 @@ Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style fr
 ### Code Quality
 - Define ALL color constants at top before use — missed AGED_CREAM, MORNING_GOLD, CURTAIN_WARM, PLANT_GREEN/DARK in first draft
 - Use `max(0.0, min(1.0, t))` clamp before `t ** n` to avoid complex number errors when t is slightly negative (floating point loop indexing)
+
+## Cycle 40 — VP Fix, Value Floor, Rebuild Specs
+
+### Tech Den v005 (C40 patch)
+- Floor plank VP fix: replaced horizontal lines with convergence-fan lines toward VP_X=820
+  - Horizontal cross-grain rows: non-linear spacing (t^0.7) gives perspective compression
+  - Vertical grain lines: fan from near-x to far_x = near_x + (VP_X - near_x)*0.6
+- Warm overlay strengthened: max alpha 30→90, coverage 320→600px
+- Floor warm wash: polygon over floor area with SUNLIT_AMBER alpha 28
+- Deep shadow anchors: NEAR_BLACK_WARM on corner crevices + far-wall junction (value floor fix)
+- Window specular dot added: (255,255,248) on window glass ensures max ≥ 225
+- Warm/cool: base image 5.6 FAIL (room is inherently warm-amber throughout); warmth_inject needed (cool bottom pass at alpha 127 → separation 100.8 PASS)
+- Tech Den warm/cool is a structural issue: entire room is warm-amber palette. Warmth inject is the correct post-process, not an in-generator fix.
+
+### School Hallway v004 (C40 re-run)
+- SUNLIT_AMBER fix was already in source (line 84: SUNLIGHT_SHAFT = (212,146,58)). Just re-ran.
+- v004 PNG saved alongside v003 as requested.
+- Pre-existing color fidelity WARN unchanged (known hue drift from floor tile compositing).
+
+### Rebuild Specs Written (C40)
+- Classroom: `output/production/ENV_REBUILD_SPEC_classroom_c41.md` — full rebuild C41
+- Luma Study: `output/production/ENV_REBUILD_SPEC_luma_study_c41.md` — new generator needed C41
+
+### Warm/Cool Debugging Lesson (C40)
+- Adding warm to top half AND the bottom half has both hues is the SAME → separation drops
+- Adding cool to bottom half when warm already dominates both halves → can make both more similar
+- Solution: use warmth_inject which has calibrated alpha stepping (found 127 alpha for cool bottom pass)
+- For rooms that are genuinely all-warm (Tech Den), warmth_inject cool-bottom is canonical solution
+- DO NOT fight this in-generator with heavy overlays — it degrades the visual
 
 ## Cycle 39 — Thumbnail Visibility Tool
 

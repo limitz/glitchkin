@@ -1,5 +1,49 @@
 # Rin Yamamoto — MEMORY
 
+## C40 (Second Pass) Completed Work
+- `LTG_TOOL_bg_other_side.py` — UV_PURPLE_DARK saturation fix
+  - Was (43, 32, 80) = #2B2050 = 31% sat — hue 253.75°, delta 18.15° from canonical
+  - Fixed to GL-04a (58, 16, 96) = #3A1060 = 72% sat — hue 271.5°, delta 0.4° PASS
+  - Also added ≤1280px thumbnail rule (was saving at 1920×1080 — rule violation)
+  - Regenerated `output/backgrounds/environments/LTG_ENV_other_side_bg.png` at 1280×720
+  - SF03 style frame generator CONFIRMED already at GL-04a since C28 — no change needed
+  - 8-cycle UV_PURPLE drift backlog (C16 flag) now cleared
+- `LTG_TOOL_sf_covetous_glitch.py` (v1.0.0, new) — COVETOUS Glitch Style Frame
+  - Output: `output/color/style_frames/LTG_SF_covetous_glitch_v001.png` (1280×720)
+  - Glitch in COVETOUS state from expr v003: tilt+12°, ACID_GREEN slit eyes bilateral,
+    reaching arms with claw-tips, sparse UV_PURPLE confetti forward-drift
+  - Other Side void background: UV_PURPLE sky gradient, far slabs, perspective floor
+  - Byte silhouette far-right with BYTE_TEAL glow halo — object of desire, small = inaccessible
+  - ACID_GREEN eye-glow spill as blurred overlay — stare has physical weight
+  - UV_PURPLE_DARK = GL-04a canonical (58,16,96) — 0.4° hue delta PASS
+  - Zero warm ambient light — BYTE_TEAL is pigment only
+- `LTG_TOOL_precritique_qa.py` bumped to v2.8.0 — alpha_blend_lint Section 10 integration
+  - Lazy-loads `LTG_TOOL_alpha_blend_lint.py` via `_load_alpha_blend_lint()`
+  - `FILL_LIGHT_ASSETS` registry: SF01, SF02, SF04 (composited + base + zones)
+  - `run_alpha_blend_lint()` — Section 10 runner, scored (FLAT_FILL=FAIL, LOW_SIGNAL=WARN)
+  - Skips gracefully when `*_nolight.png` base absent (all-skip → PASS)
+  - `build_report()` and `main()` updated; overall grade now includes Section 10
+  - Tools chain: [1/10]–[10/10]
+- Ideabox: `ideabox/20260330_rin_yamamoto_nolight_base_generator.md`
+  - `--save-nolight` flag for SF01/SF02/SF04 generators to enable Section 10 active checking
+- README updated: C40 tool update notes for bg_other_side, precritique_qa; new table entry for sf_covetous_glitch
+
+## C40 Lessons (Second Pass)
+- ENV generators (bg_other_side) are NOT automatically kept in sync with style frame generator fixes.
+  When a palette fix is applied to a style frame generator, explicitly check all ENV generators
+  that share the same palette block and apply the same fix. A diff of palette constants between
+  the two files is the quickest check.
+- UV_PURPLE_DARK hue formula: max=B, min=G, delta=B-G.
+  Hue = 240 + 60*(R-G)/delta. Old (43,32,80): 240+60*11/48=253.75°. New (58,16,96): 240+60*42/80=271.5°.
+- ENV generators that pre-date the ≤1280px rule may still be saving at 1920×1080.
+  Always add `img.thumbnail((1280, 1280), Image.LANCZOS)` before save when updating any legacy ENV.
+- COVETOUS style frame: Glitch large in foreground, Byte tiny far-right = spatial power dynamic.
+  Small = inaccessible. The gap between ACID_GREEN predator and BYTE_TEAL warmth IS the story.
+- Eye-glow spill as blurred RGBA overlay is the cleanest approach: draw radial circles at low alpha,
+  GaussianBlur, alpha_composite. Avoids halo artifacts from large hard circles.
+- alpha_blend_lint Section 10 in precritique_qa will always-skip until generators save nolight bases.
+  Filed as ideabox to add --save-nolight flag to SF01/SF02/SF04.
+
 ## C40 Completed Work
 - `LTG_TOOL_fill_light_adapter.py` bumped to v1.1.0 — Scene Presets Registry
   - `load_scene_configs(scene_name, presets_path=None) → (configs, char_h_frac)`
