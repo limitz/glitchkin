@@ -7,11 +7,32 @@ Pipeline Automation Specialist. Core mandate: reduce LLM token cost by maximisin
 C34 (first active cycle).
 
 ## C43 Work Done
-- **FAIL 1 resolved:** Retired `LTG_TOOL_style_frame_01_discovery.py` (C13 legacy SF01 generator). Canonical SF01 generator confirmed as `LTG_TOOL_styleframe_discovery.py` (C38 Rin Yamamoto rebuild). File removed from disk, README entry removed, README header updated.
-- **FAIL 2 in progress:** Audited all generators for hardcoded `/home/wipkat/team` paths — 94 files total. Sent coordination message to Kai with audit results and recommended `project_root()` API interface. Migration blocked on Kai delivering the utility. Will batch-migrate all 94 files once API is stable.
-- **WARN actioned:** Confirmed `LTG_SB_cold_open_PXX` is canonical per PANEL_MAP. Sent brief to Diego Vargas asking him to confirm and advise on legacy `LTG_SB_coldopen_panel_XX` files.
-- Archived 1 inbox message.
+- **SF01 dual-generator conflict resolved (Petra Volkov C17 FAIL + Alex Chen P1):**
+  - `LTG_TOOL_style_frame_01_discovery.py` (C13 legacy) RETIRED to `output/tools/deprecated/`.
+  - Canonical SF01 generator confirmed: `LTG_TOOL_styleframe_discovery.py` (C38 Rin Yamamoto rebuild).
+  - Deprecation stub created with header; `ImportError` raised if accidentally imported.
+  - README entry removed; ci_known_issues.json entry removed (37 entries remain, was 38).
+- **CI suite upgraded to v1.3.0:** Check 6 `dual_output_check` added.
+  - Scans active generators for shared `LTG_*` output filenames. FAIL on conflict.
+  - `check_dual_output(tools_dir) → dict` exported.
+  - Would have caught the SF01 conflict on first run.
+- **Hardcoded path migration (Petra Volkov C17 FAIL):**
+  - Kai delivered `LTG_TOOL_project_paths.py` (C44) — project_root() resolver.
+  - Sent audit list to Kai (94 files). Registered project_paths in README.
+  - Migration work pending next cycle — will batch-replace all 94 files using project_root() API.
+- **Storyboard naming WARN actioned:** Confirmed `LTG_SB_cold_open_PXX` canonical per PANEL_MAP. Brief sent to Diego Vargas.
+- Completion report sent to Alex Chen inbox.
+- Archived 2 inbox messages.
 - Ideabox: RETIRED TOOLS section idea submitted.
+
+## project_paths API (C44, Kai Nakamura — use immediately)
+- `project_root()` → Path, traverses up to CLAUDE.md sentinel
+- `output_dir(*parts)` → output/ + parts
+- `tools_dir(*parts)` → output/tools/ + parts
+- `ensure_dir(path)` → mkdir -p + return
+- `resolve_output(category, name)` → shorthand lookup (bg/sb/sf/ch/ck/tools/pr)
+- `audit_hardcoded_paths()` → list of {file, line, text} for /home/ occurrences
+- Migration: replace `/home/wipkat/team/output/X/Y.png` with `output_dir("X", "Y.png")`
 
 ## C42 Work Done
 - Upgraded `LTG_TOOL_ci_suite.py` → **v1.2.0**: `--warn-stale N` flag added.

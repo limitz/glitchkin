@@ -84,6 +84,7 @@ API
     from LTG_TOOL_ci_suite import run_suite, format_suite_report
     from LTG_TOOL_ci_suite import load_known_issues, load_known_issues_raw
     from LTG_TOOL_ci_suite import check_stale_known_issues
+    from LTG_TOOL_ci_suite import check_dual_output
 
     known     = load_known_issues("ci_known_issues.json")
     known_raw = load_known_issues_raw("ci_known_issues.json")
@@ -114,9 +115,16 @@ v1.2.0 (C42): --warn-stale N flag. Emits STALE_KNOWN WARN for known-issue
               check_stale_known_issues() exported for programmatic use.
               stale_known list added to run_suite() result dict.
               (Morgan Walsh)
+v1.3.0 (C43): Check 6 — dual_output_check. Scans all .py files in tools_dir
+              for hardcoded LTG_* output filenames. FAIL if two or more active
+              (non-deprecated, non-legacy) generators write to the same output
+              file. Prevents dual-generator provenance ambiguity (Petra Volkov
+              C17 FAIL — LTG_TOOL_style_frame_01_discovery.py conflict).
+              check_dual_output() exported for programmatic use.
+              (Morgan Walsh)
 """
 
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 
 import os
 import sys
@@ -447,6 +455,115 @@ def _run_char_spec_lint(tools_dir):
         return "ERROR", f"Could not import char_spec_lint: {exc}", ""
 
 
+# ── Check 6: dual_output_check ─────────────────────────────────────────────
+
+def check_dual_output(tools_dir):
+    """
+    Scan all active .py files in tools_dir for LTG_* output filenames.
+    Return a dict of {output_filename: [list_of_generators]} for any output
+    filename claimed by more than one active generator.
+
+    "Active" means: not in deprecated/ or legacy/ subdirectories, and not
+    the script itself (ci_suite) or stub/lint/qa tools (which read but don't
+    write).
+
+    Parameters
+    ----------
+    tools_dir : str
+        Path to the output/tools/ directory.
+
+    Returns
+    -------
+    dict  { "LTG_FOO_bar.png": ["gen_a.py", "gen_b.py"], ... }
+          Only entries with 2+ generators are returned.
+    """
+    import re as _re
+    # Pattern: LTG_ followed by category prefix, then a filename with .png/.svg/.json/.md
+    # Matches string literals in source: "LTG_COLOR_foo.png", 'LTG_ENV_bar.png', etc.
+    _OUTFILE_PAT = _re.compile(r'["\']?(LTG_(?:COLOR|ENV|CHAR|BRAND|SB|TOOL|PROD)_[A-Za-z0-9_.]+\.(?:png|svg|json|md))["\']?')
+
+    # Tool files we should skip (CI/QA/lint tools that reference filenames but don't generate them)
+    _SKIP_PREFIXES = (
+        "LTG_TOOL_ci_suite",
+        "LTG_TOOL_precritique_qa",
+        "LTG_TOOL_readme_sync",
+        "LTG_TOOL_stub_linter",
+        "LTG_TOOL_draw_order_lint",
+        "LTG_TOOL_glitch_spec_lint",
+        "LTG_TOOL_spec_sync_ci",
+        "LTG_TOOL_char_spec_lint",
+        "LTG_TOOL_render_qa",
+        "LTG_TOOL_color_fidelity",
+        "LTG_TOOL_proportion_verify",
+        "LTG_TOOL_proportion_audit",
+        "LTG_TOOL_fidelity_check",
+        "LTG_TOOL_naming_compliance",
+        "LTG_TOOL_naming_cleanup",
+        "LTG_TOOL_face_curves_caller_audit",
+        "LTG_TOOL_project_paths",
+        "LTG_TOOL_sobel_vp_detect",
+        "LTG_TOOL_vanishing_point_lint",
+        "LTG_TOOL_world_type_infer",
+        "LTG_TOOL_alpha_blend_lint",
+        "LTG_TOOL_fill_light_adapter",
+        "LTG_TOOL_sight_line_diagnostic",
+        "LTG_TOOL_motion_spec_lint",
+        "LTG_TOOL_palette_warmth_lint",
+        "LTG_TOOL_arc_diff",
+        "LTG_TOOL_contact_sheet_arc_diff",
+        "run_",
+    )
+
+    output_map = {}  # { output_filename: [generator_basename, ...] }
+
+    tools_path = os.path.abspath(tools_dir)
+    for fname in sorted(os.listdir(tools_path)):
+        if not fname.endswith(".py"):
+            continue
+        # Skip CI/QA/lint tools
+        if any(fname.startswith(pfx) for pfx in _SKIP_PREFIXES):
+            continue
+        fpath = os.path.join(tools_path, fname)
+        if not os.path.isfile(fpath):
+            continue
+        try:
+            src = open(fpath, "r", encoding="utf-8", errors="replace").read()
+        except OSError:
+            continue
+        # Look for save/output assignment patterns that suggest this file GENERATES an output
+        # Heuristic: file must contain .save( or img.save to be a generator
+        if ".save(" not in src and "ImageDraw" not in src:
+            continue
+        matches = set(_OUTFILE_PAT.findall(src))
+        # Filter to only LTG_COLOR_/LTG_ENV_/LTG_CHAR_/LTG_BRAND_/LTG_SB_ outputs
+        # (exclude LTG_TOOL_ references which are script-name refs, not outputs)
+        for m in matches:
+            if m.startswith("LTG_TOOL_"):
+                continue
+            output_map.setdefault(m, []).append(fname)
+
+    # Return only conflicts (2+ generators per output)
+    return {k: v for k, v in output_map.items() if len(v) >= 2}
+
+
+def _run_dual_output_check(tools_dir):
+    """Run dual-output-file check. Returns (status, summary, details)."""
+    try:
+        conflicts = check_dual_output(tools_dir)
+        if not conflicts:
+            return "PASS", "0 output filename conflict(s)", ""
+        lines = [f"DUAL-OUTPUT CONFLICTS ({len(conflicts)} output file(s) claimed by multiple generators):"]
+        for outfile, generators in sorted(conflicts.items()):
+            lines.append(f"  {outfile}")
+            for g in generators:
+                lines.append(f"    ← {g}")
+        details = "\n".join(lines)
+        summary = f"{len(conflicts)} output filename conflict(s) — {sum(len(v) for v in conflicts.values())} generator(s) involved"
+        return "FAIL", summary, details
+    except Exception as exc:
+        return "ERROR", f"dual_output_check error: {exc}", ""
+
+
 # ── Suite runner ──────────────────────────────────────────────────────────────
 
 _CHECKS = [
@@ -455,6 +572,7 @@ _CHECKS = [
     ("glitch_spec_lint",  _run_glitch_spec_lint, "Glitch Spec Linter"),
     ("spec_sync_ci",      _run_spec_sync_ci,   "Spec Sync CI Gate"),
     ("char_spec_lint",    _run_char_spec_lint,  "Char Spec Linter"),
+    ("dual_output_check", _run_dual_output_check, "Dual-Output File Check"),
 ]
 
 

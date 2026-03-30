@@ -172,13 +172,6 @@
     },
     {
       "check": "draw_order_lint",
-      "file": "LTG_TOOL_style_frame_01_discovery.py",
-      "code": "W004",
-      "reason": "Pattern: img.paste() on split-composite — ghost overlay and side composites, no draw calls follow. C39 baseline.",
-      "since_cycle": "C39"
-    },
-    {
-      "check": "draw_order_lint",
       "file": "LTG_TOOL_styleframe_discovery.py",
       "code": "W004",
       "reason": "Pattern: img.paste() on split-composite — ghost overlay and side composites, no draw calls follow. C39 baseline.",
