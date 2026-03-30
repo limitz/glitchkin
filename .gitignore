@@ -1,4 +1,8 @@
 .claude/
+
+# Reference images — local only, not for commit (copyright/licensing)
+reference/
+
 # Python cache files — never commit compiled bytecode
 __pycache__/
 *.pyc

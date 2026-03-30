@@ -3,98 +3,106 @@
 Reference assets for analysis and art direction on *Luma & the Glitchkin*.
 **Copyright rule:** All references are for measurable analysis only — palette extraction, geometry measurement, lighting ratios, composition structure. No copying of style, character design, or artwork. Prefer Creative Commons / public domain sources.
 
+**Local folder:** `reference/` (gitignored — local use only).
+
 ---
 
 ## CRT & Retro Display Aesthetics
 
-- Photograph of illuminated CRT television screen in a dark room — measure phosphor glow radius, FWHM of bloom, warm/cool cast of ambient spill onto surrounding surfaces. Feed into `LTG_TOOL_bg_grandma_kitchen.py` glow calibration.
-- Close-up photograph of CRT scanlines at various brightness levels — extract scanline pitch, inter-line darkness ratio, and horizontal smear profile. Use to tune the Glitch Layer's pixel-grid rendering in `LTG_TOOL_character_face_test.py`.
-- Photograph of CRT static / snow — measure spatial frequency distribution of noise. Use as reference when generating UV_PURPLE corruption texture in Glitch Layer scenes.
-- Photograph of CRT phosphor afterglow (NTSC green P22 phosphor decay) — measure hue shift from active white to decay trail. Informs CORRUPT_AMBER contamination hue path through CRT glass.
-- Photograph of CRT cabinet housing in a domestic setting — extract material color, wood grain tone, and plastic off-white values for Miri's set-prop palette reference.
+- **ACQUIRED** `reference/crt/` (18 files) — CRT screens in dark rooms, glow on faces and surfaces. Measure phosphor glow radius, FWHM of bloom, warm/cool cast of ambient spill. Feed into `LTG_TOOL_bg_grandma_kitchen.py` glow calibration.
+- **ACQUIRED** `reference/scanline closeup/` (6 files) — CRT scanlines at various brightness/resolutions. Extract scanline pitch, inter-line darkness ratio, horizontal smear profile. Tune Glitch Layer pixel-grid rendering.
+- **ACQUIRED** `reference/crt static/` (5 files) — CRT snow/static noise. Measure spatial frequency distribution. Reference for UV_PURPLE corruption texture.
+- **ACQUIRED** `reference/crt afterglow/` (3 files) — Phosphor afterglow/decay. Measure hue shift from active white to decay trail. Informs CORRUPT_AMBER contamination hue path.
+- **ACQUIRED** `reference/crt phosphor/` (7 files) — Green phosphor monitors, glow characteristics. Extract glow colour temperature and falloff.
+- **ACQUIRED** `reference/crt cabinet/` (17 files) — CRT TV cabinets in domestic settings (wood, plastic, vintage). Extract material colour, wood grain tone, plastic off-white values for Miri's set-prop palette.
 
 ---
 
 ## Warm Interior Lighting (Real World — Kitchen & Living Room)
 
-- Photograph of a kitchen at pre-dawn, lit only by a single incandescent or halogen lamp — measure warm/cool pixel ratio, shadow angle, practical lamp falloff curve. Baseline for SF05 "The Passing" warm/cool target (current: 16.7).
-- Photograph of a kitchen counter with a ceramic mug of tea steaming — extract steam rendering reference: opacity gradient, motion blur direction, colour temperature of transmitted light through steam.
-- Photograph of a domestic living room with a single table lamp on, window dark — measure warm zone radius from practical source. Use to calibrate `REAL_INTERIOR` warm/cool threshold (currently 12.0) against a real scene.
-- Photograph of wooden kitchen table surface under warm lamplight — extract specular highlight shape, wood grain colour variation. Reference for surface rendering in kitchen environments.
-- Photograph of heavy curtains or net curtains with pre-dawn light leaking through — extract cool ambient gradient values for kitchen/living room exterior window treatment.
+- **ACQUIRED** `reference/kitchen predawn/` (3 files) — Kitchens at dawn/low light with practical lamps. Measure warm/cool pixel ratio, shadow angle, lamp falloff curve. Baseline for SF05 "The Passing" (current target: 16.7).
+- **ACQUIRED** `reference/kitchen mug steam/` (3 files) — Ceramic mugs with rising steam. Extract steam opacity gradient, motion blur direction, colour temperature of transmitted light through steam.
+- **ACQUIRED** `reference/living room night/` (7 files) — Living rooms with single lamp sources, dark windows. Measure warm zone radius from practical source. Calibrate `REAL_INTERIOR` warm/cool threshold (12.0) against real scenes.
+- **ACQUIRED** `reference/dawn curtains/` (3 files) — Curtains with pre-dawn light leaking through. Extract cool ambient gradient values for kitchen/living room exterior window treatment.
+- NOT YET — Photograph of wooden kitchen table surface under warm lamplight (specular highlight shape, wood grain colour variation).
 
 ---
 
 ## Character Proportions & Anatomy
 
-- Public domain or CC-licensed figure drawing reference: pre-teen (age 11–13) head-to-body proportion chart — verify Luma's 5.5-head canon against real observed ratios. Feed a measurement tool comparing crown-chin height vs full body height.
-- Public domain figure drawing reference: elderly woman (age 65–80) standing proportions — cross-check Miri's silhouette ratios. Measure shoulder width vs hip width vs height.
-- Public domain hand anatomy reference: child hand vs adult hand scale comparison — informs Luma/Miri interaction staging (mug handoff in SF06).
-- CC-licensed facial expression reference sheet (neutral human faces) — use as ground-truth geometry for face test gate calibration. Measure eye-to-nose distance, nose-to-mouth distance, brow height as fraction of face height. Validates FG-L series metric thresholds.
+- **ACQUIRED** `reference/drawing guides/body/` (6 files) — Pre-teen and child proportion charts, adult vs child comparisons. Verify Luma's 5.5-head canon against real ratios. Feed measurement tool comparing crown-chin height vs full body height.
+- **ACQUIRED** `reference/drawing guides/face/` (14 files) — Facial expression sheets, proportion guides, cartoon expression studies. Ground-truth geometry for face test gate calibration. Measure eye-to-nose, nose-to-mouth, brow height ratios.
+- **ACQUIRED** `reference/drawing guides/hand/` (9 files) — Hand anatomy breakdowns, scale references. Informs Luma/Miri interaction staging (mug handoff in SF06).
+- NOT YET — Elderly woman (age 65–80) standing proportions specifically (body guides cover pre-teen well; elderly coverage is thin).
 
 ---
 
 ## Glitch Art & Digital Artifact Aesthetics
 
-- Creative Commons glitch art photograph (datamoshing / pixel sorting type) — extract dominant hue distribution; measure ratio of UV_PURPLE-adjacent hues (hue angle 260°–300°) to total pixel count. Validate UV_PURPLE linter dominance thresholds.
-- Creative Commons pixel art palette study — extract histogram of hue clusters in a restricted palette. Use to verify that the Glitchkin palette (GL-01 through GL-07) covers similar perceptual spread to established pixel art conventions.
-- Public domain oscilloscope waveform photograph — extract line weight and glow style for the "Other Side" environment rendering reference.
+- **ACQUIRED** `reference/glitches/` (10 files) — Datamoshing, pixel sorting, abstract pixel art. Extract dominant hue distribution; measure UV_PURPLE-adjacent hue ratio (260°–300°). Validate UV_PURPLE linter dominance thresholds.
+- **ACQUIRED** `reference/pixelart/` (5 files) — Pixel art palette studies and game screenshots. Extract histogram of hue clusters in restricted palettes. Verify Glitchkin palette (GL-01–GL-07) perceptual spread.
+- **ACQUIRED** `reference/oscilloscope/` (3 files) — Oscilloscope waveforms. Extract line weight and glow style for "Other Side" environment rendering.
 
 ---
 
 ## Suburban Exterior & School Environments
 
-- Creative Commons photograph of a mid-century American suburban street at dusk — extract warm/cool split for Millbrook Street scene. Measure sky cool percentage vs practical streetlight warm percentage.
-- Creative Commons photograph of a public middle school hallway with lockers — extract institutional colour palette (wall, floor, locker hues). Cross-reference against `LTG_TOOL_bg_school_hallway.py` palette for authenticity.
-- Creative Commons photograph of a school classroom (chalkboard visible) — measure chalkboard reflectance, chalk mark value contrast. Reference for `LTG_TOOL_bg_classroom.py` pixel-font chalkboard section.
+- **ACQUIRED** `reference/suburban dusk/` (3 files) — Suburban streets at twilight. Extract warm/cool split for Millbrook Street. Measure sky cool % vs streetlight warm %.
+- **ACQUIRED** `reference/school halway/` (7 files) — Middle school hallways with lockers. Extract institutional colour palette (wall, floor, locker hues). Cross-reference `LTG_TOOL_bg_school_hallway.py`.
+- **ACQUIRED** `reference/classroom/` (4 files) — Classrooms with chalkboards. Measure chalkboard reflectance, chalk mark value contrast. Reference for `LTG_TOOL_bg_classroom.py`.
 
 ---
 
 ## Shadow, Depth & Atmospheric Perspective
 
-- Creative Commons photograph of a room with strong depth: multiple objects at FG/MG/BG — extract per-zone warm/cool temperature; measure hue shift from warm FG to cool BG across depth. Quantitative calibration for Depth Temperature Rule (codified C45).
-- Creative Commons photograph showing aerial/atmospheric perspective on a clear day — measure hue desaturation and temperature shift per unit of perceived depth. Use to parameterise environment background cool-fade in Tech Den and Glitch Layer.
-- Creative Commons photograph of a drop-shadow on a textured surface — measure shadow softness (edge blur in px) relative to object height and light source angle. Reference for dual-warmth drop-shadow implementation in `LTG_TOOL_character_lineup.py`.
+- **ACQUIRED** `reference/depth/` (4 files) — Rooms with strong FG/MG/BG depth. Extract per-zone warm/cool temperature; measure hue shift across depth. Calibrate Depth Temperature Rule.
+- **ACQUIRED** `reference/aerial/` (5 files) — Aerial/atmospheric perspective on clear days. Measure hue desaturation and temperature shift per unit of perceived depth. Parameterise environment background cool-fade.
+- **ACQUIRED** `reference/drop shadow/` (3 files) — Drop shadows on textured surfaces. Measure shadow softness (edge blur px) relative to object height and light angle. Reference for dual-warmth drop-shadow in `LTG_TOOL_character_lineup.py`.
 
 ---
 
 ## Colour Reference Charts
 
-- Munsell colour chart (public domain) — load as reference for perceptual uniformity validation. Tool: compare ΔE between any two palette swatches in CIELAB vs Munsell distance; flags cases where visually similar swatches have large ΔE (tool calibration).
-- Macbeth ColorChecker chart (digitised, CC-licensed version) — use as known-good LAB reference target to verify that the ΔE=5.0 threshold in `precritique_qa` corresponds to visually meaningful differences.
-- Natural scene statistics study (CC-licensed dataset summary) — extract typical warm/cool pixel ratio in domestic interior photographs. Provides empirical baseline for REAL_INTERIOR threshold (12.0) and REAL_STORM threshold (3.0).
+- **ACQUIRED** `reference/color/` (7 files) — Munsell colour wheels, indoor lighting datasets, colour montages. Load as reference for perceptual uniformity validation. Compare ΔE between palette swatches in CIELAB vs Munsell distance.
+- NOT YET — Macbeth ColorChecker chart (digitised, CC-licensed version). Known-good LAB reference to verify ΔE=5.0 threshold corresponds to visually meaningful differences.
+- NOT YET — Natural scene statistics study (CC-licensed dataset summary) — domestic interior warm/cool ratio empirical data.
 
 ---
 
 ## Motion & Gesture
 
-- Creative Commons gesture drawing reference: running child — extract limb angle ranges for Luma's locomotion keyframes. Validate against Luma motion spec v002.
-- Creative Commons gesture drawing reference: elderly woman carrying a tray — arm angle, centre-of-gravity shift. Informs Miri motion spec staging.
-- Public domain high-speed photography of a small object ricocheting off a surface — extract arc curvature, squash/stretch phase timing. Reference for P14 Byte ricochet off bookshelf.
+- **ACQUIRED** `reference/gesture/` (11 files) — Running child, tray carrying, ricochet photography. Extract limb angle ranges for Luma locomotion, arm angles for Miri staging, arc curvature for P14 Byte ricochet.
+- NOT YET — Elderly woman carrying a tray specifically (gesture/ has tray references but may need more Miri-specific age-appropriate references).
 
 ---
 
-## Proposed Analysis Tools (build on acquisition)
+## Gaps Summary (still needed)
 
-| Reference type | Tool to build |
-|---|---|
-| CRT glow photograph | `LTG_TOOL_glow_profile_extract.py` — fits Gaussian to radial falloff, outputs σ_x / σ_y for use in glow generators |
-| Interior lighting photo | `LTG_TOOL_warmcool_scene_calibrate.py` — measures warm/cool ratio in reference photo, outputs suggested threshold value |
-| Expression anatomy reference | `LTG_TOOL_face_metric_calibrate.py` — reads landmark distances from reference, outputs PASS/WARN/FAIL boundary values for face test gate |
-| Depth/atmospheric perspective photo | `LTG_TOOL_depth_temp_gradient.py` — measures hue temperature shift per depth tier, outputs per-tier warm/cool targets |
-| Glitch art reference | `LTG_TOOL_uv_hue_cluster.py` — extracts hue histogram, validates that UV_PURPLE (hue 270°±15°) forms a dominant cluster above threshold |
-| Colour chart | `LTG_TOOL_delta_e_calibrate.py` — maps ΔE values to known perceptual pairs; validates linter thresholds are perceptually meaningful |
-| Drop-shadow photograph | `LTG_TOOL_shadow_softness_measure.py` — measures edge gradient width of reference shadow, informs px blur radius in lineup depth bands |
-| Interior lighting photo | `LTG_TOOL_warmcool_scene_calibrate.py` — measures warm/cool ratio in reference photo, outputs suggested threshold value for REAL_INTERIOR (12.0) and REAL_STORM (3.0) |
+| Item | Priority | Why |
+|---|---|---|
+| Macbeth ColorChecker (digitised) | HIGH | Sam's top request — ΔE=5.0 threshold validation |
+| Natural scene statistics dataset | MEDIUM | Empirical baseline for REAL_INTERIOR/REAL_STORM thresholds |
+| Elderly woman proportions | MEDIUM | Miri silhouette ratio cross-check |
+| Wooden table under warm lamplight | LOW | Kitchen surface rendering detail |
+| D50 vs D65 illuminant chart | LOW | Sam's colour-science addition — pitch-deck projection QA |
+| Simultaneous contrast swatch pairs | LOW | Sam — ΔE threshold stress testing |
+| Bezold-Brücke hue shift chart | LOW | Sam — CORRUPT_AMBER/UV_PURPLE at highlight extremes |
 
 ---
 
-## Colour Science Additions (Sam Kowalski, C45)
+## Proposed Analysis Tools (build now — references acquired)
 
-- D50 vs D65 standard illuminant comparison chart (CIE, public domain) — measure hue shift between the two white-points in CIELAB; ensures our LAB-space ΔE calculations are consistent whether the viewer renders under D50 (print) or D65 (screen/projector). Informs pitch-deck projection QA.
-- Simultaneous contrast swatch pairs (public domain illustration) — pairs of identical swatches on different background colours appearing different. Provides concrete examples for calibrating where ΔE=5.0 is perceptually meaningful vs. misleading. Use to stress-test the `render_qa` and `color_verify` pass thresholds.
-- Bezold-Brücke hue shift reference chart (public domain perceptual study) — documents how perceived hue shifts with luminance increase (reds shift toward yellow, blues toward cyan at high brightness). Reference when evaluating CORRUPT_AMBER and UV_PURPLE behaviour at highlight extremes in the Glitch Layer.
+| Reference folder | Tool to build | Priority |
+|---|---|---|
+| `crt/` | `LTG_TOOL_glow_profile_extract.py` — fits Gaussian to radial falloff, outputs σ_x / σ_y for glow generators | HIGH |
+| `living room night/` + `kitchen predawn/` | `LTG_TOOL_warmcool_scene_calibrate.py` — measures warm/cool ratio in reference photo, outputs threshold value | HIGH |
+| `drawing guides/face/` | `LTG_TOOL_face_metric_calibrate.py` — reads landmark distances, outputs PASS/WARN/FAIL boundaries for face test gate | HIGH |
+| `depth/` + `aerial/` | `LTG_TOOL_depth_temp_gradient.py` — measures hue temp shift per depth tier, outputs per-tier warm/cool targets | MEDIUM |
+| `glitches/` | `LTG_TOOL_uv_hue_cluster.py` — extracts hue histogram, validates UV_PURPLE (270°±15°) dominant cluster | MEDIUM |
+| `color/` | `LTG_TOOL_delta_e_calibrate.py` — maps ΔE to known perceptual pairs; validates linter thresholds | MEDIUM |
+| `drop shadow/` | `LTG_TOOL_shadow_softness_measure.py` — measures edge gradient width, informs blur radius in depth bands | LOW |
+| `scanline closeup/` | `LTG_TOOL_scanline_profile.py` — measures scanline pitch and darkness ratio from CRT close-ups | LOW |
 
 ## C45 Response Notes
-- **Sam Kowalski** responded this cycle: top priorities = interior lighting calibration photo + Macbeth ColorChecker for ΔE=5.0 validation. Three colour-science additions incorporated above.
+- **Sam Kowalski** responded this cycle: top priorities = interior lighting calibration photo + Macbeth ColorChecker for ΔE=5.0 validation. Three colour-science additions (D50/D65, simultaneous contrast, Bezold-Brücke) in Gaps table.
 - **All other members**: reference shopping list question is in inboxes — responses expected C46.
