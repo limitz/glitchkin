@@ -1,15 +1,15 @@
 # Pre-Critique QA Report — C46
 
-**Run date:** 2026-03-30 11:27
+**Run date:** 2026-03-30 11:31
 **Script:** LTG_TOOL_precritique_qa.py v2.11.0
 
 ---
 
 ## Overall Result
 
-**WARN** — PASS: 321  WARN: 39  FAIL: 0
+**WARN** — PASS: 329  WARN: 35  FAIL: 0
 
-> **README SYNC WARNING:** 8 discrepancy(ies) detected — 7 UNLISTED, 1 GHOST. See Section 7 for details. Update README Script Index before critique.
+> **README SYNC WARNING:** 4 discrepancy(ies) detected — 3 UNLISTED, 1 GHOST. See Section 7 for details. Update README Script Index before critique.
 
 
 | Section | Result | PASS | WARN | FAIL |
@@ -17,45 +17,33 @@
 | Render QA (pitch PNGs)         | WARN   | 0  | 6  | 0  |
 | Color Verify (style frames)    | WARN | 0 | 4 | 0 |
 | Proportion Verify (char sheets)| WARN  | 1  | 3  | 0  |
-| Stub Linter (tools dir)        | PASS   | 141   | 0   | 0   |
+| Stub Linter (tools dir)        | PASS   | 143   | 0   | 0   |
 | Palette Warmth Lint            | PASS| 17| 0| 0|
 | Glitch Spec Lint               | WARN | 7 | 14 | 0 |
-| README Script Index Sync       | WARN | 129 | 8 | 0 |
+| README Script Index Sync       | WARN | 135 | 4 | 0 |
 | Motion Spec Lint               | WARN | 26 | 4 | 0 |
 | Alpha Blend Lint               | PASS | 0 | 0 | 0 |
-| UV_PURPLE Dominance Lint       | WARN   | 0   | 1   | 0   |
+| UV_PURPLE Dominance Lint       | WARN   | 3   | 3   | 0   |
 
 ---
 
 ## 0. Delta Report
 
-**Delta since last run (C44 @ 2026-03-30 08:28): +0 FAIL, +7 WARN, -4 resolved**
+**Delta since last run (C46 @ 2026-03-30 11:27): +0 FAIL, -4 WARN, -6 resolved**
 
-_Compared against: C44 run @ 2026-03-30 08:28_
-
-**New FAILs since last run:**
-  - [Glitch Spec Lint] - LTG_TOOL_glitch_motion.py: G004: Draw order FAIL — HOT_MAG crack line appears BEFORE body fill polygon. Crack must be drawn after fill (spec §2.3 stacking order).
+_Compared against: C46 run @ 2026-03-30 11:27_
 
 **New WARNs since last run:**
-  - [Render QA] - LTG_COLOR_styleframe_sf04.png / line_weight: WARN — Line weight inconsistency — 3 outlier widths detected (mean=241.6px, std=458.0px)
-  - [Color Verify] - LTG_COLOR_styleframe_sf04.png / SUNLIT_AMBER: LAB ΔE=31.29 (threshold=5.0)
-  - [Glitch Spec Lint] - LTG_TOOL_glitch_motion.py: G003: Multi-Glitchkin frame has only 0 unique expression(s) — at least 2 required. Found: none
-  - [Glitch Spec Lint] - LTG_TOOL_style_frame_04_resolution.py: G006: Possible organic/warm fill detected — fill=(160, 155, 148). Glitch body fill must use CORRUPT_AMBER family only (spec §10).
-  - [Glitch Spec Lint] - LTG_TOOL_style_frame_04_resolution.py: G006: Possible organic/warm fill detected — fill=(175, 140, 95). Glitch body fill must use CORRUPT_AMBER family only (spec §10).
-  - [Glitch Spec Lint] - LTG_TOOL_style_frame_04_resolution.py: G006: Possible organic/warm fill detected — fill=(190, 140, 70). Glitch body fill must use CORRUPT_AMBER family only (spec §10).
-  - [README Sync] - GHOST: `LTG_TOOL_style_frame_01_discovery.py` (in README, not on disk)
+  - [README Sync] - UNLISTED: `LTG_TOOL_sb_cold_open_P16.py` (on disk, not in README Script Index)
+  - [README Sync] - UNLISTED: `LTG_TOOL_sb_cold_open_P17.py` (on disk, not in README Script Index)
+
+**Resolved since last run (previously WARN/FAIL, now PASS):**
   - [README Sync] - UNLISTED: `LTG_TOOL_lineup_tier_depth_sketch.py` (on disk, not in README Script Index)
-  - [README Sync] - UNLISTED: `LTG_TOOL_sb_caption_retrofit.py` (on disk, not in README Script Index)
+  - [README Sync] - UNLISTED: `LTG_TOOL_sb_cold_open_P10.py` (on disk, not in README Script Index)
+  - [README Sync] - UNLISTED: `LTG_TOOL_sb_cold_open_P11.py` (on disk, not in README Script Index)
   - [README Sync] - UNLISTED: `LTG_TOOL_sb_cold_open_P14.py` (on disk, not in README Script Index)
   - [README Sync] - UNLISTED: `LTG_TOOL_sb_cold_open_P15.py` (on disk, not in README Script Index)
   - [README Sync] - UNLISTED: `LTG_TOOL_sf_miri_luma_handoff.py` (on disk, not in README Script Index)
-  - [Motion Spec Lint] - LTG_CHAR_byte_motion.png: WARN: annotation_occupancy: [bg:dark-bright]  P1: 0.0% occupancy — WARN low  |  P2: 0.0% occupancy — WARN low  |  P3: 0.0% occupancy — WARN low  |  P4: 5.3% occupancy
-
-**Resolved since last run (previously WARN/FAIL, now PASS):**
-  - [Render QA] - LTG_COLOR_styleframe_sf04.png / line_weight: WARN — Line weight inconsistency — 3 outlier widths detected (mean=263.9px, std=449.6px)
-  - [Color Verify] - LTG_COLOR_styleframe_sf04.png / SUNLIT_AMBER: LAB ΔE=31.38 (threshold=5.0)
-  - [README Sync] - UNLISTED: `LTG_TOOL_sf_covetous_glitch_c43.py` (on disk, not in README Script Index)
-  - [Motion Spec Lint] - LTG_CHAR_byte_motion.png: WARN: annotation_occupancy: [bg:legacy-broad]  P1: 0.0% occupancy — WARN low  |  P2: 0.0% occupancy — WARN low  |  P3: 0.0% occupancy — WARN low  |  P4: 4.8% occupancy
 
 ---
 
@@ -118,7 +106,7 @@ PASS: 1  WARN: 3  FAIL: 0  Missing: 0
 
 ## 4. Stub Linter — output/tools/ — **PASS**
 
-PASS: 141  WARN: 0  FAIL: 0  Missing: 0
+PASS: 143  WARN: 0  FAIL: 0  Missing: 0
 
 
 _No issues found._
@@ -137,7 +125,7 @@ _No issues found._
 PASS: 7  WARN: 14  FAIL: 0  Missing: 0
 
 
-_(Non-Glitch files: 120 skipped)_
+_(Non-Glitch files: 122 skipped)_
 
 **Flagged items:**
   - LTG_CHAR_byte_motion.py: G003: Multi-Glitchkin frame has only 1 unique expression(s) — at least 2 required. Found: ['NEUTRAL']
@@ -181,21 +169,17 @@ _(Non-Glitch files: 120 skipped)_
 
 ## 7. README Script Index Sync — **WARN**
 
-PASS: 129  WARN: 8  FAIL: 0  Missing: 0
+PASS: 135  WARN: 4  FAIL: 0  Missing: 0
 
 
-_(Tools on disk: 136  |  Tools listed in README: 250)_
+_(Tools on disk: 138  |  Tools listed in README: 256)_
 
-> **ACTION REQUIRED:** 7 tool(s) on disk not listed in README and 1 README entry(ies) with no corresponding file. Update `output/tools/README.md` Script Index before next critique cycle.
+> **ACTION REQUIRED:** 3 tool(s) on disk not listed in README and 1 README entry(ies) with no corresponding file. Update `output/tools/README.md` Script Index before next critique cycle.
 
 **Flagged items:**
-  - UNLISTED: `LTG_TOOL_lineup_tier_depth_sketch.py` (on disk, not in README Script Index)
   - UNLISTED: `LTG_TOOL_sb_caption_retrofit.py` (on disk, not in README Script Index)
-  - UNLISTED: `LTG_TOOL_sb_cold_open_P10.py` (on disk, not in README Script Index)
-  - UNLISTED: `LTG_TOOL_sb_cold_open_P11.py` (on disk, not in README Script Index)
-  - UNLISTED: `LTG_TOOL_sb_cold_open_P14.py` (on disk, not in README Script Index)
-  - UNLISTED: `LTG_TOOL_sb_cold_open_P15.py` (on disk, not in README Script Index)
-  - UNLISTED: `LTG_TOOL_sf_miri_luma_handoff.py` (on disk, not in README Script Index)
+  - UNLISTED: `LTG_TOOL_sb_cold_open_P16.py` (on disk, not in README Script Index)
+  - UNLISTED: `LTG_TOOL_sb_cold_open_P17.py` (on disk, not in README Script Index)
   - GHOST: `LTG_TOOL_style_frame_01_discovery.py` (in README, not on disk)
 
 
@@ -256,11 +240,43 @@ PASS: 0  WARN: 0  FAIL: 0  Skipped: 3
 
 _Verifies UV_PURPLE (#7B2FBE) + ELEC_CYAN (#00F0FF) are the dominant colours in Glitch Layer images. Core world-rule: Glitch Layer = UV_PURPLE/ELEC_CYAN dominant, zero warm light. Check A: combined fraction of non-black pixels — PASS ≥ 20%, WARN 10–19%, FAIL < 10%. Check B: warm-hue contamination (LAB h° 30°–80°, chroma C* ≥ 8) — PASS < 5%, WARN ≥ 5%._
 
-PASS: 0  WARN: 1  FAIL: 0  Skip: 0
+PASS: 3  WARN: 3  FAIL: 0  Skip: 0
 
-  - *ERROR — LTG_TOOL_uv_purple_linter could not be loaded*
+### LTG_COLOR_sf_covetous_glitch.png — **PASS**
+  - Check A (UV_PURPLE + ELEC_CYAN Dominance): **PASS**
+    [GLITCH_DARK_SCENE] Combined UV_PURPLE-family+ELEC_CYAN = 97.1% of non-black pixels (ΔE-match=0.6%, hue-family=97.1%). ≥ 20% — PASS. UV_PURPLE hue-family pixels (h° 255°–325°, C* ≥ 8) = 96.7% of non-black.
+  - Check B (Warm-Hue Contamination): **PASS**
+    Warm-hue pixels (LAB h° 30°–80°, chroma C* ≥ 8) = 2.1% of total pixels (19232/921600). < 5% — PASS.
 
-_No Glitch Layer assets registered._
+### LTG_SF_covetous_glitch_v001.png — **PASS**
+  - Check A (UV_PURPLE + ELEC_CYAN Dominance): **PASS**
+    [GLITCH_DARK_SCENE] Combined UV_PURPLE-family+ELEC_CYAN = 98.9% of non-black pixels (ΔE-match=0.2%, hue-family=98.9%). ≥ 20% — PASS. UV_PURPLE hue-family pixels (h° 255°–325°, C* ≥ 8) = 98.9% of non-black.
+  - Check B (Warm-Hue Contamination): **PASS**
+    Warm-hue pixels (LAB h° 30°–80°, chroma C* ≥ 8) = 0.7% of total pixels (6456/921600). < 5% — PASS.
+
+### LTG_ENV_glitchlayer_frame.png — **WARN**
+  - Check A (UV_PURPLE + ELEC_CYAN Dominance): **WARN**
+    Combined UV_PURPLE+ELEC_CYAN = 17.0% of non-black pixels (UV_PURPLE=0.9%, ELEC_CYAN=16.0%). 10–19% — WARN. Glitch Layer scenes should have stronger UV_PURPLE/ELEC_CYAN presence.
+  - Check B (Warm-Hue Contamination): **PASS**
+    Warm-hue pixels (LAB h° 30°–80°, chroma C* ≥ 8) = 0.0% of total pixels (0/921600). < 5% — PASS.
+
+### LTG_ENV_glitchlayer_encounter.png — **WARN**
+  - Check A (UV_PURPLE + ELEC_CYAN Dominance): **WARN**
+    Combined UV_PURPLE+ELEC_CYAN = 17.4% of non-black pixels (UV_PURPLE=0.0%, ELEC_CYAN=17.4%). 10–19% — WARN. Glitch Layer scenes should have stronger UV_PURPLE/ELEC_CYAN presence.
+  - Check B (Warm-Hue Contamination): **PASS**
+    Warm-hue pixels (LAB h° 30°–80°, chroma C* ≥ 8) = 0.0% of total pixels (0/921600). < 5% — PASS.
+
+### bg_glitch_layer_encounter.png — **PASS**
+  - Check A (UV_PURPLE + ELEC_CYAN Dominance): **PASS**
+    Combined UV_PURPLE+ELEC_CYAN = 22.7% of non-black pixels (UV_PURPLE=0.9%, ELEC_CYAN=21.8%). ≥ 20% — PASS.
+  - Check B (Warm-Hue Contamination): **PASS**
+    Warm-hue pixels (LAB h° 30°–80°, chroma C* ≥ 8) = 0.0% of total pixels (0/921600). < 5% — PASS.
+
+### glitch_layer_frame.png — **WARN**
+  - Check A (UV_PURPLE + ELEC_CYAN Dominance): **WARN**
+    Combined UV_PURPLE+ELEC_CYAN = 17.1% of non-black pixels (UV_PURPLE=1.1%, ELEC_CYAN=16.0%). 10–19% — WARN. Glitch Layer scenes should have stronger UV_PURPLE/ELEC_CYAN presence.
+  - Check B (Warm-Hue Contamination): **PASS**
+    Warm-hue pixels (LAB h° 30°–80°, chroma C* ≥ 8) = 0.0% of total pixels (0/921600). < 5% — PASS.
 
 ---
 

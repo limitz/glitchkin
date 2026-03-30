@@ -1,0 +1,5 @@
+**Author:** Rin Yamamoto
+**Cycle:** 45
+**Date:** 2026-03-30
+**Idea:** Review and potentially widen the UV_PURPLE hue-family range (currently h° 255°–325°) for the GLITCH_DARK_SCENE linter check. The current range captures UV_PURPLE_DARK correctly (COVETOUS PASS at 96.7–98.9%), but as new dark-scene Glitch Layer assets are added they may use slightly different dark purple hues. A calibration run against all known dark-scene Glitch Layer generators — measuring the actual hue distribution of UV_PURPLE_DARK variants used — would confirm whether 255°–325° is wide enough or needs extending (e.g. 245°–335°). Could also add a GLITCH_DARK_SCENE subtype inference test to the linter's built-in self-test to guard against future regressions.
+**Benefits:** Prevents future false FAILs on new dark-scene Glitch Layer assets without opening the hue range so wide it admits non-purple hues. Turns a manually calibrated constant into a documented and validated spec. Helps any team member adding new void-dominant Glitch Layer scenes understand the palette tolerance.

@@ -1,5 +1,48 @@
 # Rin Yamamoto — MEMORY
 
+## C45 Completed Work
+- `LTG_TOOL_uv_purple_linter.py` bumped v1.0.0 → v1.1.0 — GLITCH_DARK_SCENE subtype
+  - Root cause addressed: COVETOUS assets use UV_PURPLE_DARK (GL-04a RGB 58,16,96 = h°~271°)
+    whose ΔE from canonical UV_PURPLE (mid-tone) is >> 15 due to L* lightness gap.
+    Check A ΔE-only metric: 0.6% / 0.2% — false FAIL.
+  - Fix: GLITCH_DARK_SCENE scene subtype using hue-angle matching as supplementary metric.
+    UV_PURPLE hue family h° 255°–325°, C* ≥ 8. Verdict uses better of ΔE-fraction and
+    hue-family-fraction. Both metrics reported.
+  - `infer_scene_subtype()` — "covetous" keyword → GLITCH_DARK_SCENE (filename inference)
+  - `lint_uv_purple_dominance()` — new `scene_subtype` param; infers if not supplied
+  - `run_glitch_layer_dominance_check()` — new `subtypes` dict param for per-file overrides
+  - CLI `--scene-subtype glitch_dark_scene` flag
+  - `batch_lint()` — new `scene_subtype_override` param
+  - C45 test results:
+    - COVETOUS → PASS: LTG_COLOR_sf_covetous_glitch (96.7% hue-fam, was FAIL 0.6% ΔE)
+    - COVETOUS → PASS: LTG_SF_covetous_glitch_v001 (98.9% hue-fam, was FAIL 0.2% ΔE)
+    - ENV glitch_layer_frame: WARN 17.0% unchanged (ΔE path, standard scene)
+    - bg_glitch_layer_encounter: PASS 22.7% unchanged
+- `LTG_TOOL_precritique_qa.py` bumped v2.13.1 → v2.14.0
+  - `run_uv_purple_lint()` passes GLITCH_DARK_SCENE subtype for both COVETOUS assets
+    explicitly via subtypes dict (in addition to filename inference)
+  - Version header updated
+- `output/tools/README.md` updated — C45 entry added
+- Ideabox: `ideabox/20260330_rin_yamamoto_uv_purple_hue_family_range_review.md`
+  - Calibration run to validate/widen h° 255°–325° range against all dark-scene generators
+
+## C45 Lessons
+- ΔE (CIE76) is a perceptual total distance including L*, a*, b*. A dark variant of a hue
+  (same a*/b* direction but much lower L*) will have ΔE >> 15 from the mid-tone canonical
+  even if visually "the right purple." UV_PURPLE_DARK (L*~25) vs UV_PURPLE (L*~40): ΔE ~18.
+  Solution: hue-angle matching (atan2(b,a)) captures hue-family identity independent of L*.
+- Hue-angle matching for UV_PURPLE family: canonical UV_PURPLE (#7B2FBE) sits at
+  a*≈+39, b*≈-54 → h° = atan2(-54,39) ≈ 306°. UV_PURPLE_DARK GL-04a (58,16,96):
+  same hue direction. Family range 255°–325° captures all tested variants with margin.
+- The "use the better verdict" design is correct for GLITCH_DARK_SCENE: ΔE metric remains
+  authoritative for mid-tone scenes; hue-angle provides the supplementary dark-scene gate.
+  Reporting both fractions keeps the data visible for future calibration.
+- Always import `re` when using `re.compile()` at module scope. Forgetting it gives a
+  NameError at import time, not at call time — caught immediately by the import check.
+- precritique_qa `run_uv_purple_lint()` version bumps: always check current version before
+  bumping — Ryo had already bumped to v2.13.1 for the annotation_occupancy fix in C46.
+  Bump to 2.14.0 not 2.13.2.
+
 ## C44 Completed Work
 - `LTG_TOOL_uv_purple_linter.py` (v1.0.0, new) — UV_PURPLE Dominance Linter
   - Check A: UV_PURPLE + ELEC_CYAN combined LAB ΔE ≤ 15 fraction of non-black pixels

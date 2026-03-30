@@ -1309,6 +1309,7 @@ All critical path assets verified on disk. No blocking issues found. The package
 | Lineup tier depth recommendation | `output/production/lineup_tier_depth_recommendation_c45.md` | 3-option comparison. Option C (dual-warmth drop-shadow bands) recommended: warm shadow under FG tier / cool shadow under BG tier. Reads at thumbnail, B&W print, full color. Aligns with warm=FG/cool=BG grammar. Sketch: `output/production/lineup_tier_depth_sketch.png`. (Cycle 45 — Lee Tanaka) |
 | Logo asymmetric v003 (rendered) | `output/production/LTG_BRAND_logo_asymmetric.png` | Rendered with Nunito Bold (Luma) + Space Grotesk Bold (Glitchkin) from `assets/fonts/`. Font routing: "Luma"=Nunito Bold, "&"=Space Grotesk Bold, "the"=Nunito Bold small, "Glitchkin"=Space Grotesk Bold. `assets/fonts/README.md` documents font names, URLs, licenses (SIL OFL). Generator: `LTG_TOOL_logo_asymmetric.py` v003. (Cycle 45 — Sam Kowalski/rendered by Alex Chen) |
 | Font assets directory | `assets/fonts/` | Nunito-Bold.ttf, Nunito-Light.ttf, Nunito-Regular.ttf, SpaceGrotesk-Bold.ttf on disk. README.md with font names, source URLs, license info, install instructions. (Cycle 45 — Sam Kowalski) |
+| Character lineup v010 | `output/characters/main/LTG_CHAR_character_lineup.png` | Dual-warmth tier depth indicator (Lee Option C): warm gradient band under FG tier (Luma/Byte/Cosmo) + cool gradient band under BG tier (Miri/Glitch). Both bands drawn before character draw calls — no draw-order complications. Annotation bar includes "WARM = FG / COOL = BG". Face gate consistent with prior baselines. Generator: `LTG_TOOL_character_lineup.py` v010. (Cycle 45/46 concurrent — Maya Santos) |
 
 #### Cycle 45 Pitch Package Status (CURRENT)
 
@@ -1326,14 +1327,14 @@ All critical path assets verified on disk. No blocking issues found. The package
 | Cosmo expression sheet | v007 PITCH PRIMARY (unchanged) |
 | Miri expression sheet | **v006** (C45 hairpin rename — regenerated from corrected code) |
 | Glitch expression sheet | v003 GEOMETRY CORRECTED (unchanged) |
-| Character lineup | **v009** (C45 hairpin rename). v010 (tier depth indicator) COMMISSIONED C46 (Maya) |
+| Character lineup | **v010 PITCH PRIMARY** (C45/C46 Maya) — hairpin rename + dual-warmth tier depth bands (warm=FG/cool=BG). PASS. |
 | Logo | **v003 RENDERED** (Nunito Bold + Space Grotesk Bold — correct fonts installed and used) |
 | Story Bible | v004 PITCH PRIMARY. FLAG 05 CLOSED (Maya C45 atomic update). **v005 COMMISSIONED C46** (Priya) |
 | Storyboards | P03–P11/P14/P15/P23/P24 + EP05 COVETOUS. Caption retrofit: ALL 7 panels complete (Diego C45). P16/P17 COMMISSIONED C46. |
 | Environments | Kitchen **v007** (line_weight fix). Others unchanged. Living Room v003 COMMISSIONED C46 (Hana). |
 | Motion | Luma v002 / Byte v003 / Cosmo v001 / Miri v001 / **Glitch v001 NEW** — all 5 characters covered |
 | QA/Pipeline | CI **v1.4.0** (Check 7: hardcoded paths, Check 8: thumbnail lint, Check 9: motion coverage). Byte face gate **LIVE** (`--char byte`). UV_PURPLE linter **v1.0.0 LIVE** + precritique_qa Section 11 integrated. |
-| P1 Open items C46 | Char_spec_lint Miri filename pattern (Kai); Lineup v010 tier depth (Maya); Story bible v005 + pilot structure (Priya); P16/P17 panels + legacy file migration (Diego) |
+| P1 Open items C46 | Char_spec_lint Miri filename pattern (Kai); Story bible v005 + pilot structure (Priya); P16/P17 panels + legacy file migration (Diego); Glitch motion G004 draw-order fix (Ryo) |
 | P2 Open items C46 | UV_PURPLE linter COVETOUS subtype (Rin + Morgan CI); SF06 staging review (Lee); SF02 GL-07 lamp halo (Jordan); Miri motion spec v002 (Ryo); Living room v003 (Hana); Color script analysis SF01–SF06 (Sam) |
 
 *Updated by Alex Chen, Art Director — Cycle 45 — 2026-03-30*

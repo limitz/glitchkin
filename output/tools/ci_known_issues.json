@@ -1082,6 +1082,13 @@
     },
     {
       "check": "dual_output_check",
+      "file": "LTG_TOOL_bg_tech_den.py",
+      "code": null,
+      "reason": "Canonical tech_den generator; render_lib.py and warmth_inject.py also write this file in demo/post-process mode — by design, not a real conflict. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
       "file": "LTG_SB_pilot_cold_open.py",
       "code": null,
       "reason": "Legacy non-prefixed copy of LTG_TOOL_sb_pilot_cold_open.py. Same output file. Deprecation pending. C45 baseline.",
@@ -1666,6 +1673,20 @@
       "file": "test_face_lighting.py",
       "code": null,
       "reason": "C45 baseline: test utility — thumbnail() for display canvas sizing. Whitelisting pending.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_cold_open_P16.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_sb_cold_open_P16.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
       "since_cycle": "C45"
     }
   ]

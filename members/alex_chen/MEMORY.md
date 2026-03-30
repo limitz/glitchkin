@@ -24,7 +24,7 @@
 ### C45 Canonical Asset Versions
 - Luma expression sheet: **v013** (Tier-1 silhouette body postures — confirmed C41 delivery, was stale in C44 memory)
 - Luma face curve spec: v002 / Luma motion spec: v002 / Luma color model: v002 / Luma turnaround: v004
-- Character lineup: **v009** (hairpin rename) → v010 COMMISSIONED (Maya C46 — tier depth indicator Option C)
+- Character lineup: **v010 DELIVERED** (Maya C45/C46 concurrent — dual-warmth depth bands, warm=FG/cool=BG, PASS)
 - Byte expression sheet: v007 / Byte motion spec: v003
 - Miri expression sheet: **v006** (hairpin rename, regenerated)
 - Cosmo expression sheet: v007 / Glitch expression sheet: v003
@@ -43,7 +43,7 @@
 - **RESOLVED**: Logo v003 fonts now correct and rendered.
 - **RESOLVED**: FLAG 05 (Miri hairpins) closed. All 6 files updated atomically.
 - **P1**: char_spec_lint Miri filename pattern (Kai C46 — M004 never matched no-suffix file)
-- **P1**: Lineup v010 tier depth indicator Option C (Maya C46)
+- **RESOLVED**: Lineup v010 tier depth indicator — Maya delivered concurrently. Dual-warmth bands PASS.
 - **P1**: Story bible v005 (Priya C46 — FLAG 05 close + pilot structure)
 - **P1**: P16/P17 panels + legacy file migration (Diego C46)
 - **P2**: COVETOUS linter subtype fix (Rin C46 — creative intent modeling); CI integration (Morgan C46)
