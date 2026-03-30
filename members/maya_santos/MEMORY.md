@@ -1,5 +1,51 @@
 # Maya Santos — Memory
 
+## Cycle 48 — Visual Hook Audit Tool + SF06 Shoulder Fix (COMPLETE)
+
+### P1: Visual Hook Audit Tool — DELIVERED
+- New tool: `LTG_TOOL_visual_hook_audit.py` v1.0.0
+- Output: `output/production/LTG_PROD_visual_hook_audit.png` (880x300px contact sheet)
+- Renders all 5 main characters at 128px thumbnail height, checks hook readability:
+  - Luma: orange hoodie hue mass — PASS (54.1%)
+  - Cosmo: cowlick protrusion — PASS (72.1%), tape — PASS (12.9%)
+  - Miri: wooden hairpins — PASS (14.9%)
+  - Byte: teal oval body — PASS (63.3%)
+  - Glitch: destabilized eye — PASS (7.9%)
+- OVERALL PASS. All hooks survive thumbnail downscale.
+
+### P2: SF06 Shoulder Displacement — DELIVERED
+- Updated: `LTG_TOOL_sf_miri_luma_handoff.py` (C48 version, shoulder involvement added)
+- Output: `output/color/style_frames/LTG_COLOR_sf_miri_luma_handoff.png` (1280x720px)
+- Changes per Shoulder Involvement Rule (image-rules.md, codified C47):
+  - Miri: right shoulder outward +5px (forward pull for hand-off gesture toward CRT). Cardigan crease read.
+  - Luma: left shoulder rise -3px (curious lean), right shoulder outward +5px. Hoodie bunch read.
+  - New helper: `_sf_shoulder_dy()` — calculates displacement from arm_dy/arm_dx.
+  - Torso geometry: polyline with 6 vertices (outer_l, deltoid_l, inner_l, inner_r, deltoid_r, outer_r) + bottom corners.
+- Closes Lee Tanaka deferred SF06 staging note from C47.
+
+### Face Gate C48
+- Luma (head_r=23): FOCUSED DET. PASS, DETERMINED+ PASS, EYES ONLY PASS. FEAR WARN (baseline). NEUTRAL/TOO_SMALL FAIL (diagnostic).
+- Cosmo (head_r=23): SKEPTICAL PASS, WORRIED PASS, CURIOUS PASS. PANIC RUN WARN (baseline). NEUTRAL/TOO_SMALL FAIL (diagnostic).
+- Miri (head_r=23): SURPRISED PASS, RECOGNITION PASS. KNOWING STILL WARN, WELCOMING WARN (baseline). NEUTRAL/TOO_SMALL FAIL (diagnostic).
+- Visual hook audit PNG: no face geometry (thumbnail silhouettes only) — no face gate needed.
+- SF06: Luma + Miri faces at sprint scale — visual inspection (no automated multi-char SF gate yet).
+- **No regression from C47 baselines.**
+
+### Ideabox C48
+- Submitted: `ideabox/20260330_maya_santos_sf_multi_char_face_gate.md`
+
+### Inbox Archived
+- `20260330_2400_c48_brief.md` (Producer) — acted on
+
+### ACTIVE TOOL STATUS (C48 — COMPLETE)
+- Visual hook audit: `LTG_PROD_visual_hook_audit.png` v1.0.0
+  - Generator: `LTG_TOOL_visual_hook_audit.py` v1.0.0
+- SF06 style frame: `LTG_COLOR_sf_miri_luma_handoff.png` (C48 shoulder update)
+  - Generator: `LTG_TOOL_sf_miri_luma_handoff.py` (C48)
+- All other tools unchanged from C47 (expression sheets, turnarounds, lineup).
+
+---
+
 ## Cycle 47 — Cosmo Visual Hook + Shoulder Fix + Miri Reference (COMPLETE)
 
 ### P1: Cosmo Visual Hook — DELIVERED

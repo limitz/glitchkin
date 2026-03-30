@@ -34,6 +34,12 @@ Output: output/production/LTG_PROD_visual_hook_audit.png  (contact sheet)
 Usage: python3 LTG_TOOL_visual_hook_audit.py
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 import math
 import os
 import sys
@@ -289,7 +295,7 @@ def score(pct, pass_thresh, warn_thresh):
 
 
 def main():
-    out_dir  = "/home/wipkat/team/output/production"
+    out_dir = output_dir('production')
     out_path = os.path.join(out_dir, "LTG_PROD_visual_hook_audit.png")
     os.makedirs(out_dir, exist_ok=True)
 

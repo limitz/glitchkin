@@ -803,6 +803,10 @@ def draw_cabinets_and_appliances(draw, bw_left, bw_top, bw_right, bw_bot):
     cab_bottom = bw_top + int((bw_bot - bw_top) * 0.42)
     cab_top    = bw_top + int((bw_bot - bw_top) * 0.05)
 
+    # v008: VP for cabinet side reveals
+    VP_X_CAB, VP_Y_CAB = int(W * 0.40), int(H * 0.38)
+    CAB_SIDE_REVEAL = 3  # depth face width in px (P2 item)
+
     upper_cab_specs = [
         (0.58, 0.70),
         (0.70, 0.83),
@@ -813,6 +817,21 @@ def draw_cabinets_and_appliances(draw, bw_left, bw_top, bw_right, bw_bot):
         cx2 = int(bw_left + (bw_right - bw_left) * x2f)
         draw.rectangle([cx1, cab_top, cx2, cab_bottom], fill=WOOD_DARK)
         draw.rectangle([cx1, cab_top, cx2, cab_bottom], outline=LINE_DARK, width=2)
+        # v008: Side depth reveal on VP-facing edge (VP is left of cabinets)
+        cab_center_x = (cx1 + cx2) // 2
+        if VP_X_CAB < cab_center_x:
+            # VP is left — depth face on left edge
+            side_pts = [
+                (cx1, cab_top), (cx1 - CAB_SIDE_REVEAL, cab_top + 1),
+                (cx1 - CAB_SIDE_REVEAL, cab_bottom - 1), (cx1, cab_bottom),
+            ]
+        else:
+            # VP is right — depth face on right edge
+            side_pts = [
+                (cx2, cab_top), (cx2 + CAB_SIDE_REVEAL, cab_top + 1),
+                (cx2 + CAB_SIDE_REVEAL, cab_bottom - 1), (cx2, cab_bottom),
+            ]
+        draw.polygon(side_pts, fill=lerp_color(WOOD_DARK, SHADOW_DEEP, 0.5))
         # Cabinet door panel inset
         inset = 4
         draw.rectangle([cx1 + inset, cab_top + inset,
@@ -823,23 +842,48 @@ def draw_cabinets_and_appliances(draw, bw_left, bw_top, bw_right, bw_bot):
         hy = cab_bottom - 10
         draw.rectangle([hx - 5, hy, hx + 5, hy + 3], fill=FRIDGE_TRIM)
 
-    # Countertop
+    # Countertop — v008: VP-convergent trapezoid top surface
     counter_y1 = bw_top + int((bw_bot - bw_top) * 0.52)
     counter_y2 = counter_y1 + int((bw_bot - bw_top) * 0.08)
     ct_x1 = bw_left + int((bw_right - bw_left) * 0.38)
     ct_x2 = bw_right
-    draw.rectangle([ct_x1, counter_y1, ct_x2, counter_y2], fill=COUNTERTOP)
-    draw.line([(ct_x1, counter_y1), (ct_x2, counter_y1)], fill=COUNTER_EDGE, width=2)
-    draw.rectangle([ct_x1, counter_y1, ct_x2, counter_y2], outline=LINE_DARK, width=1)
+    ct_w = ct_x2 - ct_x1
+    ct_conv = max(0.0, min(1.0, (VP_Y_CAB - counter_y1) / H))
+    ct_shrink = int(ct_w * ct_conv * 0.15)
+    ct_top_pts = [
+        (ct_x1 + ct_shrink, counter_y1),   # top-left (far, shrunk)
+        (ct_x2 - ct_shrink, counter_y1),   # top-right (far, shrunk)
+        (ct_x2, counter_y2),                # bot-right (near, full)
+        (ct_x1, counter_y2),                # bot-left (near, full)
+    ]
+    draw.polygon(ct_top_pts, fill=COUNTERTOP)
+    draw.line([(ct_x1 + ct_shrink, counter_y1), (ct_x2 - ct_shrink, counter_y1)],
+              fill=COUNTER_EDGE, width=2)
+    draw.polygon(ct_top_pts, outline=LINE_DARK, width=1)
+    # v008: Front face of countertop (visible depth)
+    ct_front_depth = 4
+    ct_front_pts = [
+        (ct_x1, counter_y2), (ct_x2, counter_y2),
+        (ct_x2, counter_y2 + ct_front_depth), (ct_x1, counter_y2 + ct_front_depth),
+    ]
+    draw.polygon(ct_front_pts, fill=COUNTER_EDGE)
+    draw.polygon(ct_front_pts, outline=LINE_DARK, width=1)
 
-    # Lower cabinets
-    lower_y1 = counter_y2
+    # Lower cabinets — v008: with side depth reveal
+    lower_y1 = counter_y2 + ct_front_depth
     lower_y2 = bw_bot
     for ci in range(4):
         lc_x1 = ct_x1 + int(ci * (ct_x2 - ct_x1) / 4)
         lc_x2 = ct_x1 + int((ci + 1) * (ct_x2 - ct_x1) / 4)
         draw.rectangle([lc_x1, lower_y1, lc_x2, lower_y2], fill=WOOD_DARK)
         draw.rectangle([lc_x1, lower_y1, lc_x2, lower_y2], outline=LINE_DARK, width=1)
+        # v008: Side depth reveal on VP-facing (left) edge for leftmost cabinet
+        if ci == 0:
+            lc_side_pts = [
+                (lc_x1, lower_y1), (lc_x1 - CAB_SIDE_REVEAL, lower_y1 + 1),
+                (lc_x1 - CAB_SIDE_REVEAL, lower_y2 - 1), (lc_x1, lower_y2),
+            ]
+            draw.polygon(lc_side_pts, fill=lerp_color(WOOD_DARK, SHADOW_DEEP, 0.5))
         inset = 4
         draw.rectangle([lc_x1 + inset, lower_y1 + inset,
                          lc_x2 - inset, lower_y2 - inset],
@@ -1229,30 +1273,71 @@ def draw_refrigerator(img, draw, bw_right, bw_top, bw_bot):
     """
     Old refrigerator on right side.
     v004: Travel-destination fridge magnets (Miri is world-experienced).
+    v008: VP-convergent fridge body with visible side face (P1).
     """
+    VP_X_F, VP_Y_F = int(W * 0.40), int(H * 0.38)
     fridge_w = int(W * 0.09)
     fridge_x1 = bw_right - int((bw_right - int(W * 0.1)) * 0.07)
     fridge_x2 = fridge_x1 + fridge_w
     fridge_y1 = bw_top + int((bw_bot - bw_top) * 0.04)
     fridge_y2 = bw_bot
 
-    draw.rectangle([fridge_x1, fridge_y1, fridge_x2, fridge_y2], fill=FRIDGE_WHITE)
-    draw.rectangle([fridge_x1, fridge_y1, fridge_x2, fridge_y2], outline=LINE_DARK, width=2)
+    # v008: VP convergence — front face foreshortens toward VP
+    fr_conv = max(0.0, min(1.0, (VP_Y_F - fridge_y1) / H))
+    fr_shrink = int(fridge_w * fr_conv * 0.12)
 
+    # Front face as trapezoid (top edge shorter — closer to VP height)
+    fr_front_pts = [
+        (fridge_x1 + fr_shrink, fridge_y1),   # top-left (far, shrunk)
+        (fridge_x2 - fr_shrink, fridge_y1),    # top-right (far, shrunk)
+        (fridge_x2, fridge_y2),                 # bot-right (near, full)
+        (fridge_x1, fridge_y2),                 # bot-left (near, full)
+    ]
+    draw.polygon(fr_front_pts, fill=FRIDGE_WHITE)
+    draw.polygon(fr_front_pts, outline=LINE_DARK, width=2)
+
+    # v008: Side face visible on left (VP is left — fridge is right of VP)
+    side_face_w = 5  # depth face width
+    side_color = lerp_color(FRIDGE_WHITE, FRIDGE_TRIM, 0.4)
+    side_pts = [
+        (fridge_x1 + fr_shrink, fridge_y1),
+        (fridge_x1 + fr_shrink - side_face_w, fridge_y1 + 2),
+        (fridge_x1 - side_face_w, fridge_y2 - 2),
+        (fridge_x1, fridge_y2),
+    ]
+    draw.polygon(side_pts, fill=side_color)
+    draw.polygon(side_pts, outline=LINE_DARK, width=1)
+
+    # Freezer/fridge divider — interpolate within trapezoid
     div_y = fridge_y1 + int((fridge_y2 - fridge_y1) * 0.22)
-    draw.line([(fridge_x1, div_y), (fridge_x2, div_y)], fill=LINE_DARK, width=2)
+    div_t = (div_y - fridge_y1) / max(1, fridge_y2 - fridge_y1)
+    div_x1 = int(fridge_x1 + fr_shrink * (1 - div_t))
+    div_x2 = int(fridge_x2 - fr_shrink * (1 - div_t))
+    draw.line([(div_x1, div_y), (div_x2, div_y)], fill=LINE_DARK, width=2)
 
+    # Handles — positioned within converging front face
     for hy in [fridge_y1 + int((div_y - fridge_y1) * 0.45),
                div_y + int((fridge_y2 - div_y) * 0.35)]:
-        hx = fridge_x1 + int(fridge_w * 0.15)
+        h_t = (hy - fridge_y1) / max(1, fridge_y2 - fridge_y1)
+        hx_base = int(fridge_x1 + fr_shrink * (1 - h_t))
+        hx = hx_base + int(fridge_w * 0.15)
         draw.rectangle([hx, hy, hx + 7, hy + 17], fill=FRIDGE_TRIM)
         draw.rectangle([hx, hy, hx + 7, hy + 17], outline=LINE_DARK, width=1)
 
+    # Door panel insets — within converging front face
     for door_y1, door_y2 in [(fridge_y1, div_y), (div_y, fridge_y2)]:
         inset = 6
-        draw.rectangle([fridge_x1 + inset, door_y1 + inset,
-                         fridge_x2 - inset, door_y2 - inset],
-                        outline=lerp_color(FRIDGE_WHITE, FRIDGE_TRIM, 0.5), width=1)
+        d1_t = (door_y1 + inset - fridge_y1) / max(1, fridge_y2 - fridge_y1)
+        d2_t = (door_y2 - inset - fridge_y1) / max(1, fridge_y2 - fridge_y1)
+        dx1_top = int(fridge_x1 + fr_shrink * (1 - d1_t)) + inset
+        dx2_top = int(fridge_x2 - fr_shrink * (1 - d1_t)) - inset
+        dx1_bot = int(fridge_x1 + fr_shrink * (1 - d2_t)) + inset
+        dx2_bot = int(fridge_x2 - fr_shrink * (1 - d2_t)) - inset
+        panel_pts = [
+            (dx1_top, door_y1 + inset), (dx2_top, door_y1 + inset),
+            (dx2_bot, door_y2 - inset), (dx1_bot, door_y2 - inset),
+        ]
+        draw.polygon(panel_pts, outline=lerp_color(FRIDGE_WHITE, FRIDGE_TRIM, 0.5), width=1)
 
     # v004: Travel-destination fridge magnets (Miri sees the world — her curiosity is established)
     magnet_rng = random.Random(83)
@@ -1441,10 +1526,10 @@ def main():
     img = Image.new("RGB", (W, H), WALL_WARM)
 
     print("LTG_TOOL_bg_grandma_kitchen.py")
-    print("Rendering Grandma Miri's Kitchen v005 — A1-01 (Act 1 opening)...")
-    print("v005 addition (Alex Chen C39 directive):")
-    print("  NEW: Dual-Miri visual plant — handwritten MIRI label on fridge door")
-    print("  All v004 content retained unchanged.")
+    print("Rendering Grandma Miri's Kitchen v008 — A1-01 (Act 1 opening)...")
+    print("v008 changes (Hana Okonkwo C48 — furniture perspective fix):")
+    print("  NEW: VP-convergent table, chair, countertop, fridge, cabinet side reveals")
+    print("  Per docs/perspective-rules.md + furniture_vp_spec_c48.md")
     print("  Canvas: 1280x720 (direct — no thumbnail needed)")
 
     print("  [1] Base room — walls, ceiling, floor...")
@@ -1539,15 +1624,16 @@ def main():
     print(f"File size: {size_bytes:,} bytes ({size_bytes // 1024} KB)")
     print(f"Image size: {img.size[0]}×{img.size[1]}px")
 
-    print("\nv007 verification:")
-    print("  [v007 NEW] paper_texture(alpha=16) + vignette(strength=45) final passes")
-    print("  [v007 NEW] flatten_rgba_to_rgb() at save time (canonical RGBA→RGB)")
+    print("\nv008 verification:")
+    print("  [v008 NEW] VP-convergent furniture: table, chair, countertop, fridge trapezoids")
+    print("  [v008 NEW] Cabinet side depth reveals (upper + lower, 3px)")
+    print("  [v008 NEW] Fridge side face visible (5px depth, left side)")
+    print("  [v008 NEW] Countertop front face depth (4px)")
+    print("  [CARRY v007] paper_texture(alpha=16) + vignette(strength=45) final passes")
+    print("  [CARRY v007] flatten_rgba_to_rgb() at save time (canonical RGBA->RGB)")
     print("  [CARRY v006] MIRI label via draw_pixel_text() — canonical pixel font")
     print("  [CARRY v005] Dual-Miri visual plant: MIRI label on fridge door")
-    print("  [CARRY v004-1] Deep shadows: DEEP_COCOA/NEAR_BLACK_WARM")
-    print("  [CARRY v004-2] Warm/cool separation: SUNLIT_AMBER + CRT_COOL_SPILL")
-    print("  [CARRY v004-3] Miri-specific details: mug, knitting, apron, magnets")
-    print("  [CARRY v003] Perspective floor grid, side wall texture, CRT glow")
+    print("  [CARRY v004] Deep shadows, warm/cool separation, Miri details")
 
 
 if __name__ == "__main__":

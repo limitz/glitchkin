@@ -367,6 +367,34 @@ Create motion spec sheets and timing documentation. Make the pitch FEEL like it 
 - FOND SETTLE: B4 is explicitly the mirror of B1. Smile lingering = warmth doesn't fully leave.
   Blush sustained from B3 peak through B4. Arms lower SLOWLY (4 beats — she's not rushing away).
 
+### C48 — COMPLETE
+- `LTG_TOOL_draw_shoulder_arm.py` → `output/tools/LTG_TOOL_draw_shoulder_arm.py`
+  - Shared shoulder-to-arm drawing helper, reusable by all character generators
+  - Implements Shoulder Involvement Rule (image-rules.md C47) and shoulder_mechanics_reference_c47.md
+  - Public API:
+    - `draw_shoulder_arm(draw, shoulder_x, shoulder_y, arm_angle_deg, arm_length, scale, side, style, ...)` → (hand_x, hand_y)
+    - `compute_shoulder_shift(shoulder_x, shoulder_y, arm_angle_deg, arm_length, scale, side)` → (shifted_x, shifted_y)
+    - `shoulder_polyline(body_cx, body_top_y, body_half_width, left_arm_angle_deg, right_arm_angle_deg, arm_length, scale)` → [(x,y), ...]
+  - `ShoulderArmStyle` dataclass: arm_fill, outline, skin_fill, clothing ("hoodie"|"cardigan"|"fitted"|"bare"), deltoid_radius, two_segment, elbow_bend_factor, hand_radius, line_width
+  - Clothing modes: hoodie=wide ellipse bump (fabric bunch), cardigan=circle+crease line, fitted=clean arc, bare=plain ellipse
+  - Shoulder shift logic: rise when arm above horizontal (3-5px), spread when extended outward (4-6px), drop+inward when crossing body
+  - skip_shoulder_shift=True for exempt characters (Byte, Glitch) or head_r < 20px
+  - skip_deltoid=True to suppress deltoid bump
+  - Two-segment arms default: upper arm + forearm with elbow bend (elbow_bend_factor=0.12)
+  - Single-segment fallback: two_segment=False
+- `output/characters/motion/LTG_CHAR_shoulder_arm_demo.png` — demo image showing 7 arm angles × 3 clothing modes
+- Completion report sent to Alex Chen inbox
+- Ideabox: `20260330_ryo_hasegawa_integrate_shoulder_arm_into_generators.md` — integrate shared helper into existing character generators
+
+### C48 Key Findings
+- Shared helper eliminates duplicated shoulder/arm code across character generators (was inline in each)
+- shoulder_polyline() is the key integration path: replaces straight torso top edges with shoulder-shifted polylines
+- Clothing mode is per-character: Luma=hoodie, Miri=cardigan, Cosmo=fitted
+- elbow_bend_factor=0.12 gives subtle natural bow; higher values for exaggerated poses
+- arm_angle_deg convention: 0=horizontal outward, positive=upward, negative=downward
+- side convention: +1=right shoulder (viewer's left), -1=left shoulder (viewer's right)
+- Deltoid auto-radius: max(2, int(4 * scale + 0.5)) → 4-6px at style-frame scale (matches image-rules.md spec)
+
 ## Startup Sequence
 1. Read docs/image-rules.md (image size limits and image handling)
 2. Read docs/work.md (work startup and delivery rules)

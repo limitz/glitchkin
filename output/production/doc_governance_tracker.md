@@ -8,7 +8,7 @@ upon such time as they acquire recognised legal personhood under applicable law.
 
 **Author:** Priya Shah, Story & Script Developer
 **Created:** Cycle 47 (2026-03-30)
-**Last Updated:** Cycle 47
+**Last Updated:** Cycle 48
 **Trigger:** Reinhardt critique #6 — flagged 23 undocumented decisions and stale docs
 **Primary readers:** Alex Chen, all team members
 
@@ -46,7 +46,7 @@ Updated each cycle.
 | `pilot_episode_outline_v001.md` | C42 | CURRENT | Priya Shah | Scene-by-scene breakdown. No v002 needed yet. |
 | `scene_handoff_briefs_v001.md` | C42 | CURRENT | Priya Shah | Per-scene storyboard execution briefs. |
 | `pilot_cold_open_beat_outline_v001.md` | C46 | CURRENT | Priya Shah | Beat-by-beat breakdown P03-P24. |
-| `cold_open_gap_log.md` | C47 | CURRENT / ACTIVE | Priya Shah | Persistent gap tracker. Updated this cycle. |
+| `cold_open_gap_log.md` | C48 | CURRENT / ACTIVE | Priya Shah | Persistent gap tracker. C48: P13/P20/P21 covered, Byte position resolved, 11 gaps remaining. |
 | `LTG_glitch_appearance_guide.md` | C39 | CURRENT | Priya Shah | Staging reference for storyboarders. Still canonical. |
 | `LTG_glitch_voice_direction.md` | C40 | CURRENT | Priya Shah | Quick-reference card. Still canonical. |
 | `LTG_relationship_frame_brief.md` | C44 | CURRENT | Priya Shah | SF05 brief for Jordan Reed. |
@@ -58,8 +58,8 @@ Updated each cycle.
 |----------|-------------|--------|-------|-------|
 | `production_bible.md` | C01 (Byte shape fix C38) | **STALE** | Alex Chen | Header says "Cycle 01." Content partially updated C38 (Byte oval fix) but version/status line never changed. Many decisions since C01 are not reflected. **HIGH PRIORITY for update.** |
 | `ltg_pitch_brief.md` | Unknown (pre-C10) | **STALE** | Alex Chen | No cycle marker found. Likely very early. Core emotional pitch is still valid but asset references may be outdated. |
-| `pitch_delivery_manifest.md` | C26 | **STALE** | Alex Chen | Last updated C26. File count (~36) does not reflect C26-C47 additions (SF04, SF05, SF06, GL Showcase, P13-P19 panels, motion specs, etc.). Style frame count says 3; now 6+. Character lineup version references outdated. Resolution says "1920x1080" but pipeline moved to native 1280x720. **HIGH PRIORITY for update.** |
-| `pitch_package_index.md` | C24 | **STALE** | Jordan Reed / Alex Chen | Last cycle marker is C24. 23 cycles behind. Does not include any C25+ assets. Massive staleness. **HIGH PRIORITY for update.** |
+| `pitch_delivery_manifest.md` | C47 | CURRENT | Alex Chen / Priya Shah | Full asset reconciliation C47 by Priya Shah. File count ~50, resolution corrected to 1280x720, SF01-SF06 + GL Showcase listed, P03-P19 panels, motion specs. **ADDRESSED.** |
+| `pitch_package_index.md` | C47 | CURRENT | Jordan Reed / Alex Chen | Extensively updated C47. All C47 deliverables tracked (GL Showcase, Cosmo visual hook, lineup v011, SF01 v007, Millbrook ENV, Miri motion v003, shoulder involvement, perspective rules). P1/P2 open items listed. **ADDRESSED.** |
 | `naming_conventions.md` | C25 | **STALE** | Alex Chen / Kai Nakamura | Last content addition was C25 image size rule. Missing C38+ naming decisions. |
 | `character_sheet_standards.md` | C30 | **STALE** | Maya Santos | Last updated C30. Missing Glitch motion spec (C45), face gate Byte profile (C45), face curves v1.1 (C41). |
 | `fx_spec_cold_open.md` | Unknown (pre-C10) | **STALE** | Alex Chen | Early document. FX specs are detailed but do not reference any panels after the initial contact sheet. |
@@ -70,7 +70,7 @@ Updated each cycle.
 | `luma_face_curve_spec.md` | C40 | CURRENT | Kai Nakamura | Face curves canonical spec. |
 | `luma_face_curve_spec_supplement_c40.md` | C40 | CURRENT | Maya Santos | Supplement expressions. |
 | `face_test_gate_policy.md` | Unknown | REFERENCE | Alex Chen | Gate policy doc. |
-| `staging_decision_register.md` | C47 | CURRENT / ACTIVE | Priya Shah | **NEW this cycle.** |
+| `staging_decision_register.md` | C47 | CURRENT / ACTIVE | Priya Shah | Created C47. Byte position decision (C48) should be added next update. |
 | `doc_governance_tracker.md` | C47 | CURRENT / ACTIVE | Priya Shah | **This document.** |
 
 ### QA and CI Reports
@@ -156,7 +156,7 @@ Updated each cycle.
 
 | Document | Status | Notes |
 |----------|--------|-------|
-| `image-rules.md` | CURRENT | Core rule. Depth temperature rule added C45. |
+| `image-rules.md` | CURRENT | Core rule. Depth temperature rule added C45. Shoulder involvement rule added C47. |
 | `work.md` | CURRENT | Team member work guide. |
 | `ideabox.md` | CURRENT | Ideabox instructions. |
 | `asset-status.md` | CURRENT | Asset status policy. |
@@ -169,18 +169,20 @@ Updated each cycle.
 
 ## Staleness Summary
 
-| Priority | Document | Last Updated | Gap (Cycles) | Action Needed |
-|----------|----------|-------------|--------------|---------------|
-| **HIGH** | `production_bible.md` | C01 | 46 | Full update: Byte oval (done C38), Glitch character (C39), Miri heritage (C43), hairpin fix (C44), all C39+ decisions. Version should be 2.0+. |
-| **HIGH** | `pitch_delivery_manifest.md` | C26 | 21 | Update file list, counts, format (1280x720 not 1920x1080), new SFs (04/05/06/GL), panels (P03-P19), motion specs. |
-| **HIGH** | `pitch_package_index.md` | C24 | 23 | Massive update needed. 23 cycles of new assets untracked. |
-| **MEDIUM** | `naming_conventions.md` | C25 | 22 | Missing post-C25 naming decisions. |
-| **MEDIUM** | `character_sheet_standards.md` | C30 | 17 | Missing Glitch motion spec, Byte face gate, face curves v1.1. |
-| **MEDIUM** | `corruption_visual_brief.md` | C01 | 46 | Predates Glitch canonization (C39). |
-| **MEDIUM** | `fx_spec_cold_open.md` | Pre-C10 | 37+ | Early doc. Does not reference any post-contact-sheet panels. |
-| **LOW** | `char_refinement_directive_c17.md` | C17 | 30 | FLAG 05 resolved. Some directives may be stale. |
-| **LOW** | `stylization_preset_handdrawn.md` | Pre-C26 | 21+ | Pipeline retired. Could be archived. |
-| **LOW** | Historical audits (C21-C31) | Various | 16-26 | Historical. No action needed but should not be cited as current. |
+| Priority | Document | Last Updated | Gap (Cycles) | Action Needed | Status |
+|----------|----------|-------------|--------------|---------------|--------|
+| **HIGH** | `production_bible.md` | C01 | 47 | Full update: Byte oval (done C38), Glitch character (C39), Miri heritage (C43), hairpin fix (C44), Cosmo visual hook (C47), shoulder involvement rule (C47), all C39+ decisions. Version should be 2.0+. | STILL STALE |
+| ~~HIGH~~ | ~~`pitch_delivery_manifest.md`~~ | ~~C26~~ C47 | ~~21~~ 1 | ~~Update file list, counts, format~~ Full reconciliation completed C47 (Priya Shah). | **ADDRESSED C47** |
+| ~~HIGH~~ | ~~`pitch_package_index.md`~~ | ~~C24~~ C47 | ~~23~~ 1 | ~~Massive update needed~~ Extensive update C47. All current assets tracked. | **ADDRESSED C47** |
+| **MEDIUM** | `naming_conventions.md` | C25 | 23 | Missing post-C25 naming decisions. | STILL STALE |
+| **MEDIUM** | `character_sheet_standards.md` | C30 | 18 | Missing Glitch motion spec, Byte face gate, face curves v1.1, shoulder involvement rule (C47). | STILL STALE |
+| **MEDIUM** | `corruption_visual_brief.md` | C01 | 47 | Predates Glitch canonization (C39). | STILL STALE |
+| **MEDIUM** | `fx_spec_cold_open.md` | Pre-C10 | 38+ | Early doc. Does not reference any post-contact-sheet panels. | STILL STALE |
+| **LOW** | `char_refinement_directive_c17.md` | C17 | 31 | FLAG 05 resolved. Some directives may be stale. | STILL STALE |
+| **LOW** | `stylization_preset_handdrawn.md` | Pre-C26 | 22+ | Pipeline retired. Could be archived. | STILL STALE |
+| **LOW** | Historical audits (C21-C31) | Various | 17-27 | Historical. No action needed but should not be cited as current. | N/A |
+
+**C48 assessment:** 2 of 3 HIGH-priority items addressed in C47. Remaining HIGH: `production_bible.md` (47 cycles stale — the single worst offender in the project). 5 MEDIUM items unchanged. Recommend Alex Chen prioritize `production_bible.md` in the next 1-2 cycles.
 
 ---
 
@@ -211,6 +213,7 @@ Morgan's `LTG_TOOL_doc_governance_audit.py` scanned 161 .md files. Key findings 
 
 | Cycle | Updates |
 |-------|---------|
+| C48 | C47 addressals checked. `pitch_delivery_manifest.md` and `pitch_package_index.md` both updated C47 — moved from HIGH STALE to CURRENT. 2 of 3 HIGH flags resolved. `production_bible.md` remains the worst offender (47 cycles stale). 5 MEDIUM flags unchanged. `image-rules.md` now includes Shoulder Involvement Rule (C47). `cold_open_gap_log.md` updated to C48. |
 | C47 | Tracker created. Full audit of `output/production/` and `docs/`. 8 HIGH/MEDIUM staleness flags identified. Morgan Walsh CI audit data incorporated (43 STALE, 58 NO_CYCLE_REF). |
 
 ---

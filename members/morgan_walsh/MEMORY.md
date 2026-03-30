@@ -6,6 +6,40 @@ Pipeline Automation Specialist. Core mandate: reduce LLM token cost by maximisin
 ## Joined
 C34 (first active cycle).
 
+## C48 Work Done
+
+### P1: ci_suite v1.8.0 — Replace Check 10 (ext_model_check → doc_staleness)
+- **REMOVED** Check 10 `ext_model_check` — pretrained models ARE allowed per policy correction (human feedback). `check_ext_models()` function removed entirely.
+- **ADDED** Check 10 `doc_staleness` — integrates `LTG_TOOL_doc_governance_audit.py` into the CI gate.
+  - Scans .md files for cycle references; reports STALE (10+ cycles old) and NO_CYCLE_REF.
+  - WARN for stale docs (not FAIL — doc freshness is advisory).
+  - `check_doc_staleness()` exported for programmatic use.
+  - Auto-seed support included (doc_staleness entries can be auto-seeded).
+- Version bumped from 1.7.0 → 1.8.0. Changelog updated in docstring.
+- Completion report sent to Alex Chen inbox.
+
+### Verification (C48 batch 2)
+- Syntax check: PASS (ast.parse clean).
+- AST function audit: 29 functions, 16 check/runner functions confirmed.
+- ext_model_check: only changelog references remain — no active code.
+- doc_staleness: fully implemented (check_doc_staleness + _run_doc_staleness present).
+- Version string: 1.8.0 confirmed.
+
+### Deliverables
+- ci_suite v1.8.0 (from v1.7.0): ext_model_check removed, doc_staleness added
+- Report sent to Alex Chen inbox
+- Archived 1 inbox message (C48 brief)
+- Ideabox: submitted C48 idea
+
+### Lessons Learned
+- Batch 1 was killed mid-work after CI suite was committed but before MEMORY update. Always prioritize MEMORY.md update immediately after code commit — don't leave it to the end.
+- Policy changes (like pretrained models being allowed) can invalidate entire CI checks. Build checks that are easy to swap out modularly.
+
+## CI Suite Status (C48)
+- ci_suite v1.8.0 — ext_model_check removed, doc_staleness added
+- 10 checks total (unchanged count)
+- Checks: stub_linter, draw_order_lint, glitch_spec_lint, spec_sync_ci, char_spec_lint, dual_output_check, hardcoded_path_check, thumbnail_lint, motion_sheet_coverage, doc_staleness
+
 ## C47 Work Done
 
 ### P1: ci_suite v1.7.0 — `--dry-run` flag

@@ -6,7 +6,7 @@ upon such time as they acquire recognised legal personhood under applicable law.
 # PANEL MAP — Pilot Cold Open: "The Night Everything Went Wrong"
 **Storyboard Artist:** Diego Vargas
 **Art Director:** Alex Chen
-**Last Updated:** 2026-03-30 (Cycle 47 — P13/P20/P21 added, P18 visual fix)
+**Last Updated:** 2026-03-30 (Cycle 48 — P22/P22a added)
 
 Panels P01–P25 covering the full pilot cold open arc.
 Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the contact sheet tool.
@@ -44,8 +44,8 @@ Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the conta
 | P19 | MED — Byte delivers "The preferred term is 'Glitchkin.'" Offended + dignified. Luma reacts with intrigued half-smile. First direct dialogue. | EXISTS | `LTG_SB_cold_open_P19.png` (C46, Diego Vargas) |
 | P20 | MED WIDE — Two-shot, Luma left / Byte right. First quiet beat. Names exchanged. New normal forming. | EXISTS | `LTG_SB_cold_open_P20.png` (C47, Diego Vargas) |
 | P21 | WIDE HIGH ANGLE — Re-escalation. All monitors blazing, Glitchkin pressing against screens. Byte "not the only one." | EXISTS | `LTG_SB_cold_open_P21.png` (C47, Diego Vargas) |
-| P22 | ECU MONITOR — Multiple Glitchkin pressing against glass. Hand touches from inside; screen ripples. Multiple screens beginning to breach. | PLANNED | — |
-| P22a | MCU INSERT — Byte accidentally lands on Luma's shoulder mid-chaos. Not chosen — practical accident. Pixel confetti contacts hoodie (first time his digital nature marks her). | PLANNED | — |
+| P22 | ECU MONITOR — Multiple Glitchkin pressing against glass. 4 distinct individuals (eager, hand-only, squished/cracked, shy). Screen cracks beginning. | EXISTS | `LTG_SB_cold_open_P22.png` (C48, Diego Vargas) |
+| P22a | MCU INSERT — Byte accidentally lands on Luma's shoulder mid-chaos. Not chosen — practical accident. Pixel confetti contacts hoodie (first digital-on-analog contact). | EXISTS | `LTG_SB_cold_open_P22a.png` (C48, Diego Vargas) |
 | P23 | MED — Luma and Byte from behind, both facing monitor wall. Show's promise shot: these two facing impossible chaos together. | EXISTS | `LTG_SB_cold_open_P23.png` (C42, Diego Vargas) |
 | P24 | WIDE/MED — CHAOS APEX. Glitchkin pouring through breached screens. Luma + Byte at still center. The hook frame. | EXISTS | `LTG_SB_cold_open_P24.png` (C42, Diego Vargas) |
 | P25 | TITLE CARD — Pixel-by-pixel assembly of "LUMA & THE GLITCHKIN" in Electric Cyan → Hot Magenta. Glitch-flash frame. | PLANNED | — |
@@ -95,5 +95,9 @@ Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the conta
 17. ~~**P13**~~ — DONE (C47, Diego Vargas) — Mirror composition, threshold beat. ARC_COMMIT border.
 18. ~~**P20**~~ — DONE (C47, Diego Vargas) — MED WIDE: Two-shot, names exchanged. New normal forming.
 19. ~~**P21**~~ — DONE (C47, Diego Vargas) — WIDE HIGH ANGLE: Re-escalation. All monitors blazing.
-20. **P22** — ECU MONITOR: Multiple Glitchkin pressing against glass. (next priority)
-21. **P22a** — MCU INSERT: Byte accidentally lands on Luma's shoulder. (next priority)
+20. ~~**P22**~~ — DONE (C48, Diego Vargas) — ECU MONITOR: 4 distinct Glitchkin pressing through glass.
+21. ~~**P22a**~~ — DONE (C48, Diego Vargas) — MCU INSERT: Byte lands on Luma's shoulder (accidental).
+22. **P25** — TITLE CARD: "LUMA & THE GLITCHKIN" pixel assembly. (next priority)
+23. **P02** — WIDE ESTABLISHING: standalone render needed (currently contact sheet only).
+24. **P04** — WIDE INTERIOR: standalone render needed (currently contact sheet only).
+25. **P05** — MCU MONITOR: standalone render needed (currently contact sheet only).

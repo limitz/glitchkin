@@ -1,0 +1,22 @@
+{
+    "_comment": "Per-asset band position overrides for LTG_TOOL_depth_temp_lint Section 12.",
+    "_comment2": "Keys are PNG basenames (case-sensitive). Values: fg_y_frac, bg_y_frac, band_h (optional), threshold (optional).",
+    "_comment3": "Assets not listed here use the default bands (FG=0.78, BG=0.70, band=50, threshold=12.0).",
+    "_comment4": "Created C48 by Lee Tanaka. Calibrated against SF04/SF05 actual character positions.",
+    "_version": "1.0.0",
+    "_calibration_cycle": "C48",
+    "overrides": {
+        "LTG_COLOR_styleframe_sf04.png": {
+            "label": "SF04 Resolution",
+            "fg_y_frac": 0.55,
+            "bg_y_frac": 0.85,
+            "rationale": "Luma stands at ~40-60% height; floor/BG zone at ~80-90%. Default 78/70 bands both sample below the character, producing inverted separation (-11.2). Correct bands: FG at character feet (55%), BG at floor reflections (85%). Verified PASS sep=28.6."
+        },
+        "LTG_COLOR_styleframe_sf05.png": {
+            "label": "SF05 The Passing",
+            "fg_y_frac": 0.40,
+            "bg_y_frac": 0.85,
+            "rationale": "Miri and Luma positioned at ~30-50% height above a counter surface. Cool floor reflections at 80-90%. Default 78/70 bands sample below both characters in the cool zone, producing inverted separation (-10.3). Correct bands: FG at character torso height (40%), BG at floor (85%). Verified PASS sep=116.1."
+        }
+    }
+}

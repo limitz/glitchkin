@@ -4,36 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present.
 
 ## Status
-**C48 IN PROGRESS. Work cycles: 48. Critique cycles: 18.**
-**Next after C48: Critique 19.**
-
-### C48 Resume State
-- **Batch 1 ALL KILLED mid-work.** Partial progress on disk (uncommitted). See completion table below.
-- **Batch 2 NOT LAUNCHED (4 agents):** Alex, Lee, Priya, Rin — inbox briefs written, ready to launch.
-- **Byte position decision:** APPROVED (Priya's rec). Diego briefed. Byte on CRT P19-P20, floats down P21.
-- **Reference images:** 168 files in `reference/` across 22 categories. Human added. All HIGH/MEDIUM gaps resolved. 4 LOW gaps remain (`docs/reference_gaps_c48.md`).
-- **Reference shopping list updated:** xrite.jpg = ColorChecker, domestic*.{webp,jpg} = scene stats, elderly.png = Miri proportions.
-- **Ideabox:** 3 new submissions (Jordan, Morgan, Ryo). Not yet processed.
-
-#### Batch 1 Agent Completion (all killed — work uncommitted)
-| Agent | ~Done? | Deliverables on disk | Still needed |
-|-------|--------|---------------------|--------------|
-| Jordan | ~YES | `LTG_TOOL_sightline_validator.py`, MEMORY updated | Completion report to Alex |
-| Morgan | ~YES | pretrained_model_detect→deprecated, CI suite updated | MEMORY update incomplete |
-| Ryo | ~YES | `LTG_TOOL_draw_shoulder_arm.py` + demo PNG | MEMORY update incomplete |
-| Sam | ~YES | `LTG_TOOL_composite_warmth_score.py`, warmcool_calibrate modified, 2 reports | May need final verification |
-| Maya | ~YES | `LTG_TOOL_visual_hook_audit.py` + audit PNG, SF06 modified | Face gate verification incomplete |
-| Kai | PARTIAL | `LTG_TOOL_object_detect_qa.py`, precritique warm_pixel started | warm_pixel_lint runner function incomplete |
-| Diego | PARTIAL | P14/P15 refinements applied (Lee's 4 items) | P22/P22a NOT created, blank test tool NOT built |
-| Hana | PARTIAL | `furniture_vp_spec_c48.md` written, kitchen gen started | Kitchen perspective fixes incomplete |
-
-#### On Restart
-1. Review uncommitted changes — verify partial work is safe to keep
-2. Re-launch Kai, Diego, Hana to finish incomplete tasks
-3. Launch batch 2 (Alex, Lee, Priya, Rin)
-4. Process 3 ideabox submissions
-5. Commit all completed work
-6. Update README.md
+**C48 COMPLETE. Work cycles: 48. Critique cycles: 18.**
+**Next: Critique 19.**
 
 ## Active Team (12 slots)
 
@@ -88,42 +60,47 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 - **Lineup: v011 C47** (Maya). Cosmo hook propagated.
 
 ### Environments
-- Kitchen: v007 C44. Tech Den: v007 C45.
-- Classroom: v004 C46. School Hallway: v005 C46.
+- **Kitchen: v008 C48** (Hana). Fridge/countertop/cabinet VP perspective fixes. Warm/cool 33.1 PASS.
+- Tech Den: v007 C45. Classroom: v004 C46. School Hallway: v005 C46.
 - Living Room: v003 C45. Glitch Layer: v003. Other Side: C41.
-- **Millbrook Street: v003 C47** (Hana). Value floor fixed, warm/cool 21.0 PASS. 3-cycle critique resolved.
-- Luma Study Interior: C42.
+- Millbrook Street: v003 C47. Value floor fixed. Luma Study Interior: C42.
 
 ### Storyboards
-- Panels: P03–P11, **P13 NEW C47**, P14–P21, P23, P24 + EP05 COVETOUS.
-- **P13 NEW C47** (Diego): standalone panel — mirror composition, trust/doubt eyes. Critique #4 addressed.
-- **P18 REBUILT C47** (Diego): 3-tier visual time arc — blank test PASS. Critique #5 addressed.
-- **P20 NEW C47** (Diego): MED WIDE two-shot, names exchanged, notebook continuity.
-- **P21 NEW C47** (Diego): WIDE HIGH ANGLE Dutch tilt, 7 monitors blazing, HOT_MAGENTA border.
-- Cold open gap log: 32 beats, **12 gaps remaining** (was 14). P22/P22a next.
+- Panels: P03–P11, P13–P21, **P22/P22a NEW C48**, P23, P24 + EP05 COVETOUS.
+- **P22 NEW C48** (Diego): ECU monitor — 4 Glitchkin pressed against glass, screen cracks, HOT_MAGENTA border.
+- **P22a NEW C48** (Diego): MCU insert — Byte accidentally on Luma's shoulder, first digital-on-analog contact, pixel bleed.
+- Cold open gap log: 32 beats, **11 gaps remaining** (was 12). 21 standalone panels.
 
 ### Story
-- Story Bible: v005 C45. Confirmed current C46.
-- **Staging decision register NEW C47** (Priya). All decisions C34-C47 indexed.
-- **Doc governance tracker NEW C47** (Priya). 8 HIGH/MEDIUM staleness flags.
-- **Character export manifest updated C47** (Priya). Was frozen C24.
-- **Pitch delivery manifest updated C47** (Priya). Was frozen C26.
+- Story Bible: v005 C45. Confirmed current C48 (Priya).
+- Staging decision register: C48 updated (Priya). Byte position resolved.
+- Doc governance tracker: C48 updated. 1 HIGH remaining (production_bible 47 cycles stale).
+- Character export manifest: C47. Pitch delivery manifest: C47.
 
 ### Motion
-- Luma v002, Byte v002, Cosmo v001, **Miri v003 C47** (Ryo — full rework, 44/100→TBD), Glitch v001.
-- **precritique_qa v2.15.0 C47** (Lee). Section 12 depth_temp_lint integrated.
+- Luma v002, Byte v002, Cosmo v001, Miri v003 C47 (Ryo), Glitch v001.
+- **Shared draw_shoulder_arm() helper NEW C48** (Ryo). 3 functions + ShoulderArmStyle dataclass.
+- **precritique_qa v2.17.0 C48** (Kai + Lee). Section 12 band overrides, Section 13 warm pixel lint.
 
 ## QA Baseline
-**precritique_qa v2.15.0 C47.** Section 12 depth_temp_lint integrated.
+**precritique_qa v2.17.0 C48.** Section 13 warm pixel lint + Section 12 band overrides.
 - **warm-pixel-percentage metric NEW C47** (Sam): replaces hue-split as primary REAL_INTERIOR gate. 31/31 assets PASS, 7/7 reference photos PASS. 24-point gap between RW floor (35%) and GL ceiling (15%).
 - **render_qa v2.1.0 C47** (Kai): warm_pixel_pct integrated as primary REAL_INTERIOR gate, overrides hue-split on disagreement.
-- **Depth temp lint Section 12**: Lineup PASS (sep=28.8), SF06 WARN, SF02 WARN, SF04/SF05 FAIL (false positives — band position mismatch). Per-asset band override config proposed (ideabox actioned).
+- **Depth temp lint Section 12**: Lineup PASS (sep=28.8), SF06 WARN, SF02 WARN. **SF04/SF05 PASS C48** (band overrides applied).
+- **depth_temp_band_overrides.json NEW C48** (Lee): Per-asset FG/BG band position config. SF04 fg=0.55/bg=0.85, SF05 fg=0.40/bg=0.85.
+- **depth_temp_lint v1.1.0 C48** (Lee): Auto-loads band override JSON.
 - **UV_PURPLE range confirmed**: h° 255°–325° (Rin C46). No change needed.
 - **CRT glow profiles**: sigma_frac=0.1165, FWHM 27.4% diagonal, CCT 13070K (Rin C46).
-- **Scanline pitch profiles NEW C47** (Rin): phosphor refs mean 25.8px, main CRT refs mean 41.7px.
-- **CI suite v1.7.0 C47** (Morgan): Check 10 ext_model_check + --auto-seed --dry-run.
+- **glow_profile_extract v2.0.0 C48** (Rin): Anisotropic Gaussian fitting (sigma_x/sigma_y). CRT refs match C46 calibration.
+- **Scanline pitch profiles C47** (Rin): phosphor refs mean 25.8px, main CRT refs mean 41.7px.
+- **CI suite v1.8.0 C48** (Morgan): Check 10 replaced — ext_model_check removed, doc_staleness added.
 - **color_verify v3.0.0 C47** (Jordan): CORRUPT_AMBER detection mode added.
-- **CORRECTION**: Pretrained torchvision models ARE allowed. Use them for object detection QA on output frames (bounding box, class label, probability). Kai's pretrained_model_detect tool and Morgan's Check 10 were built on a misunderstanding — repurpose or remove in C48.
+- **sightline_validator C48** (Jordan): 5 self-tests PASS. Angular error detection.
+- **composite_warmth_score C48** (Sam): 19/19 assets PASS. 70% warm-pixel-pct + 30% hue-split.
+- **visual_blank_test C48** (Diego): Strips text, runs 6 checks. PASS/WARN/FAIL per panel.
+- **object_detect_qa C48** (Kai): Torchvision pretrained model QA on output frames.
+- **GL Showcase registered in QA C48** (Rin): precritique_qa v2.16.1 → v2.17.0.
+- Pretrained torchvision models ARE allowed. pretrained_model_detect DEPRECATED C48.
 
 ## C45 Key Decisions & Deliverables
 - **Depth Temperature Rule** codified in `docs/image-rules.md` (Lee). Warm=FG, cool=BG. Applies to Real World / mixed-space; Glitch Layer exempt.
@@ -201,22 +178,44 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 - Takeshi: Byte COVETOUS barrier pose = best performance in pitch
 - Sam's warmcool calibration praised across critics
 
-## Open Items for C48
-1. **Lee**: per-asset depth_temp_lint band override config (ideabox actioned C47 — Alex + Lee both proposed)
-2. **Kai**: precritique_qa Section 13 warm-pixel-percentage standalone section (ideabox actioned C47)
-3. **Sam**: composite warmth score (ideabox actioned C47)
-4. **Morgan**: CI Check 11 doc_staleness (ideabox actioned C47 — Morgan + Priya both proposed)
-5. **Hana**: per-room furniture VP spec document (ideabox actioned C47) + perspective fixes per `docs/perspective-rules.md`
-6. **Jordan**: sight-line auto-validator in precritique_qa (ideabox actioned C47)
-7. **Maya**: visual hook audit tool for thumbnail-size readability (ideabox actioned C47) + SF06 shoulder displacement (deferred from C47)
-8. **Ryo**: shared `draw_shoulder_arm()` helper across all character generators (ideabox actioned C47)
-9. **Diego**: P22/P22a panels + visual blank test checklist tool (ideabox actioned C47)
-10. **Rin**: register GL Showcase in precritique_qa GLITCH_LAYER_PNGS (ideabox actioned C47)
-11. **Priya**: cold open gap log update post-C47 panels + Byte briefing position decision (urgent — blocks P20)
-12. **Kai**: photorealistic face references for calibration (carried from C46/C47)
-13. **Hana**: run batch path migration tool --apply on remaining hardcoded paths
-14. **Kai/Morgan**: REMOVE pretrained_model_detect tool + CI Check 10 (built on misunderstanding). Pretrained weights ARE allowed.
-15. **Kai**: BUILD object detection QA tool using torchvision pretrained models — detect objects in output frames, validate bounding boxes match intended subjects, report class labels + probabilities. High-value QA infrastructure.
+## C48 Key Decisions & Deliverables
+- **P22 + P22a panels** (Diego): ECU monitor with 4 Glitchkin pressed against glass + MCU insert Byte on Luma's shoulder (first contact). 21 standalone panels total.
+- **Visual blank test tool** (Diego): Strips text, 6 checks, PASS/WARN/FAIL per panel.
+- **Kitchen v008** (Hana): Fridge, countertop, cabinet VP perspective fixes. All P1 furniture items done.
+- **SF06 shoulder update** (Maya): Miri +5px outward, Luma polyline torso. Face gate all PASS.
+- **precritique_qa v2.17.0** (Kai + Lee + Rin): Section 13 warm pixel lint (Kai), Section 12 band overrides (Lee), GL Showcase registered (Rin).
+- **depth_temp_band_overrides.json** (Lee): SF04 FAIL→PASS (28.6), SF05 FAIL→PASS (116.1).
+- **glow_profile_extract v2.0.0** (Rin): Anisotropic Gaussian fitting. CRT refs match C46 (sigma_frac=0.1165).
+- **composite_warmth_score** (Sam): 19/19 PASS, zero false positives. Verified end-to-end.
+- **CI suite v1.8.0** (Morgan): Check 10 swapped from ext_model_check to doc_staleness.
+- **sightline_validator** (Jordan): 5 self-tests PASS. Pixel-based gaze detection.
+- **draw_shoulder_arm helper** (Ryo): Shared module, 3 functions + ShoulderArmStyle. 3 clothing modes.
+- **object_detect_qa** (Kai): Torchvision pretrained model QA. pretrained_model_detect DEPRECATED.
+- **face_metric_calibrate** (Kai): Re-run against 14 reference photos. Consistent with C46.
+- **Reference art direction notes** (Alex): 168 images reviewed. Key findings: CRT glow asymmetry, warm/cool threshold may be high, sigmoid transition, BG saturation drop needed.
+- **Perspective rules updated** (Alex): Hallway 1-point, ceiling convergence, VP_Y cross-check.
+- **Cold open gap log** (Priya): 12→11 gaps. Byte position resolved.
+- **Doc governance tracker** (Priya): 2/3 HIGH flags resolved. production_bible remains (47 cycles stale).
+- **Batch path migration** (Hana): 1 remaining SAFE_AUTO applied. 79 NEEDS_REVIEW mostly false positives.
+- **Visual hook audit** (Maya): 5/5 characters PASS at 128px thumbnail scale.
+- **14 ideabox ideas actioned.**
+
+## Open Items for C49 (Post-Critique 19)
+1. **Alex findings to action**: CRT glow asymmetry (30% below reduction), sigmoid warmcool transition, BG saturation drop, school hallway ceiling convergence
+2. **Tool build priority** (Alex ranked): warmcool_scene_calibrate (threshold validation), glow_profile_extract integration, face_metric_calibrate expression deltas
+3. **Sam**: composite warmth score → render_qa integration (ideabox C48)
+4. **Ryo**: integrate draw_shoulder_arm into existing generators (ideabox C48 — cosmo_motion first)
+5. **Morgan**: CI check swap registry (ideabox C48)
+6. **Morgan**: doc_staleness configurable thresholds per directory (ideabox C48)
+7. **Lee**: depth_temp auto band discovery --discover mode (ideabox C48)
+8. **Maya**: multi-char style frame face gate mode (ideabox C48)
+9. **Kai**: dlib 68-point landmark detector for face calibration (ideabox C48)
+10. **Diego**: panel-type profiles for blank test tool (ideabox C48)
+11. **Hana**: batch migrate NEEDS_REVIEW reclassify (ideabox C48)
+12. **Priya**: design-to-bible sync checklist (ideabox C48)
+13. **Rin**: anisotropic glow reference curation (ideabox C48)
+14. **Jordan**: sightline pixel detection mode for rendered PNGs (ideabox C48)
+15. **Priya**: production_bible update (47 cycles stale — last HIGH flag)
 
 ## Canonical Palette
 - Byte body = GL-01b #00D4E8 BYTE_TEAL (NOT #00F0FF)
@@ -257,15 +256,25 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 - **NEVER use `.thumbnail()` in generators** — native 1280×720 canvas only
 - Paths: use `LTG_TOOL_project_paths.project_root()` — never hardcode `/home/wipkat/team`
 
-## Shared Library (updated C47)
-`LTG_TOOL_ci_suite.py` — **v1.7.0 C47** (Morgan). Check 10 ext_model_check + --auto-seed --dry-run.
-`LTG_TOOL_precritique_qa.py` — **v2.15.0 C47** (Lee). Section 12 depth_temp_lint integrated.
+## Shared Library (updated C48)
+`LTG_TOOL_ci_suite.py` — **v1.8.0 C48** (Morgan). Check 10 doc_staleness (was ext_model_check).
+`LTG_TOOL_precritique_qa.py` — **v2.17.0 C48** (Kai+Lee+Rin). Sec 12 band overrides, Sec 13 warm pixel lint, GL Showcase registered.
 `LTG_TOOL_render_qa.py` — **v2.1.0 C47** (Kai). warm_pixel_pct primary gate for REAL_INTERIOR.
+`LTG_TOOL_depth_temp_lint.py` — **v1.1.0 C48** (Lee). Per-asset band override config.
 `LTG_TOOL_color_verify.py` — **v3.0.0 C47** (Jordan). CORRUPT_AMBER detection mode.
-`LTG_TOOL_warm_pixel_metric.py` — **NEW C47** (Sam). Warm-pixel-percentage metric.
+`LTG_TOOL_warm_pixel_metric.py` — **C47** (Sam). Warm-pixel-percentage metric.
+`LTG_TOOL_composite_warmth_score.py` — **NEW C48** (Sam). 70% warm-pixel + 30% hue-split composite.
+`LTG_TOOL_sightline_validator.py` — **NEW C48** (Jordan). Pixel-based gaze direction detection.
+`LTG_TOOL_glow_profile_extract.py` — **v2.0.0 C48** (Rin). Anisotropic Gaussian fitting.
+`LTG_TOOL_draw_shoulder_arm.py` — **NEW C48** (Ryo). Shared shoulder+arm helper, 3 clothing modes.
+`LTG_TOOL_visual_blank_test.py` — **NEW C48** (Diego). Text-strip + 6-check blank test.
+`LTG_TOOL_object_detect_qa.py` — **NEW C48** (Kai). Torchvision pretrained QA.
+`LTG_TOOL_face_metric_calibrate.py` — **C48 re-run** (Kai). 14 reference photos, consistent with C46.
+`LTG_TOOL_visual_hook_audit.py` — **NEW C48** (Maya). Thumbnail-scale readability check.
+`depth_temp_band_overrides.json` — **NEW C48** (Lee). Per-asset FG/BG band positions.
 `LTG_TOOL_styleframe_discovery.py` — **v007 C47** (Jordan). Sight-line vector fix.
-`LTG_TOOL_styleframe_glitch_layer_showcase.py` — **v1.0.0 NEW C47** (Rin). GL Showcase frame.
-`LTG_TOOL_scanline_pitch_extract.py` — **v1.0.0 NEW C47** (Rin). Autocorrelation scanline pitch.
+`LTG_TOOL_styleframe_glitch_layer_showcase.py` — **v1.0.0 C47** (Rin). GL Showcase frame.
+`LTG_TOOL_scanline_pitch_extract.py` — **v1.0.0 C47** (Rin). Autocorrelation scanline pitch.
 `LTG_TOOL_miri_motion_v002.py` — **v003 content C47** (Ryo). Full rework.
 `LTG_TOOL_cosmo_expression_sheet.py` — **v008 C47** (Maya). Visual hook + shoulder.
 `LTG_TOOL_cosmo_turnaround.py` — **v003 C47** (Maya). Visual hook propagated.
@@ -279,8 +288,11 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 `LTG_TOOL_sb_cold_open_P18.py` — **REBUILT C47** (Diego). 3-tier visual time arc.
 `LTG_TOOL_sb_cold_open_P20.py` / `P21.py` — **NEW C47** (Diego). Cold open continuation.
 `LTG_TOOL_prop_continuity_tracker.py` — **NEW C47** (Diego). 5 props tracked.
-`LTG_TOOL_pretrained_model_detect.py` — **v1.0.0 NEW C47** (Kai). 8 checks.
-`LTG_TOOL_doc_governance_audit.py` — **v1.0.0 NEW C47** (Morgan). 161 files scanned.
+`LTG_TOOL_pretrained_model_detect.py` — **DEPRECATED C48** (Kai). Moved to deprecated/.
+`LTG_TOOL_doc_governance_audit.py` — **v1.0.0 C47** (Morgan). 161 files scanned.
+`LTG_TOOL_bg_grandma_kitchen.py` — **v008 C48** (Hana). Fridge/countertop/cabinet VP fixes.
+`LTG_TOOL_sb_cold_open_P22.py` / `P22a.py` — **NEW C48** (Diego). P22 ECU monitor + P22a MCU insert.
+`LTG_TOOL_sf_miri_luma_handoff.py` — **C48 updated** (Maya). Shoulder involvement applied.
 
 ## Shared Library (historical C44)
 `LTG_TOOL_character_face_test.py` — **C44** (Kai). `--char byte` live. Pixel-grid eyes, FG-B01/B02/B03.
@@ -317,4 +329,8 @@ Do NOT duplicate inbox content in agent prompts. Prompts = role context + startu
 - Ideabox: action → actioned/, reject → rejected/ after each cycle.
 - README.md: update after every work and critique cycle.
 - Slot filling: launch next agent immediately on completion. Never exceed 8 simultaneous.
-- C47 DONE. Next: C48 work cycle (1 more before Critique 19).
+- C48 DONE. Next: Critique 19.
+
+## C19 Critic Candidates
+Rotate away from C17/C18. C17: Jonas Feld, Amara Diallo, Leila Asgari, Petra Volkov, Marcus Webb, Eleanor Whitfield. C18: Takeshi Mori, Ingrid Solberg, Reinhardt Böhm, Chiara Ferrara, Zoe Park.
+**C19 picks:** Daisuke Kobayashi, Priya Nair, Sven Halvorsen, Amara Diallo, Taraji Coleman (audience/educator).

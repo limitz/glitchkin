@@ -88,11 +88,14 @@ Comedy-adventure. Core: loneliness of perceiving differently, vindication throug
 - C47 cont'd: When updating a delivery manifest after a long gap (21 cycles), the most load-bearing changes are: (1) resolution format (1920x1080 vs 1280x720 — the pipeline moved and the manifest did not), (2) file count (undercounts erode trust in the manifest as a completeness guarantee), (3) character count (Glitch added to lineup but manifest still said "4 characters"), (4) style frame count (3 vs 7 — the pitch deck sequence recommendation changes entirely with 7 frames). Always update the lead-with sequence recommendation when the style frame count changes.
 
 ## What Exists (Story) — Updates
-- **Cold open gap log**: `output/production/story/cold_open_gap_log.md` — C47. Persistent tracker. 17 standalone panels confirmed (P18/P19 delivered C46). P13/P20/P21 IN PROGRESS (Diego C47). 12 gaps remaining, 15 in priority queue. Gap #17 (Byte briefing position) flagged URGENT — P20 in progress needs this decision. Message sent to Alex.
-- Story bible v005: CONFIRMED CURRENT as of C47. No residuals.
-- **Staging decision register**: `output/production/staging_decision_register.md` — C47. NEW. Indexes all staging decisions C34-C47. 2 open staging questions documented.
-- **Doc governance tracker**: `output/production/doc_governance_tracker.md` — C47. NEW. Full audit of output/production/ and docs/. 8 HIGH/MEDIUM staleness flags. production_bible.md, pitch_delivery_manifest.md, pitch_package_index.md are the worst offenders.
-- **Pitch delivery manifest**: `output/production/pitch_delivery_manifest.md` — C47 UPDATE. Reconciled from C26: added SF04-SF06, GL Showcase, motion specs, Glitch in lineup, living room ENV, P03-P19 panels, corrected resolution to 1280x720, file count ~50.
+- **Cold open gap log**: `output/production/story/cold_open_gap_log.md` — C48. Persistent tracker. 18 standalone panels on disk (P13/P20/P21 delivered C47). Byte position gap RESOLVED C48. 11 gaps remaining, 14 in priority queue. P22/P22a are Diego's C48 priority (#1 and #6 in queue).
+- Story bible v005: CONFIRMED CURRENT as of C48. One pending addition: Cosmo bridge tape (C47 Maya Santos visual hook). Not urgent — plan v006 by C50 if no other changes accrue. Message sent to Alex.
+- **Staging decision register**: `output/production/staging_decision_register.md` — C48. Byte position resolved, P20/P21 entries added, 1 open question remains (P15-P16 transition).
+- **Doc governance tracker**: `output/production/doc_governance_tracker.md` — C48. 2 of 3 HIGH flags addressed C47 (pitch_delivery_manifest, pitch_package_index). production_bible.md remains worst offender (47 cycles stale). 5 MEDIUM flags unchanged.
+- **Pitch delivery manifest**: `output/production/pitch_delivery_manifest.md` — C47 UPDATE. Reconciled. Now CURRENT per governance tracker.
+
+- C48: When checking whether C47 deliverables need story bible incorporation, the key question is "does this change what someone reading the bible would write or draw?" Visual hooks (bridge tape) yes — they change the character description. Production rules (shoulder involvement) no — they live in image-rules.md. Staging decisions no — they live in the staging register. New panels no — they are storyboard assets, not narrative canon. GL Showcase no — it is a pitch frame, not a story element.
+- C48 cont'd: Design-to-bible sync is a gap. Currently discovering character design changes by searching tool changelogs is fragile. Submitted ideabox idea for a lightweight intake checklist from Maya/character artists.
 
 ## Startup Sequence
 1. Read ROLE.md (if exists)

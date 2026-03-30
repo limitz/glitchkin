@@ -45,7 +45,7 @@ Usage:
   --debug            Save annotated debug PNGs for each detected face
 
 Author: Kai Nakamura — Technical Art Engineer
-Cycle: 46 (2026-03-30)
+Cycle: 46 (created), 48 (re-calibrated with 14 face reference photos)
 """
 
 import os

@@ -62,12 +62,21 @@ Usage (module API — for precritique_qa integration):
 
 Author: Lee Tanaka (Character Staging & Visual Acting Specialist)
 Created: Cycle 46 — 2026-03-30
-Version: 1.0.0
+Version: 1.1.0
+
+Version history:
+    1.1.0 (C48) — Per-asset band override config support.
+                   load_band_overrides() reads depth_temp_band_overrides.json.
+                   lint_depth_temperature() accepts overrides dict.
+                   run_depth_temp_check() accepts overrides dict, applies per-basename.
+                   SF04/SF05 false positives resolve to PASS with correct band positions.
+    1.0.0 (C46) — Initial release.
 """
 
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import sys
 from pathlib import Path
@@ -137,8 +146,63 @@ BRIGHT_CUTOFF = 700  # R+G+B > 700 = near-white, skip
 # Glitch Layer world types — exempt from this rule
 EXEMPT_WORLD_TYPES = {"GLITCH", "OTHER_SIDE"}
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __author__ = "Lee Tanaka"
+
+# Per-asset band override config path
+BAND_OVERRIDES_JSON = TOOLS_DIR / "depth_temp_band_overrides.json"
+
+
+# ---------------------------------------------------------------------------
+# Band override config loader
+# ---------------------------------------------------------------------------
+
+_band_overrides_cache = None
+
+
+def load_band_overrides(
+    config_path: Optional[str] = None,
+) -> Dict[str, Dict]:
+    """
+    Load per-asset band position overrides from JSON config.
+
+    The config file maps PNG basenames to override dicts with keys:
+        fg_y_frac, bg_y_frac, band_h (optional), threshold (optional).
+
+    Args:
+        config_path: Path to JSON file. None = use default
+                     (depth_temp_band_overrides.json in tools dir).
+
+    Returns:
+        Dict mapping basename -> override dict. Empty dict if file absent.
+    """
+    global _band_overrides_cache
+    if config_path is None and _band_overrides_cache is not None:
+        return _band_overrides_cache
+
+    p = Path(config_path) if config_path else BAND_OVERRIDES_JSON
+    if not p.is_file():
+        if config_path is None:
+            _band_overrides_cache = {}
+        return {}
+
+    try:
+        with open(str(p), "r", encoding="utf-8") as f:
+            data = json.load(f)
+        overrides = data.get("overrides", {})
+        result = {}
+        for basename, entry in overrides.items():
+            result[basename] = {
+                k: v for k, v in entry.items()
+                if k in ("fg_y_frac", "bg_y_frac", "band_h", "threshold", "label")
+            }
+        if config_path is None:
+            _band_overrides_cache = result
+        return result
+    except Exception:
+        if config_path is None:
+            _band_overrides_cache = {}
+        return {}
 
 
 # ---------------------------------------------------------------------------
@@ -232,6 +296,7 @@ def lint_depth_temperature(
     band_h: int = DEFAULT_BAND_H,
     threshold: Optional[float] = None,
     world_type_override: Optional[str] = None,
+    overrides: Optional[Dict[str, Dict]] = None,
 ) -> Dict:
     """
     Lint a single image for Depth Temperature Rule compliance.
@@ -243,6 +308,9 @@ def lint_depth_temperature(
         band_h: Height of the sampling band in pixels.
         threshold: Warm/cool separation threshold. None = auto from world_type_infer.
         world_type_override: Force a world type (e.g. "GLITCH" to force SKIP).
+        overrides: Per-asset band override dict (basename -> {fg_y_frac, bg_y_frac, ...}).
+                   If None, loads from depth_temp_band_overrides.json automatically.
+                   Pass an empty dict {} to disable override loading.
 
     Returns:
         Dict with keys: overall, fg_warmth, bg_warmth, separation, threshold,
@@ -250,6 +318,17 @@ def lint_depth_temperature(
     """
     path_str = str(image_path)
     basename = os.path.basename(path_str)
+
+    # Apply per-asset band overrides (from JSON config or caller)
+    if overrides is None:
+        overrides = load_band_overrides()
+    asset_override = overrides.get(basename, {})
+    if asset_override:
+        fg_y_frac = asset_override.get("fg_y_frac", fg_y_frac)
+        bg_y_frac = asset_override.get("bg_y_frac", bg_y_frac)
+        band_h = asset_override.get("band_h", band_h)
+        if threshold is None and "threshold" in asset_override:
+            threshold = asset_override["threshold"]
 
     # Check file exists
     if not os.path.isfile(path_str):
@@ -376,6 +455,9 @@ def lint_depth_temperature(
         "message": msg,
         "path": path_str,
         "world_type": world_type,
+        "fg_y_frac": fg_y_frac,
+        "bg_y_frac": bg_y_frac,
+        "band_override": bool(asset_override),
     }
 
 
@@ -389,9 +471,18 @@ def run_depth_temp_check(
     bg_y_frac: float = DEFAULT_BG_Y_FRAC,
     band_h: int = DEFAULT_BAND_H,
     threshold: Optional[float] = None,
+    overrides: Optional[Dict[str, Dict]] = None,
 ) -> Dict:
     """
     Run depth temperature lint on a list of image paths.
+
+    Args:
+        image_paths: List of paths to lint.
+        fg_y_frac: Default FG Y fraction (overridden per-asset if in overrides).
+        bg_y_frac: Default BG Y fraction (overridden per-asset if in overrides).
+        band_h: Default band height (overridden per-asset if in overrides).
+        threshold: Default threshold (overridden per-asset if in overrides).
+        overrides: Per-asset band override dict. None = load from JSON config.
 
     Returns a dict matching precritique_qa section conventions:
         {
@@ -403,6 +494,10 @@ def run_depth_temp_check(
             "per_file": [result_dict, ...],
         }
     """
+    # Load overrides once for the batch
+    if overrides is None:
+        overrides = load_band_overrides()
+
     pass_count = 0
     warn_count = 0
     fail_count = 0
@@ -416,6 +511,7 @@ def run_depth_temp_check(
             bg_y_frac=bg_y_frac,
             band_h=band_h,
             threshold=threshold,
+            overrides=overrides,
         )
         per_file.append(res)
         grade = res["overall"]

@@ -617,6 +617,91 @@ All three P1 priorities complete.
 - **Prop tracker value**: Tracking CRT state progression + confetti density arc
   across panels catches continuity errors before they get drawn wrong.
 
+## Cycle 48 — Delivered
+
+### Task 1 — P22 Panel (ECU Monitor — Glitchkin Pressing)
+- `LTG_TOOL_sb_cold_open_P22.py` (NEW) → `output/storyboards/panels/LTG_SB_cold_open_P22.png`
+- ECU — Single CRT monitor fills the frame. CRT bezel = frame edges. We are RIGHT at the glass.
+- 4 distinct Glitchkin pressing against glass from inside:
+  (1) Center-right: face pressed flat, eager, both palms on glass
+  (2) Upper-left: hand only, fingers splayed, strongest distortion rings
+  (3) Lower-center: face sideways, squished, one cracked eye (HOT_MAGENTA scar)
+  (4) Center-left: smaller, further back, both hands no face (shy/hidden)
+- Screen cracks radiating from GK1 + GK2 press points (white fracture lines).
+- CRT static texture, scanlines, phosphor bands (screen under stress).
+- 18 pixel confetti inside screen space. Arc: TENSE / ESCALATION (HOT_MAGENTA border).
+- 800x600px. Three-tier caption bar.
+
+### Task 2 — P22a Panel (MCU Insert — Byte on Shoulder)
+- `LTG_TOOL_sb_cold_open_P22a.py` (NEW) → `output/storyboards/panels/LTG_SB_cold_open_P22a.png`
+- MCU INSERT — Byte accidentally lands on Luma's right shoulder mid-chaos.
+- Byte at Luma's level (approved C48 — floated down during P21). NOT chosen — accident.
+- Luma: 3/4 view facing camera-left. ALARMED expression. Hoodie fills 60% of frame.
+  Right shoulder RAISED (shoulder involvement rule — tense, bracing).
+  NOT looking at Byte — she hasn't registered him yet. Looking at monitors.
+- Byte: tiny on shoulder (body_h ~15% of DRAW_H). STARTLED — wide cracked eye,
+  processing dots, small O mouth. Rigid body, arms pulled in. Looking AWAY from Luma.
+- Contact zone: 6 ELEC_CYAN pixel artifacts bleed into LUMA_HOODIE orange.
+  FIRST DIGITAL-ON-ANALOG CONTACT. Annotated with callout.
+- Desaturation bleed at contact point. Defocused chaos background.
+- 800x600px. Arc: TENSE / COMEDY (HOT_MAGENTA border).
+
+### Task 3 — Visual Blank Test Checklist Tool
+- `LTG_TOOL_visual_blank_test.py` (NEW) → `output/tools/`
+- Strips text from storyboard panels (removes caption bar, masks annotation-colored pixels).
+- Runs 6 checks, each outputting PASS / WARN / FAIL:
+  - C1: Silhouette contrast (FG/BG luma delta OR center std — dual method for ECU panels)
+  - C2: Multi-zone composition (quadrant variance)
+  - C3: Focal point concentration (energy distribution)
+  - C4: Character presence (edge density — central + upper bands for MCU panels)
+  - C5: Depth cues (warm/cool temperature split)
+  - C6: Arc color border (saturated outer pixels)
+- CLI: `--panel P22`, `--file <path>`, `--all`, `--save` (saves text-stripped PNG)
+- Text-stripped PNGs saved to `output/production/blank_tests/`
+- P22 result: WARN (C2 low quadrant variance — expected for ECU screen panel)
+- P22a result: WARN (C4 low edge density — expected for MCU costume panel)
+
+### PANEL_MAP updates
+- P22: PLANNED → EXISTS
+- P22a: PLANNED → EXISTS
+- Next priorities: P25 (title card), P02/P04/P05 (standalone renders of contact-sheet-only panels)
+
+### Inbox archived
+- `20260330_2359_lee_p14_p15_staging_review.md` (Lee Tanaka — P14/P15 fixes done in batch 1)
+- `20260330_2400_c48_brief.md` (Producer C48 brief)
+
+### Ideabox submitted
+- `20260330_diego_vargas_blank_test_panel_type_profiles.md`
+  — Panel-type profiles for blank test tool (ECU_SCREEN, MCU_CHARACTER, etc.)
+
+### Lessons Learned — Cycle 48
+- **ECU screen panel (P22)**: Bezel_w = 28px fills frame edges. Screen interior is the
+  shot. Glitchkin pressed against glass need BRIGHTER fills (lerp 0.25-0.55 toward ELEC_CYAN)
+  against a DARKER screen base (4, 8, 12) for contrast. Standard FG/BG luminance checks
+  will flag low delta — internal contrast (std dev) is the right metric for screen interiors.
+- **Multiple Glitchkin individuality**: Each one needs a distinct expression AND posture
+  (eager/flat, hand-only/splayed, squished/cracked, shy/hidden). At ECU scale, faces need
+  at least face_r=28 for expression details to read. Smaller Glitchkin (14px) work as
+  background shapes with hands only.
+- **Screen crack rendering**: Branching fracture lines via angle-walk with sub-branches.
+  White fill + gray sub-branches reads as glass stress. 5 branches at 80px length gives
+  coverage without overwhelming the Glitchkin beneath.
+- **MCU shoulder-perch staging**: Byte body_h ~15% of DRAW_H gives correct tiny-on-shoulder
+  scale. He must look AWAY from Luma (not comfortable). Arms pulled in = rigid/caught.
+  Contact zone needs explicit pixel artifacts (6 ELEC_CYAN polygons) to show digital
+  marking analog. This is a KEY STORY BEAT — annotate it.
+- **Shoulder involvement rule (P22a)**: Right shoulder raised 16px (hoodie_top - 20 vs
+  hoodie_top - 4 base). This sells "tense, bracing" without words.
+- **Blank test tool design**: Dual-method checks are essential for diverse panel types.
+  C1 uses FG/BG delta OR center std (whichever passes). C4 uses central OR upper band.
+  FAIL thresholds should be conservative (catch real problems); WARN for type-specific
+  characteristics. Edge density < 1.5 = genuine FAIL; 1.5-4.0 = WARN (check visually).
+- **Annotation color masking (blank test)**: tolerance=35 in RGB Euclidean distance
+  catches text without hitting character skin/hair tones. The 5px box blur replacement
+  preserves local luminance for the checks to work on.
+- **Byte position arc (approved C48)**: CRT through P19-P20 → Luma's level P21 → at
+  level for P22+. Build all future panels with Byte at Luma's level.
+
 ## Startup Sequence
 1. Read ROLE.md if present
 2. Read this MEMORY.md

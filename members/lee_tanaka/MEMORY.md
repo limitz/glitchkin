@@ -456,3 +456,22 @@ Read inbox for directive. Two tasks: (1) SF02 staging brief for Luma interiority
 - **Horizontal warm/cool splits (left=warm, right=cool) produce low vertical depth-temp separation.** SF06 has a deliberate warm/cool horizontal split (Miri left in lamp zone, Luma right in CRT zone). The vertical band sampling reads this as "weak separation" (11.0) because both tiers contain both warm and cool zones. This is a valid different use of the warm/cool grammar — horizontal thematic, not vertical depth. The tool correctly reports it as WARN, not FAIL.
 - **Shoulder mechanics is a silhouette problem, not an anatomy problem.** At our stylization level (3.2-3.5 heads), the shoulder shift is a 3-6px asymmetry on the torso outline. It is invisible as anatomical detail but clearly visible as silhouette shape change — which is exactly where our differentiation crisis lives.
 - **Staging reviews with specific pixel-level fixes are more useful than general notes.** "Add shoulder engagement" means nothing to a generator. "`shoulder_x += HU * 0.06` when arm extends" is actionable in one edit.
+
+## Cycle 48 Milestone
+- **Per-asset depth_temp_lint band override config BUILT + INTEGRATED:**
+  - `output/tools/depth_temp_band_overrides.json` v1.0.0 — JSON config mapping PNG basenames to custom FG/BG band Y-fraction positions.
+  - `LTG_TOOL_depth_temp_lint.py` v1.1.0 — `load_band_overrides()` API, auto-loads config. `lint_depth_temperature()` and `run_depth_temp_check()` accept `overrides` param. Result dict includes `band_override`, `fg_y_frac`, `bg_y_frac`.
+  - `LTG_TOOL_precritique_qa.py` v2.17.0 — Section 12 docstring updated, report shows band override info when used, version attribution updated.
+  - **SF04 Resolution**: override fg=0.55, bg=0.85. Was FAIL (sep=-11.2), now PASS (sep=28.6).
+  - **SF05 The Passing**: override fg=0.40, bg=0.85. Was FAIL (sep=-10.3), now PASS (sep=116.1).
+  - No regressions: Lineup PASS (28.8), SF06 WARN (10.5), SF02 WARN (1.1), COVETOUS SKIP — all unchanged.
+- **README updated:** depth_temp_lint entry updated to v1.1.0, new entry for depth_temp_band_overrides.json.
+- **Self-test:** All 5 synthetic tests PASS.
+- **Ideabox:** `20260330_lee_tanaka_depth_temp_auto_band_discovery.md`
+- **Reported to Alex Chen** via inbox
+- **Inbox archived:** C48 brief
+
+## Cycle 48 Lessons
+- **Band position calibration requires visual inspection of the composition.** The warmth-by-Y-fraction scan (30%-95% in 5% steps) reveals the warm/cool gradient structure of each scene. SF04 has a warm-to-cool top-to-bottom gradient; SF05 has warm characters above a cool counter/floor. Neither matches the lineup's 78/70 geometry.
+- **Override configs are better than per-tool heuristics.** An auto-detection algorithm would need to find characters in the image (expensive, fragile). A JSON config with per-asset overrides is simple, explicit, version-controlled, and can be updated by any team member without touching Python code.
+- **False positives erode trust in the QA pipeline.** Two persistent FAILs that the team knows are wrong cause everyone to ignore the depth_temp section. Fixing false positives is as important as catching real failures.

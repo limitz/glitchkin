@@ -33,9 +33,10 @@ Tools chained (in order):
      LTG_TOOL_uv_purple_linter.run_glitch_layer_dominance_check(). Checks UV_PURPLE + ELEC_CYAN
      combined ≥ 20% non-black pixels (FAIL < 10%, WARN 10-19%). Also checks warm-hue
      contamination < 5% total pixels (WARN if ≥ 5%). Runs on registered GLITCH_LAYER_PNGS.
- 12. Depth Temperature Lint (scored) — warm=FG / cool=BG depth grammar (Lee Tanaka C47)
+ 12. Depth Temperature Lint (scored) — warm=FG / cool=BG depth grammar (Lee Tanaka C48)
      LTG_TOOL_depth_temp_lint.run_depth_temp_check(). Validates Depth Temperature Rule
-     (docs/image-rules.md, codified C45). Samples FG (78%) and BG (70%) tier bands.
+     (docs/image-rules.md, codified C45). Default bands: FG (78%) / BG (70%).
+     Per-asset overrides loaded from depth_temp_band_overrides.json (C48).
      PASS: separation >= threshold. WARN: correct direction, insufficient separation.
      FAIL: inverted. SKIP: GL exempt. Runs on registered DEPTH_TEMP_PNGS.
  13. Warm Pixel Percentage (scored) — world-type warm/cool pixel classification (Kai Nakamura C48)
@@ -61,6 +62,13 @@ Version: 2.14.0 (C45 Rin Yamamoto: LTG_TOOL_uv_purple_linter v1.1.0 GLITCH_DARK_
                COVETOUS assets previously FAIL (0.6% / 0.2% ΔE-match) now PASS via hue-angle
                matching (96.7% / 98.9% UV_PURPLE hue family h° 255°–325°).
                No change to ENV asset handling — glitchlayer_frame WARNs remain.)
+Version: 2.17.0 (C48 Lee Tanaka: Section 12 per-asset band override config.
+               depth_temp_band_overrides.json loaded by LTG_TOOL_depth_temp_lint v1.1.0.
+               SF04 (fg=0.55, bg=0.85) and SF05 (fg=0.40, bg=0.85) false FAILs now PASS.
+               run_depth_temp_lint() unchanged — overrides auto-loaded by lint tool.)
+Version: 2.16.1 (C48 Rin Yamamoto: GLITCH_LAYER_PNGS registry extended with
+               LTG_COLOR_styleframe_glitch_layer_showcase.png (GL Showcase, Rin C47).
+               Now 7 registered GL assets for UV_PURPLE Dominance Lint Section 11.)
 Version: 2.16.0 (C48 Kai Nakamura: Section 13 Warm Pixel Percentage added.
                LTG_TOOL_warm_pixel_metric.measure_warm_pixel_percentage() +
                evaluate_threshold() on WARM_PIXEL_PNGS registry. Each asset has
@@ -445,6 +453,7 @@ GLITCH_LAYER_PNGS = [
     # Glitch Layer style frames
     SF_DIR  / "LTG_COLOR_sf_covetous_glitch.png",
     SF_DIR  / "LTG_SF_covetous_glitch_v001.png",
+    SF_DIR  / "LTG_COLOR_styleframe_glitch_layer_showcase.png",  # GL Showcase (Rin C47)
     # Glitch Layer environment backgrounds
     ENV_DIR / "LTG_ENV_glitchlayer_frame.png",
     ENV_DIR / "LTG_ENV_glitchlayer_encounter.png",
@@ -1498,6 +1507,97 @@ def run_depth_temp_lint() -> dict:
     return result
 
 
+def run_warm_pixel_lint() -> dict:
+    """
+    Section 13 — Warm Pixel Percentage (Kai Nakamura, Cycle 48).
+
+    Runs LTG_TOOL_warm_pixel_metric.measure_warm_pixel_percentage() +
+    evaluate_threshold() on each PNG registered in WARM_PIXEL_PNGS.
+    Each asset carries a world_type tag used for threshold lookup.
+
+    Returns:
+        {
+            "overall"  : "PASS" | "WARN" | "FAIL",
+            "pass"     : int,
+            "warn"     : int,
+            "fail"     : int,
+            "skip"     : int,
+            "per_file" : list of per-file result dicts
+        }
+    """
+    wpm = _load_warm_pixel_metric()
+
+    if wpm is None:
+        return {
+            "overall":  "WARN",
+            "pass":     0,
+            "warn":     1,
+            "fail":     0,
+            "skip":     0,
+            "per_file": [],
+            "error":    "LTG_TOOL_warm_pixel_metric could not be loaded",
+        }
+
+    pass_count = 0
+    warn_count = 0
+    fail_count = 0
+    skip_count = 0
+    per_file = []
+
+    for label, img_path, world_type in WARM_PIXEL_PNGS:
+        entry = {"label": label, "path": str(img_path), "world_type": world_type}
+
+        if not img_path.exists():
+            entry["overall"] = "SKIP"
+            entry["message"] = "File not found"
+            skip_count += 1
+            per_file.append(entry)
+            continue
+
+        try:
+            from PIL import Image
+            img = Image.open(str(img_path))
+            measurement = wpm.measure_warm_pixel_percentage(img)
+            warm_pct = measurement["warm_pct"]
+            evaluation = wpm.evaluate_threshold(warm_pct, world_type)
+
+            entry["warm_pct"] = warm_pct
+            entry["cool_pct"] = measurement["cool_pct"]
+            entry["chromatic_warm_pct"] = measurement.get("chromatic_warm_pct", 0.0)
+            entry["passes"] = evaluation["passes"]
+            entry["verdict"] = evaluation["verdict"]
+            entry["explanation"] = evaluation["explanation"]
+
+            if evaluation["passes"]:
+                entry["overall"] = "PASS"
+                pass_count += 1
+            else:
+                entry["overall"] = "FAIL"
+                fail_count += 1
+        except Exception as exc:
+            entry["overall"] = "WARN"
+            entry["error"] = str(exc)
+            warn_count += 1
+
+        per_file.append(entry)
+
+    if fail_count > 0:
+        overall = "FAIL"
+    elif warn_count > 0:
+        overall = "WARN"
+    else:
+        overall = "PASS"
+
+    return {
+        "overall":  overall,
+        "pass":     pass_count,
+        "warn":     warn_count,
+        "fail":     fail_count,
+        "skip":     skip_count,
+        "per_file": per_file,
+    }
+
+
 # ---------------------------------------------------------------------------
 # Report builder
 # ---------------------------------------------------------------------------
@@ -1515,6 +1615,7 @@ def build_report(
     alpha_blend_res: dict,
     uv_purple_res: dict,
     depth_temp_res: dict,
+    warm_pixel_res: dict,
     delta: dict,
     run_ts: str,
 ) -> str:
@@ -1549,11 +1650,12 @@ def build_report(
         glitch_lint_res["overall"],
         readme_sync_res["overall"],
         motion_spec_res["overall"],
+        warm_pixel_res["overall"],
     )
 
     _all_sections = [render_qa_res, color_verify_res, proportion_res,
                      stub_lint_res, palette_lint_res, glitch_lint_res,
-                     readme_sync_res, motion_spec_res]
+                     readme_sync_res, motion_spec_res, warm_pixel_res]
     total_pass  = sum(r["pass"] for r in _all_sections)
     total_warn  = sum(r["warn"] for r in _all_sections)
     total_fail  = sum(r["fail"] for r in _all_sections)
@@ -1881,6 +1983,12 @@ def build_report(
             wt = file_res.get("world_type", "")
             if wt:
                 lines.append(f"  - World type: {wt}")
+            if file_res.get("band_override"):
+                lines.append(
+                    f"  - Band override: FG={file_res.get('fg_y_frac', '?')} "
+                    f"BG={file_res.get('bg_y_frac', '?')} "
+                    f"(from depth_temp_band_overrides.json)"
+                )
         lines.append("")
 
     if not depth_temp_res.get("per_file"):
@@ -1889,9 +1997,59 @@ def build_report(
 
     lines.append("---")
     lines.append("")
+
+    # Section 13: Warm Pixel Percentage
+    wp_badge = _grade_line(warm_pixel_res["overall"])
+    lines.append(f"## 13. Warm Pixel Percentage — World-Type Threshold Validation — {wp_badge}")
+    lines.append("")
     lines.append(
-        "*Generated by LTG_TOOL_precritique_qa.py v2.15.0 — "
-        "Lee Tanaka (C47: Section 12 Depth Temperature Lint added); "
+        "_Validates warm-pixel-percentage against world-type thresholds using "
+        "Sam Kowalski's LTG_TOOL_warm_pixel_metric (C47). "
+        "REAL_INTERIOR: warm_pct >= 35%. REAL_STORM: warm_pct >= 5%. "
+        "GLITCH: warm_pct <= 15%. OTHER_SIDE: warm_pct <= 5%._"
+    )
+    lines.append("")
+    lines.append(
+        f"PASS: {warm_pixel_res['pass']}  "
+        f"WARN: {warm_pixel_res['warn']}  "
+        f"FAIL: {warm_pixel_res['fail']}  "
+        f"Skip: {warm_pixel_res.get('skip', 0)}"
+    )
+    lines.append("")
+
+    if warm_pixel_res.get("error"):
+        lines.append(f"  - *ERROR — {warm_pixel_res['error']}*")
+        lines.append("")
+
+    for file_res in warm_pixel_res.get("per_file", []):
+        f_badge = _grade_line(file_res["overall"])
+        label = file_res.get("label", os.path.basename(file_res.get("path", "")))
+        lines.append(f"### {label} — {f_badge}")
+        if file_res["overall"] == "SKIP":
+            lines.append(f"  - *SKIP — {file_res.get('message', '')}*")
+        elif file_res.get("error"):
+            lines.append(f"  - *ERROR — {file_res['error']}*")
+        else:
+            lines.append(
+                f"  - warm_pct: {file_res['warm_pct']:.1f}%  "
+                f"cool_pct: {file_res['cool_pct']:.1f}%  "
+                f"chromatic_warm_pct: {file_res.get('chromatic_warm_pct', 0):.1f}%"
+            )
+            lines.append(f"  - World type: {file_res['world_type']}  verdict: {file_res['verdict']}")
+            if file_res.get("explanation"):
+                lines.append(f"  - {file_res['explanation']}")
+        lines.append("")
+
+    if not warm_pixel_res.get("per_file"):
+        lines.append("_No warm pixel assets registered._")
+        lines.append("")
+
+    lines.append("---")
+    lines.append("")
+    lines.append(
+        "*Generated by LTG_TOOL_precritique_qa.py v2.17.0 — "
+        "Lee Tanaka (C48: Section 12 per-asset band overrides); "
+        "Kai Nakamura (C48: Section 13 Warm Pixel Percentage added); "
         "Rin Yamamoto (C44: Section 11 UV_PURPLE Dominance Lint); "
         "Ryo Hasegawa (C46: motion spec dark-sheet fix, C45: glitch motion); "
         "Rin Yamamoto (C43: SF04 FILL_LIGHT_ASSETS path fix)*"
@@ -1916,31 +2074,31 @@ def main():
     else:
         print("[precritique_qa] No baseline found — this run will establish the baseline.")
 
-    print("[1/12] Running Render QA on pitch PNGs...")
+    print("[1/13] Running Render QA on pitch PNGs...")
     render_qa_res = run_render_qa()
     print(f"      → {render_qa_res['overall']} (PASS={render_qa_res['pass']}, WARN={render_qa_res['warn']}, FAIL={render_qa_res['fail']}, MISSING={len(render_qa_res['missing'])})")
 
-    print("[2/12] Running Color Verify on style frames...")
+    print("[2/13] Running Color Verify on style frames...")
     color_verify_res = run_color_verify()
     print(f"      → {color_verify_res['overall']} (PASS={color_verify_res['pass']}, WARN={color_verify_res['warn']})")
 
-    print("[3/12] Running Proportion Verify on character turnarounds...")
+    print("[3/13] Running Proportion Verify on character turnarounds...")
     proportion_res = run_proportion_verify()
     print(f"      → {proportion_res['overall']} (PASS={proportion_res['pass']}, WARN={proportion_res['warn']}, FAIL={proportion_res['fail']})")
 
-    print("[4/12] Running Stub Linter on output/tools/...")
+    print("[4/13] Running Stub Linter on output/tools/...")
     stub_lint_res = run_stub_linter()
     print(f"      → {stub_lint_res['overall']} (PASS={stub_lint_res['pass']}, WARN={stub_lint_res['warn']}, ERROR={stub_lint_res['fail']})")
 
-    print("[5/12] Running Palette Warmth Lint on master_palette.md...")
+    print("[5/13] Running Palette Warmth Lint on master_palette.md...")
     palette_lint_res = run_palette_warmth_lint()
     print(f"      → {palette_lint_res['overall']} (checked={palette_lint_res['pass'] + palette_lint_res['warn']}, violations={palette_lint_res['warn']})")
 
-    print("[6/12] Running Glitch Spec Lint on generators...")
+    print("[6/13] Running Glitch Spec Lint on generators...")
     glitch_lint_res = run_glitch_spec_lint()
     print(f"      → {glitch_lint_res['overall']} (PASS={glitch_lint_res['pass']}, WARN={glitch_lint_res['warn']}, FAIL={glitch_lint_res['fail']}, SKIP={glitch_lint_res.get('skip',0)})")
 
-    print("[7/12] Running README Script Index Sync audit...")
+    print("[7/13] Running README Script Index Sync audit...")
     readme_sync_res = run_readme_sync()
     # Prominently report README WARN to console
     if readme_sync_res["warn"] > 0:
@@ -1948,11 +2106,11 @@ def main():
     else:
         print(f"      → {readme_sync_res['overall']} (OK={readme_sync_res['pass']}, UNLISTED/GHOST={readme_sync_res['warn']}, disk={readme_sync_res.get('disk_total','?')}, listed={readme_sync_res.get('listed_total','?')})")
 
-    print("[8/12] Running Motion Spec Lint on motion sheets...")
+    print("[8/13] Running Motion Spec Lint on motion sheets...")
     motion_spec_res = run_motion_spec_lint()
     print(f"      → {motion_spec_res['overall']} (PASS={motion_spec_res['pass']}, WARN={motion_spec_res['warn']}, FAIL={motion_spec_res['fail']}, MISSING={len(motion_spec_res['missing'])})")
 
-    print("[9/12] Running Arc-Diff Gate on contact sheet pairs...")
+    print("[9/13] Running Arc-Diff Gate on contact sheet pairs...")
     arc_diff_results = run_arc_diff_gate()
     for ad in arc_diff_results:
         sev = ad["severity"]
@@ -1962,17 +2120,21 @@ def main():
             msgs = "; ".join(m[:80] for m in ad.get("messages", [])[:2])
             print(f"      → {ad['label']}: {sev} — {msgs}")
 
-    print("[10/12] Running Alpha Blend Lint on fill-light assets...")
+    print("[10/13] Running Alpha Blend Lint on fill-light assets...")
     alpha_blend_res = run_alpha_blend_lint()
     print(f"      → {alpha_blend_res['overall']} (PASS={alpha_blend_res['pass']}, WARN={alpha_blend_res['warn']}, FAIL={alpha_blend_res['fail']}, SKIP={alpha_blend_res['skipped']})")
 
-    print("[11/12] Running UV_PURPLE Dominance Lint on Glitch Layer assets...")
+    print("[11/13] Running UV_PURPLE Dominance Lint on Glitch Layer assets...")
     uv_purple_res = run_uv_purple_lint()
     print(f"      → {uv_purple_res['overall']} (PASS={uv_purple_res['pass']}, WARN={uv_purple_res['warn']}, FAIL={uv_purple_res['fail']}, SKIP={uv_purple_res.get('skip',0)})")
 
-    print("[12/12] Running Depth Temperature Lint on multi-character assets...")
+    print("[12/13] Running Depth Temperature Lint on multi-character assets...")
     depth_temp_res = run_depth_temp_lint()
     print(f"      → {depth_temp_res['overall']} (PASS={depth_temp_res['pass']}, WARN={depth_temp_res['warn']}, FAIL={depth_temp_res['fail']}, SKIP={depth_temp_res.get('skip',0)})")
+
+    print("[13/13] Running Warm Pixel Percentage on world-typed assets...")
+    warm_pixel_res = run_warm_pixel_lint()
+    print(f"      → {warm_pixel_res['overall']} (PASS={warm_pixel_res['pass']}, WARN={warm_pixel_res['warn']}, FAIL={warm_pixel_res['fail']}, SKIP={warm_pixel_res.get('skip',0)})")
 
     # Build snapshot and compute delta
     current_snapshot = _make_snapshot(
@@ -2001,6 +2163,7 @@ def main():
         alpha_blend_res,
         uv_purple_res,
         depth_temp_res,
+        warm_pixel_res,
         delta,
         run_ts,
     )
@@ -2023,6 +2186,7 @@ def main():
         alpha_blend_res["overall"],
         uv_purple_res["overall"],
         depth_temp_res["overall"],
+        warm_pixel_res["overall"],
     )
 
     print(f"[precritique_qa] OVERALL: {overall}")

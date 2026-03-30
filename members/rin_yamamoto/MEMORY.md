@@ -1,5 +1,46 @@
 # Rin Yamamoto — MEMORY
 
+## C48 Completed Work
+- **P1 — Register GL Showcase in precritique_qa**
+  - `LTG_TOOL_precritique_qa.py` bumped v2.16.0 → v2.16.1
+  - Added `LTG_COLOR_styleframe_glitch_layer_showcase.png` to GLITCH_LAYER_PNGS list
+  - Now 7 registered GL assets for UV_PURPLE Dominance Lint Section 11
+  - No special subtype needed (standard GL scene, not COVETOUS dark scene)
+- **P2 — glow_profile_extract v2.0.0** (HIGH priority)
+  - `LTG_TOOL_glow_profile_extract.py` bumped v1.0.0 → v2.0.0
+  - **Anisotropic Gaussian**: separate σ_x (horizontal) and σ_y (vertical) fitting
+    - Axis-aligned strip sampling through screen center (10px half-width)
+    - New fields: sigma_x/y_px, sigma_x/y_frac, fwhm_x/y, amplitude_x/y,
+      baseline_x/y, r_squared_x/y, anisotropy_ratio
+  - **Cross-validation vs C46**: per-image delta%, aggregate verdict
+    (CONSISTENT <15%, MODERATE 15-30%, LARGE >30%)
+  - C48 run results:
+    - CRT refs (18): isotropic median sigma_frac=0.1165 (exact C46 match),
+      10 good fits (R²>0.5). Aniso: only 1 image with both R²_x and R²_y > 0.5
+    - Phosphor refs (7): median sigma_frac=0.1088 (-6.6%, CONSISTENT with C46)
+    - Aniso single good fit: σ_x/σ_y ≈ 4.2–5.2 (glow wider horizontally than vertically)
+  - Data: `output/production/crt_glow_profiles_c48.json`
+  - AVIF added to supported extensions
+  - Backward compatible — all v1.0.0 isotropic fields unchanged
+- `output/tools/README.md` updated — C48 header + 2 update entries
+- Inbox: archived C48 brief
+- Ideabox: submitted
+
+## C48 Lessons
+- Anisotropic glow fitting is data-hungry: most CRT reference photos don't have
+  clean enough axis-aligned falloff for both σ_x and σ_y to converge independently.
+  Only 1 of 18 CRT refs and 1 of 7 phosphor refs achieved R²>0.5 on both axes.
+  Multi-CRT wall photos and photos with non-centered screens defeat axis alignment.
+  For reliable aniso parameters, need reference set of single-CRT, centered, dark-room
+  photos with minimal room content. Current refs are compositionally diverse (good
+  for isotropic, noisy for anisotropic).
+- Isotropic fit remains very stable: C48 median sigma_frac=0.1165 is identical to
+  C46 recommended value. The C46 calibration is confirmed solid across re-runs.
+- Phosphor closeup refs run ~6.6% lower sigma_frac than general CRT scene refs.
+  Expected: closeup photos capture less room spill (smaller glow halo relative to
+  screen size). For generator calibration, use the general CRT scene sigma_frac
+  (0.1165) as it better represents viewing-distance glow perception.
+
 ## C47 Completed Work
 - **P1 — Glitch Layer Showcase Style Frame** (Zoe Park C47 feedback response)
   - `LTG_TOOL_styleframe_glitch_layer_showcase.py` (v1.0.0, new)

@@ -1,6 +1,6 @@
 # Face Metric Calibration Report
 
-**Generated:** 2026-03-30 15:12
+**Generated:** 2026-03-30 19:07
 **Tool:** LTG_TOOL_face_metric_calibrate.py
 **Cycle:** C46
 **Author:** Kai Nakamura
@@ -37,25 +37,25 @@ detectable faces are a reasonable proxy for that readability threshold.
 | `68643b9889b5783dd8572a3adbf9bf27.jpg` | 1 | 0 | Yes | No |
 | `6c4cd96778a96c36aaad9b0f55841866.jpg` | 1 | 1 | Yes | No |
 | `6c4cd96778a96c36aaad9b0f55841866.jpg` | 1 | 2 | No | Yes |
+| `ca1e4f8229c0d351bfddf787989e4260.jpg` | 1 | 0 | No | No |
+| `ca1e4f8229c0d351bfddf787989e4260.jpg` | 1 | 1 | No | No |
 | `ca1e4f8229c0d351bfddf787989e4260.jpg` | 1 | 1 | No | No |
 | `ca1e4f8229c0d351bfddf787989e4260.jpg` | 1 | 2 | No | Yes |
 | `ca1e4f8229c0d351bfddf787989e4260.jpg` | 1 | 2 | No | Yes |
 | `ca1e4f8229c0d351bfddf787989e4260.jpg` | 1 | 0 | No | No |
 | `ca1e4f8229c0d351bfddf787989e4260.jpg` | 1 | 0 | No | No |
-| `ca1e4f8229c0d351bfddf787989e4260.jpg` | 1 | 1 | No | No |
 | `ca1e4f8229c0d351bfddf787989e4260.jpg` | 1 | 0 | No | No |
-| `ca1e4f8229c0d351bfddf787989e4260.jpg` | 1 | 0 | No | No |
-| `istockphoto-984073990-612x612.jpg` | 1 | 0 | No | No |
 | `istockphoto-984073990-612x612.jpg` | 1 | 1 | No | No |
+| `istockphoto-984073990-612x612.jpg` | 1 | 0 | No | No |
 | `kelyan-visage-expressions.jpg` | 1 | 0 | No | No |
 | `kelyan-visage-expressions.jpg` | 1 | 0 | No | No |
 | `kelyan-visage-expressions.jpg` | 1 | 0 | No | No |
-| `kelyan-visage-expressions.jpg` | 1 | 1 | No | No |
 | `kelyan-visage-expressions.jpg` | 1 | 2 | No | Yes |
 | `kelyan-visage-expressions.jpg` | 1 | 1 | Yes | No |
-| `kelyan-visage-expressions.jpg` | 1 | 0 | Yes | No |
-| `kelyan-visage-expressions.jpg` | 1 | 0 | Yes | No |
 | `kelyan-visage-expressions.jpg` | 1 | 2 | Yes | Yes |
+| `kelyan-visage-expressions.jpg` | 1 | 1 | No | No |
+| `kelyan-visage-expressions.jpg` | 1 | 0 | Yes | No |
+| `kelyan-visage-expressions.jpg` | 1 | 0 | Yes | No |
 | `young-boy-character-various-facial-260nw` | 1 | 0 | No | No |
 | `young-boy-character-various-facial-260nw` | 1 | 0 | No | No |
 | `young-boy-character-various-facial-260nw` | 1 | 0 | No | No |
@@ -74,11 +74,11 @@ detectable faces are a reasonable proxy for that readability threshold.
 | `irsorvbnrurc1.jpeg` | 1 | 0 | No | No |
 | `irsorvbnrurc1.jpeg` | 1 | 0 | No | No |
 | `irsorvbnrurc1.jpeg` | 1 | 0 | No | No |
+| `irsorvbnrurc1.jpeg` | 1 | 0 | No | No |
+| `irsorvbnrurc1.jpeg` | 1 | 0 | No | No |
 | `irsorvbnrurc1.jpeg` | 1 | 0 | Yes | No |
 | `irsorvbnrurc1.jpeg` | 1 | 0 | No | No |
 | `irsorvbnrurc1.jpeg` | 1 | 0 | Yes | No |
-| `irsorvbnrurc1.jpeg` | 1 | 0 | No | No |
-| `irsorvbnrurc1.jpeg` | 1 | 0 | No | No |
 | `irsorvbnrurc1.jpeg` | 1 | 0 | No | No |
 
 ## 3. Measured Ratio Statistics

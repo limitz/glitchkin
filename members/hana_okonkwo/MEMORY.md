@@ -6,6 +6,39 @@ Comedy-adventure cartoon. Three worlds: Real World (warm/domestic), Glitch World
 ## Joined
 Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style frames).
 
+## Cycle 48 — Kitchen v008 Perspective Fix + Batch Path Migration Apply
+
+### Kitchen v008 — Furniture Perspective (C48 completion)
+- Batch 1 was killed mid-work. VP spec document was committed. Kitchen generator had partial perspective updates (table + chair done in docstring, fridge/countertop/cabinets claimed but not implemented).
+- Completed remaining P1 and P2 perspective items:
+  - **Fridge**: flat rectangle -> VP-convergent trapezoid front face + 5px side face on left (VP is left of fridge). Divider line, handles, and door panel insets interpolated within converging trapezoid.
+  - **Countertop**: flat rectangle -> VP-convergent trapezoid top surface + 4px front depth face. Far edge shrinks toward VP.
+  - **Upper cabinets** (3): added 3px side depth reveal on VP-facing (left) edge per cabinet.
+  - **Lower cabinets** (4): added 3px side depth reveal on leftmost cabinet only (others are behind countertop edge).
+  - Table and chair (already done in batch 1): VP-convergent trapezoids, leg convergence.
+- VP used: VP_X=512, VP_Y=273 (canonical Kitchen VP from vp_spec_config.json)
+- Convergence formula: `shrink = w * max(0, min(1, (VP_Y - obj_y) / H)) * factor` where factor is 0.12-0.15 depending on object type
+- QA C48: silhouette PASS, value PASS (min=21 max=228 range=207), warm/cool 33.1 PASS, line_weight outliers=2 PASS, grade WARN (color fidelity pre-existing only)
+- All QA metrics identical to v007 — perspective changes are geometry-only, no color/lighting impact
+
+### Batch Path Migration --apply (C48)
+- Ran `LTG_TOOL_batch_path_migrate.py --apply` on output/tools/
+- Only 1 SAFE_AUTO remaining (LTG_TOOL_visual_hook_audit.py line 292) — applied successfully
+- The original 85 SAFE_AUTO items from C47 were already migrated in intervening cycles
+- Remaining: 58 SAFE_MANUAL (docstrings/comments — cosmetic, no action), 79 NEEDS_REVIEW
+- NEEDS_REVIEW breakdown: ~65 are `def output_dir(...)` ImportError fallback definitions (correct pattern, not real issues), ~14 are genuine (string literals, BASE= assignments, subprocess paths)
+- Submitted ideabox idea to reclassify fallback patterns as SAFE_FALLBACK
+
+### VP Spec Migration Strategy (from furniture_vp_spec_c48.md)
+- C48: Kitchen DONE (table, countertop, fridge, chair, cabinets)
+- C49: Living Room v004 (sofa, bookcase, CRT — P1 items)
+- C50: Tech Den v008 + Classroom v005
+- C51: School Hallway v006 + Luma Study v002
+- C52-53: P2/P3 items across all rooms
+
+### Inbox
+- `20260330_2400_c48_brief.md` from Producer — archived after completing remaining tasks
+
 ## Cycle 47 — Millbrook Street v003 + Batch Path Migration Tool
 
 ### Millbrook Street v003 (P1 — 3-cycle value floor fix)
@@ -89,11 +122,10 @@ Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style fr
 - With: `ensure_dir(out_path.parent)`
 - PIL save() and str() both accept pathlib.Path — no cast needed
 
-## Existing Environments (as of C44)
-- Kitchen (Grandma's): **v007** — `LTG_ENV_grandma_kitchen.png`
-  - C44: Added paper_texture(alpha=16) + vignette(strength=45) + flatten_rgba_to_rgb() final passes
-  - QA C44: silhouette PASS, value PASS (min=21 max=228), warm/cool 32.9 PASS, line_weight outliers=0 PASS, grade WARN (color fidelity pre-existing only)
-  - line_weight FAIL resolved: border edge runs were the cause (1280px-wide at y=0/y=719); paper_texture breaks them
+## Existing Environments (as of C48)
+- Kitchen (Grandma's): **v008 (C48)** — `LTG_ENV_grandma_kitchen.png`
+  - C48: VP-convergent furniture (table, chair, countertop trapezoids + fridge side face + cabinet depth reveals)
+  - QA C48: silhouette PASS, value PASS (min=21 max=228 range=207), warm/cool 33.1 PASS, line_weight outliers=2 PASS, grade WARN (color fidelity pre-existing only)
 - Classroom: **v004 (C46)** — `LTG_ENV_classroom_bg.png`
   - C46: path migration to output_dir() (no visual changes)
   - C43: chalkboard chalk marks replaced with draw_pixel_text() math/binary content (Jonas C17 P1)

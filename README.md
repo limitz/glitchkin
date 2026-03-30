@@ -25,8 +25,8 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 
 ## Style Frames
 
-### SF01 — Discovery (v006)
-*C38: Sight-line fixed — Luma's gaze now locked on Byte, open-palm reach replaces pointing, forward lean. Right brow DOUBT VARIANT kink corrected.*
+### SF01 — Discovery (v007)
+*C47: Sight-line angular error 20.7°→2.2° PASS. Luma's gaze locked on Byte.*
 ![SF01 Discovery](output/color/style_frames/LTG_COLOR_styleframe_discovery.png)
 
 ### SF02 — Glitch Storm (v008 — native 1280×720)
@@ -45,16 +45,24 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 *C43: Luma SENSING UNEASE face added (face gate PASS). ACID_GREEN covet-vector sight-line. UV_PURPLE rim on Luma shoulder — she is in the Glitch Layer.*
 ![SF05 Covetous](output/color/style_frames/LTG_COLOR_sf_covetous_glitch.png)
 
+### SF06 — The Hand-Off (C48 shoulder update)
+*C48: Shoulder involvement applied — Miri +5px outward, Luma -3px rise + +5px outward. Polyline torso.*
+![SF06 The Hand-Off](output/color/style_frames/LTG_COLOR_sf_miri_luma_handoff.png)
+
+### GL Showcase (v1.0.0 — NEW C47)
+*Rin — Byte+Glitch in full Glitch Layer void. Zero warm light. The show's USP visualized.*
+![GL Showcase](output/color/style_frames/LTG_COLOR_styleframe_glitch_layer_showcase.png)
+
 ---
 
 ## Characters
 
-### Full Lineup (v008 — two-tier ground plane)
-*C42: FG tier Luma+Byte, BG tier Cosmo+Miri+Glitch. Luma center-protagonist. Addresses C16 flat-baseline critique.*
+### Full Lineup (v011 C47)
+*Cosmo visual hook propagated. Two-tier ground plane with warm FG / cool BG.*
 ![Character Lineup](output/characters/main/LTG_CHAR_character_lineup.png)
 
-### Luma — Expression Sheet (v013)
-*C41: Tier-1 body postures added — RECKLESS (wide-arm), ALARMED (bilateral recoil). THE_NOTICING gaze RIGHT fixed (sight-line PASS).*
+### Luma — Expression Sheet (v014 C47)
+*C47: Shoulder involvement added. Tier-1 body postures with responsive shoulder line.*
 ![Luma Expressions](output/characters/main/LTG_CHAR_luma_expression_sheet.png)
 
 ### Luma — Turnaround (v004 — construction master, 3.2 heads)
@@ -70,15 +78,15 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 ### Byte — Turnaround (v001)
 ![Byte Turnaround](output/characters/main/turnarounds/LTG_CHAR_byte_turnaround.png)
 
-### Cosmo — Expression Sheet (v007)
-*C38: SKEPTICAL arm geometry fixed — both arms now read outside body silhouette.*
+### Cosmo — Expression Sheet (v008 C47)
+*C47: Visual hook — amplified cowlick + bridge tape. Shoulder involvement.*
 ![Cosmo Expressions](output/characters/main/LTG_CHAR_cosmo_expression_sheet.png)
 
-### Cosmo — Turnaround (v002)
+### Cosmo — Turnaround (v003 C47)
 ![Cosmo Turnaround](output/characters/main/turnarounds/LTG_CHAR_cosmo_turnaround.png)
 
-### Grandma Miri — Expression Sheet (v004)
-*C35: WELCOMING (wide-open arms), SURPRISED/DELIGHTED (hand-to-cheek asymmetric hook) per Lee's brief.*
+### Grandma Miri — Expression Sheet (v007 C47)
+*C47: Shoulder involvement added. Elderly proportion reference tool.*
 ![Grandma Miri Expressions](output/characters/main/LTG_CHAR_grandma_miri_expression_sheet.png)
 
 ### Glitch — Expression Sheet (v003 — interior states: YEARNING / COVETOUS / HOLLOW)
@@ -92,8 +100,8 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 
 ## Backgrounds & Environments
 
-### Grandma's Kitchen (v006)
-*C43: MIRI fridge label now uses canonical draw_pixel_text(). Dual spatial identity.*
+### Grandma's Kitchen (v008 C48)
+*C48: Fridge, countertop, cabinet perspective fixes — VP-convergent geometry. Warm/cool 33.1 PASS.*
 ![Kitchen](output/backgrounds/environments/LTG_ENV_grandma_kitchen.png)
 
 ### Tech Den — Cosmo's Workspace (v006)
@@ -111,7 +119,8 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 ### The Other Side — Glitch Layer (v003)
 ![Other Side BG](output/backgrounds/environments/LTG_ENV_glitchlayer_frame.png)
 
-### Millbrook Street (v002)
+### Millbrook Street (v003 C47)
+*C47: Value floor fixed — warm/cool 21.0 PASS. 3-cycle critique resolved.*
 ![Millbrook Street](output/backgrounds/environments/LTG_ENV_millbrook_main_street.png)
 
 ### School Hallway (v004 C43)
@@ -144,7 +153,7 @@ Three-world palette system:
 
 ---
 
-## Team (Cycle 44)
+## Team (Cycle 48)
 
 | Member | Role | Status |
 |--------|------|--------|
@@ -165,51 +174,51 @@ Three-world palette system:
 
 ## Progress
 
-- **Work cycles:** 47 | **Critique cycles:** 18
-- **Next:** C48 work cycle (1 more before Critique 19)
-- **Ideabox:** 12 ideas actioned C47
+- **Work cycles:** 48 | **Critique cycles:** 18
+- **Next:** Critique 19
+- **Ideabox:** 14 ideas actioned C48
 - **Critics panel:** 20 total (15 professionals + 5 audience)
 - **Team:** 12 active
-- **C47 highlights:** GL Showcase frame, SF01 sight-line fix, Cosmo visual hook, shoulder involvement across all humans, Miri motion rework, 4 new/rebuilt panels (P13/P18/P20/P21), warm-pixel-percentage metric, perspective guidelines, doc governance audit
+- **C48 highlights:** P22/P22a panels, Kitchen v008 perspective fixes, SF06 shoulder update, precritique_qa v2.17.0, depth_temp_lint band overrides (SF04/SF05 PASS), glow_profile_extract v2.0.0, composite warmth score verified, visual blank test tool, shared draw_shoulder_arm helper, CI suite v1.8.0, sightline validator, 168 reference images reviewed
 
 ### Pitch Package Status
 | Asset | Latest | Notes |
 |-------|--------|-------|
-| **SF01 Discovery** | **v007 C47** | Sight-line fix — angular error 2.2° PASS |
+| SF01 Discovery | v007 C47 | Sight-line fix — angular error 2.2° PASS |
 | SF02 Glitch Storm | v008 C43 | Native 1280×720 — SUNLIT_AMBER ΔE 1.1 PASS |
 | SF03 The Other Side | v005 | UV_PURPLE ΔE 0.0 C41 |
-| SF04 Resolution | C45 updated | CORRUPT_AMBER fringe spec C46 |
-| SF05 COVETOUS | v3.0.0 C43 | Luma SENSING UNEASE face — face gate PASS |
+| SF04 Resolution | C45 updated | **depth_temp_lint PASS C48** (was false FAIL) |
+| SF05 COVETOUS | v3.0.0 C43 | **depth_temp_lint PASS C48** (was false FAIL) |
 | SF05 "The Passing" | C44 | Jordan — kitchen pre-dawn |
-| SF06 "The Hand-Off" | C44 | Maya — living room, moment of transmission |
-| **GL Showcase** | **v1.0.0 NEW C47** | Rin — Byte+Glitch in full Glitch Layer void |
-| **Luma expressions** | **v014 C47** | Shoulder involvement added |
+| **SF06 "The Hand-Off"** | **C48 updated** | Shoulder involvement applied — Miri/Luma polyline torso |
+| GL Showcase | v1.0.0 C47 | Rin — Byte+Glitch in full GL void. **Registered in QA C48** |
+| Luma expressions | v014 C47 | Shoulder involvement |
 | Luma turnaround | v004 | unchanged |
 | Byte expressions | v007 C41 | unchanged |
-| **Cosmo expressions** | **v008 C47** | Visual hook: amplified cowlick + bridge tape |
-| **Cosmo turnaround** | **v003 C47** | Visual hook propagated |
-| **Miri expressions** | **v007 C47** | Shoulder involvement added |
+| Cosmo expressions | v008 C47 | Visual hook: amplified cowlick + bridge tape |
+| Cosmo turnaround | v003 C47 | Visual hook propagated |
+| Miri expressions | v007 C47 | Shoulder involvement |
 | Glitch expressions | v003 | unchanged |
-| **Character lineup** | **v011 C47** | Cosmo hook propagated |
-| Logo | v003 C44 | Nunito Bold + Space Grotesk Bold — rendered |
-| Kitchen | v007 C44 | line_weight FAIL resolved |
+| Character lineup | v011 C47 | Cosmo hook propagated |
+| Logo | v003 C44 | Nunito Bold + Space Grotesk Bold |
+| **Kitchen** | **v008 C48** | Fridge/countertop/cabinet VP perspective fixes |
 | Tech Den | v007 C45 | Hardcoded path migrated |
-| Living Room | v003 C45 | CRT centered, warm-left/cool-right — SF06 aligned |
+| Living Room | v003 C45 | CRT centered, warm-left/cool-right |
 | Glitch Layer | v003 | UV_PURPLE range confirmed C46 |
-| Classroom | v004 C46 | Hardcoded path migrated |
+| Classroom | v004 C46 | unchanged |
 | Luma Study Interior | C42 | 33.1 PASS |
-| Other Side ENV | C41 | UV_PURPLE ΔE 0.0 |
-| School Hallway | v005 C46 | Hardcoded path migrated |
-| **Millbrook Street** | **v003 C47** | Value floor fixed — warm/cool 21.0 PASS (3-cycle fix) |
-| **Panels** | **P03–P11/P13–P21/P23/P24 + EP05** | **P13/P18/P20/P21 C47** — 19 standalone total |
-| **Cold open gap log** | **C47 updated** | 32 beats, 12 gaps remaining (was 14) |
-| **Staging decision register** | **NEW C47** | All staging decisions C34-C47 indexed |
-| Story Bible | v005 C45 | Confirmed current C46 |
-| Relationship frame brief | C44 | A1-01 kitchen morning, logline, staging spec |
+| Other Side ENV | C41 | unchanged |
+| School Hallway | v005 C46 | unchanged |
+| Millbrook Street | v003 C47 | Value floor fixed — warm/cool 21.0 PASS |
+| **Panels** | **P03–P11/P13–P22/P22a/P23/P24 + EP05** | **P22/P22a NEW C48** — 21 standalone total |
+| **Cold open gap log** | **C48 updated** | 32 beats, **11 gaps remaining** (was 12) |
+| Staging decision register | C48 updated | Byte position resolved, P20/P21 entries added |
+| Story Bible | v005 C45 | Confirmed current C48 |
+| Relationship frame brief | C44 | A1-01 kitchen morning |
 | Motion — Luma | v002 C38 | unchanged |
 | Motion — Byte | v002 C38 | unchanged |
 | Cosmo motion spec | v001 C41 | unchanged |
-| **Miri motion spec** | **v003 C47** | Full rework — weight, shoulder-hip, performing hands |
+| Miri motion spec | v003 C47 | Full rework |
 | Glitch motion spec | v001 C44 | unchanged |
 
 ---
@@ -222,4 +231,4 @@ All output generated with Python + PIL (open source only). Generators in `output
 
 ---
 
-*Cycle 47 — 2026-03-30*
+*Cycle 48 — 2026-03-30*

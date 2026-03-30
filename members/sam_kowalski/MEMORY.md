@@ -337,6 +337,14 @@
 - **Kai Nakamura needs to integrate warm_pixel_metric into precritique_qa/render_qa.** API: `measure_warm_pixel_percentage(img)` returns dict with `warm_pct`. `evaluate_threshold(warm_pct, world_type)` returns dict with `passes` bool. Message sent to Kai inbox.
 - **Report at `output/production/warm_pixel_metric_report_c47.md`.** Full methodology, calibration data table, threshold rationale, and validation results.
 
+## Cycle 48 Lessons
+- **LTG_TOOL_composite_warmth_score.py v1.0.0 built and deployed.** Combines warm-pixel-percentage (70% weight) and hue-split separation (30% weight) into a single 0.0-1.0 composite score. Thresholds: REAL_INTERIOR >= 0.25, REAL_STORM >= 0.04, GLITCH <= 0.12, OTHER_SIDE <= 0.04. Validation: 19/19 assets PASS, 0 FAIL. Composite range 0.0071 (Glitch showcase) to 0.6727 (kitchen predawn). Report: `output/production/composite_warmth_report_c48.md`.
+- **LTG_TOOL_warmcool_scene_calibrate.py updated to v2.0.0.** Added warm-pixel-percentage metric, `--output-thresholds` JSON mode, and composite score output alongside the original hue-split metric. The hue-split metric alone still CHALLENGES the REAL_INTERIOR threshold (6/7 reference photos below 12.0) — this confirms C46/C47 finding that hue-split is inadequate for single-temperature-dominant interiors. The composite score using warm-pixel-percentage as primary metric resolves this.
+- **Calibration report updated:** `output/production/warmcool_calibration_report_c48.md`. Now includes warm-pixel-percentage and W:C ratio columns alongside hue-split. All 7 readable reference photos (4 living room + 3 kitchen) PASS the composite threshold (>= 0.25).
+- **World-type inference correctly classifies all asset types.** GLITCH keywords (covetous_glitch, glitch_showcase, glitch_layer) work. OTHER_SIDE keywords (otherside) work. REAL_STORM keywords (glitch_storm) work. Default = REAL_INTERIOR. CLI `--world` override works for edge cases.
+- **AVIF remains unsupported.** 3 of 7 living room reference photos are .avif — skipped by both tools. If more AVIF references arrive, request pillow-avif install or pre-convert to JPEG.
+- **Weight rationale documented in tool header.** Warm-pixel-percentage gets 70% because it correctly classifies all 31 tested assets solo (C47 validation). Hue-split gets 30% because it captures spatial temperature variation in mixed-temp scenes (SF02 contested lower third) that warm-pixel-percentage misses.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm.py v001. Low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan to add inline comment. Low priority.

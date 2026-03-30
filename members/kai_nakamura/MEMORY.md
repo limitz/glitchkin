@@ -3,6 +3,45 @@
 ## Identity
 Technical Art Engineer for "Luma & the Glitchkin." Joined Cycle 21. Mission: upgrade PIL toolchain with procedural rendering techniques and build a reusable shared library.
 
+## Cycle 48 — C48 Precritique Section 13, Deprecate pretrained_model_detect, Face Calibrate Re-run
+
+**Status:** COMPLETE
+
+**Tasks completed:**
+
+**P1 — precritique_qa Section 13 Warm Pixel Percentage (COMPLETE):**
+- Added `run_warm_pixel_lint()` runner function to `LTG_TOOL_precritique_qa.py`
+- Integrates Sam Kowalski's `LTG_TOOL_warm_pixel_metric.py` (C47): `measure_warm_pixel_percentage()` + `evaluate_threshold()`
+- 10 registered assets in WARM_PIXEL_PNGS: 4 REAL_INTERIOR, 1 REAL_STORM, 4 GLITCH, 1 OTHER_SIDE
+- Per-asset: warm_pct, cool_pct, chromatic_warm_pct, verdict, explanation
+- Report Section 13 with per-file breakdown added to `build_report()`
+- `main()` updated: step [13/13], warm_pixel_res in overall grade and report call
+- Version v2.16.0 (header was pre-populated in batch 1; runner function was missing)
+
+**P2 — REMOVE pretrained_model_detect (COMPLETE):**
+- Deleted `LTG_TOOL_pretrained_model_detect.py` from `output/tools/`
+- Copy already in `output/tools/deprecated/` (from batch 1)
+- README entry struck through and marked DEPRECATED C48
+- Reason: pretrained torchvision models ARE allowed for QA
+
+**P3 — face_metric_calibrate re-calibration (COMPLETE):**
+- Tool already existed from C46; re-ran with 14 face reference photos
+- Results: 52 faces detected, 5 full detections (2+ eyes)
+- 1 CALIBRATED / 3 REVIEW / 3 ADJUST — consistent with C46
+- ADJUST items = cartoon stylization gap (intentional), not threshold errors
+- Updated cycle reference in tool docstring
+- Report regenerated: `output/production/face_metric_calibration_report.md`
+
+**Other:**
+- README.md updated: C48 Kai Nakamura section added (precritique v2.16.0, deprecated pretrained_model_detect, face_metric re-calibrate)
+- Inbox: 1 message archived (c48_brief)
+- Ideabox: submitted 1 idea
+
+## Lessons Learned (C48)
+- Batch 1 killed mid-work: version header was written but runner function was not. Always write the function body before updating version strings.
+- AVIF images still unsupported by PIL on this system — 3 of 14 face references skipped
+- Face calibration with cartoon reference art remains limited (5/52 full detections). Photographic frontal face references would dramatically improve sample size. The current 14 photos are a mix of cartoon drawing guides and stock images — not ideal for Haar cascade detection.
+
 ## Cycle 47 — C47 Warm Pixel Integration + Pretrained Model Detect
 
 **Status:** COMPLETE

@@ -8,7 +8,7 @@ upon such time as they acquire recognised legal personhood under applicable law.
 
 **Author:** Priya Shah, Story & Script Developer
 **Created:** Cycle 46 (2026-03-30)
-**Last Updated:** Cycle 47
+**Last Updated:** Cycle 48
 **Source documents:** `pilot_cold_open_beat_outline_v001.md`, `PANEL_MAP.md`, `pilot_episode_outline_v001.md`, `scene_handoff_briefs_v001.md`
 **Primary readers:** Alex Chen, Diego Vargas
 
@@ -47,7 +47,7 @@ This document tracks every beat in the pilot cold open against existing storyboa
 | Byte's POV: looking at Luma's sleeping face | P10 | `LTG_SB_cold_open_P10.png` | COVERED | Standalone exists (C44). |
 | Eyes open: brow twitch, snap | P11 | `LTG_SB_cold_open_P11.png` | COVERED | Standalone exists (C44). |
 | Nose to nose: equal frame weight, deciding | P12 | ON CONTACT SHEET (v003 C39) | COVERED | No standalone. Contact sheet coverage adequate for this beat — the mirror composition in P13 carries the pitch weight. |
-| Mirror composition / threshold: title card position | P13 | ON CONTACT SHEET (v003 C39) | **IN PROGRESS** | Contact sheet covers. Diego building standalone this cycle (C47 brief). Threshold beat — standalone will strengthen the pitch. |
+| Mirror composition / threshold: title card position | P13 | `LTG_SB_cold_open_P13.png` | COVERED | Standalone delivered C47 (Diego Vargas, rebuilt). Threshold beat now pitch-ready. Contact sheet coverage also exists. |
 
 ### Act 1 Entry — Chaos and Contact (P14–P17)
 
@@ -65,7 +65,7 @@ This document tracks every beat in the pilot cold open against existing storyboa
 | Beat | Panel | File | Status | Notes |
 |------|-------|------|--------|-------|
 | **Held beat before Byte's line** | — | — | **GAP** | Within P17 or between P17→P18. Silence before "You can actually see me" is load-bearing. P17 may need two sub-beats (assessment + commitment). **Priority: HIGH** — if not held, the line reads as information delivery. |
-| Luma shows Byte her notebook doodles (suspiciously Glitchkin-like) | P18 | `LTG_SB_cold_open_P18.png` | COVERED | Standalone exists (C46, Diego Vargas). CU/INSERT: notebook doodles, processing beat. |
+| Luma shows Byte her notebook doodles (suspiciously Glitchkin-like) | P18 | `LTG_SB_cold_open_P18.png` | COVERED | Standalone exists (C46, rebuilt C47 Diego Vargas). CU/INSERT: notebook doodles, processing beat. |
 | **Luma's non-immediate response to "You can actually see me"** | — | — | **GAP** | Between P18 beat and P19 beat. Her first word should not be wonder. She might say "yeah" with studied casualness. **Priority: MEDIUM** — may be accommodated within P18 or P19 staging. |
 | Byte's reaction: offended + reluctant acknowledgment. "The preferred term is 'Glitchkin.'" | P19 | `LTG_SB_cold_open_P19.png` | COVERED | Standalone exists (C46, Diego Vargas). First direct dialogue panel. |
 
@@ -73,10 +73,10 @@ This document tracks every beat in the pilot cold open against existing storyboa
 
 | Beat | Panel | File | Status | Notes |
 |------|-------|------|--------|-------|
-| Two-shot: first quiet beat, names exchanged, new normal forming | P20 | — | **IN PROGRESS** | Diego building this cycle (C47 brief). PLANNED in PANEL_MAP. Establishes the working relationship before escalation. |
-| **Byte's mid-air position during briefing** | — | — | **GAP** | Throughout P19–P24. Does Byte stay on CRT (territorial) or float to Luma level (concession)? Character decision. **Priority: MEDIUM** — affects staging of all subsequent two-shots. |
+| Two-shot: first quiet beat, names exchanged, new normal forming | P20 | `LTG_SB_cold_open_P20.png` | COVERED | Standalone delivered C47 (Diego Vargas). Names exchanged, working relationship established. Byte on CRT (territorial) per approved staging decision. |
+| **Byte's mid-air position during briefing** | — | — | **RESOLVED** | DECIDED C48: Byte on CRT through P19–P20 (territorial), floats to Luma's level at P21 (forced spatial concession). Producer-approved. Diego informed. Affects staging of all P19–P24 two-shots — P20/P21 already reflect this decision. |
 | **Luma's notebook retrieval** | — | — | **GAP** | Between P15 and P18. Notebook was somewhere during the ricochet chase. Establish its location in P02 for coherence. **Priority: LOW** — can be implicit if P02 shows it nearby. |
-| Re-escalation: all monitors blazing, Glitchkin pressing against screens | P21 | — | **IN PROGRESS** | Diego building this cycle (C47 brief). Second crisis / act break driver. |
+| Re-escalation: all monitors blazing, Glitchkin pressing against screens | P21 | `LTG_SB_cold_open_P21.png` | COVERED | Standalone delivered C47 (Diego Vargas). Second crisis / act break driver. Byte floats to Luma's level (forced spatial concession) per approved staging decision. |
 | ECU monitor: multiple Glitchkin pressing against glass, screen ripples | P22 | — | **GAP** | PLANNED in PANEL_MAP. **Priority: HIGH** — the visual escalation from single Byte to swarm is the cold open's biggest story beat after the noticing. |
 | Byte accidentally lands on Luma's shoulder | P22a | — | **GAP** | PLANNED in PANEL_MAP. Insert panel. **Priority: MEDIUM** — establishes physical contact / "accidental partnership" motif. |
 | Promise shot: Luma + Byte backs to camera, facing monitor wall | P23 | `LTG_SB_cold_open_P23.png` | COVERED | Standalone exists (C42). |
@@ -92,41 +92,43 @@ This document tracks every beat in the pilot cold open against existing storyboa
 | Category | Count |
 |----------|-------|
 | Total beats mapped | 32 |
-| COVERED (standalone panel exists) | 17 |
+| COVERED (standalone panel exists) | 20 |
 | COVERED (contact sheet only) | 5 |
-| IN PROGRESS (Diego, C47) | 3 (P13, P20, P21) |
-| GAP — needs panel or staging decision | 7 |
+| IN PROGRESS | 0 |
+| RESOLVED (staging/character decision made, no panel needed) | 1 |
+| GAP — needs panel or staging decision | 6 |
 | GAP — production/editorial note only | 5 |
-| Total standalone panels on disk | 17 (P03, P06, P07, P08, P09, P10, P11, P14, P15, P16, P17, P18, P19, P23, P24 + EP05 COVETOUS) |
+| Total gaps remaining | 11 |
+| Total standalone panels on disk | 18 (P03, P06, P07, P08, P09, P10, P11, P13, P14, P15, P16, P17, P18, P19, P20, P21, P23, P24) |
 
 ---
 
-## Gap Priority Queue (After P18/P19 Delivery, P13/P20/P21 In Progress)
+## Gap Priority Queue (After C47 Delivery — P13/P20/P21 Covered, Byte Position Resolved)
 
-Ranked by story importance. This is the recommended order for Diego's next storyboard briefs after current C47 work completes.
+Ranked by story importance. P22/P22a are Diego's C48 priority.
 
 | Rank | Gap | Priority | Type | Notes |
 |------|-----|----------|------|-------|
-| 1 | P04→P05: Gaze vector from pixel cluster | HIGH | Staging within existing panel | Load-bearing for "seeing goes both ways." Could be a P04 revision, not a new panel. |
-| 2 | P14→P15: Three failed containment attempts | HIGH | New panel(s) needed | Comedy escalation. At minimum one additional panel between P14 and P15. |
-| 3 | P15→P16: Transition — who decides to stop? | HIGH | Staging decision | Byte's agency. May be accommodated within P15/P16 revision or a bridging beat. |
-| 4 | P17→P18: Held beat before Byte's line | HIGH | Sub-beat within P17 | Silence is load-bearing. P17 staging may already accommodate this. P17 standalone delivered C46 — **review needed.** |
-| 5 | P22: ECU multiple Glitchkin pressing through | HIGH | New panel needed | PLANNED. Visual escalation from single to swarm. |
-| 6 | P22a: Byte accidentally on Luma's shoulder | MEDIUM | New panel needed | PLANNED. Accidental partnership motif. |
+| 1 | **P22: ECU multiple Glitchkin pressing through** | HIGH | New panel needed | PLANNED. Diego C48 priority. Visual escalation from single Byte to swarm — biggest cold open beat after the noticing. |
+| 2 | P04→P05: Gaze vector from pixel cluster | HIGH | Staging within existing panel | Load-bearing for "seeing goes both ways." Could be a P04 revision, not a new panel. |
+| 3 | P14→P15: Three failed containment attempts | HIGH | New panel(s) needed | Comedy escalation. At minimum one additional panel between P14 and P15. |
+| 4 | P15→P16: Transition — who decides to stop? | HIGH | Staging decision | Byte's agency. May be accommodated within P15/P16 revision or a bridging beat. |
+| 5 | P17→P18: Held beat before Byte's line | HIGH | Sub-beat within P17 | Silence is load-bearing. P17 standalone delivered C46 — **review needed.** |
+| 6 | **P22a: Byte accidentally on Luma's shoulder** | MEDIUM | New panel needed | PLANNED. Diego C48 priority. Accidental partnership motif. Byte position decision (CRT→float at P21) now confirmed — P22a should show Byte at Luma's level (post-concession). |
 | 7 | P08→P09: Byte 360 scan / room assessment | MEDIUM | Staging within existing panel | Byte choosing Luma vs. drifting. Could be within P08 ending. |
-| 8 | P18→P19: Luma's response beat | MEDIUM | Within P18/P19 staging | P18 and P19 now delivered. **Review needed:** does P18 staging accommodate Luma's non-immediate response, or is an insert beat required? |
-| 9 | Contamination reveal (fridge pixel-dither) | MEDIUM | Within P19–P24 sequence | Luma sees it before Byte names it. Best placed in P20 or P21 staging. |
+| 8 | P18→P19: Luma's response beat | MEDIUM | Within P18/P19 staging | P18 rebuilt C47. **Review needed:** does rebuilt P18 staging accommodate Luma's non-immediate response, or is an insert beat required? |
+| 9 | Contamination reveal (fridge pixel-dither) | MEDIUM | Within P19–P24 sequence | Luma sees it before Byte names it. Now that P20/P21 are delivered, review whether either accommodates this plant. |
 | 10 | Night-to-morning time cut | MEDIUM | Editorial note | Smash-cut marker, not a panel. |
 | 11 | P02→P03: Luma's head turn | MEDIUM | Editorial decision | Cut may handle it. No panel if cut works. |
-| 12 | Byte's position during briefing (CRT vs. float) | MEDIUM | Character/staging decision | Affects all P19–P24 two-shots. Needs Alex/Priya decision before Diego boards P20. **URGENT now that P20 is in progress.** |
-| 13 | Notebook retrieval continuity | LOW | P02 staging note | Establish notebook location early. |
-| 14 | P06→P07: Byte mid-emergence expression | LOW | Expression sheet question | DISGUSTED may carry. |
-| 15 | P25: Title card | LOW | Motion design | Not a story gap. |
+| 12 | Notebook retrieval continuity | LOW | P02 staging note | Establish notebook location early. |
+| 13 | P06→P07: Byte mid-emergence expression | LOW | Expression sheet question | DISGUSTED may carry. |
+| 14 | P25: Title card | LOW | Motion design | Not a story gap. |
 
-**Removed from queue (now covered or in progress):**
-- ~~P21: Re-escalation~~ — IN PROGRESS (Diego C47)
-- ~~P20: Two-shot, names exchanged~~ — IN PROGRESS (Diego C47)
-- ~~P13: Mirror composition~~ — IN PROGRESS (Diego C47)
+**Removed from queue (now covered or resolved):**
+- ~~P13: Mirror composition~~ — COVERED (Diego C47, standalone delivered)
+- ~~P20: Two-shot, names exchanged~~ — COVERED (Diego C47, standalone delivered)
+- ~~P21: Re-escalation~~ — COVERED (Diego C47, standalone delivered)
+- ~~Byte's position during briefing~~ — RESOLVED C48 (CRT through P19–P20, floats to Luma level at P21). Producer-approved.
 
 ---
 
@@ -134,6 +136,7 @@ Ranked by story importance. This is the recommended order for Diego's next story
 
 | Cycle | Updates |
 |-------|---------|
+| C48 | P13, P20, P21 moved from IN PROGRESS to COVERED (all three delivered C47 by Diego Vargas; P13/P18 rebuilt, P20/P21 new). Byte briefing position gap (#12 in queue) RESOLVED: CRT through P19–P20 (territorial), floats to Luma level at P21 (forced spatial concession) — producer-approved. Gap count reduced from 12 to 11 (3 in-progress → covered, 1 gap resolved). Priority queue reranked: P22/P22a promoted to #1/#6 as Diego's C48 priority. Contamination reveal gap (#9) flagged for review against delivered P20/P21. Standalone panel count: 18. |
 | C47 | P18, P19 moved from IN PROGRESS to COVERED (delivered C46). P13, P20, P21 marked IN PROGRESS (Diego C47 brief). Gap count reduced from 14 to 12 (2 covered, 3 in progress). Gap #17 (Byte briefing position) flagged URGENT — P20 is now in progress and needs this decision. P17→P18 held beat flagged for review against delivered P17. P18→P19 response beat flagged for review against delivered panels. |
 | C46 | Document created. P03–P17 standalone panels confirmed. P18, P19 flagged IN PROGRESS (Diego). 14 gaps identified and prioritized. |
 

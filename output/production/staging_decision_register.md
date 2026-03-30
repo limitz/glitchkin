@@ -8,7 +8,7 @@ upon such time as they acquire recognised legal personhood under applicable law.
 
 **Author:** Priya Shah, Story & Script Developer
 **Created:** Cycle 47 (2026-03-30)
-**Last Updated:** Cycle 47
+**Last Updated:** Cycle 48
 **Primary readers:** Alex Chen, Lee Tanaka, Diego Vargas, Maya Santos
 
 ---
@@ -51,7 +51,9 @@ Updated each cycle as new decisions are made.
 | P10 | OTS from Byte's POV. Byte FG silhouette (cool), Luma BG sleeping (warm). Cyan glow on her cheek. | The temperature grammar in a single frame: cool watches warm. Digital observes analog. | C44 | Diego Vargas P10 | ACTIVE |
 | P11 | ECU. Closed eyes, cyan glow on face. Long hold on nothing. Then brow twitch, eyes SNAP open. | The hold is the point. The snap is earned by the wait. If the hold is too short, the snap is information. If the hold is right, the snap is event. | C44 | Diego Vargas P11 | ACTIVE |
 | P12 | CU TWO-SHOT. Nose-to-nose, equal presence (~30% width each, ~40% gap). Byte at Luma's exact head_cy (eye-level descent). CRT visible camera-right BG. | Equal frame weight = equal narrative weight. Neither character dominates. The gap between them is the question: will they close it? | C39 | PANEL_MAP P12 staging spec | ACTIVE |
-| P13 | MIRROR COMPOSITION. Byte camera-right, Luma camera-left. Open/organic eyes face center; cracked/doubting eyes face outward. Directional ELEC_CYAN glow. ARC_COMMIT border. | Threshold beat. The composition mirrors the choice: what faces inward (toward each other) is open; what faces outward (toward their separate worlds) is damaged/doubting. | C39 | PANEL_MAP P13 | ACTIVE — standalone panel not yet delivered |
+| P13 | MIRROR COMPOSITION. Byte camera-right, Luma camera-left. Open/organic eyes face center; cracked/doubting eyes face outward. Directional ELEC_CYAN glow. ARC_COMMIT border. | Threshold beat. The composition mirrors the choice: what faces inward (toward each other) is open; what faces outward (toward their separate worlds) is damaged/doubting. | C39 | PANEL_MAP P13, Diego Vargas C47 standalone | ACTIVE |
+| P20 | TWO-SHOT. Names exchanged, new normal forming. Byte on CRT (territorial position). | First quiet beat after chaos. Byte stays on CRT = territorial read. He is not ready to meet Luma as an equal yet. Working relationship established from a position of defensive distance. | C47/C48 | Diego Vargas C47 standalone, Byte position decision C48 | ACTIVE |
+| P21 | RE-ESCALATION. All monitors blazing. Byte floats to Luma's level (forced spatial concession). | The external crisis forces Byte off his perch. He doesn't choose to come down — the situation demands it. The concession is involuntary, which makes it more honest. | C47/C48 | Diego Vargas C47 standalone, Byte position decision C48 | ACTIVE |
 | P14 | Fixed camera (5ft height). Dutch 12 degrees CW. Multi-exposure pixel trail: 5 ghost Byte silhouettes along quadratic Bezier arc, opacity 0.15 (origin) to 1.0 (impact). Books + rubber duck airborne. Impact starburst. | Multi-exposure trail IS the velocity. Viewer reads backward from impact. Airborne objects in distinct rotational states sell "mid-air chaos." | C45 | Diego Vargas P14, Lee Tanaka C47 review | ACTIVE |
 | P14 | ISSUE: Byte impact silhouette has no ALARMED expression (symmetric eyes). ISSUE: No shoulder/arm recoil asymmetry at impact. | Ghost trail can be expressionless (motion blur), but the impact-point Byte is his most visible moment — needs full expression. Symmetric arms at impact read as "hovering" not "just hit something." | C47 | `staging_review_c47_sf06_p14_p15.md` | OPEN — awaiting Diego fix |
 | P15 | Floor-level camera. Wall strip top 18%, floor dominates 82%. Glitch forced-hair circle (ELEC_CYAN outlined perfect circle, interior radial lines). DAZED expression: reduced aperture, off-center downward iris, droopy eyelid. Daze stars alternating SUNLIT_AMBER and ELEC_CYAN. | "Floor is the world now" camera. Forced geometric order on organic shape is the comedy AND the worldbuilding. Daze star color alternation: analog and digital worlds both contributing to her dazedness. | C45 | Diego Vargas P15, Lee Tanaka C47 review | ACTIVE |
@@ -81,7 +83,7 @@ Updated each cycle as new decisions are made.
 
 | Scene/Panel | Question | Impact | Cycle Raised | Source | Status |
 |-------------|----------|--------|--------------|--------|--------|
-| P19-P24 (all two-shots) | Does Byte stay on CRT (territorial) or float to Luma level (concession) during the briefing sequence? | Affects staging of ALL subsequent two-shots. If CRT = territorial read. If float-to-level = concession/partnership. | C46 | `cold_open_gap_log.md` gap #17 | OPEN — needs Alex/Priya decision |
+| ~~P19-P24 (all two-shots)~~ | ~~Does Byte stay on CRT or float to Luma level?~~ **RESOLVED C48:** Byte on CRT through P19-P20 (territorial), floats to Luma's level at P21 (forced spatial concession). | Territorial→concession arc within the sequence. The crisis forces the move, not choice. Producer-approved. | C46→C48 | `cold_open_gap_log.md` gap #17, Producer C48 brief | **RESOLVED** |
 | P15-P16 transition | Who decides to stop the chase? Byte stops because Luma stopped chasing (most character-consistent option). | Byte's agency vs. passive resolution is character-defining. | C46 | `cold_open_gap_log.md` gap #3 | OPEN — staging decision needed |
 
 ---
@@ -90,6 +92,7 @@ Updated each cycle as new decisions are made.
 
 | Cycle | Updates |
 |-------|---------|
+| C48 | Byte position question RESOLVED (CRT through P19-P20, float at P21). P20 and P21 staging decisions added. P13 standalone delivery confirmed. 1 open question remains (P15-P16 transition). |
 | C47 | Register created. All staging decisions from C34-C47 indexed. 2 open staging questions documented. Lee Tanaka C47 review issues (SF06, P14, P15) incorporated. |
 
 ---
