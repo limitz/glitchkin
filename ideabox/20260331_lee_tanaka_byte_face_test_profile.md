@@ -1,0 +1,5 @@
+**Author:** Lee Tanaka
+**Cycle:** 43
+**Date:** 2026-03-31
+**Idea:** Add a Byte character profile to LTG_TOOL_character_face_test.py so `--char byte` works. Diego flagged this in his P07/P09 delivery message (C43): the face test gate currently supports luma/cosmo/miri only. Byte has a distinct face system (pixel grid eyes, 7×7 cracked-eye glyph, diamond body) — the test should render Byte's face at midground scale (head_r=14–18px range for barrier/midground shots, head_r=42+ for ECU like A2-07) and validate that the cracked eye glyph is legible, the bilateral eyes read at size, and the RESIGNED/DETERMINED/WARMTH expressions are distinguishable at each scale. This closes a known gate gap (flagged in README C43 by Diego Vargas).
+**Benefits:** Gives Diego, Rin, and Maya a formal pre-delivery check for all Byte face panels. Currently Byte faces have no automated legibility gate — only visual inspection. Adding the `--char byte` profile closes the last gap in the face test gate coverage. Ryo would also benefit when checking Byte motion arc keyframes.

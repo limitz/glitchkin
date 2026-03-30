@@ -356,3 +356,24 @@ Read inbox for directive. Two tasks: (1) SF02 staging brief for Luma interiority
 - **Dutch tilt framing rule:** P07 uses Dutch 8° CW; P09 uses Dutch 0°. The deliberate contrast communicates: P07 = rules breaking; P09 = new strange normal established. Dutch tilt is not just a visual effect — it is a statement about the room's ontological stability. Use it with intention and always contrast it with a flat-horizon beat immediately after to sell the "new normal."
 - **Gravity-ghost confetti is character grammar for Byte.** He doesn't fall; his confetti does. Specifying drifting-DOWN confetti below his hovering body (while his body doesn't descend) visually communicates his relationship to gravity without a caption. This is a repeatable visual grammar rule: Byte's confetti obeys physics; Byte doesn't.
 - **Two-tier lineup staging is the minimal viable fix for flat-baseline compositions.** The change is ~8 lines of code (two GROUND_Y constants, a SCALE_FG multiplier, and a shadow line per tier). The visual impact is: inventory → cast. The proportions are unchanged. The read is dramatically different.
+
+## Cycle 43 Milestone
+- **COVETOUS style frame character staging DELIVERED:** `output/tools/LTG_TOOL_sf_covetous_glitch_c43.py` v3.0.0. Output: `output/color/style_frames/LTG_COLOR_sf_covetous_glitch.png` (1280×720, overwrites in place).
+- **C43 Additions over Rin v2.0.0:**
+  1. Luma face: SENSING UNEASE (THE NOTICING variant for hostile space). Left eye wider (eye_r=7, 0.21×head_r), right narrower (eye_r=5, 0.15×head_r). Asymmetric brows. Closed jaw. 12° head turn toward Byte.
+  2. Luma body: 5° backward lean (instinctive withdrawal). Left arm inward/up (self-awareness). Right arm toward Byte (safety instinct). Hair poof asymmetric — physics of lean.
+  3. UV_PURPLE rim on Luma's left shoulder — ambient of the Glitch Layer reaches her even in the warm zone.
+  4. Byte barrier arm widening: left arm extends toward Glitch (blocking), right arm angled toward Luma (guiding). Body unchanged.
+  5. ACID_GREEN dashed covet-vector sight-line: Glitch right eye → Luma head. Shows dramatic geometry in the frame.
+- **Face test gate PASS (docs/face-test-gate.md):** Tool run at head_r=33 (SF scale). eye_r_L=7 PASS, eye_r_R=5 PASS. Reference: `output/production/LTG_TOOL_face_test_luma_covetous_sf_r33.png`.
+- **Luma's face in Rin v2.0.0 had NO face — NEUTRAL result = FAIL.** C43 fixes this: legible, emotionally specific face at this scale.
+- **All G-rules preserved:** G001/G004/G008 (Glitch spec). No warm light crosses Byte barrier. UV_PURPLE_DARK hue 0.4° delta PASS.
+- **Tooling gap flagged to Alex + ideabox:** `--char byte` not supported by face test tool. Ideabox: `20260331_lee_tanaka_byte_face_test_profile.md`.
+- **Inbox:** All 4 messages archived. SF04=Resolution canonical noted.
+
+## Cycle 43 Lessons
+- **A style frame character with no face expression is a failing asset.** The face test gate NEUTRAL (no face) = FAIL. Even at smaller SF scale, an organic character must carry visible emotional content — a skin circle is a placeholder, not a character. Rin's generator produced the scene; staging's job is to put a performance inside it.
+- **SENSING UNEASE ≠ FEAR and ≠ NEUTRAL.** It is an asymmetric awareness state: one eye wider (exposed/alert), one narrower (interior processing), closed jaw (not vocalizing), brows raised but not arched. This expression exists between calm and alarm — the most interesting dramatic territory.
+- **Ambient rim light confirms spatial membership.** The UV_PURPLE rim on Luma's left shoulder is not decoration — it says she IS in the Glitch Layer, subject to its physics. Without it, the warm zone reads as a separate room. With it, the tension reads: she's here, but she doesn't belong here.
+- **Covet vector annotation makes the premise visible.** The dashed sight-line from Glitch's eye to Luma's head turns the staging into a diagram of the show's central conflict: Glitch wants what Byte is protecting. No caption needed.
+- **When building on another artist's generator, preserve all spec-compliance rules exactly.** Rin's G001/G004/G008 rules were inherited verbatim. Character staging additions never touch Glitch geometry — they extend the scene, not rewrite it.
