@@ -1,5 +1,52 @@
 # Maya Santos — Memory
 
+## Cycle 50 — Character Construction Prototype (COMPLETE)
+
+### P1: Luma Construction Diagnostic — DELIVERED
+- Documented all construction flaws in v014: rectangle torso, small head (25% of body), tiny eyes (22% of head height), stiff limbs (constant-width polylines), no weight shift, flat hands (plain ellipses)
+- Minimum pixel budget analysis: current head ~46px at scene scale, eyes ~10px = below readability threshold
+- Full diagnostic: `output/production/luma_construction_diagnostic_c50.md`
+
+### P2: New Construction Prototype (CURIOUS) — DELIVERED
+- New tool: `LTG_TOOL_luma_construction_prototype.py` v1.0.0
+- Output: `output/production/LTG_PROD_luma_construction_comparison.png` (1280x720)
+- Side-by-side: OLD v014 geometric vs NEW organic curves
+- Key new primitives:
+  - `tube_polygon()` — builds filled polygon from centerline with tapering width. Replaces both `draw.rectangle()` for legs and `polyline(..., width=N)` for arms. Clean organic tubes with proper outline.
+  - `ellipse_points()` — generates dense polygon points along elliptical arc. Used for head shape with chin/cheek modulation, eye shapes, hands.
+  - `bezier4()` — cubic bezier for S-curves (torso sides, arm paths)
+- Proportion changes: head 37% of body (was 25%), eyes 30% of head width (was 22% of height), cloud hair with 17 overlapping ellipses
+- Construction changes: bean-shaped torso (cubic bezier), tapered tube limbs, hip tilt + shoulder counter-rotation, asymmetric weight stance
+- Recommendation: FULL REBUILD of all characters using new method
+
+### What Worked
+- Head proportion: massive improvement in face readability at scene scale
+- Eyes: dual highlights, tall ovals — immediately more appealing
+- tube_polygon: cleanest organic limbs we've achieved with PIL
+- Weight shift: hip tilt + asymmetric legs makes figure read as "alive"
+
+### What Didn't Work / Needs Attention
+- Hair still slightly cap-like (needs more bump variation or composite outline)
+- No line weight hierarchy in prototype (needs 3-tier port)
+- Mouth subtle at scale (correct for style, needs exaggeration for expressions)
+- C47 shoulder involvement not yet ported
+- Pixel accents too small at new proportions
+- Face gate not run this cycle (per assignment — focus on construction)
+
+### Ideabox C50
+- Submitted: `ideabox/20260330_maya_santos_shared_organic_primitives_module.md`
+  Idea: extract tube_polygon/ellipse_points/bezier into shared `LTG_LIB_organic_primitives.py` module
+
+### Inbox Archived
+- `20260330_2800_c50_assignment.md` (Producer) — acted on
+
+### ACTIVE TOOL STATUS (C50 — COMPLETE)
+- Construction prototype: `LTG_PROD_luma_construction_comparison.png` v1.0.0 (NEW)
+  - Generator: `LTG_TOOL_luma_construction_prototype.py` v1.0.0
+- All other tools unchanged from C49.
+
+---
+
 ## Cycle 49 — Multi-Char Face Gate + Miri Elder Posture (COMPLETE)
 
 ### P1: Multi-Character Style Frame Face Gate — DELIVERED
