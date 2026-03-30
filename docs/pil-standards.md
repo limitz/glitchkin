@@ -1,7 +1,7 @@
 # PIL Coding Standards
 
 ## File Header
-Every `.py` file must open with the copyright header (see `docs/work.md`), formatted as:
+Every `.py` file created inside `output/` must open with the copyright header (see `docs/work.md`), formatted as:
 ```python
 # © 2026 — "Luma & the Glitchkin." All rights reserved. This work was created through human
 # direction and AI assistance. Copyright vests solely in the human author under current law,
