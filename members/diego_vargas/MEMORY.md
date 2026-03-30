@@ -702,6 +702,66 @@ All three P1 priorities complete.
 - **Byte position arc (approved C48)**: CRT through P19-P20 → Luma's level P21 → at
   level for P22+. Build all future panels with Byte at Luma's level.
 
+## Cycle 49 — Delivered
+
+### Task 1 — Panel-Type Profiles for Visual Blank Test
+- `LTG_TOOL_visual_blank_test.py` updated with 6 panel-type profiles:
+  ECU, MCU, WIDE, INSERT, OTS, TWO_SHOT
+- Each profile adjusts C1-C6 thresholds for shot-type-appropriate expectations
+- Auto-detection via PANEL_TYPE_MAP (panel ID -> profile)
+- New CLI flags: `--type ECU|MCU|WIDE|INSERT|OTS|TWO_SHOT|DEFAULT`, `--list-profiles`
+- Batch summary now includes per-type breakdown
+
+### Task 2 — Blank Test Re-run with Profiles
+- All 21 existing panels tested with profiled thresholds
+- Report: `output/production/blank_test_profile_report_c49.md`
+- **7 panels UPGRADED** (false WARNs/FAILs resolved):
+  P03 WARN->PASS, P06 FAIL->WARN, P09 WARN->PASS, P11 FAIL->WARN,
+  P18 WARN->PASS, P21 WARN->PASS, P22 WARN->PASS
+- **0 panels downgraded**
+- **5 panels remain FAIL** (all on C4 edge density: P13, P14, P15, P17, P20)
+  These are genuine low-edge-density panels — cel-shaded style with smooth fills.
+
+### Task 3 — P25 Title Card Panel
+- `LTG_TOOL_sb_cold_open_P25.py` (NEW) → `output/storyboards/panels/LTG_SB_cold_open_P25.png`
+- TITLE CARD — "LUMA & THE GLITCHKIN" pixel-by-pixel assembly
+- "LUMA" in ELEC_CYAN (real-world anchor), "&" in WARM_CREAM, "THE GLITCHKIN" in HOT_MAGENTA
+- VOID_BLACK background, radial gradient center bloom, CRT scanlines + phosphor bands
+- 35 pixel confetti (mixed cyan/magenta), static noise on edges
+- Glow effect via additive composite (cyan + magenta bloom)
+- Annotations: "PIXEL-BY-PIXEL ASSEMBLY (12 FRAMES)" + "FLASH: 2 FRAMES MAGENTA FULL-SCREEN"
+- Arc: PITCH BEAT (ELEC_CYAN 4px border). 800x600px. Three-tier caption bar.
+- Blank test: WARN (C2 low quadrant spread — expected for title card on void BG)
+- PANEL_MAP updated: P25 PLANNED → EXISTS
+
+### Inbox Archived
+- `20260330_2500_c49_assignment.md` (Producer C49 brief)
+- `20260330_2510_c49_p22_p22a.md` (Alex Chen P22/P22a — already delivered C48)
+
+### Ideabox Submitted
+- `20260330_diego_vargas_c4_color_cluster_supplement.md`
+  — Color-cluster detection as supplementary C4 method for smooth cel-shaded panels
+
+### Lessons Learned — Cycle 49
+- **Panel-type profiles**: Different shot types have fundamentally different visual
+  characteristics. ECU panels have no FG/BG distinction (face fills frame). INSERT panels
+  have no character silhouette. TWO_SHOT panels can have diffuse energy across two focal
+  points. One-size-fits-all thresholds produce false failures.
+- **Profile threshold tuning**: ECU depth cue threshold = 2 (essentially exempt).
+  INSERT character presence threshold = 0.5 (prop detail only). WIDE depth threshold = 6
+  (stricter than default — wide shots MUST show depth). TWO_SHOT focal point threshold = 0.50
+  (two focal points = more spread acceptable).
+- **C4 edge density limitation**: Smooth cel-shaded panels with flat fills score low on
+  gradient-based edge density even when characters are clearly present. Need color-cluster
+  or hue-variance method to supplement. 5 panels FAIL that are visually fine.
+- **P25 title card**: Pixel font at scale=5 gives bold title read. Vertical stacking
+  (LUMA / & / THE / GLITCHKIN) reads top-to-bottom. Warm connector (&) separates the
+  two color identities (cyan = Luma's world, magenta = Glitch world).
+- **Additive glow composite**: numpy int16 clipping avoids overflow. Apply only to
+  draw area ([:DRAW_H]) to avoid contaminating caption bar.
+- **Radial gradient void BG**: Per-pixel distance-from-center with 8-luma boost at center
+  gives depth to void without competing with title text.
+
 ## Startup Sequence
 1. Read ROLE.md if present
 2. Read this MEMORY.md
