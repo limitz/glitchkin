@@ -1,0 +1,139 @@
+{
+  "tool": "LTG_TOOL_scanline_pitch_extract",
+  "version": "1.0.0",
+  "cycle": 47,
+  "profiles": [
+    {
+      "file": "digital-workspaces-stockcake.jpg",
+      "pitch_px": 38.0,
+      "darkness_ratio": 0.4961,
+      "peak_luminance": 72.9,
+      "trough_luminance": 28.4,
+      "contrast_ratio": 2.57,
+      "confidence": 0.4457,
+      "num_samples": 2,
+      "pitch_std": 22.63,
+      "image_width": 384,
+      "image_height": 672,
+      "error": ""
+    },
+    {
+      "file": "green-phosphor-nostalgia-stockcake.jpg",
+      "pitch_px": 29.8,
+      "darkness_ratio": 0.5666,
+      "peak_luminance": 53.3,
+      "trough_luminance": 25.3,
+      "contrast_ratio": 2.11,
+      "confidence": 0.1763,
+      "num_samples": 5,
+      "pitch_std": 18.81,
+      "image_width": 256,
+      "image_height": 256,
+      "error": ""
+    },
+    {
+      "file": "i-turned-my-old-green-phosphor-monitor-back-on-with-the-v0-q8anrilr4yjf1.webp",
+      "pitch_px": 19.62,
+      "darkness_ratio": 0.4608,
+      "peak_luminance": 127.3,
+      "trough_luminance": 108.6,
+      "contrast_ratio": 1.17,
+      "confidence": 0.7595,
+      "num_samples": 8,
+      "pitch_std": 30.73,
+      "image_width": 1280,
+      "image_height": 720,
+      "error": ""
+    },
+    {
+      "file": "images.jpeg",
+      "pitch_px": 18.33,
+      "darkness_ratio": 0.533,
+      "peak_luminance": 125.3,
+      "trough_luminance": 49.4,
+      "contrast_ratio": 2.54,
+      "confidence": 0.536,
+      "num_samples": 9,
+      "pitch_std": 19.01,
+      "image_width": 170,
+      "image_height": 297,
+      "error": ""
+    },
+    {
+      "file": "retro-computer-glow-stockcake.jpg",
+      "pitch_px": 24.12,
+      "darkness_ratio": 0.5198,
+      "peak_luminance": 123.7,
+      "trough_luminance": 48.4,
+      "contrast_ratio": 2.56,
+      "confidence": 0.2853,
+      "num_samples": 8,
+      "pitch_std": 8.92,
+      "image_width": 192,
+      "image_height": 336,
+      "error": ""
+    },
+    {
+      "file": "retro-tech-glow-stockcake.jpg",
+      "pitch_px": 21.4,
+      "darkness_ratio": 0.4537,
+      "peak_luminance": 54.7,
+      "trough_luminance": 39.9,
+      "contrast_ratio": 1.37,
+      "confidence": 0.6289,
+      "num_samples": 5,
+      "pitch_std": 21.26,
+      "image_width": 1344,
+      "image_height": 768,
+      "error": ""
+    },
+    {
+      "file": "vintage-terminal-interface-stockcake.webp",
+      "pitch_px": 29.0,
+      "darkness_ratio": 0.4865,
+      "peak_luminance": 137.7,
+      "trough_luminance": 42.7,
+      "contrast_ratio": 3.23,
+      "confidence": 0.224,
+      "num_samples": 9,
+      "pitch_std": 25.69,
+      "image_width": 336,
+      "image_height": 192,
+      "error": ""
+    }
+  ],
+  "summary": {
+    "count": 7,
+    "good_count": 7,
+    "pitch_px": {
+      "mean": 25.753,
+      "std": 6.967,
+      "min": 18.33,
+      "max": 38.0,
+      "count": 7
+    },
+    "darkness_ratio": {
+      "mean": 0.502,
+      "std": 0.04,
+      "min": 0.454,
+      "max": 0.567,
+      "count": 7
+    },
+    "contrast_ratio": {
+      "mean": 2.221,
+      "std": 0.73,
+      "min": 1.17,
+      "max": 3.23,
+      "count": 7
+    },
+    "confidence": {
+      "mean": 0.437,
+      "std": 0.219,
+      "min": 0.176,
+      "max": 0.759,
+      "count": 7
+    },
+    "recommended_spacing": 26,
+    "recommended_darkness": 0.502
+  }
+}

@@ -1,5 +1,43 @@
 # Rin Yamamoto — MEMORY
 
+## C47 Completed Work
+- **P1 — Glitch Layer Showcase Style Frame** (Zoe Park C47 feedback response)
+  - `LTG_TOOL_styleframe_glitch_layer_showcase.py` (v1.0.0, new)
+  - Output: `output/color/style_frames/LTG_COLOR_styleframe_glitch_layer_showcase.png` (1280x720, 58 KB)
+  - Deep GL void composition: VOID_BLACK base, UV_PURPLE gradient sky (inverted atmo perspective),
+    data aurora (UV_PURPLE + DATA_BLUE + ELEC_CYAN), ring megastructure, far slabs, floating platform
+    with ELEC_CYAN circuit traces, Byte foreground (br=38, cell=5), Glitch background (rx=28/ry=34,
+    ACID_GREEN bilateral eyes + glow), data particles, scanline overlay (spacing=4, alpha=20), vignette
+  - Zero warm light — UV ambient only. UV_PURPLE_DARK = GL-04a canonical throughout.
+- **P2 — Scanline Pitch Extraction Tool** (carried from C46 ideabox)
+  - `LTG_TOOL_scanline_pitch_extract.py` (v1.0.0, new)
+  - Autocorrelation-based scanline pitch detection on vertical luminance profiles
+  - Extracts: pitch (px), inter-line darkness ratio, peak/trough luminance, contrast, confidence
+  - Multi-column sampling (center 60%, 5px band averaging) for robustness
+  - C47 runs:
+    - `reference/crt phosphor/` (7 images): mean pitch=25.8px ±7.0, darkness=0.502, recommended spacing=26
+    - `reference/crt/` (18 images, 15 good fits): mean pitch=41.7px ±24.9, darkness=0.520
+  - Data: `output/production/scanline_pitch_profiles_c47.json`
+  - Complements glow_profile_extract (C46) — full CRT stack: glow falloff + scanline structure
+- `output/tools/README.md` updated — C47 header + 2 new tool entries
+- Inbox: archived C47 brief
+- Ideabox: `ideabox/20260330_rin_yamamoto_gl_showcase_uv_purple_lint_registration.md`
+  - Register showcase frame in precritique_qa GLITCH_LAYER_PNGS for auto UV_PURPLE lint
+
+## C47 Lessons
+- Autocorrelation for scanline pitch: normalize by variance (corr/var), then find first local
+  maximum after min_lag=2. Works well for clean periodic signals (conf>0.5). Multi-CRT wall
+  photos produce lower confidence due to mixed pitches at different scales.
+- Close-up phosphor reference photos give much tighter pitch variance (±7px) than general CRT
+  scene photos (±25px). For calibration, prefer phosphor closeups. General scene photos are
+  better for glow_profile_extract (farther viewing distance = cleaner glow radial profile).
+- GL showcase composition: Byte in foreground (at home, confident) + Glitch in background
+  (watchful, looming) inverts the COVETOUS frame's power dynamic. In COVETOUS, Glitch is
+  large/close and Byte is small/far. In the showcase, Byte owns the space.
+- Face test gate for Byte: the FAIL result is "PIXEL ONLY" variant (1px dot eyes — deliberate
+  diagnostic). Byte cell=5 (5px grid) is above sprint threshold. Gate result is about the
+  test tool's rendered variants, not necessarily about my specific frame's face rendering.
+
 ## C46 Completed Work
 - **P1 — UV_PURPLE Hue-Family Range Review** — survey of 14 GL assets + 14 reference images
   - `LTG_TOOL_uv_hue_survey_c46.py` (v1.0.0, new) — purple hue distribution analysis tool
