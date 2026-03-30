@@ -234,10 +234,13 @@ def draw_byte_full_body(img, draw, byte_cx, byte_floor_y, body_h):
     draw.ellipse([ne_cx - e_r, ne_cy - int(e_r * 0.75),
                   ne_cx + e_r, ne_cy - int(e_r * 0.75) + lid * 2],
                  fill=VOID_BLACK)
-    # Iris
+    # Iris — LEVEL-FORWARD gaze (Lee Tanaka: contempt beat = level-forward or slight upward)
+    # Slight upward offset: iris centered at slightly above the eye midpoint.
+    # NOT downward (shame/resignation) — Byte is contemptuous, not defeated.
     iris_r = int(e_r * 0.50)
-    draw.ellipse([ne_cx - iris_r, ne_cy - iris_r + lid // 2,
-                  ne_cx + iris_r, ne_cy + iris_r],
+    gaze_up = int(e_r * 0.10)   # subtle upward push — superiority/contempt gaze
+    draw.ellipse([ne_cx - iris_r, ne_cy - iris_r + lid // 2 - gaze_up,
+                  ne_cx + iris_r, ne_cy + iris_r - gaze_up],
                  fill=BYTE_TEAL, outline=VOID_BLACK, width=1)
 
     # Cracked eye (left)
@@ -250,9 +253,10 @@ def draw_byte_full_body(img, draw, byte_cx, byte_floor_y, body_h):
     draw.line([(ce_cx - e_r + 2, ce_cy - int(e_r * 0.65)),
                (ce_cx + e_r - 2, ce_cy + int(e_r * 0.65))],
               fill=CRACK_LINE, width=1)
-    # Alive eye dot (small cyan in lower-left quadrant)
-    draw.ellipse([ce_cx - int(e_r * 0.40) - 2, ce_cy + int(e_r * 0.10),
-                  ce_cx - int(e_r * 0.40) + 4, ce_cy + int(e_r * 0.10) + 4],
+    # Alive eye dot — shifted upward to match level-forward/contempt gaze direction
+    # Sits at left-center rather than lower-left, consistent with outward-level aim
+    draw.ellipse([ce_cx - int(e_r * 0.38) - 2, ce_cy - int(e_r * 0.06),
+                  ce_cx - int(e_r * 0.38) + 4, ce_cy - int(e_r * 0.06) + 4],
                  fill=ELEC_CYAN)
 
     # ── EXPRESSION — grudging assessment ─────────────────────────────────────
@@ -437,7 +441,7 @@ def draw_scene(img):
               font=font_ann, fill=ANN_COL)
     draw.text((10, 20), "Byte: full body reveal — standing in real world — TINY (head barely above cables)",
               font=font_ann, fill=ANN_DIM)
-    draw.text((10, 32), "Pixel confetti drifting. Desaturation ring at feet. CRT returning to static BG.",
+    draw.text((10, 32), "Gaze: level-forward (contempt/superiority). NOT downward. Desat ring at feet.",
               font=font_ann, fill=ANN_DIM)
 
     # Dialogue notation at Byte
@@ -482,7 +486,7 @@ def make_panel():
     draw.text((10, DRAW_H + 33),
               "\"Ugh. The flesh dimension.\" — Expression: disgust cycling through assessment to reluctant OK.",
               font=font_ann, fill=(150, 140, 110))
-    draw.text((PW - 230, DRAW_H + 46), "LTG_SB_cold_open_P08  /  Diego Vargas  /  C41",
+    draw.text((PW - 230, DRAW_H + 46), "LTG_SB_cold_open_P08  /  Diego Vargas  /  C42",
               font=font_sm, fill=(100, 95, 78))
 
     # Arc border

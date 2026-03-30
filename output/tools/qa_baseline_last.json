@@ -1,6 +1,6 @@
 {
   "cycle": "C41",
-  "run_ts": "2026-03-30 02:28",
+  "run_ts": "2026-03-30 02:33",
   "sections": {
     "render_qa": {
       "section": "Render QA",
@@ -38,8 +38,6 @@
         "  - LTG_COLOR_styleframe_glitch_storm.png / ELECTRIC_CYAN: LAB \u0394E=11.75 (threshold=5.0)",
         "  - LTG_COLOR_styleframe_glitch_storm.png / SUNLIT_AMBER: LAB \u0394E=47.04 (threshold=5.0)",
         "  - LTG_COLOR_styleframe_otherside.png / BYTE_TEAL: LAB \u0394E=22.83 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_otherside.png / UV_PURPLE: LAB \u0394E=27.78 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_otherside.png / ELECTRIC_CYAN: LAB \u0394E=7.68 (threshold=5.0)",
         "  - LTG_COLOR_styleframe_otherside.png / SUNLIT_AMBER: LAB \u0394E=44.94 (threshold=5.0)",
         "  - LTG_COLOR_styleframe_luma_byte.png / BYTE_TEAL: LAB \u0394E=19.72 (threshold=5.0)",
         "  - LTG_COLOR_styleframe_luma_byte.png / ELECTRIC_CYAN: LAB \u0394E=22.83 (threshold=5.0)",
@@ -63,7 +61,7 @@
     "stub_linter": {
       "section": "Stub Linter",
       "overall": "PASS",
-      "pass": 118,
+      "pass": 122,
       "warn": 0,
       "fail": 0,
       "missing": [],
@@ -128,12 +126,15 @@
     },
     "readme_sync": {
       "section": "README Sync",
-      "overall": "PASS",
-      "pass": 113,
-      "warn": 0,
+      "overall": "WARN",
+      "pass": 115,
+      "warn": 2,
       "fail": 0,
       "missing": [],
-      "flagged": []
+      "flagged": [
+        "  - UNLISTED: `LTG_TOOL_sb_cold_open_P23.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_sb_cold_open_P24.py` (on disk, not in README Script Index)"
+      ]
     },
     "motion_spec": {
       "section": "Motion Spec Lint",
@@ -152,8 +153,8 @@
     }
   },
   "totals": {
-    "pass": 259,
-    "warn": 31,
+    "pass": 265,
+    "warn": 33,
     "fail": 0
   }
 }

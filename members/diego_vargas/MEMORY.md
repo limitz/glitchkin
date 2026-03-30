@@ -171,6 +171,47 @@ All three P1 priorities complete.
   — Shared `LTG_TOOL_byte_draw_lib.py` module for canonical Byte body drawing
   across all storyboard panels, keyed to named expression states.
 
+## Cycle 42 — Delivered
+
+### Sight-Line Fixes (Lee Tanaka review)
+- **P06 cracked-eye divergence**: added `div_x = -int(ce_r * 0.20)` offset to processing dots
+  cluster. Cracked eye now aims ~6° off-axis outward from normal eye aim line.
+- **P08 level-forward gaze**: added `gaze_up = int(e_r * 0.10)` upward iris offset.
+  Contempt beat = level-forward/superiority read. NOT downward (shame). Cracked-eye alive dot
+  shifted to match. Caption annotation added.
+- Sight-line batch diagnostic (Lee Tanaka config): 2/2 PASS, 0 WARN, 0 FAIL.
+- Both panels regenerated: `LTG_SB_cold_open_P06.png`, `LTG_SB_cold_open_P08.png`
+
+### New Panels
+- **P23** — `LTG_TOOL_sb_cold_open_P23.py` → `output/storyboards/panels/LTG_SB_cold_open_P23.png`
+  - MED OTS reverse. Luma + Byte backs to camera. Monitor wall blazing ahead.
+  - Luma: square shoulders, right arm raised. Byte: 3/4 back, shoulder-perch, cracked eye visible.
+  - Palette contrast: Luma warm vs room Full Glitch Chaos.
+  - Camera push-in annotated. Arc: TENSE.
+- **P24** — `LTG_TOOL_sb_cold_open_P24.py` → `output/storyboards/panels/LTG_SB_cold_open_P24.png`
+  - WIDE/MED, low angle, Dutch 12° left. HOOK FRAME.
+  - 28 Glitchkin swarm, 220 confetti pieces, 9 breached monitors.
+  - Dutch tilt applied: `scene_crop.rotate(-12, expand=False, fillcolor=DEEP_SPACE)` on draw area.
+  - Luma FG hero (tall from low angle). Byte on shoulder (resigned dignity).
+  - Arc: PITCH BEAT (bright cyan 4px border).
+- PANEL_MAP.md updated: P23 + P24 PLANNED → EXISTS; P07, P09 added as next priorities.
+- COVETOUS panel: Sam Kowalski spec not yet arrived. Hold for next cycle.
+
+### Lessons Learned — Cycle 42
+- **Dutch tilt implementation**: rotate only the draw area crop, not the caption bar.
+  `img.crop([0, 0, PW, DRAW_H])` → rotate(-12, expand=False, fill) → paste back.
+  Caption bar applied after tilt stays horizontal.
+- **Glitchkin swarm at chaos density**: sort by Y (back-to-front) before drawing.
+  Scale by depth: `g_scale = rng.uniform(0.6, 1.6)` gives perspective size variation.
+  28 Glitchkin + pixel trails + 220 confetti = readable chaos wave.
+- **Promise shot (backs-to-camera)**: warm identity only visible via hoodie color + hair silhouette.
+  Cyan rim light on hair (from monitors) essential — unites the character with the glitch world.
+  Hair cloud from behind reads as LARGER than front view.
+- **Sight-line diagnostic batch config**: run after any P06/P08 revision.
+  Config at `output/production/sight_line_batch_cold_open_p06_p08.json`.
+- **Contempt gaze = level-forward or slight upward**: `gaze_up = int(e_r * 0.10)` shift.
+  Downward iris = shame/resignation (wrong for "flesh dimension" beat).
+
 ## Startup Sequence
 1. Read ROLE.md if present
 2. Read this MEMORY.md

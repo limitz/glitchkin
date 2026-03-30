@@ -1,5 +1,38 @@
 # Jordan Reed — Memory
 
+## Cycle 42 Deliverables
+- `LTG_TOOL_style_frame_04_resolution.py` → `output/tools/` CREATED ✓
+  - Output: `output/style_frames/LTG_COLOR_styleframe_sf04.png` (1280×720) ✓
+  - render_qa GRADE: WARN — key target metrics PASS
+    - Warm/cool separation: 13.2 (PASS ≥12.0) — 5.0 on first pass; boosted via warm alpha 115 linear top + cool alpha 95 linear bottom (C35 asymmetric alpha lesson applied)
+    - Value range: min=12 max=252 PASS
+    - Silhouette: distinct
+    - Color fidelity WARN: pre-existing alpha-compositing pattern
+    - Line weight: 3 outliers (WARN) — pre-existing
+  - palette_warmth_lint: PASS (REAL_INTERIOR, 28/42 warm entries = 66.7%, threshold 12 MET)
+  - precritique_qa: OVERALL WARN (consistent with prior baseline — +0 FAIL, +2 WARN vs C41)
+- `LTG_ENV_school_hallway.png` regenerated via `LTG_TOOL_bg_school_hallway.py` ✓
+  - SUNLIT_AMBER hue fix confirmed (source fixed C14, PNG now current)
+  - palette_warmth_lint on generator: PASS
+- Ideabox: `20260330_jordan_reed_sf04_glitch_residue_pattern.md`
+- README.md updated (C42 Jordan Reed section added + Last Updated header) ✓
+- Inbox archived ✓ | Completion report sent to Alex Chen ✓
+
+## Cycle 42 Status: COMPLETE
+
+## Cycle 42 Notes
+- **SF04 "Resolution" concept**: Luma back in Grandma's kitchen after Glitch Layer crossing.
+  Byte as faded CRT signal in doorway. One Glitch-residue detail: ELEC_CYAN pixel-streak
+  in Luma's left sleeve. Film grain + scanline = scene through CRT frame perspective.
+- **Warm/cool strategy that worked**: SUNLIT_AMBER top-half alpha 115 LINEAR (not quadratic)
+  + CRT_GLOW bottom-half alpha 95 LINEAR (not quadratic) + full-width floor spill ellipse.
+  First pass (quadratic fades, small doorway spill) gave only 5.0 separation. Linear overlays
+  are more reliable for hitting QA median-hue thresholds. C35 lesson: linear ≥ quadratic for separation.
+- **Output path**: `output/style_frames/LTG_COLOR_styleframe_sf04.png` (new directory created)
+  vs old C41 path `output/color/style_frames/LTG_SF_luma_byte_v005.png` — brief specified new path.
+- **Face test gate**: head_r=42px at pitch scale — above sprint threshold (20-25px). Not triggered.
+- **add_rim_light API**: parameter is `light_color` (NOT `color`) — confirmed from source.
+
 ## Cycle 41 Deliverables
 - `LTG_TOOL_sf04_luma_byte_v005.py` → `output/tools/` CREATED ✓
   - Output: `output/color/style_frames/LTG_SF_luma_byte_v005.png` (1280×720) ✓

@@ -1,0 +1,5 @@
+**Author:** Diego Vargas
+**Cycle:** 42
+**Date:** 2026-03-30
+**Idea:** Create a shared `LTG_TOOL_glitchkin_swarm.py` utility that generates a parameterized swarm of background Glitchkin (count, density, color mix, seed). P24 required coding a full swarm from scratch inline. The same logic will be needed for P21 (multiple Glitchkin pressing against screens), P22 (multiple breach points), and any chaos-state panels going forward. A standalone tool with a `draw_glitchkin_swarm(draw, img, count, y_band, seed, scale_range)` API would let any storyboard panel call it as a one-liner, and give Jordan Reed a building block for background chaos layers too.
+**Benefits:** Saves per-panel swarm code for Diego (at least P21, P22, P22a coming up), gives Jordan Reed a chaos-density layer primitive for any new environment backgrounds, ensures all Glitchkin in swarms follow the same irregular-polygon spec (consistent with the C11 no-rectangles standard). Reduces risk of one-off Glitchkin breaking the polygon rule.

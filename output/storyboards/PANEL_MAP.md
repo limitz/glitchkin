@@ -1,7 +1,7 @@
 # PANEL MAP — Pilot Cold Open: "The Night Everything Went Wrong"
 **Storyboard Artist:** Diego Vargas
 **Art Director:** Alex Chen
-**Last Updated:** 2026-03-30 (Cycle 41)
+**Last Updated:** 2026-03-30 (Cycle 42)
 
 Panels P01–P25 covering the full pilot cold open arc.
 Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the contact sheet tool.
@@ -41,8 +41,8 @@ Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the conta
 | P21 | WIDE HIGH ANGLE — Re-escalation. All monitors blazing, Glitchkin pressing against screens. Byte "not the only one." | PLANNED | — |
 | P22 | ECU MONITOR — Multiple Glitchkin pressing against glass. Hand touches from inside; screen ripples. Multiple screens beginning to breach. | PLANNED | — |
 | P22a | MCU INSERT — Byte accidentally lands on Luma's shoulder mid-chaos. Not chosen — practical accident. Pixel confetti contacts hoodie (first time his digital nature marks her). | PLANNED | — |
-| P23 | MED — Luma and Byte from behind, both facing monitor wall. Show's promise shot: these two facing impossible chaos together. | PLANNED | — |
-| P24 | WIDE/MED — CHAOS APEX. Glitchkin pouring through breached screens. Luma + Byte at still center. The hook frame. | PLANNED | — |
+| P23 | MED — Luma and Byte from behind, both facing monitor wall. Show's promise shot: these two facing impossible chaos together. | EXISTS | `LTG_SB_cold_open_P23.png` (C42, Diego Vargas) |
+| P24 | WIDE/MED — CHAOS APEX. Glitchkin pouring through breached screens. Luma + Byte at still center. The hook frame. | EXISTS | `LTG_SB_cold_open_P24.png` (C42, Diego Vargas) |
 | P25 | TITLE CARD — Pixel-by-pixel assembly of "LUMA & THE GLITCHKIN" in Electric Cyan → Hot Magenta. Glitch-flash frame. | PLANNED | — |
 
 ---
@@ -74,5 +74,7 @@ Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the conta
 1. ~~**P03**~~ — DONE (C41, Diego Vargas)
 2. ~~**P06**~~ — DONE (C41, Diego Vargas)
 3. ~~**P08**~~ — DONE (C41, Diego Vargas)
-4. **P24** — Chaos apex / hook frame (pitch-critical: strongest hook for commissioning)
-5. **P23** — Promise shot: backs to camera (show's thematic thesis in one image)
+4. ~~**P24**~~ — DONE (C42, Diego Vargas) — Chaos apex / hook frame
+5. ~~**P23**~~ — DONE (C42, Diego Vargas) — Promise shot: backs to camera
+6. **P07** — Monitor bulging breach begins (next after P23/P24 complete)
+7. **P09** — Byte floating, spots Luma (next character staging challenge)

@@ -258,11 +258,17 @@ def draw_byte_face(img, draw, face_cx, face_cy, face_r):
     draw.polygon(crack_eye_pts, fill=VOID_BLACK, outline=ELEC_CYAN_DIM, width=2)
 
     # Processing dots: 3 dots in a triangle arrangement, alt cyan/magenta
+    # CRACKED EYE DIVERGENCE (Lee Tanaka sight-line note):
+    # The cracked eye registers the environment differently from the normal eye.
+    # Shift dot cluster ~6° off-axis toward viewer's right (away from normal eye aim).
+    # Normal eye aims at center/Luma (slightly left of 0°). Cracked eye diverges outward.
+    # Divergence offset: shift dot cluster +int(ce_r*0.20) in X toward outer frame edge.
+    div_x = -int(ce_r * 0.20)   # diverge LEFT (away from normal eye) in viewer's frame
     dot_r = int(ce_r * 0.18)
     dot_positions = [
-        (ce_cx,          ce_cy - int(ce_r * 0.28)),  # top
-        (ce_cx - int(ce_r * 0.28), ce_cy + int(ce_r * 0.15)),  # bottom-left
-        (ce_cx + int(ce_r * 0.28), ce_cy + int(ce_r * 0.15)),  # bottom-right
+        (ce_cx + div_x,          ce_cy - int(ce_r * 0.28)),  # top (diverged)
+        (ce_cx + div_x - int(ce_r * 0.28), ce_cy + int(ce_r * 0.15)),  # bottom-left
+        (ce_cx + div_x + int(ce_r * 0.28), ce_cy + int(ce_r * 0.15)),  # bottom-right
     ]
     dot_colors = [PROCESS_DOT_C, PROCESS_DOT_M, PROCESS_DOT_C]
     for (dx, dy), dc in zip(dot_positions, dot_colors):
@@ -465,9 +471,9 @@ def make_panel():
               "Byte pressed flat against inside of CRT glass. Expression: DISGUSTED / RELUCTANT CURIOSITY.",
               font=font_cap, fill=TEXT_CAP)
     draw.text((10, DRAW_H + 33),
-              "Cracked eye = SEARCHING/PROCESSING (3 dots cyan/magenta). Pixel confetti escaping screen edges.",
+              "Cracked eye divergent aim (~6° off-axis outward). Pixel confetti at both hands (symmetric).",
               font=font_ann, fill=(150, 140, 110))
-    draw.text((PW - 230, DRAW_H + 46), "LTG_SB_cold_open_P06  /  Diego Vargas  /  C41",
+    draw.text((PW - 230, DRAW_H + 46), "LTG_SB_cold_open_P06  /  Diego Vargas  /  C42",
               font=font_sm, fill=(100, 95, 78))
 
     # Arc border

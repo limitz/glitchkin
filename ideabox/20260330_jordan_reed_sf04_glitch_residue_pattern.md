@@ -1,0 +1,5 @@
+**Author:** Jordan Reed
+**Cycle:** 42
+**Date:** 2026-03-30
+**Idea:** Add a canonical "Glitch residue" visual vocabulary spec to the image-rules or a new `docs/glitch-residue.md`. SF04 uses the concept of subtle GL palette contamination bleeding into the Real World — a cyan pixel-streak in Luma's sleeve, CRT doorway glow with faded Byte ghost — but there are no spec rules governing how strong, how prominent, or how few these residue details can be. A spec would define: max residue pixel count per frame, permitted GL colors for residue (ELEC_CYAN only? DATA_BLUE too?), alpha ceiling for residue overlays, and placement rules (clothing detail vs environment bleed vs shadow contamination). This would prevent critics calling residue "too subtle to read" or "too dominant — breaks the Real World palette rule."
+**Benefits:** Jordan Reed (style frame consistency), Rin Yamamoto (SF generator development), critics (clear evaluation criteria vs "does this feel right"), Alex Chen (direction — can define where on the warm→cold arc residue first appears and how it intensifies across an episode arc).

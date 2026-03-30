@@ -1,38 +1,37 @@
 # Pre-Critique QA Report — C41
 
-**Run date:** 2026-03-30 02:28
+**Run date:** 2026-03-30 02:33
 **Script:** LTG_TOOL_precritique_qa.py v2.9.0
 
 ---
 
 ## Overall Result
 
-**WARN** — PASS: 259  WARN: 31  FAIL: 0
+**WARN** — PASS: 265  WARN: 33  FAIL: 0
+
+> **README SYNC WARNING:** 2 discrepancy(ies) detected — 2 UNLISTED, 0 GHOST. See Section 7 for details. Update README Script Index before critique.
+
 
 | Section | Result | PASS | WARN | FAIL |
 |---|---|---|---|---|
 | Render QA (pitch PNGs)         | WARN   | 0  | 6  | 0  |
 | Color Verify (style frames)    | WARN | 0 | 4 | 0 |
 | Proportion Verify (char sheets)| WARN  | 1  | 3  | 0  |
-| Stub Linter (tools dir)        | PASS   | 118   | 0   | 0   |
+| Stub Linter (tools dir)        | PASS   | 122   | 0   | 0   |
 | Palette Warmth Lint            | PASS| 17| 0| 0|
 | Glitch Spec Lint               | WARN | 3 | 13 | 0 |
-| README Script Index Sync       | PASS | 113 | 0 | 0 |
+| README Script Index Sync       | WARN | 115 | 2 | 0 |
 | Motion Spec Lint               | WARN | 7 | 5 | 0 |
 
 ---
 
 ## 0. Delta Report
 
-**Delta since last run (C41 @ 2026-03-30 02:26): +0 FAIL, -4 WARN, -4 resolved**
+**Delta since last run (C41 @ 2026-03-30 02:32): +0 FAIL, +0 WARN, -0 resolved**
 
-_Compared against: C41 run @ 2026-03-30 02:26_
+_Compared against: C41 run @ 2026-03-30 02:32_
 
-**Resolved since last run (previously WARN/FAIL, now PASS):**
-  - [README Sync] - UNLISTED: `LTG_TOOL_colorkey_glitch_covetous_gen.py` (on disk, not in README Script Index)
-  - [README Sync] - UNLISTED: `LTG_TOOL_sb_cold_open_P03.py` (on disk, not in README Script Index)
-  - [README Sync] - UNLISTED: `LTG_TOOL_sb_cold_open_P06.py` (on disk, not in README Script Index)
-  - [README Sync] - UNLISTED: `LTG_TOOL_sb_cold_open_P08.py` (on disk, not in README Script Index)
+_No changes in flagged items since last run._
 
 ---
 
@@ -76,8 +75,6 @@ PASS: 0  WARN: 4  FAIL: 0  Missing: 0
   - LTG_COLOR_styleframe_glitch_storm.png / ELECTRIC_CYAN: LAB ΔE=11.75 (threshold=5.0)
   - LTG_COLOR_styleframe_glitch_storm.png / SUNLIT_AMBER: LAB ΔE=47.04 (threshold=5.0)
   - LTG_COLOR_styleframe_otherside.png / BYTE_TEAL: LAB ΔE=22.83 (threshold=5.0)
-  - LTG_COLOR_styleframe_otherside.png / UV_PURPLE: LAB ΔE=27.78 (threshold=5.0)
-  - LTG_COLOR_styleframe_otherside.png / ELECTRIC_CYAN: LAB ΔE=7.68 (threshold=5.0)
   - LTG_COLOR_styleframe_otherside.png / SUNLIT_AMBER: LAB ΔE=44.94 (threshold=5.0)
   - LTG_COLOR_styleframe_luma_byte.png / BYTE_TEAL: LAB ΔE=19.72 (threshold=5.0)
   - LTG_COLOR_styleframe_luma_byte.png / ELECTRIC_CYAN: LAB ΔE=22.83 (threshold=5.0)
@@ -98,7 +95,7 @@ PASS: 1  WARN: 3  FAIL: 0  Missing: 0
 
 ## 4. Stub Linter — output/tools/ — **PASS**
 
-PASS: 118  WARN: 0  FAIL: 0  Missing: 0
+PASS: 122  WARN: 0  FAIL: 0  Missing: 0
 
 
 _No issues found._
@@ -117,7 +114,7 @@ _No issues found._
 PASS: 3  WARN: 13  FAIL: 0  Missing: 0
 
 
-_(Non-Glitch files: 102 skipped)_
+_(Non-Glitch files: 106 skipped)_
 
 **Flagged items:**
   - LTG_CHAR_byte_motion.py: G003: Multi-Glitchkin frame has only 1 unique expression(s) — at least 2 required. Found: ['NEUTRAL']
@@ -160,14 +157,18 @@ _(Non-Glitch files: 102 skipped)_
   - LTG_TOOL_style_frame_03_other_side.py: G008: Interior states (YEARNING/COVETOUS/HOLLOW) detected but no bilateral eye rule found. Spec §6.3: interior states require IDENTICAL left+right eye glyphs — asymmetric destabilization must be SKIPPED for these states.
 
 
-## 7. README Script Index Sync — **PASS**
+## 7. README Script Index Sync — **WARN**
 
-PASS: 113  WARN: 0  FAIL: 0  Missing: 0
+PASS: 115  WARN: 2  FAIL: 0  Missing: 0
 
 
-_(Tools on disk: 113  |  Tools listed in README: 230)_
+_(Tools on disk: 117  |  Tools listed in README: 232)_
 
-_No issues found._
+> **ACTION REQUIRED:** 2 tool(s) on disk not listed in README and 0 README entry(ies) with no corresponding file. Update `output/tools/README.md` Script Index before next critique cycle.
+
+**Flagged items:**
+  - UNLISTED: `LTG_TOOL_sb_cold_open_P23.py` (on disk, not in README Script Index)
+  - UNLISTED: `LTG_TOOL_sb_cold_open_P24.py` (on disk, not in README Script Index)
 
 
 ## 8. Motion Spec Lint — motion sheets — **WARN**
