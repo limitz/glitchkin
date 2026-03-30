@@ -1,6 +1,6 @@
 {
-  "cycle": "C41",
-  "run_ts": "2026-03-30 03:58",
+  "cycle": "C44",
+  "run_ts": "2026-03-30 08:28",
   "sections": {
     "render_qa": {
       "section": "Render QA",
@@ -13,8 +13,8 @@
         "  - LTG_COLOR_styleframe_discovery.png / color_fidelity: WARN",
         "  - LTG_COLOR_styleframe_glitch_storm.png / color_fidelity: WARN",
         "  - LTG_COLOR_styleframe_otherside.png / color_fidelity: WARN",
-        "  - LTG_COLOR_styleframe_luma_byte.png / color_fidelity: WARN",
-        "  - LTG_COLOR_styleframe_luma_byte.png / warm_cool: WARN \u2014 Flat palette \u2014 warm/cool separation is 1.1 PIL units (minimum 12.0 required)",
+        "  - LTG_COLOR_styleframe_sf04.png / color_fidelity: WARN",
+        "  - LTG_COLOR_styleframe_sf04.png / line_weight: WARN \u2014 Line weight inconsistency \u2014 3 outlier widths detected (mean=263.9px, std=449.6px)",
         "  - LTG_BRAND_logo.png / color_fidelity: WARN",
         "  - storyboard_pitch_export.png / color_fidelity: WARN"
       ]
@@ -31,17 +31,16 @@
         "  - LTG_COLOR_styleframe_discovery.png / UV_PURPLE: LAB \u0394E=36.19 (threshold=5.0)",
         "  - LTG_COLOR_styleframe_discovery.png / HOT_MAGENTA: LAB \u0394E=17.89 (threshold=5.0)",
         "  - LTG_COLOR_styleframe_discovery.png / SUNLIT_AMBER: LAB \u0394E=16.76 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_glitch_storm.png / CORRUPT_AMBER: LAB \u0394E=10.10 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_glitch_storm.png / BYTE_TEAL: LAB \u0394E=21.79 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_glitch_storm.png / UV_PURPLE: LAB \u0394E=29.02 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_glitch_storm.png / HOT_MAGENTA: LAB \u0394E=11.18 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_glitch_storm.png / ELECTRIC_CYAN: LAB \u0394E=11.75 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_glitch_storm.png / SUNLIT_AMBER: LAB \u0394E=47.04 (threshold=5.0)",
+        "  - LTG_COLOR_styleframe_glitch_storm.png / CORRUPT_AMBER: LAB \u0394E=8.77 (threshold=5.0)",
+        "  - LTG_COLOR_styleframe_glitch_storm.png / BYTE_TEAL: LAB \u0394E=22.83 (threshold=5.0)",
+        "  - LTG_COLOR_styleframe_glitch_storm.png / UV_PURPLE: LAB \u0394E=9.80 (threshold=5.0)",
+        "  - LTG_COLOR_styleframe_glitch_storm.png / HOT_MAGENTA: LAB \u0394E=6.08 (threshold=5.0)",
+        "  - LTG_COLOR_styleframe_glitch_storm.png / ELECTRIC_CYAN: LAB \u0394E=10.25 (threshold=5.0)",
+        "  - LTG_COLOR_styleframe_glitch_storm.png / SUNLIT_AMBER: LAB \u0394E=26.48 (threshold=5.0)",
         "  - LTG_COLOR_styleframe_otherside.png / BYTE_TEAL: LAB \u0394E=22.83 (threshold=5.0)",
         "  - LTG_COLOR_styleframe_otherside.png / SUNLIT_AMBER: LAB \u0394E=44.94 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_luma_byte.png / BYTE_TEAL: LAB \u0394E=19.72 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_luma_byte.png / ELECTRIC_CYAN: LAB \u0394E=22.83 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_luma_byte.png / SUNLIT_AMBER: LAB \u0394E=39.46 (threshold=5.0)"
+        "  - LTG_COLOR_styleframe_sf04.png / BYTE_TEAL: LAB \u0394E=30.53 (threshold=5.0)",
+        "  - LTG_COLOR_styleframe_sf04.png / SUNLIT_AMBER: LAB \u0394E=31.38 (threshold=5.0)"
       ]
     },
     "proportion": {
@@ -61,7 +60,7 @@
     "stub_linter": {
       "section": "Stub Linter",
       "overall": "PASS",
-      "pass": 129,
+      "pass": 133,
       "warn": 0,
       "fail": 0,
       "missing": [],
@@ -79,7 +78,7 @@
     "glitch_spec": {
       "section": "Glitch Spec Lint",
       "overall": "WARN",
-      "pass": 6,
+      "pass": 7,
       "warn": 12,
       "fail": 0,
       "missing": [],
@@ -120,23 +119,26 @@
     },
     "readme_sync": {
       "section": "README Sync",
-      "overall": "PASS",
-      "pass": 124,
-      "warn": 0,
+      "overall": "WARN",
+      "pass": 125,
+      "warn": 3,
       "fail": 0,
       "missing": [],
-      "flagged": []
+      "flagged": [
+        "  - UNLISTED: `LTG_TOOL_sb_cold_open_P10.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_sb_cold_open_P11.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_sf_covetous_glitch_c43.py` (on disk, not in README Script Index)"
+      ]
     },
     "motion_spec": {
       "section": "Motion Spec Lint",
       "overall": "WARN",
-      "pass": 7,
-      "warn": 5,
+      "pass": 20,
+      "warn": 4,
       "fail": 0,
       "missing": [],
       "flagged": [
-        "  - LTG_CHAR_luma_motion.png: WARN: annotation_occupancy: [bg:precise]  P1: 11.3% occupancy  |  P2: 3.9% occupancy \u2014 WARN low  |  P3: 9.4% occupancy",
-        "  - LTG_CHAR_luma_motion.png: WARN: beat_badges: beat badge occupancy  P1: 13.5% \u2014 WARN no badge  |  P2: 0.3% \u2014 WARN no badge  |  P3: 40.6%",
+        "  - LTG_CHAR_luma_motion.png: WARN: beat_badges: beat badge occupancy  P1: 13.5% \u2014 WARN no badge  |  P2: 16.5%  |  P3: 3.1% \u2014 WARN no badge  |  P4: 19.0%",
         "  - LTG_CHAR_byte_motion.png: WARN: annotation_occupancy: [bg:legacy-broad]  P1: 0.0% occupancy \u2014 WARN low  |  P2: 0.0% occupancy \u2014 WARN low  |  P3: 0.0% occupancy \u2014 WARN low  |  P4: 4.8% occupancy",
         "  - LTG_CHAR_byte_motion.png: WARN: beat_badges: beat badge occupancy  P1: 0.0% \u2014 WARN no badge  |  P2: 0.0% \u2014 WARN no badge  |  P3: 0.0% \u2014 WARN no badge  |  P4: 0.0% \u2014 WARN no badge",
         "  - LTG_CHAR_byte_motion.png: WARN: timing_colors: BEAT_COLOR [config] in 0/4 panels (0%)"
@@ -144,8 +146,8 @@
     }
   },
   "totals": {
-    "pass": 284,
-    "warn": 30,
+    "pass": 303,
+    "warn": 32,
     "fail": 0
   }
 }

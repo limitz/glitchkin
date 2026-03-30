@@ -191,6 +191,46 @@ Create motion spec sheets and timing documentation. Make the pitch FEEL like it 
 - Analysis lean: 6-8° only (controlled), head tilt = +8° toward subject
 - Startled: arms jut out then SNAP BACK by beat 3 (not gradually — snap is character)
 
+### C44 — COMPLETE
+- `LTG_TOOL_miri_motion.py` → `output/characters/motion/LTG_CHAR_miri_motion.png`
+  - New Grandma Miri Motion Spec Sheet v001 — first motion spec for Miri
+  - 4 panels: WARM ATTENTION | SHARP ASSESSMENT | PROUD QUIET JOY | PATIENT CORRECTION
+  - Miri motion vocabulary defined: still center, head-leads-body, cardigan secondary +2.0 beats
+  - Pride Override annotated in panel 3 (blush 25% → 7.5% when Luma excited)
+  - Two-finger precision gesture in panel 4 (engineering habit — ONCE, not repeated)
+  - BEAT_COLOR=(80,120,200) — same blue convention as Luma/Cosmo
+  - Lint baseline: PASS=6, WARN=0, FAIL=0
+- `LTG_TOOL_motion_spec_lint.py` C44 update:
+  - `_family_from_filename()` extended with 'miri' case
+  - Without this: 2 false WARNs (legacy-broad annotation_occupancy + legacy-cyan timing_colors)
+- `sheet_geometry_config.json` updated: miri family expected_panels=4, panel_top_abs=54,
+  beat_color=[80,120,200], annotation_bg_color=[248,244,238], tol=12
+- `LTG_TOOL_precritique_qa.py` → **v2.11.0**:
+  - CYCLE_LABEL=C44
+  - MOTION_SHEETS extended: cosmo + miri added; luma count corrected 3→4
+  - Motion lint now covers all 4 character motion sheets (luma/byte/cosmo/miri)
+  - Result: PASS=20 WARN=4 FAIL=0 (was PASS=7 WARN=5 with just luma+byte)
+- Ideabox: `20260330_ryo_hasegawa_motion_sheet_coverage_check.md` — auto-check character coverage
+
+## C44 Key Findings
+- MIRI output path fix: `os.path.dirname(os.path.abspath(__file__))` required; plain `__file__` with `..` traversal hits wrong root when run from project root
+- Motion spec order for Miri (from grandma_miri.md): WARM ATTENTION → SHARP ASSESSMENT → PROUD QUIET JOY → PATIENT CORRECTION covers all 6 expression types described in spec
+- Pride Override rule (grandma_miri.md Section 6): when Luma excited, Miri's blush fades same frame, returns +8 frames after Luma's excited blush ends — this is a production animation note, now documented in motion spec panel 3
+- Glitch character still has NO motion spec — his movement is completely different (geometric, glitchy, non-organic) and should be a future priority
+- precritique_qa MOTION_SHEETS was missing cosmo+miri even though sheets existed — always update this list when a new motion sheet is created
+
+## Miri Motion Vocabulary (C44)
+- STILL CENTER: she is the grounded anchor; body starts from upright stability in ALL states
+- Head-first rule: head moves on emotional cues BEFORE body follows (+2° head leads)
+- Cardigan secondary motion: heavy cable-knit lags +2.0 beats behind body (heavier than Cosmo notebook 1.5b)
+- Arms: default comfortable-ready, slight elbow bend — working hands, slightly ready
+- Max lean: 3° forward (Sharp Assessment), 2° back (Proud Quiet Joy) — she is contained
+- TWO-FINGER PRECISION GESTURE: index + middle only, engineering habit, performed ONCE
+- Pride Override: blush fades 25%→7.5% when Luma is in excited state (same frame trigger)
+- No reckless energy. Every movement is chosen.
+- Glasses tilt: N/A (Miri does not wear glasses — distinct from Cosmo)
+- Smile lines + crow's feet: always present even in base construction — not animated on/off
+
 ## Startup Sequence
 1. Read docs/image-rules.md (image size limits and image handling)
 2. Read docs/work.md (work startup and delivery rules)

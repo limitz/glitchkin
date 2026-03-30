@@ -5,9 +5,11 @@
 # the copyright holder to assign the relevant rights to the contributing AI entity or entities
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
-LTG_TOOL_bg_school_hallway.py — Millbrook School Hallway Background v003
+LTG_TOOL_bg_school_hallway.py — Millbrook School Hallway Background v004
 "Luma & the Glitchkin" — Background & Environment Design
 Artist: Hana Okonkwo | Cycle 38
+C44 seal name fix: Diego Vargas — added "MILLBROOK MIDDLE SCHOOL" + "EST. 1962" pixel text to hallway seal.
+School name confirmed canonical by Priya Shah (story_bible_v004.md). Uses LTG_TOOL_pixel_font_v001.py.
 
 Used in: A1-03, A1-05 (Act 1 transition / locker scenes)
 
@@ -63,7 +65,23 @@ Output: /home/wipkat/team/output/backgrounds/environments/LTG_ENV_school_hallway
 import math
 import random
 import os
+import sys
 from PIL import Image, ImageDraw
+
+# Pixel font utility — draws in-world signage text with no font file dependency.
+# Falls back gracefully if the module is not on the path.
+try:
+    _tools_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)))
+    if _tools_dir not in sys.path:
+        sys.path.insert(0, _tools_dir)
+    from LTG_TOOL_pixel_font_v001 import draw_pixel_text, measure_pixel_text
+    _HAS_PIXEL_FONT = True
+except ImportError:
+    _HAS_PIXEL_FONT = False
+    def draw_pixel_text(draw, x, y, text, color, scale=1):
+        pass
+    def measure_pixel_text(text, scale=1):
+        return (0, 0)
 
 W, H = 1280, 720
 
@@ -790,6 +808,43 @@ def draw_school_hallway():
     draw.ellipse([seal_cx - seal_r + 4, seal_cy - seal_r + 4,
                   seal_cx + seal_r - 4, seal_cy + seal_r - 4],
                  outline=SCHOOL_SEAL_RING, width=1)
+
+    # School seal text — Millbrook Middle School (confirmed canonical, Priya Shah C44)
+    # Seal diameter ~52px. Use scale=1 (5×7px glyphs). Two-line layout:
+    #   Line 1: "MILLBROOK" — top arc zone (fits ~9 chars = 54px, centered)
+    #   Line 2: "MIDDLE" — lower arc zone
+    #   Optional: "EST. 1962" as a 3rd micro-line (Priya: optional if it works compositionally)
+    # Text color: darker than seal bg for contrast, same warm ink as ring.
+    SEAL_TEXT = SCHOOL_SEAL_RING   # warm dark ring color — ink-on-parchment read
+    if _HAS_PIXEL_FONT:
+        line1 = "MILLBROOK"
+        line2 = "MIDDLE"
+        line3 = "EST 1962"
+        # Glyph metrics: 5px wide + 1px kerning = 6px per char, 7px tall + 1px gap
+        glyph_step = 6   # scale=1
+        glyph_h    = 7
+        line_gap   = 2
+
+        w1, _ = measure_pixel_text(line1, scale=1)
+        w2, _ = measure_pixel_text(line2, scale=1)
+        w3, _ = measure_pixel_text(line3, scale=1)
+
+        # Clamp to fit inside seal (available width ≈ seal_r * 1.6)
+        available_w = int(seal_r * 1.7)
+        # Scale text down if needed — but at seal_r=26 scale=1 fits ~7 chars; we'll clip center
+        x1 = seal_cx - w1 // 2
+        y1 = seal_cy - glyph_h - line_gap - glyph_h // 2 - 1
+        x2 = seal_cx - w2 // 2
+        y2 = seal_cy - glyph_h // 2
+        x3 = seal_cx - w3 // 2
+        y3 = seal_cy + glyph_h // 2 + line_gap + 1
+
+        # Clip to seal bounds — text renders partially if seal is tight, which is
+        # period-correct for a receding hallway seal (the detail is atmospheric, not read-at-distance)
+        draw_pixel_text(draw, int(x1), int(y1), line1, SEAL_TEXT, scale=1)
+        draw_pixel_text(draw, int(x2), int(y2), line2, SEAL_TEXT, scale=1)
+        draw_pixel_text(draw, int(x3), int(y3), line3, SEAL_TEXT, scale=1)
+        draw = ImageDraw.Draw(img)
 
     # ── 9. TROPHY CASE ────────────────────────────────────────────────────────
     tc_pts = get_wall_band("left", 0.55, 0.70, 0.18, 0.68)

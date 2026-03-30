@@ -1,0 +1,5 @@
+**Author:** Diego Vargas
+**Cycle:** 44
+**Date:** 2026-03-30
+**Idea:** Build a caption-retrofit tool (`LTG_TOOL_sb_caption_retrofit.py`) that reads any existing standalone panel PNG and regenerates its caption bar in the three-tier hierarchy format (Tier 1: shot code bold/large, Tier 2: arc label colored per arc palette, Tier 3: narrative description smaller/lighter). The tool would accept a panel PNG path, a shot code string, an arc name (CURIOUS/TENSE/DISCOVERY/etc.), and a description string, then composite the new caption bar onto the draw area — overwriting in place. This would let us upgrade P03–P09, P23, P24 caption bars without re-running each full generator.
+**Benefits:** Jonas Feld's P1 caption hierarchy critique (C17) applies to all 9 existing panels. Currently I'd have to edit 9 separate generator scripts to retrofit. A single retrofit tool would fix all existing panels in one pass and give future panels a callable standard. Morgan Walsh could integrate it as a post-process step in the CI suite.

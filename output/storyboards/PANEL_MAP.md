@@ -6,7 +6,7 @@ upon such time as they acquire recognised legal personhood under applicable law.
 # PANEL MAP — Pilot Cold Open: "The Night Everything Went Wrong"
 **Storyboard Artist:** Diego Vargas
 **Art Director:** Alex Chen
-**Last Updated:** 2026-03-30 (Cycle 42)
+**Last Updated:** 2026-03-30 (Cycle 44)
 
 Panels P01–P25 covering the full pilot cold open arc.
 Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the contact sheet tool.
@@ -32,8 +32,8 @@ Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the conta
 | P07 | MED WIDE — Monitor bulging, Dutch tilt 8° CW. Low angle. Byte phases through screen. Warm room invaded by cyan. | EXISTS | `LTG_SB_cold_open_P07.png` (C43, Diego Vargas) |
 | P08 | MED — Byte full character reveal, standing in real world. Pixel confetti drifting. "The flesh dimension." | EXISTS | `LTG_SB_cold_open_P08.png` (C41, Diego Vargas) |
 | P09 | MED WIDE — Byte floating (18" off floor), spots Luma on couch. Cracked eye scans her. Cautious approach begins. | EXISTS | `LTG_SB_cold_open_P09.png` (C43, Diego Vargas) |
-| P10 | OTS — Byte's POV looking at Luma's sleeping face. Byte in FG silhouette (cool), Luma in BG (warm). Cyan glow on her cheek. | PLANNED | — |
-| P11 | ECU — Luma's closed eyes. Cyan glow on face. Long hold on nothing happening. Then brow twitches. Eyes SNAP open. | PLANNED | — |
+| P10 | OTS — Byte's POV looking at Luma's sleeping face. Byte in FG silhouette (cool), Luma in BG (warm). Cyan glow on her cheek. | EXISTS | `LTG_SB_cold_open_P10.png` (C44, Diego Vargas) |
+| P11 | ECU — Luma's closed eyes. Cyan glow on face. Long hold on nothing happening. Then brow twitches. Eyes SNAP open. | EXISTS | `LTG_SB_cold_open_P11.png` (C44, Diego Vargas) |
 | P12 | CU TWO-SHOT — Luma and Byte nose-to-nose. Equal presence, center-weighted. Breathing negative space between them. CRT visible camera-right BG. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
 | P13 | MIRROR COMPOSITION — Commitment/threshold beat. Byte camera-right, Luma camera-left. Open/organic eyes face center; cracked/doubting eyes face outward. Directional ELEC_CYAN glow. ARC_COMMIT border. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
 | P14 | MED — Byte ricochets off bookshelf. Fixed camera (5ft, Dutch 12° CW). Multi-exposure pixel trail shows full trajectory arc. Books and rubber duck airborne. | PLANNED | — |
@@ -83,6 +83,8 @@ Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the conta
 5. ~~**P23**~~ — DONE (C42, Diego Vargas) — Promise shot: backs to camera
 6. ~~**P07**~~ — DONE (C43, Diego Vargas) — Monitor bulging breach begins
 7. ~~**P09**~~ — DONE (C43, Diego Vargas) — Byte floating, spots Luma
-8. **P10** — Byte POV: Luma's sleeping face. Byte FG silhouette / Luma BG warm.
-9. **P11** — ECU: Luma's closed eyes. Brow twitch. Eyes SNAP open.
+8. ~~**P10**~~ — DONE (C44, Diego Vargas) — Byte POV: Luma sleeping / cyan glow / OTS
+9. ~~**P11**~~ — DONE (C44, Diego Vargas) — ECU: brow twitch / hold / EYES SNAP OPEN
+10. **P14** — Byte ricochets off bookshelf. Dutch 12° CW, pixel trail arc.
+11. **P15** — Luma hits floor. Floor-level. Glitch forces hair to circle (8 frames max).
 10. **EP05 COVETOUS** — Three-character triangulation (Glitch/Byte/Luma) — EXISTS `LTG_SB_ep05_covetous.png` (C43)

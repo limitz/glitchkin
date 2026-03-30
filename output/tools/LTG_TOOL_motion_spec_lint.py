@@ -13,6 +13,7 @@ Author: Ryo Hasegawa / Cycle 39
 Updated: Ryo Hasegawa / Cycle 40 — sheet geometry auto-detection via config
 Updated: Ryo Hasegawa / Cycle 41 — per-family beat color config (timing_colors fix)
 Updated: Ryo Hasegawa / Cycle 43 — per-family annotation_bg_color (annotation_occupancy fix)
+Updated: Ryo Hasegawa / Cycle 44 — _family_from_filename extended with 'miri' family
 Ideabox origin: 20260329_ryo_hasegawa_cg_support_polygon_lint.md (actioned C39)
 
 Checks motion spec sheet PNGs for structural compliance without sending images
@@ -156,7 +157,7 @@ def _load_geo_config(config_path=None):
 
 def _family_from_filename(fname):
     """
-    Infer sheet family ('luma', 'byte', 'cosmo') from filename.
+    Infer sheet family ('luma', 'byte', 'cosmo', 'miri') from filename.
     Returns None if unknown.
     """
     fname_lower = fname.lower()
@@ -166,6 +167,8 @@ def _family_from_filename(fname):
         return "byte"
     if "cosmo" in fname_lower:
         return "cosmo"
+    if "miri" in fname_lower:
+        return "miri"
     return None
 
 

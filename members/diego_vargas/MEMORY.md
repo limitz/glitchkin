@@ -268,6 +268,70 @@ All three P1 priorities complete.
 - **COVETOUS panel color arc**: Draw characters back-to-front (Luma, Byte, Glitch).
   Luma warm glow layer before characters so it reads as background warmth, not overlapping.
 
+## Cycle 44 — Delivered
+
+### Task 1 — Storyboard Naming Audit
+- `output/production/storyboard_naming_audit_c44.md` — full inventory of all panels in `output/storyboards/panels/`
+- Three families identified: canonical (LTG_SB_cold_open_PXX), legacy (LTG_SB_coldopen_panel_XX), secondary (act1/act2 Lee Tanaka)
+- Legacy files NOT renamed — `LTG_TOOL_cycle13_panel_fixes.py` hardcodes them as output targets
+- Morgan Walsh messaged: `members/morgan_walsh/inbox/20260330_2359_naming_audit_action_request.md`
+- Byte face test gate: audit trail note added — routed to Kai Nakamura, no further Diego action
+
+### Task 2 — Hallway Seal: MILLBROOK MIDDLE SCHOOL
+- `LTG_TOOL_bg_school_hallway.py` updated → v004
+- Added pixel font import from `LTG_TOOL_pixel_font_v001.py` with graceful fallback
+- Seal now renders: "MILLBROOK" / "MIDDLE" / "EST 1962" via `draw_pixel_text()` at scale=1
+- School name: MILLBROOK MIDDLE SCHOOL — confirmed canonical, Priya Shah, story_bible_v004.md
+- "EST. 1962" optional detail: used compositionally per Priya's permission
+- `LTG_ENV_school_hallway.png` regenerated
+- NOTE: v004 print banner still says v003 fix verification (cosmetic only — v004 content is the seal text)
+
+### Task 3 — Caption Hierarchy (Jonas Feld C17 P1)
+- New panels P10/P11 built with 3-tier system. Existing panels NOT retrofitted this cycle.
+- **3-tier standard:**
+  - Tier 1: Shot code — bold 13pt, TEXT_SHOT=(232,224,204), top-left of caption
+  - Tier 2: Arc label — 11pt, arc-palette color (right of caption bar, top row)
+    - CURIOUS/DISCOVERY = ELEC_CYAN
+    - TENSE/THRESHOLD = HOT_MAGENTA
+    - PITCH BEAT = ELEC_CYAN bright
+  - Tier 3: Narrative description — 9pt, TEXT_DESC=(155,148,122), second row
+  - Metadata: 8pt, TEXT_META=(88,82,66), bottom-right
+  - CAPTION_H: 72px (was 60px) to accommodate 3 rows + metadata
+- Ideabox idea submitted: caption-retrofit tool to upgrade existing panels in batch
+
+### Task 4 — New Panels P10 and P11
+- **P10** — `LTG_TOOL_sb_cold_open_P10.py` → `output/storyboards/panels/LTG_SB_cold_open_P10.png`
+  - OTS / Byte POV — Luma sleeping, unaware.
+  - Byte FG silhouette (VOID_BLACK + ELEC_CYAN rim). Luma warm mid-frame (3/4 from behind).
+  - Cyan glow directional from Byte onto Luma's cheek.
+  - Dotted sight-line annotation. Arc: TENSE / PRE-DISCOVERY (ELEC_CYAN border).
+- **P11** — `LTG_TOOL_sb_cold_open_P11.py` → `output/storyboards/panels/LTG_SB_cold_open_P11.png`
+  - ECU — Luma's closed eyes. HOLD frame.
+  - R brow (audience-right = Luma's left) twitches: TWITCH_LIFT=10px inner corner.
+  - L brow settled. Cyan glow from R (Byte's ambient).
+  - "Hold 12–16 frames" + "NEXT CUT: EYES SNAP OPEN" annotations.
+  - Arc: TENSE / THRESHOLD (HOT_MAGENTA border — highest tension in cold open).
+- PANEL_MAP updated: P10 + P11 PLANNED → EXISTS
+
+### C44 School Name
+- MILLBROOK MIDDLE SCHOOL — canonical per Priya Shah / story_bible_v004.md
+- EST. 1962 — compositional optional (Priya: use if it works)
+- No mascot yet canonical. Use Wolves/Eagles/Falcons if needed — nothing supernatural.
+
+### Lessons Learned — Cycle 44
+- **3-tier caption**: CAPTION_H=72px to fit 3 text rows + metadata bottom-right.
+  Tier 1 (shot code) bold/large top-left. Tier 2 (arc) arc-colored top-right. Tier 3 (narrative) middle-left.
+- **Pixel font import in env tools**: use `sys.path.insert(0, os.path.dirname(__file__))` to resolve
+  sibling modules when running from any cwd. Always add graceful fallback `_HAS_PIXEL_FONT`.
+- **ECU face panel**: Face fills full draw area — no distinct background region. Use gradient fills
+  per scanline (lerp_color per y-row) for smooth skin tone. Hair = top band only.
+- **Brow twitch staging**: TWITCH_LIFT=10px at MCU scale reads as "just-perceptible" asymmetric pull.
+  Inner corner lifts; outer corner flat. Right brow (audience-right) = Luma's left brow anatomically.
+- **OTS panel staging**: Byte silhouette must NOT show front face details — only rim light and back-of-head.
+  FG silhouette needs ELEC_CYAN rim on the camera-facing edge (inward edge) to read as a glowing entity.
+- **Legacy file strategy**: never rename files referenced by generator output targets without CI coordination.
+  Always flag to Morgan Walsh with specific line numbers.
+
 ## Startup Sequence
 1. Read ROLE.md if present
 2. Read this MEMORY.md
