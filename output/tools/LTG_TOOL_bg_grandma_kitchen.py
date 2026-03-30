@@ -5,9 +5,9 @@
 # the copyright holder to assign the relevant rights to the contributing AI entity or entities
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
-LTG_TOOL_bg_grandma_kitchen.py — Grandma Miri's Kitchen Background v005
+LTG_TOOL_bg_grandma_kitchen.py — Grandma Miri's Kitchen Background v006
 "Luma & the Glitchkin" — Background & Environment Design
-Artist: Jordan Reed | Cycle 39
+Artist: Jordan Reed | Cycle 39 | v006 Hana Okonkwo | Cycle 43
 
 Used in: A1-01 (Act 1 opening scene)
 Narrative: Act 1 opening. Warm morning. Pre-digital world. Home = safe.
@@ -20,6 +20,8 @@ v005 — Dual-Miri Visual Plant (Alex Chen directive, C39):
 
   Single targeted addition to v004:
   - Handwritten "MIRI" label on a small scrap of paper on the fridge door
+v006 — C43 (Hana Okonkwo): Migrated MIRI label from bespoke pixel-line
+  implementation to canonical draw_pixel_text() from LTG_TOOL_pixel_font_v001.
   - Positioned right-center of fridge body, near the travel magnets
   - Real World palette only: dark ink (LINE_DARK) on cream paper (AGED_CREAM)
   - Must be legible at full PNG resolution but easy to miss at thumbnail scale
@@ -47,7 +49,11 @@ Output: /home/wipkat/team/output/backgrounds/environments/LTG_ENV_grandma_kitche
 import math
 import random
 import os
+import sys
 from PIL import Image, ImageDraw, ImageFilter
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from LTG_TOOL_pixel_font_v001 import draw_pixel_text  # noqa: E402
 
 W, H = 1280, 720
 
@@ -1251,61 +1257,13 @@ def draw_miri_fridge_label(draw, fridge_x1, fridge_x2, fridge_y1, fridge_y2, div
     draw.ellipse([pip_cx - 3, pip_cy - 3, pip_cx + 3, pip_cy + 3],
                  outline=INK_DARK, width=1)
 
-    # "MIRI" hand-lettered text — pixel-line approach (no font dependency)
-    # Each letter drawn as short line segments: 3px tall cap height, 2px stroke
-    # Total text width approx 28px (4 letters x 5px + 3 gaps x 2px + padding)
-    # Centered horizontally in paper
-
-    txt_h  = 7    # cap height in px
-    txt_y0 = lbl_y1 + (lbl_h - txt_h) // 2 + 1   # vertically centered
-    letter_w = 5  # each letter bounding box width
-    gap      = 2  # gap between letters
-    txt_total_w = 4 * letter_w + 3 * gap   # 4 letters, 3 gaps = 26px
-    txt_x0 = lbl_x1 + (lbl_w - txt_total_w) // 2  # horizontally centered
-
-    def px(x, y):
-        """Draw a single ink pixel (1x1)."""
-        draw.point([(txt_x0 + x, txt_y0 + y)], fill=INK_DARK)
-
-    def hline(x, y, length):
-        draw.line([(txt_x0 + x, txt_y0 + y), (txt_x0 + x + length - 1, txt_y0 + y)],
-                  fill=INK_DARK, width=1)
-
-    def vline(x, y, length):
-        draw.line([(txt_x0 + x, txt_y0 + y), (txt_x0 + x, txt_y0 + y + length - 1)],
-                  fill=INK_DARK, width=1)
-
-    def dline(x0, y0, x1, y1):
-        draw.line([(txt_x0 + x0, txt_y0 + y0), (txt_x0 + x1, txt_y0 + y1)],
-                  fill=INK_DARK, width=1)
-
-    # M — two verticals with V peak in middle
-    # x offset for each letter start
-    m0 = 0
-    vline(m0 + 0, 0, txt_h)          # left vertical
-    vline(m0 + 4, 0, txt_h)          # right vertical
-    dline(m0 + 0, 0, m0 + 2, 3)      # left diagonal down
-    dline(m0 + 4, 0, m0 + 2, 3)      # right diagonal down
-
-    # I — simple vertical with top + bottom serifs
-    i0 = m0 + letter_w + gap   # = 7
-    hline(i0 + 0, 0, 4)        # top serif
-    vline(i0 + 1, 0, txt_h)    # vertical
-    hline(i0 + 0, txt_h - 1, 4)  # bottom serif
-
-    # R — vertical + bump top-right + diagonal leg
-    r0 = i0 + letter_w + gap   # = 14
-    vline(r0 + 0, 0, txt_h)    # left vertical
-    hline(r0 + 0, 0, 3)        # top horizontal
-    vline(r0 + 3, 0, 3)        # right side of bump
-    hline(r0 + 0, 3, 3)        # mid horizontal
-    dline(r0 + 2, 3, r0 + 4, txt_h - 1)  # diagonal leg
-
-    # I — same as first I
-    i2_0 = r0 + letter_w + gap  # = 21
-    hline(i2_0 + 0, 0, 4)
-    vline(i2_0 + 1, 0, txt_h)
-    hline(i2_0 + 0, txt_h - 1, 4)
+    # "MIRI" via canonical draw_pixel_text() — scale=1 (5×7 glyph, 7px tall)
+    # measure_pixel_text("MIRI", scale=1) → width = (4*6 - 1)*1 = 23px, height = 7px
+    from LTG_TOOL_pixel_font_v001 import measure_pixel_text
+    txt_w, txt_h = measure_pixel_text("MIRI", scale=1)
+    txt_x0 = lbl_x1 + (lbl_w - txt_w) // 2   # horizontally centered
+    txt_y0 = lbl_y1 + (lbl_h - txt_h) // 2 + 1  # vertically centered
+    draw_pixel_text(draw, txt_x0, txt_y0, "MIRI", INK_DARK, scale=1)
 
     return lbl_x1, lbl_y1, lbl_x2, lbl_y2
 

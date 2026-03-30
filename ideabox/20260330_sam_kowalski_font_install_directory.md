@@ -1,0 +1,5 @@
+**Author:** Sam Kowalski
+**Cycle:** 43
+**Date:** 2026-03-30
+**Idea:** Create a shared `assets/fonts/` directory at the project root for open-source typefaces the pipeline needs. Currently, the logo generator falls through a chain of system font paths (DejaVu → Liberation → FreeSans) and uses whatever it finds — which produces inconsistent results across machines and makes it impossible to specify a designed-for-purpose display face. A shared `assets/fonts/` directory would be the canonical install point for all OFL-licensed fonts needed by any generator script. The fonts directory would be tracked in git (font files are small) so any agent running on any machine gets the same type output.
+**Benefits:** Unlocks the C43 typography brief recommendation — once Alex chooses a typeface, any team member (Kai, Jordan, Rin) can download it once, place it in `assets/fonts/`, and every generator that calls `load_font()` can be updated to check that path first. Eliminates the system-font fallback lottery. Also creates a traceable record of which fonts the production uses — relevant for pitch delivery and rights documentation.

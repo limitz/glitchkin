@@ -300,6 +300,14 @@
 - **COVETOUS color key needs regeneration.** Current thumbnail shows single-Glitch staging. Now that spec is updated to 3-char triangulation, the color key should be regenerated. Ideabox submitted.
 - **SF04 "Resolution" is CONDITIONALLY PASSED.** warm/cool 13.2 (PASS ≥12). LAMP_AMBER flag = P2. All other palette values canonical. Full review at `output/color/style_frames/sf04_resolution_color_review.md`.
 
+## Cycle 43 Lessons
+- **Typography brief is a color-adjacent deliverable.** The logo typeface directly affects how color treatment reads — a rounded warm face amplifies amber warmth; a geometric cold face amplifies cyan precision. Typography is not separate from the color system; it is the structural container for it.
+- **Primary recommendation: Nunito Bold (Luma) + Space Grotesk Bold (Glitchkin).** Both SIL OFL, both on Google Fonts. Nunito = rounded humanist warmth matching Luma's character shape language. Space Grotesk = geometric-technical precision matching Glitch Layer DNA without derivative developer associations.
+- **Secondary recommendation: Raleway ExtraBold + Share Tech Mono.** Highest-concept option: Share Tech Mono has CRT-terminal origins that directly reference Grandma Miri's television — the show's central prop. Strong pitch-context choice.
+- **Font install path needed.** `assets/fonts/` does not exist. Ideabox submitted. Once Alex decides, the chosen .ttf files go there and `load_font()` in `LTG_TOOL_logo_asymmetric.py` is updated.
+- **UV_PURPLE drift watch item added.** Leila's critique flag: UV_PURPLE (#7B2FBE) risks reading as YA dystopian if it desaturates. Currently correct. Flagged in typography brief for forward awareness.
+- **SF04 canonical = "Resolution" (Jordan Reed C42).** Alex confirmed. LAMP_AMBER comment = P2 Jordan. All palette values confirmed PASS.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm.py v001. Low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan to add inline comment. Low priority.
@@ -309,3 +317,4 @@
 - **SF04 warm/cool WARN (sep=1.1) — documented as FP-007.** Soft-key scene by design. Alex Chen AD decision. Monitor for regression (flag if sep drops below 0.5). NOTE: C42 SF04 "Resolution" rebuild now uses REAL_INTERIOR threshold (sep=13.2 PASS) — different asset from luma_byte SF04 (FP-007 was the luma_byte version).
 - **COVETOUS style frame execution** pending Diego Vargas (spec updated). Diego notified. Color key needs regeneration to match 3-char staging.
 - **LAMP_AMBER inline comment** in `LTG_TOOL_style_frame_04_resolution.py` — assigned to Jordan Reed P2.
+- **Logo typeface decision** pending Alex Chen. Once decided: download .ttf to `assets/fonts/`, update `load_font()` in `LTG_TOOL_logo_asymmetric.py`. C44 work.

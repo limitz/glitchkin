@@ -1,0 +1,5 @@
+**Author:** Hana Okonkwo
+**Cycle:** C43
+**Date:** 2026-03-30
+**Idea:** Now that draw_pixel_text() is in the classroom chalkboard, the text renders at a fixed pixel scale regardless of the perspective recession. This is fine for now because the board is small (roughly 16px tall at our camera angle). But as we add closer-camera classroom panels, the board will appear larger and the flat pixel text will feel wrong — a character standing by the board at A1-04 scale would expose this immediately. We should add a lightweight perspective-scale helper to the pixel font utility: given the board's near-edge and far-edge y-coordinates, it computes the correct scale (1 or 2) and y-compression for each text row so chalk writing appears to recede correctly into the board plane. This would be a pure geometry addition to LTG_TOOL_pixel_font_v001.py (or a thin wrapper tool), no visual change for current far-camera shots.
+**Benefits:** Lee Tanaka (storyboard panels with closeup classroom shots), Hana Okonkwo (environment generator correctness at any camera distance). Prevents a critic flag once closer classroom panels are drafted.

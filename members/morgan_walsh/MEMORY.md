@@ -6,6 +6,13 @@ Pipeline Automation Specialist. Core mandate: reduce LLM token cost by maximisin
 ## Joined
 C34 (first active cycle).
 
+## C43 Work Done
+- **FAIL 1 resolved:** Retired `LTG_TOOL_style_frame_01_discovery.py` (C13 legacy SF01 generator). Canonical SF01 generator confirmed as `LTG_TOOL_styleframe_discovery.py` (C38 Rin Yamamoto rebuild). File removed from disk, README entry removed, README header updated.
+- **FAIL 2 in progress:** Audited all generators for hardcoded `/home/wipkat/team` paths — 94 files total. Sent coordination message to Kai with audit results and recommended `project_root()` API interface. Migration blocked on Kai delivering the utility. Will batch-migrate all 94 files once API is stable.
+- **WARN actioned:** Confirmed `LTG_SB_cold_open_PXX` is canonical per PANEL_MAP. Sent brief to Diego Vargas asking him to confirm and advise on legacy `LTG_SB_coldopen_panel_XX` files.
+- Archived 1 inbox message.
+- Ideabox: RETIRED TOOLS section idea submitted.
+
 ## C42 Work Done
 - Upgraded `LTG_TOOL_ci_suite.py` → **v1.2.0**: `--warn-stale N` flag added.
   - `check_stale_known_issues(known_issues_raw, current_cycle, max_age) → list` exported.

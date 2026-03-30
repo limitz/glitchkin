@@ -7,7 +7,7 @@
 """
 LTG_TOOL_bg_classroom.py — Millbrook Middle School Classroom Background (Full Rebuild)
 "Luma & the Glitchkin" — Background & Environment Design
-Artist: Hana Okonkwo | Cycle 41
+Artist: Hana Okonkwo | Cycle 41 | v003 C43: chalkboard draw_pixel_text() upgrade
 
 Full rebuild from ENV_REBUILD_SPEC_classroom_c41.md. Prior generator (Jordan Reed C14/C16)
 failed QA on silhouette (blob), warm/cool (9.3 FAIL), and line weight (mean=414.65, outliers=3).
@@ -43,6 +43,7 @@ from PIL import Image, ImageDraw, ImageFilter
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from LTG_TOOL_render_lib import light_shaft, vignette, paper_texture  # noqa: E402
+from LTG_TOOL_pixel_font_v001 import draw_pixel_text  # noqa: E402
 
 # ── Canvas ─────────────────────────────────────────────────────────────────────
 W, H = 1280, 720
@@ -288,20 +289,17 @@ def main():
     # Board frame
     draw.rectangle([BOARD_X0, BOARD_Y0, BOARD_X1, BOARD_Y1],
                    outline=LINE_DARK, width=1)
-    # Chalk writing — math/binary content
-    cw_colors = [BOARD_CHALK_TEXT]
-    line_step = max(6, (BOARD_Y1 - BOARD_Y0) // 7)
-    for row_i in range(5):
-        row_y = BOARD_Y0 + 8 + row_i * line_step
-        # random-length chalk marks
-        cx = BOARD_X0 + 6
-        while cx < BOARD_X1 - 8:
-            seg_w = RNG.randint(8, 22)
-            if cx + seg_w > BOARD_X1 - 8:
-                break
-            draw.rectangle([cx, row_y, cx + seg_w, row_y + 2],
-                            fill=BOARD_CHALK_TEXT)
-            cx += seg_w + RNG.randint(3, 10)
+    # Chalk writing — math/binary content via draw_pixel_text()
+    # Board interior height is small (~16px at this camera angle) — two rows at scale=1
+    board_inner_h = BOARD_Y1 - BOARD_Y0
+    row_margin = max(1, (board_inner_h - 16) // 3)  # vertical padding
+    # Row 1: binary equation
+    draw_pixel_text(draw, BOARD_X0 + 4, BOARD_Y0 + row_margin,
+                    "1011 XOR 0110", BOARD_CHALK_TEXT, scale=1)
+    # Row 2: math formula (fits in second row if board is tall enough)
+    if board_inner_h >= 18:
+        draw_pixel_text(draw, BOARD_X0 + 4, BOARD_Y0 + row_margin + 9,
+                        "F X  2X 5", BOARD_CHALK_TEXT, scale=1)
     # Chalk tray
     draw_rect(draw, BOARD_X0, BOARD_Y1, BOARD_X1, BOARD_Y1 + 5, BOARD_TRAY)
     # Chalk dust smear — faint lighter area along tray

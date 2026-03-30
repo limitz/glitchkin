@@ -6,7 +6,17 @@ Comedy-adventure cartoon. Three worlds: Real World (warm/domestic), Glitch World
 ## Joined
 Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style frames).
 
-## Existing Environments (as of C42)
+## Existing Environments (as of C43)
+- Kitchen (Grandma's): **v006** — `LTG_ENV_grandma_kitchen.png`
+  - C43: MIRI label migrated from bespoke pixel-line drawing to draw_pixel_text() (Jonas C17 P1)
+  - QA C43: silhouette PASS, value PASS (min=20 max=230), warm/cool 32.6 PASS, line_weight outliers=3 FAIL (pre-existing — not introduced by C43), grade WARN
+- Classroom: **v003 (C43)** — `LTG_ENV_classroom_bg.png`
+  - C43: chalkboard chalk marks replaced with draw_pixel_text() math/binary content (Jonas C17 P1)
+  - QA C43: silhouette PASS, value PASS (min=14 max=251), warm/cool 17.0 PASS, line_weight outliers=1 PASS, grade WARN (color fidelity pre-existing only)
+
+## Pending (awaiting Alex Chen broadcast)
+- Kitchen cultural update (Miri Okonkwo-Santos Igbo Nigerian / Portuguese-Brazilian object language) — Amara Diallo C17 flag, 54/100. Alex convening production decision in C43. Do NOT change kitchen until broadcast received.
+
 - Kitchen (Grandma's): v004 — `output/backgrounds/environments/LTG_ENV_grandma_kitchen.png`
 - **Tech Den: v006** — `LTG_ENV_tech_den.png`
   - C41 fix (v006): in-generator cool bottom pass via numpy Porter-Duff (alpha=130, 60-row graduated transition). Warm/cool 102.9 PASS, line_weight outliers=1 PASS, grade WARN (pre-existing color fidelity only).
@@ -52,6 +62,19 @@ Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style fr
 - Two-half split with amber top and green bottom still achieves ≥12 separation because amber hue (~18-27) vs green-cyan hue (~60-65) → circular distance ≥33.
 - This is different from the Tech Den pattern where PURE cool-blue was needed (floor was already amber, needed blue at ~130).
 - General rule: warm/cool QA cares about distance between top-half and bottom-half median hue. Any hue pair with circular distance ≥12 on the 0-255 PIL scale passes.
+
+## Cycle 43 — Pixel Font Migration (Classroom + Kitchen)
+
+### draw_pixel_text() Integration Pattern
+- Import: `sys.path.insert(0, os.path.dirname(__file__))` + `from LTG_TOOL_pixel_font_v001 import draw_pixel_text`
+- Classroom chalkboard is only ~16px tall at 3/4 far-camera angle — only 1-2 rows fit at scale=1
+- Kitchen label: `measure_pixel_text("MIRI", scale=1)` returns (23, 7) — centered in 40×16px paper label cleanly
+- Kitchen line_weight outliers=3 FAIL is pre-existing (not introduced by C43 changes — geometry unmodified)
+- Inbox note: kitchen cultural identity update (Igbo Nigerian / Portuguese-Brazilian) is BLOCKED pending Alex Chen broadcast
+
+### Perspective Text Note (submitted as ideabox idea)
+- Fixed-scale pixel text on a receding chalkboard is visually acceptable at far camera; will break on any closer panel
+- Submitted ideabox idea for a perspective-scale helper to LTG_TOOL_pixel_font_v001.py
 
 ## Lessons Learned (C38)
 
