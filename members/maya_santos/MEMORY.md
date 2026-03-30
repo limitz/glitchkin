@@ -32,8 +32,14 @@
 - Submitted: `ideabox/20260330_maya_santos_visual_hook_audit_tool.md`
   Idea: automated visual hook detection tool — downscale to 200px, check distinctive elements survive.
 
+### Lee Tanaka SF06 Staging Note (DEFERRED)
+- Lee sent shoulder mechanics reference + SF06 staging findings (`output/production/staging_review_c47_sf06_p14_p15.md`)
+- SF06 WARNs: Miri right shoulder needs forward pull when arm extends toward CRT; Luma forward lean unverified.
+- Shoulder involvement rule is now implemented in expression sheets (P2 above). SF06 style frame (`LTG_TOOL_sf_miri_luma_handoff.py`) needs separate update to add shoulder displacement — carry to next cycle.
+
 ### Inbox Archived
 - `20260330_2330_c47_brief.md` (Alex Chen) — acted on
+- `20260330_2359_lee_shoulder_mechanics_sf06.md` (Lee Tanaka) — noted, SF06 fix deferred
 
 ### ACTIVE TOOL STATUS (C47 — COMPLETE)
 - Cosmo expression sheet: `LTG_CHAR_cosmo_expression_sheet.png` v008 (visual hook + shoulders)
