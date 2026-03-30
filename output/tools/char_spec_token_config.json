@@ -1,0 +1,47 @@
+{
+  "_comment": "Token configuration for LTG_TOOL_char_spec_lint.py keyword-presence checks.",
+  "_version": "1.0.0",
+  "_updated": "C45 (Kai Nakamura, 2026-03-30)",
+  "_note": "Edit this file to update token lists without touching linter source code.",
+  "miri": {
+    "M004": {
+      "label": "Hairpin/bun hair element",
+      "tokens": ["hairpin", "HAIRPIN", "bun", "BUN", "chopstick", "CHOPSTICK", "chop_stick"],
+      "note": "C45: hairpin added as primary token per Maya Santos C44 design update. chopstick retained for backward-compat with older generator versions."
+    },
+    "M005": {
+      "label": "Crow's feet / smile-line detail",
+      "tokens": ["crow", "crinkle", "CROW", "smile_line", "smile line", "laugh_line"],
+      "note": "C34 original tokens — no change."
+    }
+  },
+  "luma": {
+    "L005_cyan": {
+      "label": "Pixel-pattern cyan color PX_CYAN",
+      "tokens": ["PX_CYAN", "px_cyan", "00F0FF"],
+      "note": "L005 check tokens for pixel-pattern cyan element."
+    },
+    "L005_mag": {
+      "label": "Pixel-pattern magenta color PX_MAG",
+      "tokens": ["PX_MAG", "px_mag", "FF2D6B", "HOT_MAG", "HOT_MAGENTA"],
+      "note": "L005 check tokens for pixel-pattern magenta element."
+    }
+  },
+  "byte": {
+    "B003": {
+      "label": "Hot Magenta cracked-eye crack indicator",
+      "tokens": ["HOT_MAG", "HOT_MAGENTA", "crack", "CRACK"],
+      "note": "B003 check tokens — Hot Magenta crack on right eye."
+    },
+    "B004": {
+      "label": "Pixel confetti floating mechanism",
+      "tokens": ["confetti", "CONFETTI", "float", "FLOAT"],
+      "note": "B004 check tokens — pixel confetti or float mechanic."
+    },
+    "B005": {
+      "label": "5x5 pixel eye grid",
+      "tokens": ["pixel_size", "PIXEL_SIZE", "grid", "GRID", "5x5", "5, 5"],
+      "note": "B005 check tokens — 5x5 grid dimension near eye-drawing code."
+    }
+  }
+}

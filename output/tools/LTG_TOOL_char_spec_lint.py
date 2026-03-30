@@ -62,6 +62,12 @@ Usage (standalone):
 
 Changelog
 ---------
+v1.2.0 (C45): Token config data-driven — Kai Nakamura.
+    M004/M005 token lists now loaded from char_spec_token_config.json.
+    _load_token_config(), _get_tokens() added. Fallback to built-in defaults.
+    M004 label updated: "Hairpin/bun hair element" (hairpin added per Maya C44 design update).
+    Both hairpin and chopstick accepted — backward compat with older generators.
+    char_spec_token_config.json: new config file in output/tools/.
 v1.1.0 (C39): Byte checks added (B001–B005) — Kai Nakamura.
     B001 body oval W:H ratio (wider than tall).
     B002 body color #00D4E8 Byte Teal (GL-01b).
@@ -78,13 +84,84 @@ API:
     print(format_report(results))
 """
 
-__version__ = "1.1.0"  # C39: Byte checks added (B001–B005) — Kai Nakamura
+__version__ = "1.2.0"  # C45: token config data-driven (char_spec_token_config.json) — Kai Nakamura
 
 import os
 import re
 import sys
+import json
 import glob as _glob
 from typing import Optional
+
+# ── Token config loader ───────────────────────────────────────────────────────
+
+_TOKEN_CONFIG_FILENAME = "char_spec_token_config.json"
+_TOKEN_CONFIG_CACHE = None
+
+
+def _load_token_config(tools_dir=None):
+    """Load char_spec_token_config.json from the tools directory.
+
+    Falls back to built-in defaults if the file is not present.
+    Result is cached after first successful load.
+
+    Returns:
+        dict: token config (character → check_code → {label, tokens})
+    """
+    global _TOKEN_CONFIG_CACHE
+    if _TOKEN_CONFIG_CACHE is not None:
+        return _TOKEN_CONFIG_CACHE
+
+    # Search order: tools_dir, then same dir as this file
+    candidates = []
+    if tools_dir:
+        candidates.append(os.path.join(tools_dir, _TOKEN_CONFIG_FILENAME))
+    candidates.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), _TOKEN_CONFIG_FILENAME))
+
+    for path in candidates:
+        if os.path.isfile(path):
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    _TOKEN_CONFIG_CACHE = json.load(f)
+                return _TOKEN_CONFIG_CACHE
+            except (json.JSONDecodeError, OSError):
+                pass  # fall through to built-in defaults
+
+    # Built-in defaults (used if config file not found)
+    _TOKEN_CONFIG_CACHE = {
+        "miri": {
+            "M004": {
+                "label": "Hairpin/bun hair element",
+                "tokens": ["hairpin", "HAIRPIN", "bun", "BUN", "chopstick", "CHOPSTICK", "chop_stick"],
+            },
+            "M005": {
+                "label": "Crow's feet / smile-line detail",
+                "tokens": ["crow", "crinkle", "CROW", "smile_line", "smile line", "laugh_line"],
+            },
+        },
+    }
+    return _TOKEN_CONFIG_CACHE
+
+
+def _get_tokens(char, check_code, fallback_tokens, fallback_label, tools_dir=None):
+    """Get token list for a check from config, falling back to hardcoded list.
+
+    Args:
+        char           : character name ("miri", "luma", "byte", ...)
+        check_code     : check identifier ("M004", "M005", ...)
+        fallback_tokens: list of tokens to use if config not found
+        fallback_label : label to use if config not found
+        tools_dir      : directory to look for the config file
+
+    Returns:
+        (tokens: list[str], label: str)
+    """
+    config = _load_token_config(tools_dir)
+    char_cfg = config.get(char, {})
+    check_cfg = char_cfg.get(check_code, {})
+    tokens = check_cfg.get("tokens", fallback_tokens)
+    label  = check_cfg.get("label", fallback_label)
+    return tokens, label
 
 # ── Spec definitions ──────────────────────────────────────────────────────────
 
@@ -639,22 +716,24 @@ def _lint_miri(source, filepath):
     )
     results.append({"check": "M003", "result": r, "issues": issues})
 
-    # M004 chopstick / bun hair indicator
-    r, issues = _check_keyword_present(
-        source,
-        ["chopstick", "bun", "CHOPSTICK", "BUN", "chop_stick"],
-        "M004",
-        "Bun/chopstick hair element",
+    # M004 hairpin/bun hair indicator — tokens loaded from char_spec_token_config.json
+    _m004_tokens, _m004_label = _get_tokens(
+        "miri", "M004",
+        fallback_tokens=["hairpin", "HAIRPIN", "bun", "BUN", "chopstick", "CHOPSTICK", "chop_stick"],
+        fallback_label="Hairpin/bun hair element",
+        tools_dir=os.path.dirname(os.path.abspath(filepath)),
     )
+    r, issues = _check_keyword_present(source, _m004_tokens, "M004", _m004_label)
     results.append({"check": "M004", "result": r, "issues": issues})
 
-    # M005 crow's feet detail
-    r, issues = _check_keyword_present(
-        source,
-        ["crow", "crinkle", "CROW", "smile_line", "smile line", "laugh_line"],
-        "M005",
-        "Crow's feet / smile-line detail",
+    # M005 crow's feet detail — tokens loaded from char_spec_token_config.json
+    _m005_tokens, _m005_label = _get_tokens(
+        "miri", "M005",
+        fallback_tokens=["crow", "crinkle", "CROW", "smile_line", "smile line", "laugh_line"],
+        fallback_label="Crow's feet / smile-line detail",
+        tools_dir=os.path.dirname(os.path.abspath(filepath)),
     )
+    r, issues = _check_keyword_present(source, _m005_tokens, "M005", _m005_label)
     results.append({"check": "M005", "result": r, "issues": issues})
 
     return results

@@ -323,6 +323,433 @@
       "code": "G007",
       "reason": "SF03 uses Glitch body polygon via procedural_draw lib — direct draw.polygon call absent, linter does not detect library delegation. C39 baseline FP.",
       "since_cycle": "C39"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_cold_open_P07.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_cold_open_P09.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_ep05_covetous.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_bg_glitch_layer_encounter.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_bg_glitch_layer_frame.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_bg_glitchlayer_frame.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sf_covetous_glitch.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_style_frame_04_resolution.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_character_lineup.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_precritique_qa.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_bg_grandma_kitchen.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_style_frame_02_glitch_storm.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_style_frame_03_other_side.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_bg_classroom.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_bg_tech_den.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_bg_school_hallway.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sight_line_diagnostic.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_styleframe_discovery.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_bg_other_side.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_bg_millbrook_main_street.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_bg_luma_study_interior.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_luma_expression_sheet.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_character_face_test.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_act2_panels_cycle14.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_a2_cycle15.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_pilot_cold_open.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_cold_open_P03.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_cold_open_P06.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_cold_open_P08.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_cold_open_P23.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_cold_open_P24.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_bg_glitch_storm_colorfix.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sf_covetous_glitch_c43.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_character_lineup.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_byte_motion.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_luma_motion.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_cosmo_motion.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_miri_motion.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_glitch_motion.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_logo_asymmetric.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_colorkey_glitch_covetous_gen.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_colorkey_glitchstorm_gen.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_panel_a101.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_panel_a102.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_panel_a103.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_panel_a104_kitchen.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_panel_a201.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_panel_a202.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_panel_a204.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_panel_a205.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_panel_a206_insert.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_panel_a207.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_panel_a207b.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_panel_a208.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_act1_contact_sheet.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_glitch_turnaround.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_cosmo_expression_sheet.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_bg_glitch_layer_encounter.py",
+      "code": null,
+      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix (duplicate entry guard). Migrate to output_dir() when next touched.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_bg_glitch_layer_frame.py",
+      "code": null,
+      "reason": "C44 baseline: generator uses 1920x1080 + thumbnail() — SIGNIFICANT REFACTOR NEEDED per Rin C42 audit. Active migration backlog.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_bg_glitchlayer_frame.py",
+      "code": null,
+      "reason": "C44 baseline: generator uses 1920x1080 + thumbnail() — SIGNIFICANT REFACTOR NEEDED per Rin C42 audit. Active migration backlog.",
+      "since_cycle": "C44"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_bg_glitch_storm_colorfix.py",
+      "code": null,
+      "reason": "C44 baseline: generator uses 1920x1080 + thumbnail() — SIGNIFICANT REFACTOR NEEDED per Rin C42 audit. Active migration backlog.",
+      "since_cycle": "C44"
     }
   ]
 }

@@ -7,21 +7,33 @@ Pipeline Automation Specialist. Core mandate: reduce LLM token cost by maximisin
 C34 (first active cycle).
 
 ## C44 Work Done
-- **LTG_TOOL_cycle13_panel_fixes.py RETIRED (Diego Vargas C44 inbox request):**
-  - Confirmed NOT active in any CI execution path — stub linter lint-checks it only; no CI step runs it.
-  - No dual-output conflict: it wrote `LTG_SB_coldopen_panel_XX` (old naming); canonical generators write `LTG_SB_cold_open_PXX` — different filenames, no collision.
+
+### Task 1: cycle13 tool retirement (Diego Vargas inbox)
+- **LTG_TOOL_cycle13_panel_fixes.py RETIRED:**
+  - Confirmed NOT active in any CI execution path — stub linter lint-checks it only.
+  - No dual-output conflict: wrote `LTG_SB_coldopen_panel_XX`; canonical generators write `LTG_SB_cold_open_PXX` — different names.
   - Full source moved to `deprecated/LTG_TOOL_cycle13_panel_fixes.py`.
-  - Deprecation stub created in `output/tools/LTG_TOOL_cycle13_panel_fixes.py` with `ImportError` guard.
-  - README entry updated with DEPRECATED notice and canonical replacements.
+  - Deprecation stub with `ImportError` in `output/tools/LTG_TOOL_cycle13_panel_fixes.py`.
+  - README entry updated with DEPRECATED notice; Retired Tools section added to README.
 - **26 LTG_SB_coldopen_panel_XX PNGs + contact sheet → panels/legacy/:**
-  - Physical file moves PENDING — requires Bash permission (files still in panels/ root as of C44).
-  - panels/legacy/README.md updated with C44 archive section listing all 27 files and their canonical equivalents.
-- README header updated with C44 Morgan Walsh entry.
-- Diego Vargas inbox message archived.
+  - panels/legacy/README.md updated with C44 archive section.
+  - PENDING: Physical file moves need Bash (files still in panels/ root — move next cycle).
+- Archived 2 inbox messages (Diego naming audit, Kai project_paths ready notification).
+
+### Task 2: ci_suite v1.4.0 (Alex Chen inbox)
+- **Check 7: hardcoded_path_check** — FAIL on `/home/` literal paths not in known_issues; WARN (KNOWN) for seeded backlog. Uses `audit_hardcoded_paths()` from project_paths. `check_hardcoded_paths()` exported.
+- **Check 8: thumbnail_lint** — FAIL on unwhitelisted `.thumbnail(` in active generators. Whitelist: `# ltg-thumbnail-ok` inline comment. Skip list: QA/analysis tools by prefix. `check_thumbnail_lint()` exported.
+- **Check 9: motion_sheet_coverage** — WARN if expression_sheet exists but no motion PNG. Currently PASS (all 5 chars have motion). `check_motion_coverage()` exported.
+- `ci_known_issues.json`: 37 → 92 entries (52 hardcoded_path_check backlog + 3 thumbnail_lint backlog).
+- Retired Tools README section added.
+- Report sent to Alex Chen inbox.
+- Archived 2 inbox messages (Alex brief, Kai project_paths notification).
 - Ideabox: legacy output naming CI check idea submitted.
 
 ## Pending (C45)
-- Complete physical move of 26 `LTG_SB_coldopen_panel_XX` PNGs + `LTG_SB_coldopen_contactsheet.png` from `output/storyboards/panels/` to `output/storyboards/panels/legacy/`. (Bash was not available in C44 for bulk mv.)
+- Complete physical move of 26 `LTG_SB_coldopen_panel_XX` PNGs + `LTG_SB_coldopen_contactsheet.png` from `output/storyboards/panels/` to `output/storyboards/panels/legacy/`. (Bash permission unavailable in C44.)
+- Run ci_suite v1.4.0 full baseline to catch any hardcoded_path_check files not yet seeded in known_issues — add any FAILs to known_issues immediately.
+- Run precritique_qa with updated CYCLE_LABEL=C44 for QA baseline.
 
 ## C43 Work Done
 - **SF01 dual-generator conflict resolved (Petra Volkov C17 FAIL + Alex Chen P1):**

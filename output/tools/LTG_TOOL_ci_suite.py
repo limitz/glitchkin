@@ -85,6 +85,9 @@ API
     from LTG_TOOL_ci_suite import load_known_issues, load_known_issues_raw
     from LTG_TOOL_ci_suite import check_stale_known_issues
     from LTG_TOOL_ci_suite import check_dual_output
+    from LTG_TOOL_ci_suite import check_hardcoded_paths
+    from LTG_TOOL_ci_suite import check_thumbnail_lint
+    from LTG_TOOL_ci_suite import check_motion_coverage
 
     known     = load_known_issues("ci_known_issues.json")
     known_raw = load_known_issues_raw("ci_known_issues.json")
@@ -122,9 +125,24 @@ v1.3.0 (C43): Check 6 — dual_output_check. Scans all .py files in tools_dir
               C17 FAIL — LTG_TOOL_style_frame_01_discovery.py conflict).
               check_dual_output() exported for programmatic use.
               (Morgan Walsh)
+v1.4.0 (C44): Check 7 — hardcoded_path_check. Uses audit_hardcoded_paths()
+              from LTG_TOOL_project_paths to detect /home/-prefixed absolute
+              paths in active generators. FAIL on any hit not suppressed by
+              ci_known_issues.json. Pre-existing hits seeded as known-issues.
+              check_hardcoded_paths() exported for programmatic use.
+              Check 8 — thumbnail_lint. FAIL if any active generator contains
+              img.thumbnail( or .thumbnail((1920 without an inline
+              # ltg-thumbnail-ok suppression comment on the same line.
+              QA/analysis tools may whitelist via # ltg-thumbnail-ok.
+              check_thumbnail_lint() exported for programmatic use.
+              Check 9 — motion_sheet_coverage. WARN if any character has an
+              expression sheet PNG in output/characters/main/ but no motion
+              PNG in output/characters/motion/. check_motion_coverage()
+              exported for programmatic use.
+              (Morgan Walsh)
 """
 
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 
 import os
 import sys
@@ -564,15 +582,279 @@ def _run_dual_output_check(tools_dir):
         return "ERROR", f"dual_output_check error: {exc}", ""
 
 
+# ── Check 7: hardcoded_path_check ─────────────────────────────────────────────
+
+def check_hardcoded_paths(tools_dir):
+    """
+    Scan all active .py files in tools_dir for hardcoded /home/ paths.
+    Uses audit_hardcoded_paths() from LTG_TOOL_project_paths.
+
+    Returns
+    -------
+    list[dict]  Each entry: {file, line, text}
+                Only files in tools_dir root (not deprecated/ subdirectory).
+    """
+    _add_to_path(tools_dir)
+    try:
+        import LTG_TOOL_project_paths as pp
+        findings = pp.audit_hardcoded_paths(tools_directory=tools_dir)
+        # Filter out deprecated/ subdirectory files (audit already only does *.py in root)
+        return findings
+    except ImportError:
+        return None  # signals import failure
+
+
+def _run_hardcoded_path_check(tools_dir):
+    """Run hardcoded path check. Returns (status, summary, details).
+
+    Files listed in ci_known_issues.json under check='hardcoded_path_check'
+    are treated as KNOWN (pre-existing migration backlog) — they contribute
+    to WARN count but not FAIL. Files not in known_issues cause FAIL.
+    This lets CI be green on first pass while new violations still block.
+    """
+    try:
+        findings = check_hardcoded_paths(tools_dir)
+        if findings is None:
+            return "ERROR", "Could not import LTG_TOOL_project_paths", ""
+        if not findings:
+            return "PASS", "0 hardcoded /home/ path(s) in active generators", ""
+
+        # Load known-issues to distinguish pre-existing from new violations
+        _ki_path = os.path.join(tools_dir, "ci_known_issues.json")
+        _known_files = set()
+        if os.path.exists(_ki_path):
+            try:
+                with open(_ki_path, "r", encoding="utf-8") as _fh:
+                    _ki_data = json.load(_fh)
+                for _entry in _ki_data.get("known_issues", []):
+                    if _entry.get("check") == "hardcoded_path_check":
+                        _known_files.add(_entry.get("file", ""))
+            except (OSError, json.JSONDecodeError):
+                pass
+
+        # Group by file
+        by_file = {}
+        for f in findings:
+            by_file.setdefault(f["file"], []).append(f)
+
+        new_files = sorted(k for k in by_file if k not in _known_files)
+        known_files = sorted(k for k in by_file if k in _known_files)
+
+        lines = []
+        for fname in new_files:
+            hits = by_file[fname]
+            lines.append(f"  FAIL  {fname}  ({len(hits)} hit(s)) — not in known_issues")
+            for h in hits:
+                lines.append(f"    L{h['line']:4d}  {h['text'][:80]}")
+        for fname in known_files:
+            hits = by_file[fname]
+            lines.append(f"  KNOWN {fname}  ({len(hits)} hit(s)) — migration backlog")
+            for h in hits:
+                lines.append(f"    L{h['line']:4d}  {h['text'][:80]}")
+
+        if lines:
+            lines.append("  → Migrate: replace /home/wipkat/team/output/... with output_dir() from LTG_TOOL_project_paths")
+            lines.append("  → Add entry to ci_known_issues.json under hardcoded_path_check once resolved")
+
+        details = "\n".join(lines)
+        total_hits = sum(len(v) for v in by_file.values())
+        if new_files:
+            summary = (
+                f"{total_hits} hardcoded /home/ occurrence(s) in {len(by_file)} file(s): "
+                f"{len(new_files)} NEW (FAIL) + {len(known_files)} KNOWN (migration backlog)"
+            )
+            return "FAIL", summary, details
+        else:
+            summary = (
+                f"{total_hits} hardcoded /home/ occurrence(s) in {len(by_file)} KNOWN file(s) "
+                f"(migration backlog — no new violations)"
+            )
+            return "WARN", summary, details
+    except Exception as exc:
+        return "ERROR", f"hardcoded_path_check error: {exc}", ""
+
+
+# ── Check 8: thumbnail_lint ────────────────────────────────────────────────────
+
+def check_thumbnail_lint(tools_dir):
+    """
+    Scan all active .py files in tools_dir for thumbnail() calls in generator
+    context. Lines with '# ltg-thumbnail-ok' on the same line are whitelisted.
+
+    Detects patterns:
+      - img.thumbnail(
+      - .thumbnail((1920
+    (both indicate LANCZOS downscale from an oversized canvas — pipeline error)
+
+    Returns
+    -------
+    list[dict]  Each entry: {file, line, text}
+                Only files in tools_dir root.
+    """
+    import re as _re
+    _THUMB_PAT = _re.compile(r'\.thumbnail\(')
+    _WHITELIST  = "# ltg-thumbnail-ok"
+
+    # Skip CI/QA/analysis tools (they may call thumbnail for inspection, not generation)
+    _SKIP_PREFIXES = (
+        "LTG_TOOL_ci_suite",
+        "LTG_TOOL_precritique_qa",
+        "LTG_TOOL_readme_sync",
+        "LTG_TOOL_stub_linter",
+        "LTG_TOOL_draw_order_lint",
+        "LTG_TOOL_glitch_spec_lint",
+        "LTG_TOOL_spec_sync_ci",
+        "LTG_TOOL_char_spec_lint",
+        "LTG_TOOL_render_qa",
+        "LTG_TOOL_color_fidelity",
+        "LTG_TOOL_proportion_verify",
+        "LTG_TOOL_proportion_audit",
+        "LTG_TOOL_fidelity_check",
+        "LTG_TOOL_naming_compliance",
+        "LTG_TOOL_naming_cleanup",
+        "LTG_TOOL_face_curves_caller_audit",
+        "LTG_TOOL_project_paths",
+        "LTG_TOOL_sobel_vp_detect",
+        "LTG_TOOL_vanishing_point_lint",
+        "LTG_TOOL_world_type_infer",
+        "LTG_TOOL_alpha_blend_lint",
+        "LTG_TOOL_fill_light_adapter",
+        "LTG_TOOL_sight_line_diagnostic",
+        "LTG_TOOL_motion_spec_lint",
+        "LTG_TOOL_palette_warmth_lint",
+        "LTG_TOOL_arc_diff",
+        "LTG_TOOL_contact_sheet_arc_diff",
+        "LTG_TOOL_render_lib",
+        "run_",
+    )
+
+    findings = []
+    tools_path = os.path.abspath(tools_dir)
+    for fname in sorted(os.listdir(tools_path)):
+        if not fname.endswith(".py"):
+            continue
+        if any(fname.startswith(pfx) for pfx in _SKIP_PREFIXES):
+            continue
+        fpath = os.path.join(tools_path, fname)
+        if not os.path.isfile(fpath):
+            continue
+        try:
+            with open(fpath, "r", encoding="utf-8", errors="replace") as fh:
+                lines = fh.readlines()
+        except OSError:
+            continue
+        for lineno, line in enumerate(lines, 1):
+            if _THUMB_PAT.search(line) and _WHITELIST not in line:
+                findings.append({"file": fname, "line": lineno, "text": line.rstrip()})
+    return findings
+
+
+def _run_thumbnail_lint(tools_dir):
+    """Run thumbnail lint check. Returns (status, summary, details)."""
+    try:
+        findings = check_thumbnail_lint(tools_dir)
+        if not findings:
+            return "PASS", "0 unwhitelisted thumbnail() call(s) in active generators", ""
+        by_file = {}
+        for f in findings:
+            by_file.setdefault(f["file"], []).append(f)
+        lines = []
+        for fname, hits in sorted(by_file.items()):
+            lines.append(f"  FAIL  {fname}  ({len(hits)} hit(s))")
+            for h in hits:
+                lines.append(f"    L{h['line']:4d}  {h['text'][:80]}")
+            lines.append(f"         → Use native 1280×720 canvas instead.")
+            lines.append(f"         → Add '# ltg-thumbnail-ok' to whitelist legitimate analysis uses.")
+        details = "\n".join(lines)
+        summary = (
+            f"{len(findings)} unwhitelisted .thumbnail() call(s) in "
+            f"{len(by_file)} generator(s) — native canvas required"
+        )
+        return "FAIL", summary, details
+    except Exception as exc:
+        return "ERROR", f"thumbnail_lint error: {exc}", ""
+
+
+# ── Check 9: motion_sheet_coverage ────────────────────────────────────────────
+
+def check_motion_coverage(tools_dir):
+    """
+    Check that every character with an expression sheet PNG in
+    output/characters/main/ also has a motion PNG in output/characters/motion/.
+
+    Expression sheets are identified by pattern: LTG_CHAR_<name>_expression_sheet.png
+    Motion sheets are identified by pattern: LTG_CHAR_<name>_motion.png
+
+    Returns
+    -------
+    list[str]  Character names missing a motion sheet. Empty = all present.
+    """
+    # Infer output/ root from tools_dir (tools_dir is output/tools/)
+    tools_path = os.path.abspath(tools_dir)
+    output_root = os.path.dirname(tools_path)  # output/
+    main_dir   = os.path.join(output_root, "characters", "main")
+    motion_dir = os.path.join(output_root, "characters", "motion")
+
+    if not os.path.isdir(main_dir) or not os.path.isdir(motion_dir):
+        return None  # directories not found — skip
+
+    import re as _re
+    expr_pat   = _re.compile(r"LTG_CHAR_([a-z_]+)_expression_sheet\.png$", _re.IGNORECASE)
+    motion_pat = _re.compile(r"LTG_CHAR_([a-z_]+)_motion\.png$", _re.IGNORECASE)
+
+    expr_chars   = set()
+    motion_chars = set()
+
+    for fname in os.listdir(main_dir):
+        m = expr_pat.match(fname)
+        if m:
+            expr_chars.add(m.group(1).lower())
+
+    for fname in os.listdir(motion_dir):
+        m = motion_pat.match(fname)
+        if m:
+            motion_chars.add(m.group(1).lower())
+
+    missing = sorted(expr_chars - motion_chars)
+    return missing
+
+
+def _run_motion_coverage(tools_dir):
+    """Run motion sheet coverage check. Returns (status, summary, details)."""
+    try:
+        missing = check_motion_coverage(tools_dir)
+        if missing is None:
+            return "WARN", "characters/main/ or characters/motion/ not found — skipping", ""
+        if not missing:
+            return "PASS", "All characters with expression sheets have motion sheets", ""
+        details_lines = []
+        for char in missing:
+            details_lines.append(
+                f"  WARN  {char}: LTG_CHAR_{char}_expression_sheet.png exists "
+                f"but LTG_CHAR_{char}_motion.png is missing"
+            )
+        details = "\n".join(details_lines)
+        summary = (
+            f"{len(missing)} character(s) missing motion sheet: "
+            f"{', '.join(missing)}"
+        )
+        return "WARN", summary, details
+    except Exception as exc:
+        return "ERROR", f"motion_coverage error: {exc}", ""
+
+
 # ── Suite runner ──────────────────────────────────────────────────────────────
 
 _CHECKS = [
-    ("stub_linter",       _run_stub_linter,    "Stub Integrity Linter"),
-    ("draw_order_lint",   _run_draw_order_lint, "Draw Order Linter"),
-    ("glitch_spec_lint",  _run_glitch_spec_lint, "Glitch Spec Linter"),
-    ("spec_sync_ci",      _run_spec_sync_ci,   "Spec Sync CI Gate"),
-    ("char_spec_lint",    _run_char_spec_lint,  "Char Spec Linter"),
-    ("dual_output_check", _run_dual_output_check, "Dual-Output File Check"),
+    ("stub_linter",          _run_stub_linter,          "Stub Integrity Linter"),
+    ("draw_order_lint",      _run_draw_order_lint,      "Draw Order Linter"),
+    ("glitch_spec_lint",     _run_glitch_spec_lint,     "Glitch Spec Linter"),
+    ("spec_sync_ci",         _run_spec_sync_ci,         "Spec Sync CI Gate"),
+    ("char_spec_lint",       _run_char_spec_lint,       "Char Spec Linter"),
+    ("dual_output_check",    _run_dual_output_check,    "Dual-Output File Check"),
+    ("hardcoded_path_check", _run_hardcoded_path_check, "Hardcoded Path Check"),
+    ("thumbnail_lint",       _run_thumbnail_lint,       "Thumbnail Lint"),
+    ("motion_sheet_coverage",_run_motion_coverage,      "Motion Sheet Coverage"),
 ]
 
 
