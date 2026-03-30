@@ -328,6 +328,15 @@
 - **numpy div-by-zero warning fixed.** Pure black pixels (cmax=0) caused numpy RuntimeWarning in saturation calculation. Fixed with `cmax_safe = np.where(cmax > 0, cmax, 1.0)` pattern.
 - **Ideabox: warm pixel percentage metric.** Submitted idea for Kai to evaluate whether a warm-pixel-percentage metric (e.g., "40% warm + 5% cool minimum") would be a better discriminator for interior scenes than the vertical hue split.
 
+## Cycle 47 Lessons
+- **Warm-pixel-percentage replaces hue-split as the primary REAL_INTERIOR warm/cool metric.** The hue-split metric (top-half vs bottom-half median hue) produces near-zero separation for single-temperature-dominant interiors. Warm-pixel-percentage directly measures what matters: % of chromatic pixels in the warm hue range. Tool: `LTG_TOOL_warm_pixel_metric.py`.
+- **Calibrated thresholds:** REAL_INTERIOR >= 35%, REAL_STORM >= 5%, GLITCH <= 15%, OTHER_SIDE <= 5%. 24-point gap between REAL_INTERIOR floor (42.0%) and GLITCH ceiling (11.1%) — robust.
+- **Validation: 31/31 generated assets PASS, 7/7 reference photos PASS.** Zero false positives. All environments and style frames correctly classified by world type.
+- **COVETOUS Glitch filenames must be classified as GLITCH.** Initial world-type inference missed these (defaulted to REAL_INTERIOR). Added "covetous_glitch" and "glitch_showcase" to the GLITCH keyword list.
+- **NEVER use `.thumbnail()` — confirmed C46.** Author at 1280x720 natively. Do not post-process resize. This supersedes all older MEMORY notes about thumbnail().
+- **Kai Nakamura needs to integrate warm_pixel_metric into precritique_qa/render_qa.** API: `measure_warm_pixel_percentage(img)` returns dict with `warm_pct`. `evaluate_threshold(warm_pct, world_type)` returns dict with `passes` bool. Message sent to Kai inbox.
+- **Report at `output/production/warm_pixel_metric_report_c47.md`.** Full methodology, calibration data table, threshold rationale, and validation results.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm.py v001. Low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan to add inline comment. Low priority.
