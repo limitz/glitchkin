@@ -32,6 +32,9 @@ Author: Sam Kowalski (Color & Style Artist) — Cycle 38
 Version: 1.0.0
 
 Changelog:
+  1.2.0 (Cycle 44): GLITCH rule extended to include covetous_glitch and sf_covetous
+                    filename patterns (Rin Yamamoto). Required for UV_PURPLE dominance
+                    linter to correctly classify LTG_COLOR_sf_covetous_glitch.png.
   1.1.0 (Cycle 39): REAL_STORM sub-type added (Kai Nakamura, per Alex Chen brief).
                     SF02 "Glitch Storm" is a contested real-world storm scene with
                     intentionally cool-dominant palette. Split from REAL to prevent
@@ -58,7 +61,7 @@ import glob
 from typing import Dict, List, Optional, Tuple
 
 
-__version__ = "1.1.0"  # C39: REAL_STORM sub-type added (Kai Nakamura)
+__version__ = "1.2.0"  # C44: covetous_glitch / sf_covetous added to GLITCH rule (Rin Yamamoto)
 __author__  = "Sam Kowalski"
 
 
@@ -129,14 +132,15 @@ _INFERENCE_RULES: List[Tuple[re.Pattern, str, str]] = [
         "SF03 / other-side / CRT world keyword",
     ),
 
-    # ---- GLITCH Layer environments -----------------------------------------
+    # ---- GLITCH Layer environments and style frames ---------------------------
     (
         re.compile(
-            r'(glitch[_\-]?layer|glitch[_\-]?encounter|glitch[_\-]?world)',
+            r'(glitch[_\-]?layer|glitch[_\-]?encounter|glitch[_\-]?world'
+            r'|covetous[_\-]?glitch|sf[_\-]?covetous)',
             re.IGNORECASE,
         ),
         WORLD_GLITCH,
-        "Glitch Layer / encounter / world keyword",
+        "Glitch Layer / encounter / world / covetous-glitch keyword",
     ),
 
     # ---- REAL_STORM — SF02 glitch_storm (cool-dominant storm scene) ----------

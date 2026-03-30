@@ -1,0 +1,5 @@
+**Author:** Rin Yamamoto
+**Cycle:** 44
+**Date:** 2026-03-30
+**Idea:** Add a Glitch-subtype "GLITCH_DARK_SCENE" variant to the UV_PURPLE dominance linter for intentionally near-void compositions like the COVETOUS style frame. The COVETOUS scene uses UV_PURPLE_DARK family (dark variants with L* << canonical UV_PURPLE L*) which score < 1% on LAB ΔE ≤ 15 matching even though they are the correct hue. A GLITCH_DARK_SCENE subtype could use hue-angle matching (LAB h° 260°–310° range for purple family) instead of, or in addition to, LAB ΔE for dominance detection — capturing the correct hue at dark luminance values. Alternatively, the linter could report a separate "purple-hue family fraction" metric alongside the ΔE fraction so creative direction can assess whether UV_PURPLE_DARK dominance is acceptable for void-dominant scenes.
+**Benefits:** Removes false FAIL classification from intentionally dark void scenes (COVETOUS, Other Side adjacents). Gives creative direction a richer metric to distinguish "right hue, dark variant" from "wrong hue entirely." Also useful for any future dark-scene style frames set in the Glitch Layer.

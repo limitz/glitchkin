@@ -1,5 +1,50 @@
 # Rin Yamamoto — MEMORY
 
+## C44 Completed Work
+- `LTG_TOOL_uv_purple_linter.py` (v1.0.0, new) — UV_PURPLE Dominance Linter
+  - Check A: UV_PURPLE + ELEC_CYAN combined LAB ΔE ≤ 15 fraction of non-black pixels
+    - PASS ≥ 20%, WARN 10–19%, FAIL < 10%
+    - VOID_BLACK = max(R,G,B) < 30 (max-channel / HSV Value)
+  - Check B: Warm-hue contamination (LAB h° 30°–80°, chroma C* ≥ 8) fraction total pixels
+    - PASS < 5%, WARN ≥ 5%
+  - CLI: single file + `--batch dir/` + `--world-type glitch` override
+  - Module API: `lint_uv_purple_dominance()`, `batch_lint()`, `run_glitch_layer_dominance_check()`
+- `LTG_TOOL_world_type_infer.py` bumped v1.1.0 → v1.2.0
+  - GLITCH rule extended: `covetous[_-]?glitch|sf[_-]?covetous` patterns added
+- `LTG_TOOL_precritique_qa.py` bumped v2.12.0 → v2.13.0
+  - `GLITCH_LAYER_PNGS` registry (6 assets: 2 COVETOUS SFs + 4 ENV)
+  - `_load_uv_purple_linter()` lazy loader added
+  - `run_uv_purple_lint()` Section 11 runner
+  - `build_report()` + `main()` + exit code updated for Section 11
+  - Summary table now shows Alpha Blend Lint + UV_PURPLE rows
+- C44 batch results:
+  - FAIL: LTG_COLOR_sf_covetous_glitch.png (0.6%), LTG_SF_covetous_glitch_v001.png (0.2%)
+  - WARN: glitchlayer_frame (17.0%), glitchlayer_encounter (17.4%), glitch_layer_frame (17.1%)
+  - PASS: bg_glitch_layer_encounter.png (22.7%)
+- Inbox archived: C44 UV_PURPLE linter brief + Kai's Byte face test notification
+- Ideabox: `ideabox/20260330_rin_yamamoto_glitch_subtype_dark_scene_threshold.md`
+  - GLITCH_DARK_SCENE subtype for intentionally near-void scenes like COVETOUS
+
+## C44 Lessons
+- cv2 LAB format is 8-bit scaled: L in [0,255]→[0,100]; a,b in [0,255]→[-128,127].
+  When using cv2.COLOR_BGR2LAB, ALWAYS unscale before any ΔE, chroma, or hue math:
+  `L_std = L_cv2 * 100/255; a_std = a_cv2 - 128; b_std = b_cv2 - 128`
+  Failure produces: garbage chroma (always large), garbage hue angles, garbage ΔE.
+- VOID_BLACK threshold should use max(R,G,B) < N (max-channel / HSV Value), not per-channel.
+  The COVETOUS background (13,10,25) has max=25 — per-channel threshold of 20 misses it.
+  max-channel threshold of 30 catches it correctly.
+- Chroma guard (C* ≥ 8) on hue-angle checks is mandatory. Near-neutral dark pixels
+  have near-zero C*, and arctan2(b,a) at near-zero gives numerically unstable hue angles
+  (can be any value 0°–360°). Without the guard, 89% of pixels in a dark scene register
+  as "warm hue" — a catastrophic false positive.
+- UV_PURPLE_DARK (dark purple variants) score < 1% on LAB ΔE ≤ 15 from canonical
+  UV_PURPLE because ΔE is a perceptual distance including L* (lightness). Dark purple
+  vs mid-tone purple: ΔE >> 15 even at identical hue. The linter is correct per spec —
+  but COVETOUS intentionally uses dark variants. Filed ideabox for GLITCH_DARK_SCENE
+  subtype with hue-angle matching as alternative metric.
+- World type inference for covetous_glitch filenames requires explicit pattern addition
+  to LTG_TOOL_world_type_infer.py — "covetous" alone is not a world-type keyword.
+
 ## C43 Completed Work
 - `--save-nolight` flag added to SF01, SF02, SF04 generators
   - `LTG_TOOL_styleframe_discovery.py` (SF01):

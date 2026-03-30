@@ -29,6 +29,10 @@ Tools chained (in order):
  10. Alpha Blend Lint (scored)       — fill-light composition defect detection (Rin Yamamoto C40)
      LTG_TOOL_alpha_blend_lint.lint_alpha_blend(). Requires unlit base (*_nolight.png) alongside
      composited. FLAT_FILL = FAIL. LOW_SIGNAL = WARN. Skips gracefully when base absent.
+ 11. UV_PURPLE Dominance Lint (scored) — Glitch Layer world-rule colour balance (Rin Yamamoto C44)
+     LTG_TOOL_uv_purple_linter.run_glitch_layer_dominance_check(). Checks UV_PURPLE + ELEC_CYAN
+     combined ≥ 20% non-black pixels (FAIL < 10%, WARN 10-19%). Also checks warm-hue
+     contamination < 5% total pixels (WARN if ≥ 5%). Runs on registered GLITCH_LAYER_PNGS.
 
 Output:
     output/production/precritique_qa_c<NN>.md
@@ -41,6 +45,11 @@ Exit codes:
 
 Author: Morgan Walsh (Pipeline Automation Specialist)
 Created: Cycle 34 — 2026-03-29
+Version: 2.13.0 (C44 Rin Yamamoto: UV_PURPLE Dominance Lint Section 11 added. New GLITCH_LAYER_PNGS
+               registry. Lazy-loaded LTG_TOOL_uv_purple_linter via _load_uv_purple_linter().
+               run_uv_purple_lint() runner, Section 11 in build_report(), main() [11/11],
+               and overall exit-code logic updated. world_type_infer.py bumped to v1.2.0:
+               covetous_glitch / sf_covetous added to GLITCH rule.)
 Version: 2.12.0 (C45 Ryo Hasegawa: CYCLE_LABEL bumped to C45. MOTION_SHEETS extended with
                LTG_CHAR_glitch_motion.png (4 panels). Lint now covers all 5 character motion
                sheets: luma/byte/cosmo/miri/glitch.)
@@ -145,6 +154,27 @@ def _load_alpha_blend_lint():
         mod = _importlib_util.module_from_spec(spec)
         spec.loader.exec_module(mod)
         _alpha_blend_lint_mod = mod
+        return mod
+    except Exception:
+        return None
+
+
+# UV-purple-lint tool: loaded lazily (requires PIL + numpy; skips gracefully if absent)
+_uv_purple_lint_mod = None
+
+def _load_uv_purple_linter():
+    """Lazily import LTG_TOOL_uv_purple_linter. Returns module or None."""
+    global _uv_purple_lint_mod
+    if _uv_purple_lint_mod is not None:
+        return _uv_purple_lint_mod
+    try:
+        spec = _importlib_util.spec_from_file_location(
+            "LTG_TOOL_uv_purple_linter",
+            str(TOOLS_DIR / "LTG_TOOL_uv_purple_linter.py"),
+        )
+        mod = _importlib_util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        _uv_purple_lint_mod = mod
         return mod
     except Exception:
         return None
@@ -324,6 +354,26 @@ FILL_LIGHT_ASSETS = [
              "src_dx_frac": -0.5, "src_dy_frac": -0.8},
         ],
     ),
+]
+
+# ---------------------------------------------------------------------------
+# Glitch Layer PNGs for Section 11 — UV_PURPLE Dominance Lint
+# ---------------------------------------------------------------------------
+# Registered Glitch Layer rendered images to check for UV_PURPLE + ELEC_CYAN
+# dominance (Alex Chen C44 brief). World type override = GLITCH applied to all.
+# Add new Glitch Layer style frames and env backgrounds here each cycle.
+
+ENV_DIR = OUTPUT_DIR / "backgrounds" / "environments"
+
+GLITCH_LAYER_PNGS = [
+    # Glitch Layer style frames
+    SF_DIR  / "LTG_COLOR_sf_covetous_glitch.png",
+    SF_DIR  / "LTG_SF_covetous_glitch_v001.png",
+    # Glitch Layer environment backgrounds
+    ENV_DIR / "LTG_ENV_glitchlayer_frame.png",
+    ENV_DIR / "LTG_ENV_glitchlayer_encounter.png",
+    ENV_DIR / "bg_glitch_layer_encounter.png",
+    ENV_DIR / "glitch_layer_frame.png",
 ]
 
 
@@ -1179,6 +1229,52 @@ def run_alpha_blend_lint() -> dict:
     }
 
 
+def run_uv_purple_lint() -> dict:
+    """
+    Section 11 — UV_PURPLE Dominance Lint (Rin Yamamoto, Cycle 44).
+
+    Runs LTG_TOOL_uv_purple_linter.run_glitch_layer_dominance_check() on each
+    PNG registered in GLITCH_LAYER_PNGS. World type override = GLITCH applied
+    to all (they are pre-selected Glitch Layer assets).
+
+    Scoring per file:
+        FAIL   → Check A combined fraction < 10%, or error
+        WARN   → Check A 10–19%, or Check B warm-hue ≥ 5%
+        PASS   → Check A ≥ 20%, Check B < 5%
+        SKIP   → File not on disk
+
+    Returns:
+        {
+            "overall"  : "PASS" | "WARN" | "FAIL",
+            "pass"     : int,
+            "warn"     : int,
+            "fail"     : int,
+            "skip"     : int,
+            "per_file" : list of per-file result dicts
+        }
+    """
+    uv_mod = _load_uv_purple_linter()
+
+    # If module cannot be loaded, return graceful WARN
+    if uv_mod is None:
+        return {
+            "overall":  "WARN",
+            "pass":     0,
+            "warn":     1,
+            "fail":     0,
+            "skip":     0,
+            "per_file": [],
+            "error":    "LTG_TOOL_uv_purple_linter could not be loaded",
+        }
+
+    existing_paths = [str(p) for p in GLITCH_LAYER_PNGS if p.exists()]
+    missing_count  = len(GLITCH_LAYER_PNGS) - len(existing_paths)
+
+    result = uv_mod.run_glitch_layer_dominance_check(existing_paths)
+    result["skip"] = result.get("skip", 0) + missing_count
+    return result
+
+
 # ---------------------------------------------------------------------------
 # Report builder
 # ---------------------------------------------------------------------------
@@ -1194,6 +1290,7 @@ def build_report(
     motion_spec_res,
     arc_diff_results: list,
     alpha_blend_res: dict,
+    uv_purple_res: dict,
     delta: dict,
     run_ts: str,
 ) -> str:
@@ -1276,6 +1373,8 @@ def build_report(
         f"| Glitch Spec Lint               | {glitch_lint_res['overall']} | {glitch_lint_res['pass']} | {glitch_lint_res['warn']} | {glitch_lint_res['fail']} |",
         f"| README Script Index Sync       | {readme_sync_res['overall']} | {readme_sync_res['pass']} | {readme_sync_res['warn']} | {readme_sync_res['fail']} |",
         f"| Motion Spec Lint               | {motion_spec_res['overall']} | {motion_spec_res['pass']} | {motion_spec_res['warn']} | {motion_spec_res['fail']} |",
+        f"| Alpha Blend Lint               | {alpha_blend_res['overall']} | {alpha_blend_res['pass']} | {alpha_blend_res['warn']} | {alpha_blend_res['fail']} |",
+        f"| UV_PURPLE Dominance Lint       | {uv_purple_res['overall']}   | {uv_purple_res['pass']}   | {uv_purple_res['warn']}   | {uv_purple_res['fail']}   |",
         "",
         "---",
         "",
@@ -1470,7 +1569,52 @@ def build_report(
 
     lines.append("---")
     lines.append("")
-    lines.append("*Generated by LTG_TOOL_precritique_qa.py v2.12.0 — Ryo Hasegawa (C45: CYCLE_LABEL=C45; MOTION_SHEETS extended: glitch added — all 5 characters now have motion specs; C44: cosmo+miri added, luma panel count 3→4; Rin Yamamoto (C43: SF04 FILL_LIGHT_ASSETS path fix, --save-nolight enabled))*")
+
+    # Section 11: UV_PURPLE Dominance Lint
+    uv_badge = _grade_line(uv_purple_res["overall"])
+    lines.append(f"## 11. UV_PURPLE Dominance Lint — Glitch Layer Colour Balance — {uv_badge}")
+    lines.append("")
+    lines.append(
+        "_Verifies UV_PURPLE (#7B2FBE) + ELEC_CYAN (#00F0FF) are the dominant colours "
+        "in Glitch Layer images. Core world-rule: Glitch Layer = UV_PURPLE/ELEC_CYAN dominant, "
+        "zero warm light. Check A: combined fraction of non-black pixels — PASS ≥ 20%, "
+        "WARN 10–19%, FAIL < 10%. Check B: warm-hue contamination (LAB h° 30°–80°, "
+        "chroma C* ≥ 8) — PASS < 5%, WARN ≥ 5%._"
+    )
+    lines.append("")
+    lines.append(
+        f"PASS: {uv_purple_res['pass']}  "
+        f"WARN: {uv_purple_res['warn']}  "
+        f"FAIL: {uv_purple_res['fail']}  "
+        f"Skip: {uv_purple_res.get('skip', 0)}"
+    )
+    lines.append("")
+
+    if uv_purple_res.get("error"):
+        lines.append(f"  - *ERROR — {uv_purple_res['error']}*")
+        lines.append("")
+
+    for file_res in uv_purple_res.get("per_file", []):
+        f_badge = _grade_line(file_res["overall"])
+        lines.append(f"### {file_res['basename']} — {f_badge}")
+        if file_res.get("skipped"):
+            lines.append(f"  - *SKIP — {file_res.get('skip_reason', '')}*")
+        elif file_res.get("error"):
+            lines.append(f"  - *ERROR — {file_res['error']}*")
+        else:
+            for check in file_res.get("checks", []):
+                cv = _grade_line(check["verdict"])
+                lines.append(f"  - Check {check['check']} ({check['name']}): {cv}")
+                lines.append(f"    {check['msg']}")
+        lines.append("")
+
+    if not uv_purple_res.get("per_file"):
+        lines.append("_No Glitch Layer assets registered._")
+        lines.append("")
+
+    lines.append("---")
+    lines.append("")
+    lines.append("*Generated by LTG_TOOL_precritique_qa.py v2.13.0 — Rin Yamamoto (C44: Section 11 UV_PURPLE Dominance Lint added; world_type_infer v1.2.0); Ryo Hasegawa (C45: glitch motion; C44: cosmo+miri, luma panel count); Rin Yamamoto (C43: SF04 FILL_LIGHT_ASSETS path fix)*")
 
     return "\n".join(lines)
 
@@ -1537,9 +1681,13 @@ def main():
             msgs = "; ".join(m[:80] for m in ad.get("messages", [])[:2])
             print(f"      → {ad['label']}: {sev} — {msgs}")
 
-    print("[10/10] Running Alpha Blend Lint on fill-light assets...")
+    print("[10/11] Running Alpha Blend Lint on fill-light assets...")
     alpha_blend_res = run_alpha_blend_lint()
     print(f"      → {alpha_blend_res['overall']} (PASS={alpha_blend_res['pass']}, WARN={alpha_blend_res['warn']}, FAIL={alpha_blend_res['fail']}, SKIP={alpha_blend_res['skipped']})")
+
+    print("[11/11] Running UV_PURPLE Dominance Lint on Glitch Layer assets...")
+    uv_purple_res = run_uv_purple_lint()
+    print(f"      → {uv_purple_res['overall']} (PASS={uv_purple_res['pass']}, WARN={uv_purple_res['warn']}, FAIL={uv_purple_res['fail']}, SKIP={uv_purple_res.get('skip',0)})")
 
     # Build snapshot and compute delta
     current_snapshot = _make_snapshot(
@@ -1566,6 +1714,7 @@ def main():
         motion_spec_res,
         arc_diff_results,
         alpha_blend_res,
+        uv_purple_res,
         delta,
         run_ts,
     )
@@ -1586,6 +1735,7 @@ def main():
         readme_sync_res["overall"],
         motion_spec_res["overall"],
         alpha_blend_res["overall"],
+        uv_purple_res["overall"],
     )
 
     print(f"[precritique_qa] OVERALL: {overall}")
