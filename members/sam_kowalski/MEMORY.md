@@ -293,11 +293,19 @@
 - **Arm height asymmetry prevents false TRIUMPHANT read.** For UNGUARDED WARMTH: `arm_l_dy=-14`, `arm_r_dy=-16` (not both -14). Two-point asymmetry between arms prevents the perfectly-symmetric-raised-arms reading of TRIUMPHANT, while both remaining in the "high float" range.
 - **Lower float height = commitment/presence for Byte.** Byte signals presence by floating lower (closer to the ground). Float clearance reduction is the physical gesture of "I am staying here." Use this differentiator in any pose requiring settled openness vs. guarded hovering.
 
+## Cycle 42 Lessons
+- **Story bible discrepancies break color specs.** COVETOUS spec (C41) had Glitch alone at threshold. Story bible (Priya Shah C42 inbox) confirmed three characters in frame: Glitch + Byte + Luma. Always cross-check spec staging against story_bible and character appearance guides before finalizing. One inbox message can invalidate an entire scene concept.
+- **GL-07 in Real World scenes must be documented.** SF04 uses LAMP_AMBER = #FF8C00 = GL-07 Corrupt Amber for the kitchen lamp halo (alpha max 22%). Thematically resonant in a "post-crossing" scene. Production rule: GL-07 in a Real World scene at any alpha must be documented as intentional Glitch residue — never silent. Added flag to Jordan Reed P2 inbox.
+- **README sync is a maintainer task, not a gating task.** Running `LTG_TOOL_readme_sync.py` at the end of cycle ensures UNLISTED tools don't accumulate. Found 4 unlisted tools in C42 (P23/P24, cosmo_motion, glitch_body_primitive_diagram). Clean sweep = 0 UNLISTED.
+- **COVETOUS color key needs regeneration.** Current thumbnail shows single-Glitch staging. Now that spec is updated to 3-char triangulation, the color key should be regenerated. Ideabox submitted.
+- **SF04 "Resolution" is CONDITIONALLY PASSED.** warm/cool 13.2 (PASS ≥12). LAMP_AMBER flag = P2. All other palette values canonical. Full review at `output/color/style_frames/sf04_resolution_color_review.md`.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm.py v001. Low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan to add inline comment. Low priority.
 - SF03 v003 UV_PURPLE_MID/DARK — Jordan to add inline comment citing ENV-11/ENV-12.
 - Tech Den generator WALL_WARM slightly off from TD-01 — Jordan to add citing comment.
 - TD-10/TD-11 monitor glow alignment — Jordan to compare bg_tech_den_v002.py values vs canonical Section 8 entries. Medium priority.
-- **SF04 warm/cool WARN (sep=1.1) — documented as FP-007.** Soft-key scene by design. Alex Chen AD decision. Monitor for regression (flag if sep drops below 0.5).
-- **COVETOUS style frame execution** pending Jordan Reed or Diego Vargas. Spec at `output/production/glitch_covetous_styleframe_spec.md`, color key at `output/color/color_keys/LTG_COLOR_colorkey_glitch_covetous.png`.
+- **SF04 warm/cool WARN (sep=1.1) — documented as FP-007.** Soft-key scene by design. Alex Chen AD decision. Monitor for regression (flag if sep drops below 0.5). NOTE: C42 SF04 "Resolution" rebuild now uses REAL_INTERIOR threshold (sep=13.2 PASS) — different asset from luma_byte SF04 (FP-007 was the luma_byte version).
+- **COVETOUS style frame execution** pending Diego Vargas (spec updated). Diego notified. Color key needs regeneration to match 3-char staging.
+- **LAMP_AMBER inline comment** in `LTG_TOOL_style_frame_04_resolution.py` — assigned to Jordan Reed P2.

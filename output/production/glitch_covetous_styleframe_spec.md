@@ -3,18 +3,32 @@
 
 **Author:** Sam Kowalski, Color & Style Artist
 **Date:** 2026-03-30
-**Cycle:** 41
+**Cycle:** 42 (updated from C41)
 **Requested by:** Alex Chen (Art Director) — C41 brief
-**Narrative source:** glitch.md §7.2 (Interior State Expressions); Jayden Torres critique C16
+**Narrative source:** glitch.md §7.2 (Interior State Expressions); Jayden Torres critique C16; story_bible_v003.md §EP5; LTG_glitch_appearance_guide.md §2.2
+
+**C42 STAGING UPDATE:** C41 spec had Glitch alone at the threshold. Priya Shah (2026-03-30 inbox) confirmed from story_bible_v003.md: the COVETOUS beat includes Luma and Byte in frame. Glitch is NOT alone. Triangulation: Glitch at distance — Byte as barrier — Luma as subject of desire. Spec updated below.
 
 ---
 
 ## 1. Scene Narrative
 
-Glitch is alone at the threshold — the invisible boundary between the Glitch Layer
-(its home) and the Real World (the world it covets). Luma is not present. Glitch
-is watching Real World light from the other side of the barrier. It is the moment
-of wanting, not the moment of acting.
+**C42 UPDATE — Story Bible Alignment (Priya Shah, 2026-03-30)**
+
+Glitch is NOT alone. From story_bible_v003.md and LTG_glitch_appearance_guide.md §2.2:
+
+The COVETOUS beat is Glitch's **first appearance in the series** (Episode 5). Beat sequence:
+1. Glitch found, already present in an organized section of a familiar Glitch Layer location.
+2. Glitch starts in NEUTRAL (operational, watching).
+3. Glitch registers Luma. Expression shifts: CALCULATING → COVETOUS (bilateral acid slit eyes — genuine interior state).
+4. The lean forward is physical: tilt +12°, arms slightly raised, forward-reaching.
+5. Byte positions between Glitch and Luma. Glitch observes and does not pursue.
+
+**Character triangulation (canonical):** Glitch at distance (left or center-left) — Byte as barrier (midground) — Luma as subject (right, or right-center).
+
+**What Glitch covets:** Access — specifically, the breach point Luma represents. Luma can move freely between Real World and Glitch Layer. Glitch cannot breach without a CRT anchor. The COVETOUS state is *I could have that. I should take that.* Appetitive, not angry. The first crack in Glitch's control.
+
+**Color implication:** The warm light is NOT just an ambient bleed through a threshold — it is Luma herself. The right-side warm zone should be associated with Luma's character warmth (hoodie orange, skin) visible at scale. Glitch's body must remain untouched by that warmth. The gap between them is the image.
 
 **Daisuke's design note:** Interior states must feel quiet and private. COVETOUS is
 not triumphant. It is not even mischievous. It is still — and the stillness is what
@@ -28,21 +42,27 @@ not simply evil.
 
 ## 2. Scene Staging
 
-**Setting:** The threshold — the moment Glitch hovers at the barrier between worlds.
+**Setting:** The Glitch Layer — a familiar Glitch Layer location where Glitch is already present when Luma and Byte encounter it (Episode 5 first appearance).
 
-- **Camera:** Low angle (eye-level to Glitch, approximately Glitch's center height)
-- **Composition:** Glitch positioned left-center (not fully centered — weight toward
-  the threshold). The barrier/threshold is right-of-frame, established by the
-  Real World warm light bleeding through.
+- **Camera:** Low angle (approximately Glitch's center height — Glitch reads larger, more imposing)
+- **Composition (THREE-CHARACTER TRIANGULATION):**
+  - **LEFT / CENTER-LEFT:** Glitch — COVETOUS state, tilt +12° leaning toward Luma,
+    arms slightly raised. This is the dominant figure.
+  - **MIDGROUND / CENTER:** Byte — positioned between Glitch and Luma. Byte's body
+    language: protective barrier posture. Small relative to Glitch.
+  - **RIGHT:** Luma — the subject of Glitch's want. Warm palette (hoodie orange, skin)
+    reads as a warm zone against the cold void. She need not be fully lit — silhouette
+    + warm color recognizable. Slightly behind Byte's position.
+  - **BARRIER LINE:** Byte's position defines the implicit barrier. Glitch's lean
+    crosses the axis of the barrier — appetitive, not yet acting.
 - **Depth layers:**
   - BACKGROUND (far void): Deep Glitch Layer void — UV Purple atmospheric depth,
     Void Black base
-  - MID-GROUND: The threshold itself — a faint vertical luminous boundary edge,
-    barely visible as a pale ELEC_CYAN line/shimmer
-  - FOREGROUND/MID: Glitch hovering, COVETOUS state, leaning slightly toward the
-    threshold (+12° tilt, arms slightly raised)
-  - THRESHOLD SIDE (right 25%): Warm Real World light spilling through — not full
-    illumination, a glow bleed only. Soft Gold warmth pressing against cool void.
+  - MID-GROUND: The threshold / organized Glitch Layer platform zone —
+    faint ELEC_CYAN platform lines (canonical Glitch Layer depth system)
+  - FOREGROUND: Glitch hovering, COVETOUS state
+  - MIDGROUND: Byte as barrier silhouette
+  - RIGHT ZONE: Luma — warm character warmth provides the "what Glitch wants" read
 
 ---
 
@@ -57,18 +77,23 @@ not simply evil.
 | Atmospheric mid-void band | Mid-distance | Atmospheric Depth Purple | GL-04b `#4A1880` | Depth separation band between sky void and platform zone |
 | Platform/ground void | Lower 30% | Void Black + GL-04a | GL-04a `#3A1060` | Deep digital void — Glitch hovers over this |
 
-### 3.2 The Threshold (Key Narrative Element)
+### 3.2 The Warm Zone (Luma — the Subject of Desire)
+
+**C42 UPDATE:** The warm right-side zone is not an abstract threshold bleed — it is
+Luma's character presence. The orange hoodie and warm skin tones ARE the warm light.
 
 | Zone | Area | Color | Code | Notes |
 |---|---|---|---|---|
-| Threshold barrier edge | Vertical line, right 25% | Electric Cyan | GL-01 `#00F0FF` | The boundary itself — thin luminous edge, 2–3px |
-| Real World warm bleed | Right 25%, radial | Soft Gold | RW-02 `#E8C95A` | The thing Glitch covets — warm light visible through/past the barrier. NOT a full key light. Alpha max 90 at nearest edge, falling to 0 within 120px. |
-| Real World secondary | Right edge, softer | Sunlit Amber | RW-03 `#D4923A` | Deepens the warm volume in the threshold zone. Radial falloff, alpha max 60. |
+| Luma hoodie | Right zone, character fill | Hoodie Orange | CHAR-L-04 `#E8703A` | Primary warm color in the right zone — Luma's canonical hoodie |
+| Luma skin | Right zone, face/hands | Skin (UV-ambient mod) | CHAR-L-01 derived | Under UV ambient — cooler than SF01 but retains R>G>B warmth |
+| Luma hair | Right zone, silhouette | Hair black | DRW-18 `#1A0F0A` | Dark silhouette anchor |
+| Glitch Layer platform lines | Right midground | Electric Cyan | GL-01 `#00F0FF` | Canonical platform depth system — thin lines only |
+| Ambient warm glow (from Luma) | Right 30%, radial | Soft Gold | RW-02 `#E8C95A` | Character warmth radiates slightly into nearby void space. Alpha max 50, falls to 0. Atmospheric suggestion only. |
 
-**Threshold color rule:** The warm light visible through the threshold MUST remain
-entirely in the right 25% of the composition. It must not spill left into the void
-zone where Glitch stands. Glitch is in pure cool/void light — it sees the warmth
-but is not touched by it. This separation IS the visual premise of the scene.
+**Warm zone color rule:** Luma's warm colors (CHAR-L-04 hoodie, warm skin) MUST remain
+in the right 30% of the composition. They must not overlap Glitch's body zone. Glitch
+is not warmed or lit by Luma. The spatial separation is the visual premise: Glitch sees
+what it cannot have. The hoodie orange reading against the UV void IS the scene's argument.
 
 ### 3.3 Key Light Sources
 
@@ -76,11 +101,26 @@ but is not touched by it. This separation IS the visual premise of the scene.
 |---|---|---|---|
 | UV Purple ambient | UV Purple GL-04 | Omnidirectional (Glitch Layer ambient) | The only actual light on Glitch. Fills all surfaces dimly. |
 | No direct key light | — | — | Glitch has no strong key. The void ambient is its only illumination. |
-| Threshold warm bleed | RW-02 / RW-03 | From right | NOT a key light on Glitch. Glitch is NOT lit by warm light in this frame. |
+| Luma character warmth | CHAR-L-04 / RW-02 | From right | NOT a key light on Glitch. Glitch is NOT lit by Luma's warmth. Warm colors are Luma's character palette, not a light source reaching Glitch. |
 
-**Critical: Glitch must NOT receive warm light.** The warm glow in the threshold
-zone is visible in the background — it does not reach Glitch's body. The entire
-power of this image is that Glitch can see what it cannot have.
+**Critical: Glitch must NOT receive warm light.** Luma's warm character colors are
+visible in the right zone but do not reach Glitch. The Byte silhouette in midground
+reinforces the spatial separation. The entire power of this image is that Glitch
+can see and want what it cannot reach.
+
+### 3.4a Byte — Midground Barrier Character
+
+| Element | Color | Notes |
+|---|---|---|
+| Body fill | GL-01b Byte Teal `#00D4E8` | Canonical fill — CAN be slightly dimmed by UV ambient |
+| Eye (organic) | GL-01 Electric Cyan `#00F0FF` | Left organic eye |
+| Eye (cracked) | GL-02 Hot Magenta `#FF2D6B` | Right cracked eye |
+| UV Purple shadow | GL-04 shadow companion | Body shadow at +3px offset |
+| VOID_BLACK outline | GL-08 `#0A0A14` | 3px — standard |
+| Body posture | Barrier lean | Byte positions body between Glitch and Luma — protective barrier |
+
+**Byte lighting note:** Byte is under UV ambient (same as Glitch Layer canonical). Byte Teal body reads correctly under UV. Apply GL-01a `#00A8C0` shadow companion.
+**Byte scale note:** Byte should read as SMALLER than Glitch in this frame. Glitch is the dominant character; Byte's barrier role is spatial/compositional, not size-matching.
 
 ### 3.4 Glitch Character Colors
 
@@ -117,12 +157,18 @@ light to simulate Real World proximity. Glitch is not warmed by the threshold li
 
 **Emotional read:**
 - Vast cool void (GL-04) = the digital world that contains Glitch — its home, but not enough
-- Warm glow at threshold (RW-02/03) = what Glitch wants — visible, present, unreachable
+- Luma's warm character palette (CHAR-L-04 hoodie, warm skin) in the right zone = what Glitch wants — the living bridge that can go where Glitch cannot
+- Byte's teal silhouette (GL-01b) = the barrier — belonging to neither world fully, positioned between
 - Corrupt Amber body (GL-07) = Glitch itself — neither warm nor cold, neither Real nor Glitch — in-between and wanting
-- Acid slit eyes (GL-03) = COVETOUS target-lock — "I could take that"
+- Acid slit eyes (GL-03) = COVETOUS target-lock — "I could take that. I should take that."
 
-**The image must communicate:** Glitch is a creature of the void looking at warmth
-it did not make and cannot enter. The image is about the gap, not the encounter.
+**Three-character color arc (left to right):**
+Glitch (GL-07 amber, GL-04 void) → Byte (GL-01b teal) → Luma (CHAR-L-04 orange, warm skin)
+Temperature arc: amber-in-void → teal-transition → warm orange
+
+**The image must communicate:** Glitch is a creature of the void watching the one
+thing in this frame that moves freely between worlds. The gap between Glitch and Luma
+— Byte standing in it — is the premise of Season 1.
 
 ---
 
@@ -130,20 +176,22 @@ it did not make and cannot enter. The image is about the gap, not the encounter.
 
 | Color | Reason |
 |---|---|
-| Electric Cyan as ambient fill | GL-01 is Real World screen emission — wrong for this void setting |
-| Byte Teal (GL-01b) | Byte is not in this frame |
-| Acid Green (GL-03) as fill or accent | Reserved for Glitch eyes only in COVETOUS. No flora in this scene (platform context, not encounter zone) |
-| Warm light on Glitch's body | The entire premise is the separation. Do not compromise it. |
+| Electric Cyan as ambient fill | GL-01 is Real World screen emission — use only for platform depth lines (thin, 1–2px) |
+| Acid Green (GL-03) as fill or accent | Reserved for Glitch's bilateral eyes only. No flora in this scene (platform context, not Glitch Layer encounter zone flora) |
+| Warm light on Glitch's body | The premise of the scene. Glitch is NOT lit by Luma. Do not compromise it. |
 | Hot Magenta as fill or background accent | Not this scene — no corruption event, no storm. |
+| Luma hoodie orange spilling west of Byte | Warm colors must not cross the Byte barrier line into Glitch's zone |
+| Byte body fill as large-area fill | Byte Teal (GL-01b) is a character fill only — Byte is smaller than Glitch, a midground barrier silhouette |
 
 ---
 
 ## 6. Output Spec
 
 - **Color key thumbnail:** `output/color/color_keys/LTG_COLOR_colorkey_glitch_covetous.png`
-  (640×360px — generated by companion script)
+  (640×360px — generated by companion script; thumbnail reflects C41 single-Glitch staging — executor note: three-character triangulation applies to full style frame, not thumbnail)
 - **Written spec (this document):** `output/production/glitch_covetous_styleframe_spec.md`
-- **For:** Jordan Reed or Diego Vargas (style frame execution)
+- **For:** Diego Vargas or Jordan Reed (style frame execution)
+- **Three characters to render:** Glitch (COVETOUS, left), Byte (barrier, midground center), Luma (right zone, warm palette)
 
 ---
 
@@ -156,3 +204,4 @@ it did not make and cannot enter. The image is about the gap, not the encounter.
 - Alex Chen brief C41 — task source
 
 *Cycle 41 — Sam Kowalski, Color & Style Artist*
+*Cycle 42 — Updated with Priya Shah story bible notes (three-character triangulation). Sam Kowalski.*

@@ -1,0 +1,5 @@
+**Author:** Priya Shah
+**Cycle:** 42
+**Date:** 2026-03-30
+**Idea:** The pilot episode outline (v001, C42) identifies three high-priority storyboard panels for Acts 1–3 that don't yet have standalone PNGs: A1-03 (Byte's arrival and ricochet — comedy beat), A3-02 (the doubt-in-certainty beat — emotional center), and A3-04 (Grandma Miri reveals she knows Byte — key character moment). Diego is currently working the cold open (P07, P09). When those are complete, a staged handoff brief identifying these three Act 1–3 panels as the next-priority story beats would help Diego sequence his work with the story's structural priorities rather than panel-number order. I can write those staging briefs if Lee Tanaka produces the expression/gaze specs for the scenes.
+**Benefits:** Diego: reduces ambiguity about what scenes matter most once the cold open is complete. Lee: a natural next brief series after the v013 and lineup work concludes. Pitch package: the three most emotionally critical non-cold-open moments get visual representation before the next critique cycle.
