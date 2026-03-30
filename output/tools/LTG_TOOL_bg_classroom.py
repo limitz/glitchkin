@@ -8,6 +8,7 @@
 LTG_TOOL_bg_classroom.py — Millbrook Middle School Classroom Background (Full Rebuild)
 "Luma & the Glitchkin" — Background & Environment Design
 Artist: Hana Okonkwo | Cycle 41 | v003 C43: chalkboard draw_pixel_text() upgrade
+v004 C46: migrated hardcoded path to LTG_TOOL_project_paths.output_dir()
 
 Full rebuild from ENV_REBUILD_SPEC_classroom_c41.md. Prior generator (Jordan Reed C14/C16)
 failed QA on silhouette (blob), warm/cool (9.3 FAIL), and line weight (mean=414.65, outliers=3).
@@ -31,7 +32,8 @@ QA targets:
   - value floor ≤ 30, ceiling ≥ 225, range ≥ 150
   - line weight outliers ≤ 1
 
-Output: /home/wipkat/team/output/backgrounds/environments/LTG_ENV_classroom_bg.png
+Output: output/backgrounds/environments/LTG_ENV_classroom_bg.png
+  (resolved at runtime via LTG_TOOL_project_paths.output_dir())
 """
 
 import math
@@ -44,6 +46,7 @@ from PIL import Image, ImageDraw, ImageFilter
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from LTG_TOOL_render_lib import light_shaft, vignette, paper_texture  # noqa: E402
 from LTG_TOOL_pixel_font_v001 import draw_pixel_text  # noqa: E402
+from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
 
 # ── Canvas ─────────────────────────────────────────────────────────────────────
 W, H = 1280, 720
@@ -748,8 +751,8 @@ def main():
     # ── 16. THUMBNAIL RESIZE and SAVE ─────────────────────────────────────────
     img.thumbnail((1280, 1280), Image.LANCZOS)
 
-    out_path = "/home/wipkat/team/output/backgrounds/environments/LTG_ENV_classroom_bg.png"
-    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    out_path = output_dir("backgrounds", "environments", "LTG_ENV_classroom_bg.png")
+    ensure_dir(out_path.parent)
     img.convert("RGB").save(out_path)
     print(f"Saved: {out_path}")
     return out_path

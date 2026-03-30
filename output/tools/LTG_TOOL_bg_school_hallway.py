@@ -10,6 +10,7 @@ LTG_TOOL_bg_school_hallway.py — Millbrook School Hallway Background v004
 Artist: Hana Okonkwo | Cycle 38
 C44 seal name fix: Diego Vargas — added "MILLBROOK MIDDLE SCHOOL" + "EST. 1962" pixel text to hallway seal.
 School name confirmed canonical by Priya Shah (story_bible_v004.md). Uses LTG_TOOL_pixel_font_v001.py.
+v005 C46: migrated hardcoded path to LTG_TOOL_project_paths.output_dir()
 
 Used in: A1-03, A1-05 (Act 1 transition / locker scenes)
 
@@ -59,7 +60,8 @@ C38 figure-ground separation pass (Cosmo silhouette notes, Takeshi Murakami):
     - Structural line work
     - School seal
 
-Output: /home/wipkat/team/output/backgrounds/environments/LTG_ENV_school_hallway.png
+Output: output/backgrounds/environments/LTG_ENV_school_hallway.png
+  (resolved at runtime via LTG_TOOL_project_paths.output_dir())
 """
 
 import math
@@ -82,6 +84,18 @@ except ImportError:
         pass
     def measure_pixel_text(text, scale=1):
         return (0, 0)
+
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir
+except ImportError:
+    # Fallback if project_paths not available — use hardcoded path
+    import pathlib
+    def output_dir(*parts):
+        base = pathlib.Path(__file__).resolve().parent.parent.parent / "output"
+        return base / pathlib.Path(*parts) if parts else base
+    def ensure_dir(path):
+        pathlib.Path(path).mkdir(parents=True, exist_ok=True)
+        return pathlib.Path(path)
 
 W, H = 1280, 720
 
@@ -924,8 +938,8 @@ def draw_school_hallway():
               fill=LINE_DARK, width=1)
 
     # ── OUTPUT ────────────────────────────────────────────────────────────────
-    out_path = "/home/wipkat/team/output/backgrounds/environments/LTG_ENV_school_hallway.png"
-    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    out_path = output_dir("backgrounds", "environments", "LTG_ENV_school_hallway.png")
+    ensure_dir(out_path.parent)
     img.thumbnail((1280, 1280), Image.LANCZOS)
     img.convert("RGB").save(out_path)
     print(f"Saved: {out_path}")

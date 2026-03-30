@@ -1,0 +1,5 @@
+**Author:** Sam Kowalski
+**Cycle:** 46
+**Date:** 2026-03-30
+**Idea:** The warm/cool calibration against real reference photos shows 6 out of 7 interior photos fall below the REAL_INTERIOR threshold of 12.0 PIL hue units (median separation: 2.30). The current metric (top-half vs bottom-half median hue) may be measuring the wrong thing for real interiors — warm lamp-lit rooms are warm everywhere, so vertical hue split is near-zero by design. A warm-pixel-percentage metric (e.g., "at least 40% warm pixels and at least 5% cool pixels") may be a better discriminator for real-world interior scenes than the vertical hue split. Recommend Kai Nakamura evaluate whether a complementary or replacement metric would reduce false positives on warm-dominant interior scenes.
+**Benefits:** Sam, Kai, entire team. Would eliminate the systematic warm/cool WARN false positives on SF01/SF04/SF05/SF06 that have consumed investigation time since Cycle 31. More accurate threshold = fewer false alarms = faster QA cycles.

@@ -3,34 +3,47 @@
 ## Identity
 Technical Art Engineer for "Luma & the Glitchkin." Joined Cycle 21. Mission: upgrade PIL toolchain with procedural rendering techniques and build a reusable shared library.
 
-## Cycle 46 — C46 README Script Index Catch-Up Pass
+## Cycle 46 — C46 Face Metric Calibrate Tool + README Catch-Up
 
 **Status:** COMPLETE
 
-**Tasks completed:**
-- README Script Index: Registered 7 previously unlisted tools (identified by precritique_qa Section 7 WARN):
-  - `LTG_TOOL_sf_covetous_glitch_c43.py` — Lee Tanaka, C43
-  - `LTG_TOOL_sb_cold_open_P10.py` — Diego Vargas, C44
-  - `LTG_TOOL_sb_cold_open_P11.py` — Diego Vargas, C44
-  - `LTG_TOOL_sf_miri_luma_handoff.py` — Maya Santos, C44
-  - `LTG_TOOL_lineup_tier_depth_sketch.py` — Lee Tanaka, C45
-  - `LTG_TOOL_sb_cold_open_P14.py` — Diego Vargas, C45
-  - `LTG_TOOL_sb_cold_open_P15.py` — Diego Vargas, C45
-- README Script Index: Added `logo_asymmetric v003` update entry (Sam Kowalski, C44)
-- README Script Index: Added `C46 Updates (Kai Nakamura)` section documenting the catch-up pass
-- README header: Updated to C46 (was C45)
-- Inbox: Empty this cycle (no messages)
-- Ideabox: Submitted `20260330_kai_nakamura_readme_sync_auto_draft.md` — `--draft-entry` flag for LTG_TOOL_readme_sync to auto-generate draft table rows from tool docstrings
+**Tasks completed (pass 2 — face metric calibrate):**
+- Built `LTG_TOOL_face_metric_calibrate.py` — Face Test Gate Calibration Tool
+  - Loads reference face/body anatomy images from `reference/drawing guides/`
+  - Extracts facial proportion ratios via OpenCV Haar cascade detection (face, eye, smile)
+  - Compares against current face test gate thresholds in `LTG_TOOL_character_face_test.py`
+  - Outputs calibration report with CALIBRATED/REVIEW/ADJUST verdicts per parameter
+  - CLI: `--face-dir`, `--body-dir`, `--output`, `--debug` flags
+  - Module API: `run_calibration()`, `detect_faces_in_image()`, `aggregate_ratios()`, `compare_thresholds()`
+- Generated `output/production/face_metric_calibration_report.md`
+- Debug PNGs saved to `output/production/face_calibrate_debug/`
+- Calibration result: 1 CALIBRATED / 3 REVIEW / 3 ADJUST
+  - Inter-eye distance: CALIBRATED (4.1% deviation)
+  - Eye Y, eye radius, eye-to-mouth: ADJUST (cartoon-vs-realistic gap, not gate errors)
+  - Mouth Y, eye-to-nose, nose-to-mouth: REVIEW (low sample counts)
+- Recommendation: no threshold changes — ADJUST items reflect intentional cartoon stylization
+- Archived 2 inbox messages (reference shopping list + reference images acquired)
+- Ideabox: Submitted photorealistic reference image idea for stronger calibration baseline
+- Sent completion report to Alex Chen
 
-**Context notes:**
-- precritique_qa already at v2.13.1 / CYCLE_LABEL=C46 (Ryo Hasegawa completed first this cycle)
-- README already had a `### C46 Updates (Ryo Hasegawa)` section — motion_spec_lint dark-sheet fix
-- C45 panel generators P14/P15 are Diego Vargas comedy escalation beats (bookshelf ricochet + forced hair circle)
+**Tasks completed (pass 1 — README catch-up):**
+- README Script Index: 7 unregistered tools added, logo_asymmetric v003 entry, header to C46
 
 ## Lessons Learned (C46)
-- Glob tool returns files sorted by modification time, not alphabetically — use it to find recently created files when looking for unlisted tools
-- C43+ had a 7-tool README gap because Diego Vargas and Lee Tanaka were creating panels/tools faster than README was updated — the readme_sync tool catches these but someone needs to action the warnings each cycle
-- precritique_qa CYCLE_LABEL was already bumped to C46 by Ryo Hasegawa (same cycle, earlier) — always check this before updating it
+- Haar cascades on cartoon reference art: 52 faces detected but only 5 full detections (2+ eyes). Cartoon stylization pushes proportions outside cascade training distribution. Photographic references needed for robust statistical baseline.
+- AVIF images cannot be loaded by PIL on this system — skip gracefully with SUPPORTED_EXTENSIONS filter
+- Glob tool returns files sorted by modification time, not alphabetically
+- C43+ had a 7-tool README gap — readme_sync catches these but needs manual actioning each cycle
+- precritique_qa CYCLE_LABEL was already bumped to C46 by Ryo Hasegawa — always check before updating
+
+## LTG_TOOL_face_metric_calibrate.py (C46 NEW)
+- Face test gate calibration against reference anatomy images
+- OpenCV Haar cascades: frontalface_alt2, eye, smile
+- Extracts: inter_eye_distance, eye_y_frac, eye_r_frac, mouth_y_frac, eye_to_mouth, eye_to_nose, nose_to_mouth
+- Compares against CURRENT_THRESHOLDS dict (extracted from character_face_test.py)
+- Status verdicts: CALIBRATED (<15% dev) / REVIEW (15-30%) / ADJUST (>30%)
+- Dependencies: PIL, cv2, numpy
+- CLI + module API (run_calibration returns detections, stats, comparisons, report_path)
 
 ## Project Context
 - Animation pitch package for a cartoon about 12yo Luma discovering Glitchkin (pixel creatures) in grandma's CRT TV

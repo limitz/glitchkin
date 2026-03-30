@@ -408,3 +408,25 @@ Read inbox for directive. Two tasks: (1) SF02 staging brief for Luma interiority
 - **Ambient rim light confirms spatial membership.** The UV_PURPLE rim on Luma's left shoulder is not decoration — it says she IS in the Glitch Layer, subject to its physics. Without it, the warm zone reads as a separate room. With it, the tension reads: she's here, but she doesn't belong here.
 - **Covet vector annotation makes the premise visible.** The dashed sight-line from Glitch's eye to Luma's head turns the staging into a diagram of the show's central conflict: Glitch wants what Byte is protecting. No caption needed.
 - **When building on another artist's generator, preserve all spec-compliance rules exactly.** Rin's G001/G004/G008 rules were inherited verbatim. Character staging additions never touch Glitch geometry — they extend the scene, not rewrite it.
+
+## Cycle 46 Milestone
+- **LTG_TOOL_depth_temp_lint.py v1.0.0 BUILT + TESTED:** `output/tools/LTG_TOOL_depth_temp_lint.py`. Depth Temperature Grammar Linter — automated validator for C45 Depth Temperature Rule (warm=FG, cool=BG).
+  - Samples horizontal bands at FG (78%) and BG (70%) ground-plane Y positions (matching lineup v008 geometry)
+  - Measures per-tier avg warmth (R-B channel diff, excluding near-black < 60 and near-white > 700 pixel sums)
+  - PASS: separation >= threshold (12.0 REAL_INTERIOR). WARN: correct direction, insufficient separation. FAIL: inverted. SKIP: GL/OTHER_SIDE exempt.
+  - Uses `LTG_TOOL_world_type_infer.py` for threshold + GL auto-exemption
+  - CLI: `--self-test`, `--batch`, `--fg-y`/`--bg-y`/`--band`/`--threshold` overrides
+  - Module API: `lint_depth_temperature(path)` + `run_depth_temp_check(paths)` — precritique_qa-compatible dict format
+  - Self-test: 5 synthetic tests (PASS/WARN/FAIL/SKIP/batch) all PASS
+  - Real results: Lineup WARN (sep=9.1 < 12.0, correct direction), SF06 Handoff WARN (sep=11.0, correct direction), Covetous Glitch SKIP (GL exempt)
+- **Registered in README** (C46 New tools section)
+- **Ideabox:** `20260330_lee_tanaka_depth_temp_precritique_integration.md` — propose Section 12 integration in precritique_qa
+- **Reported to Alex Chen** via inbox
+- **Inbox archived:** C46 brief, reference shopping list review, reference images acquired
+- **P1 (SF06 staging review) and P2 (Byte P14/P15 staging) NOT started** — carried if assigned
+
+## Cycle 46 Lessons
+- **R-B channel difference is the simplest effective warmth metric.** Positive R-B = warm (amber, golden), negative = cool (slate, cyan-tinted). Excluding near-black (outlines, void) and near-white (highlights) prevents score contamination by non-chromatic pixels. This correlates with perceived warmth better than hue-based metrics for our palette range.
+- **Band sampling at ground-plane Y positions is more reliable than full-image half-split.** The ground plane is where the depth cue matters most (shadow bands, character feet, environment floor). Sampling a 50px band centered on each tier's Y position captures the depth temperature signal without dilution from sky, title bars, or label areas.
+- **Lineup warm/cool separation (9.1) is close to but under the 12.0 threshold.** The dual-warmth shadow bands from C45 are present and working (correct direction), but the temperature differential could be stronger. This is useful feedback for Maya's next lineup iteration.
+- **Tool self-tests with synthetic geometry are the most reliable first validation.** Same lesson as C39 sight-line tool: synthetic PASS/WARN/FAIL generation confirms the scoring logic works before testing on real assets (where multiple variables interact).

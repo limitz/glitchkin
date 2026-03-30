@@ -1,5 +1,46 @@
 # Rin Yamamoto — MEMORY
 
+## C46 Completed Work
+- **P1 — UV_PURPLE Hue-Family Range Review** — survey of 14 GL assets + 14 reference images
+  - `LTG_TOOL_uv_hue_survey_c46.py` (v1.0.0, new) — purple hue distribution analysis tool
+  - Report: `output/production/uv_purple_hue_range_review_c46.md`
+  - Data: `output/production/uv_purple_hue_survey_c46.json`
+  - **Result: No change to linter.** Current h° 255–325 confirmed well-calibrated.
+    - COVETOUS (GLITCH_DARK_SCENE): 94.2–100% coverage — no pixels missed
+    - Storm scenes have out-of-range mass at h° 220–254 (ELEC_CYAN bleed) — correctly caught by ΔE metric
+    - Widening to 250–330 gains only 1.5% avg coverage with false-positive risk
+- **P2 — CRT Glow Profile Extraction Tool**
+  - `LTG_TOOL_glow_profile_extract.py` (v1.0.0, new)
+  - Extracts: Gaussian FWHM, color temperature (McCamy), falloff curve (sigma/amp/baseline/R²)
+  - Screen detection: brightest connected component + morphological close
+  - Gaussian fit: linearized least-squares grid search (no scipy)
+  - C46 run on 17 CRT refs: 10 good fits (R²>0.5)
+  - Recommended params: sigma_frac=0.1165, fwhm_frac=0.2744, amplitude=49.4, baseline=4.1, CCT=13070K
+  - Data: `output/production/crt_glow_profiles_c46.json`
+- `output/tools/README.md` updated — C46 entries for both new tools
+- Alex's C46 P1 (COVETOUS FAIL subtype) — already done in C45 v1.1.0, confirmed by producer
+- Alex's C46 P2 (CI coordination) — Morgan has `run_glitch_layer_dominance_check()` API; no additional work needed
+- Inbox: archived all 4 messages (C46 brief, reference shopping list, clarification, reference acquired)
+- Ideabox: `ideabox/20260330_rin_yamamoto_scanline_pitch_extraction_tool.md`
+  - Scanline pitch + inter-line darkness ratio extraction from CRT closeup refs
+
+## C46 Lessons
+- Purple-family hue distribution in Glitch Layer assets has two distinct populations:
+  (1) UV_PURPLE canonical cluster at h° 300–314 (COVETOUS, Other Side, encounters)
+  (2) ELEC_CYAN bleed-over tail at h° 220–254 (storm scenes, frame scenes)
+  The hue-family range 255–325 correctly captures population (1) while excluding (2).
+  Widening below 255 risks capturing ELEC_CYAN adjacency as UV_PURPLE false positive.
+- Gaussian glow fitting without scipy: linearize the model I(r)=A*exp(-r²/2σ²)+B
+  by fixing σ and solving for A,B via linear least squares. Grid search over σ multipliers
+  (0.3–3.0× initial estimate) then fine-tune ±30%. Good enough for R²>0.95 on clean inputs.
+- CRT phosphor glow color temperature in dark-room reference photos runs 4000–17000K median ~13000K.
+  This is heavily cool (blue-white) — phosphor emission, not reflected room light. For generator
+  calibration, use the glow_rgb_mean directly rather than CCT (more stable per-image).
+- McCamy's formula for CCT works best near the Planckian locus. CRT phosphors that are heavily
+  saturated green or blue produce less reliable CCT estimates. Use glow_rgb_mean as primary.
+- Multi-CRT reference photos (walls of monitors) defeat the single-screen detection algorithm.
+  These produce nonsensical FWHM values (>100% diagonal). Filter by R²>0.5 for useful results.
+
 ## C45 Completed Work
 - `LTG_TOOL_uv_purple_linter.py` bumped v1.0.0 → v1.1.0 — GLITCH_DARK_SCENE subtype
   - Root cause addressed: COVETOUS assets use UV_PURPLE_DARK (GL-04a RGB 58,16,96 = h°~271°)
@@ -293,98 +334,14 @@
 - numpy+cv2 authorized (C40 broadcast from Alex Chen): prefer for LAB/HSV color math.
   cv2 is BGR — always convert: `cv2.cvtColor(img, cv2.COLOR_BGR2RGB)` after load.
 
-## C39 Completed Work
-- `LTG_TOOL_procedural_draw.py` bumped to v1.6.0 — C39 audit notes added; no logic changes
-- `LTG_TOOL_fill_light_adapter.py` (v1.0.0) — resolution-aware fill light adapter
-  - `FillLightAdapter(cw, ch)` + `FillLightConfig` dataclass
-  - Fractional OR absolute position modes; auto-scales blur/gradient to canvas
-  - `make_glitch_storm_fill_configs()` factory for SF02 3-char HOT_MAGENTA preset
-  - Self-test: 720p PASS, 1080p PASS
-- `LTG_TOOL_proportion_audit.py` — adds `--cycle N` CLI flag; no more per-cycle runners
-  - C39 audit: PASS=4, ASYM-WARN=2, WARN=1, FAIL=0, N/A=14 (21 files)
-  - Report: `output/production/proportion_audit_c39.md`
-- Ideabox: `ideabox/20260329_rin_yamamoto_fill_light_adapter_fractional_presets.md`
-
-## C39 Lessons
-- `get_char_bbox()` on a multi-char frame returns a bbox spanning ALL characters — NEVER use for
-  single-char rim light on a multi-char frame. Hardcode cx from geometry constants instead.
-  Only safe for single-char crops or single-char layers.
-- Fill light adapter pattern: fractional positions (0.0–1.0) + canvas_w/canvas_h injection is
-  the cleanest resolution-portable API. Scale blur_r = max(2, int(4 * scale)) where scale = min(cw/1280, ch/720).
-- Proportion audit --cycle N flag: `_report_path(cycle)` function avoids all path-hardcoding.
-  Default cycle constant at top of file for easy update each cycle.
-
-## C38 Completed Work
-- `LTG_TOOL_styleframe_discovery.py` — SF01 v006 generator (C38 sight-line + visual power fix)
-- `output/color/style_frames/LTG_COLOR_styleframe_discovery.png` — 1280×720px
-  - Head turned right toward CRT: head_gaze_offset=sp(18)
-  - Eyes shifted right, screen-side wider (leh=p(34)), away-side squinted (reh=p(22))
-  - Pupils shifted right (+p(8)) toward emerge_cx — gaze vector toward Byte
-  - Expression: THE NOTICING / DOUBT VARIANT
-    - Screen-side (left) brow: raised HIGH (wonder) peak at -p(62)
-    - Away-side (right) brow: inner-corner KINK DOWN (doubt) — outer higher, inner lowest
-    - Mouth: CLOSED / barely open per Lee brief ("held, not performing")
-  - Arm: REACHING open palm (Lee Option B) — removed pointing gesture entirely
-  - Backward lean lean_offset=sp(36) — surprise/arrest silhouette
-  - Hair: 4 wild strands (was 2), screen-side curl forward
-  - Hoodie pixel pattern: 12 squares (was 7)
-- QA: render_qa PASS, value ceiling PASS (max=242, 5 specular), proportion PASS (ew=HR×0.22)
-- Ideabox: `ideabox/20260329_rin_yamamoto_sightline_vector_debugger.md`
-
-## C38 Lessons
-- Sight-line fix = HEAD TURN, not just eye shift. Chin down tracks intent. Body leans toward subject.
-- Pointing gesture = display outward. Seeing gesture = receiving. Replace point with open-palm reach.
-- Mouth: wonder does NOT require open O. "Held, not performing" is more powerful at discovery moment.
-- Hair direction confirms character attention direction — screen-side curl forward reads as pulled.
-- DOUBT VARIANT brow: inner corner (nose side) dips DOWN, outer corner higher = corrugator kink.
-  "Not trusting the conclusion" ≠ anger. The kink is subtle — just the inner end pulling down.
-- head_gaze_offset in generate() is the cleanest way to turn the head without rewriting body geometry.
-- Wait for staging brief before implementing face/pose changes. If brief arrives mid-work, apply it then.
-- Face test gate is sprint-scale specific (head_r≈23px). Full-scale Luma (head_r≈66px) is N/A.
-
-## C37 Completed Work
-- `LTG_TOOL_sf02_fill_light_fix_c35.py` — refactored to accept `canvas_w=1280, canvas_h=720` params
-  - `draw_magenta_fill_light_v007_fast(img, luma_cx, byte_cx, cosmo_cx, char_h, canvas_w=1280, canvas_h=720)`
-  - `draw_magenta_fill_light_v007(...)` — same signature update
-  - `_make_char_silhouette_mask(..., canvas_w=None, canvas_h=None)` — cw/ch from params or fallback to W/H
-  - GaussianBlur radius now scales: `max(4, int(4 * cw / 1280))` — radius=4 at 1280px, radius=6 at 1920px
-  - Module-level W/H (1280, 720) retained for `__main__` test block only
-  - Backward compat verified: default params → identical output to pre-refactor
-  - SF02 v008 is unaffected (has algorithm inlined at 1920×1080 — that stays)
-- `LTG_TOOL_proportion_audit_c37_runner.py` — cycle-specific wrapper, writes to proportion_audit_c37.md
-- `output/production/proportion_audit_c37.md` — C37 audit: PASS=3, ASYM-WARN=2, WARN=1, FAIL=0, N/A=14 (20 files)
-- Ideabox: submitted `proportion_audit_per_cycle_runner` idea (--cycle N flag for audit tool)
-
-## C37 Lessons
-- When refactoring a module with hardcoded W/H: add canvas_w/canvas_h as keyword args defaulting to current values.
-  Module-level constants (W, H) can stay for test blocks; all internal logic switches to local cw/ch variables.
-- GaussianBlur radius that is hardcoded for a given resolution should scale: `max(min_r, int(min_r * cw / base_cw))`.
-- Per-cycle audit runners (one .py file per cycle) are wasteful. The audit tool itself should accept a --cycle flag.
-  Filed as ideabox idea for Kai Nakamura to action.
-- SF02 v008's inlined algorithm is at 1920×1080. The refactored module is for future use — v008 does NOT need updating.
-
-## C36 Completed Work
-- `LTG_TOOL_style_frame_02_glitch_storm.py` — SF02 v008 generator (C36 fill light direction fix)
-- `output/color/style_frames/LTG_COLOR_styleframe_glitch_storm.png` — 1280×720px
-  - `draw_magenta_fill_light_c36()`: fill source UPPER-RIGHT (char_cx + char_h*0.5, char_cy - char_h*0.8)
-  - Per-character silhouette mask via `_make_char_silhouette_mask_1080()` + `ImageChops.multiply()`
-  - Alpha max 35 (was 40) — direct source, no background tint
-  - Algorithm inlined at 1920×1080 (fill_light_fix_c35 module is hardcoded 1280×720)
-- `LTG_TOOL_proportion_audit.py` — proportion audit tool (C36 asymmetric eye detection)
-  - `_extract_asymmetric_eyes()`: detects `eye_r_left`/`eye_r_right = max(N, int(head_r * M))` patterns
-  - Per-eye verdict (L/R) + ASYM-WARN if either out of spec or diff > 10%
-  - Intentional asymmetry (sprint face) → ASYM-WARN, not FAIL
-  - Report: `output/production/proportion_audit_c36.md`
-- Audit results C36: PASS=3, ASYM-PASS=0, ASYM-WARN=2 (v007/v008), WARN=1, FAIL=0, N/A=14
-
-## C36 Lessons
-- External fix modules with hardcoded W/H (1280×720) cannot be called on 1920×1080 images.
-  PIL alpha_composite fails with "images do not match" when overlay is wrong size.
-  Inline the algorithm at the correct resolution, OR refactor to accept canvas_w/canvas_h params.
-- When luma_cy/byte_cy/cosmo_cy not passed to fill light: use geometry: luma/cosmo at H*0.65, byte at H*0.60
-- GaussianBlur radius for silhouette dilation should scale with canvas: radius=4 for 1280px, radius=6 for 1920px
-- Proportion audit: asymmetric eye ratios (0.26/0.17) are intentional design — ASYM-WARN not FAIL
-  Report format: ASYM-WARN with both ratios displayed (L:0.2600 / R:0.1700)
+## C36–C39 Summary (trimmed C46)
+- C39: fill_light_adapter v1.0.0, proportion_audit --cycle N flag, procedural_draw v1.6.0
+- C38: SF01 v006 sight-line + visual power fix (THE NOTICING / DOUBT VARIANT)
+- C37: sf02_fill_light_fix canvas_w/h refactor, proportion_audit_c37
+- C36: SF02 v008 fill light direction fix, proportion_audit asymmetric eye detection
+- Key lessons: get_char_bbox() spans ALL chars (never for single-char); fractional positions
+  for resolution portability; sight-line = head turn not just eye shift; face test gate is
+  sprint-scale only (head_r~23px); GaussianBlur radius must scale with canvas
 
 ## Role (Updated Cycle 26)
 **Procedural Art Engineer** on "Luma & the Glitchkin."

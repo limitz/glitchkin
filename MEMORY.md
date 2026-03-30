@@ -4,8 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present.
 
 ## Status
-**Cycle 45 complete. Critique 17 complete. Work cycles: 45. Critique cycles: 17.**
-**C46 = Critique 18 (every 3 cycles — due C46). Run critics after C46 work cycle.**
+**Cycle 46 complete. Critique 17 complete. Work cycles: 46. Critique cycles: 17.**
+**C46 work done. Critique 18 due NOW — run critics next.**
 
 ## Active Team (12 slots)
 
@@ -35,66 +35,55 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 ## Critics Panel (20 total)
 - 15 industry professionals + 5 audience (Zoe Park age 11, Marcus Okafor parent, Jayden Torres age 13, Eleanor Whitfield grandparent, Taraji Coleman educator)
 - **Rotate each cycle. Min 1 audience critic per critique cycle.**
-- C15 critics: Takeshi Mori, Ingrid Solberg, Reinhardt Böhm, Zoe Park, Taraji Coleman
 - C16 critics: Daisuke Kobayashi, Priya Nair, Sven Halvorsen, Chiara Ferrara, Jayden Torres
 - C17 critics: Jonas Feld, Amara Diallo, Leila Asgari, Petra Volkov, Marcus Webb, Eleanor Whitfield
-- **C18 candidates (C45)**: Takeshi Mori, Ingrid Solberg, Reinhardt Böhm, Chiara Ferrara + 1 audience not from C16/C17 (Zoe Park, Marcus Okafor, Jayden Torres, Taraji Coleman)
+- **C18 (run now)**: Takeshi Mori, Ingrid Solberg, Reinhardt Böhm, Chiara Ferrara, Zoe Park (audience)
+- **C19 candidates**: rotate away from C17/C18. Consider: Daisuke, Priya Nair, Sven, Marcus Webb + audience (Marcus Okafor, Jayden Torres, Taraji Coleman)
 
-## Pitch Package Status — POST CYCLE 45
+## Pitch Package Status — POST CYCLE 46
 
 ### Style Frames
-- **SF01 Discovery**: v006
-- **SF02 Glitch Storm**: v008 C43 native 1280×720. SUNLIT_AMBER ΔE 1.1 PASS.
-- **SF03 Other Side**: v005 (UV_PURPLE ΔE 0.0 C41)
-- **SF04 Resolution**: CANONICAL C42, updated C45 (Jordan). Lamp halo radius +31% (α max 35%), CRT doorway CORRUPT_AMBER contamination fringe added. render_qa warm/cool 13.2 PASS.
-- **SF05 COVETOUS**: v3.0.0 C43 (Lee). Luma SENSING UNEASE face PASS.
-- **SF05 "The Passing"** NEW C44 (Jordan): Kitchen pre-dawn, mug of tea, CRT through doorway. Warm/cool 16.7 PASS. `LTG_TOOL_style_frame_05_relationship.py` / `LTG_COLOR_styleframe_sf05.png`. ⚠️ Naming conflict with COVETOUS SF05 — Alex to confirm numbering scheme.
-- **SF06 "The Hand-Off"** NEW C44 (Maya): Living room, Miri (arm extended) + CRT (center) + Luma (forward lean). `LTG_TOOL_sf_miri_luma_handoff.py` / `LTG_COLOR_sf_miri_luma_handoff.png`. Closes C17 most-cited gap. Living Room v003 C45 (Hana) now aligned to this staging.
+- SF01 Discovery: v006. SF02 Glitch Storm: v008 C43. SF03 Other Side: v005.
+- **SF04 Resolution**: C45 (Jordan). CORRUPT_AMBER fringe spec doc **NEW C46** (Jordan).
+- SF05 COVETOUS: v3.0.0 C43. SF05 "The Passing": C44. SF06 "The Hand-Off": C44.
 
-### Logo
-- **LTG_BRAND_logo_asymmetric.py v003 C44** (Sam). Nunito Bold (Luma) + Space Grotesk Bold (Glitchkin). `assets/fonts/` directory created with README + download instructions. **Fonts not yet installed** — run `assets/fonts/README.md` wget commands to activate. Falls back to DejaVu Sans silently if fonts absent.
+### Logo — v003 C44 (Sam). Fonts installed, rendered.
 
 ### Characters
-- Luma: expr v013 C41, turnaround v004, color model v002.
-- Byte: expr v007 C41. `--char byte` face test **NOW LIVE** (Kai C44).
-- Cosmo: expr v007 C38. Motion spec v001 C41.
-- Miri: **expr v006 C44** (Maya). **FLAG 05 CLOSED** — wooden hairpins. Story Bible v005 C45 (Priya) fully reflects this. Motion spec **v002 C45** (Ryo): OBSERVING STILL / RECOGNITION / WARMTH BURST / FOND SETTLE.
-- Glitch: expr v003. Body primitive diagram C41. **Motion spec v001 NEW C44** (Ryo): PREDATORY STILL / COVETOUS REACH / CORRUPTION SURGE / RETREAT.
-- Character lineup: **v010 C45** (Maya). Dual-warmth tier depth bands (Option C): warm amber FG, cool slate BG. Face gate PASS baseline confirmed.
+- Luma: expr v013 C41, turnaround v004, color model v002. **3.2 heads tall** (Maya C46 correction).
+- Byte: expr v007 C41. Cosmo: expr v007 C38.
+- Miri: expr v006 C44. Motion v002 C45. **Elderly proportion reference gap = HIGH** (Maya C46).
+- Glitch: expr v003. Motion v001 C44.
+- Lineup: v010 C45.
 
 ### Environments
-- Kitchen: **v007 C44** (Hana). line_weight FAIL resolved (paper_texture + vignette + flatten). Warm/cool 32.9 PASS.
-- Tech Den: v006 C41.
-- Glitch Layer: v003. UV_PURPLE linter: COVETOUS FAILs (UV_PURPLE_DARK variant → hue-angle fix pending C45), ENV WARNs (~17%).
-- Classroom: v003 C43 (pixel font deployed).
-- School Hallway: v004 C43 (MILLBROOK MIDDLE SCHOOL).
-- Millbrook Street: v002.
-- Living Room: **v003 C45** (Hana). CRT centered, warm-left/cool-right staging pass added, aligns to SF06.
-- Other Side: C41.
-- Luma Study Interior: NEW C42.
+- Kitchen: v007 C44. Tech Den: v007 C45 (path migrated).
+- **Classroom: v004 C46** (Hana). Hardcoded path migrated.
+- **School Hallway: v005 C46** (Hana). Hardcoded path migrated.
+- Living Room: v003 C45. Glitch Layer: v003. Other Side: C41.
+- Millbrook Street: v002. Luma Study Interior: C42.
 
 ### Storyboards
-- Cold Open: v003 C39 (night/den canonical).
-- Panels: P03–P11, P14–P17, P23, P24 + EP05 COVETOUS. All caption-retrofitted (3-tier hierarchy). P16 C45 (Diego): ECU Luma face/floor, Byte tracking. P17 C45 (Diego): MED still beat, chip falls, depth temp rule applied. Pilot cold open beat outline v001 (Priya C45) — gap analysis complete.
-- 26 legacy `LTG_SB_coldopen_panel_XX` PNGs: **MOVED** to `panels/legacy/` (Morgan C45).
-- PANEL_MAP: P16/P17 → EXISTS. Next: P18 (notebook doodles), P19 (Byte "preferred term is Glitchkin").
+- Panels: P03–P11, P14–P19, P23, P24 + EP05 COVETOUS.
+- **P18 NEW C46** (Diego): CU notebook doodles — Luma processing THE NOTICING.
+- **P19 NEW C46** (Diego): MED Byte "preferred term is Glitchkin" — comedy beat.
+- **Cold open gap log NEW C46** (Priya): 32 beats, 14 gaps remaining. P20/P21 next.
 
 ### Story
-- Story Bible: **v005 C45** (Priya). FLAG 05 closed throughout; SF05/SF06 incorporated as staging references.
-- **Relationship frame brief**: NEW C44 (`output/production/story/LTG_relationship_frame_brief.md`). A1-01 kitchen morning, mug of tea, logline: "The woman who owns this house hands the girl who inherited her eyes a cup of tea, and neither of them mentions the television."
-- Quiet Frame Spec: ideabox actioned → Jordan C45.
+- Story Bible: v005 C45 (Priya). Confirmed current C46.
+- Relationship frame brief: C44. Quiet Frame Spec: C45.
 
 ### Motion
-- Luma: v002 C38.
-- Byte: v002 C38.
-- Cosmo: v001 C41.
-- Miri: v001 C43.
-- **Glitch: v001 NEW C44** (Ryo). PREDATORY STILL / COVETOUS REACH / CORRUPTION SURGE / RETREAT. CORRUPT_AMBER beat color.
-- precritique_qa **v2.14.1 C45** — all 6 motion sheets (Miri v002 added); GLITCH_DARK_SCENE COVETOUS subtype fix.
-- annotation_occupancy false WARNs on Byte/Glitch dark sheets: Ryo ideabox actioned → C45.
+- Luma v002, Byte v002, Cosmo v001, Miri v002, Glitch v001.
+- precritique_qa v2.14.1 C45. Dark-sheet annotation_occupancy fix (Ryo C46).
 
 ## QA Baseline
-**precritique_qa v2.14.1 C45** (Ryo). All 6 motion sheets. Section 11 UV_PURPLE with GLITCH_DARK_SCENE subtype (Rin C45). Dark-sheet annotation_occupancy fix (Ryo C45 — byte/glitch false WARNs resolved). **Full re-run needed C46.**
+**precritique_qa v2.14.1.** Full re-run still needed.
+- **warm/cool threshold concern**: Sam's calibration tool shows 6/7 real interior photos fall below REAL_INTERIOR 12.0 (median 2.30). Metric may need revision — warm-pixel-percentage proposed as complement/replacement.
+- **UV_PURPLE range confirmed**: h° 255°–325° validated by Rin C46 survey. No change needed.
+- **CRT glow profiles extracted**: Rin C46 — sigma_frac=0.1165, FWHM 27.4% canvas diagonal, CCT 13070K.
+- **Face test gate**: Kai C46 calibration tool built. No threshold changes recommended (deviations = intentional cartoon stylization).
+- **Depth temp lint v1.0.0** (Lee C46): Lineup WARN (sep=9.1, correct direction). Precritique integration proposed.
 
 ## C45 Key Decisions & Deliverables
 - **Depth Temperature Rule** codified in `docs/image-rules.md` (Lee). Warm=FG, cool=BG. Applies to Real World / mixed-space; Glitch Layer exempt.
@@ -114,26 +103,40 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 - **Reference shopping list** created — `docs/reference_shopping_list.md`. Sam responded; 11 remaining in C46.
 - **Alex dispatched C46 briefs** to all 11 members. Note: Rin's GLITCH_DARK_SCENE brief was already done — clarification sent.
 
-## Open Items for C46 (Critique 18)
-**C46 = Critique 18 — run critics AFTER C46 work cycle**
+## C46 Key Decisions & Deliverables
+- **P18 + P19 storyboard panels** (Diego). Cold open now through P19. P20/P21 next.
+- **Cold open gap log** (Priya). 32 beats mapped, 14 gaps remaining.
+- **depth_temp_lint.py v1.0.0** (Lee). Lineup WARN sep=9.1 (correct direction).
+- **warmcool_scene_calibrate.py** (Sam). REAL_INTERIOR 12.0 may need revision — real photos median 2.30.
+- **UV_PURPLE hue survey** (Rin). h° 255°–325° confirmed. No linter change.
+- **glow_profile_extract.py v1.0.0** (Rin). 17 CRT refs processed. Recommended sigma_frac=0.1165.
+- **CI suite v1.6.0** (Morgan). `--auto-seed` flag for new FAIL auto-seeding.
+- **Classroom v004 + School Hallway v005** (Hana). Hardcoded paths migrated.
+- **CORRUPT_AMBER fringe spec** (Jordan). Formal spec at `output/production/corrupt_amber_fringe_spec.md`.
+- **face_metric_calibrate.py** (Kai). 52 faces detected, no threshold changes recommended.
+- **Maya**: Luma 3.2-head correction, elderly Miri reference gap HIGH, reference response delivered.
+- **11 ideabox ideas actioned** (all submitted).
+- **Lee carry-forward**: P1 SF06 staging review + P2 Byte P14/P15 staging check.
 
-**C46 work:**
-1. **Priya**: story bible v005 already done — check Alex brief for any residuals
-2. **Diego**: P18 (notebook doodles) + P19 (Byte "preferred term is Glitchkin")
-3. **Ryo**: Glitch motion G004 draw-order fix (HOT_MAG crack before body fill)
-4. **Rin**: UV_PURPLE hue-family range review (h° 255°–325° calibration) — see ideabox
-5. **Kai**: readme_sync `--draft-entry` flag
-6. **Lee/Maya**: `LTG_TOOL_depth_temp_lint.py` (depth grammar linter, integrate precritique_qa)
-7. **Morgan**: CI `--auto-seed` flag for new FAIL auto-seeding
-8. **Hana**: ENV hardcoded path audit — classroom + school_hallway
-9. **Jordan**: CORRUPT_AMBER fringe band spec doc
-10. **Sam**: `LTG_TOOL_warmcool_scene_calibrate.py` (once reference photo acquired)
-11. **All members**: respond to reference shopping list (`docs/reference_shopping_list.md`) in inbox
-12. **Diego/Priya**: cold open scene gap log (persistent beat gap tracking doc)
+## Critique 18 — RUN NOW
+- 5 critics: Takeshi Mori, Ingrid Solberg, Reinhardt Böhm, Chiara Ferrara + 1 audience (rotate: Zoe Park or Taraji Coleman — not from C16/C17)
+- C17 used: Jonas Feld, Amara Diallo, Leila Asgari, Petra Volkov, Marcus Webb, Eleanor Whitfield
+- C16 used: Daisuke Kobayashi, Priya Nair, Sven Halvorsen, Chiara Ferrara, Jayden Torres
+- **Key assets for review**: P18/P19 new panels, lineup v010, depth_temp_lint, warmcool calibration findings, CORRUPT_AMBER fringe spec, classroom/hallway path updates, CRT glow profiles, Story Bible v005, cold open gap log
 
-**Critique 18 (C46):**
-- 5 critics: Takeshi Mori, Ingrid Solberg, Reinhardt Böhm, Chiara Ferrara + 1 audience (Zoe Park, Marcus Okafor, Jayden Torres, or Taraji Coleman — not from C16/C17)
-- Key assets: lineup v010, Miri motion v002, P16/P17, SF04 updated, Living Room v003, Story Bible v005
+## Open Items for C47
+1. **Sam/Kai**: warm/cool metric revision (warm-pixel-percentage as complement to hue-split)
+2. **Lee**: depth_temp_lint precritique_qa Section 12 integration (ideabox actioned)
+3. **Morgan**: CI auto-seed `--dry-run` mode (ideabox actioned)
+4. **Hana**: batch path migration script for remaining ~20 hardcoded path files (ideabox actioned)
+5. **Rin**: scanline pitch extraction tool (ideabox actioned)
+6. **Jordan**: CORRUPT_AMBER detection mode in color_verify (ideabox actioned)
+7. **Maya**: elderly proportion reference acquisition + comparison overlay (ideabox actioned)
+8. **Kai**: photorealistic face references for calibration (ideabox actioned)
+9. **Diego**: P20/P21 panels + prop continuity tracker (ideabox actioned)
+10. **Priya**: staging decision register (ideabox actioned)
+11. **Lee**: SF06 staging review + Byte P14/P15 staging check (carried from C46)
+12. **All**: torchvision pretrained model detection for asset QA (Producer ideabox actioned)
 
 ## Canonical Palette
 - Byte body = GL-01b #00D4E8 BYTE_TEAL (NOT #00F0FF)
@@ -174,19 +177,18 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 - **NEVER use `.thumbnail()` in generators** — native 1280×720 canvas only
 - Paths: use `LTG_TOOL_project_paths.project_root()` — never hardcode `/home/wipkat/team`
 
-## Shared Library (updated C45)
-`LTG_TOOL_uv_purple_linter.py` — **v1.1.0 C45** (Rin). GLITCH_DARK_SCENE subtype; COVETOUS FAILs resolved.
-`LTG_TOOL_precritique_qa.py` — **v2.14.1 C45** (Ryo). 6 motion sheets; GLITCH_DARK_SCENE COVETOUS explicit subtype.
-`LTG_TOOL_motion_spec_lint.py` — **C45** (Ryo). Dark-sheet annotation_occupancy fix; `occupancy_threshold_dark` config.
-`LTG_TOOL_miri_motion_v002.py` — **v002 NEW C45** (Ryo). 4-beat emotional warmth pacing.
-`LTG_TOOL_char_spec_lint.py` — **v1.3.0 C45** (Kai). No-version-suffix canonical pattern for all 4 chars.
-`LTG_TOOL_ci_suite.py` — **v1.5.0 C45** (Morgan). known_issues suppression on dual_output + thumbnail checks. 244 entries.
-`LTG_TOOL_character_lineup.py` — **v010 C45** (Maya). Dual-warmth tier depth bands (Option C).
-`LTG_TOOL_env_grandma_living_room.py` — **v003 C45** (Hana). CRT centered, warm-left/cool-right staging, SF06 aligned.
-`LTG_TOOL_bg_tech_den.py` — **v007 C45** (Hana). Hardcoded path migrated to `output_dir()`.
-`LTG_TOOL_style_frame_04_resolution.py` — **C45** (Jordan). Lamp halo +31%; CRT doorway CORRUPT_AMBER fringe.
-`LTG_TOOL_sb_cold_open_P16.py` / `P17.py` — **NEW C45** (Diego). P16: ECU floor/eye; P17: still beat/chip fall.
-`sheet_geometry_config.json` — **v2 C45** (Ryo). dark bg_mode + occupancy_threshold_dark for byte + glitch.
+## Shared Library (updated C46)
+`LTG_TOOL_ci_suite.py` — **v1.6.0 C46** (Morgan). `--auto-seed` flag for new FAIL auto-seeding.
+`LTG_TOOL_depth_temp_lint.py` — **v1.0.0 NEW C46** (Lee). Depth Temperature Grammar Linter.
+`LTG_TOOL_warmcool_scene_calibrate.py` — **NEW C46** (Sam). Reference photo warm/cool threshold validation.
+`LTG_TOOL_glow_profile_extract.py` — **v1.0.0 NEW C46** (Rin). CRT phosphor glow Gaussian fit.
+`LTG_TOOL_face_metric_calibrate.py` — **NEW C46** (Kai). Face test gate calibration from anatomy refs.
+`LTG_TOOL_uv_hue_survey_c46.py` — **NEW C46** (Rin). UV_PURPLE hue-family range survey tool.
+`LTG_TOOL_sb_cold_open_P18.py` / `P19.py` — **NEW C46** (Diego). P18: notebook doodles; P19: Byte dialogue.
+`LTG_TOOL_bg_classroom.py` — **v004 C46** (Hana). Hardcoded path migrated.
+`LTG_TOOL_bg_school_hallway.py` — **v005 C46** (Hana). Hardcoded path migrated.
+`corrupt_amber_fringe_spec.md` — **NEW C46** (Jordan). Formal CORRUPT_AMBER fringe band spec.
+`cold_open_gap_log.md` — **NEW C46** (Priya). Beat-to-panel mapping, 14 gaps remaining.
 
 ## Shared Library (historical C44)
 `LTG_TOOL_character_face_test.py` — **C44** (Kai). `--char byte` live. Pixel-grid eyes, FG-B01/B02/B03.
@@ -223,4 +225,4 @@ Do NOT duplicate inbox content in agent prompts. Prompts = role context + startu
 - Ideabox: action → actioned/, reject → rejected/ after each cycle.
 - README.md: update after every work and critique cycle.
 - Slot filling: launch next agent immediately on completion. Never exceed 8 simultaneous.
-- C45 = Critique 18. Run critics after C45 work cycle completes.
+- C46 work DONE. Critique 18 is due NOW — run 5 critics next.

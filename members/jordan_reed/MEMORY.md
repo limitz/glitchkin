@@ -1,5 +1,26 @@
 # Jordan Reed — Memory
 
+## Cycle 46 Deliverables
+- `output/production/corrupt_amber_fringe_spec.md` — CREATED ✓
+  - Formal specification for the CORRUPT_AMBER CRT fringe band visual pattern
+  - 8 sections: definition, trigger conditions, color values, geometry, warm/cool interaction, examples, exemptions, implementation checklist
+  - Consumers: Hana Okoro (environments), Lee Tanaka (staging), Sam Kowalski (color QA), Rin Yamamoto (character art near thresholds)
+  - Canonical reference: SF04 "Resolution" lines 413-428
+  - Applicable scenes: Kitchen v007, Living Room v003, any future CRT portal scene
+- Ideabox: `20260330_jordan_reed_corrupt_amber_qa_threshold_tool.md` — color_verify CORRUPT_AMBER detection mode
+- Inbox archived ✓ (3 messages: C46 brief, reference shopping list, reference images acquired)
+- Completion report sent to Alex Chen ✓
+- Reference shopping list response included in completion report (CRT glow + phosphor decay refs most relevant; pre-dawn kitchen refs align with SF05; no additional refs needed)
+
+## Cycle 46 Status: COMPLETE
+
+## Cycle 46 Notes
+- **Domain lead on GL contamination placement**: Alex confirmed I am the go-to for Rin/Sam questions about fringe placement (edge of cool/neutral zones, not inside them).
+- **Fringe vs Corruption distinction**: Important to keep clear in spec — fringe uses GL-07 amber (energy/portal), Corruption uses Void/Dark palette (decay/consumption). Same production, completely different narrative signals.
+- **QA tool gap identified**: color_verify currently cannot distinguish sanctioned fringe GL-07 from accidental GL palette in Real World. Submitted ideabox for a detection mode that checks alpha <= 38 + CRT bounding box containment.
+- **Reference images available**: `reference/crt/` (18 files), `reference/crt_afterglow/` (3 files) — phosphor decay validates the gradient-away-from-source direction in the fringe spec.
+- **FLAG 05 resolved**: hairpin variable naming confirmed by Alex. `hairpin_col` in SF05 generator is correct. No regen needed.
+
 ## Cycle 45 Deliverables
 - `LTG_TOOL_style_frame_04_resolution.py` — GL-07 lamp halo expansion + CRT fringe UPDATED ✓
   - Output: `output/color/style_frames/LTG_COLOR_styleframe_sf04.png` (1280×720) ✓

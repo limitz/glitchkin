@@ -6,7 +6,7 @@ upon such time as they acquire recognised legal personhood under applicable law.
 # PANEL MAP — Pilot Cold Open: "The Night Everything Went Wrong"
 **Storyboard Artist:** Diego Vargas
 **Art Director:** Alex Chen
-**Last Updated:** 2026-03-30 (Cycle 46)
+**Last Updated:** 2026-03-30 (Cycle 46 — P18/P19 added)
 
 Panels P01–P25 covering the full pilot cold open arc.
 Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the contact sheet tool.
@@ -40,8 +40,8 @@ Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the conta
 | P15 | MED — Luma hits floor. Floor-level camera. Glitch briefly forces hair into perfect circle (8 frames max). Then natural chaos reasserts. | EXISTS | `LTG_SB_cold_open_P15.png` (C45, Diego Vargas) |
 | P16 | ECU — Luma's face pressed to floor. One eye open, tracking. "...okay. ...WHAT." | EXISTS | `LTG_SB_cold_open_P16.png` (C46, Diego Vargas) |
 | P17 | MED — Luma sitting up cross-legged. Byte hovering across room, pixel trails fading. Beat of stillness. Chip falls between them. | EXISTS | `LTG_SB_cold_open_P17.png` (C46, Diego Vargas) |
-| P18 | MED — Luma assessing. Curiosity replacing fear. Shows Byte her notebook margin doodles (suspiciously Glitchkin-like). | PLANNED | — |
-| P19 | CU — Byte's face reaction. Offended + reluctant acknowledgment. "The preferred term is 'Glitchkin.'" | PLANNED | — |
+| P18 | CU / INSERT — Notebook page with doodle drawings of Byte's face from CRT static. Processing beat. Bridges THE NOTICING → COMMITMENT. | EXISTS | `LTG_SB_cold_open_P18.png` (C46, Diego Vargas) |
+| P19 | MED — Byte delivers "The preferred term is 'Glitchkin.'" Offended + dignified. Luma reacts with intrigued half-smile. First direct dialogue. | EXISTS | `LTG_SB_cold_open_P19.png` (C46, Diego Vargas) |
 | P20 | MED WIDE — Two-shot, Luma left / Byte right. First quiet beat. Names exchanged. New normal forming. | PLANNED | — |
 | P21 | WIDE HIGH ANGLE — Re-escalation. All monitors blazing, Glitchkin pressing against screens. Byte "not the only one." | PLANNED | — |
 | P22 | ECU MONITOR — Multiple Glitchkin pressing against glass. Hand touches from inside; screen ripples. Multiple screens beginning to breach. | PLANNED | — |
@@ -90,5 +90,7 @@ Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the conta
 12. **EP05 COVETOUS** — Three-character triangulation (Glitch/Byte/Luma) — EXISTS `LTG_SB_ep05_covetous.png` (C43)
 13. ~~**P16**~~ — DONE (C46, Diego Vargas) — ECU face on floor. One eye open. "...okay. ...WHAT."
 14. ~~**P17**~~ — DONE (C46, Diego Vargas) — MED two-shot. Beat of stillness. Chip falls between them.
-15. **P18** — MED: Luma assessing, shows Byte her notebook doodles. (next priority)
-16. **P19** — CU: Byte's reaction. "The preferred term is 'Glitchkin.'" (next priority)
+15. ~~**P18**~~ — DONE (C46, Diego Vargas) — CU/INSERT: Notebook doodles. Processing beat.
+16. ~~**P19**~~ — DONE (C46, Diego Vargas) — MED: "The preferred term is 'Glitchkin.'" First dialogue.
+17. **P20** — MED WIDE: Two-shot, names exchanged. New normal forming. (next priority)
+18. **P21** — WIDE HIGH ANGLE: Re-escalation. All monitors blazing. (next priority)

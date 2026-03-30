@@ -6,7 +6,7 @@ Comedy-adventure cartoon. Three worlds: Real World (warm/domestic), Glitch World
 ## Joined
 Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style frames).
 
-## Cycle 46 — Living Room v003 + Tech Den v007
+## Cycle 46 — Living Room v003 + Tech Den v007 + Classroom v004 + School Hallway v005
 
 ### Living Room v003 (SF06 Alignment)
 - CRT repositioned: stand from W*0.54–0.76 (691–973px) → W*0.38–0.52 (486–666px)
@@ -24,6 +24,25 @@ Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style fr
 - Closes C44 backlog item in ci_known_issues.json (hardcoded_path_check)
 - No visual changes — QA C46 matches C41 baseline exactly (sep=102.9, outliers=1, WARN)
 - ci_known_issues.json entry updated with resolved_cycle="C46"
+
+### Classroom v004 (Path Migration)
+- Migrated hardcoded `/home/wipkat/team/...` output path to `output_dir("backgrounds", "environments", "LTG_ENV_classroom_bg.png")`
+- Added `from LTG_TOOL_project_paths import output_dir, ensure_dir` import (direct, matching Tech Den pattern)
+- Replaced `os.makedirs(os.path.dirname(out_path), exist_ok=True)` with `ensure_dir(out_path.parent)`
+- ci_known_issues.json entry updated with resolved_cycle="C46"
+- Tested: generates correctly, no visual changes
+
+### School Hallway v005 (Path Migration)
+- Migrated hardcoded `/home/wipkat/team/...` output path to `output_dir("backgrounds", "environments", "LTG_ENV_school_hallway.png")`
+- Added `try/except ImportError` fallback for `output_dir, ensure_dir` (matches school hallway's existing pixel_font import pattern)
+- Replaced `os.makedirs(os.path.dirname(out_path), exist_ok=True)` with `ensure_dir(out_path.parent)`
+- ci_known_issues.json entry updated with resolved_cycle="C46"
+- Tested: generates correctly, no visual changes
+
+### Reference Images (Producer Brief)
+- Reference images acquired in `reference/` — classroom (4 files), school hallway (7 files), kitchen predawn (3), living room night (7), suburban dusk (3)
+- Archived both inbox messages (shopping list review + acquired notification)
+- Replied to Alex Chen with reactions: refs useful for future QA, warmcool calibration tool would help
 
 ### Value Ceiling Pattern — Specular Restoration
 - Problem: window specular drawn BEFORE overlay passes → overlays dim it below 225 threshold
@@ -44,7 +63,8 @@ Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style fr
   - C44: Added paper_texture(alpha=16) + vignette(strength=45) + flatten_rgba_to_rgb() final passes
   - QA C44: silhouette PASS, value PASS (min=21 max=228), warm/cool 32.9 PASS, line_weight outliers=0 PASS, grade WARN (color fidelity pre-existing only)
   - line_weight FAIL resolved: border edge runs were the cause (1280px-wide at y=0/y=719); paper_texture breaks them
-- Classroom: **v003 (C43)** — `LTG_ENV_classroom_bg.png`
+- Classroom: **v004 (C46)** — `LTG_ENV_classroom_bg.png`
+  - C46: path migration to output_dir() (no visual changes)
   - C43: chalkboard chalk marks replaced with draw_pixel_text() math/binary content (Jonas C17 P1)
   - QA C43: silhouette PASS, value PASS (min=14 max=251), warm/cool 17.0 PASS, line_weight outliers=1 PASS, grade WARN (color fidelity pre-existing only)
 
@@ -55,7 +75,7 @@ Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style fr
 - **Tech Den: v006** — `LTG_ENV_tech_den.png`
   - C41 fix (v006): in-generator cool bottom pass via numpy Porter-Duff (alpha=130, 60-row graduated transition). Warm/cool 102.9 PASS, line_weight outliers=1 PASS, grade WARN (pre-existing color fidelity only).
 - Glitch Layer: v003
-- School Hallway: **v004** (C40 re-run) — `LTG_ENV_school_hallway.png`
+- School Hallway: **v005 (C46)** — `LTG_ENV_school_hallway.png` — C46 path migration
 - Millbrook Street: v002
 - **Living Room**: **v003 (C46)** — `LTG_ENV_grandma_living_room.png` — QA PASS (SF06 aligned, CRT center, warm-left/cool-right staging)
 - **Classroom: FULL REBUILD C41** — `LTG_ENV_classroom_bg.png`

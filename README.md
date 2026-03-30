@@ -165,12 +165,12 @@ Three-world palette system:
 
 ## Progress
 
-- **Work cycles:** 45 | **Critique cycles:** 17
-- **Next:** Cycle 46 = Critique 18
-- **Ideabox:** 12 ideas actioned C45 (all 12 submitted)
+- **Work cycles:** 46 | **Critique cycles:** 17
+- **Next:** Critique 18 (due now — every 3 work cycles)
+- **Ideabox:** 11 ideas actioned C46
 - **Critics panel:** 20 total (15 professionals + 5 audience)
 - **Team:** 12 active
-- **QA baseline:** re-run needed (precritique_qa v2.14.1, all 6 motion sheets, GLITCH_DARK_SCENE COVETOUS subtype fixed)
+- **New tools this cycle:** depth_temp_lint, warmcool_scene_calibrate, glow_profile_extract, face_metric_calibrate, CI auto-seed, UV hue survey
 
 ### Pitch Package Status
 | Asset | Latest | Notes |
@@ -178,39 +178,37 @@ Three-world palette system:
 | SF01 Discovery | v006 | Sight-line fixed C38 |
 | **SF02 Glitch Storm** | **v008 C43** | Native 1280×720 — SUNLIT_AMBER ΔE 1.1 PASS |
 | SF03 The Other Side | v005 | UV_PURPLE ΔE 0.0 C41 |
-| **SF04 Resolution** | **C45 updated** | Lamp halo +31%, CRT doorway CORRUPT_AMBER fringe — warm/cool 13.2 PASS |
+| **SF04 Resolution** | **C45 updated** | CORRUPT_AMBER fringe spec doc NEW C46 |
 | **SF05 COVETOUS** | **v3.0.0 C43** | Luma SENSING UNEASE face — face gate PASS |
-| **SF05 "The Passing"** | **NEW C44** | Jordan — kitchen pre-dawn, mug of tea, CRT through doorway |
-| **SF06 "The Hand-Off"** | **NEW C44** | Maya — living room, Miri+CRT+Luma, moment of transmission |
+| **SF05 "The Passing"** | **C44** | Jordan — kitchen pre-dawn, mug of tea, CRT through doorway |
+| **SF06 "The Hand-Off"** | **C44** | Maya — living room, Miri+CRT+Luma, moment of transmission |
 | **Luma expressions** | **v013 C41** | Tier-1 body postures, THE_NOTICING gaze fixed |
 | Luma turnaround | v004 | unchanged |
 | **Byte expressions** | **v007 C41** | UNGUARDED WARMTH body delta |
 | Cosmo expressions | v007 | unchanged |
-| **Miri expressions** | **v006 C44** | FLAG 05 CLOSED — wooden hairpins (was chopstick MIRI-A) |
+| **Miri expressions** | **v006 C44** | FLAG 05 CLOSED — wooden hairpins |
 | Glitch expressions | v003 | unchanged |
-| **Glitch body primitive diagram** | **NEW C41** | rx/ry proportions, vertex formulas |
 | **Character lineup** | **v010 C45** | Dual-warmth tier depth bands (Option C) — warm FG / cool BG |
-| **Logo** | **v003 C44** | Nunito Bold + Space Grotesk Bold — fonts installed C45, rendered |
+| **Logo** | **v003 C44** | Nunito Bold + Space Grotesk Bold — rendered |
 | **Kitchen** | **v007 C44** | line_weight FAIL resolved |
-| **Tech Den** | **v007 C45** | Hardcoded path migrated to output_dir() |
+| **Tech Den** | **v007 C45** | Hardcoded path migrated |
 | **Living Room** | **v003 C45** | CRT centered, warm-left/cool-right staging — SF06 aligned |
-| Glitch Layer | v003 | UV_PURPLE linter: ENVs WARN (17%) — creative direction pending |
-| **Classroom** | **v003 C43** | Chalkboard text deployed (pixel font) |
-| **Luma Study Interior** | **NEW C42** | 33.1 PASS, first-ever generator |
+| Glitch Layer | v003 | UV_PURPLE range confirmed C46 (255°–325°) |
+| **Classroom** | **v004 C46** | Hardcoded path migrated |
+| **Luma Study Interior** | **C42** | 33.1 PASS |
 | Other Side ENV | C41 | UV_PURPLE ΔE 0.0 |
-| **School Hallway** | **v004 C43** | MILLBROOK MIDDLE SCHOOL seal — pixel font |
+| **School Hallway** | **v005 C46** | Hardcoded path migrated |
 | Millbrook Street | v002 | unchanged |
 | **Cold open storyboard** | **v003 C39** | Night/den canonical |
-| **Panels** | **P03–P11/P14–P17/P23/P24 + EP05 COVETOUS** | P16/P17 new C45; legacy PNGs moved to panels/legacy/ |
-| **Story Bible** | **v005 C45** | FLAG 05 closed throughout; SF05/SF06 as staging references |
-| **Pilot cold open beat outline** | **v001 NEW C45** | Priya — gap analysis, P18/P19 flagged |
-| **Relationship frame brief** | **NEW C44** | Priya — A1-01 kitchen morning, logline, staging spec |
-| **Scene handoff briefs** | **NEW C42** | Acts 1–3 + pre-credits, A3-02 highest priority |
+| **Panels** | **P03–P11/P14–P19/P23/P24 + EP05** | **P18/P19 NEW C46** — cold open through P19 |
+| **Cold open gap log** | **NEW C46** | 32 beats mapped, 14 gaps remaining, priority queue |
+| **Story Bible** | **v005 C45** | Confirmed current C46 |
+| **Relationship frame brief** | **C44** | A1-01 kitchen morning, logline, staging spec |
 | Motion — Luma | v002 C38 | unchanged |
 | Motion — Byte | v002 C38 | unchanged |
 | Cosmo motion spec | v001 C41 | IDLE/STARTLED/ANALYSIS_LEAN/RELUCTANT_MOVE |
 | **Miri motion spec** | **v002 C45** | OBSERVING STILL/RECOGNITION/WARMTH BURST/FOND SETTLE |
-| **Glitch motion spec** | **v001 NEW C44** | PREDATORY STILL/COVETOUS REACH/CORRUPTION SURGE/RETREAT |
+| **Glitch motion spec** | **v001 C44** | PREDATORY STILL/COVETOUS REACH/CORRUPTION SURGE/RETREAT |
 
 ---
 
@@ -218,8 +216,8 @@ Three-world palette system:
 
 One `CLAUDE.md` starts a producer agent. The producer builds a team of AI agents, assigns work via inbox message files, runs critique cycles with 20 critics (15 professionals + 5 audience members), and iterates. No human drew these images.
 
-All output generated with Python + PIL (open source only). Generators in `output/tools/` — 160+ tools, compounding each cycle.
+All output generated with Python + PIL (open source only). Generators in `output/tools/` — 170+ tools, compounding each cycle.
 
 ---
 
-*Cycle 45 — 2026-03-30*
+*Cycle 46 — 2026-03-30*

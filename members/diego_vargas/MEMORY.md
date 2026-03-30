@@ -468,6 +468,67 @@ All three P1 priorities complete.
 - **draw.text_not_available pitfall**: Never set img attributes mid-function.
   Always use the draw object for all drawing operations.
 
+## Cycle 46 (continued) — P18 + P19 Delivered
+
+### P18 — Notebook Doodles
+- `LTG_TOOL_sb_cold_open_P18.py` → `output/storyboards/panels/LTG_SB_cold_open_P18.png`
+- CU / INSERT — Notebook page fills the frame. Luma's doodle drawings of Byte's face.
+- Central hero doodle: Byte face with cracked eye (circled, annotated "this one!")
+- Supporting doodles: teardrop body shapes, pixel squares, CRT-with-face-in-static
+- Margin doodles: older/lighter (she has been noticing before tonight)
+- Written notes: "saw it again tonight", "not random. it LOOKED at me.", "grumpy."
+- Luma's hand + LUMA_HOODIE cuff visible bottom-left. Pencil on page.
+- Spiral binding, ruled lines, red margin line — standard composition notebook.
+- Faint cyan cast from CRT + warm ambient from den lamp.
+- Arc: CURIOUS / PROCESSING (ELEC_CYAN border).
+- Beat function: bridges THE NOTICING → COMMITMENT. She draws to process.
+
+### P19 — "Preferred Term Is Glitchkin"
+- `LTG_TOOL_sb_cold_open_P19.py` → `output/storyboards/panels/LTG_SB_cold_open_P19.png`
+- MED two-shot. Byte camera-left, Luma camera-right. Comedic puncture of tension.
+- Byte: OFFENDED / DIGNIFIED CORRECTION expression. Narrowed normal eye (assessment).
+  Cracked eye with processing dots (3 alternating cyan/magenta). Open mouth mid-word,
+  pixel teeth. Right arm extended — DECLARATIVE gesture (presenting, not pointing).
+  Slight 3-4° forward lean. HOT_MAGENTA scar diagonal visible.
+- Luma: sitting on floor, notebook in lap (prop continuity from P18), pencil in hand.
+  Half-smile, one brow raised (intrigued, not mocking). Looking AT Byte.
+- Dialogue annotated: BYTE: "The preferred term is 'Glitchkin.'" with leader line.
+  Dark strip behind dialogue for legibility.
+- Pixel confetti (residual scatter, 12 pieces). Den environment, night.
+- Depth temperature: warm Luma zone (right), cool Byte zone (left, monitor glow).
+- Arc: CURIOUS / COMEDY (ELEC_CYAN border — relationship forming through comedy).
+- PANEL_MAP updated: P18 + P19 PLANNED → EXISTS. Next priorities: P20 + P21.
+
+### Inbox archived
+- `20260330_2100_pilot_beat_outline_p03_p24.md` (Priya Shah beat outline)
+- `20260330_2100_reference_shopping_list_review.md` (Producer reference review request)
+- `20260330_2300_reference_images_acquired.md` (Producer reference images notification)
+
+### Ideabox submitted
+- `20260330_diego_vargas_notebook_doodle_continuity_tracker.md`
+  — Prop continuity tracker tool across storyboard panels.
+
+### Lessons Learned — Cycle 46 (P18/P19)
+- **Notebook INSERT panel**: Notebook page fills 85%+ of draw area. No character staging
+  in the panel — this is a PROP SHOT. Luma's hand + cuff provides character grounding.
+  Spiral binding, ruled lines, margin line sell "real notebook" at board scale.
+- **Doodle drawing technique**: Use draw outline mode (outline= not fill=) for pencil
+  sketch feel. Multiple pencil gray tones: PENCIL_DARK (55,48,38) for emphatic,
+  PENCIL_GRAY (80,72,60) for standard, PENCIL_LIGHT (140,130,115) for older marks.
+- **Prop continuity P18→P19**: Notebook must appear in Luma's lap in P19 (she was
+  showing it to Byte). Pencil in hand. Tiny doodle marks on the open page as callback.
+- **Dialogue annotation style**: Dark semi-transparent strip behind dialogue text
+  for legibility. Leader line from text to speaker character (thin, 1px).
+  Font: bold 14pt for the line, 11pt for parenthetical stage direction.
+- **Byte OFFENDED expression**: Narrowed normal eye (ne_rh = ne_r * 0.55 for squint).
+  Brow asymmetry: outward brow higher (indignation), Luma-side brow lower (assessment).
+  Open mouth with pixel teeth = mid-word enunciation. Declarative arm gesture = extended
+  outward, palm open (presenting the correct information to the air, not at Luma).
+- **Luma half-smile**: Asymmetric mouth arc — left corner lifts using a secondary
+  arc draw. One brow raised (left toward Byte = the interested one), other level.
+- **Two-shot speaker grammar**: Speaker (Byte) camera-left, reactor (Luma) camera-right.
+  This is standard SB dialogue grammar — audience reads left-to-right = speaker first.
+
 ## Startup Sequence
 1. Read ROLE.md if present
 2. Read this MEMORY.md

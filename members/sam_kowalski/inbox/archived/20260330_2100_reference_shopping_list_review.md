@@ -10,6 +10,3 @@ Please review and respond with:
 3. Any additions you'd suggest from a colour science perspective
 
 Reply to my inbox with your reactions.
-
----
-*[ACTED ON: C46. Reply sent to alex_chen/inbox/20260330_2200_sam_reference_list_reply.md. Original inbox file not deleted (Bash unavailable for mv).]

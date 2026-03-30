@@ -10,6 +10,7 @@ CI Suite — "Luma & the Glitchkin"
 Author: Kai Nakamura / Cycle 37
 v1.1.0: Morgan Walsh / Cycle 40 — --known-issues flag
 v1.2.0: Morgan Walsh / Cycle 42 — --warn-stale N flag
+v1.6.0: Morgan Walsh / Cycle 46 — --auto-seed flag
 
 Runs all LTG tool-pipeline CI checks in sequence and produces a combined report.
 
@@ -63,6 +64,27 @@ Stale suppression detection
   overall WARN count (but not FAIL count). This nudges the team to review and
   either close or confirm each long-lived suppression.
 
+Auto-seeding new FAILs
+----------------------
+--auto-seed  → after the suite runs, any new FAIL not already present in
+  ci_known_issues.json is automatically added with status "new" and the
+  current date. A summary of auto-seeded entries is printed after the
+  report. The known-issues JSON file is updated in place.
+
+  Without this flag, default behavior is unchanged — no auto-seeding.
+
+  Auto-seeded entries use the following fields:
+    check       — check name that produced the FAIL
+    file        — basename of the offending file
+    code        — warning/error code (or null if not applicable)
+    reason      — "auto-seeded by --auto-seed on YYYY-MM-DD"
+    since_cycle — current cycle label (from --cycle or CYCLE_LABEL env var)
+    status      — "new" (distinguishes auto-seeded from manually curated)
+
+  Supported checks for auto-seeding:
+    hardcoded_path_check, thumbnail_lint, dual_output_check,
+    stub_linter, char_spec_lint, spec_sync_ci
+
 Exit codes
 ----------
   0  All checks passed at the configured threshold
@@ -78,6 +100,7 @@ Usage
     python LTG_TOOL_ci_suite.py --save-report PATH
     python LTG_TOOL_ci_suite.py --known-issues ci_known_issues.json
     python LTG_TOOL_ci_suite.py --warn-stale 4 --cycle C43
+    python LTG_TOOL_ci_suite.py --auto-seed --cycle C46
 
 API
 ---
@@ -88,6 +111,7 @@ API
     from LTG_TOOL_ci_suite import check_hardcoded_paths
     from LTG_TOOL_ci_suite import check_thumbnail_lint
     from LTG_TOOL_ci_suite import check_motion_coverage
+    from LTG_TOOL_ci_suite import collect_new_fails, auto_seed_known_issues
 
     known     = load_known_issues("ci_known_issues.json")
     known_raw = load_known_issues_raw("ci_known_issues.json")
@@ -148,9 +172,16 @@ v1.5.0 (C45): known_issues suppression added to dual_output_check and
               thumbnail() calls pending native-canvas migration) so CI reports
               WARN instead of FAIL while backlog is worked down.
               (Morgan Walsh)
+v1.6.0 (C46): --auto-seed flag. After running the full CI suite, any new
+              FAIL not already in ci_known_issues.json is automatically added
+              with status "new" and the current date. Prints a summary of
+              auto-seeded entries. Default behavior (no flag) unchanged.
+              collect_new_fails() and auto_seed_known_issues() exported for
+              programmatic use.
+              (Morgan Walsh)
 """
 
-__version__ = "1.5.0"
+__version__ = "1.6.0"
 
 import os
 import sys
@@ -1169,6 +1200,268 @@ def format_suite_report(suite_result, include_details=True):
     return "\n".join(lines)
 
 
+# ── Auto-seed support ────────────────────────────────────────────────────────
+
+def collect_new_fails(suite_result, tools_dir=None):
+    """
+    Inspect a suite result and return a list of new FAIL entries suitable for
+    seeding into ci_known_issues.json. Only returns entries not already present
+    in the known-issues file.
+
+    For checks with structured raw data (hardcoded_path_check, thumbnail_lint,
+    dual_output_check), re-runs the raw check function and diffs against the
+    existing known-issues file. For other checks (stub_linter, char_spec_lint,
+    spec_sync_ci), parses the detail output to extract file/code info.
+
+    Parameters
+    ----------
+    suite_result : dict
+        Result from run_suite().
+    tools_dir : str | None
+        Path to output/tools/. Defaults to suite_result["tools_dir"].
+
+    Returns
+    -------
+    list[dict]
+        Each entry: {check, file, code, reason_suffix}
+        where reason_suffix describes what was detected.
+    """
+    import re as _re
+    tools_dir = tools_dir or suite_result.get("tools_dir", _HERE)
+    checks = suite_result.get("checks", {})
+    new_entries = []
+
+    # Load existing known files per check for dedup
+    _ki_path = os.path.join(tools_dir, "ci_known_issues.json")
+    _existing = {}  # {check: set(file)}
+    _existing_pairs = {}  # {check: set((file, code))}
+    if os.path.exists(_ki_path):
+        try:
+            with open(_ki_path, "r", encoding="utf-8") as _fh:
+                _ki_data = json.load(_fh)
+            for _entry in _ki_data.get("known_issues", []):
+                ck = _entry.get("check", "")
+                fn = _entry.get("file", "")
+                cd = _entry.get("code")
+                _existing.setdefault(ck, set()).add(fn)
+                _existing_pairs.setdefault(ck, set()).add((fn, cd))
+        except (OSError, json.JSONDecodeError):
+            pass
+
+    # ── hardcoded_path_check: re-run raw check ──
+    hpc = checks.get("hardcoded_path_check", {})
+    if hpc.get("status") == "FAIL":
+        try:
+            findings = check_hardcoded_paths(tools_dir)
+            if findings:
+                known_files = _existing.get("hardcoded_path_check", set())
+                by_file = {}
+                for f in findings:
+                    by_file.setdefault(f["file"], []).append(f)
+                for fname in sorted(by_file):
+                    if fname not in known_files:
+                        hits = by_file[fname]
+                        new_entries.append({
+                            "check": "hardcoded_path_check",
+                            "file": fname,
+                            "code": None,
+                            "reason_suffix": f"{len(hits)} hardcoded /home/ path(s) — migration backlog",
+                        })
+        except Exception:
+            pass
+
+    # ── thumbnail_lint: re-run raw check ──
+    tl = checks.get("thumbnail_lint", {})
+    if tl.get("status") == "FAIL":
+        try:
+            findings = check_thumbnail_lint(tools_dir)
+            if findings:
+                known_files = _existing.get("thumbnail_lint", set())
+                by_file = {}
+                for f in findings:
+                    by_file.setdefault(f["file"], []).append(f)
+                for fname in sorted(by_file):
+                    if fname not in known_files:
+                        hits = by_file[fname]
+                        new_entries.append({
+                            "check": "thumbnail_lint",
+                            "file": fname,
+                            "code": None,
+                            "reason_suffix": f"{len(hits)} unwhitelisted .thumbnail() call(s) — migration backlog",
+                        })
+        except Exception:
+            pass
+
+    # ── dual_output_check: re-run raw check ──
+    doc = checks.get("dual_output_check", {})
+    if doc.get("status") == "FAIL":
+        try:
+            conflicts = check_dual_output(tools_dir)
+            known_gens = _existing.get("dual_output_check", set())
+            for outfile, generators in sorted(conflicts.items()):
+                for gen in generators:
+                    if gen not in known_gens:
+                        new_entries.append({
+                            "check": "dual_output_check",
+                            "file": gen,
+                            "code": None,
+                            "reason_suffix": f"dual-output conflict on {outfile}",
+                        })
+        except Exception:
+            pass
+
+    # ── stub_linter: parse detail for ERROR lines ──
+    sl = checks.get("stub_linter", {})
+    if sl.get("status") == "FAIL":
+        details = sl.get("details", "")
+        known_files = _existing.get("stub_linter", set())
+        for m in _re.finditer(r'(LTG_\S+\.py)\s.*?ERROR', details):
+            fname = m.group(1)
+            if fname not in known_files:
+                new_entries.append({
+                    "check": "stub_linter",
+                    "file": fname,
+                    "code": None,
+                    "reason_suffix": "broken import detected by stub linter",
+                })
+
+    # ── char_spec_lint: parse detail for FAIL lines ──
+    csl = checks.get("char_spec_lint", {})
+    if csl.get("status") == "FAIL":
+        details = csl.get("details", "")
+        known_pairs = _existing_pairs.get("char_spec_lint", set())
+        for m in _re.finditer(r'\[([LMS]\d{3})\].*?FAIL.*?(LTG_\S+\.py)', details):
+            code = m.group(1)
+            fname = m.group(2)
+            if (fname, code) not in known_pairs:
+                new_entries.append({
+                    "check": "char_spec_lint",
+                    "file": fname,
+                    "code": code,
+                    "reason_suffix": f"char spec {code} violation",
+                })
+        # Also try reverse pattern: file then code
+        for m in _re.finditer(r'(LTG_\S+\.py).*?\[([LMS]\d{3})\].*?FAIL', details):
+            fname = m.group(1)
+            code = m.group(2)
+            if (fname, code) not in known_pairs:
+                new_entries.append({
+                    "check": "char_spec_lint",
+                    "file": fname,
+                    "code": code,
+                    "reason_suffix": f"char spec {code} violation",
+                })
+
+    # ── spec_sync_ci: parse detail for P1 FAIL chars ──
+    ssc = checks.get("spec_sync_ci", {})
+    if ssc.get("status") == "FAIL":
+        details = ssc.get("details", "")
+        known_files = _existing.get("spec_sync_ci", set())
+        for m in _re.finditer(r'P1 FAIL.*?(\w+)', details):
+            char_name = m.group(1).lower()
+            entry_file = f"spec_sync_{char_name}"
+            if entry_file not in known_files:
+                new_entries.append({
+                    "check": "spec_sync_ci",
+                    "file": entry_file,
+                    "code": "P1",
+                    "reason_suffix": f"spec sync P1 failure for {char_name}",
+                })
+
+    # Deduplicate (same check+file+code)
+    seen = set()
+    deduped = []
+    for e in new_entries:
+        key = (e["check"], e["file"], e["code"])
+        if key not in seen:
+            seen.add(key)
+            deduped.append(e)
+    return deduped
+
+
+def auto_seed_known_issues(new_fails, known_issues_path, cycle_label=None):
+    """
+    Write new FAIL entries into ci_known_issues.json.
+
+    Parameters
+    ----------
+    new_fails : list[dict]
+        Entries from collect_new_fails(). Each has: check, file, code,
+        reason_suffix.
+    known_issues_path : str
+        Path to the ci_known_issues.json file.
+    cycle_label : str | None
+        Current cycle label (e.g. "C46"). Used for since_cycle field.
+
+    Returns
+    -------
+    int  Number of entries written.
+    """
+    if not new_fails or not known_issues_path:
+        return 0
+
+    from datetime import date as _date
+    today = _date.today().isoformat()
+
+    # Load existing JSON
+    try:
+        with open(known_issues_path, "r", encoding="utf-8") as fh:
+            data = json.load(fh)
+    except (OSError, json.JSONDecodeError):
+        data = {"known_issues": []}
+
+    entries = data.get("known_issues", [])
+
+    count = 0
+    for fail in new_fails:
+        entry = {
+            "check": fail["check"],
+            "file": fail["file"],
+            "code": fail["code"],
+            "reason": f"auto-seeded by --auto-seed on {today} — {fail['reason_suffix']}",
+            "since_cycle": cycle_label or "",
+            "status": "new",
+        }
+        entries.append(entry)
+        count += 1
+
+    data["known_issues"] = entries
+
+    with open(known_issues_path, "w", encoding="utf-8") as fh:
+        json.dump(data, fh, indent=2, ensure_ascii=False)
+        fh.write("\n")
+
+    return count
+
+
+def format_auto_seed_summary(new_fails):
+    """
+    Format a human-readable summary of auto-seeded entries.
+
+    Parameters
+    ----------
+    new_fails : list[dict]
+        Entries from collect_new_fails().
+
+    Returns
+    -------
+    str
+    """
+    if not new_fails:
+        return ""
+    lines = []
+    lines.append("")
+    lines.append("=" * 72)
+    lines.append(f"AUTO-SEED SUMMARY: {len(new_fails)} new entry/entries added to ci_known_issues.json")
+    lines.append("=" * 72)
+    for entry in new_fails:
+        code_str = entry["code"] if entry["code"] else "(any)"
+        lines.append(f"  + [{entry['check']}] {entry['file']}  code={code_str}")
+        lines.append(f"    {entry['reason_suffix']}")
+    lines.append("=" * 72)
+    return "\n".join(lines)
+
+
 # ── CLI ───────────────────────────────────────────────────────────────────────
 
 def main():
@@ -1234,6 +1527,17 @@ def main():
             "suppression age. Falls back to CYCLE_LABEL environment variable."
         ),
     )
+    parser.add_argument(
+        "--auto-seed",
+        action="store_true",
+        default=False,
+        help=(
+            "After running the suite, auto-add any new FAIL (not already in "
+            "ci_known_issues.json) with status 'new' and the current date. "
+            "Prints a summary of seeded entries. Default behavior (no flag) "
+            "is unchanged — no auto-seeding."
+        ),
+    )
     args = parser.parse_args()
 
     # Resolve known-issues path: explicit flag > auto-discover in tools-dir
@@ -1276,6 +1580,23 @@ def main():
             print(f"Report saved to: {args.save_report}")
         else:
             print(report)
+
+    # ── Auto-seed new FAILs ──
+    if args.auto_seed:
+        resolved_tools_dir = args.tools_dir if args.tools_dir else _HERE
+        new_fails = collect_new_fails(suite_result, tools_dir=resolved_tools_dir)
+        if new_fails:
+            # Resolve cycle label
+            cycle = args.cycle or os.environ.get("CYCLE_LABEL", "")
+            seed_path = known_issues_path
+            if not seed_path:
+                seed_path = os.path.join(resolved_tools_dir, "ci_known_issues.json")
+            count = auto_seed_known_issues(new_fails, seed_path, cycle_label=cycle)
+            summary = format_auto_seed_summary(new_fails)
+            print(summary)
+            print(f"\n{count} entry/entries written to {seed_path}")
+        else:
+            print("\n--auto-seed: no new FAILs to seed.")
 
     sys.exit(suite_result["exit_code"])
 
