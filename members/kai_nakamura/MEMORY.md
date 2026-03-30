@@ -282,6 +282,40 @@ Import: `from LTG_TOOL_render_lib import ...`
 - G008 bilateral check: proxy approach (detect interior state keywords + destabilize function) is
   conservative; may flag files that correctly implement bilateral but use different variable names
 
+## Cycle 43 — C43 Sobel VP Detect Tool
+
+**Status:** COMPLETE
+
+**Tasks completed:**
+- Built `LTG_TOOL_sobel_vp_detect.py` — Sobel VP coordinate detector v1.0.0
+  - Outputs VP_X, VP_Y in original image pixel coordinates + confidence score
+  - Algorithm: Sobel → Canny → HoughLinesP → pairwise intersections → 2D histogram clustering
+  - VP001: FAIL if confidence < 0.15 or < 4 line segments
+  - VP002: PASS/WARN/FAIL based on distance to --vp-x-expected / --vp-y-expected (default tol 80px)
+  - numpy fallback for environments without cv2
+  - --debug-png: saves annotated VP overlay PNG
+  - Closes C40 carry item (P2 from Producer brief)
+- README.md updated: C42 Kai section + table row added; header updated to C43
+- Archived both inbox messages (G007 clarification + C42 brief)
+- Ideabox: submitted vp_spec_config_json idea (auto-lookup VP specs for batch QA)
+
+## LTG_TOOL_sobel_vp_detect.py (C43 NEW)
+- `detect_vp(image_path, vp_x_expected, vp_y_expected, tolerance_px) → dict`
+  - Keys: file, vp_x, vp_y, confidence, n_lines, n_intersections, grade, issues,
+          vp_x_expected, vp_y_expected, distance_px, tolerance_px, image_width, image_height, skipped_reason
+- `detect_vp_batch(directory, vp_x_expected, vp_y_expected, tolerance_px) → list`
+- `format_report(results, include_pass=True) → str`
+- `save_debug_png(image_path, result, output_path)` — annotated VP overlay
+- VP001 threshold: confidence ≥ 0.15, n_lines ≥ 4
+- VP002 thresholds: PASS ≤ tol_px, WARN ≤ 2×tol_px, FAIL > 2×tol_px
+- Grid cell = 5% of image dimension for clustering
+- CLI: exit 0=PASS, 1=WARN, 2=FAIL
+
+## Lessons Learned (C43)
+- vanishing_point_lint (C40) estimates VP azimuth (horizontal direction); sobel_vp_detect estimates VP pixel coordinates — these are complementary, not overlapping
+- Pairwise intersection clustering: bounding VP search to ±3× image dimensions prevents infinite-plane outliers while allowing off-frame VPs
+- _GRID_CELL_FRACTION=0.05 (5% of image size per cell) balances precision vs noise tolerance
+
 ## Cycle 42 — C42 Face Curves Caller Audit
 
 **Status:** COMPLETE
