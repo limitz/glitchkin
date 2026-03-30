@@ -17,10 +17,14 @@ For Glitch  (glitch_spec_lint_v001):
   result == "FAIL" on any of G001/G002 (geometry checks)  →  P1 violation.
   G003–G008 WARNs are design-quality issues, not P1 construction violations.
 
-For Byte  (no dedicated spec linter yet):
-  Byte is checked for the presence of canonical body color GL-01b (#00D4E8)
-  and basic 5×5 pixel-grid eye indicators using a lightweight inline scan.
-  FAIL only if an actively wrong value is found; WARN if check is inconclusive.
+For Byte  (char_spec_lint_v001 B001–B005 via lint_character("byte", ...)):
+  B001 body oval W:H ratio (wider than tall).
+  B002 body color #00D4E8 Byte Teal (GL-01b).
+  B003 Hot Magenta crack indicator.
+  B004 pixel confetti floating mechanism.
+  B005 5×5 pixel eye grid.
+  P1 = FAIL-grade checks only; WARNs are advisory.
+  (v1.1.0 C39: delegates to char_spec_lint instead of inline scan.)
 
 Characters covered (default: all)
 ----------------------------------
@@ -49,10 +53,9 @@ API
     # result["exit_code"] is 0 (pass) or 1 (fail)
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"  # C39: Byte delegation to char_spec_lint (B001–B005) — Kai Nakamura
 
 import os
-import re
 import sys
 import json
 import glob as _glob
@@ -87,107 +90,6 @@ def _latest_glob(tools_dir: str, *patterns: str) -> Optional[str]:
     if not candidates:
         return None
     return sorted(candidates)[-1]
-
-
-# ── Byte inline linter ────────────────────────────────────────────────────────
-# Byte does not yet have a dedicated spec linter.  We perform a focused
-# inline check here to cover his two most critical P1 construction rules.
-
-_BYTE_BODY_SPEC_HEX  = "#00D4E8"
-_BYTE_BODY_SPEC_RGB  = (0, 212, 232)
-
-def _byte_p1_checks(source: str, filepath: str) -> List[Dict]:
-    """
-    Inline P1 checks for Byte:
-      B001  Body color is GL-01b (#00D4E8 / 0,212,232).
-             FAIL if an explicitly wrong body-color constant is detected.
-             WARN if no body-color constant is found.
-      B002  5×5 pixel-grid eye system indicator present.
-             WARN if no indicator found (absent = uncertain, not wrong).
-
-    Returns list of check result dicts (same schema as char_spec_lint).
-    """
-    results = []
-
-    # ── B001 body color ───────────────────────────────────────────────────────
-    # Look for BODY, BODY_COL, BYTE_BODY constant with an explicit (R,G,B) tuple
-    body_re = re.compile(
-        r'\b(BODY|BODY_COL|BYTE_BODY|body_col)\s*=\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)'
-    )
-    body_match = body_re.search(source)
-    if body_match:
-        r, g, b = int(body_match.group(2)), int(body_match.group(3)), int(body_match.group(4))
-        # Manhattan distance to spec
-        dist = abs(r - 0) + abs(g - 212) + abs(b - 232)
-        if dist <= 40:
-            results.append({"check": "B001", "result": "PASS", "issues": []})
-        else:
-            results.append({
-                "check": "B001",
-                "result": "FAIL",
-                "issues": [{
-                    "code": "B001",
-                    "result": "FAIL",
-                    "message": (
-                        f"B001: Byte body color: spec={_BYTE_BODY_SPEC_HEX} {_BYTE_BODY_SPEC_RGB}, "
-                        f"found {body_match.group(1)}=({r},{g},{b}) — "
-                        f"Manhattan dist={dist} (limit 40)."
-                    ),
-                }],
-            })
-    else:
-        # Scan all RGB tuples for proximity to spec
-        all_tuples = re.findall(r'\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)', source)
-        close = [
-            t for t in all_tuples
-            if abs(int(t[0]) - 0) + abs(int(t[1]) - 212) + abs(int(t[2]) - 232) <= 40
-        ]
-        if close:
-            results.append({"check": "B001", "result": "PASS", "issues": []})
-        else:
-            results.append({
-                "check": "B001",
-                "result": "WARN",
-                "issues": [{
-                    "code": "B001",
-                    "result": "WARN",
-                    "message": (
-                        f"B001: Byte body color GL-01b {_BYTE_BODY_SPEC_HEX} {_BYTE_BODY_SPEC_RGB} "
-                        f"not found in source. Verify body uses #00D4E8."
-                    ),
-                }],
-            })
-
-    # ── B002 5×5 pixel-grid eye system ───────────────────────────────────────
-    # Look for 5×5 grid, GRID_W=5, GRID_SIZE=5, or PIXEL_SIZE patterns near eye context
-    eye_grid_found = bool(re.search(
-        r'(GRID_W\s*=\s*5|GRID_SIZE\s*=\s*5|5\s*[×x]\s*5|pixel.*grid|grid.*5)',
-        source, re.IGNORECASE
-    ))
-    if not eye_grid_found:
-        # Secondary: look for a range(5) near eye/pixel/draw context
-        eye_grid_found = bool(re.search(
-            r'(draw_eye|pixel_eye|eye.*pixel|CELL_W|CELL_SIZE).*range\s*\(\s*5\s*\)|'
-            r'range\s*\(\s*5\s*\).*\b(eye|pixel|cell)\b',
-            source, re.IGNORECASE
-        ))
-    if eye_grid_found:
-        results.append({"check": "B002", "result": "PASS", "issues": []})
-    else:
-        results.append({
-            "check": "B002",
-            "result": "WARN",
-            "issues": [{
-                "code": "B002",
-                "result": "WARN",
-                "message": (
-                    "B002: 5×5 pixel-grid eye system indicator not found. "
-                    "Expected GRID_W=5/GRID_SIZE=5 or 5×5 pattern near eye drawing code."
-                ),
-            }],
-        })
-
-    return results
 
 
 # ── Per-character CI runners ──────────────────────────────────────────────────
@@ -341,59 +243,16 @@ def _run_glitch_spec_lint(tools_dir: str) -> Dict:
 
 def _run_byte_lint(tools_dir: str) -> Dict:
     """
-    Run inline Byte P1 checks against the most recent Byte generator.
+    Run Byte spec checks via char_spec_lint_v001 lint_character("byte", ...).
+
+    Provides B001–B005 checks (5 checks) instead of the prior 2-check inline scan.
+    Delegates entirely to char_spec_lint so Byte gets the same treatment as
+    Luma/Cosmo/Miri.
+
+    Changed in v1.1.0 (C39 — Kai Nakamura): replaces inline B001/B002 scan
+    with full char_spec_lint delegation (B001–B005).
     """
-    latest = _latest_glob(
-        tools_dir,
-        "LTG_TOOL_byte_expression_sheet_v*.py",
-        "LTG_TOOL_byte_turnaround_v*.py",
-        "LTG_TOOL_byte_color_model_v*.py",
-    )
-    if latest is None:
-        return {
-            "char": "byte",
-            "overall": "WARN",
-            "summary": {"PASS": 0, "WARN": 1, "FAIL": 0},
-            "p1_fails": [],
-            "all_checks": [],
-            "file_linted": None,
-            "error": "No Byte generator files found in tools directory.",
-        }
-
-    source = _load_source(latest)
-    if source is None:
-        return {
-            "char": "byte",
-            "overall": "ERROR",
-            "summary": {"PASS": 0, "WARN": 0, "FAIL": 0},
-            "p1_fails": [],
-            "all_checks": [],
-            "file_linted": latest,
-            "error": f"Could not read {latest}",
-        }
-
-    checks = _byte_p1_checks(source, latest)
-    p1_fails = [c for c in checks if c["result"] == "FAIL"]
-    summary = {"PASS": 0, "WARN": 0, "FAIL": 0}
-    for c in checks:
-        summary[c["result"]] = summary.get(c["result"], 0) + 1
-
-    if p1_fails:
-        overall = "FAIL"
-    elif summary.get("WARN", 0):
-        overall = "WARN"
-    else:
-        overall = "PASS"
-
-    return {
-        "char": "byte",
-        "overall": overall,
-        "summary": summary,
-        "p1_fails": p1_fails,
-        "all_checks": checks,
-        "file_linted": latest,
-        "error": None,
-    }
+    return _run_char_spec_lint("byte", tools_dir)
 
 
 # ── Public API ────────────────────────────────────────────────────────────────

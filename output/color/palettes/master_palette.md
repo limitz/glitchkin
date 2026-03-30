@@ -1261,13 +1261,60 @@ When a character is rendered under a specific three-light setup, the base skin s
 
 ---
 
+### 7.3b — CHAR-C-02 — Cosmo Skin Shadow
+
+- **Hex:** `#B89A78`
+- **RGB:** 184, 154, 120
+- **Role:** Cosmo's warm-light skin shadow. Under chin, inner arm, nose underside, beneath glasses frames.
+- **R > G > B:** 184 > 154 > 120 — unambiguously warm. Shadow companion to CHAR-C-01.
+- **Source:** Cosmo color model sheet (Maya Santos, Cycle 3) — "Warm Sand."
+- **Scene use:** Any warm-lit or neutral-light scene (Real World). Not for Glitch Layer/cyan-dominant scenes.
+- **Parent:** CHAR-C-01 (Cosmo Skin Base)
+- **Added:** Sam Kowalski — Cycle 40 (2026-03-30); registered as named entry to enable warmth lint coverage.
+
+---
+
+### 7.3c — CHAR-C-03 — Cosmo Skin Highlight
+
+- **Hex:** `#EED4B0`
+- **RGB:** 238, 212, 176
+- **Role:** Cosmo's warm-light skin highlight. Forehead, nose bridge, cheekbone — caught-light surface.
+- **R > G > B:** 238 > 212 > 176 — unambiguously warm. Highlight companion to CHAR-C-01.
+- **Source:** Cosmo color model sheet (Maya Santos, Cycle 3) — "Pale Golden."
+- **Scene use:** Any warm-lit or neutral-light scene (Real World). Sparingly in mid-shot.
+- **Parent:** CHAR-C-01 (Cosmo Skin Base)
+- **Added:** Sam Kowalski — Cycle 40 (2026-03-30); registered as named entry to enable warmth lint coverage.
+
+---
+
+### CHAR-C Skin Warmth Guarantee Table
+
+**Production rule:** Cosmo's skin entries must remain "unambiguously warm" — R must be the dominant channel. This table is the machine-readable source for `LTG_TOOL_palette_warmth_lint.py` and the CI warmth gate. If a value changes in the prose section, it must also be updated here.
+
+**Exclusions (intentionally cool — NOT in this table):**
+- Cosmo's cardigan (`#A89BBF`, RW-08 Dusty Lavender, B>R) — cool palette, correct
+- Cerulean shirt stripes (`#5B8DB8`, B>R) — intentionally cool
+- Sage shirt stripes (`#7A9E7E`, G>R) — intentionally cool-neutral
+- Hair (`#1A1824`, B>R) — cool blue-black, correct
+- Jeans/pants — cool neutral, not warm-guaranteed
+
+| Code | Name | Hex | RGB | Notes |
+|---|---|---|---|---|
+| CHAR-C-01 | Cosmo Skin Base | `#D9C09A` | (217, 192, 154) | Neutral-light skin base. R>G>B — warm guarantee. See prose entry above. |
+| CHAR-C-02 | Cosmo Skin Shadow | `#B89A78` | (184, 154, 120) | Warm-light shadow companion. R>G>B — warm guarantee. See prose entry above. |
+| CHAR-C-03 | Cosmo Skin Highlight | `#EED4B0` | (238, 212, 176) | Warm-light highlight companion. R>G>B — warm guarantee. See prose entry above. |
+
+*Cycle 40 addition (Sam Kowalski — 2026-03-30): CHAR-C skin warmth guarantee table added. Entries are now machine-checked by `LTG_TOOL_palette_warmth_lint.py` with prefix "CHAR-C" when `ltg_warmth_guarantees.json` is active. Only skin tone entries (base, shadow, highlight) appear in table format. Cosmo's cardigan (cool lavender), shirt stripes (cerulean/sage), and hair (blue-black) are intentionally non-warm and excluded.*
+
+---
+
 ### 7.4 — Skin Under Warm Light (Real World)
 
 | Zone | Luma (RW-10 base) | Luma (lamp-lit Frame 01) | Cosmo |
 |---|---|---|---|
 | **Neutral base** | `#C4A882` (RW-10) | `#C8885A` (CHAR-L-01) | `#D9C09A` (CHAR-C-01) |
-| **Shadow** | `#8C5A38` (RW-10b) | `#A86838` (CHAR-L-03) | `#B89A78` |
-| **Highlight** | `#E8D4B0` (RW-10a) | `#E8B888` (CHAR-L-02) | `#EED4B0` |
+| **Shadow** | `#8C5A38` (RW-10b) | `#A86838` (CHAR-L-03) | `#B89A78` (CHAR-C-02) |
+| **Highlight** | `#E8D4B0` (RW-10a) | `#E8B888` (CHAR-L-02) | `#EED4B0` (CHAR-C-03) |
 | **Deep crevice** | `#3B2820` (RW-12) | `#3B2820` (RW-12) | `#3B2820` (RW-12) |
 
 ---
@@ -1419,6 +1466,7 @@ Lighting key: Overhead fluorescent — cool, flat, even, slightly greenish. No d
 *Cycle 30 revision (Sam Kowalski — 2026-03-29): CHAR-L-11 Constraint 1 hex error corrected — prior text cited `#00D4E8` (GL-01b Byte Teal) for neutral/cold-scene hoodie pixel accents; correct value is GL-01 Electric Cyan `#00F0FF`. Byte Teal is Byte's body fill only and must never appear as a hoodie pixel color.*
 *Cycle 32 revision (Sam Kowalski — 2026-03-30): CHAR-L-11 cross-reference corrected — cross-ref line cited `#00D4E8` (GL-01b Byte Teal) for cold-scene hoodie pixels; correct is GL-01 `#00F0FF` Electric Cyan (Priya Nair C13 P1). CHAR-M-11 Miri House Slippers corrected — `#5A7A5A` Deep Sage (cool-neutral green, G>R) replaced with `#C4907A` Dusty Warm Apricot (R>G>B, warm family) per Priya Nair C13 P2; Deep Sage contradicted Miri warm-palette guarantee in color story. DRW-18 warmth clarification — added HSL lightness note (7%); warmth of R:26>G:15>B:10 is theoretically present but functionally imperceptible at this luminance; DRW-18 does NOT contribute visual warmth to SF03; warm values in SF03 are hoodie orange and skin only. Color story doc updated with same clarification.*
 *Review cycle: Update after each critic feedback pass.*
+*Cycle 40 revision (Sam Kowalski — 2026-03-30): CHAR-C-02 and CHAR-C-03 added — Cosmo Skin Shadow (#B89A78, 184,154,120) and Cosmo Skin Highlight (#EED4B0, 238,212,176). Previously these were prose-only values in Section 7.3. Now registered as named CHAR-C entries and added to the CHAR-C Skin Warmth Guarantee Table. "CHAR-C" prefix added to ltg_warmth_guarantees.json warm_prefixes. Exclusions noted: cardigan (RW-08 Dusty Lavender, B>R), shirt stripes (cerulean/sage, intentionally cool), hair (blue-black, B>R) — all intentionally non-warm, correctly excluded. C40 baseline: 3 CHAR-C entries checked, 0 violations.*
 *Cycle 33 revision (Sam Kowalski — 2026-03-30): QA Scene-Lighting Exceptions section added — SF04 Byte teal dim documented as SCENE-LIGHTING — ACCEPTED per Alex Chen Art Director decision (C32 directive). GL-01b in SF04 at ~60-70% canonical luminance is intentional discovery-scene low-key lighting, not a generation error. LTG_TOOL_palette_warmth_lint.py created and registered in tools README — catches G>R or B>R violations in all CHAR-M entries (actioned ideabox: warmth linter). C33 baseline: 11 CHAR-M entries, 0 violations.*
 
 ---
@@ -1466,7 +1514,7 @@ These are the show's foundational colors. Every generator, color key, and painte
 | RW-NSM | Moon Ambient | `#C8BFD8` | No rendering yet; referenced in spec only |
 | TD-10/TD-11 | Monitor Screen / Glow | `#C8D4E0` / `#B8C8D4` | Close-but-not-identical variants appear in LTG_TOOL_bg_tech_den.py (MON_GLOW_BRIGHT 200,218,240 and MON_GLOW_MID 180,200,210). Needs alignment pass. |
 | CHAR-M-04 | Miri Permanent Blush | `#D4956B` | Opacity-feel spec (25%) in grandma_miri_color_model.md not yet translated to a flat alpha render constant |
-| CHAR-C-01 | Cosmo Skin Base | `#D9C09A` | In character spec; no rendered SF or generator has used this value directly yet |
+| CHAR-C-01 | Cosmo Skin Base | `#D9C09A` | In character spec; no rendered SF or generator has used this value directly yet. CHAR-C-02/03 (shadow/highlight) added C40. |
 | SH-01 through SH-12 | School Hallway palette | various | Documented in Section 8.3; no rendered generator exists for hallway environment yet |
 
 ---

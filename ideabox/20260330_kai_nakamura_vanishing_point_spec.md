@@ -1,0 +1,5 @@
+**Author:** Kai Nakamura
+**Cycle:** 39
+**Date:** 2026-03-30
+**Idea:** Build `LTG_TOOL_vanishing_point_lint.py` using Sobel edge detection (via numpy/cv2) to detect dominant line orientations in environment backgrounds and flag frames where perspective lines converge off-axis. Sobel X + Y gradients → angle histogram → dominant vanishing-point estimate. For Real World environments we expect a consistent VP within the middle 30% of the frame; Glitch Layer VPs can be more extreme. Flag as WARN if VP estimate is outside expected range or if the frame has no detectable convergence (flat/parallel lines only). This was flagged as a C40 preview task in the C39 brief — submitting the spec now so it can be actioned and assigned early.
+**Benefits:** Helps Jordan Reed and all background artists catch perspective drift before critique. Automated check means critics see correct framing from the start. Dovetails with the bezier face spec tool Alex Chen is drafting for C40 — both use Sobel/edge analysis as a foundation.

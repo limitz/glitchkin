@@ -1,5 +1,38 @@
 # Rin Yamamoto — MEMORY
 
+## C40 Completed Work
+- `LTG_TOOL_fill_light_adapter.py` bumped to v1.1.0 — Scene Presets Registry
+  - `load_scene_configs(scene_name, presets_path=None) → (configs, char_h_frac)`
+  - Loads from `LTG_fill_light_presets.json`; falls back to hardcoded if JSON absent
+  - All 4 scenes: SF01 (warm lamp + CRT bounce), SF02 (3-char HOT_MAGENTA storm), SF03 (UV_PURPLE + ELEC_CYAN), SF04 (BYTE_TEAL bounce + self-glow)
+  - Self-test: 720p PASS, 1080p PASS, all-scenes PASS, SF02 registry render PASS
+- `LTG_fill_light_presets.json` (new) — JSON registry at `output/tools/`
+  - Keys with `_` prefix are comment fields, stripped on load
+  - JSON must not use `+` prefix on positive floats (invalid JSON)
+- `LTG_TOOL_alpha_blend_lint.py` (v1.0.0, new) — Differential Alpha Blend Lint
+  - Compares composited vs unlit base in LAB (cv2) or numpy approx fallback
+  - Per-zone radial bin analysis; FLAT_FILL / LOW_SIGNAL / PASS verdicts
+  - Two FLAT_FILL checks: low-std among signal bins + abrupt-edge coverage (< 65% zone_r)
+  - `lint_alpha_blend(comp, base, zones, ...) → dict` module API
+  - `annotate_result(comp, results, out)` — annotated PNG with zone circles + source crosshairs
+  - CLI: `composited.png base.png [--output annot.png] [--json] [--zones JSON]`
+  - Self-test PASS (Luma radial→PASS, Byte flat→FLAT_FILL, Cosmo/spill→FLAT_FILL)
+- Ideabox: `ideabox/20260330_rin_yamamoto_alpha_blend_lint_precritique_integration.md`
+
+## C40 Lessons
+- JSON does NOT allow `+0.8` explicit positive floats — only `-0.8` and `0.8` are valid.
+  Always write positive floats without sign prefix in JSON files.
+- FLAT_FILL detection: flat uniform circle has high inner values then abrupt zero at radius edge.
+  Coverage fraction (last_signal_bin_idx / n_bins < 0.65) + low inner CV (std/mean < 0.5)
+  correctly catches flat circles while not flagging genuine radial gradients.
+- Spill detection is CORRECT behavior: a flat fill that bleeds into a neighbour's zone IS a defect.
+  Don't expect LOW_SIGNAL for neighbours in a multi-char frame with full-radius flat fills.
+- Self-test synthetic data: applying flat fill to mixed base (dark bg + character silhouettes)
+  produces non-uniform L* diffs because underlying pixel values differ. Use a simple dark base
+  for flat-fill test cases so the diff is truly uniform.
+- numpy+cv2 authorized (C40 broadcast from Alex Chen): prefer for LAB/HSV color math.
+  cv2 is BGR — always convert: `cv2.cvtColor(img, cv2.COLOR_BGR2RGB)` after load.
+
 ## C39 Completed Work
 - `LTG_TOOL_procedural_draw.py` bumped to v1.6.0 — C39 audit notes added; no logic changes
 - `LTG_TOOL_fill_light_adapter.py` (v1.0.0) — resolution-aware fill light adapter

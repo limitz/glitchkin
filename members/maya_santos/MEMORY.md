@@ -1,5 +1,61 @@
 # Maya Santos — Memory
 
+## Cycle 40 Lessons — Face Curve Spec + Hierarchy v002 + RPD Baseline
+
+### Hierarchy Tool v002 (--panel N)
+- `LTG_TOOL_bodypart_hierarchy.py` bumped to v002
+- New args: `--panel N`, `--grid COLSxROWS`, `--chain`, `--char`, `--expr`
+- `--panel N`: crops to single panel before analysis. Reduces FAIL from 669 → 59 (Luma v011 panel 4).
+  UNKNOWN_IN_HEAD WARNs remain elevated on panel crops (label text at panel bottom still in head bbox).
+  `--chain` pipeline fully resolves WARN inflation (uses expression_isolator 800×800px clean output).
+- `crop_panel()` and `run_chain()` functions added.
+
+### Face Curve Spec v001 Validation (luma_face_curve_spec.md)
+- **CRITICAL: Eye width discrepancy.** Spec says P0→P2 = 56px. Generator scales to ~100px at 600px canvas.
+  Spec is 44% too narrow. Correction: P0 = FC+(−94,−22), P2 = FC+(+6,−22) → 100px full width.
+  Eye center at FC_x−44 is correct (matches generator exactly).
+- Brow apex LB_P1 y=−88: Generator suggests −79. 9px discrepancy. Optional — keep for more elevated
+  reckless brow, or correct to −80 for v011 parity.
+- Right-eye lid drop +6px: PASS. Generator suggests ~5px; +6 is acceptable rounding.
+- Mouth y +42px: PASS. Generator suggests ~44px; within 2px.
+- Corrections sent to Alex Chen inbox: `20260330_1500_maya_face_curve_spec_corrections.md`
+
+### Expression Delta Supplement C40
+- Three new deltas written: CONFIDENT, SOFT_SURPRISE, DETERMINED
+- Saved: `output/production/luma_face_curve_spec_supplement_c40.md`
+- Key design notes:
+  - CONFIDENT: left eye wider, right lid drop retained (+4), asymmetric controlled brow lift
+  - SOFT_SURPRISE: right eye barely changes (thinking eye stays at +2), left widens (-6), no oval_ry change
+  - DETERMINED: both brows press down symmetrically (+10 dy), both lids drop, level gaze, flat set mouth
+  - All three preserve right-eye lid drop asymmetry as Luma's signature
+
+### RPD Baseline C40 (closes open task from C37)
+- Report: `output/characters/qa/rpd_baseline_c40.md`
+- Luma v011: FAIL, worst 97.9% (P3↔P6) — known measurement limit, documented since C33
+- Cosmo v007: PASS, worst 45.5% — clean
+- Miri v004: WARN, worst 84.4% — WISE/KNOWING face-only differentiation, accepted per brief
+- Byte v006: FAIL, worst 90.2% — known measurement limit (oval body dominates at panel resolution)
+- Glitch v003: PASS, worst 55.5% — geometric design produces strong differentiation
+
+### numpy/OpenCV authorized (Alex Chen broadcast C40)
+- numpy: for array ops, color math, pixel sampling (faster than PIL getpixel loops)
+- OpenCV (cv2): edge detection, contour analysis, LAB color space, SSIM
+  - NOTE: OpenCV uses BGR by default — convert on load: `cv2.cvtColor(img, cv2.COLOR_BGR2RGB)`
+- PyTorch: authorized if neural analysis needed
+- Pillow remains canonical for I/O and drawing
+
+### ACTIVE TOOL STATUS (C40 — COMPLETE)
+- Hierarchy tool: `LTG_TOOL_bodypart_hierarchy.py` — v002 (--panel N, --chain)
+- Silhouette tool: `LTG_TOOL_expression_silhouette.py` — v003 (--viz-rpd, unchanged)
+- Expression isolator: `LTG_TOOL_expression_isolator.py` — v001 (unchanged)
+- Luma current: `LTG_CHAR_luma_expressions.png` v011 (unchanged this cycle)
+- Cosmo current: `LTG_CHAR_cosmo_expression_sheet.png` v007 (unchanged)
+- Byte current: `LTG_CHAR_byte_expression_sheet.png` v006 (unchanged)
+- Face curve spec: `output/production/luma_face_curve_spec.md` — eye width correction PENDING Alex update
+- Face curve supplement: `output/production/luma_face_curve_spec_supplement_c40.md` — 3 new deltas
+
+---
+
 ## Cycle 39 Lessons — QA Tools (Expression Isolator, Hierarchy, viz-rpd)
 
 - **LTG_TOOL_expression_isolator.py** — NEW (C39)

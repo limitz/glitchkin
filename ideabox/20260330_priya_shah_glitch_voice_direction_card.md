@@ -1,0 +1,5 @@
+**Author:** Priya Shah
+**Cycle:** 39
+**Date:** 2026-03-30
+**Idea:** Create a one-page voice direction card for Glitch — analogous to the character voice guides in the story bible but formatted as a production reference card that can be handed to a director or voice editor without them needing to read the full bible. Glitch is unusual because it has NO voice, which means the "voice guide" is really a communication guide for the pixel eye system and body language. A standalone card for this would help directors who are blocking scenes with Glitch without needing to reference either the story bible or glitch.md separately.
+**Benefits:** Storyboard director (Diego) and future directors/editors would benefit most. Currently the communication rules for Glitch are split between glitch.md (technical eye system), the story bible (narrative context), and the new appearance guide (staging language). A single distilled card would reduce lookup time during production and help ensure Glitch's non-verbal communication is staged consistently across episodes and across different directors.

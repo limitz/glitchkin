@@ -1087,3 +1087,36 @@ All critical path assets verified on disk. No blocking issues found. The package
 | Open items C40 | SF02 REAL_STORM threshold (Kai + Sam — P1); Costume-background clash lint tool (Kai — P2); Byte expression sheet silhouette oval-body tool tuning (Maya — P3); RPD baseline run all sheets; Story bible antagonist appearance staging guide (Priya — for Lee/Diego) |
 
 *Updated by Alex Chen, Art Director — Cycle 39 — 2026-03-30*
+
+---
+
+### Cycle 40 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| Sight-line diagnostic tool v001 | `/home/wipkat/team/output/tools/LTG_TOOL_sight_line_diagnostic.py` | **NEW (C39 — Lee Tanaka).** Pixel-analysis sight-line QA. Three coordinates: eye_xy, aim_xy, target_xy. miss_px = perpendicular miss distance. PASS ≤15px / WARN 15–45px / FAIL >45px. CLI + `run_sight_line_check()` module API. Self-test outputs in `output/production/`. SF01 v006 PASS confirmed. |
+| Pixel font utility v001 | `/home/wipkat/team/output/tools/LTG_TOOL_pixel_font_v001.py` | **NEW (C40 — Jordan Reed).** 5×7 bitmap pixel font, pure PIL. `draw_pixel_text()`, `measure_pixel_text()`. A–Z + 0–9 + space. Scale-agnostic. Self-test: `output/production/LTG_TEST_pixel_font_v001.png`. |
+| Luma face curve spec v001 | `/home/wipkat/team/output/production/luma_face_curve_spec.md` | **NEW (C40 — Alex Chen). Bezier/spline face system for Luma.** Defines all facial features (brows, eye outlines, irises, nose bridge, mouth, blush) as named bezier/ellipse curves with explicit control points relative to face center. 6 expression delta dicts: RECKLESS, THE_NOTICING, THE_NOTICING_DOUBT, WORRIED, ALARMED, FRUSTRATED. Transform rules (lid-top-drop canonical, iris clamping, smooth interpolation guide). Draw order. Resolves face regression from ad-hoc pixel-stroke approach. Reference implementation: `LTG_TOOL_luma_face_curves.py` (Kai — in progress). (Cycle 40 — Alex Chen) |
+
+#### Cycle 40 Pitch Package Status
+
+| Requirement | C40 Status |
+|---|---|
+| All 4 style frames | SF01 v006 PITCH PRIMARY, SF02 v008 PITCH PRIMARY, SF03 v005 PITCH PRIMARY, SF04 v004 PITCH PRIMARY (unchanged) |
+| Luma expression sheet | v011 PITCH PRIMARY (unchanged) |
+| Luma face system | **v001 NEW** — bezier/spline spec written; implementation in progress (Kai + Maya) |
+| Byte expression sheet | v006 (unchanged) |
+| Cosmo expression sheet | v007 (unchanged) |
+| Miri expression sheet | v004 PITCH PRIMARY (unchanged) |
+| Glitch expression sheet | v003 GEOMETRY CORRECTED (unchanged) |
+| Luma turnaround | v004 PITCH PRIMARY (unchanged) |
+| Character lineup | v007 PITCH PRIMARY (unchanged) |
+| Canonical logo | `LTG_BRAND_logo.png` (unchanged) |
+| Environments | Kitchen v005, Living Room v002, School Hallway v003, all others unchanged |
+| Story documents | Story Bible v003 PITCH PRIMARY (unchanged) |
+| Storyboards | Cold Open v003 PITCH PRIMARY (unchanged) |
+| Motion specs | Luma v002, Byte v003 NEW (COMMITMENT beat arc — Ryo C39) |
+| QA tools | glitch_spec_lint v1.4.0 (docstring-stripping), char_spec_lint v1.1.0 (Byte B001-B005), costume_bg_clash v001 NEW, world_type_infer v1.1.0, palette_warmth_lint v5, render_qa v1.6.0 (REAL_STORM split — FP-006 RESOLVED), expression_isolator v001 NEW, bodypart_hierarchy v001 NEW, motion_spec_lint v001 NEW, precritique_qa v2.6.0 (arc-diff S9) |
+| Open items C41 | **P1: LTG_TOOL_luma_face_curves.py** (Kai); **P1: spec validation + 3 new expression deltas** (Maya); **P2: RPD baseline run** (Maya — long-standing); Antagonist appearance guide (Priya); Tool consolidation warmth-shims + naming (Kai); Byte spec checks in CI suite (Kai); Cosmo warmth lint CHAR-C scope (Sam) |
+
+*Updated by Alex Chen, Art Director — Cycle 40 — 2026-03-30*

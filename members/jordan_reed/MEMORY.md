@@ -1,5 +1,22 @@
 # Jordan Reed — Memory
 
+## Cycle 40 Deliverables
+- `LTG_TOOL_pixel_font_v001.py` → `output/tools/` CREATED ✓
+  - `draw_pixel_text(draw, x, y, text, color, scale=1)` — A–Z, 0–9, space
+  - `measure_pixel_text(text, scale=1) → (width, height)` — centering math
+  - 5×7 bitmap glyphs, no font file deps, pure PIL
+  - Self-test PASS → `output/production/LTG_TEST_pixel_font_v001.png`
+  - Registered in README.md (C40 New Tools section + Last Updated header) ✓
+- Kitchen v005 (`LTG_ENV_grandma_kitchen.png`): already complete from C39 — confirmed on disk ✓
+- Ideabox: `20260330_jordan_reed_pixel_font_label_centering_helper.md` — draw_centered_label() wrapper proposal
+- README.md updated ✓ | Inbox archived ✓ | Completion report sent to Alex Chen ✓
+
+## Cycle 40 Status: COMPLETE
+
+## Cycle 40 Notes
+- **numpy/OpenCV now authorized** (Alex broadcast): use for image math in new tools — cv2 default is BGR (convert on load), Pillow remains canonical for I/O and drawing.
+- **pixel_font_v001 design**: scale=1 → each bit = 1px point; scale>1 → filled rectangle blocks. `draw.point()` for scale=1 is marginally faster than rectangle. Returns `(end_x, end_y)` for call chaining. Glyph cell 5w × 7h + 1px kerning.
+
 ## Cycle 39 Deliverables
 - `LTG_TOOL_bg_grandma_kitchen.py` → `LTG_ENV_grandma_kitchen.png` (1280×720) GENERATED ✓
   - Dual-Miri visual plant: handwritten "MIRI" label on cream paper scrap on fridge lower door

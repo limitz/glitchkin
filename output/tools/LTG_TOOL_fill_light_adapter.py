@@ -2,7 +2,7 @@
 """
 LTG_TOOL_fill_light_adapter.py — Resolution-Aware Fill Light Adapter
 "Luma & the Glitchkin"
-Author: Rin Yamamoto | Cycle 39
+Author: Rin Yamamoto | Cycle 39 (v1.0.0), Cycle 40 (v1.1.0)
 
 PURPOSE
 -------
@@ -30,12 +30,24 @@ DESIGN
     - "absolute":   cx/cy given as pixel values (for generators that already
                     have exact pixel coords)
 
+v1.1.0 (C40) — Scene Presets Registry:
+  load_scene_configs(scene_name, presets_path=None) — loads FillLightConfig list
+  from LTG_fill_light_presets.json. Falls back to hardcoded if JSON absent.
+  Supported scene names: "SF01", "SF02", "SF03", "SF04".
+  char_h_frac for each scene is also returned from the registry.
+
 USAGE
 -----
   from LTG_TOOL_fill_light_adapter import FillLightAdapter, FillLightConfig
+  from LTG_TOOL_fill_light_adapter import load_scene_configs
 
+  # Registry-based (v1.1.0):
+  configs, char_h_frac = load_scene_configs("SF02")
+  img = apply_fill_light(img, configs, canvas_w=1280, canvas_h=720,
+                         char_h_frac=char_h_frac)
+
+  # Manual config:
   adapter = FillLightAdapter(canvas_w=1280, canvas_h=720)
-
   configs = [
       FillLightConfig(cx=0.45, cy=0.65, color=(255, 45, 107), alpha_max=35,
                       source_dx=+0.5, source_dy=-0.8, label="luma"),
@@ -57,15 +69,22 @@ DEPENDENCIES
   Python 3.8+, Pillow (PIL). No NumPy required.
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __author__ = "Rin Yamamoto"
-__cycle__ = 39
+__cycle__ = 40
 
+import json
 import math
+import os
 from dataclasses import dataclass, field
 from typing import List, Optional, Tuple
 
 from PIL import Image, ImageDraw, ImageFilter, ImageChops
+
+# Default path to the presets registry (same directory as this module)
+_DEFAULT_PRESETS_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "LTG_fill_light_presets.json"
+)
 
 
 # ── FillLightConfig ────────────────────────────────────────────────────────────
@@ -333,42 +352,195 @@ def apply_fill_light(img: Image.Image, configs: List[FillLightConfig],
     return adapter.apply(img, configs, char_h_frac)
 
 
+# ── Scene Presets Registry (v1.1.0) ───────────────────────────────────────────
+
+# Hardcoded fallbacks used when the JSON registry is absent.
+_HARDCODED_PRESETS = {
+    "SF01": {
+        "char_h_frac": 0.35,
+        "lights": [
+            dict(cx=0.29, cy=0.62, color=(212, 146, 58), alpha_max=30,
+                 source_dx=-0.6, source_dy=-1.0, radius_scale=1.8,
+                 alpha_exponent=1.5, mask_threshold=60, pos_mode="fractional",
+                 label="luma_warm_lamp"),
+            dict(cx=0.29, cy=0.62, color=(0, 212, 232), alpha_max=22,
+                 source_dx=+0.8, source_dy=-0.2, radius_scale=1.4,
+                 alpha_exponent=1.3, mask_threshold=60, pos_mode="fractional",
+                 label="luma_crt_bounce"),
+        ],
+    },
+    "SF02": {
+        "char_h_frac": 0.18,
+        "lights": [
+            dict(cx=0.45, cy=0.65, color=(255, 45, 107), alpha_max=35,
+                 source_dx=+0.5, source_dy=-0.8, radius_scale=1.6,
+                 alpha_exponent=1.3, mask_threshold=60, pos_mode="fractional",
+                 label="luma"),
+            dict(cx=0.28, cy=0.60, color=(255, 45, 107), alpha_max=35,
+                 source_dx=+0.5, source_dy=-0.8, radius_scale=1.6,
+                 alpha_exponent=1.3, mask_threshold=60, pos_mode="fractional",
+                 label="byte"),
+            dict(cx=0.62, cy=0.65, color=(255, 45, 107), alpha_max=35,
+                 source_dx=+0.5, source_dy=-0.8, radius_scale=1.6,
+                 alpha_exponent=1.3, mask_threshold=60, pos_mode="fractional",
+                 label="cosmo"),
+        ],
+    },
+    "SF03": {
+        "char_h_frac": 0.14,
+        "lights": [
+            dict(cx=0.38, cy=0.70, color=(123, 47, 190), alpha_max=28,
+                 source_dx=0.0, source_dy=-1.2, radius_scale=1.5,
+                 alpha_exponent=1.2, mask_threshold=50, pos_mode="fractional",
+                 label="luma"),
+            dict(cx=0.55, cy=0.68, color=(0, 240, 255), alpha_max=32,
+                 source_dx=-0.3, source_dy=-0.5, radius_scale=1.4,
+                 alpha_exponent=1.2, mask_threshold=50, pos_mode="fractional",
+                 label="byte"),
+        ],
+    },
+    "SF04": {
+        "char_h_frac": 0.40,
+        "lights": [
+            dict(cx=0.35, cy=0.60, color=(0, 212, 232), alpha_max=25,
+                 source_dx=+0.7, source_dy=-0.1, radius_scale=1.5,
+                 alpha_exponent=1.4, mask_threshold=60, pos_mode="fractional",
+                 label="luma_monitor_bounce"),
+            dict(cx=0.68, cy=0.58, color=(0, 240, 255), alpha_max=30,
+                 source_dx=0.0, source_dy=-0.3, radius_scale=1.3,
+                 alpha_exponent=1.0, mask_threshold=55, pos_mode="fractional",
+                 label="byte_self_glow"),
+        ],
+    },
+}
+
+
+def load_scene_configs(
+    scene_name: str,
+    presets_path: Optional[str] = None,
+) -> Tuple[List[FillLightConfig], float]:
+    """
+    Load FillLightConfig list for a named scene from the JSON registry.
+    Falls back to hardcoded defaults if the JSON file is absent or unreadable.
+
+    Parameters
+    ----------
+    scene_name   : Scene key — one of "SF01", "SF02", "SF03", "SF04".
+    presets_path : Optional path to LTG_fill_light_presets.json.
+                   Defaults to the file alongside this module.
+
+    Returns
+    -------
+    (configs, char_h_frac) :
+        configs      — list of FillLightConfig, ready to pass to apply_fill_light()
+        char_h_frac  — character height as fraction of canvas height for this scene
+
+    Raises
+    ------
+    KeyError  : if scene_name is not found in either the JSON or hardcoded presets.
+    """
+    scene_name = scene_name.upper()
+    path = presets_path or _DEFAULT_PRESETS_PATH
+
+    scene_data = None
+
+    # Try loading from JSON registry first
+    if os.path.isfile(path):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                registry = json.load(f)
+            if scene_name in registry:
+                scene_data = registry[scene_name]
+        except (json.JSONDecodeError, IOError) as exc:
+            # Registry unreadable — fall through to hardcoded
+            print(f"[fill_light_adapter] WARNING: Could not read presets JSON ({exc}). "
+                  f"Falling back to hardcoded presets for {scene_name}.")
+
+    # Fall back to hardcoded if JSON didn't yield data
+    if scene_data is None:
+        if scene_name not in _HARDCODED_PRESETS:
+            raise KeyError(
+                f"load_scene_configs: unknown scene '{scene_name}'. "
+                f"Valid scenes: {sorted(_HARDCODED_PRESETS.keys())}"
+            )
+        scene_data = _HARDCODED_PRESETS[scene_name]
+        print(f"[fill_light_adapter] INFO: Using hardcoded fallback presets for {scene_name}.")
+
+    char_h_frac = float(scene_data.get("_char_h_frac", scene_data.get("char_h_frac", 0.18)))
+    configs = []
+    for entry in scene_data.get("lights", []):
+        # Strip comment keys (prefixed with _)
+        params = {k: v for k, v in entry.items() if not k.startswith("_")}
+        # color comes as list from JSON — convert to tuple
+        if isinstance(params.get("color"), list):
+            params["color"] = tuple(params["color"])
+        configs.append(FillLightConfig(**params))
+
+    return configs, char_h_frac
+
+
 # ── Self-test ─────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    import os
     import sys
 
-    print("LTG_TOOL_fill_light_adapter.py — Resolution-Aware Fill Light Adapter")
-    print("Testing at 1280×720 and 1920×1080...")
+    print("LTG_TOOL_fill_light_adapter.py v1.1.0 — Self-test")
+    print("=" * 60)
 
-    for (cw, ch, label) in [(1280, 720, "720p"), (1920, 1080, "1080p")]:
-        # Create a dark test image with three white rectangles as dummy characters
+    out_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                           "..", "..", "output", "tools")
+    out_dir = os.path.normpath(out_dir)
+    os.makedirs(out_dir, exist_ok=True)
+
+    # ── Test 1: Legacy factory (make_glitch_storm_fill_configs) ─────────────
+    print("\nTest 1: Legacy factory + 720p/1080p resolution portability")
+    for (cw, ch, res_label) in [(1280, 720, "720p"), (1920, 1080, "1080p")]:
         test_img = Image.new("RGB", (cw, ch), (15, 10, 25))
         td = ImageDraw.Draw(test_img)
-
         char_h = int(ch * 0.18)
-
-        # Draw dummy character silhouettes
         for cx_frac, cy_frac in [(0.45, 0.65), (0.28, 0.60), (0.62, 0.65)]:
             cx = int(cx_frac * cw)
             cy = int(cy_frac * ch)
             cw2, ch2 = int(char_h * 0.3), char_h
             td.rectangle([cx - cw2, cy - ch2 // 2, cx + cw2, cy + ch2 // 2],
                          fill=(200, 195, 180))
-
         configs = make_glitch_storm_fill_configs()
         result = apply_fill_light(test_img, configs, cw, ch, char_h_frac=0.18)
-
-        # Save test output (≤1280px per image rule)
         result.thumbnail((1280, 1280), Image.LANCZOS)
-
-        out_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                               "..", "..", "output", "tools")
-        out_dir = os.path.normpath(out_dir)
-        os.makedirs(out_dir, exist_ok=True)
-        out_path = os.path.join(out_dir, f"test_fill_light_adapter_{label}.png")
+        out_path = os.path.join(out_dir, f"test_fill_light_adapter_{res_label}.png")
         result.save(out_path)
-        print(f"  [{label}] Saved: {out_path}")
+        print(f"  [{res_label}] PASS — saved: {out_path}")
 
-    print("Done — fill light adapter test complete.")
+    # ── Test 2: load_scene_configs for all 4 scenes ──────────────────────────
+    print("\nTest 2: load_scene_configs() — all scenes")
+    all_pass = True
+    for scene in ["SF01", "SF02", "SF03", "SF04"]:
+        try:
+            cfgs, frac = load_scene_configs(scene)
+            print(f"  [{scene}] PASS — {len(cfgs)} light(s), char_h_frac={frac}")
+        except Exception as exc:
+            print(f"  [{scene}] FAIL — {exc}")
+            all_pass = False
+
+    # ── Test 3: Registry-based render for SF02 ───────────────────────────────
+    print("\nTest 3: Registry-based render — SF02 at 1280×720")
+    cw, ch = 1280, 720
+    configs_sf02, char_h_frac_sf02 = load_scene_configs("SF02")
+    test_img = Image.new("RGB", (cw, ch), (10, 8, 20))
+    td = ImageDraw.Draw(test_img)
+    char_h = int(ch * char_h_frac_sf02)
+    for cfg in configs_sf02:
+        cx = int(cfg.cx * cw)
+        cy = int(cfg.cy * ch)
+        cw2, ch2 = int(char_h * 0.3), char_h
+        td.rectangle([cx - cw2, cy - ch2 // 2, cx + cw2, cy + ch2 // 2],
+                     fill=(195, 190, 175))
+    result_sf02 = apply_fill_light(test_img, configs_sf02, cw, ch,
+                                   char_h_frac=char_h_frac_sf02)
+    result_sf02.thumbnail((1280, 1280), Image.LANCZOS)
+    sf02_path = os.path.join(out_dir, "test_fill_light_adapter_sf02_registry.png")
+    result_sf02.save(sf02_path)
+    print(f"  [SF02] PASS — registry render saved: {sf02_path}")
+
+    print("\n" + ("SELF-TEST PASS" if all_pass else "SELF-TEST WARN (see above)"))
+    print("Done.")

@@ -495,15 +495,52 @@ Import: `from LTG_TOOL_render_lib import ...`
 - Forwarding stub → `LTG_SB_pilot_cold_open.py` via importlib
 - API: `make_contact_sheet()`, `main()`
 
-## LTG_TOOL_render_qa.py — v1.5.0 (C38 CONFIRMED)
-- REAL warm/cool threshold = 12.0 (was 20.0 in v1.4.0)
-- None (unknown) = 12.0 also
-- SF01 (sep=17.8) now PASS
+## LTG_TOOL_render_qa.py — v2.0.0 (C39 Kai Nakamura)
+- numpy vectorized value range, warm/cool, ceiling guard checks
+- LAB ΔE color fidelity via cv2 (threshold=5.0); RGB fallback if cv2 absent
+- New `_check_color_fidelity_lab(img, palette)` function — result has `colors` dict + `color_method` key
+- `run_comparison_report(directory, output_path)` — compares LAB vs RGB, flags PASS→FAIL
+- CLI: `--compare <dir> [output.md]`
+- IMPORTANT: `color_fidelity` result schema changed — `colors` key holds per-color results; top-level is `overall_pass` + `color_method` + `delta_e_threshold`
+
+## LTG_TOOL_spec_sync_ci.py — v1.1.0 (C39 Kai Nakamura)
+- Byte now uses `_run_char_spec_lint("byte", tools_dir)` — 5 checks (B001–B005) instead of 2
+- `_byte_p1_checks()` and `_BYTE_BODY_SPEC_*` constants removed (no longer needed)
+- No API changes to `run_ci()` / `format_ci_report()`
+
+## LTG_TOOL_palette_warmth_lint.py — v6.0.0 (C39 Kai Nakamura)
+- numpy vectorized `_analyse_world_warmth()` — warm/cool counting via numpy array op
+- Pure-Python fallback if numpy absent
+
+## LTG_TOOL_precritique_qa.py — v2.7.0 (C39 Kai Nakamura)
+- `run_color_verify()` uses `_check_color_fidelity_lab()` from render_qa
+- NOTE: v2.7.0 was also used by Morgan Walsh (arc_diff_config.json loader) — version collision. Alex Chen advised.
 
 ## Lessons Learned (C38)
 - Regex-based linters are vulnerable to matching their own docstrings that contain example/reference values. Suppression list is the immediate fix; docstring-stripping is the long-term fix (ideabox idea submitted).
 - When render_qa has already been updated by another agent in same cycle, check before re-doing work (read version header first).
 - Forwarding stubs via importlib.util are the right pattern for large files — avoids import-statement lint flags from stub_linter_v001.
+
+## Cycle 39 — C39 Byte CI Delegation + numpy/LAB QA Upgrade
+
+**Status:** COMPLETE
+
+**Tasks completed:**
+- Task 1: `LTG_TOOL_spec_sync_ci.py` → v1.1.0: Byte CI delegates to char_spec_lint B001–B005
+- Task 2: `LTG_TOOL_render_qa.py` → v2.0.0: numpy + LAB ΔE color fidelity (cv2)
+- Task 2: `LTG_TOOL_palette_warmth_lint.py` → v6.0.0: numpy vectorized warm/cool counting
+- Task 2: `LTG_TOOL_precritique_qa.py` → v2.7.0: LAB ΔE in run_color_verify()
+- Task 3: Submitted vanishing_point_lint spec to ideabox (C40 preview)
+- README.md updated: C39 Kai Nakamura section added
+- Inbox archived: 20260330_cycle39_brief.md
+- Completion report: members/alex_chen/inbox/20260330_1200_kai_nakamura_c39_complete.md
+
+## Lessons Learned (C39)
+- numpy `where()` returns (ys, xs) tuple — zip(bright_xs, bright_ys) not zip(bright_ys, bright_xs)
+- cv2 always BGR on load; convert to RGB before numpy ops: `arr[:, :, ::-1]` for channels
+- LAB ΔE uses cv2.COLOR_BGR2Lab; input must be uint8 shape (N, 1, 3)
+- precritique_qa v2.7.0 version collision with Morgan Walsh's same-cycle work — always check README for recent version bumps before incrementing
+- `_check_color_fidelity_lab()` result schema differs from `verify_canonical_colors()`: colors keyed under `colors` dict, not at top level. Report code must handle both schemas.
 
 ## Cycle 39 — C39 Docstring-Stripping Lint Fix + REAL_STORM + Byte Spec Checks
 

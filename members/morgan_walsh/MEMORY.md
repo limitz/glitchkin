@@ -9,6 +9,22 @@ C34 (first active cycle).
 ## Operating Rule
 Build tools, not prompts. Use existing LTG_TOOL_* where possible. Extend before creating new. Report PASS/FAIL counts — not prose.
 
+## New (C39): numpy, OpenCV (cv2), PyTorch now authorized
+- numpy for image array ops (much faster than PIL getpixel loops in batch analysis)
+- OpenCV (cv2): color space conversion (LAB, HSV), edge detection, SSIM structural similarity
+- OpenCV default is BGR — convert to RGB on load. Use Pillow for drawing; numpy/cv2 for analysis.
+
+## C39 Work Done
+- CI suite post-C38-fixes re-run: OVERALL WARN (exit code 0) — **0 FAIL confirmed**.
+  - C38 blocker (spec_sync_ci G002 P1 FAIL) now PASS — Kai's fixes verified.
+  - Stub linter: PASS (105 files). Draw order: WARN (26 advisory only). Glitch spec: WARN (12, all pre-existing FP). Spec Sync CI: PASS (0 P1 FAIL). Char Spec: PASS.
+  - Report: output/production/ci_suite_c39_report.md
+- Created `output/tools/arc_diff_config.json` — external JSON config for arc-diff pairs in precritique_qa Section 10. Format: pairs array of [label, old_rel_path, new_rel_path, diff_out_rel_path], paths relative to repo root.
+- Upgraded `LTG_TOOL_precritique_qa.py` → **v2.7.0**: `_load_arc_diff_pairs()` loads ARC_DIFF_PAIRS from arc_diff_config.json at startup; falls back to hardcoded `_ARC_DIFF_PAIRS_DEFAULT` if JSON absent or invalid — fully backwards-compatible.
+- Updated README.md: v2.7.0 changelog, arc_diff_config.json entry, last-updated header.
+- Ideabox: CI suite `--known-issues` flag idea submitted.
+- Archived 2 inbox messages.
+
 ## C38 Work Done
 - Upgraded `LTG_TOOL_precritique_qa.py` → v2.3.0: CYCLE_LABEL→C38; report output precritique_qa_c38.md
 - C38 QA baseline: WARN (PASS=343, WARN=38, FAIL=0). Delta vs C37: +10 PASS, +12 WARN, +0 FAIL

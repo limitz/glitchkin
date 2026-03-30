@@ -1,33 +1,52 @@
 {
   "cycle": "C39",
-  "run_ts": "2026-03-29 23:05",
+  "run_ts": "2026-03-30 01:23",
   "sections": {
     "render_qa": {
       "section": "Render QA",
       "overall": "WARN",
-      "pass": 2,
-      "warn": 4,
+      "pass": 0,
+      "warn": 6,
       "fail": 0,
       "missing": [],
       "flagged": [
-        "  - LTG_COLOR_styleframe_otherside_v005.png / color_fidelity: WARN",
-        "  - LTG_COLOR_styleframe_luma_byte_v004.png / color_fidelity: WARN",
-        "  - LTG_COLOR_styleframe_luma_byte_v004.png / warm_cool: WARN \u2014 Flat palette \u2014 warm/cool separation is 1.1 PIL units (minimum 12.0 required)",
-        "  - LTG_BRAND_logo_v001.png / warm_cool: WARN \u2014 Flat palette \u2014 warm/cool separation is 0.0 PIL units (minimum 12.0 required)",
+        "  - LTG_COLOR_styleframe_discovery.png / color_fidelity: WARN",
+        "  - LTG_COLOR_styleframe_discovery.png / warm_cool: WARN \u2014 Flat palette \u2014 warm/cool separation is 7.4 PIL units (minimum 12.0 required)",
+        "  - LTG_COLOR_styleframe_glitch_storm.png / color_fidelity: WARN",
+        "  - LTG_COLOR_styleframe_otherside.png / color_fidelity: WARN",
+        "  - LTG_COLOR_styleframe_luma_byte.png / color_fidelity: WARN",
+        "  - LTG_BRAND_logo.png / color_fidelity: WARN",
+        "  - LTG_BRAND_logo.png / warm_cool: WARN \u2014 Flat palette \u2014 warm/cool separation is 9.1 PIL units (minimum 12.0 required)",
+        "  - storyboard_pitch_export.png / color_fidelity: WARN",
         "  - storyboard_pitch_export.png / warm_cool: WARN \u2014 Flat palette \u2014 warm/cool separation is 4.6 PIL units (minimum 12.0 required)"
       ]
     },
     "color_verify": {
       "section": "Color Verify",
       "overall": "WARN",
-      "pass": 2,
-      "warn": 2,
+      "pass": 0,
+      "warn": 4,
       "fail": 0,
       "missing": [],
       "flagged": [
-        "  - LTG_COLOR_styleframe_otherside_v005.png / UV_PURPLE: hue drift 9.2\u00b0 (target=272, found=263)",
-        "  - LTG_COLOR_styleframe_otherside_v005.png / SUNLIT_AMBER: hue drift 9.3\u00b0 (target=34, found=25)",
-        "  - LTG_COLOR_styleframe_luma_byte_v004.png / SUNLIT_AMBER: hue drift 15.7\u00b0 (target=34, found=19)"
+        "  - LTG_COLOR_styleframe_discovery.png / BYTE_TEAL: LAB \u0394E=22.83 (threshold=5.0)",
+        "  - LTG_COLOR_styleframe_discovery.png / UV_PURPLE: LAB \u0394E=36.19 (threshold=5.0)",
+        "  - LTG_COLOR_styleframe_discovery.png / HOT_MAGENTA: LAB \u0394E=17.89 (threshold=5.0)",
+        "  - LTG_COLOR_styleframe_discovery.png / SUNLIT_AMBER: LAB \u0394E=16.76 (threshold=5.0)",
+        "  - LTG_COLOR_styleframe_glitch_storm.png / CORRUPT_AMBER: LAB \u0394E=10.10 (threshold=5.0)",
+        "  - LTG_COLOR_styleframe_glitch_storm.png / BYTE_TEAL: LAB \u0394E=21.79 (threshold=5.0)",
+        "  - LTG_COLOR_styleframe_glitch_storm.png / UV_PURPLE: LAB \u0394E=29.02 (threshold=5.0)",
+        "  - LTG_COLOR_styleframe_glitch_storm.png / HOT_MAGENTA: LAB \u0394E=11.18 (threshold=5.0)",
+        "  - LTG_COLOR_styleframe_glitch_storm.png / ELECTRIC_CYAN: LAB \u0394E=11.75 (threshold=5.0)",
+        "  - LTG_COLOR_styleframe_glitch_storm.png / SUNLIT_AMBER: LAB \u0394E=47.04 (threshold=5.0)",
+        "  - LTG_COLOR_styleframe_otherside.png / CORRUPT_AMBER: LAB \u0394E=19.44 (threshold=5.0)",
+        "  - LTG_COLOR_styleframe_otherside.png / BYTE_TEAL: LAB \u0394E=22.83 (threshold=5.0)",
+        "  - LTG_COLOR_styleframe_otherside.png / UV_PURPLE: LAB \u0394E=27.78 (threshold=5.0)",
+        "  - LTG_COLOR_styleframe_otherside.png / ELECTRIC_CYAN: LAB \u0394E=7.68 (threshold=5.0)",
+        "  - LTG_COLOR_styleframe_otherside.png / SUNLIT_AMBER: LAB \u0394E=44.94 (threshold=5.0)",
+        "  - LTG_COLOR_styleframe_luma_byte.png / BYTE_TEAL: LAB \u0394E=19.72 (threshold=5.0)",
+        "  - LTG_COLOR_styleframe_luma_byte.png / ELECTRIC_CYAN: LAB \u0394E=22.83 (threshold=5.0)",
+        "  - LTG_COLOR_styleframe_luma_byte.png / SUNLIT_AMBER: LAB \u0394E=39.46 (threshold=5.0)"
       ]
     },
     "proportion": {
@@ -38,16 +57,16 @@
       "fail": 0,
       "missing": [],
       "flagged": [
-        "  - LTG_CHAR_luma_turnaround_v004.png: head gap not found (no-gap) \u2014 multi-panel turnaround may require manual proportion check \u2014 WARN",
-        "  - LTG_CHAR_cosmo_turnaround_v002.png: head gap not found (no-gap) \u2014 multi-panel turnaround may require manual proportion check \u2014 WARN",
-        "  - LTG_CHAR_miri_turnaround_v001.png: head gap not found (no-gap) \u2014 multi-panel turnaround may require manual proportion check \u2014 WARN",
-        "  - LTG_CHAR_glitch_turnaround_v002.png: SKIP proportion check (Glitch non-humanoid)"
+        "  - LTG_CHAR_luma_turnaround.png: head gap not found (no-gap) \u2014 multi-panel turnaround may require manual proportion check \u2014 WARN",
+        "  - LTG_CHAR_cosmo_turnaround.png: head gap not found (no-gap) \u2014 multi-panel turnaround may require manual proportion check \u2014 WARN",
+        "  - LTG_CHAR_miri_turnaround.png: head gap not found (no-gap) \u2014 multi-panel turnaround may require manual proportion check \u2014 WARN",
+        "  - LTG_CHAR_glitch_turnaround.png: SKIP proportion check (Glitch non-humanoid)"
       ]
     },
     "stub_linter": {
       "section": "Stub Linter",
       "overall": "PASS",
-      "pass": 189,
+      "pass": 109,
       "warn": 0,
       "fail": 0,
       "missing": [],
@@ -56,7 +75,7 @@
     "palette_warmth": {
       "section": "Palette Warmth Lint",
       "overall": "PASS",
-      "pass": 14,
+      "pass": 17,
       "warn": 0,
       "fail": 0,
       "missing": [],
@@ -65,62 +84,52 @@
     "glitch_spec": {
       "section": "Glitch Spec Lint",
       "overall": "WARN",
-      "pass": 8,
-      "warn": 24,
+      "pass": 2,
+      "warn": 12,
       "fail": 0,
       "missing": [],
       "flagged": [
-        "  - LTG_CHAR_byte_motion_v002.py: G003: Multi-Glitchkin frame has only 1 unique expression(s) \u2014 at least 2 required. Found: ['NEUTRAL']",
-        "  - LTG_CHAR_byte_motion_v002.py: G005: UV_PURPLE shadow offset (+3,+4) not detected. Spec \u00a72.2 requires UV_PURPLE shadow polygon before body fill.",
-        "  - LTG_CHAR_byte_motion_v002.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
-        "  - LTG_TOOL_bg_glitch_storm_colorfix_v001.py: G005: UV_PURPLE shadow offset (+3,+4) not detected. Spec \u00a72.2 requires UV_PURPLE shadow polygon before body fill.",
-        "  - LTG_TOOL_bg_glitch_storm_colorfix_v001.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
-        "  - LTG_TOOL_bg_other_side_v002.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
-        "  - LTG_TOOL_byte_motion_v001.py: G003: Multi-Glitchkin frame has only 1 unique expression(s) \u2014 at least 2 required. Found: ['NEUTRAL']",
-        "  - LTG_TOOL_byte_motion_v001.py: G005: UV_PURPLE shadow offset (+3,+4) not detected. Spec \u00a72.2 requires UV_PURPLE shadow polygon before body fill.",
-        "  - LTG_TOOL_byte_motion_v001.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
-        "  - LTG_TOOL_byte_motion_v003.py: G003: Multi-Glitchkin frame has only 0 unique expression(s) \u2014 at least 2 required. Found: none",
-        "  - LTG_TOOL_byte_motion_v003.py: G005: UV_PURPLE shadow offset (+3,+4) not detected. Spec \u00a72.2 requires UV_PURPLE shadow polygon before body fill.",
-        "  - LTG_TOOL_byte_motion_v003.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
-        "  - LTG_TOOL_character_face_test_v001.py: G003: Multi-Glitchkin frame has only 1 unique expression(s) \u2014 at least 2 required. Found: ['NEUTRAL']",
-        "  - LTG_TOOL_character_face_test_v001.py: G005: UV_PURPLE shadow offset (+3,+4) not detected. Spec \u00a72.2 requires UV_PURPLE shadow polygon before body fill.",
-        "  - LTG_TOOL_character_face_test_v001.py: G006: Possible organic/warm fill detected \u2014 fill=(120, 120, 140). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
-        "  - LTG_TOOL_character_face_test_v001.py: G006: Possible organic/warm fill detected \u2014 fill=(120, 120, 140). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
-        "  - LTG_TOOL_character_face_test_v001.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
-        "  - LTG_TOOL_color_verify_v001.py: G005: UV_PURPLE shadow offset (+3,+4) not detected. Spec \u00a72.2 requires UV_PURPLE shadow polygon before body fill.",
-        "  - LTG_TOOL_color_verify_v002.py: G005: UV_PURPLE shadow offset (+3,+4) not detected. Spec \u00a72.2 requires UV_PURPLE shadow polygon before body fill.",
+        "  - LTG_CHAR_byte_motion.py: G003: Multi-Glitchkin frame has only 1 unique expression(s) \u2014 at least 2 required. Found: ['NEUTRAL']",
+        "  - LTG_CHAR_byte_motion.py: G005: UV_PURPLE shadow offset (+3,+4) not detected. Spec \u00a72.2 requires UV_PURPLE shadow polygon before body fill.",
+        "  - LTG_CHAR_byte_motion.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
+        "  - LTG_TOOL_bg_glitch_storm_colorfix.py: G005: UV_PURPLE shadow offset (+3,+4) not detected. Spec \u00a72.2 requires UV_PURPLE shadow polygon before body fill.",
+        "  - LTG_TOOL_bg_glitch_storm_colorfix.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
+        "  - LTG_TOOL_bg_other_side.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
+        "  - LTG_TOOL_byte_motion.py: G003: Multi-Glitchkin frame has only 0 unique expression(s) \u2014 at least 2 required. Found: none",
+        "  - LTG_TOOL_byte_motion.py: G005: UV_PURPLE shadow offset (+3,+4) not detected. Spec \u00a72.2 requires UV_PURPLE shadow polygon before body fill.",
+        "  - LTG_TOOL_byte_motion.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
+        "  - LTG_TOOL_character_face_test.py: G003: Multi-Glitchkin frame has only 1 unique expression(s) \u2014 at least 2 required. Found: ['NEUTRAL']",
+        "  - LTG_TOOL_character_face_test.py: G005: UV_PURPLE shadow offset (+3,+4) not detected. Spec \u00a72.2 requires UV_PURPLE shadow polygon before body fill.",
+        "  - LTG_TOOL_character_face_test.py: G006: Possible organic/warm fill detected \u2014 fill=(120, 120, 140). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
+        "  - LTG_TOOL_character_face_test.py: G006: Possible organic/warm fill detected \u2014 fill=(120, 120, 140). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
+        "  - LTG_TOOL_character_face_test.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
+        "  - LTG_TOOL_character_lineup.py: G006: Possible organic/warm fill detected \u2014 fill=(184, 154, 120). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
+        "  - LTG_TOOL_character_lineup.py: G006: Possible organic/warm fill detected \u2014 fill=(184, 154, 120). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
+        "  - LTG_TOOL_character_lineup.py: G006: Possible organic/warm fill detected \u2014 fill=(168, 152, 140). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
+        "  - LTG_TOOL_character_lineup.py: G006: Possible organic/warm fill detected \u2014 fill=(212, 149, 107). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
+        "  - LTG_TOOL_character_lineup.py: G006: Possible organic/warm fill detected \u2014 fill=(212, 149, 107). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
+        "  - LTG_TOOL_character_lineup.py: G006: Possible organic/warm fill detected \u2014 fill=(138, 122, 112). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
+        "  - LTG_TOOL_character_lineup.py: G006: Possible organic/warm fill detected \u2014 fill=(138, 122, 112). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
+        "  - LTG_TOOL_character_lineup.py: G006: Possible organic/warm fill detected \u2014 fill=(212, 130, 90). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
+        "  - LTG_TOOL_color_verify.py: G005: UV_PURPLE shadow offset (+3,+4) not detected. Spec \u00a72.2 requires UV_PURPLE shadow polygon before body fill.",
+        "  - LTG_TOOL_color_verify.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
         "  - LTG_TOOL_fidelity_check_c24.py: G005: UV_PURPLE shadow offset (+3,+4) not detected. Spec \u00a72.2 requires UV_PURPLE shadow polygon before body fill.",
         "  - LTG_TOOL_fidelity_check_c24.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
-        "  - LTG_TOOL_glitch_color_model_v001.py: G006: Possible organic/warm fill detected \u2014 fill=(200, 160, 80). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
-        "  - LTG_TOOL_glitch_turnaround_v001.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
-        "  - LTG_TOOL_glitch_turnaround_v002.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
-        "  - LTG_TOOL_style_frame_02_glitch_storm_v001.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
-        "  - LTG_TOOL_style_frame_02_glitch_storm_v002.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
-        "  - LTG_TOOL_style_frame_02_glitch_storm_v003.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
-        "  - LTG_TOOL_style_frame_02_glitch_storm_v004.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
-        "  - LTG_TOOL_style_frame_02_glitch_storm_v006.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
-        "  - LTG_TOOL_style_frame_02_glitch_storm_v007.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
-        "  - LTG_TOOL_style_frame_02_glitch_storm_v008.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
-        "  - LTG_TOOL_style_frame_03_other_side_v001.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
-        "  - LTG_TOOL_style_frame_03_other_side_v002.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
-        "  - LTG_TOOL_style_frame_03_other_side_v003.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
-        "  - LTG_TOOL_style_frame_03_other_side_v004.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
-        "  - LTG_TOOL_style_frame_03_other_side_v005.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3)."
+        "  - LTG_TOOL_glitch_color_model.py: G006: Possible organic/warm fill detected \u2014 fill=(200, 160, 80). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
+        "  - LTG_TOOL_glitch_turnaround.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
+        "  - LTG_TOOL_style_frame_02_glitch_storm.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
+        "  - LTG_TOOL_style_frame_03_other_side.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3)."
       ]
     },
     "readme_sync": {
       "section": "README Sync",
       "overall": "WARN",
-      "pass": 176,
-      "warn": 5,
+      "pass": 103,
+      "warn": 1,
       "fail": 0,
       "missing": [],
       "flagged": [
-        "  - UNLISTED: `LTG_TOOL_bg_school_hallway_v003.py` (on disk, not in README Script Index)",
-        "  - UNLISTED: `LTG_TOOL_costume_bg_clash_v001.py` (on disk, not in README Script Index)",
-        "  - UNLISTED: `LTG_TOOL_env_grandma_living_room_v002.py` (on disk, not in README Script Index)",
-        "  - UNLISTED: `LTG_TOOL_sb_pilot_cold_open_v003.py` (on disk, not in README Script Index)",
-        "  - UNLISTED: `LTG_TOOL_sight_line_diagnostic_v001.py` (on disk, not in README Script Index)"
+        "  - UNLISTED: `LTG_TOOL_sheet_geometry_calibrate.py` (on disk, not in README Script Index)"
       ]
     },
     "motion_spec": {
@@ -131,18 +140,18 @@
       "fail": 0,
       "missing": [],
       "flagged": [
-        "  - LTG_CHAR_luma_motion_v002.png: WARN: annotation_occupancy: P1: 4.2% occupancy  |  P2: 0.8% occupancy \u2014 WARN low  |  P3: 3.0% occupancy \u2014 WARN low",
-        "  - LTG_CHAR_luma_motion_v002.png: WARN: beat_badges: beat badge occupancy  P1: 13.3% \u2014 WARN no badge  |  P2: 0.0% \u2014 WARN no badge  |  P3: 40.6%",
-        "  - LTG_CHAR_luma_motion_v002.png: WARN: timing_colors: BEAT_COLOR cyan in 0/3 panels (0%)",
-        "  - LTG_CHAR_byte_motion_v003.png: WARN: annotation_occupancy: P1: 0.0% occupancy \u2014 WARN low  |  P2: 0.0% occupancy \u2014 WARN low  |  P3: 0.0% occupancy \u2014 WARN low  |  P4: 4.5% occupancy",
-        "  - LTG_CHAR_byte_motion_v003.png: WARN: beat_badges: beat badge occupancy  P1: 0.0% \u2014 WARN no badge  |  P2: 0.0% \u2014 WARN no badge  |  P3: 0.0% \u2014 WARN no badge  |  P4: 0.0% \u2014 WARN no badge",
-        "  - LTG_CHAR_byte_motion_v003.png: WARN: timing_colors: BEAT_COLOR cyan in 0/4 panels (0%)"
+        "  - LTG_CHAR_luma_motion.png: WARN: annotation_occupancy: P1: 4.4% occupancy  |  P2: 0.8% occupancy \u2014 WARN low  |  P3: 3.1% occupancy \u2014 WARN low",
+        "  - LTG_CHAR_luma_motion.png: WARN: beat_badges: beat badge occupancy  P1: 13.5% \u2014 WARN no badge  |  P2: 0.3% \u2014 WARN no badge  |  P3: 40.6%",
+        "  - LTG_CHAR_luma_motion.png: WARN: timing_colors: BEAT_COLOR cyan in 0/3 panels (0%)",
+        "  - LTG_CHAR_byte_motion.png: WARN: annotation_occupancy: P1: 0.0% occupancy \u2014 WARN low  |  P2: 0.0% occupancy \u2014 WARN low  |  P3: 0.0% occupancy \u2014 WARN low  |  P4: 4.8% occupancy",
+        "  - LTG_CHAR_byte_motion.png: WARN: beat_badges: beat badge occupancy  P1: 0.0% \u2014 WARN no badge  |  P2: 0.0% \u2014 WARN no badge  |  P3: 0.0% \u2014 WARN no badge  |  P4: 0.0% \u2014 WARN no badge",
+        "  - LTG_CHAR_byte_motion.png: WARN: timing_colors: BEAT_COLOR cyan in 0/4 panels (0%)"
       ]
     }
   },
   "totals": {
-    "pass": 398,
-    "warn": 44,
+    "pass": 238,
+    "warn": 32,
     "fail": 0
   }
 }

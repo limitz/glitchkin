@@ -1,7 +1,8 @@
 {
   "_description": "LTG Warmth Guarantees — canonical list of character palette prefixes whose entries must remain unambiguously warm (R >= G and R >= B, within soft_tolerance). Used by LTG_TOOL_palette_warmth_lint_v004.py and the CI warmth gate. Supersedes warmth_lint_config.json warm_prefixes for production use.",
   "_note_char_l": "Only CHAR-L hoodie entries appear in the palette table format (CHAR-L-04, CHAR-L-08, CHAR-L-11). Other CHAR-L entries (skin, jeans, shoes) are in prose format only and are intentionally excluded from machine warmth checking — jeans are blue (B>R), shoes are near-white. The warmth lint tool's table-row regex ensures only table-format entries are checked.",
-  "warm_prefixes": ["CHAR-M", "CHAR-L"],
+  "_note_char_c": "Only CHAR-C skin tone entries appear in the palette table format (CHAR-C-01, CHAR-C-02, CHAR-C-03). Cosmo's cardigan (dusty lavender, RW-08, B>R) and shirt stripes (cerulean, B>R) are intentionally cool and are NOT warm-guaranteed. Only skin base, skin shadow, and skin highlight are warm-guaranteed. The warmth lint table-row regex ensures only table-format entries are checked.",
+  "warm_prefixes": ["CHAR-M", "CHAR-L", "CHAR-C"],
   "soft_tolerance": {
     "G": 0,
     "B": 0

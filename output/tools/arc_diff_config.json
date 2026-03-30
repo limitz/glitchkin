@@ -1,0 +1,18 @@
+{
+  "_comment": "Arc-diff contact sheet pairs for precritique_qa Section 10.",
+  "_format": "Each entry: [label, old_sheet_path, new_sheet_path, diff_output_path]. Paths relative to repo root (output/tools/../..).",
+  "pairs": [
+    [
+      "Act 2 contact sheet v005\u2192v006",
+      "output/storyboards/act2/LTG_SB_act2_contact_sheet.png",
+      "output/storyboards/act2/LTG_SB_act2_contact_sheet.png",
+      "output/production/arc_diff_act2_c39.png"
+    ],
+    [
+      "Act 1 cold open contact sheet v001\u2192v002",
+      "output/storyboards/LTG_SB_act1_coldopen_contact_sheet.png",
+      "output/storyboards/LTG_SB_act1_coldopen_contact_sheet.png",
+      "output/production/arc_diff_act1_c39.png"
+    ]
+  ]
+}

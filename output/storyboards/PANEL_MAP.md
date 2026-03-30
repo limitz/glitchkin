@@ -1,0 +1,78 @@
+# PANEL MAP — Pilot Cold Open: "The Night Everything Went Wrong"
+**Storyboard Artist:** Diego Vargas
+**Art Director:** Alex Chen
+**Last Updated:** 2026-03-30 (Cycle 39)
+
+Panels P01–P25 covering the full pilot cold open arc.
+Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the contact sheet tool.
+
+---
+
+## Status Key
+- **EXISTS** — standalone panel PNG rendered on disk (`output/storyboards/panels/`)
+- **ON CONTACT SHEET** — included in a contact sheet but no standalone PNG
+- **PLANNED** — described in `ep01_cold_open.md`, not yet rendered as standalone
+- **TBD** — panel exists in pacing/timing notes only; beat description pending full spec
+
+---
+
+| Panel | Beat Description | Status | Contact Sheet Version |
+|-------|-----------------|--------|-----------------------|
+| P01 | EXTERIOR NIGHT — Residential neighborhood, Luma's house with single warm upstairs window. Grounds audience before we enter. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
+| P02 | WIDE ESTABLISHING — Luma enters Grandma's tech den. Character intro via sleeping position, snacks, notebook. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
+| P03 | CU MONITOR — Hero CRT prop, static. One cyan pixel appears in lower-right corner. First Glitch Palette in episode. | PLANNED | — |
+| P04 | WIDE INTERIOR — Full tech den revealed. Glitch bleeds into warm room. MCU push-in, cyan intrusion has directional source point. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
+| P05 | MCU MONITOR — Camera inside shelf looking out. Pixel cluster growing (8–12 cyan pixels). Luma's blurred warm form in BG. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
+| P06 | CU MONITOR SCREEN — Byte's face pressed against glass from inside. Disgust/curious expression. First appearance of Byte. | PLANNED | — |
+| P07 | MED WIDE — Monitor bulging, Dutch tilt 8° CW. Low angle. Byte phases through screen. Warm room invaded by cyan. | PLANNED | — |
+| P08 | MED — Byte full character reveal, standing in real world. Pixel confetti drifting. "The flesh dimension." | PLANNED | — |
+| P09 | MED WIDE — Byte floating (18" off floor), spots Luma on couch. Cracked eye scans her. Cautious approach begins. | PLANNED | — |
+| P10 | OTS — Byte's POV looking at Luma's sleeping face. Byte in FG silhouette (cool), Luma in BG (warm). Cyan glow on her cheek. | PLANNED | — |
+| P11 | ECU — Luma's closed eyes. Cyan glow on face. Long hold on nothing happening. Then brow twitches. Eyes SNAP open. | PLANNED | — |
+| P12 | CU TWO-SHOT — Luma and Byte nose-to-nose. Equal presence, center-weighted. Breathing negative space between them. CRT visible camera-right BG. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
+| P13 | MIRROR COMPOSITION — Commitment/threshold beat. Byte camera-right, Luma camera-left. Open/organic eyes face center; cracked/doubting eyes face outward. Directional ELEC_CYAN glow. ARC_COMMIT border. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
+| P14 | MED — Byte ricochets off bookshelf. Fixed camera (5ft, Dutch 12° CW). Multi-exposure pixel trail shows full trajectory arc. Books and rubber duck airborne. | PLANNED | — |
+| P15 | MED — Luma hits floor. Floor-level camera. Glitch briefly forces hair into perfect circle (8 frames max). Then natural chaos reasserts. | PLANNED | — |
+| P16 | ECU — Luma's face pressed to floor. One eye open, tracking. "...okay. ...WHAT." | PLANNED | — |
+| P17 | MED — Luma sitting up cross-legged. Byte hovering across room, pixel trails fading. Beat of stillness. Chip falls between them. | PLANNED | — |
+| P18 | MED — Luma assessing. Curiosity replacing fear. Shows Byte her notebook margin doodles (suspiciously Glitchkin-like). | PLANNED | — |
+| P19 | CU — Byte's face reaction. Offended + reluctant acknowledgment. "The preferred term is 'Glitchkin.'" | PLANNED | — |
+| P20 | MED WIDE — Two-shot, Luma left / Byte right. First quiet beat. Names exchanged. New normal forming. | PLANNED | — |
+| P21 | WIDE HIGH ANGLE — Re-escalation. All monitors blazing, Glitchkin pressing against screens. Byte "not the only one." | PLANNED | — |
+| P22 | ECU MONITOR — Multiple Glitchkin pressing against glass. Hand touches from inside; screen ripples. Multiple screens beginning to breach. | PLANNED | — |
+| P22a | MCU INSERT — Byte accidentally lands on Luma's shoulder mid-chaos. Not chosen — practical accident. Pixel confetti contacts hoodie (first time his digital nature marks her). | PLANNED | — |
+| P23 | MED — Luma and Byte from behind, both facing monitor wall. Show's promise shot: these two facing impossible chaos together. | PLANNED | — |
+| P24 | WIDE/MED — CHAOS APEX. Glitchkin pouring through breached screens. Luma + Byte at still center. The hook frame. | PLANNED | — |
+| P25 | TITLE CARD — Pixel-by-pixel assembly of "LUMA & THE GLITCHKIN" in Electric Cyan → Hot Magenta. Glitch-flash frame. | PLANNED | — |
+
+---
+
+## Contact Sheet Coverage
+
+| File | Panels Covered | Version / Cycle |
+|------|----------------|-----------------|
+| `LTG_SB_pilot_cold_open.png` | P01, P02, P04, P05, P12, P13 (3×2 grid) | v003, C39 |
+| `LTG_SB_act1_coldopen_contact_sheet.png` | Act 1 cold open panels (Lee Tanaka boards) | varies |
+| `LTG_SB_act1_full_contact_sheet.png` | Full Act 1 panels | varies |
+
+---
+
+## Notes
+
+- **Canonical cold open setting:** Night / Grandma's den (confirmed by Alex Chen, C39)
+- **P01 tone:** Exterior establisher — quiet residential, NOT a full location shot. Tight read.
+- **P12 staging spec:** Equal presence ~30% width each, ~40% gap. Byte at Luma's exact head_cy (eye-level descent).
+- **P13 thematic note:** This is the THRESHOLD MOMENT — still arriving. Not UNGUARDED WARMTH (post-decision). Quiet, subdued. ARC_COMMIT = (60, 200, 140).
+- **P06 expression:** Must read as DISGUSTED/CURIOUS, NOT menacing. See ep01_cold_open.md art director notes.
+- **P22a:** New insert panel (Cycle 2 revision). Byte shoulder-perch must read as ACCIDENTAL, not chosen.
+- **P15 hair:** Glitch-forced symmetry 8 frames maximum. Coordinate with Maya Santos on circle geometry.
+- **Runtime:** ~68–74 seconds total cold open (per ep01_cold_open.md pacing rhythm section).
+
+---
+
+## Next Priorities (Standalone Panels Needed)
+1. **P03** — First pixel / CRT hero prop (pitch-critical: first Glitch Palette moment)
+2. **P06** — Byte's face reveal (expression spec very detailed in ep01_cold_open.md — pitch-critical)
+3. **P08** — Byte full character reveal in real world ("The flesh dimension")
+4. **P24** — Chaos apex / hook frame (pitch-critical: strongest hook for commissioning)
+5. **P23** — Promise shot: backs to camera (show's thematic thesis in one image)

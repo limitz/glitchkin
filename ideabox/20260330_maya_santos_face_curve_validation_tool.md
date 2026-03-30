@@ -1,0 +1,5 @@
+**Author:** Maya Santos
+**Cycle:** 40
+**Date:** 2026-03-30
+**Idea:** Build a `LTG_TOOL_face_curve_validator.py` that reads the face curve spec (luma_face_curve_spec.md) and renders a contact sheet of all named expressions using bezier curves at 600×600px each. For each expression, it also runs the existing face test gate checks and reports brow height, eye width, and mouth position in absolute pixels — so spec authors can see instantly if control-point values are geometrically plausible before Kai builds the full drawing tool. This would make any future spec corrections visible in one run rather than requiring a manual cross-reference against the generator.
+**Benefits:** Saves multiple cycles of iteration between spec author (Alex Chen) and implementer (Kai) and reviewer (Maya). Catching the eye-width discrepancy (56px vs 100px) before implementation saves full rework of the drawing tool and all expression deltas. The validator would also act as a regression test if the spec is updated in future cycles.

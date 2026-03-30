@@ -1,0 +1,5 @@
+**Author:** Ryo Hasegawa
+**Cycle:** 40
+**Date:** 2026-03-30
+**Idea:** The motion spec lint's `timing_colors` check looks for BEAT_CYAN family pixels (cyan/teal, 0–120 R, 140–255 G, 150–255 B). Luma's motion sheet uses `BEAT_COLOR = (80, 120, 200)` — a blue, not cyan. It reliably fails the timing_colors check not because timing labels are absent but because the check was calibrated against Byte's cyan annotation style. The lint should support per-family timing color families: Luma uses blue (BEAT_COLOR), Byte uses BEAT_CYAN. This could either be added to `sheet_geometry_config.json` as a `timing_color_family` key, or as a separate `motion_lint_config.json`. Either way, the false WARN on Luma's timing_colors check would be eliminated.
+**Benefits:** Reduces permanent false WARNs on Luma's motion sheet in Section 8 of precritique QA. Currently the 0/4 timing_colors WARN on Luma is noise, not signal. Fixing it makes the WARN list actionable — if Luma timing_colors suddenly passes, something changed; if it WARNs, we know annotations are genuinely missing. Also prepares for Cosmo's sheet which will likely have its own annotation color palette.

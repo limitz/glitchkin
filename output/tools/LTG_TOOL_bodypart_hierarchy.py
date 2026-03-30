@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 LTG_TOOL_bodypart_hierarchy.py
-Body-Part Color-Index Hierarchy Tool — v001
-"Luma & the Glitchkin" — Cycle 39 / Maya Santos
+Body-Part Color-Index Hierarchy Tool — v002
+"Luma & the Glitchkin" — Cycle 39–40 / Maya Santos
 
 PURPOSE:
   Assigns a color-index ID to each character body part in a character sprite
@@ -61,20 +61,37 @@ USAGE:
   python3 LTG_TOOL_bodypart_hierarchy.py <image.png>
           [--palette luma|byte|cosmo|custom]
           [--tolerance 25]
+          [--panel N]
+          [--grid COLSxROWS]
           [--head-region x0,y0,x1,y1]
           [--output-annotated annotated.png]
           [--output-csv transitions.csv]
           [--verbose]
+          [--chain --char NAME --expr EXPR]
 
-  <image.png>             Character panel or expression sheet panel PNG
+  <image.png>             Character panel or expression sheet panel PNG.
+                          Ignored when using --chain (source image derived from
+                          expression_isolator output).
   --palette               Use named character palette (default: luma)
   --tolerance             Per-channel tolerance for color matching (default: 25)
+  --panel N               Auto-crop to panel index N (0-based, left-to-right,
+                          top-to-bottom) before running analysis. Eliminates
+                          UNKNOWN_IN_HEAD inflation from label text and panel
+                          borders on full expression sheets.
+                          Use --grid to specify sheet dimensions (default: 3x3).
+  --grid COLSxROWS        Grid layout when using --panel N (default: 3x3).
+                          Example: --grid 4x3 for a 4-column, 3-row sheet.
   --head-region           Optional: restrict analysis to a pixel region (x0,y0,x1,y1)
                           If not specified: auto-detect head bounding box from
                           HAIR + SKIN + EYE pixels in upper 50% of image
   --output-annotated      Save annotated image with colored body-part overlay
   --output-csv            Save scan-line transition CSV
   --verbose               Print full transition table to stdout
+  --chain                 Pipeline mode: run expression_isolator first to extract
+                          the expression at 800x800px, then run hierarchy on that
+                          output. Use with --char and --expr.
+  --char NAME             Character name for --chain mode (luma|byte|cosmo)
+  --expr EXPR             Expression name for --chain mode (e.g. "THE NOTICING")
 
 OUTPUT:
   PASS/WARN/FAIL with pixel coordinates of any violations.
@@ -477,16 +494,112 @@ def build_annotated_image(img: Image.Image, idx_map, w, h,
     return out
 
 
+def crop_panel(img: "Image.Image", panel_index: int, cols: int, rows: int) -> "Image.Image":
+    """
+    Crop a single panel (0-based, left-to-right, top-to-bottom) from an
+    expression sheet laid out in a cols×rows grid.
+
+    The crop is computed by dividing the full image width by cols and height by
+    rows. No padding compensation is applied — the crop includes any inter-panel
+    border pixels, but those will be classified as BACKGROUND by the hierarchy
+    tool since they match the sheet BG colour.
+
+    Returns the cropped PIL Image.
+    """
+    w, h = img.size
+    if panel_index < 0 or panel_index >= cols * rows:
+        print(f"ERROR: --panel {panel_index} out of range for {cols}x{rows} grid "
+              f"(valid: 0–{cols * rows - 1})")
+        sys.exit(1)
+
+    col = panel_index % cols
+    row = panel_index // cols
+    panel_w = w // cols
+    panel_h = h // rows
+    x0 = col * panel_w
+    y0 = row * panel_h
+    x1 = x0 + panel_w
+    y1 = y0 + panel_h
+    print(f"Panel {panel_index} → grid ({col},{row}) → crop ({x0},{y0})–({x1},{y1})  "
+          f"({panel_w}×{panel_h}px)")
+    return img.crop((x0, y0, x1, y1))
+
+
+def run_chain(char: str, expr: str, palette_name: str, tolerance: int,
+              output_annotated: str, output_csv: str, verbose: bool) -> None:
+    """
+    Pipeline mode: run expression_isolator to extract the named expression at
+    800×800px, then run the hierarchy check on that output.
+
+    Requires LTG_TOOL_expression_isolator.py to be in the same directory.
+    """
+    import subprocess
+    import tempfile
+
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    isolator   = os.path.join(script_dir, "LTG_TOOL_expression_isolator.py")
+
+    if not os.path.exists(isolator):
+        print(f"ERROR: --chain requires LTG_TOOL_expression_isolator.py in {script_dir}")
+        sys.exit(1)
+
+    # Run expression_isolator to produce a single-expression PNG
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
+        tmp_path = tmp.name
+
+    iso_cmd = [
+        sys.executable, isolator,
+        "--char", char,
+        "--expr", expr,
+        "--output", tmp_path,
+    ]
+    print(f"[chain] Running expression_isolator: {' '.join(iso_cmd[2:])}")
+    result = subprocess.run(iso_cmd, capture_output=True, text=True)
+    if result.returncode not in (0, 1):     # isolator exits 0=PASS, 1=WARN, 2=FAIL
+        print(f"ERROR: expression_isolator failed:\n{result.stderr}")
+        os.unlink(tmp_path)
+        sys.exit(1)
+    print(result.stdout.strip())
+
+    # Now run hierarchy on the isolated expression image
+    hier_cmd = [
+        sys.executable, __file__,
+        tmp_path,
+        "--palette", palette_name,
+        "--tolerance", str(tolerance),
+    ]
+    if output_annotated:
+        hier_cmd += ["--output-annotated", output_annotated]
+    if output_csv:
+        hier_cmd += ["--output-csv", output_csv]
+    if verbose:
+        hier_cmd += ["--verbose"]
+
+    print(f"[chain] Running hierarchy on isolated expression...")
+    result2 = subprocess.run(hier_cmd, capture_output=True, text=True)
+    print(result2.stdout)
+    if result2.stderr:
+        print(result2.stderr)
+
+    os.unlink(tmp_path)
+    sys.exit(result2.returncode)
+
+
 def main():
     parser = argparse.ArgumentParser(
-        description="LTG Body-Part Hierarchy Tool — detects eye-inside-hair and other rendering violations."
+        description="LTG Body-Part Hierarchy Tool v002 — detects eye-inside-hair and other rendering violations."
     )
-    parser.add_argument("image",               help="Character panel or expression sheet PNG")
+    parser.add_argument("image",               nargs="?", default=None,
+                        help="Character panel or expression sheet PNG (omit when using --chain)")
     parser.add_argument("--palette",           default="luma",
                         choices=["luma", "byte", "cosmo"],
                         help="Character palette to use (default: luma)")
     parser.add_argument("--tolerance",         type=int, default=25,
                         help="Per-channel color tolerance for palette matching (default: 25)")
+    parser.add_argument("--panel",             type=int, default=None,
+                        help="Crop to panel index N (0-based, L→R, T→B) before analysis")
+    parser.add_argument("--grid",              default="3x3",
+                        help="Grid layout for --panel (default: 3x3, e.g. 4x3)")
     parser.add_argument("--head-region",       default=None,
                         help="Restrict analysis to region: x0,y0,x1,y1 (pixels)")
     parser.add_argument("--output-annotated",  default=None,
@@ -495,7 +608,34 @@ def main():
                         help="Save scan-line transition CSV")
     parser.add_argument("--verbose",           action="store_true",
                         help="Print full transition table to stdout")
+    parser.add_argument("--chain",             action="store_true",
+                        help="Pipeline: run expression_isolator then hierarchy (requires --char and --expr)")
+    parser.add_argument("--char",              default=None,
+                        help="Character name for --chain mode (luma|byte|cosmo)")
+    parser.add_argument("--expr",              default=None,
+                        help="Expression name for --chain mode (e.g. 'THE NOTICING')")
     args = parser.parse_args()
+
+    # ── Chain mode ──────────────────────────────────────────────────────────────
+    if args.chain:
+        if not args.char or not args.expr:
+            print("ERROR: --chain requires --char and --expr")
+            sys.exit(1)
+        run_chain(
+            char=args.char,
+            expr=args.expr,
+            palette_name=args.palette,
+            tolerance=args.tolerance,
+            output_annotated=args.output_annotated,
+            output_csv=args.output_csv,
+            verbose=args.verbose,
+        )
+        return   # run_chain calls sys.exit() internally; this is a safety return
+
+    # ── Normal mode ─────────────────────────────────────────────────────────────
+    if args.image is None:
+        print("ERROR: <image> is required unless --chain is used.")
+        sys.exit(1)
 
     if not os.path.exists(args.image):
         print(f"ERROR: Image not found: {args.image}")
@@ -525,6 +665,21 @@ def main():
     w, h = img.size
     print(f"Image: {args.image}  ({w}×{h}px)")
     print(f"Palette: {args.palette}  |  Tolerance: {args.tolerance}px per channel")
+
+    # ── Panel crop (--panel N) ──────────────────────────────────────────────────
+    if args.panel is not None:
+        try:
+            grid_parts = args.grid.lower().split("x")
+            if len(grid_parts) != 2:
+                raise ValueError
+            grid_cols = int(grid_parts[0])
+            grid_rows = int(grid_parts[1])
+        except (ValueError, IndexError):
+            print(f"ERROR: --grid must be in COLSxROWS format (e.g. 3x3, 4x3). Got: {args.grid!r}")
+            sys.exit(1)
+        img = crop_panel(img, args.panel, grid_cols, grid_rows)
+        w, h = img.size
+        print(f"Panel crop applied. Working image: {w}×{h}px")
 
     bg_color = sample_bg_color(img)
     print(f"BG color (auto): RGB{bg_color}")

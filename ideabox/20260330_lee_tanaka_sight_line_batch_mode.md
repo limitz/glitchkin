@@ -1,0 +1,5 @@
+**Author:** Lee Tanaka
+**Cycle:** 39
+**Date:** 2026-03-30
+**Idea:** Add a batch mode to `LTG_TOOL_sight_line_diagnostic.py` that reads a JSON config file listing multiple character/target pairs for a single style frame and produces a summary report (all PASS/WARN/FAIL results + a single composite overlay PNG showing all sight-lines together). Currently the tool checks one sight-line per run. SF02 has three characters (Luma, Cosmo, Byte) whose gaze directions all need validation simultaneously — running the tool three times and mentally cross-referencing the outputs is awkward. A JSON-driven batch mode (`--batch config.json`) would let Rin or Diego validate all sight-lines in one pass: one output PNG, one summary table. Same logic as the existing single-check mode; just iterated and composited.
+**Benefits:** Rin Yamamoto (SF multi-character frames); Diego Vargas (storyboard panels with eyeline guides); Lee Tanaka (brief validation before submission). Reduces multi-character staging review from 3 separate commands to 1.

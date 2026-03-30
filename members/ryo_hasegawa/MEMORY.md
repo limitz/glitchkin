@@ -95,6 +95,32 @@ Create motion spec sheets and timing documentation. Make the pitch FEEL like it 
 - HOLD (B4): 8–12 frames, no movement, float stops
 - Crack scar remains — damage doesn't change the decision
 
+### C40 — COMPLETE
+- `LTG_TOOL_sheet_geometry_calibrate.py` → `output/tools/sheet_geometry_config.json`
+  - New calibration tool: scans first 100 rows per sheet, detects panel_top_abs via brightness (light sheets) or header-end detection (dark sheets)
+  - Strategy 2 (dark sheet): finds end of header band (mean > 15), then scans for panel start; fallback = 56
+  - Result: luma panel_top=54, byte panel_top=56 (both correct per source code)
+- `LTG_TOOL_motion_spec_lint.py` updated:
+  - Loads `sheet_geometry_config.json` at lint time
+  - Passes calibrated zone params to annotation_occupancy, beat_badges, timing_colors checks
+  - Expected panel count now from config (Luma=4, Byte=4 — was 3/3 before, wrong)
+  - `--geo-config` CLI arg added; `geo_source` in result dict
+- `LTG_TOOL_luma_motion.py` updated: `_load_header_h()` loads panel_top from config; `_LUMA_PANEL_TOP` drives panel_origin() and PANEL_H
+- `LTG_TOOL_byte_motion.py` updated: `_load_header_h_byte()` loads panel_top from config; HEADER_H now config-driven
+
+### C40 Before/After WARN Count
+- BEFORE: PASS=6 WARN=6 — but panel_count wrongly expected 3 for both sheets (both are 4-panel)
+- AFTER: PASS=6 WARN=6 — panel_count now CORRECT 4/4 for both; remaining WARNs are genuine content issues
+- Key false WARN eliminated: panel_count now correct (both 4-panel sheets correctly evaluated as 4)
+- Remaining genuine WARNs: annotation_occupancy low (dark Byte panels have little bright content), beat_badges (dark panels), timing_colors (Luma uses blue not cyan — separate ideabox submitted)
+
+### C40 Key Findings
+- Byte sheet is almost entirely VOID_BLACK — mean brightness 4-8 for most rows; only ~5 rows above 30
+- Bright-threshold detection fails on dark sheets → header-end detection strategy needed
+- Byte HEADER_H=44, PAD=12, panel_top=56 (confirmed by source code and Strategy 2 detection)
+- Luma BEAT_COLOR=(80,120,200) is blue, not cyan — timing_colors WARN is permanent false positive until ideabox idea actioned
+- `sheet_geometry_config.json` must be re-run after any motion sheet regeneration
+
 ## Startup Sequence
 1. Read docs/image-rules.md (image size limits and image handling)
 2. Read docs/work.md (work startup and delivery rules)

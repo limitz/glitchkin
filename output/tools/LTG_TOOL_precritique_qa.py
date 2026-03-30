@@ -35,6 +35,12 @@ Exit codes:
 
 Author: Morgan Walsh (Pipeline Automation Specialist)
 Created: Cycle 34 — 2026-03-29
+Version: 2.7.0 (C39 Morgan Walsh: arc-diff pairs now loaded from arc_diff_config.json at startup;
+              falls back to hardcoded constant if JSON absent — backwards compatible.)
+Version: 2.7.0 (C39 Kai Nakamura: numpy batch pixel scans; LAB ΔE color verify.
+              run_color_verify() now uses _check_color_fidelity_lab() from render_qa v2.0.0
+              when cv2 is available — perceptual ΔE replaces hue-drift RGB Euclidean.
+              numpy import added; no API changes.)
 Version: 2.6.0 (C39 Morgan Walsh: arc-diff gate Section 10 added — contact sheet changelog for critics.
               Lineup suppression expansion complete — glitch_spec_lint v1.4.0 file_prefix mode;
               character_lineup_* G006/G007 now auto-suppressed via prefix.)
@@ -47,6 +53,13 @@ import sys
 import json
 import datetime
 from pathlib import Path
+
+try:
+    import numpy as np
+    _NP_AVAILABLE = True
+except ImportError:
+    np = None  # type: ignore
+    _NP_AVAILABLE = False
 
 # ---------------------------------------------------------------------------
 # Path setup — allow running from any cwd
@@ -67,7 +80,7 @@ if str(TOOLS_DIR) not in sys.path:
 # ---------------------------------------------------------------------------
 # Import QA tools
 # ---------------------------------------------------------------------------
-from LTG_TOOL_render_qa import qa_report, qa_batch
+from LTG_TOOL_render_qa import qa_report, qa_batch, _check_color_fidelity_lab as _lab_color_check
 from LTG_TOOL_color_verify import verify_canonical_colors, get_canonical_palette
 from LTG_TOOL_stub_linter import lint_directory as stub_lint_directory, format_report as stub_format_report
 from LTG_TOOL_palette_warmth_lint import lint_palette_file, format_report as palette_format_report
@@ -143,11 +156,14 @@ MOTION_SHEETS = [
 ]
 
 # Contact sheet pairs for arc-diff gate (Section 10).
-# Each entry: (label, old_sheet_path, new_sheet_path)
+# Each entry: (label, old_sheet_path, new_sheet_path, diff_output_path)
 # old = previous version, new = current version.
 # Arc-diff output PNG saves to output/production/.
+#
+# Loaded from arc_diff_config.json at startup if present; falls back to
+# the hardcoded constant below so existing runs are never broken.
 SB_DIR = OUTPUT_DIR / "storyboards"
-ARC_DIFF_PAIRS = [
+_ARC_DIFF_PAIRS_DEFAULT = [
     (
         "Act 2 contact sheet v005→v006",
         SB_DIR / "act2" / "LTG_SB_act2_contact_sheet.png",
@@ -161,6 +177,36 @@ ARC_DIFF_PAIRS = [
         PROD_DIR / "arc_diff_act1_c39.png",
     ),
 ]
+
+_ARC_DIFF_CONFIG = TOOLS_DIR / "arc_diff_config.json"
+
+
+def _load_arc_diff_pairs():
+    """
+    Load ARC_DIFF_PAIRS from arc_diff_config.json if present.
+    Paths in JSON are relative to REPO_ROOT. Returns list of
+    (label, old_path, new_path, diff_out) tuples with Path objects.
+    Falls back to _ARC_DIFF_PAIRS_DEFAULT if JSON is absent or invalid.
+    """
+    if not _ARC_DIFF_CONFIG.exists():
+        return _ARC_DIFF_PAIRS_DEFAULT
+    try:
+        data = json.loads(_ARC_DIFF_CONFIG.read_text(encoding="utf-8"))
+        pairs = []
+        for entry in data.get("pairs", []):
+            label, old_rel, new_rel, diff_rel = entry
+            pairs.append((
+                label,
+                REPO_ROOT / old_rel,
+                REPO_ROOT / new_rel,
+                REPO_ROOT / diff_rel,
+            ))
+        return pairs if pairs else _ARC_DIFF_PAIRS_DEFAULT
+    except Exception:
+        return _ARC_DIFF_PAIRS_DEFAULT
+
+
+ARC_DIFF_PAIRS = _load_arc_diff_pairs()
 
 
 # ---------------------------------------------------------------------------
@@ -402,7 +448,12 @@ def run_render_qa() -> dict:
 
 def run_color_verify() -> dict:
     """
-    Run LTG_TOOL_color_verify on all style frames.
+    Run color fidelity check on all style frames.
+
+    v2.7.0: uses _check_color_fidelity_lab() (LAB ΔE via cv2) from render_qa v2.0.0
+    when cv2 is available.  Falls back to verify_canonical_colors (RGB Euclidean) if not.
+    numpy array ops used for batch pixel operations where possible.
+
     Returns a summary dict.
     """
     palette = get_canonical_palette()
@@ -419,20 +470,31 @@ def run_color_verify() -> dict:
             img = Image.open(str(p)).convert("RGB")
             # Downscale if needed
             img.thumbnail((1280, 1280), Image.LANCZOS)
-            result = verify_canonical_colors(img, palette)
+            # v2.7.0: LAB ΔE check (falls back to RGB if cv2 absent)
+            result = _lab_color_check(img, palette)
+            method = result.get("color_method", "RGB_euclidean")
             name = p.name
             if result.get("overall_pass"):
                 pass_count += 1
             else:
                 warn_count += 1
-                for color_name, info in result.items():
-                    if color_name == "overall_pass":
+                colors_data = result.get("colors", {})
+                for color_name, info in colors_data.items():
+                    if not isinstance(info, dict):
                         continue
-                    if isinstance(info, dict) and not info.get("pass", True) and info.get("found_hue") is not None:
-                        flagged.append(
-                            f"  - {name} / {color_name}: hue drift {info.get('delta', '?'):.1f}° "
-                            f"(target={info.get('target_hue', '?'):.0f}, found={info.get('found_hue', '?'):.0f})"
-                        )
+                    if not info.get("pass", True) and info.get("status") == "found":
+                        if method == "LAB_DE":
+                            de = info.get("delta_e", "?")
+                            de_str = f"{de:.2f}" if isinstance(de, float) else str(de)
+                            flagged.append(
+                                f"  - {name} / {color_name}: LAB ΔE={de_str} "
+                                f"(threshold={result.get('delta_e_threshold', 5.0)})"
+                            )
+                        else:
+                            flagged.append(
+                                f"  - {name} / {color_name}: hue drift "
+                                f"delta={info.get('delta', '?'):.1f}°"
+                            )
         except Exception as e:
             warn_count += 1
             flagged.append(f"  - {p.name}: exception — {e}")

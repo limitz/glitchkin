@@ -1,0 +1,5 @@
+**Author:** Alex Chen
+**Cycle:** 40
+**Date:** 2026-03-30
+**Idea:** Now that Luma's face is defined by named bezier control points with explicit neutral positions and expression deltas, we should build a `LTG_TOOL_face_curve_lint.py` that validates any expression sheet against the canonical control-point spec. The tool would: (1) extract face region via the expression isolator, (2) detect brow arc height (pixel row of peak brow), (3) detect eye outline width, (4) detect lid-top vs lid-bottom drop direction, and flag any generator that draws the face in ways that deviate from the spec. This would catch future regressions automatically — e.g. the lid-bottom-rise bug that shipped in several Luma versions before C38.
+**Benefits:** Closes the regression loop permanently. Gives Kai a spec-compliance gate for face generators analogous to glitch_spec_lint for Glitch Layer assets. Benefits Maya (catches character deviations early), critics (consistent face quality), and the whole team (prevents silent regressions from accumulating across cycles).

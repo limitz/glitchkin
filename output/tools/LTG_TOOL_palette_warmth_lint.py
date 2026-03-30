@@ -5,6 +5,13 @@ Warmth compliance linter for "Luma & the Glitchkin" palette entries.
 
 CHANGES FROM v004
 -----------------
+v006 (Cycle 39 — 2026-03-30 — Kai Nakamura):
+  - numpy vectorization in _analyse_world_warmth() — warm/cool counting via
+    numpy array ops instead of per-entry Python loop (future-proof for large palettes).
+  - numpy import added; no API changes. Graceful: no effect if numpy unavailable
+    (pure-Python fallback retained).
+  - Version bumped to 6.0.0.
+
 v005 (Cycle 39 — 2026-03-29 — Sam Kowalski):
   - World-type inference now delegates to LTG_TOOL_world_type_infer (standalone)
     instead of using inline _WORLD_INFERENCE_RULES.  Falls back to v004 built-in rules
@@ -101,7 +108,7 @@ PROGRAMMATIC API (backward compatible with v004)
 
 Author: Sam Kowalski (Color & Style Artist) — Cycle 39
 Based on: LTG_TOOL_palette_warmth_lint.py (Kai Nakamura / Sam Kowalski, Cycle 36)
-Version: 5.0.0
+Version: 6.0.0
 
 Design note: Operates entirely on markdown source text — no Pillow dependency.
 """
@@ -113,6 +120,13 @@ import os
 import re
 import sys
 from typing import Dict, List, Optional, Tuple, Union
+
+try:
+    import numpy as np
+    _NP_AVAILABLE = True
+except ImportError:
+    np = None  # type: ignore
+    _NP_AVAILABLE = False
 
 
 # ---------------------------------------------------------------------------
@@ -475,15 +489,23 @@ def _analyse_world_warmth(
     note = preset.get("note", "")
 
     total = len(entries)
-    warm_count = 0
-    cool_count = 0
 
-    for entry in entries:
-        r, g, b = entry["rgb"]
-        if r >= g and r >= b:
-            warm_count += 1
-        else:
-            cool_count += 1
+    if _NP_AVAILABLE and total > 0:
+        # v6.0.0: numpy vectorization — build RGB array, count warm entries in one op
+        rgb_arr = np.array([e["rgb"] for e in entries], dtype=np.int32)  # (N, 3)
+        R, G, B = rgb_arr[:, 0], rgb_arr[:, 1], rgb_arr[:, 2]
+        warm_mask = (R >= G) & (R >= B)
+        warm_count = int(warm_mask.sum())
+        cool_count = total - warm_count
+    else:
+        warm_count = 0
+        cool_count = 0
+        for entry in entries:
+            r, g, b = entry["rgb"]
+            if r >= g and r >= b:
+                warm_count += 1
+            else:
+                cool_count += 1
 
     warm_ratio = (warm_count / total * 100) if total > 0 else 0.0
     advisory = []

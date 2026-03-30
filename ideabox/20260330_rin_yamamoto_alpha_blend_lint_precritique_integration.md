@@ -1,0 +1,5 @@
+**Author:** Rin Yamamoto
+**Cycle:** 40
+**Date:** 2026-03-30
+**Idea:** Integrate `LTG_TOOL_alpha_blend_lint.py` into the precritique QA pipeline as Section 10. Add a new `ARC_FILL_PAIRS` config listing each style frame's composited PNG and its expected unlit base. Run automatically before every critique cycle to catch flat-fill defects before critics see them. If a base image is unavailable (not all generators save one), the lint section can be marked SKIP rather than FAIL — the tool already handles missing base gracefully by reporting LOW_SIGNAL. This closes the gap where fill-light defects (like the SF02 Sven C14 critique) were only caught by human critics rather than by automated QA.
+**Benefits:** Catches flat-alpha fill artifacts before critique, saving critic review cycles. Pairs naturally with the existing `render_qa` value-ceiling check. Cost is near-zero — the tool is already built and self-tested. Morgan Walsh could wire it into `precritique_qa.py` as Section 10 in the next cycle.

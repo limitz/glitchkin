@@ -1,0 +1,161 @@
+{
+  "_comment": "Fill Light Presets Registry — Luma & the Glitchkin",
+  "_version": "1.0",
+  "_author": "Rin Yamamoto",
+  "_cycle": 40,
+  "_note": "All cx/cy positions are fractional (0.0–1.0) unless pos_mode is 'absolute'. source_dx/source_dy are fractions of char_h.",
+
+  "SF01": {
+    "_description": "The Discovery — Luma notices Byte on the CRT. Warm domestic interior, real-world palette.",
+    "_char_h_frac": 0.35,
+    "lights": [
+      {
+        "label": "luma_warm_lamp",
+        "cx": 0.29,
+        "cy": 0.62,
+        "color": [212, 146, 58],
+        "alpha_max": 30,
+        "source_dx": -0.6,
+        "source_dy": -1.0,
+        "radius_scale": 1.8,
+        "alpha_exponent": 1.5,
+        "mask_threshold": 60,
+        "pos_mode": "fractional",
+        "_note": "SUNLIT_AMBER warm lamp fill from upper-left (lamp off-screen left)"
+      },
+      {
+        "label": "luma_crt_bounce",
+        "cx": 0.29,
+        "cy": 0.62,
+        "color": [0, 212, 232],
+        "alpha_max": 22,
+        "source_dx": 0.8,
+        "source_dy": -0.2,
+        "radius_scale": 1.4,
+        "alpha_exponent": 1.3,
+        "mask_threshold": 60,
+        "pos_mode": "fractional",
+        "_note": "BYTE_TEAL CRT bounce from right — CRT screen is primary discovery source"
+      }
+    ]
+  },
+
+  "SF02": {
+    "_description": "Glitch Storm — Sprint scene, 3 characters. HOT_MAGENTA fill from storm crack at upper-right.",
+    "_char_h_frac": 0.18,
+    "lights": [
+      {
+        "label": "luma",
+        "cx": 0.45,
+        "cy": 0.65,
+        "color": [255, 45, 107],
+        "alpha_max": 35,
+        "source_dx": 0.5,
+        "source_dy": -0.8,
+        "radius_scale": 1.6,
+        "alpha_exponent": 1.3,
+        "mask_threshold": 60,
+        "pos_mode": "fractional",
+        "_note": "HOT_MAGENTA fill from storm crack upper-right"
+      },
+      {
+        "label": "byte",
+        "cx": 0.28,
+        "cy": 0.60,
+        "color": [255, 45, 107],
+        "alpha_max": 35,
+        "source_dx": 0.5,
+        "source_dy": -0.8,
+        "radius_scale": 1.6,
+        "alpha_exponent": 1.3,
+        "mask_threshold": 60,
+        "pos_mode": "fractional",
+        "_note": "HOT_MAGENTA fill from storm crack upper-right"
+      },
+      {
+        "label": "cosmo",
+        "cx": 0.62,
+        "cy": 0.65,
+        "color": [255, 45, 107],
+        "alpha_max": 35,
+        "source_dx": 0.5,
+        "source_dy": -0.8,
+        "radius_scale": 1.6,
+        "alpha_exponent": 1.3,
+        "mask_threshold": 60,
+        "pos_mode": "fractional",
+        "_note": "HOT_MAGENTA fill from storm crack upper-right"
+      }
+    ]
+  },
+
+  "SF03": {
+    "_description": "The Other Side — Digital void environment. UV_PURPLE ambient fill from upper void.",
+    "_char_h_frac": 0.14,
+    "lights": [
+      {
+        "label": "luma",
+        "cx": 0.38,
+        "cy": 0.70,
+        "color": [123, 47, 190],
+        "alpha_max": 28,
+        "source_dx": 0.0,
+        "source_dy": -1.2,
+        "radius_scale": 1.5,
+        "alpha_exponent": 1.2,
+        "mask_threshold": 50,
+        "pos_mode": "fractional",
+        "_note": "UV_PURPLE ambient fill from void sky above"
+      },
+      {
+        "label": "byte",
+        "cx": 0.55,
+        "cy": 0.68,
+        "color": [0, 240, 255],
+        "alpha_max": 32,
+        "source_dx": -0.3,
+        "source_dy": -0.5,
+        "radius_scale": 1.4,
+        "alpha_exponent": 1.2,
+        "mask_threshold": 50,
+        "pos_mode": "fractional",
+        "_note": "ELECTRIC_CYAN bounce fill — Byte is lit from within in the Other Side"
+      }
+    ]
+  },
+
+  "SF04": {
+    "_description": "The Dynamic — Luma and Byte interaction. CRT monitor as fill light source on Byte's left side.",
+    "_char_h_frac": 0.40,
+    "lights": [
+      {
+        "label": "luma_monitor_bounce",
+        "cx": 0.35,
+        "cy": 0.60,
+        "color": [0, 212, 232],
+        "alpha_max": 25,
+        "source_dx": 0.7,
+        "source_dy": -0.1,
+        "radius_scale": 1.5,
+        "alpha_exponent": 1.4,
+        "mask_threshold": 60,
+        "pos_mode": "fractional",
+        "_note": "BYTE_TEAL monitor bounce on Luma's right-facing side from CRT on right"
+      },
+      {
+        "label": "byte_self_glow",
+        "cx": 0.68,
+        "cy": 0.58,
+        "color": [0, 240, 255],
+        "alpha_max": 30,
+        "source_dx": 0.0,
+        "source_dy": -0.3,
+        "radius_scale": 1.3,
+        "alpha_exponent": 1.0,
+        "mask_threshold": 55,
+        "pos_mode": "fractional",
+        "_note": "ELECTRIC_CYAN self-emission fill — Byte's monitor screen emits ambient glow"
+      }
+    ]
+  }
+}

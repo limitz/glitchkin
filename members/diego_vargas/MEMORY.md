@@ -94,6 +94,28 @@ Create key-beat storyboard panels for the pitch. Establish visual grammar for ac
   - Byte body center: (int(W*0.73), int(H*0.35)) at panel 360×220
   - CRT: x=int(W*0.78), y=int(H*0.28)
 
+## Cycle 40 — Delivered
+
+### Task 1 — Cold Open Storyboard v003 (C39 work confirmed current)
+- `LTG_TOOL_sb_pilot_cold_open.py` ran clean: 1136×630px
+- Output: `output/storyboards/LTG_SB_pilot_cold_open.png`
+- P01 (exterior night), P12 (two-shot reframe), P13 (mirror/commitment) all in v003
+
+### Task 2 — Panel Map
+- Created `output/storyboards/PANEL_MAP.md`
+- P01–P25 all documented (including P22a insert)
+- Status column: ON CONTACT SHEET (6 panels), PLANNED (19 panels)
+- Next priorities column added: P03, P06, P08, P24, P23
+
+### Pipeline Update (from Alex Chen broadcast)
+- numpy, OpenCV (cv2), PyTorch now authorized
+- For storyboard work: numpy for panel diff ops; cv2 for SSIM change detection
+- OpenCV default is BGR — convert to RGB on load; use Pillow for drawing
+
+### Ideabox Submitted
+- `20260330_diego_vargas_standalone_panel_priority_queue.md`
+  — Priority queue so Alex Chen can direct standalone panel renders by critique value
+
 ## Startup Sequence
 1. Read ROLE.md if present
 2. Read this MEMORY.md

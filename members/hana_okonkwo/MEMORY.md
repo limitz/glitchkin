@@ -77,6 +77,26 @@ Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style fr
 - Define ALL color constants at top before use — missed AGED_CREAM, MORNING_GOLD, CURTAIN_WARM, PLANT_GREEN/DARK in first draft
 - Use `max(0.0, min(1.0, t))` clamp before `t ** n` to avoid complex number errors when t is slightly negative (floating point loop indexing)
 
+## Cycle 39 — Thumbnail Visibility Tool
+
+### Tool Built
+- `output/tools/LTG_TOOL_thumbnail_preview_v001.py` (Hana Okonkwo / C39)
+- Input: any PNG + optional `--region x1 y1 x2 y2` (in input-image pixel coords)
+- Output: side-by-side sheet — full 1280×720 view (left) + 120×68 thumbnail at 8× NEAREST zoom (right)
+- Orange bounding box drawn on both panels when region is specified
+- Output saved as `<input_stem>_thumbnail_preview.png` next to input file
+- Sheet auto-thumbnailed to ≤1280px per image rules
+- Tested against `LTG_ENV_grandma_living_room.png` — tool runs cleanly; output 1280×439px
+- Diamond crystal figurine at (438, 328): visible at full scale; thumbnail legibility TBD (needs visual inspection by team)
+
+### Pipeline Notes (C39)
+- numpy, OpenCV (cv2), PyTorch now authorized. Factor into future tool builds.
+  - Use Pillow for drawing; numpy/cv2 for analysis
+  - OpenCV default is BGR — convert to RGB on load
+
+### Ideabox submitted
+- Multi-region batch mode for thumbnail preview (JSON input → contact sheet of annotated details)
+
 ## My Job
 Design and build new environment generators. Maintain existing ones. Expand pitch coverage.
 

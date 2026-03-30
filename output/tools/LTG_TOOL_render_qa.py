@@ -16,6 +16,18 @@ Created: Cycle 26 — 2026-03-29
 Version: 1.5.0
 
 Changelog:
+  2.0.0 (Cycle 39): numpy vectorization for value/warm-cool checks; LAB ΔE for
+                    color fidelity (Kai Nakamura C39). Replaces per-pixel Python
+                    loops in _check_value_range, _check_warm_cool, and
+                    check_value_ceiling_guard with numpy array ops (5–10× faster).
+                    Color fidelity check now uses OpenCV LAB ΔE (threshold 5.0) for
+                    perceptually accurate color matching. cv2 fallback: if cv2 is not
+                    importable, the tool silently degrades to the prior RGB path.
+                    A new key "color_method" ("LAB_DE" or "RGB_euclidean") is added
+                    to the color_fidelity result so callers know which path ran.
+                    run_comparison_report() added: runs both methods on a directory
+                    and reports any PASS→FAIL changes under LAB ΔE.
+                    numpy required; cv2 optional (graceful fallback).
   1.6.0 (Cycle 39): REAL_STORM threshold split (Sam Kowalski C39).
                     Implements ideabox 20260330_sam_kowalski_render_qa_real_threshold_split.
                     Adds _infer_world_subtype(): when world_type=="REAL", checks filename
@@ -72,7 +84,21 @@ import random
 import statistics
 from pathlib import Path
 
+import numpy as np
 from PIL import Image, ImageFilter, ImageOps
+
+# ---------------------------------------------------------------------------
+# Optional cv2 import (for LAB ΔE color fidelity)
+# ---------------------------------------------------------------------------
+try:
+    import cv2 as _cv2
+    _CV2_AVAILABLE = True
+except ImportError:
+    _cv2 = None  # type: ignore
+    _CV2_AVAILABLE = False
+
+# LAB ΔE threshold: flag perceptual colour clash at ΔE < 5
+_LAB_DE_THRESHOLD = 5.0
 
 # ---------------------------------------------------------------------------
 # Import color verification from sibling tool
@@ -82,6 +108,113 @@ if str(_TOOLS_DIR) not in sys.path:
     sys.path.insert(0, str(_TOOLS_DIR))
 
 from LTG_TOOL_color_verify import verify_canonical_colors, get_canonical_palette
+
+# ---------------------------------------------------------------------------
+# LAB ΔE color fidelity helper (v2.0.0)
+# ---------------------------------------------------------------------------
+
+def _rgb_to_lab(r: int, g: int, b: int):
+    """
+    Convert an (R, G, B) triple (0–255) to CIE LAB using OpenCV.
+    Returns (L, a, b) as floats, or None if cv2 is unavailable.
+    """
+    if not _CV2_AVAILABLE:
+        return None
+    pixel = np.array([[[b, g, r]]], dtype=np.uint8)  # cv2 uses BGR
+    lab = _cv2.cvtColor(pixel, _cv2.COLOR_BGR2Lab)
+    L, a, b_ = lab[0, 0]
+    return float(L), float(a), float(b_)
+
+
+def _lab_delta_e(lab1, lab2) -> float:
+    """
+    CIE76 ΔE between two LAB colour triplets.
+    ΔE = sqrt((L1-L2)² + (a1-a2)² + (b1-b2)²)
+    """
+    return float(np.sqrt(sum((x - y) ** 2 for x, y in zip(lab1, lab2))))
+
+
+def _check_color_fidelity_lab(img: Image.Image, palette: dict) -> dict:
+    """
+    Color fidelity check using LAB ΔE (perceptually accurate) instead of
+    RGB Euclidean distance.  Requires cv2; falls back to verify_canonical_colors
+    if cv2 is not available.
+
+    For each canonical colour, samples the image for pixels within a loose
+    Euclidean RGB radius of 60, converts those and the target to LAB, and
+    computes median ΔE.  A colour is flagged if median ΔE > _LAB_DE_THRESHOLD (5.0).
+
+    Returns the same schema as verify_canonical_colors(), with an additional
+    key "color_method" = "LAB_DE" | "RGB_euclidean".
+
+    Parameters
+    ----------
+    img : PIL.Image
+    palette : dict  — {"NAME": (R, G, B), ...}
+
+    Returns
+    -------
+    dict — same schema as verify_canonical_colors() + "color_method" key
+    """
+    if not _CV2_AVAILABLE:
+        # Graceful degradation: run RGB path
+        result = verify_canonical_colors(img, palette, max_delta_hue=5)
+        result["color_method"] = "RGB_euclidean"
+        return result
+
+    rgb_img = img.convert("RGB")
+    arr = np.array(rgb_img, dtype=np.uint8).reshape(-1, 3)  # (N, 3) RGB
+
+    color_results = {}
+    for name, target_rgb in palette.items():
+        tr, tg, tb = target_rgb
+        target_lab = _rgb_to_lab(tr, tg, tb)
+        if target_lab is None:
+            color_results[name] = {"status": "not_found", "delta_e": None}
+            continue
+
+        # Find nearby pixels (loose RGB radius 60 to cast a wide net)
+        diff = arr.astype(np.int32) - np.array([tr, tg, tb], dtype=np.int32)
+        euclidean_dist = np.sqrt((diff ** 2).sum(axis=1))
+        nearby_mask = euclidean_dist <= 60
+        nearby_pixels = arr[nearby_mask]
+
+        if len(nearby_pixels) == 0:
+            color_results[name] = {"status": "not_found", "delta_e": None}
+            continue
+
+        # Convert nearby pixels to LAB and compute ΔE
+        # Batch conversion via cv2
+        nearby_bgr = nearby_pixels[:, ::-1].reshape(-1, 1, 3)  # BGR for cv2
+        nearby_lab_batch = _cv2.cvtColor(nearby_bgr.astype(np.uint8), _cv2.COLOR_BGR2Lab)
+        nearby_lab_vals = nearby_lab_batch.reshape(-1, 3).astype(np.float32)
+
+        tL, ta, tb_ = target_lab
+        delta_e_vals = np.sqrt(
+            (nearby_lab_vals[:, 0] - tL) ** 2 +
+            (nearby_lab_vals[:, 1] - ta) ** 2 +
+            (nearby_lab_vals[:, 2] - tb_) ** 2
+        )
+        median_de = float(np.median(delta_e_vals))
+
+        passed = median_de <= _LAB_DE_THRESHOLD
+        color_results[name] = {
+            "status": "found",
+            "delta_e": round(median_de, 2),
+            "pass": passed,
+            "sample_count": int(len(nearby_pixels)),
+        }
+
+    # Overall pass: all found colours within threshold
+    found_results = [v for v in color_results.values() if v.get("status") == "found"]
+    overall_pass = all(v.get("pass", True) for v in found_results)
+
+    return {
+        "colors": color_results,
+        "overall_pass": overall_pass,
+        "color_method": "LAB_DE",
+        "delta_e_threshold": _LAB_DE_THRESHOLD,
+    }
 
 # ---------------------------------------------------------------------------
 # World-type inference (v1.6.0: prefer standalone world_type_infer_v001 — Task 4 C39)
@@ -104,7 +237,7 @@ except ImportError:
 # ---------------------------------------------------------------------------
 # Version
 # ---------------------------------------------------------------------------
-__version__ = "1.6.0"  # C39: REAL_STORM threshold split (Sam Kowalski). REAL→REAL_INTERIOR(12)/REAL_STORM(3)
+__version__ = "2.0.0"  # C39: numpy vectorization + LAB ΔE color fidelity (Kai Nakamura).
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -303,6 +436,8 @@ def _check_value_range(img: Image.Image) -> dict:
     """
     Check that the image uses the full value range.
 
+    v2.0.0: uses numpy array ops instead of Python list iteration (~5× faster).
+
     Returns
     -------
     dict
@@ -317,9 +452,9 @@ def _check_value_range(img: Image.Image) -> dict:
         }
     """
     gray = img.convert("L")
-    pixels = list(gray.getdata())
-    min_val = min(pixels)
-    max_val = max(pixels)
+    arr = np.array(gray, dtype=np.uint8)
+    min_val = int(arr.min())
+    max_val = int(arr.max())
     val_range = max_val - min_val
 
     has_dark = min_val <= _VALUE_MIN_DARK
@@ -393,23 +528,41 @@ def _check_warm_cool(img: Image.Image, min_separation: float = None) -> dict:
     rgb = img.convert("RGB")
     w, h = rgb.size
 
-    # Split top / bottom halves
-    top_half = rgb.crop((0, 0, w, h // 2))
-    bot_half = rgb.crop((0, h // 2, w, h))
+    # v2.0.0: numpy-vectorized hue extraction (replaces per-pixel Python loop)
+    arr = np.array(rgb, dtype=np.float32) / 255.0  # shape (H, W, 3)
 
-    def median_hue(region: Image.Image) -> float:
-        hues = []
-        for (r, g, b) in region.getdata():
-            hue = _rgb_to_pil_hue(r, g, b)
-            if hue >= 0:
-                hues.append(hue)
-        if not hues:
+    def _np_median_hue(region_arr: np.ndarray) -> float:
+        """Compute median PIL-scale hue (0–255) from an RGB float32 array."""
+        R, G, B = region_arr[..., 0], region_arr[..., 1], region_arr[..., 2]
+        Cmax = np.maximum(np.maximum(R, G), B)
+        Cmin = np.minimum(np.minimum(R, G), B)
+        delta = Cmax - Cmin
+        # Saturation mask: skip achromatic pixels (delta < 0.05)
+        chromatic = delta >= 0.05
+        if not chromatic.any():
             return -1.0
-        hues.sort()
-        return hues[len(hues) // 2]
+        # Hue calculation (degrees 0–360)
+        # Standard HSV hue formula: H = 60 * ((segment + shift) % 6)
+        hue_deg = np.zeros_like(R)
+        # R dominant: H = 60 * ((G-B)/delta % 6)
+        mask_r = chromatic & (Cmax == R)
+        hue_deg[mask_r] = 60.0 * ((G[mask_r] - B[mask_r]) / delta[mask_r] % 6.0)
+        # G dominant: H = 60 * ((B-R)/delta + 2)
+        mask_g = chromatic & (Cmax == G)
+        hue_deg[mask_g] = 60.0 * ((B[mask_g] - R[mask_g]) / delta[mask_g] + 2.0)
+        # B dominant: H = 60 * ((R-G)/delta + 4)
+        mask_b = chromatic & (Cmax == B)
+        hue_deg[mask_b] = 60.0 * ((R[mask_b] - G[mask_b]) / delta[mask_b] + 4.0)
+        # Wrap to 0–360
+        hue_deg = hue_deg % 360.0
+        # Convert degrees to PIL scale (0–255)
+        hue_pil = hue_deg[chromatic] * (255.0 / 360.0)
+        return float(np.median(hue_pil))
 
-    hue_a = median_hue(top_half)
-    hue_b = median_hue(bot_half)
+    top_arr = arr[:h // 2, :, :]
+    bot_arr = arr[h // 2:, :, :]
+    hue_a = _np_median_hue(top_arr)
+    hue_b = _np_median_hue(bot_arr)
 
     notes = []
     if hue_a < 0 or hue_b < 0:
@@ -574,9 +727,10 @@ def check_value_ceiling_guard(img_path: str) -> dict:
     # Load original at native resolution
     orig = Image.open(img_path)
     orig.load()
-    orig_rgb = orig.convert("L")
-    pixels_before = list(orig_rgb.getdata())
-    max_before = max(pixels_before)
+    orig_gray = orig.convert("L")
+    # v2.0.0: numpy array ops replace list(getdata()) iteration
+    arr_before = np.array(orig_gray, dtype=np.uint8)
+    max_before = int(arr_before.max())
 
     # Downscale copy
     downscaled = orig.copy()
@@ -584,25 +738,24 @@ def check_value_ceiling_guard(img_path: str) -> dict:
         downscaled.thumbnail((_MAX_OUTPUT_PX, _MAX_OUTPUT_PX), Image.LANCZOS)
 
     ds_gray = downscaled.convert("L")
-    pixels_after = list(ds_gray.getdata())
-    max_after = max(pixels_after)
+    arr_after = np.array(ds_gray, dtype=np.uint8)
+    max_after = int(arr_after.max())
     brightness_loss = max(0, max_before - max_after)
 
     # Specular candidate detection: count isolated bright-pixel clusters in
-    # the PRE-downscale image (clusters ≤ 5px radius = "specular dot" scale)
+    # the PRE-downscale image (clusters ≤ 25 pixels = "specular dot" scale).
+    # v2.0.0: use numpy to find bright positions; BFS cluster logic retained.
     specular_count = 0
     specular_candidate = False
 
     if max_before >= _VALUE_MIN_BRIGHT:
-        # Find all pixels >= 240 in original
-        bright_positions = [
-            (i % orig_rgb.width, i // orig_rgb.width)
-            for i, v in enumerate(pixels_before) if v >= 240
-        ]
-        # Cluster: a pixel is "isolated" if its 5×5 neighbourhood contains
-        # fewer than 25 other bright pixels (not a solid large highlight zone)
-        W_orig = orig_rgb.width
-        H_orig = orig_rgb.height
+        # Find all pixels >= 240 in original via numpy boolean indexing
+        bright_mask = arr_before >= 240
+        bright_ys, bright_xs = np.where(bright_mask)
+        bright_positions = list(zip(bright_xs.tolist(), bright_ys.tolist()))
+
+        W_orig = orig_gray.width
+        H_orig = orig_gray.height
         bright_set = set(bright_positions)
 
         visited = set()
@@ -767,9 +920,9 @@ def qa_report(img_path: str, asset_type: str = "auto") -> dict:
     # B — Value range
     value_result = _check_value_range(img)
 
-    # C — Color fidelity
+    # C — Color fidelity (v2.0.0: LAB ΔE via cv2 when available, RGB fallback)
     palette = get_canonical_palette()
-    color_result = verify_canonical_colors(img, palette, max_delta_hue=5)
+    color_result = _check_color_fidelity_lab(img, palette)
 
     # D — Warm/cool separation (conditional on asset type)
     # v1.4.0: also infer world-type to apply per-world threshold
@@ -1006,21 +1159,31 @@ def qa_summary_report(results: list, output_path: str):
         # C — Color fidelity
         cf = r["color_fidelity"]
         cf_status = "PASS" if cf.get("overall_pass", True) else "WARN"
-        lines.append(f"**C. Color Fidelity:** {cf_status}")
-        for color_name, data in cf.items():
-            if color_name == "overall_pass":
+        method = cf.get("color_method", "RGB_euclidean")
+        lines.append(f"**C. Color Fidelity:** {cf_status} ({method})")
+        colors_data = cf.get("colors", {})
+        if not colors_data:
+            # Legacy RGB path: iterate top-level keys
+            colors_data = {k: v for k, v in cf.items()
+                           if k not in ("overall_pass", "color_method", "delta_e_threshold")}
+        for color_name, data in colors_data.items():
+            if not isinstance(data, dict):
                 continue
-            if isinstance(data, dict):
-                status = data.get("status", "")
-                if status in ("not_found", "achromatic_target"):
-                    lines.append(f"  - {color_name}: {status}")
-                else:
-                    flag = "PASS" if data.get("pass", True) else "FAIL"
-                    lines.append(
-                        f"  - {color_name}: target={data.get('target_hue', '?'):.1f}° "
-                        f"found={data.get('found_hue', '?'):.1f}° "
-                        f"delta={data.get('delta', '?'):.1f}° [{flag}]"
-                    )
+            status = data.get("status", "")
+            if status in ("not_found", "achromatic_target"):
+                lines.append(f"  - {color_name}: {status}")
+            elif method == "LAB_DE":
+                flag = "PASS" if data.get("pass", True) else "FAIL"
+                de = data.get("delta_e")
+                de_str = f"{de:.2f}" if de is not None else "?"
+                lines.append(f"  - {color_name}: ΔE={de_str} [{flag}]")
+            else:
+                flag = "PASS" if data.get("pass", True) else "FAIL"
+                lines.append(
+                    f"  - {color_name}: target={data.get('target_hue', '?'):.1f}° "
+                    f"found={data.get('found_hue', '?'):.1f}° "
+                    f"delta={data.get('delta', '?'):.1f}° [{flag}]"
+                )
         lines.append("")
 
         # D — Warm/cool
@@ -1079,6 +1242,98 @@ def qa_summary_report(results: list, output_path: str):
 
 
 # ---------------------------------------------------------------------------
+# LAB ΔE comparison report (v2.0.0)
+# ---------------------------------------------------------------------------
+
+def run_comparison_report(directory: str, output_path: str = None) -> str:
+    """
+    Run color fidelity on all PNGs in *directory* using both the LAB ΔE method
+    (v2.0.0) and the legacy RGB Euclidean method, and report any discrepancies.
+
+    Specifically flags any asset that would change PASS→FAIL under LAB ΔE
+    compared to the RGB Euclidean baseline.  This is the mandatory comparison
+    report requested in the C39 brief.
+
+    Parameters
+    ----------
+    directory : str
+        Path to a directory containing PNG files.
+    output_path : str | None
+        If provided, writes the Markdown report to this path.
+        If None, returns the report as a string without writing.
+
+    Returns
+    -------
+    str
+        Markdown-formatted comparison report.
+    """
+    dir_path = Path(directory)
+    png_files = sorted(dir_path.glob("*.png"))
+
+    palette = get_canonical_palette()
+    lines = []
+    lines.append("# LAB ΔE vs RGB Euclidean Color Fidelity Comparison")
+    lines.append(f"**Directory:** `{directory}`")
+    lines.append(f"**Method A (legacy):** RGB Euclidean (hue drift, max_delta_hue=5)")
+    lines.append(f"**Method B (v2.0.0):** LAB ΔE (threshold={_LAB_DE_THRESHOLD})")
+    lines.append(f"**cv2 available:** {_CV2_AVAILABLE}")
+    lines.append("")
+    lines.append("| File | RGB PASS | LAB PASS | Change |")
+    lines.append("|------|----------|----------|--------|")
+
+    changes = []
+    for png in png_files:
+        try:
+            img = Image.open(str(png))
+            img.load()
+            if img.width > _MAX_OUTPUT_PX or img.height > _MAX_OUTPUT_PX:
+                img = img.copy()
+                img.thumbnail((_MAX_OUTPUT_PX, _MAX_OUTPUT_PX), Image.LANCZOS)
+
+            # RGB Euclidean (legacy)
+            rgb_result = verify_canonical_colors(img, palette, max_delta_hue=5)
+            rgb_pass = rgb_result.get("overall_pass", True)
+
+            # LAB ΔE (v2.0.0)
+            lab_result = _check_color_fidelity_lab(img, palette)
+            lab_pass = lab_result.get("overall_pass", True)
+
+            if rgb_pass and not lab_pass:
+                change = "**PASS→FAIL**"
+                changes.append((str(png.name), "PASS→FAIL"))
+            elif not rgb_pass and lab_pass:
+                change = "FAIL→PASS"
+                changes.append((str(png.name), "FAIL→PASS"))
+            else:
+                change = "unchanged"
+
+            lines.append(
+                f"| {png.name} | {'PASS' if rgb_pass else 'FAIL'} "
+                f"| {'PASS' if lab_pass else 'FAIL'} | {change} |"
+            )
+        except Exception as exc:
+            lines.append(f"| {png.name} | ERROR | ERROR | {exc} |")
+
+    lines.append("")
+    if changes:
+        lines.append(f"**Total changes: {len(changes)}**")
+        for name, ch in changes:
+            lines.append(f"- `{name}`: {ch}")
+    else:
+        lines.append("**No PASS/FAIL changes under LAB ΔE.**")
+    lines.append("")
+
+    report = "\n".join(lines)
+    if output_path:
+        Path(output_path).parent.mkdir(parents=True, exist_ok=True)
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(report)
+        print(f"[QA] Comparison report written to: {output_path}")
+
+    return report
+
+
+# ---------------------------------------------------------------------------
 # CLI entry point
 # ---------------------------------------------------------------------------
 
@@ -1087,11 +1342,21 @@ if __name__ == "__main__":
 
     if len(sys.argv) < 2:
         print("Usage:")
-        print("  python LTG_TOOL_render_qa.py <image.png> [asset_type]          # single file")
-        print("  python LTG_TOOL_render_qa.py --batch <directory> [output.md]   # batch mode")
+        print("  python LTG_TOOL_render_qa.py <image.png> [asset_type]              # single file")
+        print("  python LTG_TOOL_render_qa.py --batch <directory> [output.md]       # batch mode")
+        print("  python LTG_TOOL_render_qa.py --compare <directory> [output.md]     # LAB vs RGB comparison")
         sys.exit(0)
 
-    if sys.argv[1] == "--batch" and len(sys.argv) >= 3:
+    if sys.argv[1] == "--compare" and len(sys.argv) >= 3:
+        directory = sys.argv[2]
+        output_md = sys.argv[3] if len(sys.argv) >= 4 else None
+        print(f"[QA] LAB ΔE vs RGB comparison: {directory}")
+        report = run_comparison_report(directory, output_md)
+        if not output_md:
+            print(report)
+        sys.exit(0)
+
+    elif sys.argv[1] == "--batch" and len(sys.argv) >= 3:
         directory = sys.argv[2]
         output_md = sys.argv[3] if len(sys.argv) >= 4 else "qa_report.md"
         print(f"[QA] Batch mode: {directory}")

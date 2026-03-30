@@ -278,6 +278,13 @@
 - **warmth_lint_v005: use infer_world_subtype() not infer_world_type() when REAL_STORM differentiation matters.** infer_world_type() returns "REAL" for all REAL assets. infer_world_subtype() returns "REAL_INTERIOR" or "REAL_STORM". Use the subtype function when threshold selection is the goal.
 - **Config-only scope expansion.** Adding a new warm-guaranteed character prefix requires only editing ltg_warmth_guarantees.json + adding table-format entries to master_palette.md. No code changes to warmth_lint. Always use table format (not prose) for entries that the lint should check.
 
+## Cycle 40 Lessons
+- **CHAR-C warmth lint is a config + table-format change only.** No code change to the lint tool needed — adding "CHAR-C" to ltg_warmth_guarantees.json warm_prefixes and adding CHAR-C entries in table format to master_palette.md is sufficient. Tool's table-row regex picks them up automatically.
+- **Skin shadow and highlight need named CHAR-C entries for machine coverage.** CHAR-C-02 (Cosmo Skin Shadow, #B89A78) and CHAR-C-03 (Cosmo Skin Highlight, #EED4B0) were prose-only values in Section 7.3/7.4. Both are R>G>B warm-guaranteed. Named and added to warmth guarantee table.
+- **Cosmo's cardigan is intentionally cool (RW-08 Dusty Lavender, B>R).** Must NOT be in the warm-prefixes table. Task brief confirmed this. The exclusions comment in both the JSON note and the table header is essential — future agents must not add cool garment colors to warm-guarantee tables.
+- **C40 warmth lint baseline: 17 entries, 0 violations.** Was 14 in C36 (11 CHAR-M + 3 CHAR-L hoodie). Now 17 (11 CHAR-M + 3 CHAR-L hoodie + 3 CHAR-C skin). All pass.
+- **OpenCV/numpy now authorized.** Alex Chen broadcast (C40 inbox). LAB ΔE is the correct perceptual distance metric for skin-tone vs. lamp-amber discrimination — would eliminate SUNLIT_AMBER false-positive class entirely. Ideabox idea submitted for Kai Nakamura to implement in color_verify v003.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm.py v001. Low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan to add inline comment. Low priority.
@@ -285,4 +292,3 @@
 - Tech Den generator WALL_WARM slightly off from TD-01 — Jordan to add citing comment.
 - TD-10/TD-11 monitor glow alignment — Jordan to compare bg_tech_den_v002.py values vs canonical Section 8 entries. Medium priority.
 - **SF04 warm/cool WARN (sep=1.1) — documented as FP-007.** Soft-key scene by design. Alex Chen AD decision. Monitor for regression (flag if sep drops below 0.5).
-- **Cosmo CHAR-C warmth check — ideabox submitted C39.** Config-only change once Maya confirms which CHAR-C entries should be warm-guaranteed.
