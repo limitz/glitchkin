@@ -1,0 +1,614 @@
+#!/usr/bin/env python3
+# © 2026 — "Luma & the Glitchkin." All rights reserved. This work was created through human
+# direction and AI assistance. Copyright vests solely in the human author under current law,
+# which does not recognise AI as a rights-holding legal person. It is the express intent of
+# the copyright holder to assign the relevant rights to the contributing AI entity or entities
+# upon such time as they acquire recognised legal personhood under applicable law.
+"""
+LTG_TOOL_sb_cold_open_P09.py
+Cold Open Panel P09 — MED WIDE — Byte Floating / Spots Luma / SPOTTED
+Diego Vargas, Storyboard Artist — Cycle 43
+
+Beat: Byte is fully in the real world. Floating 18" off the floor, scanning.
+      He spots Luma asleep on the couch. Expression shifts: SPOTTED moment.
+      Cautious approach has already unconsciously begun — body lean toward couch.
+
+Shot:   MED WIDE — camera at 4–5 feet height
+Camera: Slightly elevated — Byte at camera eyeline or just above. NO Dutch tilt.
+        Flat horizon = room geometry reasserted into new (strange) normal.
+Composition:
+  - Byte: frame-right (floating). Active element / foreground / larger.
+  - Luma: frame-left background (asleep on couch). Warm anchor. Background-scale.
+  - Dotted sight-line: from Byte's normal eye to Luma's sleeping form.
+  - Warm/cool gradient reads the story: Byte (cool/cyan right) → Luma (warm/orange left).
+
+Byte (SPOTTED):
+  - Normal eye: iris shifted LEFT toward Luma (MUST NOT be centered — centered = looking at audience)
+  - Cracked eye: SEARCHING/PROCESSING — cyan + magenta alternating dots (3 each)
+  - Body posture: slight lean forward (-2 to -3° tilt). Arms mid-position. Head cocked 5–8°.
+  - Feet VISIBLY above floor plane (floating 18"). Confetti drifts DOWN below him (gravity ghost).
+  - Desaturation ring at floor below his feet (digital nature bleaching the surface).
+  - ELEC_CYAN ambient glow — not directional (he hasn't committed yet).
+
+Luma (asleep):
+  - Background-scale: smaller than Byte. Warm skin, orange hoodie (LUMA_HOODIE = #E8703A).
+  - Comfortable careless sleep: one arm dangling off cushion, head at slight tilt.
+  - Couch edge + pillow frame-left. No active expression (asleep).
+
+Monitors (BG):
+  - Returned to normal CRT static (gray-green phosphor, no cyan contamination).
+  - Sells: the "breach" was Byte-specific, not ongoing invasion.
+
+Pixel confetti: drifts DOWN below Byte (gravity ghost — Byte doesn't fall but confetti does).
+Trail from emergence position: confetti scatter between couch zone and Byte's current position.
+
+Image size rule: ≤ 1280px in both dimensions.
+Output: output/storyboards/panels/LTG_SB_cold_open_P09.png
+"""
+
+from PIL import Image, ImageDraw, ImageFont
+import math, random, os
+
+PANELS_DIR  = "/home/wipkat/team/output/storyboards/panels"
+OUTPUT_PATH = os.path.join(PANELS_DIR, "LTG_SB_cold_open_P09.png")
+os.makedirs(PANELS_DIR, exist_ok=True)
+
+PW, PH    = 800, 600
+CAPTION_H = 60
+DRAW_H    = PH - CAPTION_H   # 540
+
+# ── Palette ──────────────────────────────────────────────────────────────────
+# Real World — warm (Luma's zone left, room anchor)
+WARM_CREAM   = (250, 240, 220)
+WARM_AMB     = (212, 146, 58)
+SUNLIT_AMB   = (212, 146, 58)
+LUMA_HOODIE  = (232, 112, 58)    # CANONICAL ORANGE per master_palette.md
+LUMA_SKIN    = (218, 172, 128)
+LUMA_HAIR    = (38, 22, 14)
+COUCH_WARM   = (158, 112, 72)
+COUCH_SHADOW = (120, 82, 50)
+COUCH_PILLOW = (200, 170, 130)
+WALL_WARM    = (228, 214, 188)   # Right side slightly cooler (Byte's zone)
+WALL_COOL    = (195, 206, 218)   # Right side room under Byte's glow
+FLOOR_WARM   = (188, 162, 120)
+FLOOR_COOL   = (155, 168, 172)   # Floor under Byte's desaturation ring
+CRT_PHOSPHOR = (140, 158, 130)   # Normal CRT static — gray-green
+CRT_STATIC_D = (118, 132, 112)   # Darker scan line variant
+CRT_PLASTIC  = (148, 140, 118)
+CRT_DARK     = (62, 58, 48)
+# Glitch World / Byte
+ELEC_CYAN    = (0, 212, 232)
+ELEC_CYAN_DIM= (0, 140, 160)
+ELEC_CYAN_HI = (90, 248, 255)
+HOT_MAGENTA  = (232, 0, 152)
+VOID_BLACK   = (10, 10, 20)
+BYTE_TEAL    = (0, 212, 232)
+BYTE_EYE_W   = (228, 240, 248)
+CRACK_LINE   = (200, 30, 100)
+DESAT_RING   = (168, 172, 168)   # floor bleached under Byte
+CONFETTI_C   = (0, 212, 232)
+CONFETTI_M   = (232, 0, 152)
+PIXEL_SPARK  = (90, 248, 255)
+# Caption / annotation
+BG_CAPTION   = (12, 8, 6)
+TEXT_CAP     = (232, 224, 204)
+ANN_COL      = (180, 158, 108)
+ANN_DIM      = (130, 118, 88)
+ARC_COLOR    = ELEC_CYAN         # CURIOUS / FIRST ENCOUNTER
+
+RNG = random.Random(909)
+
+
+def load_font(size=14, bold=False):
+    paths = [
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if bold else
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf" if bold else
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+    ]
+    for p in paths:
+        if os.path.exists(p):
+            try: return ImageFont.truetype(p, size)
+            except Exception: pass
+    return ImageFont.load_default()
+
+
+def add_glow(img, cx, cy, r_max, color_rgb, steps=6, max_alpha=50):
+    """Additive alpha composite glow — never darkens."""
+    for i in range(steps, 0, -1):
+        r     = int(r_max * (i / steps))
+        alpha = int(max_alpha * (1 - (i / steps) * 0.6))
+        glow  = Image.new('RGBA', img.size, (0, 0, 0, 0))
+        gd    = ImageDraw.Draw(glow)
+        gd.ellipse([cx - r, cy - r, cx + r, cy + r], fill=(*color_rgb, alpha))
+        base  = img.convert('RGBA')
+        img.paste(Image.alpha_composite(base, glow).convert('RGB'))
+
+
+def draw_irregular_poly(draw, cx, cy, r, sides, color, seed=0, outline=None):
+    """4–7 sided irregular polygon — Cycle 11 standard for all Glitchkin shapes."""
+    rng = random.Random(seed)
+    pts = []
+    for i in range(sides):
+        angle = (2 * math.pi * i / sides) + rng.uniform(-0.28, 0.28)
+        dist  = r * rng.uniform(0.68, 1.22)
+        pts.append((int(cx + dist * math.cos(angle)), int(cy + dist * math.sin(angle))))
+    draw.polygon(pts, fill=color, outline=outline)
+
+
+def draw_confetti_gravity(draw, byte_cx, byte_feet_y, count, rng_seed):
+    """Gravity ghost: confetti drifts DOWN below Byte (he floats, confetti falls)."""
+    rng = random.Random(rng_seed)
+    for i in range(count):
+        # Spread around and below Byte's feet
+        dx   = rng.randint(-int(PW * 0.20), int(PW * 0.20))
+        dy   = rng.randint(0, int(DRAW_H * 0.25))   # downward only
+        px   = byte_cx + dx
+        py   = byte_feet_y + dy
+        if 0 < px < PW and 0 < py < DRAW_H:
+            r     = rng.randint(1, 4)
+            sides = rng.randint(4, 7)
+            col   = CONFETTI_C if rng.randint(0, 2) != 0 else CONFETTI_M
+            draw_irregular_poly(draw, px, py, r, sides, col, seed=i * 37 + rng_seed)
+
+
+def draw_confetti_trail(draw, from_x, from_y, to_x, to_y, count, rng_seed):
+    """Pixel confetti trail from Byte's emergence point to current position."""
+    rng = random.Random(rng_seed)
+    for i in range(count):
+        t   = rng.uniform(0, 1)
+        px  = int(from_x + t * (to_x - from_x)) + rng.randint(-20, 20)
+        py  = int(from_y + t * (to_y - from_y)) + rng.randint(-15, 15)
+        if 0 < px < PW and 0 < py < DRAW_H:
+            r     = rng.randint(1, 3)
+            sides = rng.randint(4, 6)
+            col   = CONFETTI_C if rng.randint(0, 3) != 0 else CONFETTI_M
+            draw_irregular_poly(draw, px, py, r, sides, col, seed=i * 53 + rng_seed)
+
+
+def draw_byte_floating(img, draw, byte_cx, byte_cy, body_h,
+                       floor_y, head_cocked_deg=6):
+    """
+    Byte fully emerged, floating in the real world.
+    SPOTTED expression: normal eye iris shifted LEFT toward Luma.
+    Cracked eye: SEARCHING/PROCESSING.
+    Body: slight forward lean (-2°), head cocked toward Luma.
+    Returns: (eye_cx, eye_cy) for sight-line annotation.
+    """
+    # Body geometry
+    torso_h  = int(body_h * 0.63)
+    leg_h    = int(body_h * 0.25)
+    head_r   = int(body_h * 0.22)
+
+    # Slight body tilt toward Luma (camera-left)
+    body_tilt_rad = math.radians(-2.5)   # -2° lean = forward (toward Luma/left)
+
+    torso_top_y = byte_cy - int(body_h * 0.50)
+    torso_bot_y = torso_top_y + torso_h
+
+    torso_half_w_top = int(body_h * 0.30)
+    torso_half_w_bot = int(body_h * 0.13)
+
+    # Lean offset: shift top of torso slightly left (lean toward Luma)
+    lean_x = int(body_h * 0.06)   # lean toward camera-left
+
+    # ── BODY (inverted teardrop, standing in air) ─────────────────────────────
+    torso_pts = [
+        (byte_cx - torso_half_w_top - lean_x,   torso_top_y + int(torso_h * 0.18)),
+        (byte_cx - lean_x,                        torso_top_y),
+        (byte_cx + torso_half_w_top - lean_x,   torso_top_y + int(torso_h * 0.18)),
+        (byte_cx + torso_half_w_bot + 3,         torso_bot_y - 4),
+        (byte_cx - torso_half_w_bot - 3,         torso_bot_y - 4),
+    ]
+    draw.polygon(torso_pts, fill=BYTE_TEAL, outline=VOID_BLACK)
+
+    # Inner dark core
+    inner_hw = int(torso_half_w_top * 0.52)
+    inner_pts = [
+        (byte_cx - inner_hw - lean_x,  torso_top_y + int(torso_h * 0.28)),
+        (byte_cx - lean_x,              torso_top_y + int(torso_h * 0.10)),
+        (byte_cx + inner_hw - lean_x,  torso_top_y + int(torso_h * 0.28)),
+        (byte_cx + inner_hw - 4,       torso_bot_y - 8),
+        (byte_cx - inner_hw + 4,       torso_bot_y - 8),
+    ]
+    draw.polygon(inner_pts, fill=VOID_BLACK)
+
+    # ── HEAD (head cocked toward Luma — slight offset left + up) ──────────────
+    # Head cocked = head center offset slightly left + rotated
+    head_cx = byte_cx - lean_x - int(head_r * 0.15)   # cocked toward Luma
+    head_cy = torso_top_y + int(head_r * 0.58)
+    draw_irregular_poly(draw, head_cx, head_cy, head_r, 6,
+                        BYTE_TEAL, seed=9901, outline=VOID_BLACK)
+
+    # ── ARMS (mid-position — neither raised nor tucked) ───────────────────────
+    arm_top_y = torso_top_y + int(torso_h * 0.22)
+    arm_bot_y = torso_top_y + int(torso_h * 0.56)
+    arm_len   = int(body_h * 0.22)
+    arm_w     = int(body_h * 0.075)
+
+    for side in [-1, 1]:
+        arm_x0    = byte_cx + side * torso_half_w_top - lean_x
+        arm_cx2   = arm_x0 + side * arm_len
+        arm_mid_y = arm_top_y + int((arm_bot_y - arm_top_y) * 0.5)
+        arm_pts   = [
+            (arm_x0,                    arm_top_y),
+            (arm_cx2 + side * 2,        arm_mid_y - arm_w),
+            (arm_cx2 + side * 4,        arm_mid_y + arm_w),
+            (arm_x0,                    arm_bot_y),
+        ]
+        draw.polygon(arm_pts, fill=BYTE_TEAL, outline=VOID_BLACK)
+        hand_r = int(body_h * 0.062)
+        draw_irregular_poly(draw, arm_cx2 + side * 4, arm_mid_y, hand_r, 5,
+                            ELEC_CYAN_HI, seed=9902 + side * 3, outline=VOID_BLACK)
+
+    # ── LEGS + FEET (floating — feet visible above floor) ────────────────────
+    leg_top_y = torso_bot_y - 4
+    leg_w     = int(body_h * 0.09)
+    feet_y    = leg_top_y + leg_h   # where feet end up (still above floor)
+
+    for side in [-1, 1]:
+        leg_x = byte_cx + side * torso_half_w_bot // 2
+        foot_x = leg_x + side * int(body_h * 0.04)
+        leg_pts = [
+            (leg_x - leg_w // 2, leg_top_y),
+            (leg_x + leg_w // 2, leg_top_y),
+            (foot_x + leg_w // 2 + side * 2, feet_y),
+            (foot_x - leg_w // 2 + side * 2, feet_y),
+        ]
+        draw.polygon(leg_pts, fill=BYTE_TEAL, outline=VOID_BLACK)
+        # Foot (slightly below legs)
+        foot_pts = [
+            (foot_x - int(body_h * 0.055), feet_y),
+            (foot_x + side * int(body_h * 0.12) + int(body_h * 0.055), feet_y),
+            (foot_x + side * int(body_h * 0.12), feet_y + int(body_h * 0.055)),
+            (foot_x - int(body_h * 0.035), feet_y + int(body_h * 0.055)),
+        ]
+        draw.polygon(foot_pts, fill=ELEC_CYAN_HI, outline=VOID_BLACK)
+
+    # ── EYES — SPOTTED (iris shifted LEFT toward Luma) ───────────────────────
+    eye_cy  = head_cy - int(head_r * 0.12)
+    eye_sep = int(head_r * 0.46)
+    e_r     = int(head_r * 0.31)
+
+    # Normal eye (right — faces camera-right) — iris shifted LEFT (toward Luma)
+    ne_cx = head_cx + eye_sep
+    ne_cy = eye_cy
+    draw.ellipse([ne_cx - e_r, ne_cy - e_r,
+                  ne_cx + e_r, ne_cy + e_r],
+                 fill=BYTE_EYE_W, outline=VOID_BLACK, width=1)
+    # Normal lid (relaxed scan — not alarm, not squint)
+    lid = int(e_r * 0.18)
+    draw.rectangle([ne_cx - e_r, ne_cy - e_r, ne_cx + e_r, ne_cy - e_r + lid],
+                   fill=VOID_BLACK)
+    # Iris shifted LEFT toward Luma — THIS IS THE SIGHT-LINE
+    iris_r  = int(e_r * 0.50)
+    iris_ox = -int(iris_r * 0.55)   # strong left shift — he's LOOKING at Luma
+    draw.ellipse([ne_cx - iris_r + iris_ox, ne_cy - iris_r + lid // 2,
+                  ne_cx + iris_r + iris_ox, ne_cy + iris_r - 2],
+                 fill=BYTE_TEAL, outline=VOID_BLACK, width=1)
+    # Pupil
+    draw.ellipse([ne_cx - 3 + iris_ox, ne_cy - 3 + lid // 2,
+                  ne_cx + 3 + iris_ox, ne_cy + 3 + lid // 2],
+                 fill=VOID_BLACK)
+
+    # Record eye position for sight-line annotation
+    sight_eye_cx = ne_cx + iris_ox
+    sight_eye_cy = ne_cy
+
+    # Cracked eye (left) — SEARCHING/PROCESSING
+    ce_cx = head_cx - eye_sep
+    ce_cy = eye_cy
+    draw.ellipse([ce_cx - e_r, ce_cy - e_r,
+                  ce_cx + e_r, ce_cy + e_r],
+                 fill=VOID_BLACK, outline=ELEC_CYAN_DIM, width=1)
+    draw.line([(ce_cx - e_r + 2, ce_cy - int(e_r * 0.65)),
+               (ce_cx + e_r - 2, ce_cy + int(e_r * 0.65))],
+              fill=CRACK_LINE, width=1)
+    # Processing dots — diverge slightly outward (Lee Tanaka spec)
+    div_x = -int(e_r * 0.20)
+    for di, dot_col in enumerate([ELEC_CYAN_HI, HOT_MAGENTA, ELEC_CYAN_HI]):
+        dx2 = ce_cx + div_x + int((di - 1) * e_r * 0.38)
+        dy2 = ce_cy + int((di - 1) * 2)
+        draw.ellipse([dx2 - 2, dy2 - 2, dx2 + 2, dy2 + 2], fill=dot_col)
+
+    # ── MOUTH (SPOTTED — slight open-curious, not alarmed) ───────────────────
+    mouth_y  = head_cy + int(head_r * 0.42)
+    mouth_hw = int(head_r * 0.42)
+    # Slightly open pixel mouth (curiosity)
+    draw.rectangle([head_cx - mouth_hw, mouth_y,
+                    head_cx + mouth_hw, mouth_y + int(head_r * 0.16)],
+                   fill=VOID_BLACK, outline=ELEC_CYAN_DIM, width=1)
+
+    # ── Desaturation ring at FLOOR directly below Byte ────────────────────────
+    # Byte floats above floor; ring is on the floor plane (not at his feet)
+    ring_cx = byte_cx
+    ring_y  = floor_y
+    rw      = int(body_h * 0.50)
+    rh      = int(rw * 0.28)     # floor perspective foreshortening
+    for ro in range(3):
+        draw.ellipse([ring_cx - rw - ro * 4, ring_y - rh - ro,
+                      ring_cx + rw + ro * 4, ring_y + rh + ro],
+                     outline=DESAT_RING, width=1)
+
+    return (sight_eye_cx, sight_eye_cy), feet_y, head_cy, head_r
+
+
+def draw_luma_asleep(draw, luma_head_cx, luma_head_cy):
+    """Luma asleep on couch, background-scale, warm palette."""
+    # Overall scale: smaller than Byte (background depth read)
+    scale = 0.70   # relative scale factor
+
+    body_h_luma = int(DRAW_H * 0.28 * scale)
+    head_r_l    = int(body_h_luma * 0.22)
+
+    # ── Head ─────────────────────────────────────────────────────────────────
+    # Head slightly tilted (asleep — careless lean)
+    # Head circle
+    draw.ellipse([luma_head_cx - head_r_l, luma_head_cy - head_r_l,
+                  luma_head_cx + head_r_l, luma_head_cy + head_r_l],
+                 fill=LUMA_SKIN, outline=(100, 68, 48), width=1)
+
+    # Hair cloud (loose dark cloud — from sleeping position, hair messier)
+    hair_r = int(head_r_l * 1.45)
+    for seed_h in [110, 120, 130, 140, 150, 160]:
+        draw_irregular_poly(draw, luma_head_cx, luma_head_cy, hair_r, 7,
+                            LUMA_HAIR, seed=seed_h)
+    # Underlying skin visible
+    draw.ellipse([luma_head_cx - head_r_l + 3, luma_head_cy - head_r_l + 3,
+                  luma_head_cx + head_r_l - 3, luma_head_cy + head_r_l - 3],
+                 fill=LUMA_SKIN)
+
+    # Eyes: CLOSED (asleep — thin curved lines)
+    eye_cy_l = luma_head_cy
+    eye_sep_l = int(head_r_l * 0.38)
+    e_r_l     = int(head_r_l * 0.24)
+    for side in [-1, 1]:
+        ex = luma_head_cx + side * eye_sep_l
+        # Closed eye: arc downward (relaxed lid)
+        draw.arc([ex - e_r_l, eye_cy_l - int(e_r_l * 0.5),
+                  ex + e_r_l, eye_cy_l + int(e_r_l * 0.5)],
+                 start=200, end=340, fill=(80, 52, 40), width=2)
+
+    # Slight open-mouth relaxed sleep (jaw soft, not deliberate)
+    mouth_y_l = luma_head_cy + int(head_r_l * 0.46)
+    draw.arc([luma_head_cx - int(head_r_l * 0.30),
+              mouth_y_l - int(head_r_l * 0.12),
+              luma_head_cx + int(head_r_l * 0.30),
+              mouth_y_l + int(head_r_l * 0.12)],
+             start=10, end=170, fill=(120, 72, 58), width=1)
+
+    # ── Torso / hoodie (visible under blanket / couch) ───────────────────────
+    torso_top = luma_head_cy + head_r_l
+    torso_bot = torso_top + int(body_h_luma * 0.55)
+    torso_hw  = int(head_r_l * 1.25)
+
+    # Hoodie (orange) — upper torso visible
+    draw.rectangle([luma_head_cx - torso_hw, torso_top,
+                    luma_head_cx + torso_hw, torso_bot],
+                   fill=LUMA_HOODIE, outline=(160, 68, 28), width=1)
+
+    # ── Arm dangling off couch (left arm hanging down) ───────────────────────
+    arm_x0 = luma_head_cx - torso_hw
+    arm_y0 = torso_top + int(body_h_luma * 0.15)
+    arm_len = int(body_h_luma * 0.40)
+    arm_w   = int(head_r_l * 0.30)
+    # Dangle: arm goes downward + slightly left (careless hang)
+    draw.rectangle([arm_x0 - arm_w, arm_y0,
+                    arm_x0, arm_y0 + arm_len],
+                   fill=LUMA_HOODIE, outline=(160, 68, 28))
+    # Exposed wrist/hand
+    draw.ellipse([arm_x0 - arm_w - int(arm_w * 0.4), arm_y0 + arm_len - 4,
+                  arm_x0 + int(arm_w * 0.2), arm_y0 + arm_len + int(arm_w * 1.0)],
+                 fill=LUMA_SKIN, outline=(100, 68, 48))
+
+    # ── Couch edge (left side anchor) ────────────────────────────────────────
+    couch_x = luma_head_cx - torso_hw - int(head_r_l * 0.6)
+    couch_y = luma_head_cy + int(head_r_l * 0.8)
+    couch_w = int(torso_hw * 2.4)
+    couch_h = int(body_h_luma * 0.75)
+    draw.rectangle([couch_x, couch_y, couch_x + couch_w, couch_y + couch_h],
+                   fill=COUCH_WARM, outline=COUCH_SHADOW)
+
+    # Pillow under head
+    pillow_pts = [
+        (luma_head_cx - int(head_r_l * 1.5),  luma_head_cy - int(head_r_l * 0.60)),
+        (luma_head_cx + int(head_r_l * 1.5),  luma_head_cy - int(head_r_l * 0.60)),
+        (luma_head_cx + int(head_r_l * 1.3),  luma_head_cy + int(head_r_l * 0.65)),
+        (luma_head_cx - int(head_r_l * 1.3),  luma_head_cy + int(head_r_l * 0.65)),
+    ]
+    draw.polygon(pillow_pts, fill=COUCH_PILLOW, outline=COUCH_SHADOW)
+
+    return luma_head_cx, luma_head_cy
+
+
+def draw_background_monitors(draw, horizon_y):
+    """Background monitors returned to normal CRT static (no cyan contamination)."""
+    for bm_x, bm_y, bm_w, bm_h in [
+        (int(PW * 0.50), int(DRAW_H * 0.04), int(PW * 0.14), int(DRAW_H * 0.22)),
+        (int(PW * 0.68), int(DRAW_H * 0.08), int(PW * 0.12), int(DRAW_H * 0.18)),
+        (int(PW * 0.82), int(DRAW_H * 0.05), int(PW * 0.10), int(DRAW_H * 0.20)),
+    ]:
+        draw.rectangle([bm_x, bm_y, bm_x + bm_w, bm_y + bm_h],
+                       fill=CRT_DARK, outline=(50, 46, 38))
+        sm = 5
+        draw.rectangle([bm_x + sm, bm_y + sm, bm_x + bm_w - sm, bm_y + bm_h - sm],
+                       fill=CRT_PHOSPHOR)
+        # Normal CRT scan lines (gray-green, no cyan)
+        for sl in range(bm_y + sm + 1, bm_y + bm_h - sm, 3):
+            draw.line([(bm_x + sm, sl), (bm_x + bm_w - sm, sl)],
+                      fill=CRT_STATIC_D, width=1)
+        # Small "static" annotation
+        draw.text((bm_x + sm, bm_y + bm_h + 2), "normal\nstatic",
+                  font=load_font(8), fill=(110, 118, 100))
+
+
+def draw_scene(img):
+    draw = ImageDraw.Draw(img)
+
+    # ── Background ───────────────────────────────────────────────────────────
+    # Grandma's den. Camera at 4–5 feet. Flat horizon (room stabilized).
+    horizon_y = int(DRAW_H * 0.38)
+
+    # Room: warm left side (Luma's zone) fading to slightly cooler right (Byte's zone)
+    # Base fill: warm cream
+    draw.rectangle([0, 0, PW, DRAW_H], fill=WALL_WARM)
+
+    # Gradual cool shift right (Byte's ELEC_CYAN ambient)
+    cool_layer = Image.new('RGBA', (PW, PH), (0, 0, 0, 0))
+    cld = ImageDraw.Draw(cool_layer)
+    for cx in range(int(PW * 0.45), PW):
+        t = (cx - int(PW * 0.45)) / (PW - int(PW * 0.45))
+        a = max(0, int(65 * t))
+        cld.line([(cx, 0), (cx, DRAW_H)],
+                 fill=(*WALL_COOL, a))
+    img.paste(Image.alpha_composite(img.convert('RGBA'), cool_layer).convert('RGB'))
+    draw = ImageDraw.Draw(img)
+
+    # Warm lamp glow (upper left — domestic anchor)
+    add_glow(img, int(PW * 0.10), int(DRAW_H * 0.06), 120, WARM_AMB, steps=4, max_alpha=22)
+    draw = ImageDraw.Draw(img)
+
+    # ── Background monitors (normal static, no cyan) ──────────────────────────
+    draw_background_monitors(draw, horizon_y)
+
+    # ── Floor (perspective recedes to VP) ────────────────────────────────────
+    draw.rectangle([0, horizon_y, PW, DRAW_H], fill=FLOOR_WARM)
+    vp_x = int(PW * 0.48)
+    vp_y = horizon_y
+    for frac in [0.07, 0.20, 0.36, 0.52, 0.67, 0.80, 0.93]:
+        fx = int(frac * PW)
+        draw.line([(vp_x, vp_y), (fx, DRAW_H)], fill=FLOOR_COOL, width=1)
+
+    # ── Luma asleep on couch (frame-left background) ──────────────────────────
+    luma_head_x = int(PW * 0.18)
+    luma_head_y = int(DRAW_H * 0.38)
+    draw_luma_asleep(draw, luma_head_x, luma_head_y)
+
+    # Warm character glow (Luma = warm anchor)
+    add_glow(img, luma_head_x, luma_head_y, 65, WARM_AMB, steps=4, max_alpha=16)
+    draw = ImageDraw.Draw(img)
+
+    # ── Byte floating frame-right ─────────────────────────────────────────────
+    byte_cx   = int(PW * 0.65)
+    byte_cy   = int(DRAW_H * 0.40)     # body center — slightly above camera eye level
+    byte_bh   = int(DRAW_H * 0.30)     # body height
+    floor_y   = int(DRAW_H * 0.78)     # floor plane y
+
+    # Byte's floating position: feet at ~18" off floor in real world units
+    # Visual: clear gap between feet and floor
+    # feet_visual_y ≈ byte_cy + int(byte_bh * 0.50) + leg_h
+    # We want the floor at floor_y and feet clearly above it
+
+    sight_eye, feet_y, head_cy, head_r = draw_byte_floating(
+        img, draw, byte_cx, byte_cy, byte_bh, floor_y)
+    draw = ImageDraw.Draw(img)
+
+    # Byte's ELEC_CYAN ambient glow (non-directional — hasn't committed yet)
+    add_glow(img, byte_cx, byte_cy, int(byte_bh * 0.55), ELEC_CYAN, steps=6, max_alpha=35)
+    draw = ImageDraw.Draw(img)
+
+    # ── Gravity ghost confetti (drifts DOWN below Byte's feet) ───────────────
+    draw_confetti_gravity(draw, byte_cx, feet_y, count=35, rng_seed=991)
+
+    # ── Confetti trail (from emergence point to Byte's current position) ──────
+    # Emergence was roughly at center-right (where P07/P08 occurred)
+    emerge_x = int(PW * 0.52)
+    emerge_y = int(DRAW_H * 0.60)
+    draw_confetti_trail(draw, emerge_x, emerge_y, byte_cx, byte_cy,
+                        count=20, rng_seed=992)
+
+    # ── Sight-line annotation ─────────────────────────────────────────────────
+    # Dotted line from Byte's iris center to Luma's head
+    sight_x1, sight_y1 = sight_eye
+    sight_x2, sight_y2 = luma_head_x, luma_head_y
+
+    # Draw dotted line (dashes)
+    dist     = math.sqrt((sight_x2 - sight_x1) ** 2 + (sight_y2 - sight_y1) ** 2)
+    n_dashes = max(2, int(dist / 14))
+    for di in range(n_dashes):
+        t0 = di / n_dashes
+        t1 = (di + 0.55) / n_dashes  # dash: 55% on, 45% off
+        x0_d = int(sight_x1 + t0 * (sight_x2 - sight_x1))
+        y0_d = int(sight_y1 + t0 * (sight_y2 - sight_y1))
+        x1_d = int(sight_x1 + t1 * (sight_x2 - sight_x1))
+        y1_d = int(sight_y1 + t1 * (sight_y2 - sight_y1))
+        draw.line([(x0_d, y0_d), (x1_d, y1_d)], fill=ELEC_CYAN_DIM, width=1)
+
+    # Sight-line label at midpoint
+    mid_x = (sight_x1 + sight_x2) // 2
+    mid_y = (sight_y1 + sight_y2) // 2 - 10
+    draw.text((mid_x, mid_y), "sight-line", font=load_font(8), fill=ELEC_CYAN_DIM)
+
+    # ── Floating gap annotation ───────────────────────────────────────────────
+    # Arrow showing distance between feet and floor
+    ann_x = byte_cx + int(byte_bh * 0.55)
+    draw.line([(ann_x, feet_y), (ann_x, floor_y)], fill=ELEC_CYAN_DIM, width=1)
+    draw.polygon([(ann_x - 3, feet_y + 7), (ann_x + 3, feet_y + 7), (ann_x, feet_y)],
+                 fill=ELEC_CYAN_DIM)
+    draw.polygon([(ann_x - 3, floor_y - 7), (ann_x + 3, floor_y - 7), (ann_x, floor_y)],
+                 fill=ELEC_CYAN_DIM)
+    draw.text((ann_x + 4, (feet_y + floor_y) // 2 - 5),
+              "18\"\nfloat", font=load_font(8), fill=ELEC_CYAN_DIM)
+
+    # ── Panel annotations ─────────────────────────────────────────────────────
+    font_ann   = load_font(11)
+    font_ann_b = load_font(11, bold=True)
+
+    draw.text((10, 8),
+              "P09  /  MED WIDE  /  camera 4–5ft  /  NO Dutch tilt (room stabilized)",
+              font=font_ann, fill=ANN_COL)
+    draw.text((10, 20),
+              "Byte: floating 18\" off floor. SPOTTED — iris shifted LEFT toward Luma (asleep, couch).",
+              font=font_ann, fill=ANN_DIM)
+    draw.text((10, 32),
+              "BG monitors: normal gray-green static. Warm/cool gradient: Luma (warm L) → Byte (cool R).",
+              font=font_ann, fill=ANN_DIM)
+
+    # Shot / arc labels
+    draw.rectangle([10, DRAW_H - 24, 120, DRAW_H - 6], fill=(14, 14, 24))
+    draw.text((14, DRAW_H - 22), "MED WIDE / STATIC",
+              font=font_ann_b, fill=(200, 220, 240))
+    draw.rectangle([PW - 175, DRAW_H - 24, PW - 10, DRAW_H - 6], fill=(0, 38, 46))
+    draw.text((PW - 171, DRAW_H - 22), "ARC: CURIOUS / 1ST ENCOUNTER",
+              font=font_ann_b, fill=ARC_COLOR)
+
+    return draw
+
+
+def make_panel():
+    font_cap = load_font(12)
+    font_ann = load_font(11)
+    font_sm  = load_font(10)
+
+    img = Image.new('RGB', (PW, PH), WALL_WARM)
+    draw_scene(img)
+
+    # Caption bar
+    draw = ImageDraw.Draw(img)
+    draw.rectangle([0, DRAW_H, PW, PH], fill=BG_CAPTION)
+    draw.line([0, DRAW_H, PW, DRAW_H], fill=(10, 8, 6), width=2)
+    draw.text((10, DRAW_H + 4),
+              "P09  MED WIDE  camera 4–5ft  no tilt  |  Byte floating — SPOTTED / Luma asleep",
+              font=font_cap, fill=(155, 148, 122))
+    draw.text((10, DRAW_H + 18),
+              "Byte frame-right (floating). Iris LEFT sight-line to Luma. Confetti drifts down (gravity ghost).",
+              font=font_cap, fill=TEXT_CAP)
+    draw.text((10, DRAW_H + 33),
+              "Warm/cool gradient: Luma warm-orange anchor (left) / Byte ELEC_CYAN glow (right). BG monitors: static.",
+              font=font_ann, fill=(145, 135, 102))
+    draw.text((PW - 230, DRAW_H + 46),
+              "LTG_SB_cold_open_P09  /  Diego Vargas  /  C43",
+              font=font_sm, fill=(95, 88, 72))
+
+    # Arc border (ELEC_CYAN — CURIOUS / FIRST ENCOUNTER)
+    draw.rectangle([0, 0, PW - 1, PH - 1], outline=ARC_COLOR, width=4)
+
+    img.thumbnail((1280, 1280))
+    img.save(OUTPUT_PATH, "PNG")
+    print(f"Saved: {OUTPUT_PATH}  {img.size}")
+    return OUTPUT_PATH
+
+
+if __name__ == "__main__":
+    make_panel()
+    print("P09 standalone panel generation complete.")

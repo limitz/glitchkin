@@ -1,5 +1,25 @@
 # Jordan Reed — Memory
 
+## Cycle 43 Deliverables
+- `LTG_TOOL_style_frame_04_resolution.py` — P2 inline comment added to `LAMP_AMBER` constant ✓
+  - Documents intentional GL-07 / #FF8C00 Corrupt Amber use as kitchen ceiling lamp halo
+  - Flags C42 Alex brief authorisation, post-crossing narrative purpose, low alpha ceiling (22%)
+  - Closes Sam Kowalski P2 flag (20260330_0300_sam_sf04_lamp_amber_flag.md)
+- Alex Chen confirmation received: SF04 "Resolution" is canonical (warm/cool 13.2 PASS)
+  - C41 sf04_luma_byte_v005 superseded; on disk for history only
+- Ideabox: `20260330_jordan_reed_gl_color_in_realworld_comment_guard.md`
+- Inbox archived ✓
+
+## Cycle 43 Status: COMPLETE
+
+## Cycle 43 Notes
+- **LAMP_AMBER comment pattern**: `# GL-07 / #FF8C00 — intentional in SF04 (C42 Alex brief)` —
+  use this as the template whenever a GL-palette color appears in a Real World scene for
+  narrative reasons. Key fields: palette code, hex, cycle + brief owner, narrative rationale,
+  alpha ceiling (to confirm it cannot pass for a true character GL application).
+- **Ideabox: sentinel comment pattern** for GLITCH-COLOR-IN-REAL-WORLD — propose machine-readable
+  marker for Morgan Walsh's ci_suite; eliminates repeat P2 flags for documented intentional choices.
+
 ## Cycle 42 Deliverables
 - `LTG_TOOL_style_frame_04_resolution.py` → `output/tools/` CREATED ✓
   - Output: `output/style_frames/LTG_COLOR_styleframe_sf04.png` (1280×720) ✓

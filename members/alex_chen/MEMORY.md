@@ -56,7 +56,7 @@
 - COVETOUS storyboard panel (Diego — P2, 3-char spec from Sam delivered)
 - LAMP_AMBER inline comment in SF04 generator (Jordan — P2)
 - CI --warn-stale N (Morgan — P2)
-- Sobel VP tool (Kai — P2)
+- Sobel VP tool (Kai — DELIVERED C43: `LTG_TOOL_sobel_vp_detect.py` v1.0.0 — pixel-coordinate VP detection, VP001/VP002 checks, --debug-png mode)
 - Annotation occupancy fix (Ryo — P2)
 - Scene handoff briefs (Priya — P2)
 - Glitch voice card (Priya — carry)
