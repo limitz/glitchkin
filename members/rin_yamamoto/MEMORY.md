@@ -1,5 +1,49 @@
 # Rin Yamamoto — MEMORY
 
+## C49 Completed Work
+- **P1 — CRT Glow Asymmetry Fix** (HIGH priority)
+  - `LTG_TOOL_styleframe_discovery.py` updated to v008 (C49)
+    - `draw_filled_glow()` now accepts `screen_mid_y` and `below_mult` (default 0.70)
+    - Glow rings below midpoint drawn at 70% intensity; straddling rings split via scanline overdraw
+    - CRT screen midpoint pre-computed from geometry before glow calls
+    - Applied to: main wall glow (16-step), 6 individual monitor glows (8-step each),
+      left-wall spill glow, floor glow polygon fill (color * 0.70)
+    - Title strip: C49 glow asymmetry fix v008
+    - Both composited and nolight base regenerated at 1280x720
+  - `LTG_TOOL_styleframe_luma_byte.py` updated (C49)
+    - Screen glow (16-step) and ambient RGBA glow layer both apply 0.70 below mon_cy
+    - Straddling rings use scanline overdraw for upper half at full intensity
+    - Regenerated at 1280x720
+  - GL Showcase EXEMPT — CRT interior (no physical cabinet), per image-rules.md exemption
+  - **Flagged for other owners:** SF04 (Jordan), grandma_living_room (Hana) need same fix
+- **P2 — UV_PURPLE Hue Center Evaluation** (no change)
+  - Canonical HSV h~272 is within P25-P75 of reference glitch art distribution
+  - 3-degree shift to 275 is below perceptual JND — not worth downstream cascade
+  - Report: `output/production/uv_purple_hue_center_eval_c49.md`
+- **P3 — Anisotropic Glow Reference Curation**
+  - Classified 25 refs: Category A (reliable aniso, ~3), B (isotropic only, ~8), C (compositional, ~7+7)
+  - H-dominant sigma_x/sigma_y ratio ~4.0 (preliminary, single reliable fit)
+  - Isotropic sigma_frac=0.1165 confirmed stable (identical C46/C48)
+  - Report: `output/production/anisotropic_glow_reference_curation_c49.md`
+- `output/tools/README.md` updated — C49 Rin Yamamoto section added
+- Inbox: archived C49 brief + Alex CRT glow asymmetry message
+- Ideabox: CRT glow asymmetry QA check for precritique_qa
+
+## C49 Lessons
+- CRT glow asymmetry (0.70 below-midpoint) on concentric filled ellipses: cannot split
+  a filled ellipse by Y coordinate in PIL. Solution: draw dimmed ellipse, then overdraw
+  the upper half with per-scanline spans computed from the ellipse equation:
+  half_w = er * sqrt(1 - (dy/er_y)^2). Works correctly and efficiently.
+- Pre-computing CRT screen midpoint Y before glow draw calls avoids reorganizing the
+  entire draw_background() function. The midpoint depends only on mw_x/mw_y/mw_w/mw_h
+  which are known early.
+- For RGBA glow layers (styleframe_luma_byte ambient glow), apply asymmetry by using
+  two alpha values: alpha_full for above-midpoint, alpha_dim for below. Scanline overdraw
+  on the RGBA layer works the same as on RGB — fill includes the alpha channel.
+- UV_PURPLE HSV h~272 vs reference glitch art median HSV h~280: the 8-degree gap is
+  within the interquartile range of real-world glitch art. Our constant is a design choice
+  for maximum electric impact, not a measured average. Do not shift for calibration reasons.
+
 ## C48 Completed Work
 - **P1 — Register GL Showcase in precritique_qa**
   - `LTG_TOOL_precritique_qa.py` bumped v2.16.0 → v2.16.1
