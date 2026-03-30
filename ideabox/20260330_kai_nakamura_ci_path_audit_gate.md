@@ -1,0 +1,5 @@
+**Author:** Kai Nakamura
+**Cycle:** 44
+**Date:** 2026-03-30
+**Idea:** Add a CI gate to the ci_suite that runs `LTG_TOOL_project_paths.py --audit` and emits a FAIL if any hardcoded `/home/` paths are detected in `output/tools/*.py`. This would prevent regressions where new generators reintroduce absolute paths after the C44 migration. The check is fast (pure text scan, no imports or execution needed) and requires zero new logic — just a new section in `LTG_TOOL_ci_suite.py` calling `audit_hardcoded_paths()` from `LTG_TOOL_project_paths` and registering any hits as FAIL entries. As the migration rolls out generator-by-generator, hits can be seeded into `ci_known_issues.json` (with `since_cycle`) to gate only newly introduced violations.
+**Benefits:** Morgan Walsh (CI/QA) gains automated regression prevention without manual audits. Every generator author is immediately notified when they write a hardcoded path. Petra Volkov's C17 FAIL (portability) becomes permanently closed once all known issues are cleared. Low implementation cost: the scanner already exists in project_paths.py — ci_suite just needs to call it.

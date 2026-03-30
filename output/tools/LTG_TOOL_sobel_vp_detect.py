@@ -74,12 +74,18 @@ Usage
     python LTG_TOOL_sobel_vp_detect.py output/backgrounds/ \\
         --save-report output/tools/sobel_vp_report.txt
 
+    # Batch with auto VP-spec lookup (v1.1.0+)
+    python LTG_TOOL_sobel_vp_detect.py output/backgrounds/environments/ \\
+        --vp-config output/tools/vp_spec_config.json \\
+        --save-report output/tools/sobel_vp_report.txt
+
     # Debug: save annotated VP image
     python LTG_TOOL_sobel_vp_detect.py LTG_ENV_classroom_bg.png --debug-png vp_debug.png
 
 API
 ---
-    from LTG_TOOL_sobel_vp_detect import detect_vp, detect_vp_batch, format_report
+    from LTG_TOOL_sobel_vp_detect import (detect_vp, detect_vp_batch, format_report,
+        load_vp_config, lookup_vp_spec, detect_vp_batch_with_config)
 
     result = detect_vp("LTG_ENV_classroom_bg.png",
                        vp_x_expected=192, vp_y_expected=230, tolerance_px=80)
@@ -93,6 +99,12 @@ API
 
 Changelog
 ---------
+v1.1.0 (C44): Added vp_spec_config.json support.
+    load_vp_config(config_path) — load and index the JSON config by output_filename.
+    lookup_vp_spec(config, image_path) — auto-resolve VP_X/VP_Y/tolerance for a given image.
+    detect_vp_batch_with_config(directory, config_path) — batch using per-file VP specs.
+    CLI: --vp-config PATH flag auto-fills --vp-x-expected/--vp-y-expected per file in batch mode.
+    Known-spec comment updated to refer to vp_spec_config.json as canonical source.
 v1.0.0 (C42): Initial implementation.
     Sobel → Canny → HoughLinesP → pairwise intersection clustering.
     cv2 required for Hough; numpy-only fallback uses angle histogram + gradient centroid.
@@ -107,11 +119,12 @@ Dependencies
     Pillow — for image loading and debug-PNG output
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 import os
 import sys
 import math
+import json
 import glob as _glob
 from collections import defaultdict
 
@@ -566,6 +579,117 @@ def detect_vp_batch(directory, vp_x_expected=None, vp_y_expected=None, tolerance
     return results
 
 
+# ── VP config JSON support ───────────────────────────────────────────────────
+
+def load_vp_config(config_path):
+    """Load and index vp_spec_config.json by output_filename.
+
+    Parameters
+    ----------
+    config_path : str
+        Path to vp_spec_config.json (or a compatible JSON with an "environments" list).
+
+    Returns
+    -------
+    dict  mapping output_filename (str) → environment spec dict.
+          Returns empty dict on any load/parse error.
+    """
+    try:
+        with open(config_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        index = {}
+        for env in data.get("environments", []):
+            fname = env.get("output_filename")
+            if fname:
+                index[fname] = env
+        return index
+    except Exception as e:
+        sys.stderr.write(f"[sobel_vp_detect] load_vp_config failed: {e}\n")
+        return {}
+
+
+def lookup_vp_spec(config_index, image_path):
+    """Look up VP spec for a given image path using a loaded config index.
+
+    Matches by the basename of image_path against the output_filename keys
+    in the config index.
+
+    Parameters
+    ----------
+    config_index : dict
+        Return value of load_vp_config().
+    image_path : str
+        Path to image file (basename is used for matching).
+
+    Returns
+    -------
+    tuple (vp_x, vp_y, tolerance_px, world_type)
+        vp_x / vp_y — int or None (None for glitch_layer environments).
+        tolerance_px — int, from config or _DEFAULT_TOLERANCE_PX fallback.
+        world_type — str or None.
+    If no match found, returns (None, None, _DEFAULT_TOLERANCE_PX, None).
+    """
+    fname = os.path.basename(image_path)
+    spec = config_index.get(fname)
+    if spec is None:
+        return None, None, _DEFAULT_TOLERANCE_PX, None
+    vp_x = spec.get("vp_x")     # may be None for glitch_layer
+    vp_y = spec.get("vp_y")
+    tol = spec.get("tolerance_px") or _DEFAULT_TOLERANCE_PX
+    world_type = spec.get("world_type")
+    return vp_x, vp_y, tol, world_type
+
+
+def detect_vp_batch_with_config(directory, config_path, tolerance_px=None):
+    """Run detect_vp() on all PNG files in a directory using per-file VP specs.
+
+    Each file's expected VP is looked up from config_path by output_filename.
+    Files with world_type=="glitch_layer" are skipped (no VP expected).
+    Files not found in the config are run without VP comparison (VP001 only).
+
+    Parameters
+    ----------
+    directory : str
+        Directory containing PNG files.
+    config_path : str
+        Path to vp_spec_config.json.
+    tolerance_px : int or None
+        Global tolerance override (overrides per-file config tolerance if set).
+
+    Returns
+    -------
+    list of result dicts (same format as detect_vp()).
+    Each result gains an extra key: "world_type" (str or None).
+    """
+    config_index = load_vp_config(config_path)
+    results = []
+    pattern = os.path.join(directory, "*.png")
+    paths = sorted(_glob.glob(pattern))
+    for p in paths:
+        vp_x, vp_y, file_tol, world_type = lookup_vp_spec(config_index, p)
+        if world_type == "glitch_layer":
+            # Skip VP detection for abstract environments
+            r = {
+                "file": p,
+                "vp_x": None, "vp_y": None, "confidence": 0.0,
+                "n_lines": 0, "n_intersections": 0,
+                "grade": "PASS",  # no VP requirement = not a failure
+                "issues": ["VP001 SKIP — glitch_layer world type; no perspective VP expected"],
+                "vp_x_expected": None, "vp_y_expected": None,
+                "distance_px": None, "tolerance_px": file_tol,
+                "image_width": None, "image_height": None,
+                "skipped_reason": "glitch_layer — VP not applicable",
+                "world_type": world_type,
+            }
+            results.append(r)
+            continue
+        used_tol = tolerance_px if tolerance_px is not None else file_tol
+        r = detect_vp(p, vp_x_expected=vp_x, vp_y_expected=vp_y, tolerance_px=used_tol)
+        r["world_type"] = world_type
+        results.append(r)
+    return results
+
+
 # ── Report formatting ─────────────────────────────────────────────────────────
 
 def format_report(results, include_pass=True):
@@ -684,6 +808,7 @@ def _parse_args(argv):
         "vp_x_expected": None,
         "vp_y_expected": None,
         "tolerance": _DEFAULT_TOLERANCE_PX,
+        "vp_config": None,
         "save_report": None,
         "debug_png": None,
         "include_pass": True,
@@ -698,6 +823,8 @@ def _parse_args(argv):
             args["vp_y_expected"] = int(argv[i + 1]); i += 2
         elif arg == "--tolerance" and i + 1 < len(argv):
             args["tolerance"] = int(argv[i + 1]); i += 2
+        elif arg == "--vp-config" and i + 1 < len(argv):
+            args["vp_config"] = argv[i + 1]; i += 2
         elif arg == "--save-report" and i + 1 < len(argv):
             args["save_report"] = argv[i + 1]; i += 2
         elif arg == "--debug-png" and i + 1 < len(argv):
@@ -720,7 +847,11 @@ def main(argv=None):
         print(f"LTG_TOOL_sobel_vp_detect.py  v{__version__}")
         print("Usage: python LTG_TOOL_sobel_vp_detect.py <image_or_dir>")
         print("       [--vp-x-expected X] [--vp-y-expected Y] [--tolerance PX]")
+        print("       [--vp-config vp_spec_config.json]")
         print("       [--save-report PATH] [--debug-png PATH] [--no-pass]")
+        print()
+        print("--vp-config: auto-fills VP_X/VP_Y/tolerance per file from JSON spec.")
+        print("             Use with a directory target for fully automated batch QA.")
         return 0
 
     args = _parse_args(argv)
@@ -732,13 +863,30 @@ def main(argv=None):
     vp_x = args["vp_x_expected"]
     vp_y = args["vp_y_expected"]
     tol = args["tolerance"]
+    vp_config = args["vp_config"]
 
     if os.path.isdir(target):
-        results = detect_vp_batch(target, vp_x_expected=vp_x,
-                                  vp_y_expected=vp_y, tolerance_px=tol)
+        if vp_config:
+            # Config-aware batch: per-file VP lookup
+            results = detect_vp_batch_with_config(target, vp_config,
+                                                  tolerance_px=vp_x and tol)
+        else:
+            results = detect_vp_batch(target, vp_x_expected=vp_x,
+                                      vp_y_expected=vp_y, tolerance_px=tol)
     elif os.path.isfile(target):
-        results = [detect_vp(target, vp_x_expected=vp_x,
-                             vp_y_expected=vp_y, tolerance_px=tol)]
+        if vp_config:
+            # Single file + config: look up this file's spec
+            config_index = load_vp_config(vp_config)
+            spec_vp_x, spec_vp_y, spec_tol, world_type = lookup_vp_spec(config_index, target)
+            # CLI explicit flags override config
+            used_x = vp_x if vp_x is not None else spec_vp_x
+            used_y = vp_y if vp_y is not None else spec_vp_y
+            used_tol = tol if args["tolerance"] != _DEFAULT_TOLERANCE_PX else spec_tol
+            results = [detect_vp(target, vp_x_expected=used_x,
+                                 vp_y_expected=used_y, tolerance_px=used_tol)]
+        else:
+            results = [detect_vp(target, vp_x_expected=vp_x,
+                                 vp_y_expected=vp_y, tolerance_px=tol)]
         if args["debug_png"] and results:
             save_debug_png(target, results[0], args["debug_png"])
             print(f"Debug PNG saved to {args['debug_png']}")

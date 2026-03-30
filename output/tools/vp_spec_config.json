@@ -1,0 +1,144 @@
+{
+  "_meta": {
+    "description": "Canonical vanishing point (VP) specifications for LTG environment generators.",
+    "purpose": "Enables LTG_TOOL_sobel_vp_detect.py and vanishing_point_lint.py to look up expected VP_X/VP_Y automatically without requiring --vp-x-expected/--vp-y-expected flags on every invocation.",
+    "format": {
+      "generator": "LTG_TOOL_ filename (without .py)",
+      "output_filename": "Expected PNG output filename",
+      "canvas_w": "Canvas width in pixels",
+      "canvas_h": "Canvas height in pixels",
+      "vp_x": "Vanishing point X in pixels (at canvas size above)",
+      "vp_y": "Vanishing point Y in pixels (at canvas size above)",
+      "tolerance_px": "Acceptable pixel deviation for PASS (VP002 check)",
+      "world_type": "real_world | glitch_layer | mixed",
+      "notes": "Source of VP value (formula or constant)"
+    },
+    "usage_example": "python LTG_TOOL_sobel_vp_detect.py LTG_ENV_foo.png --vp-config vp_spec_config.json",
+    "maintained_by": "Kai Nakamura — update whenever a background spec changes",
+    "version": "1.0.0",
+    "created_cycle": "C44"
+  },
+  "environments": [
+    {
+      "generator": "LTG_TOOL_bg_classroom",
+      "output_filename": "LTG_ENV_classroom_bg.png",
+      "canvas_w": 1280,
+      "canvas_h": 720,
+      "vp_x": 192,
+      "vp_y": 230,
+      "tolerance_px": 80,
+      "world_type": "real_world",
+      "notes": "VP_X = int(W * 0.15) = 192; VP_Y = int(H * 0.32) = 230; 3/4 back-right camera"
+    },
+    {
+      "generator": "LTG_TOOL_bg_luma_study_interior",
+      "output_filename": "LTG_ENV_luma_study_interior.png",
+      "canvas_w": 1280,
+      "canvas_h": 720,
+      "vp_x": 230,
+      "vp_y": 273,
+      "tolerance_px": 80,
+      "world_type": "real_world",
+      "notes": "VP_X = int(W * 0.18) = 230; VP_Y = int(H * 0.38) = 273; CRT key light setup"
+    },
+    {
+      "generator": "LTG_TOOL_bg_grandma_kitchen",
+      "output_filename": "LTG_ENV_grandma_kitchen.png",
+      "canvas_w": 1280,
+      "canvas_h": 720,
+      "vp_x": 512,
+      "vp_y": 273,
+      "tolerance_px": 80,
+      "world_type": "real_world",
+      "notes": "VP_X = int(W * 0.40) = 512; VP_Y = int(H * 0.38) = 273"
+    },
+    {
+      "generator": "LTG_TOOL_bg_tech_den",
+      "output_filename": "LTG_ENV_tech_den.png",
+      "canvas_w": 1280,
+      "canvas_h": 720,
+      "vp_x": 820,
+      "vp_y": 295,
+      "tolerance_px": 80,
+      "world_type": "real_world",
+      "notes": "VP_X = 820 (absolute constant); VP_Y = 295 (absolute constant)"
+    },
+    {
+      "generator": "LTG_TOOL_bg_millbrook_main_street",
+      "output_filename": "LTG_ENV_millbrook_main_street.png",
+      "canvas_w": 1280,
+      "canvas_h": 720,
+      "vp_x": 742,
+      "vp_y": 273,
+      "tolerance_px": 80,
+      "world_type": "real_world",
+      "notes": "VP_X = int(W * 0.58) = 742; VP_Y = int(H * 0.38) = 273; slightly right of center"
+    },
+    {
+      "generator": "LTG_TOOL_bg_school_hallway",
+      "output_filename": "LTG_ENV_school_hallway.png",
+      "canvas_w": 1280,
+      "canvas_h": 720,
+      "vp_x": 640,
+      "vp_y": 158,
+      "tolerance_px": 80,
+      "world_type": "real_world",
+      "notes": "VP_CX = W // 2 = 640; VP_CY = int(H * 0.22) = 158; symmetric central corridor VP"
+    },
+    {
+      "generator": "LTG_TOOL_env_grandma_living_room",
+      "output_filename": "LTG_ENV_grandma_living_room.png",
+      "canvas_w": 1280,
+      "canvas_h": 720,
+      "vp_x": 704,
+      "vp_y": 259,
+      "tolerance_px": 80,
+      "world_type": "real_world",
+      "notes": "VP_X = int(W * 0.55) = 704; VP_Y = int(H * 0.36) = 259"
+    },
+    {
+      "generator": "LTG_TOOL_bg_other_side",
+      "output_filename": "LTG_ENV_other_side_bg.png",
+      "canvas_w": 1280,
+      "canvas_h": 720,
+      "vp_x": null,
+      "vp_y": null,
+      "tolerance_px": null,
+      "world_type": "glitch_layer",
+      "notes": "Glitch Layer — no perspective VP. Abstract depth via platform tiers. VP checks skipped."
+    },
+    {
+      "generator": "LTG_TOOL_bg_glitchlayer_frame",
+      "output_filename": "LTG_ENV_glitchlayer_frame.png",
+      "canvas_w": 1280,
+      "canvas_h": 720,
+      "vp_x": null,
+      "vp_y": null,
+      "tolerance_px": null,
+      "world_type": "glitch_layer",
+      "notes": "Glitch Layer — no perspective VP. Three-tier platform depth; VP checks skipped."
+    },
+    {
+      "generator": "LTG_TOOL_bg_glitch_layer_frame",
+      "output_filename": "LTG_ENV_glitch_layer_frame.png",
+      "canvas_w": 1280,
+      "canvas_h": 720,
+      "vp_x": null,
+      "vp_y": null,
+      "tolerance_px": null,
+      "world_type": "glitch_layer",
+      "notes": "Glitch Layer variant — no perspective VP. VP checks skipped."
+    },
+    {
+      "generator": "LTG_TOOL_bg_glitch_layer_encounter",
+      "output_filename": "LTG_ENV_glitch_layer_encounter.png",
+      "canvas_w": 1280,
+      "canvas_h": 720,
+      "vp_x": null,
+      "vp_y": null,
+      "tolerance_px": null,
+      "world_type": "glitch_layer",
+      "notes": "Glitch Layer — encounter variant; no perspective VP. VP checks skipped."
+    }
+  ]
+}

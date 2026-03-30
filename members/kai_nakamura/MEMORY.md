@@ -7,7 +7,7 @@ Technical Art Engineer for "Luma & the Glitchkin." Joined Cycle 21. Mission: upg
 - Animation pitch package for a cartoon about 12yo Luma discovering Glitchkin (pixel creatures) in grandma's CRT TV
 - All tools: Python PIL/Pillow (open source only)
 - Tools live in `/home/wipkat/team/output/tools/`
-- Shared library: `output/tools/LTG_TOOL_render_lib.py` — __version__ = "1.1.0"
+- Shared library: `output/tools/LTG_TOOL_render_lib.py` — __version__ = "1.2.0"
 - Naming: `LTG_[CATEGORY]_[descriptor]_v[###].[ext]`
 
 ## Key Standards
@@ -281,6 +281,58 @@ Import: `from LTG_TOOL_render_lib import ...`
   but has false-positive risk on docstrings/comments — document known false-positive cases clearly
 - G008 bilateral check: proxy approach (detect interior state keywords + destabilize function) is
   conservative; may flag files that correctly implement bilateral but use different variable names
+
+## Cycle 44 — C44 Project Root Resolver + VP Spec Config
+
+**Status:** COMPLETE
+
+**Tasks completed:**
+- Built `LTG_TOOL_project_paths.py` v1.0.0 — project root resolver utility
+  - `project_root()`: traverses ancestors from `__file__` until CLAUDE.md sentinel found; lru_cache
+  - `output_dir(*parts)`: path inside output/; `tools_dir(*parts)`: path inside output/tools/
+  - `ensure_dir(path)`: mkdir -p; `resolve_output(category, name)`: category shorthands
+  - `audit_hardcoded_paths()`: scans output/tools/*.py for /home/ occurrences → grouped report
+  - CLI: `--audit` (exit 1 on hits — CI gate), `--root`, `--output`, `--tools`
+  - Migration guide in module docstring; no external deps
+- Built `vp_spec_config.json` v1.0.0 — 11 ENV VP specifications
+  - 7 real-world environments: classroom(192,230), study(230,273), kitchen(512,273),
+    tech_den(820,295), main_street(742,273), hallway(640,158), living_room(704,259)
+  - 4 glitch-layer: null VP (no perspective; auto-PASS in detect_vp_batch_with_config)
+  - All at 1280×720; tolerance_px=80 for all real-world envs
+- Updated `LTG_TOOL_sobel_vp_detect.py` → v1.1.0
+  - `load_vp_config(config_path) → dict`: indexes JSON by output_filename
+  - `lookup_vp_spec(config_index, image_path) → (vp_x, vp_y, tol, world_type)`
+  - `detect_vp_batch_with_config(directory, config_path)`: per-file VP lookup; glitch-layer skipped
+  - CLI: `--vp-config PATH` flag; single-file and batch modes both supported
+- Archived inbox message: 20260330_2359_c17_petra_project_root_resolver.md
+- README.md updated: C44 section with 2 new tools + v1.1.0 update; header updated to C44
+- Ideabox: submitted `20260330_kai_nakamura_ci_path_audit_gate.md`
+
+## LTG_TOOL_project_paths.py (C44 NEW)
+- `project_root() → pathlib.Path` — cached; sentinel=CLAUDE.md
+- `output_dir(*parts) → pathlib.Path` — path inside output/
+- `tools_dir(*parts) → pathlib.Path` — path inside output/tools/
+- `ensure_dir(path) → pathlib.Path` — mkdir -p; returns path
+- `resolve_output(category, name) → pathlib.Path` — category shorthands: bg, sb, sf, ch, ck, tl, pr
+- `audit_hardcoded_paths(tools_directory=None, pattern="/home/") → list[dict]`
+- CLI: `--audit` (exit 1 on hits), `--root`, `--output`, `--tools`
+- Migration: replace `"/home/wipkat/team/output/..."` → `output_dir("subdir", ..., "file.png")`; `ensure_dir(path.parent)` before save
+
+## vp_spec_config.json (C44 NEW)
+- 11 entries; format: generator, output_filename, canvas_w/h, vp_x, vp_y, tolerance_px, world_type, notes
+- Use with: `python LTG_TOOL_sobel_vp_detect.py <dir> --vp-config vp_spec_config.json`
+
+## LTG_TOOL_sobel_vp_detect.py — v1.1.0 (C44 UPDATED)
+- `load_vp_config(config_path) → dict`
+- `lookup_vp_spec(config_index, image_path) → (vp_x, vp_y, tol, world_type)`
+- `detect_vp_batch_with_config(directory, config_path, tolerance_px=None) → list`
+- `--vp-config PATH` CLI flag
+
+## Lessons Learned (C44)
+- project_root() sentinel traversal: CLAUDE.md is reliable (project root only); fallback to ../../ from output/tools/ works even without sentinel
+- vp_spec_config.json: record vp_x/vp_y as integer pixel values computed from the generator's own formula (int(W*0.15) etc.), not as floats — ensures exact match
+- school_hallway uses VP_CX/VP_CY variable names (not VP_X/VP_Y) — double-check naming on any new generator before adding to config
+- Glitch-layer environments: always null VP in config and auto-PASS in batch — avoids false FAILs on abstract environments
 
 ## Cycle 43 — C43 Sobel VP Detect Tool
 
