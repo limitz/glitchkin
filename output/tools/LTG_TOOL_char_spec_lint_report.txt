@@ -1,17 +1,11 @@
-LTG Character Spec Linter — v1.0.0
+LTG Character Spec Linter — v1.2.0
 ======================================================================
 
 
 ======================================================================
-WARN    Luma  (LTG_TOOL_luma_expression_sheet_v009.py)
+WARN    Grandma Miri  ((no file))
 ======================================================================
-  PASS  [L001]
-  PASS  [L002]
-  PASS  [L003]
-  WARN  [L004] L004: Luma curl count: spec requires exactly 5 curls. No clear CURL_COUNT=5 constant or range(5) in hair context found. Verify hair generator uses exactly 5 curl indicators.
-  PASS  [L005]
-
-  Summary: 4 PASS / 1 WARN / 0 FAIL  →  WARN
+  ERROR: No generator files found for 'miri' in /home/wipkat/team/output/tools. Patterns: ['LTG_TOOL_grandma_miri_expression_sheet_v*.py']
 
 ======================================================================
-TOTAL: 4 PASS / 1 WARN / 0 FAIL across 1 character(s)
+TOTAL: 0 PASS / 0 WARN / 0 FAIL across 1 character(s)

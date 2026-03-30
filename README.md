@@ -144,7 +144,7 @@ Three-world palette system:
 
 ---
 
-## Team (Cycle 43)
+## Team (Cycle 44)
 
 | Member | Role | Status |
 |--------|------|--------|
@@ -165,48 +165,51 @@ Three-world palette system:
 
 ## Progress
 
-- **Work cycles:** 43 | **Critique cycles:** 17
-- **Next:** Cycle 44 (Critique 18 after C45)
-- **Ideabox:** 12 ideas actioned C43 (all 12 submitted)
+- **Work cycles:** 44 | **Critique cycles:** 17
+- **Next:** Cycle 45 = Critique 18
+- **Ideabox:** 12 ideas actioned C44 (all 12 submitted)
 - **Critics panel:** 20 total (15 professionals + 5 audience)
 - **Team:** 12 active
-- **QA baseline:** re-run needed (precritique_qa v2.11.0, SF04 path corrected, Miri motion added)
+- **QA baseline:** re-run needed (precritique_qa v2.13.0, all 5 motion sheets, UV_PURPLE linter integrated)
 
 ### Pitch Package Status
 | Asset | Latest | Notes |
 |-------|--------|-------|
 | SF01 Discovery | v006 | Sight-line fixed C38 |
-| **SF02 Glitch Storm** | **v008 C43** | Native 1280×720 — SUNLIT_AMBER ΔE 1.1 PASS (was 47.04) |
+| **SF02 Glitch Storm** | **v008 C43** | Native 1280×720 — SUNLIT_AMBER ΔE 1.1 PASS |
 | SF03 The Other Side | v005 | UV_PURPLE ΔE 0.0 C41 |
-| **SF04 Resolution** | **C42 canonical** | Warm/cool 13.2 PASS — output dir fixed C43 |
-| **SF05 COVETOUS** | **v3.0.0 C43** | Luma SENSING UNEASE face added — face gate PASS |
+| **SF04 Resolution** | **C42 canonical** | Warm/cool 13.2 PASS — GL-07 lamp halo (Leila's find) |
+| **SF05 COVETOUS** | **v3.0.0 C43** | Luma SENSING UNEASE face — face gate PASS |
+| **SF05 "The Passing"** | **NEW C44** | Jordan — kitchen pre-dawn, mug of tea, CRT through doorway |
+| **SF06 "The Hand-Off"** | **NEW C44** | Maya — living room, Miri+CRT+Luma, moment of transmission |
 | **Luma expressions** | **v013 C41** | Tier-1 body postures, THE_NOTICING gaze fixed |
 | Luma turnaround | v004 | unchanged |
 | **Byte expressions** | **v007 C41** | UNGUARDED WARMTH body delta |
 | Cosmo expressions | v007 | unchanged |
-| Miri expressions | v005 C40 | FLAG 05 open — chopstick→wooden hairpin (C44) |
+| **Miri expressions** | **v006 C44** | FLAG 05 CLOSED — wooden hairpins (was chopstick MIRI-A) |
 | Glitch expressions | v003 | unchanged |
 | **Glitch body primitive diagram** | **NEW C41** | rx/ry proportions, vertex formulas |
-| **Character lineup** | **v008 C42** | Two-tier ground plane — Luma center |
-| Logo | v001 | Typography brief C43 — Alex decision pending C44 |
-| **Kitchen** | **v006 C43** | MIRI label via canonical draw_pixel_text() |
+| **Character lineup** | **v009 C44** | Wooden hairpin atomic update (Maya) |
+| **Logo** | **v003 C44** | Nunito Bold + Space Grotesk Bold pipeline ready — fonts pending install |
+| **Kitchen** | **v007 C44** | line_weight FAIL resolved (paper_texture/vignette/flatten) |
 | **Tech Den** | **v006 C41** | In-generator warm/cool 102.9 PASS |
 | Living Room | v001 | unchanged |
-| Glitch Layer | v003 | 3 generators native 1280×720 C42 |
+| Glitch Layer | v003 | UV_PURPLE linter: ENVs WARN (17%) — creative direction pending |
 | **Classroom** | **v003 C43** | Chalkboard text deployed (pixel font) |
 | **Luma Study Interior** | **NEW C42** | 33.1 PASS, first-ever generator |
 | Other Side ENV | C41 | UV_PURPLE ΔE 0.0 |
 | **School Hallway** | **v004 C43** | MILLBROOK MIDDLE SCHOOL seal — pixel font |
 | Millbrook Street | v002 | unchanged |
 | **Cold open storyboard** | **v003 C39** | Night/den canonical |
-| **Panels** | **P03/P06/P07/P08/P09/P10/P11/P23/P24 + EP05 COVETOUS** | P10/P11 new C43 |
-| **Story Bible** | **v004 C43** | Miri heritage confirmed, Millbrook midwest, FLAG 05 |
-| **Miri cultural identity brief** | **NEW C43** | Chopstick error, replacement spec, school name |
+| **Panels** | **P03–P11/P14/P15/P23/P24 + EP05 COVETOUS** | P14/P15 new C44; all captions retrofitted to 3-tier |
+| **Story Bible** | **v004 C43** | Miri heritage + Millbrook + school name canonical |
+| **Relationship frame brief** | **NEW C44** | Priya — A1-01 kitchen morning, logline, staging spec |
 | **Scene handoff briefs** | **NEW C42** | Acts 1–3 + pre-credits, A3-02 highest priority |
 | Motion — Luma | v002 C38 | unchanged |
 | Motion — Byte | v002 C38 | unchanged |
 | Cosmo motion spec | v001 C41 | IDLE/STARTLED/ANALYSIS_LEAN/RELUCTANT_MOVE |
-| **Miri motion spec** | **v001 NEW C43** | WARM ATTENTION/SHARP ASSESSMENT/PROUD JOY/PATIENT CORRECTION |
+| **Miri motion spec** | **v001 C43** | WARM ATTENTION/SHARP ASSESSMENT/PROUD JOY/PATIENT CORRECTION |
+| **Glitch motion spec** | **v001 NEW C44** | PREDATORY STILL/COVETOUS REACH/CORRUPTION SURGE/RETREAT |
 
 ---
 
@@ -218,4 +221,4 @@ All output generated with Python + PIL (open source only). Generators in `output
 
 ---
 
-*Cycle 43 — 2026-03-31*
+*Cycle 44 — 2026-03-31*
