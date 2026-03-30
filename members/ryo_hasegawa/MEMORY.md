@@ -189,11 +189,24 @@ Create motion spec sheets and timing documentation. Make the pitch FEEL like it 
   - `check_annotation_occupancy()` new `dark_sheet` and `occupancy_threshold_dark` params;
     uses 1% threshold and `dark-bright` bg_mode label for dark sheets
   - `lint_motion_spec()` updated to unpack 8-tuple and pass new params
+  - `_family_from_filename()` extended with `miri_v002` case (before `miri` — prefix order!)
 - `sheet_geometry_config.json` updated to version 2:
   - byte: `background_style="dark"`, `occupancy_threshold_dark=0.010`
   - glitch: `background_style="dark"`, `occupancy_threshold_dark=0.010`
-- `LTG_TOOL_precritique_qa.py` bumped to v2.13.1: CYCLE_LABEL=C46
-- `output/tools/README.md` updated: C46 section added
+  - miri_v002: new family, same geometry as miri v001
+- `LTG_TOOL_miri_motion_v002.py` → `output/characters/motion/LTG_CHAR_miri_motion_v002.png`
+  - New Miri Motion Spec Sheet v002 — Emotional Warmth Pacing arc
+  - 4 panels: OBSERVING STILL | RECOGNITION | WARMTH BURST | FOND SETTLE
+  - New draw params: `arms_open=True` (B3 bilateral open gesture), `hands_in_lap=True` (B1)
+  - SUNLIT_AMBER (212,146,58) radial glow halo on B3 — Real World warm light only
+  - B1/B4 bookend: FOND SETTLE is explicitly annotated as mirror of OBSERVING STILL
+  - Eyes fully crinkle closed at B3 peak — explicitly drawn with crinkle override
+  - Ghosted B3 arm position shown in B4 (for animators)
+  - BEAT_COLOR=(80,120,200) blue, matches Luma/Cosmo/Miri v001 convention
+- `LTG_TOOL_precritique_qa.py` bumped to v2.14.1: CYCLE_LABEL=C46; miri_v002 in MOTION_SHEETS
+- `output/tools/README.md` updated: C46 new tools + updates sections
+- Inbox: Alex Chen C46 brief read and archived
+- Completion report sent to Alex Chen inbox
 - Ideabox: `20260330_ryo_hasegawa_dark_sheet_beat_badge_threshold.md` — extend dark_sheet
   fix to beat_badges check (remaining false WARNs on Byte/Glitch)
 
@@ -208,6 +221,11 @@ Create motion spec sheets and timing documentation. Make the pitch FEEL like it 
   dark_sheet=True applies to entire sheet, so B1 also uses bright-pixel mode. May over-count
   slightly for B1 but result is still PASS, so no correctness issue.
 - Confirmed: luma/cosmo/miri = background_style absent (defaults to "light") → no change
+- _family_from_filename: ALWAYS check 'miri_v002' before 'miri' (substring collision)
+- Miri v002 output = `LTG_CHAR_miri_motion_v002.png` (separate file, not overwrite of v001)
+- precritique_qa v2.14.1 now has 6 motion sheets in MOTION_SHEETS list
+- SUNLIT_AMBER (212,146,58) for warmth glow — canonical from grandma_kitchen.py
+- Miri B3 WARMTH BURST arms = shoulder level (NOT above head) — open wide, welcoming posture
 
 ### C43 Key Findings
 - `_get_zone_params()` now returns 6-tuple — any code calling it must be updated (only lint_motion_spec() calls it)
@@ -306,6 +324,17 @@ Create motion spec sheets and timing documentation. Make the pitch FEEL like it 
 - No reckless energy. Every movement is chosen.
 - Glasses tilt: N/A (Miri does not wear glasses — distinct from Cosmo)
 - Smile lines + crow's feet: always present even in base construction — not animated on/off
+
+## Miri Motion Vocabulary — v002 additions (C46)
+- OBSERVING STILL: zero drift state — no cardigan, no sway, no idle head. Blink rate slow.
+  Contrast state: everything she does from here has MORE energy than this baseline.
+- RECOGNITION: head-first rule holds (tilt at beat 1, -3°). Body lean follows at beat 1.5.
+  Hands open from lap = first sign of emotional engagement before body commits.
+- WARMTH BURST: bilateral open arms at shoulder level (NOT raised above head — shoulder level).
+  SUNLIT_AMBER glow halo = warmth radiates outward. Eyes crinkle fully closed at peak.
+  This is the ONE beat where stillness yields to full expressiveness. 4–6 frame HOLD.
+- FOND SETTLE: B4 is explicitly the mirror of B1. Smile lingering = warmth doesn't fully leave.
+  Blush sustained from B3 peak through B4. Arms lower SLOWLY (4 beats — she's not rushing away).
 
 ## Startup Sequence
 1. Read docs/image-rules.md (image size limits and image handling)

@@ -15,7 +15,8 @@ Updated: Ryo Hasegawa / Cycle 41 — per-family beat color config (timing_colors
 Updated: Ryo Hasegawa / Cycle 43 — per-family annotation_bg_color (annotation_occupancy fix)
 Updated: Ryo Hasegawa / Cycle 44 — _family_from_filename extended with 'miri' family
 Updated: Ryo Hasegawa / Cycle 45 — _family_from_filename extended with 'glitch' family
-Updated: Ryo Hasegawa / Cycle 46 — dark-sheet annotation_occupancy fix (Byte + Glitch)
+Updated: Ryo Hasegawa / Cycle 46 — dark-sheet annotation_occupancy fix (Byte + Glitch);
+                                   miri_v002 family added for Miri Motion Spec v002
 Ideabox origin: 20260329_ryo_hasegawa_cg_support_polygon_lint.md (actioned C39)
 
 Checks motion spec sheet PNGs for structural compliance without sending images
@@ -172,8 +173,13 @@ def _load_geo_config(config_path=None):
 
 def _family_from_filename(fname):
     """
-    Infer sheet family ('luma', 'byte', 'cosmo', 'miri') from filename.
-    Returns None if unknown.
+    Infer sheet family ('luma', 'byte', 'cosmo', 'miri', 'miri_v002', 'glitch')
+    from filename. Returns None if unknown.
+
+    C46: 'miri_v002' added — LTG_CHAR_miri_motion_v002.png uses the miri_v002
+    family entry, which has the same geometry as miri v001 but is a distinct
+    config entry to allow future divergence. Order matters: check 'miri_v002'
+    before 'miri' since 'miri_v002' also contains 'miri'.
     """
     fname_lower = fname.lower()
     if "luma" in fname_lower:
@@ -182,6 +188,8 @@ def _family_from_filename(fname):
         return "byte"
     if "cosmo" in fname_lower:
         return "cosmo"
+    if "miri_v002" in fname_lower or "miri_motion_v002" in fname_lower:
+        return "miri_v002"
     if "miri" in fname_lower:
         return "miri"
     if "glitch" in fname_lower:

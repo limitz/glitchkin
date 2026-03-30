@@ -5,27 +5,39 @@
 # the copyright holder to assign the relevant rights to the contributing AI entity or entities
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
-LTG_TOOL_env_grandma_living_room.py — Grandma Miri's Living Room v002
+LTG_TOOL_env_grandma_living_room.py — Grandma Miri's Living Room v003
 "Luma & the Glitchkin" — Background & Environment Design
-Artist: Hana Okonkwo | Cycle 37 base, C39 update
+Artist: Hana Okonkwo | Cycle 37 base, C39 update, C46 SF06 alignment
 
 Narrative: The living room is the emotional heart of the show.
 The CRT television dominates the space — it is the story's
 central object. Family photos, a knitted throw, stacked books:
 all evidence of a life fully lived. Afternoon light slants warm
-and low through a window on the left. The CRT sits slightly
-off-center right, clearly old, gently glowing.
+and low through a window on the left. The CRT sits center stage,
+clearly old, gently glowing.
 
 The room should feel: inhabited, layered, specific.
 Not a generic "old lady room" — Miri's living room.
 
 Design decisions:
   - Camera: mild 3/4 angle, looking in from slightly left of center
-  - Key light: SUNLIT_AMBER afternoon lamp from right-upper quadrant
+  - Key light: SUNLIT_AMBER afternoon lamp — LEFT of CRT (Miri warm zone)
   - Window: warm afternoon light shaft from left
-  - Focal point: CRT television (off-center right, screen ON, pale cyan glow)
-  - Warm/cool: warm left (afternoon sun) / cool right (CRT bounce)
+  - Focal point: CRT television (center, screen ON, pale cyan glow)
+  - Warm/cool: warm left (afternoon sun + lamp, Miri staging zone)
+              cool right (CRT glow, Luma staging zone)
   - Deep shadows applied after all light passes for QA value floor ≤30
+
+C46 update (v003 — Hana Okonkwo, Alex Chen brief):
+  - CRT repositioned to center (stand x ~0.38–0.52 W) from off-center right
+    (was 0.54–0.76 W) — matches SF06 "The Hand-Off" spatial layout.
+  - Reading lamp moved LEFT of CRT (lamp_x ~0.20 W) — becomes warm source
+    for Miri staging zone (left of CRT). Aligns with SF06 warm-left/cool-right
+    character placement: Miri in warm zone (left lamp), Luma in cool zone (CRT).
+  - Family photos shifted right of CRT (0.56–0.70 W) to clear CRT footprint.
+  - Added horizontal warm-left/cool-right staging pass (alpha 28/32) on top
+    of existing top/bottom QA split — reinforces character staging reads.
+  - Hardcoded output path migrated to output_dir() (closes C44 backlog item).
 
 C39 addition:
   - Diamond-crystal figurine on bookshelf top shelf (right side of shelf)
@@ -37,13 +49,18 @@ C39 addition:
 World: REAL — warm/cool threshold = 12 (ltg_warmth_guarantees.json)
 
 Canvas: 1280×720 (≤1280 rule — direct, no thumbnail needed)
-Output: /home/wipkat/team/output/backgrounds/environments/LTG_ENV_grandma_living_room.png
+Output: output/backgrounds/environments/LTG_ENV_grandma_living_room.png
+  (resolved at runtime via LTG_TOOL_project_paths.output_dir())
 """
 
 import math
 import os
+import sys
 import random
 from PIL import Image, ImageDraw, ImageFilter
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
 
 W, H = 1280, 720
 
@@ -467,9 +484,10 @@ def draw_crt_tv(img, vp_x, vp_y, bw_left, bw_top, bw_right, bw_bot):
     """
     draw = ImageDraw.Draw(img)
 
-    # TV stand
-    stand_x1 = int(W * 0.54)
-    stand_x2 = int(W * 0.76)
+    # TV stand — centered (C46 v003: moved from off-center right to center for SF06)
+    # SF06 "The Hand-Off": CRT at x ~490–680px; Miri LEFT, Luma RIGHT.
+    stand_x1 = int(W * 0.38)
+    stand_x2 = int(W * 0.52)
     stand_y1 = int(H * 0.65)
     stand_y2 = bw_bot + 2
 
@@ -797,13 +815,14 @@ def draw_coffee_table(img, bw_bot):
 
 def draw_reading_lamp(img, bw_right, bw_top, bw_bot):
     """
-    Floor lamp to the right of the CRT — the warm key source.
-    Tall standing lamp, warm amber-orange shade.
-    Positioned between TV stand and right wall.
+    Floor lamp LEFT of CRT — the warm key source for Miri staging zone.
+    C46 v003: moved from right side (W*0.82) to left side (W*0.20).
+    Positioned between bookcase right edge and CRT stand left edge.
+    Warm zone: Miri stands here in SF06 "The Hand-Off".
     """
     draw = ImageDraw.Draw(img)
 
-    lamp_x = int(W * 0.82)
+    lamp_x = int(W * 0.20)
     lamp_base_y = bw_bot - 2
 
     # Lamp post (thin pole)
@@ -924,11 +943,12 @@ def draw_family_photos(img, bw_left, bw_top, bw_right):
     """
     draw = ImageDraw.Draw(img)
 
-    # Photo positions (center of back wall, above sofa area)
+    # Photo positions — right of CRT on back wall (C46 v003: shifted right to clear
+    # CRT footprint now at W*0.38–0.52; photos now live in Luma's cool zone)
     photo_data = [
-        (int(W * 0.38), bw_top + 40, 46, 36),   # left portrait
-        (int(W * 0.46), bw_top + 28, 38, 50),   # center tall portrait
-        (int(W * 0.52), bw_top + 44, 46, 32),   # right landscape
+        (int(W * 0.56), bw_top + 40, 46, 36),   # left portrait
+        (int(W * 0.64), bw_top + 28, 38, 50),   # center tall portrait
+        (int(W * 0.70), bw_top + 44, 46, 32),   # right landscape
     ]
 
     photo_fills = [
@@ -1121,8 +1141,8 @@ def draw_wall_texture(img, bw_left, bw_top, bw_right, bw_bot):
 def main():
     random.seed(42)
 
-    out_path = "/home/wipkat/team/output/backgrounds/environments/LTG_ENV_grandma_living_room.png"
-    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    out_path = output_dir("backgrounds", "environments", "LTG_ENV_grandma_living_room.png")
+    ensure_dir(out_path.parent)
 
     # Start with base warm cream fill (ensures no default-black edges)
     img = Image.new("RGB", (W, H), WALL_BASE)
@@ -1183,14 +1203,29 @@ def main():
     img = alpha_overlay_rect(img, 0, 0, W, H // 2, SUNLIT_AMBER, 50)
     img = alpha_overlay_rect(img, 0, H // 2, W, H, CRT_COOL_SPILL, 65)
 
+    # Layer 12c: Horizontal character staging pass (C46 v003 — SF06 compatibility)
+    # LEFT zone (0 to W*0.38): warm SUNLIT_AMBER — Miri staging area (window + lamp)
+    # RIGHT zone (W*0.52 to W): cool CRT_COOL_SPILL — Luma staging area (CRT glow)
+    # Low alpha: spatial cue only, does not fight scene color or QA top/bottom split.
+    img = alpha_overlay_rect(img, 0, 0, int(W * 0.38), H, SUNLIT_AMBER, 28)
+    img = alpha_overlay_rect(img, int(W * 0.52), 0, W, H, CRT_COOL_SPILL, 32)
+
     # Layer 13: Deep shadows — applied AFTER all light, so value floor is forced down
     img = draw_deep_shadows(img, vp_x, vp_y, bw_left, bw_top, bw_right, bw_bot)
+
+    # Specular restoration — ensures value ceiling ≥225 after all overlay passes.
+    # Window hotspot re-drawn LAST so overlays cannot dim it below threshold.
+    _final_spec = ImageDraw.Draw(img)
+    _final_spec.ellipse([ws_cx - 6, ws_cy - 6, ws_cx + 6, ws_cy + 6],
+                        fill=(255, 252, 230))
+    _final_spec.ellipse([ws_cx - 3, ws_cy - 3, ws_cx + 3, ws_cy + 3],
+                        fill=(255, 255, 248))
 
     # Size rule compliance
     img.thumbnail((1280, 1280), Image.LANCZOS)
 
     img.save(out_path)
-    print(f"[Hana v002] Saved: {out_path}  ({img.width}×{img.height})")
+    print(f"[Hana v003] Saved: {out_path}  ({img.width}×{img.height})")
     return out_path
 
 

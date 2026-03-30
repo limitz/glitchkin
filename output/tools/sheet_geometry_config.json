@@ -70,6 +70,23 @@
       "annotation_bg_tolerance": 12,
       "_annotation_bg_note": "ANNOTATION_BG=(248,244,238) warm cream from LTG_TOOL_miri_motion.py; tol=12 excludes Miri skin fill (140,84,48) which diverges by 100+ in R channel — no false positives possible"
     },
+    "miri_v002": {
+      "header_h": 54,
+      "panel_top_abs": 54,
+      "annot_zone_y_start": 80,
+      "annot_zone_y_end": 228,
+      "badge_panel_top_abs": 58,
+      "expected_panels": 4,
+      "sheet_w": 1280,
+      "sheet_h": 720,
+      "_source": "LTG_CHAR_miri_motion_v002.png",
+      "beat_color": [80, 120, 200],
+      "beat_color_tolerance": 40,
+      "_beat_color_note": "BEAT_COLOR=(80,120,200) from LTG_TOOL_miri_motion_v002.py — blue family, matches Luma/Cosmo/Miri v001 convention",
+      "annotation_bg_color": [248, 244, 238],
+      "annotation_bg_tolerance": 12,
+      "_annotation_bg_note": "C46: same bg spec as miri v001. warm cream (248,244,238), tol=12."
+    },
     "glitch": {
       "header_h": 44,
       "panel_top_abs": 56,

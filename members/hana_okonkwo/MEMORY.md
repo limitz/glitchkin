@@ -6,6 +6,39 @@ Comedy-adventure cartoon. Three worlds: Real World (warm/domestic), Glitch World
 ## Joined
 Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style frames).
 
+## Cycle 46 — Living Room v003 + Tech Den v007
+
+### Living Room v003 (SF06 Alignment)
+- CRT repositioned: stand from W*0.54–0.76 (691–973px) → W*0.38–0.52 (486–666px)
+  - Matches SF06 "The Hand-Off" CRT center-left requirement (~490–680px)
+- Reading lamp moved: W*0.82 → W*0.20 — now LEFT of CRT, warm source for Miri zone
+- Family photos shifted: W*0.38/0.46/0.52 → W*0.56/0.64/0.70 — clear of CRT footprint
+- Added Layer 12c: horizontal warm-left/cool-right staging overlays (SUNLIT_AMBER alpha 28 left, CRT_COOL_SPILL alpha 32 right) for SF06 character zone reinforcement
+- Specular restoration moved to LAST draw (after all overlays) — fixes value ceiling drop from overlay accumulation
+- Hardcoded output path migrated to output_dir() from LTG_TOOL_project_paths
+- QA C46: silhouette PASS, value PASS (min=26 max=254), warm/cool 47.3 PASS, line_weight outliers=2 PASS, grade WARN (color fidelity pre-existing only)
+
+### Tech Den v007 (Path Migration)
+- Migrated hardcoded `/home/wipkat/team/...` output path to `output_dir("backgrounds", "environments", "LTG_ENV_tech_den.png")`
+- Added `from LTG_TOOL_project_paths import output_dir, ensure_dir` import
+- Closes C44 backlog item in ci_known_issues.json (hardcoded_path_check)
+- No visual changes — QA C46 matches C41 baseline exactly (sep=102.9, outliers=1, WARN)
+- ci_known_issues.json entry updated with resolved_cycle="C46"
+
+### Value Ceiling Pattern — Specular Restoration
+- Problem: window specular drawn BEFORE overlay passes → overlays dim it below 225 threshold
+- Fix pattern: re-draw specular AFTER all overlays and deep shadows (last draw before save)
+- ws_cx/ws_cy must be in scope — compute from win_x1/win_x2/win_y1/win_y2 in main(), keep in local scope
+- Lesson: any ENV with overlay passes added after the original specular should re-draw specular last
+
+### Path Migration Pattern (project_paths)
+- Import: `from LTG_TOOL_project_paths import output_dir, ensure_dir`
+- Replace: `out_path = "/home/wipkat/team/output/backgrounds/environments/LTG_ENV_foo.png"`
+- With: `out_path = output_dir("backgrounds", "environments", "LTG_ENV_foo.png")`
+- Replace: `os.makedirs(os.path.dirname(out_path), exist_ok=True)`
+- With: `ensure_dir(out_path.parent)`
+- PIL save() and str() both accept pathlib.Path — no cast needed
+
 ## Existing Environments (as of C44)
 - Kitchen (Grandma's): **v007** — `LTG_ENV_grandma_kitchen.png`
   - C44: Added paper_texture(alpha=16) + vignette(strength=45) + flatten_rgba_to_rgb() final passes
@@ -24,7 +57,7 @@ Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style fr
 - Glitch Layer: v003
 - School Hallway: **v004** (C40 re-run) — `LTG_ENV_school_hallway.png`
 - Millbrook Street: v002
-- **Living Room (C39)**: **v002** — `LTG_ENV_grandma_living_room.png` — QA PASS
+- **Living Room**: **v003 (C46)** — `LTG_ENV_grandma_living_room.png` — QA PASS (SF06 aligned, CRT center, warm-left/cool-right staging)
 - **Classroom: FULL REBUILD C41** — `LTG_ENV_classroom_bg.png`
   - QA C41: silhouette PASS, warm/cool 17.0 PASS, line_weight 2 outliers PASS, grade WARN (pre-existing only)
 - **Luma Study Interior: BUILT C42** — `LTG_ENV_luma_study_interior.png`

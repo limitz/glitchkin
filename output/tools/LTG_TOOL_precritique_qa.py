@@ -51,11 +51,12 @@ Version: 2.14.0 (C45 Rin Yamamoto: LTG_TOOL_uv_purple_linter v1.1.0 GLITCH_DARK_
                COVETOUS assets previously FAIL (0.6% / 0.2% ΔE-match) now PASS via hue-angle
                matching (96.7% / 98.9% UV_PURPLE hue family h° 255°–325°).
                No change to ENV asset handling — glitchlayer_frame WARNs remain.)
-Version: 2.13.1 (C46 Ryo Hasegawa: CYCLE_LABEL bumped to C46. motion_spec_lint C46 update
+Version: 2.14.1 (C46 Ryo Hasegawa: CYCLE_LABEL bumped to C46. motion_spec_lint C46 update
                (dark-sheet annotation_occupancy fix) — byte + glitch annotation_occupancy
                now PASS with 1% bright-pixel threshold. Eliminates 2 persistent false WARNs.
-               sheet_geometry_config.json v2 with background_style + occupancy_threshold_dark
-               for byte and glitch families.)
+               sheet_geometry_config.json v2: background_style + occupancy_threshold_dark
+               for byte and glitch; miri_v002 family added. MOTION_SHEETS extended with
+               LTG_CHAR_miri_motion_v002.png (4 panels) — Miri Emotional Warmth Pacing arc.)
 Version: 2.13.0 (C44 Rin Yamamoto: UV_PURPLE Dominance Lint Section 11 added. New GLITCH_LAYER_PNGS
                registry. Lazy-loaded LTG_TOOL_uv_purple_linter via _load_uv_purple_linter().
                run_uv_purple_lint() runner, Section 11 in build_report(), main() [11/11],
@@ -252,11 +253,13 @@ MOTION_SHEETS = [
     # (path, expected_panel_count)
     # C44 update (Ryo Hasegawa): luma corrected 3→4 (4-panel sheet); cosmo+miri added
     # C45 update (Ryo Hasegawa): glitch added — first motion spec for Glitch character
-    (MOTION_DIR / "LTG_CHAR_luma_motion.png",   4),
-    (MOTION_DIR / "LTG_CHAR_byte_motion.png",   4),
-    (MOTION_DIR / "LTG_CHAR_cosmo_motion.png",  4),
-    (MOTION_DIR / "LTG_CHAR_miri_motion.png",   4),
-    (MOTION_DIR / "LTG_CHAR_glitch_motion.png", 4),
+    # C46 update (Ryo Hasegawa): miri_v002 added — Emotional Warmth Pacing arc
+    (MOTION_DIR / "LTG_CHAR_luma_motion.png",        4),
+    (MOTION_DIR / "LTG_CHAR_byte_motion.png",        4),
+    (MOTION_DIR / "LTG_CHAR_cosmo_motion.png",       4),
+    (MOTION_DIR / "LTG_CHAR_miri_motion.png",        4),
+    (MOTION_DIR / "LTG_CHAR_miri_motion_v002.png",   4),
+    (MOTION_DIR / "LTG_CHAR_glitch_motion.png",      4),
 ]
 
 # Contact sheet pairs for arc-diff gate (Section 10).
