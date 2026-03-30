@@ -1,5 +1,33 @@
 # Jordan Reed — Memory
 
+## Cycle 51 Deliverables
+- `LTG_TOOL_freetype_eval.py` — freetype-py vs PIL ImageFont evaluation ✓
+  - Output: `output/production/freetype_eval_c51.png` (side-by-side visual comparison)
+  - Report: `output/production/freetype_eval_report_c51.md`
+  - Finding: AA quality identical (both use FreeType backend). freetype-py 13x slower (10ms vs 0.8ms).
+  - Kerning: Available but DejaVu Sans has sparse tables. Font-dependent benefit.
+  - Verdict: Selective upgrade — freetype-py for logo/title text (kerning + glyph metrics), PIL for small labels.
+- `LTG_TOOL_wand_compositing_eval.py` — Wand vs PIL scene-lit compositing evaluation (PARTIAL) ✓
+  - Output: `output/production/wand_compositing_eval_c51.png` (PIL baseline only)
+  - Report: `output/production/wand_compositing_eval_report_c51.md`
+  - **BLOCKER**: Wand requires ImageMagick system library (`libmagickwand-dev`), not installed.
+  - PIL baselines collected. Wand implementations written and ready to test.
+  - Alternative documented: PIL + scipy.ndimage.gaussian_filter covers Wand's key advantage (blur).
+  - Wand compositing code is complete in the eval script — will auto-populate once ImageMagick installed.
+- Ideabox: `20260330_jordan_reed_unified_text_renderer.md` — unified text renderer with engine selection
+- Inbox archived ✓ (3 messages: C51 assignment, C50 assignment, Sam's character_color_enhance spec)
+- Completion report sent to Alex Chen ✓
+
+## Cycle 51 Status: PARTIAL (Wand blocked on ImageMagick, full-stack blocked on Rin's engine decision)
+
+## Cycle 51 Notes
+- **freetype-py and PIL produce identical anti-aliased text**: Both use the same FreeType C library under the hood. PIL wraps it tightly; freetype-py gives lower-level access. No visual improvement from switching engines.
+- **Kerning benefit is font-dependent**: DejaVu Sans has sparse kerning tables. "AV", "To", "Ty" pairs show 0 adjustment at most sizes. A custom display font for the pitch logo would benefit more.
+- **Glyph metrics are the real freetype-py win**: ascender/descender/advance/bearing data enables pixel-precise text layout — important for title strips where text must center vertically in a fixed-height band.
+- **Wand's value is gaussian_blur, not drawing**: The Drawing API is comparable to PIL's. The real advantage is `gaussian_blur()` for physically correct soft shadows and `composite_channel()` for blend modes. But scipy.ndimage.gaussian_filter does the same blur without the system dependency.
+- **PIL + scipy + numpy covers everything Wand offers**: gaussian_filter for blur, numpy for blend modes (screen = 1-(1-a)*(1-b)), PIL for drawing. No system dependency beyond pip packages already in our stack.
+- **Full-stack prototype blocked on Rin**: Task 3 (winning engine + compositing + freetype text) cannot proceed until Rin picks pycairo vs skia-python and builds the primitives library.
+
 ## Cycle 50 Deliverables
 - `output/production/character_background_integration_audit_c50.md` — FULL AUDIT ✓
   - All 5 style frames audited for character-background integration
