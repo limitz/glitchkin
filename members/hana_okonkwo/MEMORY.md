@@ -6,6 +6,57 @@ Comedy-adventure cartoon. Three worlds: Real World (warm/domestic), Glitch World
 ## Joined
 Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style frames).
 
+## Cycle 50 — Character-Environment Integration (Full Team Character Pivot)
+
+### Context
+C50 is a full team pivot to character quality. No new environments. Backgrounds are strong — characters are the bottleneck. Characters look like paper dolls pasted onto backgrounds.
+
+### Contact Shadow System — `LTG_TOOL_contact_shadow.py` v1.0.0
+- Built reusable contact shadow tool with 6 functions:
+  - `draw_contact_shadow()` — elliptical soft shadow beneath character feet
+  - `draw_seated_shadow()` — wider/flatter shadow for seated characters
+  - `draw_bounce_light()` — ground color influence on character underside (lower 25%)
+  - `tint_character_edges()` — environment color bleed on character silhouette edges
+  - `sample_surface_color()` — auto-sample ground color from background at char position
+  - `composite_character_into_scene()` — full pipeline (shadow + char + bounce + edge tint)
+- Shadow color derived from environment surface (darken 70%, desaturate 15%) — never pure black
+- Shadow alpha 40-60 range (subtle, matching Hilda/Owl House reference)
+- Demo output: `output/production/LTG_DEMO_contact_shadow_test.png`
+
+### Character-Environment Lighting Spec — `output/production/character_environment_lighting_c50.md`
+- Per-environment lighting document covering all 7 environments:
+  - Kitchen, Study, Hallway, Classroom, Tech Den, Living Room, Millbrook Street, Glitch Layer
+- Each entry: light sources (position, color, role), character shading direction, contact shadow params, bounce light config
+- Key findings from reference study:
+  - Characters' lit side must pick up ACTUAL color of dominant light source (not generic highlight)
+  - Shadow side picks up ambient/fill color
+  - Contact shadows use darkened surface color, not black
+  - Bounce light from colored surfaces on character undersides
+  - Edge tint from BG color prevents "pasted on" look
+- Documented corrected compositing pass order (was: BG → overlay → character; should be: BG → overlay → shadow → character → scene shading → face light → rim → bounce → edge tint)
+- Line weight audit: BG has textured lines (paper_texture), characters have clean uniform lines → mismatch
+
+### Scale Reference Sheet — `output/production/LTG_SCALE_reference_sheet.png`
+- Generated via `LTG_TOOL_scale_reference_sheet.py` v1.0.0
+- Shows all 4 characters (Miri 3.2 heads, Luma 3.5, Cosmo 4.3, Byte 0.5) against environment landmarks
+- 4 panels: Kitchen, Hallway, Classroom, Study
+- Landmark lines: floor, countertop, cabinets, locker top, desk, chair, chalkboard, shelf, couch
+- 1 Luma-head = 78px at reference scale
+
+### Reference Study (from reference/shows/)
+- Hilda: scene_hilda.jpg — warm brown earth bounce on boots/lower skirt, ground contact visible, character colors respond to environment
+- Hilda living room: hilda_8epv.jpg — warm interior, characters IN the light (not on top of it), consistent shadow direction
+- Owl House: heartwarming scene — characters' warm-orange silhouette tint from doorway light behind them, contact shadows visible
+- Owl House: Luz standing — character fills receive scene lighting color, not baked-in generic
+- Owl House close-up (scene2.jpg) — purple scene light = purple-tinted skin highlight (not generic warm)
+
+### Inbox
+- `20260330_2800_c50_assignment.md` from Producer — archived
+- `20260330_2900_c50_assignment.md` from Alex Chen — archived
+
+### Ideabox
+- Submitted: scene lighting presets tool (importable Python dicts per environment for consistent character lighting)
+
 ## Cycle 49 — Hallway Ceiling Convergence v006 + Batch Path Migrate Reclassify
 
 ### School Hallway v006 — Ceiling Convergence (C49)
