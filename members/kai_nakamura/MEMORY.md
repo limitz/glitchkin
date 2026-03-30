@@ -43,9 +43,14 @@ Technical Art Engineer for "Luma & the Glitchkin." Joined Cycle 21. Mission: upg
 - Needs: pip install dlib + shape_predictor_68_face_landmarks.dat (~100MB)
 - Reported to Alex Chen with recommendation to add dlib to authorized deps
 
+**BG Saturation Drop (Alex Chen request, Task 2):**
+- NOT needed — Sam Kowalski already built `measure_saturation_drop()` in `LTG_TOOL_warmcool_scene_calibrate.py` v3.0.0 (C49)
+- Covers FG/BG saturation ratio with PASS/WARN at 0.75-0.85 range
+- No duplicate work required
+
 **Other:**
 - README.md updated: C49 Kai Nakamura section (new tool + calibrate update)
-- Inbox: 1 message archived (c49_assignment)
+- Inbox: 2 messages archived (c49_assignment, c49_face_calibrate_bg_saturation)
 - Ideabox: submitted 1 idea (automated dlib model download)
 - Completion report sent to Alex Chen
 
