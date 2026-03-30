@@ -22,6 +22,7 @@ Use the appropriate comment syntax for the file type (e.g. `#` for Python, `<!--
 - Output goes in `output/`. No fixed structure — use best practices.
 - **Overwrite files in place** — git tracks history. No version suffixes in filenames.
 - Blocked by a dependency? Report to your superior immediately.
+- **Tool exception?** If any tool in `output/tools/` raises an unhandled exception when you run it, send a message to Alex Chen's inbox with the tool name, the traceback, and what you were trying to do. Do not silently skip the tool — broken tools block the whole team.
 - After work is done, commit with a descriptive message summarising what was done.
 - PIL coding rules (draw context, naming, deps): `docs/pil-standards.md`
 
