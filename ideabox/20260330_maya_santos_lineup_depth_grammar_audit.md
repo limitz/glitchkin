@@ -1,0 +1,5 @@
+**Author:** Maya Santos
+**Cycle:** 45
+**Date:** 2026-03-30
+**Idea:** Now that the lineup has explicit warm/cool depth encoding (warm = FG/close, cool = BG/far), we should audit all other multi-character assets (style frames SF05, SF06, COVETOUS style frame) to verify the same grammar is consistently applied. Specifically: do warm-tinted characters always occupy the visual foreground? Are BG-tier characters always lit with cooler sources? A one-page "warm/cool depth grammar audit" tool (similar to the palette_warmth_lint but operating on depth zones) would let us catch violations before critics do. The audit would check: for each named character bounding-box zone in a style frame, warm/cool dominant hue should correlate with their depth tier. Could be a new QA section in precritique_qa.
+**Benefits:** Gives Sam Kowalski and Rin Yamamoto a systematic way to verify depth-grammar consistency across all assets going into the pitch package. Would catch warm-BG-character / cool-FG-character violations automatically — the kind of subtle incoherence that critics like Petra Volkov and Jonas Feld would notice but struggle to articulate precisely.

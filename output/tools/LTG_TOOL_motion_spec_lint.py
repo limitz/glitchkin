@@ -15,6 +15,7 @@ Updated: Ryo Hasegawa / Cycle 41 — per-family beat color config (timing_colors
 Updated: Ryo Hasegawa / Cycle 43 — per-family annotation_bg_color (annotation_occupancy fix)
 Updated: Ryo Hasegawa / Cycle 44 — _family_from_filename extended with 'miri' family
 Updated: Ryo Hasegawa / Cycle 45 — _family_from_filename extended with 'glitch' family
+Updated: Ryo Hasegawa / Cycle 46 — dark-sheet annotation_occupancy fix (Byte + Glitch)
 Ideabox origin: 20260329_ryo_hasegawa_cg_support_polygon_lint.md (actioned C39)
 
 Checks motion spec sheet PNGs for structural compliance without sending images
@@ -56,6 +57,19 @@ C43 Change: annotation_occupancy check now uses per-family annotation_bg_color
   background color are treated as background — character fills that diverge more
   than tolerance in any channel count as content. Falls back to legacy broad
   light-range when config or family entry is absent.
+
+C46 Change: annotation_occupancy check now handles dark-background sheets (Byte,
+  Glitch) without producing false WARNs. Previously, dark sheets (VOID_BLACK
+  backgrounds) used the legacy-broad background path, giving 1–2% occupancy
+  (below the 4% threshold) even when annotation content was correct. Fix:
+  config now supports "background_style": "dark" per family, plus an optional
+  "occupancy_threshold_dark" (default 0.010 = 1%). When background_style is
+  "dark", annotation_occupancy counts bright pixels (mean channel value > 40)
+  as annotation content instead of subtracting background. The 1% threshold is
+  appropriate for sparse text/arrow annotations on void-black panels. This
+  eliminates the persistent false WARNs on Byte (B2–B4) and Glitch (B2–B3)
+  panels. Config families updated: byte and glitch gain background_style="dark"
+  and occupancy_threshold_dark=0.010.
 
 Usage:
   python3 LTG_TOOL_motion_spec_lint.py path/to/motion_sheet.png
@@ -211,22 +225,49 @@ def _annot_bg_spec_from_config(fam_cfg):
     return (tuple(bg), tol)
 
 
+def _dark_sheet_params_from_config(fam_cfg):
+    """
+    Return (dark_sheet, occupancy_threshold_dark) from a family config dict.
+
+    C46: Reads "background_style" ("light" | "dark") and
+    "occupancy_threshold_dark" (float, default 0.010) from config.
+    When background_style is "dark", the annotation_occupancy check counts
+    bright pixels (mean channel > 40) as annotation content rather than
+    subtracting background — appropriate for void-black panels where annotation
+    density is inherently low (1–2%).
+
+    Returns:
+        dark_sheet (bool): True if background_style == "dark"
+        occupancy_threshold_dark (float): per-family threshold for dark sheets
+                                          (None → use OCCUPANCY_WARN_THRESHOLD)
+    """
+    bg_style = fam_cfg.get("background_style", "light")
+    dark_sheet = bg_style == "dark"
+    occ_thresh_dark = fam_cfg.get("occupancy_threshold_dark", None)
+    return dark_sheet, occ_thresh_dark
+
+
 def _get_zone_params(fname, geo_config):
     """
     Return (annot_y_start, annot_y_end, badge_panel_top, expected_panels,
-            beat_color_range, annot_bg_spec)
+            beat_color_range, annot_bg_spec, dark_sheet, occupancy_threshold_dark)
     for a given sheet filename, using geo_config when available.
     Falls back to legacy hard-coded values.
 
     beat_color_range: (min_rgb, max_rgb) tuple or None (→ use legacy cyan range).
     annot_bg_spec: (bg_rgb, tolerance) tuple or None (→ use legacy broad light range).
+    dark_sheet: bool — True for void-black background sheets (Byte, Glitch).
+    occupancy_threshold_dark: float or None — per-family occupancy threshold
+        for dark sheets; None → caller uses OCCUPANCY_WARN_THRESHOLD.
     C41: extended to return per-family beat color range.
     C43: extended to return per-family annotation background spec (6-tuple total).
+    C46: extended to return dark_sheet + occupancy_threshold_dark (8-tuple total).
     """
     family = _family_from_filename(fname)
     if geo_config and family:
         fam = geo_config.get("families", {}).get(family)
         if fam:
+            dark_sheet, occ_thresh_dark = _dark_sheet_params_from_config(fam)
             return (
                 fam.get("annot_zone_y_start", ANNOT_ZONE_ABS_Y_START),
                 fam.get("annot_zone_y_end", ANNOT_ZONE_ABS_Y_END),
@@ -234,10 +275,12 @@ def _get_zone_params(fname, geo_config):
                 fam.get("expected_panels", None),
                 _beat_color_range_from_config(fam),
                 _annot_bg_spec_from_config(fam),
+                dark_sheet,
+                occ_thresh_dark,
             )
 
     # Legacy fallback (hard-coded, pre-C40 behavior)
-    return (ANNOT_ZONE_ABS_Y_START, ANNOT_ZONE_ABS_Y_END, 56, None, None, None)
+    return (ANNOT_ZONE_ABS_Y_START, ANNOT_ZONE_ABS_Y_END, 56, None, None, None, False, None)
 
 
 # ---------------------------------------------------------------------------
@@ -286,7 +329,7 @@ def _is_precise_bg_pixel(pixel, bg_rgb, tolerance):
     return all(abs(pixel[i] - bg_rgb[i]) <= tolerance for i in range(3))
 
 
-def _count_non_bg(img_crop, annot_bg_spec=None):
+def _count_non_bg(img_crop, annot_bg_spec=None, dark_sheet=False):
     """
     Count non-background pixels in a cropped PIL image.
 
@@ -294,11 +337,26 @@ def _count_non_bg(img_crop, annot_bg_spec=None):
     per-family background matching (_is_precise_bg_pixel) instead of the broad
     light-range heuristic (_is_bg_pixel). The dark-BG check (_is_dark_bg_pixel)
     is always applied regardless of mode, so void/commitment panels still work.
+
+    C46: When dark_sheet=True (Byte, Glitch), inverts the counting logic:
+    counts pixels whose per-channel mean exceeds 40 as annotation content
+    rather than subtracting background. This is appropriate for void-black
+    panels where annotation text/arrows are bright-on-dark and the traditional
+    background-subtraction approach under-counts content. The result should be
+    compared against a lower threshold (occupancy_threshold_dark ≈ 0.010)
+    rather than the default 0.04. annot_bg_spec is ignored in dark-sheet mode.
     """
     w, h = img_crop.size
     count = 0
     px = img_crop.load()
-    if annot_bg_spec is not None:
+    if dark_sheet:
+        # C46: count bright pixels as annotation content on void-black sheets
+        for y in range(h):
+            for x in range(w):
+                p = px[x, y]
+                if (p[0] + p[1] + p[2]) // 3 > 40:
+                    count += 1
+    elif annot_bg_spec is not None:
         bg_rgb, tol = annot_bg_spec
         for y in range(h):
             for x in range(w):
@@ -431,7 +489,9 @@ def check_panel_count(img, expected_panels, panels):
 def check_annotation_occupancy(img, panels, threshold=OCCUPANCY_WARN_THRESHOLD,
                                 annot_y_start=ANNOT_ZONE_ABS_Y_START,
                                 annot_y_end=ANNOT_ZONE_ABS_Y_END,
-                                annot_bg_spec=None):
+                                annot_bg_spec=None,
+                                dark_sheet=False,
+                                occupancy_threshold_dark=None):
     """
     Check 3: Each panel's annotation zone has sufficient non-BG pixel density.
 
@@ -445,11 +505,21 @@ def check_annotation_occupancy(img, panels, threshold=OCCUPANCY_WARN_THRESHOLD,
     highlights, cardigan RW-08) from being mis-classified as panel background,
     which caused false annotation_occupancy WARNs on light-bg sheets.
     The bg_mode label in the detail string shows which path was used.
+
+    C46: dark_sheet=True enables bright-pixel counting mode for void-black sheets
+    (Byte, Glitch). occupancy_threshold_dark overrides `threshold` when dark_sheet
+    is True. bg_mode label shows "dark-bright" to distinguish this path.
     """
     w, h = img.size
     results = []
     any_warn = False
-    bg_mode = "precise" if annot_bg_spec is not None else "legacy-broad"
+
+    if dark_sheet:
+        bg_mode = "dark-bright"
+        effective_threshold = occupancy_threshold_dark if occupancy_threshold_dark is not None else threshold
+    else:
+        bg_mode = "precise" if annot_bg_spec is not None else "legacy-broad"
+        effective_threshold = threshold
 
     for i, (x0, x1) in enumerate(panels):
         y0 = annot_y_start
@@ -457,9 +527,9 @@ def check_annotation_occupancy(img, panels, threshold=OCCUPANCY_WARN_THRESHOLD,
         if y1 <= y0:
             continue
         crop = img.crop((x0, y0, x1, y1))
-        non_bg, total = _count_non_bg(crop, annot_bg_spec=annot_bg_spec)
+        non_bg, total = _count_non_bg(crop, annot_bg_spec=annot_bg_spec, dark_sheet=dark_sheet)
         occ = non_bg / max(total, 1)
-        ok = occ >= threshold
+        ok = occ >= effective_threshold
         if not ok:
             any_warn = True
         results.append(f"P{i+1}: {occ:.1%} occupancy" + ("" if ok else " — WARN low"))
@@ -632,10 +702,11 @@ def lint_motion_spec(path: str, expected_panels: int = None,
     result["width"] = img.width
     result["height"] = img.height
 
-    # --- C40/C41/C43: Load sheet geometry config ---
+    # --- C40/C41/C43/C46: Load sheet geometry config ---
     geo_config = _load_geo_config(geo_config_path)
     fname = os.path.basename(path)
-    annot_y_start, annot_y_end, badge_panel_top, config_panels, beat_color_range, annot_bg_spec = \
+    (annot_y_start, annot_y_end, badge_panel_top, config_panels,
+     beat_color_range, annot_bg_spec, dark_sheet, occupancy_threshold_dark) = \
         _get_zone_params(fname, geo_config)
     geo_source = "config" if geo_config and _family_from_filename(fname) else "legacy defaults"
 
@@ -668,12 +739,15 @@ def lint_motion_spec(path: str, expected_panels: int = None,
     # C2: panel count
     checks.append(check_panel_count(img, expected_panels, panels))
 
-    # C3: annotation occupancy (C40: calibrated zone coords; C43: precise bg color)
+    # C3: annotation occupancy (C40: calibrated zone coords; C43: precise bg color;
+    #     C46: dark-sheet bright-pixel mode for Byte + Glitch)
     checks.append(check_annotation_occupancy(img, panels,
                                               threshold=occupancy_threshold,
                                               annot_y_start=annot_y_start,
                                               annot_y_end=annot_y_end,
-                                              annot_bg_spec=annot_bg_spec))
+                                              annot_bg_spec=annot_bg_spec,
+                                              dark_sheet=dark_sheet,
+                                              occupancy_threshold_dark=occupancy_threshold_dark))
 
     # C4: beat badge zones (C40: uses calibrated badge_panel_top_abs)
     checks.append(check_beat_badge_zones(img, panels,

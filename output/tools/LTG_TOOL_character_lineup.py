@@ -7,6 +7,20 @@
 """
 LTG_TOOL_character_lineup.py
 Character Lineup Generator — Luma & the Glitchkin
+Cycle 45 / v010: Dual-warmth tier depth indicator bands (Lee Tanaka C45 recommendation).
+
+Cycle 45 changes (Maya Santos, C45):
+  - TWO-TIER DEPTH BANDS (Option C per Lee Tanaka C45 recommendation):
+    Replaced flat 2px shadow lines with gradient drop-shadow bands per tier.
+    BG tier: 8px cool-slate gradient fading downward from BG_GROUND_Y.
+    FG tier: 10px warm-amber gradient fading downward from FG_GROUND_Y.
+    Warm/cool encoding teaches the eye: warm line = close, cool line = far.
+    Aligns with established show palette grammar (warm=FG/real, cool=BG/digital).
+    Both bands drawn BEFORE characters — no draw-order complications, no alpha passes.
+  - Tier labels updated: "FG tier (WARM)" / "BG tier (COOL)"
+  - Staging annotation updated with "WARM = FG / COOL = BG" grammar note.
+  - Closes Alex Chen C44 brief P2 (lineup tier depth indicator).
+
 Cycle 44 / v009: Miri wooden hairpin rename (P0 cultural identity correction).
 
 Cycle 44 changes (Maya Santos, C44):
@@ -892,26 +906,44 @@ def generate_lineup(output_path):
 
     draw.rectangle([0, 0, IMG_W, IMG_H], fill=BG)
 
-    title = ("LUMA & THE GLITCHKIN — Full Cast Lineup — C42 v008"
-             " (two-tier staging: Luma+Byte FG / Cosmo+Miri+Glitch BG)")
+    title = ("LUMA & THE GLITCHKIN — Full Cast Lineup — C45 v010"
+             " (two-tier staging: Luma+Byte FG/WARM / Cosmo+Miri+Glitch BG/COOL)")
     draw.text((20, 14), title, fill=LABEL_COL, font=font_title)
     draw.line([(0, TITLE_H - 4), (IMG_W, TITLE_H - 4)], fill=TICK_COL, width=1)
 
-    # ── Two-tier shadow lines ──────────────────────────────────────────────────
-    # BG tier shadow (cool gray) — drawn first so FG line sits on top
-    FG_SHADOW_COL = (165, 148, 128)   # warm gray shadow for FG
-    BG_SHADOW_COL = (148, 158, 170)   # cool gray shadow for BG
-    draw.line([(40, BG_GROUND_Y), (IMG_W - 20, BG_GROUND_Y)],
-              fill=BG_SHADOW_COL, width=2)
-    # FG tier shadow (warm gray)
-    draw.line([(40, FG_GROUND_Y), (IMG_W - 20, FG_GROUND_Y)],
-              fill=FG_SHADOW_COL, width=2)
+    # ── Two-tier gradient depth bands (v010 — Option C, Lee Tanaka C45) ─────────
+    # Drawn BEFORE characters. Both bands ≤10px tall — below all character geometry.
+    # Warm/cool encoding: warm = FG/close, cool = BG/far. Reads at thumbnail scale.
+    _BG_SHADOW_COL = (180, 195, 210)   # cool slate
+    _BG_SHADOW_H   = 8                  # px
+    _FG_SHADOW_COL = (220, 200, 160)   # warm amber
+    _FG_SHADOW_H   = 10                 # px
 
-    # Tier labels
-    draw.text((IMG_W - 95, BG_GROUND_Y + 5), "BG tier",
-              fill=BG_SHADOW_COL, font=font_small)
-    draw.text((IMG_W - 95, FG_GROUND_Y + 5), "FG tier",
-              fill=FG_SHADOW_COL, font=font_small)
+    # BG tier drop-shadow (cool slate) — drawn first
+    for row in range(_BG_SHADOW_H):
+        alpha_frac = 1.0 - row / _BG_SHADOW_H    # fades to 0 downward
+        r = int(_BG_SHADOW_COL[0] + (BG[0] - _BG_SHADOW_COL[0]) * (1 - alpha_frac))
+        g = int(_BG_SHADOW_COL[1] + (BG[1] - _BG_SHADOW_COL[1]) * (1 - alpha_frac))
+        b = int(_BG_SHADOW_COL[2] + (BG[2] - _BG_SHADOW_COL[2]) * (1 - alpha_frac))
+        draw.line([(0, BG_GROUND_Y + row), (IMG_W, BG_GROUND_Y + row)],
+                  fill=(r, g, b), width=1)
+
+    # FG tier drop-shadow (warm amber)
+    for row in range(_FG_SHADOW_H):
+        alpha_frac = 1.0 - row / _FG_SHADOW_H
+        r = int(_FG_SHADOW_COL[0] + (BG[0] - _FG_SHADOW_COL[0]) * (1 - alpha_frac))
+        g = int(_FG_SHADOW_COL[1] + (BG[1] - _FG_SHADOW_COL[1]) * (1 - alpha_frac))
+        b = int(_FG_SHADOW_COL[2] + (BG[2] - _FG_SHADOW_COL[2]) * (1 - alpha_frac))
+        draw.line([(0, FG_GROUND_Y + row), (IMG_W, FG_GROUND_Y + row)],
+                  fill=(r, g, b), width=1)
+
+    # Tier labels (updated with warm/cool grammar)
+    _tier_col_bg = (148, 165, 180)   # cool label color
+    _tier_col_fg = (180, 150, 90)    # warm label color
+    draw.text((IMG_W - 110, BG_GROUND_Y + 5), "BG tier (COOL)",
+              fill=_tier_col_bg, font=font_small)
+    draw.text((IMG_W - 110, FG_GROUND_Y + 5), "FG tier (WARM)",
+              fill=_tier_col_fg, font=font_small)
 
     draw_byte_float_dimension(draw, font_small)
     draw = ImageDraw.Draw(img)  # refresh after annotations
@@ -964,17 +996,17 @@ def generate_lineup(output_path):
 
     # Staging annotation bar
     annotation = (
-        f"Staging: FG tier (y={FG_GROUND_Y}) = Luma+Byte @+3% scale.  "
-        f"BG tier (y={BG_GROUND_Y}) = Cosmo+Miri+Glitch @baseline scale.  "
-        "Proportion constants unchanged — uniform post-scale only.  "
-        "Closes Daisuke C16 P3 (inventory→cast) + C15 Luma power balance."
+        f"Staging: FG tier (y={FG_GROUND_Y}, WARM) = Luma+Byte @+3% scale.  "
+        f"BG tier (y={BG_GROUND_Y}, COOL) = Cosmo+Miri+Glitch @baseline scale.  "
+        "WARM = FG / COOL = BG.  "
+        "Proportion constants unchanged — uniform post-scale only."
     )
     draw.text((20, IMG_H - 34), annotation, fill=(140, 120, 100), font=font_small)
 
     footer = (
         f"Full cast: Cosmo | Miri | LUMA | Byte | Glitch.  "
         f"Reference: 1 head unit = {HEAD_UNIT:.0f}px.  "
-        "Colors per master_palette.md (canonical).  C42 v008."
+        "Colors per master_palette.md (canonical).  C45 v010."
     )
     draw.text((20, IMG_H - 18), footer, fill=TICK_COL, font=font_small)
 
@@ -992,8 +1024,8 @@ def main():
     out_dir = "/home/wipkat/team/output/characters/main"
     os.makedirs(out_dir, exist_ok=True)
     generate_lineup(os.path.join(out_dir, "LTG_CHAR_character_lineup.png"))
-    print("Character lineup v008 generation complete.")
-    print("  C42 changes: two-tier ground plane (FG=Luma+Byte, BG=Cosmo+Miri+Glitch)")
+    print("Character lineup v010 generation complete.")
+    print("  C45 changes: dual-warmth tier depth bands (Option C, Lee Tanaka C45 recommendation)")
     print(f"  FG_GROUND_Y={FG_GROUND_Y}, BG_GROUND_Y={BG_GROUND_Y}, FG_SCALE={FG_SCALE}")
     print(f"  Character order (L→R): cosmo | miri | luma | byte | glitch")
     print(f"  Luma: {LUMA_RENDER_H_FG}px drawn ({LUMA_RENDER_H}px base ×{FG_SCALE}), "

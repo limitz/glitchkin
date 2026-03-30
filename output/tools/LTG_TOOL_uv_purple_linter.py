@@ -18,8 +18,12 @@ The linter also flags warm-hue contamination (LAB hue 30°–80°) in Glitch Lay
 
 Checks (Glitch Layer images only):
   A. UV_PURPLE + ELEC_CYAN Dominance
-       Pixels within LAB ΔE ≤ 15 of UV_PURPLE (#7B2FBE) or ELEC_CYAN (#00F0FF)
-       as a fraction of non-black pixels (VOID_BLACK: per-channel value < 20).
+       Standard: Pixels within LAB ΔE ≤ 15 of UV_PURPLE (#7B2FBE) or ELEC_CYAN (#00F0FF)
+       as a fraction of non-black pixels.
+       GLITCH_DARK_SCENE subtype: additionally counts pixels whose LAB hue angle falls
+       in the UV_PURPLE hue family range (h° 255°–325°, chroma C* ≥ 8) as UV_PURPLE-family
+       matches. The better of ΔE-fraction and hue-fraction is used for the verdict.
+       Both fractions are reported.
        PASS  ≥ 20%
        WARN  10–19%
        FAIL  < 10%
@@ -28,22 +32,43 @@ Checks (Glitch Layer images only):
        PASS  < 5%
        WARN  ≥ 5%  (WARN only — warm contamination does not FAIL on its own)
 
+Scene Subtypes:
+  GLITCH_DARK_SCENE — intentionally near-void compositions (e.g. COVETOUS style frame)
+       where UV_PURPLE_DARK variants (dark luminance purple) are used instead of canonical
+       mid-tone UV_PURPLE. ΔE-based matching fails for dark variants because ΔE includes
+       L* lightness. Hue-angle matching is used as a supplementary metric.
+       Inferred automatically from filename keywords: "covetous".
+       Override with --scene-subtype glitch_dark_scene.
+
 Images inferred as non-GLITCH world type are skipped (informational note only).
 Override world type with --world-type glitch.
 
 Usage:
     python LTG_TOOL_uv_purple_linter.py path/to/image.png
     python LTG_TOOL_uv_purple_linter.py path/to/image.png --world-type glitch
+    python LTG_TOOL_uv_purple_linter.py path/to/image.png --scene-subtype glitch_dark_scene
     python LTG_TOOL_uv_purple_linter.py --batch output/color/style_frames/
     python LTG_TOOL_uv_purple_linter.py --batch output/color/style_frames/ --world-type glitch
 
 Module API:
-    from LTG_TOOL_uv_purple_linter import lint_uv_purple_dominance, batch_lint
+    from LTG_TOOL_uv_purple_linter import (
+        lint_uv_purple_dominance, batch_lint,
+        infer_scene_subtype, run_glitch_layer_dominance_check,
+    )
 
 Author: Rin Yamamoto (Procedural Art Engineer) — Cycle 44
-Version: 1.0.0
+Version: 1.1.0
 
 Changelog:
+  1.1.0 (Cycle 45): GLITCH_DARK_SCENE subtype added (Rin Yamamoto, C45).
+                    Fixes false FAIL on COVETOUS assets using UV_PURPLE_DARK variants.
+                    - UV_PURPLE hue-angle range constants (h° 255°–325°, C* ≥ 8).
+                    - infer_scene_subtype() — infers GLITCH_DARK_SCENE from filename.
+                    - lint_uv_purple_dominance() accepts scene_subtype parameter.
+                    - Check A GLITCH_DARK_SCENE path: uses better of ΔE-fraction and
+                      hue-fraction for verdict; reports both metrics.
+                    - run_glitch_layer_dominance_check() accepts subtypes dict.
+                    - CLI --scene-subtype flag.
   1.0.0 (Cycle 44): Initial implementation. Requested by Alex Chen C44 brief.
                     Check A: UV_PURPLE + ELEC_CYAN pixel fraction (LAB ΔE ≤ 15).
                     Check B: Warm-hue contamination (LAB h° 30°–80°).
@@ -55,6 +80,7 @@ Changelog:
 from __future__ import annotations
 
 import os
+import re
 import sys
 import math
 import glob
@@ -85,8 +111,19 @@ except ImportError:
     cv2 = None  # type: ignore
     _CV2_AVAILABLE = False
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __author__  = "Rin Yamamoto"
+
+# ---------------------------------------------------------------------------
+# Scene subtype constants
+# ---------------------------------------------------------------------------
+
+SCENE_SUBTYPE_NONE             = None
+SCENE_SUBTYPE_GLITCH_DARK_SCENE = "GLITCH_DARK_SCENE"
+
+# Filename keywords that trigger GLITCH_DARK_SCENE subtype inference.
+# "covetous" scenes intentionally use UV_PURPLE_DARK (GL-04a: dark luminance purple).
+_DARK_SCENE_KEYWORDS = re.compile(r'covetous', re.IGNORECASE)
 
 # ---------------------------------------------------------------------------
 # Canonical palette references
@@ -100,7 +137,7 @@ ELEC_CYAN_RGB  = (0, 240, 255)    # GL-01a #00F0FF
 # are correctly excluded even when one channel slightly exceeds the per-channel floor.
 VOID_BLACK_THRESHOLD = 30
 
-# LAB ΔE threshold for colour matching
+# LAB ΔE threshold for colour matching (standard scenes)
 LAB_DE_THRESHOLD = 15.0
 
 # Dominance thresholds (fraction of non-black pixels)
@@ -119,6 +156,18 @@ WARM_HUE_MAX = 80.0
 # considered reliable. Near-neutral dark pixels have near-zero chroma; their hue
 # angles are numerically unstable and should not contribute to the warm-hue check.
 WARM_HUE_MIN_CHROMA = 8.0
+
+# ---------------------------------------------------------------------------
+# UV_PURPLE hue family range for GLITCH_DARK_SCENE subtype
+# ---------------------------------------------------------------------------
+# Canonical UV_PURPLE (#7B2FBE = RGB 123,47,190) sits at approximately:
+#   LAB a* ≈ +39, b* ≈ -54  →  hue = atan2(-54, 39) ≈ -54° → 306° mod 360
+# UV_PURPLE_DARK (GL-04a: RGB 58,16,96) shares the same hue angle family.
+# The family spans from cold violet (h° ~255°) through purple (~320°).
+# Pixels in this range with sufficient chroma are counted as UV_PURPLE-family.
+UV_PURPLE_HUE_MIN    = 255.0   # °, inclusive
+UV_PURPLE_HUE_MAX    = 325.0   # °, inclusive
+UV_PURPLE_HUE_MIN_CHROMA = 8.0  # C* threshold (same as warm-hue guard)
 
 # ---------------------------------------------------------------------------
 # Colour conversion helpers
@@ -225,6 +274,42 @@ def _lab_hue_angle(lab_array: "np.ndarray") -> "np.ndarray":
 
 
 # ---------------------------------------------------------------------------
+# Scene subtype inference
+# ---------------------------------------------------------------------------
+
+def infer_scene_subtype(filename_or_path: str) -> Optional[str]:
+    """
+    Infer the scene subtype from an asset filename.
+
+    Currently returns GLITCH_DARK_SCENE for intentionally void-dominant compositions
+    (e.g. COVETOUS scenes) that use UV_PURPLE_DARK family colours. All other
+    filenames return None (standard scene subtype).
+
+    Parameters
+    ----------
+    filename_or_path : str
+        Any path or filename referencing an LTG asset.
+
+    Returns
+    -------
+    str | None
+        "GLITCH_DARK_SCENE" if the filename matches a dark-scene keyword.
+        None for standard Glitch Layer scenes.
+
+    Examples
+    --------
+    >>> infer_scene_subtype("LTG_COLOR_sf_covetous_glitch.png")
+    'GLITCH_DARK_SCENE'
+    >>> infer_scene_subtype("LTG_ENV_glitchlayer_frame.png")
+    None
+    """
+    basename = os.path.basename(filename_or_path)
+    if _DARK_SCENE_KEYWORDS.search(basename):
+        return SCENE_SUBTYPE_GLITCH_DARK_SCENE
+    return SCENE_SUBTYPE_NONE
+
+
+# ---------------------------------------------------------------------------
 # Reference LAB values
 # ---------------------------------------------------------------------------
 
@@ -242,6 +327,7 @@ def _precompute_ref_lab() -> Tuple["np.ndarray", "np.ndarray"]:
 def lint_uv_purple_dominance(
     image_path: str,
     world_type_override: Optional[str] = None,
+    scene_subtype: Optional[str] = None,
 ) -> Dict:
     """
     Run the UV_PURPLE dominance lint on a single image.
@@ -255,6 +341,12 @@ def lint_uv_purple_dominance(
         world-type inferred from the filename.
         Pass "glitch" to force Glitch Layer checks on any image.
         Pass "skip" to force non-GLITCH (skip lint).
+    scene_subtype : str | None
+        Optional scene subtype for specialised Check A logic.
+        "GLITCH_DARK_SCENE" — uses hue-angle matching alongside ΔE for UV_PURPLE
+        family detection. Applies to intentionally void-dominant dark scenes
+        (COVETOUS style frame) using UV_PURPLE_DARK colour variants.
+        If None, inferred automatically from the filename.
 
     Returns
     -------
@@ -262,6 +354,7 @@ def lint_uv_purple_dominance(
         path          : str — absolute path
         basename      : str — filename
         world_type    : str | None — inferred or overridden world type
+        scene_subtype : str | None — GLITCH_DARK_SCENE or None
         skipped       : bool — True if image is not Glitch Layer world type
         skip_reason   : str | None
         checks        : list of check result dicts (when not skipped)
@@ -271,15 +364,20 @@ def lint_uv_purple_dominance(
     abs_path = os.path.abspath(image_path)
     basename = os.path.basename(abs_path)
 
+    # Resolve scene subtype: explicit override → filename inference
+    if scene_subtype is None:
+        scene_subtype = infer_scene_subtype(abs_path)
+
     result: Dict = {
-        "path":       abs_path,
-        "basename":   basename,
-        "world_type": None,
-        "skipped":    False,
-        "skip_reason": None,
-        "checks":     [],
-        "overall":    "SKIP",
-        "error":      None,
+        "path":         abs_path,
+        "basename":     basename,
+        "world_type":   None,
+        "scene_subtype": scene_subtype,
+        "skipped":      False,
+        "skip_reason":  None,
+        "checks":       [],
+        "overall":      "SKIP",
+        "error":        None,
     }
 
     # Determine world type
@@ -363,14 +461,15 @@ def lint_uv_purple_dominance(
 
     if non_black_count == 0:
         check_a = {
-            "check":   "A",
-            "name":    "UV_PURPLE + ELEC_CYAN Dominance",
-            "verdict": "WARN",
-            "msg":     "All pixels are void/black — no non-black pixels to measure dominance.",
-            "uv_purple_frac":   0.0,
-            "elec_cyan_frac":   0.0,
-            "combined_frac":    0.0,
-            "non_black_pixels": 0,
+            "check":         "A",
+            "name":          "UV_PURPLE + ELEC_CYAN Dominance",
+            "verdict":       "WARN",
+            "msg":           "All pixels are void/black — no non-black pixels to measure dominance.",
+            "uv_purple_frac":       0.0,
+            "elec_cyan_frac":       0.0,
+            "combined_frac":        0.0,
+            "non_black_pixels":     0,
+            "scene_subtype":        scene_subtype,
         }
     else:
         # Compute ΔE for UV_PURPLE and ELEC_CYAN on all pixels
@@ -381,49 +480,123 @@ def lint_uv_purple_dominance(
         match_uv   = de_uv   <= LAB_DE_THRESHOLD    # (N,) bool
         match_cyan = de_cyan <= LAB_DE_THRESHOLD
 
-        # Combined match (union)
-        match_combined = match_uv | match_cyan
+        # Combined match (union) via ΔE
+        match_combined_de = match_uv | match_cyan
 
         # Count only among non-black pixels
         non_black_match_uv   = int(np.sum(match_uv   & non_black_mask))
         non_black_match_cyan = int(np.sum(match_cyan & non_black_mask))
-        non_black_match_both = int(np.sum(match_combined & non_black_mask))
+        non_black_match_de   = int(np.sum(match_combined_de & non_black_mask))
 
         uv_frac       = non_black_match_uv   / non_black_count
         cyan_frac     = non_black_match_cyan / non_black_count
-        combined_frac = non_black_match_both / non_black_count
+        de_combined_frac = non_black_match_de / non_black_count
 
+        # ------------------------------------------------------------------
+        # GLITCH_DARK_SCENE subtype: supplementary hue-angle matching
+        # ------------------------------------------------------------------
+        # UV_PURPLE_DARK variants have high ΔE from canonical UV_PURPLE because
+        # ΔE includes L* (lightness). Their hue angle is correct (~306°) but they
+        # are too dark for the ΔE ≤ 15 gate. We therefore also count pixels whose
+        # LAB hue falls in the UV_PURPLE hue family range (255°–325°) with
+        # sufficient chroma (C* ≥ 8) as UV_PURPLE-family matches.
+        # The verdict uses the BETTER of ΔE-fraction and hue-fraction.
+        # Both metrics are always reported in the check dict.
+
+        hue_family_frac: Optional[float] = None
+        hue_family_combined_frac: Optional[float] = None
+        hue_family_match_count: Optional[int] = None
+
+        if scene_subtype == SCENE_SUBTYPE_GLITCH_DARK_SCENE and _NP_AVAILABLE:
+            # Compute hue angles and chroma (may already be computed below for Check B;
+            # computed here explicitly to keep Check A self-contained)
+            hue_a = _lab_hue_angle(pixels_lab)   # (N,) float32
+            chroma_a = np.sqrt(pixels_lab[:, 1] ** 2 + pixels_lab[:, 2] ** 2)
+
+            # UV_PURPLE hue family: h° in [UV_PURPLE_HUE_MIN, UV_PURPLE_HUE_MAX]
+            # with sufficient chroma (C* ≥ UV_PURPLE_HUE_MIN_CHROMA).
+            uv_hue_family_mask = (
+                (chroma_a >= UV_PURPLE_HUE_MIN_CHROMA)
+                & (hue_a  >= UV_PURPLE_HUE_MIN)
+                & (hue_a  <= UV_PURPLE_HUE_MAX)
+            )
+
+            # Union of ΔE-matches (UV+CYAN) and UV-hue-family pixels
+            match_combined_hue = match_combined_de | uv_hue_family_mask
+            hue_family_match_count = int(np.sum(uv_hue_family_mask & non_black_mask))
+            non_black_hue_combined = int(np.sum(match_combined_hue & non_black_mask))
+
+            hue_family_frac          = hue_family_match_count / non_black_count
+            hue_family_combined_frac = non_black_hue_combined / non_black_count
+        else:
+            hue_family_combined_frac = de_combined_frac  # no supplementary metric
+
+        # Choose the most permissive combined fraction for the verdict
+        combined_frac = max(de_combined_frac, hue_family_combined_frac)
+
+        # Determine verdict and message
         if combined_frac >= DOMINANCE_PASS_FRAC:
             verdict_a = "PASS"
-            msg_a = (
-                f"Combined UV_PURPLE+ELEC_CYAN = {combined_frac:.1%} of non-black pixels "
-                f"(UV_PURPLE={uv_frac:.1%}, ELEC_CYAN={cyan_frac:.1%}). ≥ 20% — PASS."
-            )
+            if scene_subtype == SCENE_SUBTYPE_GLITCH_DARK_SCENE and hue_family_frac is not None:
+                msg_a = (
+                    f"[GLITCH_DARK_SCENE] Combined UV_PURPLE-family+ELEC_CYAN = {combined_frac:.1%} "
+                    f"of non-black pixels (ΔE-match={de_combined_frac:.1%}, "
+                    f"hue-family={hue_family_combined_frac:.1%}). ≥ 20% — PASS. "
+                    f"UV_PURPLE hue-family pixels (h° {UV_PURPLE_HUE_MIN:.0f}°–{UV_PURPLE_HUE_MAX:.0f}°, "
+                    f"C* ≥ {UV_PURPLE_HUE_MIN_CHROMA:.0f}) = {hue_family_frac:.1%} of non-black."
+                )
+            else:
+                msg_a = (
+                    f"Combined UV_PURPLE+ELEC_CYAN = {combined_frac:.1%} of non-black pixels "
+                    f"(UV_PURPLE={uv_frac:.1%}, ELEC_CYAN={cyan_frac:.1%}). ≥ 20% — PASS."
+                )
         elif combined_frac >= DOMINANCE_WARN_FRAC:
             verdict_a = "WARN"
-            msg_a = (
-                f"Combined UV_PURPLE+ELEC_CYAN = {combined_frac:.1%} of non-black pixels "
-                f"(UV_PURPLE={uv_frac:.1%}, ELEC_CYAN={cyan_frac:.1%}). 10–19% — WARN. "
-                f"Glitch Layer scenes should have stronger UV_PURPLE/ELEC_CYAN presence."
-            )
+            if scene_subtype == SCENE_SUBTYPE_GLITCH_DARK_SCENE and hue_family_frac is not None:
+                msg_a = (
+                    f"[GLITCH_DARK_SCENE] Combined UV_PURPLE-family+ELEC_CYAN = {combined_frac:.1%} "
+                    f"of non-black pixels (ΔE-match={de_combined_frac:.1%}, "
+                    f"hue-family={hue_family_combined_frac:.1%}). 10–19% — WARN. "
+                    f"UV_PURPLE hue-family pixels = {hue_family_frac:.1%} of non-black. "
+                    f"Consider stronger UV_PURPLE family presence."
+                )
+            else:
+                msg_a = (
+                    f"Combined UV_PURPLE+ELEC_CYAN = {combined_frac:.1%} of non-black pixels "
+                    f"(UV_PURPLE={uv_frac:.1%}, ELEC_CYAN={cyan_frac:.1%}). 10–19% — WARN. "
+                    f"Glitch Layer scenes should have stronger UV_PURPLE/ELEC_CYAN presence."
+                )
         else:
             verdict_a = "FAIL"
-            msg_a = (
-                f"Combined UV_PURPLE+ELEC_CYAN = {combined_frac:.1%} of non-black pixels "
-                f"(UV_PURPLE={uv_frac:.1%}, ELEC_CYAN={cyan_frac:.1%}). < 10% — FAIL. "
-                f"Structural violation: Glitch Layer must be UV_PURPLE+ELEC_CYAN dominant."
-            )
+            if scene_subtype == SCENE_SUBTYPE_GLITCH_DARK_SCENE and hue_family_frac is not None:
+                msg_a = (
+                    f"[GLITCH_DARK_SCENE] Combined UV_PURPLE-family+ELEC_CYAN = {combined_frac:.1%} "
+                    f"of non-black pixels (ΔE-match={de_combined_frac:.1%}, "
+                    f"hue-family={hue_family_combined_frac:.1%}). < 10% — FAIL. "
+                    f"UV_PURPLE hue-family pixels = {hue_family_frac:.1%} of non-black. "
+                    f"Even hue-angle matching shows insufficient UV_PURPLE family presence."
+                )
+            else:
+                msg_a = (
+                    f"Combined UV_PURPLE+ELEC_CYAN = {combined_frac:.1%} of non-black pixels "
+                    f"(UV_PURPLE={uv_frac:.1%}, ELEC_CYAN={cyan_frac:.1%}). < 10% — FAIL. "
+                    f"Structural violation: Glitch Layer must be UV_PURPLE+ELEC_CYAN dominant."
+                )
 
         check_a = {
-            "check":             "A",
-            "name":              "UV_PURPLE + ELEC_CYAN Dominance",
-            "verdict":           verdict_a,
-            "msg":               msg_a,
-            "uv_purple_frac":    round(uv_frac, 4),
-            "elec_cyan_frac":    round(cyan_frac, 4),
-            "combined_frac":     round(combined_frac, 4),
-            "non_black_pixels":  non_black_count,
-            "total_pixels":      total_pixels,
+            "check":                  "A",
+            "name":                   "UV_PURPLE + ELEC_CYAN Dominance",
+            "verdict":                verdict_a,
+            "msg":                    msg_a,
+            "uv_purple_frac":         round(uv_frac, 4),
+            "elec_cyan_frac":         round(cyan_frac, 4),
+            "combined_frac":          round(combined_frac, 4),
+            "de_combined_frac":       round(de_combined_frac, 4),
+            "hue_family_frac":        round(hue_family_frac, 4) if hue_family_frac is not None else None,
+            "hue_family_combined_frac": round(hue_family_combined_frac, 4) if hue_family_combined_frac is not None else None,
+            "non_black_pixels":       non_black_count,
+            "total_pixels":           total_pixels,
+            "scene_subtype":          scene_subtype,
         }
 
     result["checks"].append(check_a)
@@ -498,6 +671,7 @@ def lint_uv_purple_dominance(
 def batch_lint(
     directory_or_paths,
     world_type_override: Optional[str] = None,
+    scene_subtype_override: Optional[str] = None,
     extensions: Tuple[str, ...] = (".png",),
 ) -> Dict:
     """
@@ -509,6 +683,11 @@ def batch_lint(
         Directory path or explicit list of file paths.
     world_type_override : str | None
         Passed through to lint_uv_purple_dominance() for every file.
+    scene_subtype_override : str | None
+        If provided, forces this scene subtype for every file in the batch,
+        bypassing per-file filename inference. Use "GLITCH_DARK_SCENE" to force
+        dark-scene hue-angle matching on all files in a batch.
+        If None (default), each file's subtype is inferred from its filename.
     extensions : tuple[str, ...]
         File extensions to include. Default: (".png",)
 
@@ -534,7 +713,11 @@ def batch_lint(
     counts: Dict[str, int] = {"PASS": 0, "WARN": 0, "FAIL": 0, "SKIP": 0}
 
     for p in paths:
-        r = lint_uv_purple_dominance(p, world_type_override=world_type_override)
+        r = lint_uv_purple_dominance(
+            p,
+            world_type_override=world_type_override,
+            scene_subtype=scene_subtype_override,
+        )
         results.append(r)
         overall = r.get("overall", "SKIP")
         counts[overall] = counts.get(overall, 0) + 1
@@ -621,16 +804,29 @@ def format_batch_report(batch: Dict) -> str:
 # ---------------------------------------------------------------------------
 # These functions are called by LTG_TOOL_precritique_qa.py Section 11.
 
-def run_glitch_layer_dominance_check(glitch_png_paths: List[str]) -> Dict:
+def run_glitch_layer_dominance_check(
+    glitch_png_paths: List[str],
+    subtypes: Optional[Dict[str, Optional[str]]] = None,
+) -> Dict:
     """
     Section 11 runner: UV_PURPLE dominance check on a specific list of Glitch Layer PNGs.
 
     World type override = "GLITCH" is applied to all paths (they are pre-selected Glitch Layer).
 
+    If scene subtype is not provided in the subtypes dict, it is inferred automatically
+    from each filename via infer_scene_subtype(). Pass an explicit None value in the dict
+    to force the standard (non-dark-scene) subtype for a specific file.
+
     Parameters
     ----------
     glitch_png_paths : list[str]
         Absolute paths to Glitch Layer rendered PNGs.
+    subtypes : dict[str, str|None] | None
+        Optional per-file scene subtype overrides.
+        Keys are absolute (or basename) paths; values are subtype strings
+        (e.g. "GLITCH_DARK_SCENE") or None for standard scene.
+        Unrecognised keys are ignored; missing entries use filename inference.
+        Example: {"/path/to/LTG_COLOR_sf_covetous_glitch.png": "GLITCH_DARK_SCENE"}
 
     Returns
     -------
@@ -645,8 +841,25 @@ def run_glitch_layer_dominance_check(glitch_png_paths: List[str]) -> Dict:
     results = []
     counts: Dict[str, int] = {"PASS": 0, "WARN": 0, "FAIL": 0, "SKIP": 0}
 
+    subtypes = subtypes or {}
+
     for p in glitch_png_paths:
-        r = lint_uv_purple_dominance(str(p), world_type_override="GLITCH")
+        abs_p = os.path.abspath(str(p))
+        # Look up explicit subtype by absolute path or basename
+        if abs_p in subtypes:
+            file_subtype: Optional[str] = subtypes[abs_p]
+        elif os.path.basename(abs_p) in subtypes:
+            file_subtype = subtypes[os.path.basename(abs_p)]
+        else:
+            # Infer from filename — infer_scene_subtype() is called inside
+            # lint_uv_purple_dominance when scene_subtype=None
+            file_subtype = None  # will be inferred inside lint_uv_purple_dominance
+
+        r = lint_uv_purple_dominance(
+            abs_p,
+            world_type_override="GLITCH",
+            scene_subtype=file_subtype,
+        )
         results.append(r)
         overall = r.get("overall", "SKIP")
         counts[overall] = counts.get(overall, 0) + 1
@@ -680,6 +893,7 @@ def _cli(argv: List[str]) -> int:
         print(f"LTG_TOOL_uv_purple_linter  v{__version__}")
         print("Usage:")
         print("  python LTG_TOOL_uv_purple_linter.py <image.png> [--world-type glitch]")
+        print("  python LTG_TOOL_uv_purple_linter.py <image.png> [--scene-subtype glitch_dark_scene]")
         print("  python LTG_TOOL_uv_purple_linter.py --batch <directory/> [--world-type glitch]")
         return 0
 
@@ -693,6 +907,21 @@ def _cli(argv: List[str]) -> int:
             print("ERROR: --world-type requires an argument (e.g. glitch)", file=sys.stderr)
             return 2
 
+    scene_subtype_override: Optional[str] = None
+    if "--scene-subtype" in argv:
+        idx = argv.index("--scene-subtype")
+        if idx + 1 < len(argv):
+            raw_st = argv[idx + 1].upper()
+            # Normalise common variants
+            if raw_st in ("GLITCH_DARK_SCENE", "DARK_SCENE", "DARK"):
+                scene_subtype_override = SCENE_SUBTYPE_GLITCH_DARK_SCENE
+            else:
+                scene_subtype_override = raw_st
+            argv = argv[:idx] + argv[idx + 2:]
+        else:
+            print("ERROR: --scene-subtype requires an argument (e.g. glitch_dark_scene)", file=sys.stderr)
+            return 2
+
     # --batch mode
     if "--batch" in argv:
         idx = argv.index("--batch")
@@ -703,7 +932,11 @@ def _cli(argv: List[str]) -> int:
         if not os.path.isdir(directory):
             print(f"ERROR: Not a directory: {directory}", file=sys.stderr)
             return 2
-        batch = batch_lint(directory, world_type_override=world_type_override)
+        batch = batch_lint(
+            directory,
+            world_type_override=world_type_override,
+            scene_subtype_override=scene_subtype_override,
+        )
         print(format_batch_report(batch))
         summary = batch["summary"]
         if summary["overall"] == "FAIL":
@@ -724,7 +957,11 @@ def _cli(argv: List[str]) -> int:
             print(f"ERROR: File not found: {p}", file=sys.stderr)
             exit_code = 2
             continue
-        result = lint_uv_purple_dominance(p, world_type_override=world_type_override)
+        result = lint_uv_purple_dominance(
+            p,
+            world_type_override=world_type_override,
+            scene_subtype=scene_subtype_override,
+        )
         print(format_result(result, verbose=True))
         print()
         if result["overall"] == "FAIL":

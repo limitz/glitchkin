@@ -175,6 +175,40 @@ Create motion spec sheets and timing documentation. Make the pitch FEEL like it 
   - Byte: unaffected; still bg:legacy-broad; pre-existing WARNs unchanged
 - Ideabox: `20260330_ryo_hasegawa_extend_annot_bg_to_byte.md` — auto-detect annotation_bg_color in sheet_geometry_calibrate tool
 
+### C46 — COMPLETE
+- `LTG_TOOL_motion_spec_lint.py` C46 update — dark-sheet annotation_occupancy false WARN fix:
+  - Root cause: Byte and Glitch sheets use VOID_BLACK panels; annotation content is sparse
+    bright text/arrows on dark backgrounds; old non-bg subtraction method yielded 1–2%
+    occupancy (below 4% threshold) even when annotation content was correct
+  - Fix: new `_dark_sheet_params_from_config(fam_cfg)` helper reads `background_style`
+    ("light"/"dark") and `occupancy_threshold_dark` from per-family config
+  - `_get_zone_params()` now returns 8-tuple: added `dark_sheet` (bool) and
+    `occupancy_threshold_dark` (float or None) as elements 7 and 8
+  - `_count_non_bg()` new `dark_sheet=False` param: when True, counts pixels with
+    mean channel value > 40 as annotation content (bright-on-dark mode)
+  - `check_annotation_occupancy()` new `dark_sheet` and `occupancy_threshold_dark` params;
+    uses 1% threshold and `dark-bright` bg_mode label for dark sheets
+  - `lint_motion_spec()` updated to unpack 8-tuple and pass new params
+- `sheet_geometry_config.json` updated to version 2:
+  - byte: `background_style="dark"`, `occupancy_threshold_dark=0.010`
+  - glitch: `background_style="dark"`, `occupancy_threshold_dark=0.010`
+- `LTG_TOOL_precritique_qa.py` bumped to v2.13.1: CYCLE_LABEL=C46
+- `output/tools/README.md` updated: C46 section added
+- Ideabox: `20260330_ryo_hasegawa_dark_sheet_beat_badge_threshold.md` — extend dark_sheet
+  fix to beat_badges check (remaining false WARNs on Byte/Glitch)
+
+### C46 Key Findings
+- Dark sheets (Byte, Glitch): bright-pixel counting (mean > 40) is correct classification
+  strategy; 1% threshold appropriate for sparse text/arrow annotations on void-black
+- _get_zone_params() now returns 8-tuple — code calling it with old tuple unpacking will
+  break; only lint_motion_spec() calls it (updated in same commit)
+- beat_badges check still uses legacy _count_non_bg (no dark_sheet param) — false WARNs
+  persist on Byte/Glitch beat_badge check; ideabox filed for C47
+- Byte WARN pattern: B1 panel uses light bg (BYTE_TEAL header), B2–B4 are void-dark.
+  dark_sheet=True applies to entire sheet, so B1 also uses bright-pixel mode. May over-count
+  slightly for B1 but result is still PASS, so no correctness issue.
+- Confirmed: luma/cosmo/miri = background_style absent (defaults to "light") → no change
+
 ### C43 Key Findings
 - `_get_zone_params()` now returns 6-tuple — any code calling it must be updated (only lint_motion_spec() calls it)
 - Precise bg matching works by max-channel-delta: pixel is bg only if ALL channels within ±tol of known bg color

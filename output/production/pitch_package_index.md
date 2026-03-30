@@ -1285,3 +1285,55 @@ All critical path assets verified on disk. No blocking issues found. The package
 | P2 Open items C44 | Logo font update (Sam); GL-07 lamp halo (Jordan); UV_PURPLE linter (Rin); Pixel font perspective helper (Hana); Glitch motion spec (Ryo); Lineup tier depth indicator (Lee) |
 
 *Updated by Alex Chen, Art Director — Cycle 44 — 2026-03-30*
+
+---
+
+### Cycle 45 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| SF05 "The Passing" | `output/color/style_frames/LTG_COLOR_styleframe_sf05.png` | Miri seated at kitchen table, Luma standing behind her, both watching CRT through doorway pre-dawn. "CRT as matrilineal heirloom." Neither speaking. Miri knows; Luma doesn't yet. Warm/cool 16.7 PASS. Silhouette PASS. Line weight 0 outliers PASS. SUNLIT_AMBER ΔE 1.3° PASS. Generator: `LTG_TOOL_style_frame_05_relationship.py`. (Cycle 45 — Jordan Reed) |
+| SF06 "The Hand-Off" | `output/color/style_frames/LTG_COLOR_sf_miri_luma_handoff.png` | Miri (left) + CRT (center) + Luma (right) in living room. Miri's right arm extended toward CRT — moment of transmission. Luma attentive forward lean. SUNLIT_AMBER left / CRT_COOL_SPILL right. Real World palette only. Luma face gate PASS (FOCUSED DET. / DETERMINED+). Generator: `LTG_TOOL_sf_miri_luma_handoff.py`. (Cycle 45 — Maya Santos) |
+| Caption retrofit tool | `output/tools/LTG_TOOL_sb_caption_retrofit.py` | Retrofits panels to three-tier caption bar (CAPTION_H=72px). Accepts `--panel PXX` or batch. `--dry-run` flag. P03/P06/P07/P08/P09/P23/P24 all retrofitted (7/7). Closes Jonas Feld C17 P1 caption hierarchy. (Cycle 45 — Diego Vargas) |
+| Cold Open P14 | `output/storyboards/panels/LTG_SB_cold_open_P14.png` | Dutch 12° CW, fixed cam 5ft. Byte ricochets off bookshelf. 5-ghost Bezier pixel trail, 3 books airborne, rubber duck upper-center. Generator: `LTG_TOOL_sb_cold_open_P14.py`. (Cycle 45 — Diego Vargas) |
+| Cold Open P15 | `output/storyboards/panels/LTG_SB_cold_open_P15.png` | Floor-level cam 6". Luma hits floor. Glitch forces Luma hair to perfect geometric circle (radius = head_r × 1.55, ELEC_CYAN outline). "8 FRAMES MAX" annotated. Generator: `LTG_TOOL_sb_cold_open_P15.py`. (Cycle 45 — Diego Vargas) |
+| Pixel font perspective helper | `output/tools/LTG_TOOL_pixel_font_v001.py` (v001.1) | `draw_pixel_text_perspective()` added: distance-to-VP normalized scale interpolation (0.65 at VP → 1.0 at far edge). Graceful fallback when vp_x/vp_y=None. Effective scale clamped to max(1, round). Self-test PASS. (Cycle 45 — Hana Okonkwo) |
+| Kitchen BG v007 | `output/backgrounds/environments/LTG_ENV_grandma_kitchen.png` | Pre-existing line_weight FAIL fixed: paper_texture(alpha=16) + vignette(strength=45) + flatten_rgba_to_rgb() final passes. QA: silhouette PASS, value 21/228 PASS, warm/cool 32.9 PASS, line_weight outliers=0 PASS. Grade WARN (color fidelity pre-existing only). (Cycle 45 — Hana Okonkwo) |
+| CI suite v1.4.0 | `output/tools/LTG_TOOL_ci_suite.py` | Check 7: hardcoded_path_check (uses audit_hardcoded_paths from project_paths). Check 8: thumbnail_lint (FAIL on unwhitelisted .thumbnail() calls). Check 9: motion_sheet_coverage (WARN on expression-sheet/motion mismatch). 52 hardcoded_path_check + 3 thumbnail_lint known-issues seeded. ci_known_issues.json: 37→92 entries. (Cycle 45 — Morgan Walsh) |
+| Character face test — Byte profile | `output/tools/LTG_TOOL_character_face_test.py` | `--char byte` profile added. Byte: wider-than-tall oval, 5×5 pixel-grid eyes (left=DEEP_CYAN / right=HOT_MAG crack). Face gate checks FG-B01/B02/B03. 6 variants (NEUTRAL PASS, GRUMPY PASS, ALARMED PASS, SEARCHING WARN, POWERED DOWN WARN, PIXEL ONLY FAIL). All existing chars verified clean. (Cycle 45 — Kai Nakamura) |
+| UV_PURPLE dominance linter v1.0.0 | `output/tools/LTG_TOOL_uv_purple_linter.py` | Check A: UV_PURPLE+CYAN combined LAB ΔE ≤15 fraction ≥20% PASS / 10–19% WARN / <10% FAIL. Check B: Warm-hue contamination fraction <5% PASS. cv2 LAB unscaling fix included. Batch results: COVETOUS frames FAIL (intentional dark void — subtype fix commissioned C46), ENV frames WARN 17%, bg_glitch_layer_encounter PASS 22.7%. Integrated into precritique_qa v2.13.0 as Section 11. (Cycle 45 — Rin Yamamoto) |
+| precritique_qa v2.12.0 / v2.13.0 | `output/tools/LTG_TOOL_precritique_qa.py` | v2.12.0: MOTION_SHEETS extended with glitch (all 5 characters covered). v2.13.0: Section 11 UV_PURPLE dominance added (GLITCH_LAYER_PNGS registry + Section 11 result in overall exit code). (Cycle 45 — Ryo/Rin) |
+| Glitch motion spec v001 | `output/characters/motion/LTG_CHAR_glitch_motion.png` | 4-beat arc: PREDATORY STILL / COVETOUS REACH (bilateral eyes, +12° tilt, UV_PURPLE confetti) / CORRUPTION SURGE (×1.15 stretch, jitter, max confetti) / RETREAT (squash 0.65, -20° recoil — "still dangerous"). CORRUPT_AMBER body canonical (glitch.md confirmed). Lint PASS=5 WARN=1 FAIL=0. Generator: `LTG_TOOL_glitch_motion.py`. (Cycle 45 — Ryo Hasegawa) |
+| Miri expression sheet v006 | `output/characters/supporting/LTG_CHAR_grandma_miri_expression_sheet.png` | P0 wooden hairpin rename complete. `chop_x1/chop_x2` → `hairpin_x1/hairpin_x2` in draw_hair_bun(). All active Miri PNGs regenerated. Face gate: WARN on KNOWING STILL + WELCOMING (pre-existing baselines, not failures). Generator: `LTG_TOOL_grandma_miri_expression_sheet.py` v006. (Cycle 45 — Maya Santos) |
+| Character lineup v009 | `output/characters/main/LTG_CHAR_character_lineup.png` | P0 hairpin rename: `chopstick_col` → `hairpin_col`. Both polygon fill calls updated. Generator: `LTG_TOOL_character_lineup.py` v009. v010 (tier depth indicator) commissioned C46. (Cycle 45 — Maya Santos) |
+| Lineup tier depth recommendation | `output/production/lineup_tier_depth_recommendation_c45.md` | 3-option comparison. Option C (dual-warmth drop-shadow bands) recommended: warm shadow under FG tier / cool shadow under BG tier. Reads at thumbnail, B&W print, full color. Aligns with warm=FG/cool=BG grammar. Sketch: `output/production/lineup_tier_depth_sketch.png`. (Cycle 45 — Lee Tanaka) |
+| Logo asymmetric v003 (rendered) | `output/production/LTG_BRAND_logo_asymmetric.png` | Rendered with Nunito Bold (Luma) + Space Grotesk Bold (Glitchkin) from `assets/fonts/`. Font routing: "Luma"=Nunito Bold, "&"=Space Grotesk Bold, "the"=Nunito Bold small, "Glitchkin"=Space Grotesk Bold. `assets/fonts/README.md` documents font names, URLs, licenses (SIL OFL). Generator: `LTG_TOOL_logo_asymmetric.py` v003. (Cycle 45 — Sam Kowalski/rendered by Alex Chen) |
+| Font assets directory | `assets/fonts/` | Nunito-Bold.ttf, Nunito-Light.ttf, Nunito-Regular.ttf, SpaceGrotesk-Bold.ttf on disk. README.md with font names, source URLs, license info, install instructions. (Cycle 45 — Sam Kowalski) |
+
+#### Cycle 45 Pitch Package Status (CURRENT)
+
+| Requirement | C45 Status |
+|---|---|
+| **SF01** | v006 PITCH PRIMARY (unchanged) |
+| **SF02 Glitch Storm** | v008 NATIVE (unchanged) |
+| **SF03 Other Side** | v005 PITCH PRIMARY (unchanged) |
+| **SF04 Resolution** | CANONICAL (Jordan C42) PITCH PRIMARY (unchanged) |
+| **SF05 COVETOUS** | v3.0.0 PITCH PRIMARY (Lee C44 — unchanged) |
+| **SF05 "The Passing"** | **NEW C45** (Jordan Reed) — Miri+Luma kitchen pre-dawn. Warm/cool 16.7 PASS. |
+| **SF06 "The Hand-Off"** | **NEW C45** (Maya Santos) — Miri+Luma living room at CRT. PITCH PRIMARY. Closes pitch gap. |
+| Luma expression sheet | v013 PITCH PRIMARY (unchanged) |
+| Byte expression sheet | v007 PITCH PRIMARY (unchanged) |
+| Cosmo expression sheet | v007 PITCH PRIMARY (unchanged) |
+| Miri expression sheet | **v006** (C45 hairpin rename — regenerated from corrected code) |
+| Glitch expression sheet | v003 GEOMETRY CORRECTED (unchanged) |
+| Character lineup | **v009** (C45 hairpin rename). v010 (tier depth indicator) COMMISSIONED C46 (Maya) |
+| Logo | **v003 RENDERED** (Nunito Bold + Space Grotesk Bold — correct fonts installed and used) |
+| Story Bible | v004 PITCH PRIMARY. FLAG 05 CLOSED (Maya C45 atomic update). **v005 COMMISSIONED C46** (Priya) |
+| Storyboards | P03–P11/P14/P15/P23/P24 + EP05 COVETOUS. Caption retrofit: ALL 7 panels complete (Diego C45). P16/P17 COMMISSIONED C46. |
+| Environments | Kitchen **v007** (line_weight fix). Others unchanged. Living Room v003 COMMISSIONED C46 (Hana). |
+| Motion | Luma v002 / Byte v003 / Cosmo v001 / Miri v001 / **Glitch v001 NEW** — all 5 characters covered |
+| QA/Pipeline | CI **v1.4.0** (Check 7: hardcoded paths, Check 8: thumbnail lint, Check 9: motion coverage). Byte face gate **LIVE** (`--char byte`). UV_PURPLE linter **v1.0.0 LIVE** + precritique_qa Section 11 integrated. |
+| P1 Open items C46 | Char_spec_lint Miri filename pattern (Kai); Lineup v010 tier depth (Maya); Story bible v005 + pilot structure (Priya); P16/P17 panels + legacy file migration (Diego) |
+| P2 Open items C46 | UV_PURPLE linter COVETOUS subtype (Rin + Morgan CI); SF06 staging review (Lee); SF02 GL-07 lamp halo (Jordan); Miri motion spec v002 (Ryo); Living room v003 (Hana); Color script analysis SF01–SF06 (Sam) |
+
+*Updated by Alex Chen, Art Director — Cycle 45 — 2026-03-30*

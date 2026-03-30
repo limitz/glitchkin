@@ -45,6 +45,17 @@ Exit codes:
 
 Author: Morgan Walsh (Pipeline Automation Specialist)
 Created: Cycle 34 — 2026-03-29
+Version: 2.14.0 (C45 Rin Yamamoto: LTG_TOOL_uv_purple_linter v1.1.0 GLITCH_DARK_SCENE subtype
+               integration. run_uv_purple_lint() now passes GLITCH_DARK_SCENE subtype for
+               COVETOUS assets (LTG_COLOR_sf_covetous_glitch.png, LTG_SF_covetous_glitch_v001.png).
+               COVETOUS assets previously FAIL (0.6% / 0.2% ΔE-match) now PASS via hue-angle
+               matching (96.7% / 98.9% UV_PURPLE hue family h° 255°–325°).
+               No change to ENV asset handling — glitchlayer_frame WARNs remain.)
+Version: 2.13.1 (C46 Ryo Hasegawa: CYCLE_LABEL bumped to C46. motion_spec_lint C46 update
+               (dark-sheet annotation_occupancy fix) — byte + glitch annotation_occupancy
+               now PASS with 1% bright-pixel threshold. Eliminates 2 persistent false WARNs.
+               sheet_geometry_config.json v2 with background_style + occupancy_threshold_dark
+               for byte and glitch families.)
 Version: 2.13.0 (C44 Rin Yamamoto: UV_PURPLE Dominance Lint Section 11 added. New GLITCH_LAYER_PNGS
                registry. Lazy-loaded LTG_TOOL_uv_purple_linter via _load_uv_purple_linter().
                run_uv_purple_lint() runner, Section 11 in build_report(), main() [11/11],
@@ -117,7 +128,7 @@ PALETTE_MD  = REPO_ROOT / "output" / "color" / "palettes" / "master_palette.md"
 BASELINE_JSON = TOOLS_DIR / "qa_baseline_last.json"
 
 # Cycle label — update each cycle
-CYCLE_LABEL = "C45"
+CYCLE_LABEL = "C46"
 
 if str(TOOLS_DIR) not in sys.path:
     sys.path.insert(0, str(TOOLS_DIR))
@@ -1270,7 +1281,21 @@ def run_uv_purple_lint() -> dict:
     existing_paths = [str(p) for p in GLITCH_LAYER_PNGS if p.exists()]
     missing_count  = len(GLITCH_LAYER_PNGS) - len(existing_paths)
 
-    result = uv_mod.run_glitch_layer_dominance_check(existing_paths)
+    # Per-file scene subtype hints (v2.14.0, Rin Yamamoto C45).
+    # COVETOUS assets use UV_PURPLE_DARK family (dark luminance purple variants).
+    # Without GLITCH_DARK_SCENE subtype they FAIL Check A via ΔE (< 1% match).
+    # With GLITCH_DARK_SCENE, hue-angle matching correctly identifies them as
+    # UV_PURPLE family (96–99% of non-black pixels in h° 255°–325°).
+    # Filename inference in lint_uv_purple_dominance() already handles "covetous"
+    # automatically (via infer_scene_subtype()), but explicit registration here
+    # documents the intent and survives any future keyword changes.
+    _GLITCH_DARK_SCENE = getattr(uv_mod, "SCENE_SUBTYPE_GLITCH_DARK_SCENE", "GLITCH_DARK_SCENE")
+    subtypes = {
+        str(SF_DIR / "LTG_COLOR_sf_covetous_glitch.png"):    _GLITCH_DARK_SCENE,
+        str(SF_DIR / "LTG_SF_covetous_glitch_v001.png"):     _GLITCH_DARK_SCENE,
+    }
+
+    result = uv_mod.run_glitch_layer_dominance_check(existing_paths, subtypes=subtypes)
     result["skip"] = result.get("skip", 0) + missing_count
     return result
 

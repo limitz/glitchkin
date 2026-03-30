@@ -1,5 +1,35 @@
 # Maya Santos — Memory
 
+## Cycle 45 — Lineup v010 Dual-Warmth Tier Depth Bands (COMPLETE)
+
+### Task: Character Lineup v010 (Option C Depth Bands)
+- Brief: Lee Tanaka C45 recommendation (`output/production/lineup_tier_depth_recommendation_c45.md`)
+- Closes: Alex Chen C44 brief P2 — lineup tier depth indicator
+- Generator: `output/tools/LTG_TOOL_character_lineup.py` bumped v009 → v010
+- **Change:** Replaced flat 2px shadow lines with gradient drop-shadow bands per tier.
+  - BG tier: 8px cool-slate gradient `(180, 195, 210)` fading downward from BG_GROUND_Y
+  - FG tier: 10px warm-amber gradient `(220, 200, 160)` fading downward from FG_GROUND_Y
+  - Warm/cool encoding: warm = FG/close/real, cool = BG/far/digital — aligns with show palette grammar
+  - Both bands drawn BEFORE character draw calls — no draw-order complications, no alpha passes
+- Tier labels updated: "FG tier (WARM)" / "BG tier (COOL)"
+- Staging annotation bar updated: "WARM = FG / COOL = BG" grammar note
+- Title updated: "C45 v010 (two-tier staging: Luma+Byte FG/WARM / Cosmo+Miri+Glitch BG/COOL)"
+- Output: `output/characters/main/LTG_CHAR_character_lineup.png` (1280×535px)
+- Face gate: No face geometry changes. Run for completeness — NEUTRAL/TOO_SMALL FAILs are known diagnostic variants. WAR Ns (KNOWING STILL, WELCOMING for Miri; FEAR for Luma; PANIC RUN for Cosmo) match C42/C44 baselines. No regression.
+- README.md: Updated with C45 entry.
+
+### Task 2: COVETOUS SF v3.0.0 QA Review (P2 from C46 brief)
+- Brief: Alex Chen — confirm face gate PASS + precritique_qa check on Lee's COVETOUS SF v3.0.0 delivery
+- precritique_qa C46 run: OVERALL WARN (PASS=321, WARN=39, FAIL=0). Report: `output/production/precritique_qa_c46.md`
+- Face gate at head_r=33 (Luma SENSING UNEASE): FOCUSED DET. PASS, DETERMINED+ PASS, EYES ONLY PASS, FEAR WARN (expected), NEUTRAL/TOO_SMALL are diagnostic baselines. No regression.
+- Notable new WARN in delta: `LTG_TOOL_glitch_motion.py` G004 FAIL (draw order — Ryo Hasegawa tool). Flagged to Alex.
+- Notable README SYNC warns: `LTG_TOOL_sf_miri_luma_handoff.py` UNLISTED — this is my C44 tool, needs separate Script Index entry (README last-updated section already covers it but Script Index table doesn't). Morgan Walsh should add it.
+
+### Ideabox C46
+- Submitted: `ideabox/20260330_maya_santos_lineup_depth_grammar_audit.md`
+
+---
+
 ## Cycle 44 — P0 Hairpin Rename + SF06 "The Hand-Off" (COMPLETE)
 
 ### P0 — Miri Wooden Hairpin Rename

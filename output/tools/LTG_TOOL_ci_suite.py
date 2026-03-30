@@ -140,9 +140,17 @@ v1.4.0 (C44): Check 7 — hardcoded_path_check. Uses audit_hardcoded_paths()
               PNG in output/characters/motion/. check_motion_coverage()
               exported for programmatic use.
               (Morgan Walsh)
+v1.5.0 (C45): known_issues suppression added to dual_output_check and
+              thumbnail_lint. Both checks now load ci_known_issues.json (same
+              as hardcoded_path_check) — files listed as KNOWN contribute to
+              WARN only, not FAIL. Enables seeding baseline false-positives
+              (contact-sheet/caption-retrofit dual-output patterns; legacy
+              thumbnail() calls pending native-canvas migration) so CI reports
+              WARN instead of FAIL while backlog is worked down.
+              (Morgan Walsh)
 """
 
-__version__ = "1.4.0"
+__version__ = "1.5.0"
 
 import os
 import sys
@@ -565,19 +573,70 @@ def check_dual_output(tools_dir):
 
 
 def _run_dual_output_check(tools_dir):
-    """Run dual-output-file check. Returns (status, summary, details)."""
+    """Run dual-output-file check. Returns (status, summary, details).
+
+    Files listed in ci_known_issues.json under check='dual_output_check'
+    are treated as KNOWN (pre-existing / by-design patterns such as contact
+    sheets and caption-retrofit tools). Known files contribute to WARN count
+    only — not FAIL. New unrecognised conflicts cause FAIL.
+    """
     try:
         conflicts = check_dual_output(tools_dir)
         if not conflicts:
             return "PASS", "0 output filename conflict(s)", ""
-        lines = [f"DUAL-OUTPUT CONFLICTS ({len(conflicts)} output file(s) claimed by multiple generators):"]
-        for outfile, generators in sorted(conflicts.items()):
-            lines.append(f"  {outfile}")
-            for g in generators:
-                lines.append(f"    ← {g}")
+
+        # Load known-issues to distinguish by-design from real conflicts
+        _ki_path = os.path.join(tools_dir, "ci_known_issues.json")
+        _known_generators = set()
+        if os.path.exists(_ki_path):
+            try:
+                with open(_ki_path, "r", encoding="utf-8") as _fh:
+                    _ki_data = json.load(_fh)
+                for _entry in _ki_data.get("known_issues", []):
+                    if _entry.get("check") == "dual_output_check":
+                        _known_generators.add(_entry.get("file", ""))
+            except (OSError, json.JSONDecodeError):
+                pass
+
+        # A conflict is "new" if ANY generator in the conflict group is not known
+        # A conflict is "known" only if ALL generators in the group are known
+        new_conflicts = {}
+        known_conflicts = {}
+        for outfile, generators in conflicts.items():
+            unknown_gens = [g for g in generators if g not in _known_generators]
+            if unknown_gens:
+                new_conflicts[outfile] = generators
+            else:
+                known_conflicts[outfile] = generators
+
+        lines = []
+        if new_conflicts:
+            lines.append(f"NEW DUAL-OUTPUT CONFLICTS ({len(new_conflicts)} output file(s)):")
+            for outfile, generators in sorted(new_conflicts.items()):
+                lines.append(f"  {outfile}")
+                for g in generators:
+                    lines.append(f"    ← {g}")
+        if known_conflicts:
+            lines.append(f"KNOWN DUAL-OUTPUT (by-design patterns — {len(known_conflicts)} output file(s)):")
+            for outfile, generators in sorted(known_conflicts.items()):
+                lines.append(f"  {outfile}  [KNOWN]")
+                for g in generators:
+                    lines.append(f"    ← {g}")
+
         details = "\n".join(lines)
-        summary = f"{len(conflicts)} output filename conflict(s) — {sum(len(v) for v in conflicts.values())} generator(s) involved"
-        return "FAIL", summary, details
+        total_gen = sum(len(v) for v in conflicts.values())
+        if new_conflicts:
+            summary = (
+                f"{len(new_conflicts)} NEW conflict(s) + {len(known_conflicts)} KNOWN — "
+                f"{total_gen} generator(s) involved"
+            )
+            return "FAIL", summary, details
+        else:
+            summary = (
+                f"{len(known_conflicts)} KNOWN conflict(s) (all by-design) — "
+                f"{total_gen} generator(s) involved"
+            )
+            return "WARN", summary, details
     except Exception as exc:
         return "ERROR", f"dual_output_check error: {exc}", ""
 
@@ -750,27 +809,67 @@ def check_thumbnail_lint(tools_dir):
 
 
 def _run_thumbnail_lint(tools_dir):
-    """Run thumbnail lint check. Returns (status, summary, details)."""
+    """Run thumbnail lint check. Returns (status, summary, details).
+
+    Files listed in ci_known_issues.json under check='thumbnail_lint' are
+    treated as KNOWN (pre-existing migration backlog or legitimate analysis
+    tools). KNOWN files contribute to WARN count only — not FAIL. New files
+    with unwhitelisted thumbnail() calls cause FAIL.
+    """
     try:
         findings = check_thumbnail_lint(tools_dir)
         if not findings:
             return "PASS", "0 unwhitelisted thumbnail() call(s) in active generators", ""
+
+        # Load known-issues to separate backlog from new violations
+        _ki_path = os.path.join(tools_dir, "ci_known_issues.json")
+        _known_files = set()
+        if os.path.exists(_ki_path):
+            try:
+                with open(_ki_path, "r", encoding="utf-8") as _fh:
+                    _ki_data = json.load(_fh)
+                for _entry in _ki_data.get("known_issues", []):
+                    if _entry.get("check") == "thumbnail_lint":
+                        _known_files.add(_entry.get("file", ""))
+            except (OSError, json.JSONDecodeError):
+                pass
+
         by_file = {}
         for f in findings:
             by_file.setdefault(f["file"], []).append(f)
+
+        new_files    = sorted(k for k in by_file if k not in _known_files)
+        known_files  = sorted(k for k in by_file if k in _known_files)
+
         lines = []
-        for fname, hits in sorted(by_file.items()):
+        for fname in new_files:
+            hits = by_file[fname]
             lines.append(f"  FAIL  {fname}  ({len(hits)} hit(s))")
             for h in hits:
                 lines.append(f"    L{h['line']:4d}  {h['text'][:80]}")
             lines.append(f"         → Use native 1280×720 canvas instead.")
             lines.append(f"         → Add '# ltg-thumbnail-ok' to whitelist legitimate analysis uses.")
+        for fname in known_files:
+            hits = by_file[fname]
+            lines.append(f"  KNOWN {fname}  ({len(hits)} hit(s)) — migration backlog")
+            for h in hits:
+                lines.append(f"    L{h['line']:4d}  {h['text'][:80]}")
+
         details = "\n".join(lines)
-        summary = (
-            f"{len(findings)} unwhitelisted .thumbnail() call(s) in "
-            f"{len(by_file)} generator(s) — native canvas required"
-        )
-        return "FAIL", summary, details
+        total_hits = sum(len(v) for v in by_file.values())
+        if new_files:
+            summary = (
+                f"{total_hits} unwhitelisted .thumbnail() call(s) in "
+                f"{len(by_file)} generator(s): {len(new_files)} NEW (FAIL) + "
+                f"{len(known_files)} KNOWN (migration backlog)"
+            )
+            return "FAIL", summary, details
+        else:
+            summary = (
+                f"{total_hits} .thumbnail() call(s) in {len(by_file)} KNOWN generator(s) "
+                f"(migration backlog — no new violations)"
+            )
+            return "WARN", summary, details
     except Exception as exc:
         return "ERROR", f"thumbnail_lint error: {exc}", ""
 

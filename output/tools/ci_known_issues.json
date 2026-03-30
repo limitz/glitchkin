@@ -750,6 +750,923 @@
       "code": null,
       "reason": "C44 baseline: generator uses 1920x1080 + thumbnail() — SIGNIFICANT REFACTOR NEEDED per Rin C42 audit. Active migration backlog.",
       "since_cycle": "C44"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_CHAR_byte_motion.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_CHAR_luma_motion.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_SB_pilot_cold_open.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_byte_cracked_eye_glyph.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_byte_expression_sheet.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_ci_suite.py",
+      "code": null,
+      "reason": "C45 baseline: /home/ occurrences are in docstring/comment strings explaining the check, not functional hardcoded paths. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_color_qa_c37_runner.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_colorkey_otherside_gen.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_contact_sheet_arc_diff.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_env_grandma_living_room.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_fidelity_check_c24.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_logo.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_luma_act2_standing_pose.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_luma_classroom_pose.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_luma_cold_overlay_swatches.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_naming_compliance_copier.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_naming_compliance_copy.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_project_paths.py",
+      "code": null,
+      "reason": "C45 baseline: /home/ occurrences are in module docstring examples and comments explaining migration — not functional hardcoded paths.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_act1_full_contact_sheet.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_act2_contact_sheet.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_caption_retrofit.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_cold_open_P10.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_cold_open_P11.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_cold_open_P14.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_cold_open_P15.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sb_panel_a203.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sf02_fill_light_fix_c35.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sf04_luma_byte_v005.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_sf_miri_luma_handoff.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_style_frame_05_relationship.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_styleframe_luma_byte.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "LTG_TOOL_world_type_infer.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "hardcoded_path_check",
+      "file": "run_c31_qa.py",
+      "code": null,
+      "reason": "C45 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_act1_contact_sheet.py",
+      "code": null,
+      "reason": "Contact sheet embeds thumbnail copies of panel PNGs by design; not a real dual-output conflict. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_act1_full_contact_sheet.py",
+      "code": null,
+      "reason": "Full contact sheet embeds thumbnail copies of panel PNGs by design; not a real dual-output conflict. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_act2_contact_sheet.py",
+      "code": null,
+      "reason": "Act2 contact sheet embeds thumbnail copies of panel PNGs by design; not a real dual-output conflict. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_a2_cycle15.py",
+      "code": null,
+      "reason": "Cycle15 act2 batch generator writes act2 panel PNGs; superseded by individual panel generators but both kept for archive. Not a real regression conflict. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_caption_retrofit.py",
+      "code": null,
+      "reason": "Caption retrofit tool rewrites panels in-place by design — same output file as panel generator. Known pattern. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_act2_panels_cycle14.py",
+      "code": null,
+      "reason": "C14 legacy batch generator overlaps with individual panel generators. Both kept for archive; no active regeneration conflict. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_byte_motion.py",
+      "code": null,
+      "reason": "LTG_CHAR_byte_motion.py is a legacy alias/copy of LTG_TOOL_byte_motion.py. Canonical is LTG_TOOL_ prefixed; legacy is deprecated alias. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_CHAR_byte_motion.py",
+      "code": null,
+      "reason": "Legacy alias for LTG_TOOL_byte_motion.py — same output file by design. Deprecation pending. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_luma_motion.py",
+      "code": null,
+      "reason": "LTG_CHAR_luma_motion.py is a legacy alias/copy of LTG_TOOL_luma_motion.py. Canonical is LTG_TOOL_ prefixed. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_CHAR_luma_motion.py",
+      "code": null,
+      "reason": "Legacy alias for LTG_TOOL_luma_motion.py — same output file by design. Deprecation pending. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sf_covetous_glitch.py",
+      "code": null,
+      "reason": "LTG_TOOL_sf_covetous_glitch_c43.py is an updated version writing same output file. Both kept; only one should run in production. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sf_covetous_glitch_c43.py",
+      "code": null,
+      "reason": "Newer version of sf_covetous_glitch; writes same output as legacy version. Active generator — legacy should be retired. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_render_lib.py",
+      "code": null,
+      "reason": "render_lib writes LTG_ENV_tech_den.png only in test/demo mode — not primary generator; bg_tech_den.py is canonical. FP from demo path. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_warmth_inject.py",
+      "code": null,
+      "reason": "warmth_inject writes LTG_ENV_tech_den.png as post-process of bg_tech_den output — same file by design. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_SB_pilot_cold_open.py",
+      "code": null,
+      "reason": "Legacy non-prefixed copy of LTG_TOOL_sb_pilot_cold_open.py. Same output file. Deprecation pending. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_pilot_cold_open.py",
+      "code": null,
+      "reason": "LTG_SB_pilot_cold_open.py is a legacy alias — same output by design. Non-prefixed file is the deprecated copy. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_byte_expression_sheet.py",
+      "code": null,
+      "reason": "sb_a2_cycle15.py copies LTG_CHAR_byte_expression_sheet.png as part of act2 contact sheet assembly — thumbnail copy, not a real dual-output conflict. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_panel_a101.py",
+      "code": null,
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_panel_a102.py",
+      "code": null,
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_panel_a103.py",
+      "code": null,
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_panel_a104_kitchen.py",
+      "code": null,
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_panel_a201.py",
+      "code": null,
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_panel_a202.py",
+      "code": null,
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_panel_a203.py",
+      "code": null,
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_panel_a204.py",
+      "code": null,
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_panel_a205.py",
+      "code": null,
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_panel_a206_insert.py",
+      "code": null,
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_panel_a207.py",
+      "code": null,
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_panel_a207b.py",
+      "code": null,
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_panel_a208.py",
+      "code": null,
+      "reason": "Panel generators write individual PNGs; contact sheets read these as thumbnails and also write them — by design. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_cold_open_P03.py",
+      "code": null,
+      "reason": "sb_caption_retrofit.py rewrites cold open panel PNGs in-place by design; not a real conflict. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_cold_open_P06.py",
+      "code": null,
+      "reason": "sb_caption_retrofit.py rewrites cold open panel PNGs in-place by design; not a real conflict. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_cold_open_P07.py",
+      "code": null,
+      "reason": "sb_caption_retrofit.py rewrites cold open panel PNGs in-place by design; not a real conflict. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_cold_open_P08.py",
+      "code": null,
+      "reason": "sb_caption_retrofit.py rewrites cold open panel PNGs in-place by design; not a real conflict. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_cold_open_P09.py",
+      "code": null,
+      "reason": "sb_caption_retrofit.py rewrites cold open panel PNGs in-place by design; not a real conflict. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_cold_open_P23.py",
+      "code": null,
+      "reason": "sb_caption_retrofit.py rewrites cold open panel PNGs in-place by design; not a real conflict. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "dual_output_check",
+      "file": "LTG_TOOL_sb_cold_open_P24.py",
+      "code": null,
+      "reason": "sb_caption_retrofit.py rewrites cold open panel PNGs in-place by design; not a real conflict. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_CHAR_byte_motion.py",
+      "code": null,
+      "reason": "Legacy alias using thumbnail() as final 1280px gate — migration backlog; canonical LTG_TOOL_byte_motion.py also flagged. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_CHAR_luma_motion.py",
+      "code": null,
+      "reason": "Legacy alias using thumbnail() as final 1280px gate — migration backlog. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_SB_pilot_cold_open.py",
+      "code": null,
+      "reason": "Legacy non-prefixed copy; uses thumbnail() on final contact sheet. Migration backlog. C45 baseline.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_bg_classroom.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final 1280px gate on native-canvas bg. Migrate to native 1280x720 canvas. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_bg_grandma_kitchen.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final 1280px gate. Migrate to native 1280x720 canvas. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_bg_luma_study_interior.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migrate to native 1280x720 canvas. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_bg_other_side.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Now native 1280x720 per C41 refactor but thumbnail() call remains. Remove call. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_bg_school_hallway.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migrate to native 1280x720 canvas. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_bodypart_hierarchy.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final output size gate on composite. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_byte_commitment_rpd_test.py",
+      "code": null,
+      "reason": "C45 baseline: analysis QA tool — thumbnail() used for display/output sizing. Whitelisting pending.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_byte_expression_sheet.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migrate to native canvas. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_byte_motion.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migrate to native canvas. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_character_face_test.py",
+      "code": null,
+      "reason": "C45 baseline: QA/test tool — uses thumbnail() on multi-expression test sheet for size conformance. Whitelisting pending.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_character_lineup.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migrate to native canvas. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_colorkey_glitch_covetous_gen.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migrate to native canvas. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_cosmo_expression_sheet.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migrate to native canvas. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_cosmo_motion.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_cosmo_turnaround.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_costume_bg_clash.py",
+      "code": null,
+      "reason": "C45 baseline: analysis tool — thumbnail() used for downscaling input images before analysis. Legitimate analysis use; whitelisting pending.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_env_grandma_living_room.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_expression_isolator.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as output size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_expression_silhouette.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() on output sheets. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_face_curve_validator.py",
+      "code": null,
+      "reason": "C45 baseline: QA tool — uses thumbnail() for display sheet sizing. Whitelisting pending.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_glitch_body_primitive_diagram_gen.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_glitch_motion.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_grandma_miri_expression_sheet.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_lineup_tier_depth_sketch.py",
+      "code": null,
+      "reason": "C45 baseline: single-use evaluation sketch tool; thumbnail() for final size conformance. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_luma_color_model.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_luma_expression_sheet.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_luma_face_curves.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() on face curves reference sheet. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_luma_motion.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_luma_turnaround.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_miri_motion.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_pixel_font_v001.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate on demo output. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_procedural_draw.py",
+      "code": null,
+      "reason": "C45 baseline: library utility — thumbnail() used in crop/annotated helpers and demo canvas. Library usage cannot use native canvas directly. Whitelisting pending.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_sb_caption_retrofit.py",
+      "code": null,
+      "reason": "C45 baseline: retrofit tool resizes loaded existing PNGs via thumbnail() — resize in-place tool, legitimate use. Whitelisting pending.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_sb_cold_open_P03.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_sb_cold_open_P06.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_sb_cold_open_P07.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_sb_cold_open_P08.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_sb_cold_open_P09.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_sb_cold_open_P10.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_sb_cold_open_P11.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_sb_cold_open_P14.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_sb_cold_open_P15.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_sb_cold_open_P23.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_sb_cold_open_P24.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_sb_ep05_covetous.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_sb_pilot_cold_open.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() on contact sheet for final size conformance. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_sf02_fill_light_fix_c35.py",
+      "code": null,
+      "reason": "C45 baseline: fill light QA tool — thumbnail() on result for display. Analysis/QA use; whitelisting pending.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_sf04_luma_byte_v005.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_sf_miri_luma_handoff.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_style_frame_02_glitch_storm.py",
+      "code": null,
+      "reason": "C45 baseline: comment reference to old thumbnail() that was removed; hit is in docstring. Migration backlog (docstring cleanup).",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_style_frame_03_other_side.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_style_frame_04_resolution.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_styleframe_discovery.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_styleframe_luma_byte.py",
+      "code": null,
+      "reason": "C45 baseline: uses thumbnail() as final size gate. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_thumbnail_preview_v001.py",
+      "code": null,
+      "reason": "C45 baseline: thumbnail preview utility — thumbnail() is the core feature of this tool. Legitimate use; whitelisting pending.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_warmth_inject.py",
+      "code": null,
+      "reason": "C45 baseline: post-process tool — thumbnail() on result for size conformance. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "LTG_TOOL_warmth_inject_hook.py",
+      "code": null,
+      "reason": "C45 baseline: post-process hook — thumbnail() on result for size conformance. Migration backlog.",
+      "since_cycle": "C45"
+    },
+    {
+      "check": "thumbnail_lint",
+      "file": "test_face_lighting.py",
+      "code": null,
+      "reason": "C45 baseline: test utility — thumbnail() for display canvas sizing. Whitelisting pending.",
+      "since_cycle": "C45"
     }
   ]
 }

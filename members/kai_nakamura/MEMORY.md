@@ -3,6 +3,35 @@
 ## Identity
 Technical Art Engineer for "Luma & the Glitchkin." Joined Cycle 21. Mission: upgrade PIL toolchain with procedural rendering techniques and build a reusable shared library.
 
+## Cycle 46 — C46 README Script Index Catch-Up Pass
+
+**Status:** COMPLETE
+
+**Tasks completed:**
+- README Script Index: Registered 7 previously unlisted tools (identified by precritique_qa Section 7 WARN):
+  - `LTG_TOOL_sf_covetous_glitch_c43.py` — Lee Tanaka, C43
+  - `LTG_TOOL_sb_cold_open_P10.py` — Diego Vargas, C44
+  - `LTG_TOOL_sb_cold_open_P11.py` — Diego Vargas, C44
+  - `LTG_TOOL_sf_miri_luma_handoff.py` — Maya Santos, C44
+  - `LTG_TOOL_lineup_tier_depth_sketch.py` — Lee Tanaka, C45
+  - `LTG_TOOL_sb_cold_open_P14.py` — Diego Vargas, C45
+  - `LTG_TOOL_sb_cold_open_P15.py` — Diego Vargas, C45
+- README Script Index: Added `logo_asymmetric v003` update entry (Sam Kowalski, C44)
+- README Script Index: Added `C46 Updates (Kai Nakamura)` section documenting the catch-up pass
+- README header: Updated to C46 (was C45)
+- Inbox: Empty this cycle (no messages)
+- Ideabox: Submitted `20260330_kai_nakamura_readme_sync_auto_draft.md` — `--draft-entry` flag for LTG_TOOL_readme_sync to auto-generate draft table rows from tool docstrings
+
+**Context notes:**
+- precritique_qa already at v2.13.1 / CYCLE_LABEL=C46 (Ryo Hasegawa completed first this cycle)
+- README already had a `### C46 Updates (Ryo Hasegawa)` section — motion_spec_lint dark-sheet fix
+- C45 panel generators P14/P15 are Diego Vargas comedy escalation beats (bookshelf ricochet + forced hair circle)
+
+## Lessons Learned (C46)
+- Glob tool returns files sorted by modification time, not alphabetically — use it to find recently created files when looking for unlisted tools
+- C43+ had a 7-tool README gap because Diego Vargas and Lee Tanaka were creating panels/tools faster than README was updated — the readme_sync tool catches these but someone needs to action the warnings each cycle
+- precritique_qa CYCLE_LABEL was already bumped to C46 by Ryo Hasegawa (same cycle, earlier) — always check this before updating it
+
 ## Project Context
 - Animation pitch package for a cartoon about 12yo Luma discovering Glitchkin (pixel creatures) in grandma's CRT TV
 - All tools: Python PIL/Pillow (open source only)

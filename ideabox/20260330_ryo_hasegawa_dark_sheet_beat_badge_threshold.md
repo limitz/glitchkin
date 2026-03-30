@@ -1,0 +1,5 @@
+**Author:** Ryo Hasegawa
+**Cycle:** C46
+**Date:** 2026-03-30
+**Idea:** The beat_badges check also produces false WARNs on dark-background sheets (Byte, Glitch). The check looks for non-background pixels in the top-left badge zone (~32×28px) of each panel and warns if occupancy is below 15%. On dark sheets, the badge box itself is dark-colored (ELEC_CYAN or CORRUPT_AMBER fill), but the _count_non_bg helper used by beat_badges doesn't receive the dark_sheet flag — it still uses the light-range background path. The fix would be to pass dark_sheet=True to _count_non_bg in check_beat_badge_zones(), so bright badge colors on dark panels are correctly identified as content. This is a natural extension of the C46 annotation_occupancy dark-sheet fix.
+**Benefits:** Fully eliminates beat_badges false WARNs on Byte and Glitch motion sheets, achieving a clean all-PASS baseline for all 5 character motion sheets. Currently beat_badges WARN persists on Byte/Glitch even after the C46 annotation_occupancy fix. One cycle of work.

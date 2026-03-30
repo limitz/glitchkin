@@ -1,6 +1,6 @@
 {
-  "cycle": "C44",
-  "run_ts": "2026-03-30 08:28",
+  "cycle": "C46",
+  "run_ts": "2026-03-30 11:27",
   "sections": {
     "render_qa": {
       "section": "Render QA",
@@ -14,7 +14,7 @@
         "  - LTG_COLOR_styleframe_glitch_storm.png / color_fidelity: WARN",
         "  - LTG_COLOR_styleframe_otherside.png / color_fidelity: WARN",
         "  - LTG_COLOR_styleframe_sf04.png / color_fidelity: WARN",
-        "  - LTG_COLOR_styleframe_sf04.png / line_weight: WARN \u2014 Line weight inconsistency \u2014 3 outlier widths detected (mean=263.9px, std=449.6px)",
+        "  - LTG_COLOR_styleframe_sf04.png / line_weight: WARN \u2014 Line weight inconsistency \u2014 3 outlier widths detected (mean=241.6px, std=458.0px)",
         "  - LTG_BRAND_logo.png / color_fidelity: WARN",
         "  - storyboard_pitch_export.png / color_fidelity: WARN"
       ]
@@ -40,7 +40,7 @@
         "  - LTG_COLOR_styleframe_otherside.png / BYTE_TEAL: LAB \u0394E=22.83 (threshold=5.0)",
         "  - LTG_COLOR_styleframe_otherside.png / SUNLIT_AMBER: LAB \u0394E=44.94 (threshold=5.0)",
         "  - LTG_COLOR_styleframe_sf04.png / BYTE_TEAL: LAB \u0394E=30.53 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_sf04.png / SUNLIT_AMBER: LAB \u0394E=31.38 (threshold=5.0)"
+        "  - LTG_COLOR_styleframe_sf04.png / SUNLIT_AMBER: LAB \u0394E=31.29 (threshold=5.0)"
       ]
     },
     "proportion": {
@@ -60,7 +60,7 @@
     "stub_linter": {
       "section": "Stub Linter",
       "overall": "PASS",
-      "pass": 133,
+      "pass": 141,
       "warn": 0,
       "fail": 0,
       "missing": [],
@@ -79,7 +79,7 @@
       "section": "Glitch Spec Lint",
       "overall": "WARN",
       "pass": 7,
-      "warn": 12,
+      "warn": 14,
       "fail": 0,
       "missing": [],
       "flagged": [
@@ -111,43 +111,53 @@
         "  - LTG_TOOL_fidelity_check_c24.py: G005: UV_PURPLE shadow offset (+3,+4) not detected. Spec \u00a72.2 requires UV_PURPLE shadow polygon before body fill.",
         "  - LTG_TOOL_fidelity_check_c24.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
         "  - LTG_TOOL_glitch_color_model.py: G006: Possible organic/warm fill detected \u2014 fill=(200, 160, 80). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
+        "  - LTG_TOOL_glitch_motion.py: G003: Multi-Glitchkin frame has only 0 unique expression(s) \u2014 at least 2 required. Found: none",
+        "  - LTG_TOOL_glitch_motion.py: G004: Draw order FAIL \u2014 HOT_MAG crack line appears BEFORE body fill polygon. Crack must be drawn after fill (spec \u00a72.3 stacking order).",
         "  - LTG_TOOL_glitch_turnaround.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
         "  - LTG_TOOL_style_frame_02_glitch_storm.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
         "  - LTG_TOOL_style_frame_03_other_side.py: G004: Draw order FAIL \u2014 HOT_MAG crack line appears BEFORE body fill polygon. Crack must be drawn after fill (spec \u00a72.3 stacking order).",
-        "  - LTG_TOOL_style_frame_03_other_side.py: G008: Interior states (YEARNING/COVETOUS/HOLLOW) detected but no bilateral eye rule found. Spec \u00a76.3: interior states require IDENTICAL left+right eye glyphs \u2014 asymmetric destabilization must be SKIPPED for these states."
+        "  - LTG_TOOL_style_frame_03_other_side.py: G008: Interior states (YEARNING/COVETOUS/HOLLOW) detected but no bilateral eye rule found. Spec \u00a76.3: interior states require IDENTICAL left+right eye glyphs \u2014 asymmetric destabilization must be SKIPPED for these states.",
+        "  - LTG_TOOL_style_frame_04_resolution.py: G006: Possible organic/warm fill detected \u2014 fill=(175, 140, 95). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
+        "  - LTG_TOOL_style_frame_04_resolution.py: G006: Possible organic/warm fill detected \u2014 fill=(190, 140, 70). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
+        "  - LTG_TOOL_style_frame_04_resolution.py: G006: Possible organic/warm fill detected \u2014 fill=(160, 155, 148). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710)."
       ]
     },
     "readme_sync": {
       "section": "README Sync",
       "overall": "WARN",
-      "pass": 125,
-      "warn": 3,
+      "pass": 129,
+      "warn": 8,
       "fail": 0,
       "missing": [],
       "flagged": [
+        "  - UNLISTED: `LTG_TOOL_lineup_tier_depth_sketch.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_sb_caption_retrofit.py` (on disk, not in README Script Index)",
         "  - UNLISTED: `LTG_TOOL_sb_cold_open_P10.py` (on disk, not in README Script Index)",
         "  - UNLISTED: `LTG_TOOL_sb_cold_open_P11.py` (on disk, not in README Script Index)",
-        "  - UNLISTED: `LTG_TOOL_sf_covetous_glitch_c43.py` (on disk, not in README Script Index)"
+        "  - UNLISTED: `LTG_TOOL_sb_cold_open_P14.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_sb_cold_open_P15.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_sf_miri_luma_handoff.py` (on disk, not in README Script Index)",
+        "  - GHOST: `LTG_TOOL_style_frame_01_discovery.py` (in README, not on disk)"
       ]
     },
     "motion_spec": {
       "section": "Motion Spec Lint",
       "overall": "WARN",
-      "pass": 20,
+      "pass": 26,
       "warn": 4,
       "fail": 0,
       "missing": [],
       "flagged": [
         "  - LTG_CHAR_luma_motion.png: WARN: beat_badges: beat badge occupancy  P1: 13.5% \u2014 WARN no badge  |  P2: 16.5%  |  P3: 3.1% \u2014 WARN no badge  |  P4: 19.0%",
-        "  - LTG_CHAR_byte_motion.png: WARN: annotation_occupancy: [bg:legacy-broad]  P1: 0.0% occupancy \u2014 WARN low  |  P2: 0.0% occupancy \u2014 WARN low  |  P3: 0.0% occupancy \u2014 WARN low  |  P4: 4.8% occupancy",
+        "  - LTG_CHAR_byte_motion.png: WARN: annotation_occupancy: [bg:dark-bright]  P1: 0.0% occupancy \u2014 WARN low  |  P2: 0.0% occupancy \u2014 WARN low  |  P3: 0.0% occupancy \u2014 WARN low  |  P4: 5.3% occupancy",
         "  - LTG_CHAR_byte_motion.png: WARN: beat_badges: beat badge occupancy  P1: 0.0% \u2014 WARN no badge  |  P2: 0.0% \u2014 WARN no badge  |  P3: 0.0% \u2014 WARN no badge  |  P4: 0.0% \u2014 WARN no badge",
         "  - LTG_CHAR_byte_motion.png: WARN: timing_colors: BEAT_COLOR [config] in 0/4 panels (0%)"
       ]
     }
   },
   "totals": {
-    "pass": 303,
-    "warn": 32,
+    "pass": 321,
+    "warn": 39,
     "fail": 0
   }
 }

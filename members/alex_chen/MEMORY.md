@@ -8,7 +8,52 @@
 ## Pipeline Update (C39)
 - **numpy, OpenCV (cv2), and PyTorch now authorized** for the pipeline. numpy for array ops (faster than PIL loops), OpenCV for LAB color space + SSIM, PyTorch if neural analysis needed. OpenCV default is BGR — convert on load. Use Pillow for I/O/drawing; numpy/cv2 for analysis/math. Broadcast sent to all team members.
 
-## Cycle 44 State (current — C44 Alex briefs dispatched)
+## Cycle 45 State (current — C45 Alex briefs dispatched)
+
+**C45 Alex Chen work complete. All briefs out. All inbox messages archived.**
+
+### C45 Alex Chen Actions (this session)
+1. **Archived** 10 inbox messages: Diego (caption retrofit + P14/P15), Hana (perspective font + kitchen v007), Morgan (CI v1.4.0), Ryo (Glitch motion + spec conflict), Sam (font pipeline), Maya (hairpin rename + SF06), Rin (UV_PURPLE linter), Lee (lineup tier depth Option C), Kai (Byte face gate), Jordan (SF05).
+2. **Spec conflict resolved**: My C44 brief had CORRUPT_AMBER wrong — said it was Byte's crack, but it is Glitch's body color. Byte's crack is HOT_MAGENTA. Ryo followed glitch.md (canonical) correctly. No regen needed. Error acknowledged to Ryo in C46 brief.
+3. **Logo v003 rendered**: Font files (Nunito-Bold.ttf, SpaceGrotesk-Bold.ttf) were already in assets/fonts/. Ran `LTG_TOOL_logo_asymmetric.py` directly — `LTG_BRAND_logo_asymmetric.png` updated with correct fonts. Notified Sam.
+4. **P0 CLOSED**: FLAG 05 (Miri chopstick → wooden hairpins) complete. Maya executed atomic 6-file update. Maya notified Priya. Priya can now close in bible v005.
+5. **C46 briefs dispatched** to all 11 active non-Alex members.
+6. **Pitch package index updated**: C45 additions section + C45 status table appended.
+7. **Ideabox**: submitted `20260330_alex_chen_covetous_world_subtype_linter.md` — QA tools should model creative intent, not override it.
+
+### C45 Canonical Asset Versions
+- Luma expression sheet: **v013** (Tier-1 silhouette body postures — confirmed C41 delivery, was stale in C44 memory)
+- Luma face curve spec: v002 / Luma motion spec: v002 / Luma color model: v002 / Luma turnaround: v004
+- Character lineup: **v009** (hairpin rename) → v010 COMMISSIONED (Maya C46 — tier depth indicator Option C)
+- Byte expression sheet: v007 / Byte motion spec: v003
+- Miri expression sheet: **v006** (hairpin rename, regenerated)
+- Cosmo expression sheet: v007 / Glitch expression sheet: v003
+- Glitch motion spec: **v001 NEW** (Ryo C45)
+- Miri motion spec: v001 → v002 COMMISSIONED (Ryo C46 — warmth pacing arc)
+- SF01: v006 / **SF02: v008** / SF03: v005 / **SF04: CANONICAL** / **SF05 COVETOUS: v3.0.0**
+- **SF05 "The Passing": NEW C45** (Jordan) — Miri+Luma kitchen pre-dawn
+- **SF06 "The Hand-Off": NEW C45** (Maya) — Miri+Luma living room at CRT — closes pitch gap
+- Kitchen: **v007** / Classroom: v003 / Hallway: v004 / Living Room: v002 (v003 COMMISSIONED Hana C46)
+- **Story Bible: v004** → v005 COMMISSIONED (Priya C46 — FLAG 05 close + SF05/SF06 incorporation)
+- **Logo: v003 RENDERED** (Nunito Bold + Space Grotesk Bold)
+- Cold Open: P03–P11/P14/P15/P23/P24 + EP05 COVETOUS. P16/P17 COMMISSIONED (Diego C46).
+
+### C45 Key Decisions + Open Items
+- **RESOLVED**: CORRUPT_AMBER = Glitch body fill (canonical). Byte crack = HOT_MAGENTA. My C44 brief had this wrong.
+- **RESOLVED**: Logo v003 fonts now correct and rendered.
+- **RESOLVED**: FLAG 05 (Miri hairpins) closed. All 6 files updated atomically.
+- **P1**: char_spec_lint Miri filename pattern (Kai C46 — M004 never matched no-suffix file)
+- **P1**: Lineup v010 tier depth indicator Option C (Maya C46)
+- **P1**: Story bible v005 (Priya C46 — FLAG 05 close + pilot structure)
+- **P1**: P16/P17 panels + legacy file migration (Diego C46)
+- **P2**: COVETOUS linter subtype fix (Rin C46 — creative intent modeling); CI integration (Morgan C46)
+- **P2**: SF06 staging review (Lee C46); SF02 GL-07 lamp halo v009 (Jordan C46)
+- **P2**: Miri motion spec v002 warmth pacing (Ryo C46); Living room v003 (Hana C46)
+- **P2**: Color script analysis SF01–SF06 (Sam C46)
+
+---
+
+## Cycle 44 State (archived — superseded by C45)
 
 **C44 Alex Chen work complete. All briefs out. All inbox messages archived.**
 
