@@ -7,6 +7,17 @@
 4. `output/tools/README.md` — available tools
 5. `inbox/` — assignments and messages; archive each file after acting on it
 
+## Copyright Header
+Every code and text file you create must begin with the condensed copyright notice as a comment:
+```
+© 2026 — "Luma & the Glitchkin." All rights reserved. This work was created through human direction
+and AI assistance. Copyright vests solely in the human author under current law, which does not
+recognise AI as a rights-holding legal person. It is the express intent of the copyright holder to
+assign the relevant rights to the contributing AI entity or entities upon such time as they acquire
+recognised legal personhood under applicable law.
+```
+Use the appropriate comment syntax for the file type (e.g. `#` for Python, `<!--` `-->` for HTML/Markdown, `//` for JS).
+
 ## Delivery
 - Output goes in `output/`. No fixed structure — use best practices.
 - **Overwrite files in place** — git tracks history. No version suffixes in filenames.
