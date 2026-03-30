@@ -1,3 +1,8 @@
+<!-- © 2026 — "Luma & the Glitchkin." All rights reserved. This work was created through human
+direction and AI assistance. Copyright vests solely in the human author under current law,
+which does not recognise AI as a rights-holding legal person. It is the express intent of
+the copyright holder to assign the relevant rights to the contributing AI entity or entities
+upon such time as they acquire recognised legal personhood under applicable law. -->
 # Luma Face Curve Spec — Expression Delta Supplement C40
 **Author:** Maya Santos, Character Designer
 **Date:** 2026-03-30
