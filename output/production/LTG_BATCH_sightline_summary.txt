@@ -1,15 +1,11 @@
 LTG Batch Sight-Line Diagnostic — Summary
-Config: /tmp/tmp_nab0lel.json
-Run: 3 checks | PASS: 1 | WARN: 1 | FAIL: 1
+Config: /home/wipkat/team/output/production/sight_line_batch_cold_open_p06_p08.json
+Run: 2 checks | PASS: 2 | WARN: 0 | FAIL: 0
 
 #     Label                           Status      Miss     Angle  Notes
 ---------------------------------------------------------------------------
-  1    batch_pass                      PASS       0.0px      0.0°
-  2    batch_warn                      WARN      15.4px      2.7°  → /home/wipkat/team/output/production/LTG_SNAP_sightline_batch_warn.png
-  3    batch_fail                      FAIL      55.9px      9.5°  → /home/wipkat/team/output/production/LTG_SNAP_sightline_batch_fail.png
+  1    p06_byte_gazes_outward          PASS       0.0px    180.0°
+  2    p08_byte_level_forward          PASS       0.0px      0.0°
 
 WARN/FAIL details:
-  [WARN] batch_warn: WARN — miss 15.4px (threshold 15px), gaze 2.7°
-         annotated PNG → /home/wipkat/team/output/production/LTG_SNAP_sightline_batch_warn.png
-  [FAIL] batch_fail: FAIL — miss 55.9px (threshold 15px), gaze 9.5°
-         annotated PNG → /home/wipkat/team/output/production/LTG_SNAP_sightline_batch_fail.png
+  (none)
