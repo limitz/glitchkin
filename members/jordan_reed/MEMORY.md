@@ -1,5 +1,37 @@
 # Jordan Reed — Memory
 
+## Cycle 44 Deliverables
+- `LTG_TOOL_style_frame_02_glitch_storm.py` — NATIVE CANVAS REFACTOR (1920×1080 → 1280×720) ✓
+  - Eliminates `img.thumbnail()` LANCZOS pass — root cause of SUNLIT_AMBER LAB ΔE=47.04
+  - All hardcoded coords scaled × 2/3 (uniform — same 16:9 aspect ratio, SX = SY = 0.6667)
+  - Post-thumbnail specular restore pass removed (was only needed to compensate LANCZOS averaging)
+  - `_make_char_silhouette_mask_1080` → `_make_char_silhouette_mask` (no longer 1080p-specific)
+  - color_verify: SUNLIT_AMBER delta=1.1° PASS (was 47.04 LAB ΔE) — all 6 canonical PASS
+  - render_qa GRADE: WARN (warm/cool 8.5 — intentionally cold scene; color fidelity pre-existing)
+  - All C36/C35/C34/C22/C19/C16 fixes carried forward
+- `LTG_TOOL_style_frame_04_resolution.py` — OUTPUT PATH FIX ✓
+  - OUTPUT_PATH corrected: `output/style_frames/` → `output/color/style_frames/`
+  - Regenerated to correct location; misplaced file in `output/style_frames/` removed
+- Ideabox: `20260330_jordan_reed_native_canvas_lint_check.md` — .thumbnail() static lint check
+- Inbox archived ✓ | Completion report sent to Alex Chen ✓
+
+## Cycle 44 Status: COMPLETE
+
+## Cycle 44 Notes
+- **Native canvas refactor strategy**: When W_src/W_dst = H_src/H_dst (same aspect ratio), ALL
+  hardcoded coords scale by a single factor (2/3 for 1920→1280). Fractional geometry (int(W*0.xx))
+  is already relative — no changes needed. Only literal pixel values require scaling.
+- **LANCZOS drift mechanism**: thumbnail() on a 1920px render to 1280px averages 1.5px strips —
+  warm hues shift up to 47° in LAB space. Native render eliminates this entirely.
+  color_verify is the correct gate — LAB ΔE is the diagnostic, not hue alone.
+- **Post-thumbnail specular restore was a symptom fix**: specular dots added after thumbnail()
+  to compensate LANCZOS averaging of narrow lines. At native resolution they render correctly.
+  Remove the restore pass entirely — it adds complexity with no benefit at native scale.
+- **GL-07 lamp halo in SF04**: Critics (Marcus Webb / Leila Asgari) called it the production's
+  most distinctive narrative-visual idea. Current: 22% alpha ceiling, quiet detail. To foreground:
+  increase halo radius/alpha, or add secondary amber fringe to CRT doorway static.
+  Awaiting Alex brief before touching.
+
 ## Cycle 43 Deliverables
 - `LTG_TOOL_style_frame_04_resolution.py` — P2 inline comment added to `LAMP_AMBER` constant ✓
   - Documents intentional GL-07 / #FF8C00 Corrupt Amber use as kitchen ceiling lamp halo

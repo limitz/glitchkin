@@ -39,7 +39,7 @@ FACE TEST GATE:
   (Sprint scale threshold = 20–25px. head_r = 42px ≥ threshold.)
 
 OUTPUT:
-  /home/wipkat/team/output/style_frames/LTG_COLOR_styleframe_sf04.png
+  /home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_sf04.png
   1280×720 — ≤ 1280px hard limit
 
 Usage:
@@ -60,7 +60,7 @@ from LTG_TOOL_procedural_draw import (
     get_char_bbox
 )
 
-OUTPUT_PATH = "/home/wipkat/team/output/style_frames/LTG_COLOR_styleframe_sf04.png"
+OUTPUT_PATH = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_sf04.png"
 
 W, H = 1280, 720
 

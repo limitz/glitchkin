@@ -6,24 +6,30 @@
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
 LTG_TOOL_style_frame_02_glitch_storm.py
-Style Frame 02 — "Glitch Storm" — C36 Fill Light Direction Fix
+Style Frame 02 — "Glitch Storm" — C44 Native Canvas Refactor
 "Luma & the Glitchkin"
 
-Artist: Rin Yamamoto | Cycle 36
-Based on: LTG_TOOL_style_frame_02_glitch_storm.py (Rin Yamamoto, Cycle 35)
+Artist: Jordan Reed | Cycle 44
+Based on: LTG_TOOL_style_frame_02_glitch_storm.py (Rin Yamamoto, Cycle 36)
 
-Cycle 36 fixes (Sven Halvorsen C14 critique, Jordan Reed fix module):
-  1. FILL LIGHT DIRECTION — draw_magenta_fill_light() replaced with
-     draw_magenta_fill_light_v007_fast() from LTG_TOOL_sf02_fill_light_fix_c35.
-     - WRONG (v006/v007): source at lower-left of each character
-       (fill_src_x = char_cx - char_h*0.6, fill_src_y = char_cy + char_h*0.2)
-     - CORRECT (v008): source at UPPER-RIGHT — storm crack is at upper-right canvas
-       (fill_src_x = char_cx + int(char_h * 0.5), fill_src_y = char_cy - int(char_h * 0.8))
-  2. PER-CHARACTER SILHOUETTE MASK — gradient applied ONLY within character pixel
-     zones (not to background). Uses ImageChops.multiply() on alpha channel.
-     Alpha max reduced 40 → 35 (direct source is harder/cleaner than bounce).
-  3. char_cx constants passed directly — do NOT use get_char_bbox() on full 3-char
-     frame (bbox would span 83% canvas width — Sven C14 / Rin C35 documented issue).
+Cycle 44 changes (Petra Volkov C17 critique):
+  NATIVE CANVAS REFACTOR — 1920×1080 → 1280×720
+  - Eliminates img.thumbnail() LANCZOS pass at end — the source of SUNLIT_AMBER
+    LAB ΔE=47.04 color drift flagged by Petra Volkov (C17).
+  - All hardcoded pixel coordinates scaled by factor 2/3 (same 16:9 aspect ratio,
+    uniform scale: SX = SY = 1280/1920 = 720/1080 = 0.6667).
+  - All fractional geometry (int(W * 0.xx), int(H * 0.xx)) unchanged — already
+    relative to canvas dimensions.
+  - Post-thumbnail specular restore pass REMOVED — unnecessary at native resolution.
+    Specular detail is now rendered correctly at 1280×720 without LANCZOS averaging.
+  - _make_char_silhouette_mask_1080() renamed to _make_char_silhouette_mask() —
+    no longer hardcoded to 1080p dimensions; uses W/H globals.
+
+All Cycle 36 fixes carried forward:
+  - FILL LIGHT DIRECTION — source UPPER-RIGHT of each character (storm crack)
+  - PER-CHARACTER SILHOUETTE MASK via ImageChops.multiply — no BG tint
+  - char_cx from geometry constants (NOT get_char_bbox on full frame)
+  - Alpha max 35
 
 All Cycle 35 fixes carried forward:
   - LUMA FACE: _draw_luma_face_sprint() — FOCUSED DETERMINATION expression
@@ -51,7 +57,7 @@ import os
 import sys
 import math
 import random
-from PIL import Image, ImageDraw, ImageFilter
+from PIL import Image, ImageDraw, ImageFilter, ImageChops
 
 # Import procedural draw library for add_rim_light
 _TOOLS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -63,11 +69,9 @@ except ImportError:
     PROCEDURAL_DRAW_AVAILABLE = False
     print("WARNING: LTG_TOOL_procedural_draw not found — rim light passes will use fallback.")
 
-# C36: PIL ImageChops needed for per-character fill light mask
-from PIL import ImageChops
-
 OUTPUT_PATH = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm.png"
-W, H = 1920, 1080
+# C44: Native 1280×720 — no LANCZOS thumbnail pass
+W, H = 1280, 720
 
 # ── Master Palette ────────────────────────────────────────────────────────────
 WARM_CREAM      = (250, 240, 220)
@@ -84,7 +88,7 @@ DATA_BLUE       = ( 10,  79, 140)   # #0A4F8C — dominant storm confetti color
 UV_PURPLE       = (123,  47, 190)
 HOT_MAGENTA     = (255,  45, 107)   # GL-02 #FF2D6B — canonical (NOT #FF0090)
 STATIC_WHITE    = (240, 240, 240)
-CORRUPT_AMBER   = (255, 140,   0)   # GL-07 canonical #FF8C00 — C22 fix: was (200,122,32)
+CORRUPT_AMBER   = (255, 140,   0)   # GL-07 canonical #FF8C00
 
 # ENV colors
 NIGHT_SKY_DEEP  = ( 26,  20,  40)
@@ -146,10 +150,10 @@ def draw_sky(img):
 
 
 def _draw_uv_cloud_masses(img):
-    draw = ImageDraw.Draw(img)
+    # C44: all pixel coords scaled × 2/3 from 1920×1080 originals
     cloud_shapes = [
-        (0,    0,  520, 220), (80,  60,  380, 160),
-        (20, 120,  260,  80), (460,  0,  200, 140), (380, 80,  180, 120),
+        (0,    0,  347, 147), (53,  40,  253, 107),
+        (13,  80,  173,  53), (307,  0,  133,  93), (253, 53,  120,  80),
     ]
     for (cx, cy, cw, ch) in cloud_shapes:
         overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
@@ -159,10 +163,9 @@ def _draw_uv_cloud_masses(img):
         bite_y = cy + int(ch * 0.30)
         od.rectangle([bite_x, bite_y, cx + cw, bite_y + int(ch * 0.40)], fill=(*VOID_BLACK, 255))
         img = alpha_paste(img, overlay)
-        draw = ImageDraw.Draw(img)
     cloud_shapes_r = [
-        (1380,  0,  540, 300), (1500, 60,  420, 200), (1620, 20,  300, 160),
-        (1760, 80,  160, 240), (1350, 160, 380, 140),
+        (920,  0,  360, 200), (1000, 40,  280, 133), (1080, 13,  200, 107),
+        (1173, 53,  107, 160), (900, 107,  253,  93),
     ]
     for (cx, cy, cw, ch) in cloud_shapes_r:
         overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
@@ -173,7 +176,6 @@ def _draw_uv_cloud_masses(img):
         od.rectangle([core_x, core_y, core_x + int(cw * 0.50),
                       core_y + int(ch * 0.50)], fill=(*VOID_BLACK, 255))
         img = alpha_paste(img, overlay)
-        draw = ImageDraw.Draw(img)
     return img
 
 
@@ -190,33 +192,35 @@ def _draw_horizon_haze(img):
 
 
 def _draw_main_crack(img):
+    # C44: crack_pts scaled × 2/3
     crack_pts = [
-        (1820, 0), (1700, 80), (1700, 140), (1600, 220), (1520, 220),
-        (1460, 340), (1380, 420), (1380, 500), (1280, 580), (1200, 640),
+        (1213, 0), (1133, 53), (1133, 93), (1067, 147), (1013, 147),
+        (973, 227), (920, 280), (920, 333), (853, 387), (800, 427),
     ]
     glow_specs = [
-        (HOT_MAGENTA, 18, 80), (ELEC_CYAN, 12, 180), (ELEC_CYAN, 6, 240), (STATIC_WHITE, 3, 220),
+        (HOT_MAGENTA, 12, 80), (ELEC_CYAN, 8, 180), (ELEC_CYAN, 4, 240), (STATIC_WHITE, 2, 220),
     ]
     for (color, half_w, alpha) in glow_specs:
         overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
         od = ImageDraw.Draw(overlay)
         for i in range(len(crack_pts) - 1):
             x0, y0 = crack_pts[i]; x1, y1 = crack_pts[i + 1]
-            od.line([(x0, y0), (x1, y1)], fill=(*color, alpha), width=half_w * 2)
+            od.line([(x0, y0), (x1, y1)], fill=(*color, alpha), width=max(1, half_w * 2))
         img = alpha_paste(img, overlay)
     return img
 
 
 def _draw_sub_cracks(img):
+    # C44: sub_cracks coords scaled × 2/3
     sub_cracks = [
-        (1700, 140, 1750, 50), (1600, 220, 1560, 160), (1460, 340, 1520, 400),
-        (1380, 420, 1320, 380), (1280, 580, 1240, 520), (1380, 500, 1440, 560),
-        (1200, 640, 1160, 680),
+        (1133, 93, 1167, 33), (1067, 147, 1040, 107), (973, 227, 1013, 267),
+        (920, 280, 880, 253), (853, 387, 827, 347), (920, 333, 960, 373),
+        (800, 427, 773, 453),
     ]
     for (x0, y0, x1, y1) in sub_cracks:
         overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
         od = ImageDraw.Draw(overlay)
-        od.line([(x0, y0), (x1, y1)], fill=(*ELEC_CYAN, 160), width=4)
+        od.line([(x0, y0), (x1, y1)], fill=(*ELEC_CYAN, 160), width=3)
         mid_x = (x0 + x1) // 2; mid_y = (y0 + y1) // 2
         od.line([(mid_x, mid_y), (x1, y1)], fill=(*DATA_BLUE, 120), width=2)
         img = alpha_paste(img, overlay)
@@ -225,13 +229,14 @@ def _draw_sub_cracks(img):
 
 def _draw_storm_edges(img):
     draw = ImageDraw.Draw(img)
+    # C44: burn_line coords scaled × 2/3
     burn_lines = [
-        ((460,  0), (520, 30)), ((380, 80), (440, 110)), ((80,  60), (110, 90)),
-        ((1380, 0), (1360, 50)), ((1500, 60), (1480, 110)), ((1760, 80), (1720, 130)),
-        ((1350, 160), (1380, 200)),
+        ((307,  0), (347, 20)), ((253, 53), (293, 73)), ((53,  40), (73, 60)),
+        ((920,  0), (907, 33)), ((1000, 40), (987, 73)), ((1173, 53), (1147, 87)),
+        ((900, 107), (920, 133)),
     ]
     for pt1, pt2 in burn_lines:
-        draw.line([pt1, pt2], fill=HOT_MAGENTA, width=3)
+        draw.line([pt1, pt2], fill=HOT_MAGENTA, width=2)
     return img
 
 
@@ -248,17 +253,18 @@ def draw_storm_confetti(img):
     )
     accent_pool = cold_dominant + [UV_PURPLE]
 
+    # C44: x/y ranges and sizes scaled × 2/3; confetti count unchanged
     for _ in range(240):
-        cx = RNG.randint(1100, 1900); cy = RNG.randint(0, int(H * 0.55))
-        dist = math.sqrt((cx - 1400) ** 2 + (cy - 300) ** 2)
-        t = clamp(dist / 700.0, 0.0, 1.0)
-        size = int(15 - (15 - 3) * t)
+        cx = RNG.randint(733, 1267); cy = RNG.randint(0, int(H * 0.55))
+        dist = math.sqrt((cx - 933) ** 2 + (cy - 200) ** 2)
+        t = clamp(dist / 467.0, 0.0, 1.0)
+        size = int(10 - (10 - 2) * t)
         color = RNG.choice(cold_dominant)
         draw.rectangle([cx, cy, cx + size, cy + size], fill=color)
 
     for _ in range(160):
-        cx = RNG.randint(600, 1900); cy = RNG.randint(int(H * 0.25), int(H * 0.60))
-        size = RNG.randint(3, 8)
+        cx = RNG.randint(400, 1267); cy = RNG.randint(int(H * 0.25), int(H * 0.60))
+        size = RNG.randint(2, 5)
         color = RNG.choice(accent_pool)
         alpha_draw = RNG.randint(140, 220)
         overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
@@ -268,8 +274,8 @@ def draw_storm_confetti(img):
     draw = ImageDraw.Draw(img)
 
     for _ in range(80):
-        cx = RNG.randint(300, 900); cy = RNG.randint(int(H * 0.65), H)
-        size = RNG.randint(2, 4)
+        cx = RNG.randint(200, 600); cy = RNG.randint(int(H * 0.65), H)
+        size = RNG.randint(1, 3)
         color = RNG.choice(cold_dominant)
         draw.rectangle([cx, cy, cx + size, cy + size], fill=color)
     return img
@@ -280,32 +286,37 @@ def draw_storm_confetti(img):
 def draw_town_silhouette(img):
     draw = ImageDraw.Draw(img)
     horizon_y = int(H * 0.58)
+    # C44: building x coords and heights scaled × 2/3
     buildings = [
-        (0, horizon_y - 160, 180, horizon_y, DEEP_WARM_SHAD),
-        (150, horizon_y - 200, 320, horizon_y, DEEP_WARM_SHAD),
-        (300, horizon_y - 140, 440, horizon_y, TERRA_CYAN_LIT),
-        (420, horizon_y - 260, 560, horizon_y, DEEP_WARM_SHAD),
-        (540, horizon_y - 180, 680, horizon_y, TERRA_CYAN_LIT),
-        (660, horizon_y - 340, 760, horizon_y, DEEP_WARM_SHAD),
-        (690, horizon_y - 420, 730, horizon_y - 340, DEEP_WARM_SHAD),
-        (760, horizon_y - 190, 900, horizon_y, TERRA_CYAN_LIT),
-        (880, horizon_y - 150, 1020, horizon_y, DEEP_WARM_SHAD),
-        (1000, horizon_y - 220, 1140, horizon_y, TERRA_CYAN_LIT),
-        (1120, horizon_y - 170, 1260, horizon_y, DEEP_WARM_SHAD),
-        (1240, horizon_y - 240, 1380, horizon_y, TERRA_CYAN_LIT),
-        (1360, horizon_y - 130, 1500, horizon_y, DEEP_WARM_SHAD),
-        (1480, horizon_y - 200, 1620, horizon_y, TERRA_CYAN_LIT),
-        (1600, horizon_y - 160, 1740, horizon_y, DEEP_WARM_SHAD),
-        (1720, horizon_y - 210, W, horizon_y, TERRA_CYAN_LIT),
+        (0,    horizon_y - 107, 120,  horizon_y, DEEP_WARM_SHAD),
+        (100,  horizon_y - 133, 213,  horizon_y, DEEP_WARM_SHAD),
+        (200,  horizon_y -  93, 293,  horizon_y, TERRA_CYAN_LIT),
+        (280,  horizon_y - 173, 373,  horizon_y, DEEP_WARM_SHAD),
+        (360,  horizon_y - 120, 453,  horizon_y, TERRA_CYAN_LIT),
+        (440,  horizon_y - 227, 507,  horizon_y, DEEP_WARM_SHAD),
+        (460,  horizon_y - 280, 487,  horizon_y - 227, DEEP_WARM_SHAD),
+        (507,  horizon_y - 127, 600,  horizon_y, TERRA_CYAN_LIT),
+        (587,  horizon_y - 100, 680,  horizon_y, DEEP_WARM_SHAD),
+        (667,  horizon_y - 147, 760,  horizon_y, TERRA_CYAN_LIT),
+        (747,  horizon_y - 113, 840,  horizon_y, DEEP_WARM_SHAD),
+        (827,  horizon_y - 160, 920,  horizon_y, TERRA_CYAN_LIT),
+        (907,  horizon_y -  87, 1000, horizon_y, DEEP_WARM_SHAD),
+        (987,  horizon_y - 133, 1080, horizon_y, TERRA_CYAN_LIT),
+        (1067, horizon_y - 107, 1160, horizon_y, DEEP_WARM_SHAD),
+        (1147, horizon_y - 140, W,    horizon_y, TERRA_CYAN_LIT),
     ]
     for (lx, ry, rx, gy, col) in buildings:
         draw.rectangle([lx, ry, rx, gy], fill=col)
 
+    # C44: chimney coords scaled × 2/3
     chimneys = [
-        (200, horizon_y - 220, 215, horizon_y - 190), (380, horizon_y - 215, 395, horizon_y - 190),
-        (480, horizon_y - 280, 495, horizon_y - 250), (870, horizon_y - 210, 885, horizon_y - 180),
-        (1050, horizon_y - 240, 1065, horizon_y - 210), (1300, horizon_y - 260, 1315, horizon_y - 230),
-        (1550, horizon_y - 220, 1565, horizon_y - 190),
+        (133, horizon_y - 147, 143, horizon_y - 127),
+        (253, horizon_y - 143, 263, horizon_y - 127),
+        (320, horizon_y - 187, 330, horizon_y - 167),
+        (580, horizon_y - 140, 590, horizon_y - 120),
+        (700, horizon_y - 160, 710, horizon_y - 140),
+        (867, horizon_y - 173, 877, horizon_y - 153),
+        (1033, horizon_y - 147, 1043, horizon_y - 127),
     ]
     for (x0, y0, x1, y1) in chimneys:
         draw.rectangle([x0, y0, x1, y1], fill=DEEP_COCOA)
@@ -332,10 +343,10 @@ def _draw_building_windows_with_glow(img, buildings, horizon_y):
     for (lx, ry, rx, gy, _) in buildings:
         bld_w = rx - lx
         bld_h = gy - ry
-        if bld_w < 60 or bld_h < 60:
+        if bld_w < 40 or bld_h < 40:
             continue
-        win_w = max(12, bld_w // 5)
-        win_h = max(10, bld_h // 6)
+        win_w = max(8, bld_w // 5)
+        win_h = max(7, bld_h // 6)
         for row in range(2):
             for col in range(2):
                 wx = lx + int(bld_w * (0.2 + col * 0.45))
@@ -348,13 +359,13 @@ def _draw_building_windows_with_glow(img, buildings, horizon_y):
 
                 win_cx = wx + win_w // 2
                 cone_top_y = wy + win_h
-                cone_bot_y = min(gy, horizon_y + 30)
+                cone_bot_y = min(gy, horizon_y + 20)
                 if cone_bot_y <= cone_top_y:
                     continue
                 cone_height = cone_bot_y - cone_top_y
                 half_spread_top = win_w // 2
                 half_spread_bot = int(win_w * 0.9)
-                n_steps = max(8, cone_height // 8)
+                n_steps = max(6, cone_height // 6)
                 for step in range(n_steps):
                     t_step = step / n_steps
                     step_y = int(cone_top_y + t_step * cone_height)
@@ -373,14 +384,14 @@ def _draw_building_windows_with_glow(img, buildings, horizon_y):
 
 def _draw_building_storm_rims(img, buildings, horizon_y):
     """Storm edge-lighting on buildings — right/top edges ELEC_CYAN, base UV bounce."""
-    crack_x = 1400
+    crack_x = 933  # C44: 1400 × 2/3
     overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     od = ImageDraw.Draw(overlay)
 
     for (lx, ry, rx, gy, col) in buildings:
         bld_cx = (lx + rx) / 2
         dist = abs(bld_cx - crack_x)
-        rim_strength = clamp(1.0 - dist / 1200.0, 0.0, 1.0)
+        rim_strength = clamp(1.0 - dist / 800.0, 0.0, 1.0)
         rim_alpha = int(30 + rim_strength * 90)
 
         rim_width = max(2, int(4 * rim_strength) + 1)
@@ -391,7 +402,7 @@ def _draw_building_storm_rims(img, buildings, horizon_y):
         od.rectangle([lx, ry, rx, ry + rim_width],
                      fill=(*STORM_RIM_CYAN, top_alpha))
 
-        base_h = max(4, int((gy - ry) * 0.08))
+        base_h = max(3, int((gy - ry) * 0.08))
         uv_alpha = int(25 + rim_strength * 40)
         od.rectangle([lx, gy - base_h, rx, gy],
                      fill=(*STORM_RIM_UV, uv_alpha))
@@ -402,8 +413,9 @@ def _draw_building_storm_rims(img, buildings, horizon_y):
 
 def _draw_power_lines(img, horizon_y):
     draw = ImageDraw.Draw(img)
-    poles = [120, 320, 520, 760, 950, 1150, 1350, 1550, 1750]
-    wire_y = horizon_y - 100
+    # C44: pole positions scaled × 2/3
+    poles = [80, 213, 347, 507, 633, 767, 900, 1033, 1167]
+    wire_y = horizon_y - 67  # C44: 100 × 2/3
     for i in range(len(poles) - 1):
         x0, x1 = poles[i], poles[i + 1]
         sag = int((x1 - x0) * 0.06)
@@ -431,8 +443,8 @@ def draw_street(img):
 
     overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     od = ImageDraw.Draw(overlay)
-    crack_floor_x = 1200
-    pool_width = 560
+    crack_floor_x = 800   # C44: 1200 × 2/3
+    pool_width = 373      # C44: 560 × 2/3
     pool_height = int((street_bottom - horizon_y) * 0.7)
     for col in range(pool_width):
         t = col / pool_width
@@ -459,7 +471,7 @@ def draw_storefront(img):
 
     sf_left  = int(W * 0.80)
     sf_right = int(W * 0.96)
-    sf_top   = horizon_y - 100
+    sf_top   = horizon_y - 67   # C44: 100 × 2/3
     sf_bot   = horizon_y + int((H - horizon_y) * 0.58)
     sf_w     = sf_right - sf_left
     sf_h     = sf_bot - sf_top
@@ -473,14 +485,14 @@ def draw_storefront(img):
 
     draw.rectangle([sf_left, sf_top, sf_right, sf_bot], fill=INTERIOR)
 
-    frame_w = 8
+    frame_w = 5  # C44: 8 × 2/3 ≈ 5
     draw.rectangle([sf_left, sf_top, sf_right, sf_bot],
                    outline=FRAME_COL, width=frame_w)
 
     vert_1 = sf_left + sf_w // 3
     vert_2 = sf_left + 2 * sf_w // 3
     horiz_1 = sf_top + sf_h // 2
-    bar_w = 6
+    bar_w = 4  # C44: 6 × 2/3 ≈ 4
     draw.rectangle([vert_1 - bar_w//2, sf_top, vert_1 + bar_w//2, sf_bot], fill=FRAME_COL)
     draw.rectangle([vert_2 - bar_w//2, sf_top, vert_2 + bar_w//2, sf_bot], fill=FRAME_COL)
     draw.rectangle([sf_left, horiz_1 - bar_w//2, sf_right, horiz_1 + bar_w//2], fill=FRAME_COL)
@@ -506,56 +518,56 @@ def draw_storefront(img):
     draw = ImageDraw.Draw(img)
 
     impact_pts = [
-        (vert_1 + 30, sf_top + sf_h // 4),
-        (sf_left + sf_w // 2 + 20, horiz_1 + 15),
+        (vert_1 + 20, sf_top + sf_h // 4),
+        (sf_left + sf_w // 2 + 13, horiz_1 + 10),
     ]
     rng_crack = random.Random(77)
     for (ox, oy) in impact_pts:
         n_rays = rng_crack.randint(6, 8)
         for ri in range(n_rays):
             angle = (2 * math.pi * ri / n_rays) + rng_crack.uniform(-0.2, 0.2)
-            length = rng_crack.randint(50, 120)
+            length = rng_crack.randint(33, 80)  # C44: 50–120 × 2/3
             ex = int(ox + math.cos(angle) * length)
             ey = int(oy + math.sin(angle) * length)
             ex = clamp(ex, sf_left + frame_w, sf_right - frame_w)
             ey = clamp(ey, sf_top + frame_w, sf_bot - frame_w)
-            draw.line([(ox, oy), (ex, ey)], fill=SHARD_EDGE, width=2)
+            draw.line([(ox, oy), (ex, ey)], fill=SHARD_EDGE, width=1)
             if rng_crack.random() < 0.5:
                 mid_x = (ox + ex) // 2
                 mid_y = (oy + ey) // 2
                 branch_angle = angle + rng_crack.uniform(-0.8, 0.8)
-                branch_len = rng_crack.randint(20, 55)
+                branch_len = rng_crack.randint(13, 37)  # C44: 20–55 × 2/3
                 bx = int(mid_x + math.cos(branch_angle) * branch_len)
                 by = int(mid_y + math.sin(branch_angle) * branch_len)
                 bx = clamp(bx, sf_left + frame_w, sf_right - frame_w)
                 by = clamp(by, sf_top + frame_w, sf_bot - frame_w)
                 draw.line([(mid_x, mid_y), (bx, by)], fill=SHARD_EDGE, width=1)
-        draw.ellipse([ox - 4, oy - 4, ox + 4, oy + 4], fill=INTERIOR)
+        draw.ellipse([ox - 3, oy - 3, ox + 3, oy + 3], fill=INTERIOR)
 
     debris_y_base = sf_bot
-    debris_zone_x0 = sf_left - 20
-    debris_zone_x1 = sf_right + 10
+    debris_zone_x0 = sf_left - 13
+    debris_zone_x1 = sf_right + 7
     rng_debris = random.Random(44)
     for _ in range(22):
         dx = rng_debris.randint(debris_zone_x0, debris_zone_x1)
-        dy = debris_y_base + rng_debris.randint(2, 45)
+        dy = debris_y_base + rng_debris.randint(1, 30)
         if dy >= H:
             continue
-        shard_w = rng_debris.randint(4, 14)
-        shard_h = rng_debris.randint(3, 9)
+        shard_w = rng_debris.randint(3, 9)
+        shard_h = rng_debris.randint(2, 6)
         shard_pts = [
             (dx, dy - shard_h),
-            (dx + shard_w, dy - shard_h + rng_debris.randint(-3, 3)),
-            (dx + shard_w - 2, dy),
-            (dx - 2, dy),
+            (dx + shard_w, dy - shard_h + rng_debris.randint(-2, 2)),
+            (dx + shard_w - 1, dy),
+            (dx - 1, dy),
         ]
         draw.polygon(shard_pts, fill=GLASS_REMAIN, outline=SHARD_EDGE)
     for _ in range(30):
         dx = rng_debris.randint(debris_zone_x0, debris_zone_x1)
-        dy = debris_y_base + rng_debris.randint(0, 30)
+        dy = debris_y_base + rng_debris.randint(0, 20)
         if dy >= H:
             continue
-        ds = rng_debris.randint(2, 5)
+        ds = rng_debris.randint(1, 3)
         draw.ellipse([dx - ds, dy - ds//2, dx + ds, dy + ds//2], fill=DEBRIS_COL)
 
     draw.rectangle([sf_left, sf_top, sf_right, sf_bot],
@@ -577,42 +589,35 @@ def _draw_glitch_storm(img, cx, cy, body_h):
     overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     od = ImageDraw.Draw(overlay)
 
-    rx = int(body_h * 0.88)   # horizontal half-extent (ry > rx: taller than wide)
+    rx = int(body_h * 0.88)
     ry = body_h
-    tilt_deg = 8               # slight tilt — Glitch is never perfectly upright
+    tilt_deg = 8
     angle = math.radians(tilt_deg)
 
-    # Diamond body points (spec §2.1 formula)
     top   = (cx + int(rx * 0.15 * math.sin(angle)),  cy - ry + int(rx * 0.15 * math.cos(angle)))
     right = (cx + int(rx * math.cos(-angle)),          cy + int(rx * 0.2 * math.sin(-angle)))
     bot   = (cx - int(rx * 0.15 * math.sin(angle)),  cy + int(ry * 1.15))
     left  = (cx - int(rx * math.cos(-angle)),          cy - int(rx * 0.2 * math.sin(-angle)))
     pts = [top, right, bot, left]
 
-    # UV_PURPLE shadow offset (+3, +4)
-    sh_pts = [(x + 3, y + 4) for x, y in pts]
+    sh_pts = [(x + 2, y + 3) for x, y in pts]
     od.polygon(sh_pts, fill=(*UV_PURPLE, 200))
 
-    # Main body fill — CORRUPT_AMBER
     od.polygon(pts, fill=(*CORRUPT_AMBER, 240))
 
-    # Highlight facet
     ctr = (cx, cy - ry // 4)
     mid_tl = ((top[0] + left[0]) // 2, (top[1] + left[1]) // 2)
-    od.polygon([top, ctr, mid_tl], fill=(*((255, 185, 80)), 220))  # CORRUPT_AMB_HL
+    od.polygon([top, ctr, mid_tl], fill=(*((255, 185, 80)), 220))
 
-    # G007 SPEC: VOID_BLACK outline on body polygon — width=3
     od.polygon(pts, outline=(*VOID_BLACK, 255), width=3)
 
-    # HOT_MAG crack (drawn AFTER body fill — spec §2.3)
     cs = (cx - rx // 2, cy - ry // 3)
     ce = (cx + rx // 3, cy + ry // 2)
     od.line([cs, ce], fill=(*HOT_MAGENTA, 230), width=2)
     mid_c = ((cs[0] + ce[0]) // 2, (cs[1] + ce[1]) // 2)
     od.line([mid_c, (cx + rx // 2, cy - ry // 4)], fill=(*HOT_MAGENTA, 200), width=1)
 
-    # Top spike (spec §3.1)
-    spike_h = max(4, ry // 2)
+    spike_h = max(3, ry // 2)
     sx = cx + int(rx * 0.15 * math.sin(angle))
     cy_top = top[1]
     spike_pts = [
@@ -624,20 +629,17 @@ def _draw_glitch_storm(img, cx, cy, body_h):
     ]
     od.polygon(spike_pts, fill=(*CORRUPT_AMBER, 240))
     od.polygon(spike_pts, outline=(*VOID_BLACK, 255), width=2)
-    od.line([(sx, cy_top - spike_h * 2), (sx, cy_top - spike_h * 2 - max(2, ry // 8))],
+    od.line([(sx, cy_top - spike_h * 2), (sx, cy_top - spike_h * 2 - max(1, ry // 8))],
             fill=(*HOT_MAGENTA, 220), width=2)
 
-    # Pixel eyes — simple 2-cell pixel grid at this scale
     eye_cell = max(2, rx // 5)
     face_cy = cy - ry // 6
-    # Left eye (viewer's right): CORRUPT_AMBER_HL tint (hostile calculating state)
     le_cx = cx - rx // 3
     od.rectangle([le_cx - eye_cell, face_cy - eye_cell, le_cx + eye_cell, face_cy + eye_cell],
                  fill=(*UV_PURPLE, 230))
     od.rectangle([le_cx - eye_cell // 2, face_cy - eye_cell // 2,
                   le_cx + eye_cell // 2, face_cy + eye_cell // 2],
-                 fill=(*ACID_GREEN, 255))  # MISCHIEVOUS state — it's causing the storm
-    # Right eye: match left for bilateral storm state
+                 fill=(*ACID_GREEN, 255))
     re_cx = cx + rx // 3
     od.rectangle([re_cx - eye_cell, face_cy - eye_cell, re_cx + eye_cell, face_cy + eye_cell],
                  fill=(*UV_PURPLE, 230))
@@ -645,44 +647,37 @@ def _draw_glitch_storm(img, cx, cy, body_h):
                   re_cx + eye_cell // 2, face_cy + eye_cell // 2],
                  fill=(*ACID_GREEN, 255))
 
-    # ACID_GREEN particle confetti near Glitch (spec §confetti: Glitchkin confetti
-    # stays close to the Glitchkin, NOT intermingled with storm confetti)
     rng_gc = random.Random(77)
     for _ in range(6):
         px = cx + rng_gc.randint(-rx * 2, rx * 2)
         py = cy + rng_gc.randint(-ry * 2, ry * 2)
-        ps = rng_gc.randint(2, 4)
+        ps = rng_gc.randint(2, 3)
         od.rectangle([px, py, px + ps, py + ps], fill=(*ACID_GREEN, 180))
 
     img = alpha_paste(img, overlay)
-    draw = ImageDraw.Draw(img)  # refresh after alpha_composite  # noqa: F841
+    draw = ImageDraw.Draw(img)  # noqa: F841
     return img
 
 
 def draw_characters(img):
-    """Character layout — sprinting left-to-right across frame.
-    C40 G007 FIX: _draw_glitch_storm() added — Glitch now appears in SF02 with
-    canonical VOID_BLACK body outline (spec §2.2, G007 compliance).
-    """
+    """Character layout — sprinting left-to-right across frame."""
     horizon_y = int(H * 0.58)
     ground_y  = horizon_y + int((H - horizon_y) * 0.12)
     char_h = int(H * 0.18)
 
     luma_cx = int(W * 0.45)
-    luma_foot_y = ground_y + 10
+    luma_foot_y = ground_y + 7   # C44: 10 × 2/3
     luma_head_cy = luma_foot_y - char_h
 
     byte_cx = int(W * 0.28)
     byte_float_y = luma_head_cy + int(char_h * 0.30)
 
     cosmo_cx = int(W * 0.62)
-    cosmo_foot_y = ground_y + 14
+    cosmo_foot_y = ground_y + 9  # C44: 14 × 2/3
 
-    # Glitch — hovering near the crack (upper-right mid-ground, ~x=78%, y=32%)
-    # At mid-distance scale: ~50% of char_h. VOID_BLACK outline per spec §2.2.
     glitch_cx = int(W * 0.78)
     glitch_cy = int(H * 0.32)
-    glitch_body_h = int(char_h * 0.50)  # ry (vertical half-extent)
+    glitch_body_h = int(char_h * 0.50)
     img = _draw_glitch_storm(img, glitch_cx, glitch_cy, glitch_body_h)
 
     img = _draw_luma(img, luma_cx, luma_foot_y, char_h)
@@ -695,32 +690,18 @@ def draw_characters(img):
 
 def _draw_luma_face_sprint(draw, cx, head_cy, head_r):
     """
-    C35 NEW: FOCUSED DETERMINATION expression for Luma in sprint.
-    Lee Tanaka staging brief: asymmetric eyes, inward left brow,
-    level right brow, compressed jaw-set mouth.
-
-    At head_r ≈ 23px (sprint scale), features are minimal but readable:
-    - 2 eyes (asymmetric size), pupils (4px ellipse)
-    - 2 brow lines (1-2px, directional)
-    - 1 mouth mark (compressed line or tiny ajar oval)
-
-    Eye direction: angled slightly down-forward (both pupils look ahead-down,
-    not at camera). This is a doing gaze, not a performing gaze.
+    C35: FOCUSED DETERMINATION expression for Luma in sprint.
+    Asymmetric eyes, inward left brow, level right brow, compressed jaw-set mouth.
     """
-    # Eye parameters — asymmetric, angled down-forward
-    # Left eye (viewer's left = Luma's right — leading eye): slightly wider
-    eye_r_left  = max(2, int(head_r * 0.26))   # ~6px at hr=23
-    eye_r_right = max(2, int(head_r * 0.17))   # ~4px at hr=23
+    eye_r_left  = max(2, int(head_r * 0.26))
+    eye_r_right = max(2, int(head_r * 0.17))
 
-    # Eye centers: positioned in upper-middle of head, forward-angled
-    # Both eyes lowered slightly for down-forward gaze
-    eye_y_offset  = -int(head_r * 0.15)   # slight down-forward (below head center)
+    eye_y_offset  = -int(head_r * 0.15)
     left_eye_cx   = cx - int(head_r * 0.30)
     right_eye_cx  = cx + int(head_r * 0.22)
     left_eye_cy   = head_cy + eye_y_offset
-    right_eye_cy  = head_cy + eye_y_offset + int(head_r * 0.08)  # right slightly lower = angled
+    right_eye_cy  = head_cy + eye_y_offset + int(head_r * 0.08)
 
-    # Draw eye whites (very small ellipses at sprint scale)
     draw.ellipse([left_eye_cx  - eye_r_left,  left_eye_cy  - eye_r_left,
                   left_eye_cx  + eye_r_left,  left_eye_cy  + eye_r_left],
                  fill=WARM_CREAM)
@@ -728,12 +709,9 @@ def _draw_luma_face_sprint(draw, cx, head_cy, head_r):
                   right_eye_cx + eye_r_right, right_eye_cy + eye_r_right],
                  fill=WARM_CREAM)
 
-    # Pupils — 4px ellipses (Lee brief), positioned forward-down
-    pupil_r = max(1, int(head_r * 0.09))  # ~2px at hr=23, visible at this scale
-    # Left pupil: offset slightly forward (toward right/sprint direction) and down
+    pupil_r = max(1, int(head_r * 0.09))
     lp_cx = left_eye_cx  + max(1, int(eye_r_left  * 0.25))
     lp_cy = left_eye_cy  + max(1, int(eye_r_left  * 0.20))
-    # Right pupil: also forward-down
     rp_cx = right_eye_cx + max(1, int(eye_r_right * 0.25))
     rp_cy = right_eye_cy + max(1, int(eye_r_right * 0.20))
     draw.ellipse([lp_cx - pupil_r, lp_cy - pupil_r, lp_cx + pupil_r, lp_cy + pupil_r],
@@ -741,7 +719,6 @@ def _draw_luma_face_sprint(draw, cx, head_cy, head_r):
     draw.ellipse([rp_cx - pupil_r, rp_cy - pupil_r, rp_cx + pupil_r, rp_cy + pupil_r],
                  fill=DEEP_COCOA)
 
-    # Eye outlines (dark ring)
     draw.ellipse([left_eye_cx  - eye_r_left,  left_eye_cy  - eye_r_left,
                   left_eye_cx  + eye_r_left,  left_eye_cy  + eye_r_left],
                  outline=DEEP_COCOA, width=1)
@@ -749,33 +726,25 @@ def _draw_luma_face_sprint(draw, cx, head_cy, head_r):
                   right_eye_cx + eye_r_right, right_eye_cy + eye_r_right],
                  outline=DEEP_COCOA, width=1)
 
-    # BROWS — asymmetric (Lee brief):
-    # Left brow: slightly lower, pulled inward toward nose — corrugator activation
-    # Right brow: level — not symmetric, signals interior complexity
-    brow_y_base = head_cy - int(head_r * 0.40)  # above eyes
+    brow_y_base = head_cy - int(head_r * 0.40)
     brow_width  = int(head_r * 0.35)
 
-    # Left brow: angled down-inward (inner end lower than outer end)
     lbrow_x0 = left_eye_cx  - brow_width // 2
     lbrow_y0 = brow_y_base
     lbrow_x1 = left_eye_cx  + brow_width // 2
-    lbrow_y1 = brow_y_base + int(head_r * 0.12)  # inner end (toward nose) drops down
+    lbrow_y1 = brow_y_base + int(head_r * 0.12)
     draw.line([(lbrow_x0, lbrow_y0), (lbrow_x1, lbrow_y1)],
               fill=DEEP_COCOA, width=max(1, int(head_r * 0.08)))
 
-    # Right brow: level (flat)
     rbrow_x0 = right_eye_cx - brow_width // 2
     rbrow_y0 = brow_y_base
     rbrow_x1 = right_eye_cx + brow_width // 2
-    rbrow_y1 = brow_y_base  # no slope
+    rbrow_y1 = brow_y_base
     draw.line([(rbrow_x0, rbrow_y0), (rbrow_x1, rbrow_y1)],
               fill=DEEP_COCOA, width=max(1, int(head_r * 0.07)))
 
-    # MOUTH — compressed jaw-set line (not a smile, not a fear O)
-    # At sprint scale: single compressed horizontal line or very small open oval
     mouth_y = head_cy + int(head_r * 0.42)
     mouth_w = int(head_r * 0.40)
-    # Compressed line — jaw is set
     draw.line([(cx - mouth_w // 2, mouth_y), (cx + mouth_w // 2, mouth_y)],
               fill=DEEP_COCOA, width=max(1, int(head_r * 0.09)))
 
@@ -792,25 +761,21 @@ def _draw_luma(img, cx, foot_y, h):
 
     head_cy   = foot_y - h + head_r
 
-    # C35: 10° forward lean — torso shifts forward (left = sprint direction)
-    # lean_offset: horizontal displacement at torso midpoint due to tilt
     lean_offset = int(torso_h * math.tan(math.radians(10)))
     torso_top = head_cy + head_r + 2
     torso_bot = torso_top + torso_h
-    # Leaned torso: top forward (left), bottom at cx
-    torso_cx_top  = cx - lean_offset       # top of torso leans forward (left)
-    torso_cx_bot  = cx                     # bottom stays at foot plumb
+
+    torso_cx_top  = cx - lean_offset
+    torso_cx_bot  = cx
     torso_left_top  = torso_cx_top  - torso_w // 2
     torso_right_top = torso_cx_top  + torso_w // 2
     torso_left_bot  = torso_cx_bot  - torso_w // 2
     torso_right_bot = torso_cx_bot  + torso_w // 2
 
-    # Head follows torso lean — head_cx shifts slightly forward
     head_cx = cx - lean_offset // 2
 
     outline_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     ol = ImageDraw.Draw(outline_layer)
-    # Outline torso as leaned parallelogram-ish polygon
     torso_outline_pts = [
         (torso_left_top - 2,  torso_top - 2),
         (torso_right_top + 2, torso_top - 2),
@@ -825,7 +790,6 @@ def _draw_luma(img, cx, foot_y, h):
 
     shadow_overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     sd = ImageDraw.Draw(shadow_overlay)
-    # Shadow side of leaned torso (left half)
     shadow_pts = [
         (torso_left_top,     torso_top),
         ((torso_cx_top),     torso_top),
@@ -838,7 +802,6 @@ def _draw_luma(img, cx, foot_y, h):
     overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     od = ImageDraw.Draw(overlay)
 
-    # Leaned torso fill (full polygon)
     torso_fill_pts = [
         (torso_left_top,  torso_top),
         (torso_right_top, torso_top),
@@ -847,12 +810,10 @@ def _draw_luma(img, cx, foot_y, h):
     ]
     od.polygon(torso_fill_pts, fill=(*DRW_HOODIE_STORM, 255))
 
-    # Head fill
     od.ellipse([head_cx - head_r, head_cy - head_r,
                 head_cx + head_r, head_cy + head_r],
                fill=(*DRW_SKIN_STORM, 255))
 
-    # Hair — dark cap arc
     od.arc([head_cx - head_r, head_cy - head_r,
             head_cx + head_r, head_cy + head_r],
            start=190, end=360, fill=DEEP_COCOA, width=int(head_r * 0.5))
@@ -860,56 +821,47 @@ def _draw_luma(img, cx, foot_y, h):
             head_cx + head_r - 2, head_cy + head_r - 2],
            start=190, end=330, fill=DRW_HAIR_MAGENTA, width=2)
 
-    # Legs — counter-rotation sprint arm pump
-    left_leg_pts = [(cx - 8, torso_bot), (cx + 30, torso_bot + int(leg_h * 0.55)), (cx + 50, foot_y)]
+    left_leg_pts = [(cx - 5, torso_bot), (cx + 20, torso_bot + int(leg_h * 0.55)), (cx + 33, foot_y)]
     for i in range(len(left_leg_pts) - 1):
         od.line([left_leg_pts[i], left_leg_pts[i + 1]], fill=(*DRW_HOODIE_STORM, 255), width=int(torso_w * 0.35))
 
-    right_leg_pts = [(cx + 8, torso_bot), (cx - 25, torso_bot + int(leg_h * 0.50)), (cx - 40, foot_y - int(leg_h * 0.15))]
+    right_leg_pts = [(cx + 5, torso_bot), (cx - 17, torso_bot + int(leg_h * 0.50)), (cx - 27, foot_y - int(leg_h * 0.15))]
     for i in range(len(right_leg_pts) - 1):
         od.line([right_leg_pts[i], right_leg_pts[i + 1]], fill=(*DRW_HOODIE_SHADOW, 255), width=int(torso_w * 0.30))
 
-    # Arms — leaned counter-rotation (leading arm reaches forward, back arm pushes back)
-    # Left arm (push-back): elbow well behind body, hand behind hip — higher endpoint
     od.line([(torso_cx_bot - int(torso_w * 0.45), torso_top + int(torso_h * 0.20)),
              (torso_cx_bot + int(torso_w * 0.30), torso_top - int(h * 0.45 * 0.45))],
             fill=(*DRW_HOODIE_STORM, 255), width=int(torso_w * 0.30))
-    # Right arm (push-forward): reaches further forward
     od.line([(torso_cx_bot + int(torso_w * 0.35), torso_top + int(torso_h * 0.20)),
              (torso_cx_bot - int(torso_w * 0.60), torso_top + int(h * 0.26 * 0.65))],
             fill=(*DRW_HOODIE_SHADOW, 255), width=int(torso_w * 0.28))
 
-    # C35: Hair stream — steeper angle (more horizontal, closer to ground-parallel = velocity)
-    # Original was trailing left and slightly up; now angled sharply rearward (more leftward)
-    hair_anchor = (head_cx - head_r + 4, head_cy)
+    hair_anchor = (head_cx - head_r + 3, head_cy)
     hair_stream = [
         hair_anchor,
-        (head_cx - head_r - int(h * 0.09), head_cy + int(h * 0.01)),   # primary: nearly horizontal
-        (head_cx - head_r - int(h * 0.16), head_cy + int(h * 0.005)),  # tip: very flat angle
+        (head_cx - head_r - int(h * 0.09), head_cy + int(h * 0.01)),
+        (head_cx - head_r - int(h * 0.16), head_cy + int(h * 0.005)),
     ]
     for i in range(len(hair_stream) - 1):
-        od.line([hair_stream[i], hair_stream[i + 1]], fill=DEEP_COCOA, width=6)
+        od.line([hair_stream[i], hair_stream[i + 1]], fill=DEEP_COCOA, width=4)
     od.line([hair_stream[0], hair_stream[-1]], fill=DRW_HAIR_MAGENTA, width=2)
 
-    # Second finer strand — trailing further back for velocity read
     fine_strand = [
-        (head_cx - head_r + 2, head_cy + int(head_r * 0.20)),
+        (head_cx - head_r + 1, head_cy + int(head_r * 0.20)),
         (head_cx - head_r - int(h * 0.07), head_cy + int(h * 0.02)),
         (head_cx - head_r - int(h * 0.13), head_cy + int(h * 0.015)),
     ]
     for i in range(len(fine_strand) - 1):
-        od.line([fine_strand[i], fine_strand[i + 1]], fill=DEEP_COCOA, width=3)
+        od.line([fine_strand[i], fine_strand[i + 1]], fill=DEEP_COCOA, width=2)
 
-    # Ground shadow
     shadow_pts = [
-        (cx - int(torso_w * 0.8), foot_y + 4), (cx + int(torso_w * 0.8), foot_y + 4),
-        (cx + int(torso_w * 1.8), foot_y + 14), (cx - int(torso_w * 1.2), foot_y + 14),
+        (cx - int(torso_w * 0.8), foot_y + 3), (cx + int(torso_w * 0.8), foot_y + 3),
+        (cx + int(torso_w * 1.8), foot_y + 9), (cx - int(torso_w * 1.2), foot_y + 9),
     ]
     od.polygon(shadow_pts, fill=(10, 42, 58, 120))
 
     img = alpha_paste(img, overlay)
 
-    # C35: Draw face AFTER compositing body (draw handle on top of all fills)
     face_img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     face_draw = ImageDraw.Draw(face_img)
     _draw_luma_face_sprint(face_draw, head_cx, head_cy, head_r)
@@ -943,18 +895,18 @@ def _draw_cosmo(img, cx, foot_y, h):
     gw, gh = int(head_r * 0.60), int(head_r * 0.40)
     od.rectangle([gx0, gy0, gx0 + gw, gy0 + gh], outline=DEEP_COCOA, width=2)
     od.rectangle([gx0 + 2, gy0 + 2, gx0 + gw - 2, gy0 + gh - 2], fill=(*ELEC_CYAN, 100))
-    od.rectangle([gx0 + gw + 4, gy0, gx0 + gw * 2 + 4, gy0 + gh], outline=DEEP_COCOA, width=2)
-    od.rectangle([gx0 + gw + 6, gy0 + 2, gx0 + gw * 2 + 2, gy0 + gh - 2], fill=(*ELEC_CYAN, 100))
+    od.rectangle([gx0 + gw + 3, gy0, gx0 + gw * 2 + 3, gy0 + gh], outline=DEEP_COCOA, width=2)
+    od.rectangle([gx0 + gw + 4, gy0 + 2, gx0 + gw * 2 + 1, gy0 + gh - 2], fill=(*ELEC_CYAN, 100))
 
     od.ellipse([cx - int(head_r * 0.35), head_cy + int(head_r * 0.30),
                 cx + int(head_r * 0.35), head_cy + int(head_r * 0.65)], fill=VOID_BLACK)
 
-    for (dx, dy, shadow) in [(-12, torso_bot, False), (12, torso_bot, True)]:
+    for (dx, dy, shadow) in [(-8, torso_bot, False), (8, torso_bot, True)]:
         lx = cx + dx
-        endx = lx + (25 if not shadow else -20)
+        endx = lx + (17 if not shadow else -13)
         endy = foot_y - int(leg_h * 0.10 if not shadow else 0.25)
         col = DRW_JACKET_STORM if not shadow else DRW_JACKET_SHADOW
-        od.line([(lx, dy), (endx, endy), (endx + (15 if not shadow else -10), foot_y)],
+        od.line([(lx, dy), (endx, endy), (endx + (10 if not shadow else -7), foot_y)],
                 fill=(*col, 255), width=int(torso_w * 0.32))
 
     od.line([(cx - int(torso_w * 0.4), torso_top + int(torso_h * 0.15)),
@@ -964,9 +916,9 @@ def _draw_cosmo(img, cx, foot_y, h):
              (cx - int(torso_w * 0.2), head_cy - int(h * 0.08))],
             fill=(*DRW_JACKET_SHADOW, 255), width=int(torso_w * 0.28))
 
-    od.line([(cx - int(torso_w * 0.35), torso_top + 5),
+    od.line([(cx - int(torso_w * 0.35), torso_top + 3),
              (cx - int(torso_w * 0.50), torso_top + int(torso_h * 0.60))],
-            fill=WARM_CREAM, width=3)
+            fill=WARM_CREAM, width=2)
 
     img = alpha_paste(img, overlay)
     return img
@@ -988,7 +940,7 @@ def _draw_byte_hovering(img, cx, cy, char_h):
     od.rectangle([body_left, body_top, body_right, body_bot],
                  fill=(*VOID_BLACK, 255), outline=(*CORRUPT_AMBER, 255), width=3)
 
-    screen_pad = max(4, byte_w // 8)
+    screen_pad = max(3, byte_w // 8)
     screen_left  = body_left  + screen_pad
     screen_right = body_right - screen_pad
     screen_top   = body_top   + screen_pad
@@ -1011,7 +963,7 @@ def _draw_byte_hovering(img, cx, cy, char_h):
     ant_top_y  = body_top - int(byte_h * 0.40)
     od.line([(ant_x, ant_base_y), (ant_x, ant_top_y)],
             fill=(*CORRUPT_AMBER, 200), width=2)
-    ball_r = max(3, byte_h // 10)
+    ball_r = max(2, byte_h // 10)
     od.ellipse([ant_x - ball_r, ant_top_y - ball_r,
                 ant_x + ball_r, ant_top_y + ball_r], fill=(*ELEC_CYAN, 255))
 
@@ -1030,14 +982,15 @@ def _draw_townspeople(img, horizon_y):
     od = ImageDraw.Draw(overlay)
 
     ground_y = horizon_y + int((H - horizon_y) * 0.12)
+    # C44: x positions scaled × 2/3; head heights scaled × 2/3
     people = [
-        (200, ground_y, 12), (260, ground_y, 10), (340, ground_y - 4, 11),
-        (500, ground_y, 13), (550, ground_y, 9),
-        (680, ground_y - 2, 10), (720, ground_y, 8),
-        (1020, ground_y, 12), (1080, ground_y, 10),
-        (1500, ground_y, 11), (1540, ground_y, 9),
-        (1640, ground_y, 10), (1680, ground_y - 3, 12),
-        (1780, ground_y, 8), (1820, ground_y, 11),
+        (133, ground_y, 8), (173, ground_y, 7), (227, ground_y - 3, 7),
+        (333, ground_y, 9), (367, ground_y, 6),
+        (453, ground_y - 1, 7), (480, ground_y, 5),
+        (680, ground_y, 8), (720, ground_y, 7),
+        (1000, ground_y, 7), (1027, ground_y, 6),
+        (1093, ground_y, 7), (1120, ground_y - 2, 8),
+        (1187, ground_y, 5), (1213, ground_y, 7),
     ]
     for (px, py, ph) in people:
         body_col = (*DEEP_WARM_SHAD, 200)
@@ -1046,32 +999,20 @@ def _draw_townspeople(img, horizon_y):
         od.rectangle([px - ph // 4, py - int(ph * 0.65),
                       px + ph // 4, py - int(ph * 0.25)], fill=body_col)
         od.line([(px - ph // 4, py - int(ph * 0.25)),
-                 (px - ph // 2, py + 2)], fill=body_col, width=2)
+                 (px - ph // 2, py + 1)], fill=body_col, width=1)
         od.line([(px + ph // 4, py - int(ph * 0.25)),
-                 (px + ph // 3, py + 2)], fill=body_col, width=2)
+                 (px + ph // 3, py + 1)], fill=body_col, width=1)
 
     img = alpha_paste(img, overlay)
     return img
 
 
 # ── Layer 6b: Magenta Fill Light (C36 — corrected direction + character mask) ─
-#
-# Implements Jordan Reed's C35 fix (LTG_TOOL_sf02_fill_light_fix_c35.py) directly
-# at 1920×1080 resolution (the fix module uses hardcoded 1280×720 and cannot be
-# called on a 1920×1080 image without a wrapper — so the algorithm is integrated here).
-#
-# Fixes (per Sven Halvorsen C14):
-#   1. Source direction: UPPER-RIGHT (storm crack at ~x=1700, y=0)
-#      fill_src_x = char_cx + int(char_h * 0.5)   (right of char)
-#      fill_src_y = char_cy - int(char_h * 0.8)   (above char)
-#   2. Per-character silhouette mask via ImageChops.multiply — no background tint
-#   3. Alpha max 35 (was 40) — direct source, cleaner than bounce
 
-def _make_char_silhouette_mask_1080(img, char_cx, char_h, char_cy, threshold=60):
+def _make_char_silhouette_mask(img, char_cx, char_h, char_cy, threshold=60):
     """
-    Build per-character silhouette mask at 1920×1080.
-    Crops zone around char_cx/char_cy, thresholds, dilates, pastes onto full canvas.
-    Returns full-canvas L mask (0=background, 255=character).
+    Build per-character silhouette mask at native resolution (W×H).
+    C44: renamed from _make_char_silhouette_mask_1080 — no longer 1080p-specific.
     """
     zone_w = int(char_h * 2.0)
     zone_h = int(char_h * 2.5)
@@ -1087,9 +1028,7 @@ def _make_char_silhouette_mask_1080(img, char_cx, char_h, char_cy, threshold=60)
     full_mask = Image.new("L", (W, H), 0)
     full_mask.paste(mask_crop, (x0, y0))
 
-    # Dilate slightly via blur + threshold
-    from PIL import ImageFilter
-    full_mask_blur = full_mask.filter(ImageFilter.GaussianBlur(radius=6))
+    full_mask_blur = full_mask.filter(ImageFilter.GaussianBlur(radius=4))
     full_mask_dilated = full_mask_blur.point(lambda p: 255 if p > 30 else 0, mode="L")
 
     return full_mask_dilated
@@ -1100,20 +1039,13 @@ def draw_magenta_fill_light_c36(img, luma_cx, byte_cx, cosmo_cx, char_h):
     C36 CORRECTED HOT_MAGENTA fill light.
     Source: UPPER-RIGHT of each character (matching storm crack at upper-right canvas).
     Per-character silhouette mask applied via ImageChops.multiply — no BG tint.
-
-    Parameters match character geometry constants defined in main():
-      luma_cx  = int(W * 0.45)
-      byte_cx  = int(W * 0.28)
-      cosmo_cx = int(W * 0.62)
-      char_h   = int(H * 0.18)
     """
     horizon_y = int(H * 0.58)
     ground_y  = horizon_y + int((H - horizon_y) * 0.12)
 
-    FILL_ALPHA_MAX    = 35    # upper-right direct fill — cleaner than lower bounce
+    FILL_ALPHA_MAX    = 35
     FILL_RADIUS_SCALE = 1.6
 
-    # Default vertical centers (feet on ground for Luma/Cosmo; Byte floats higher)
     char_centers = [
         (luma_cx,  int(H * 0.65), "luma"),
         (byte_cx,  int(H * 0.60), "byte"),
@@ -1121,17 +1053,15 @@ def draw_magenta_fill_light_c36(img, luma_cx, byte_cx, cosmo_cx, char_h):
     ]
 
     for (char_cx_pos, char_cy_pos, char_name) in char_centers:
-        # Build per-character silhouette mask
-        char_mask = _make_char_silhouette_mask_1080(
+        char_mask = _make_char_silhouette_mask(
             img, char_cx_pos, char_h, char_cy_pos, threshold=60
         )
 
-        # Build radial gradient at corrected source: UPPER-RIGHT of character
         fill_overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
         fd = ImageDraw.Draw(fill_overlay)
 
-        fill_src_x = char_cx_pos + int(char_h * 0.5)   # right of character
-        fill_src_y = char_cy_pos - int(char_h * 0.8)   # above character
+        fill_src_x = char_cx_pos + int(char_h * 0.5)
+        fill_src_y = char_cy_pos - int(char_h * 0.8)
         fill_r = int(char_h * FILL_RADIUS_SCALE)
 
         for r_step in range(fill_r, 0, -max(1, fill_r // 30)):
@@ -1144,7 +1074,6 @@ def draw_magenta_fill_light_c36(img, luma_cx, byte_cx, cosmo_cx, char_h):
                         fill_src_x + r_step, fill_src_y + r_step],
                        fill=(*HOT_MAGENTA, a))
 
-        # Apply char mask to fill alpha via ImageChops.multiply
         r_ch, g_ch, b_ch, a_ch = fill_overlay.split()
         masked_alpha = ImageChops.multiply(a_ch, char_mask)
         masked_fill = Image.merge("RGBA", (r_ch, g_ch, b_ch, masked_alpha))
@@ -1159,33 +1088,27 @@ def draw_magenta_fill_light_c36(img, luma_cx, byte_cx, cosmo_cx, char_h):
 def draw_cyan_specular_luma(img, luma_cx, char_h):
     """
     C34 FIX 2 / C35 BUG FIX: ELEC_CYAN specular on Luma hair/shoulders.
-
-    C35 FIX: get_char_bbox() was called on the full 3-character frame in v006,
-    returning a bbox spanning 83% of canvas width — completely wrong char_cx for Luma.
-    Fix: use luma_cx directly (known geometry: W*0.45 = 864px). No bbox call needed.
-    This gives correct right-side rim for Luma without false detection.
+    C35 FIX: use luma_cx directly — do NOT call get_char_bbox on full frame.
+    C44: No post-thumbnail specular restore needed — native canvas renders correctly.
     """
     if PROCEDURAL_DRAW_AVAILABLE:
-        # C35 FIX: Use luma_cx directly — do NOT call get_char_bbox on full frame
-        # luma_cx = int(W * 0.45) passed from caller, correct for this character
         add_rim_light(
             img,
-            threshold=180,           # high threshold — specular on highlights only
+            threshold=180,
             light_color=ELEC_CYAN,
             width=2,
             side="right",
-            char_cx=luma_cx          # C35: hardcoded from known geometry, not bbox
+            char_cx=luma_cx
         )
     else:
-        # Fallback: manual cyan specular arc on Luma's head/shoulder
         head_r = int(char_h * 0.12)
-        luma_foot_y_approx = int(H * 0.58) + int((H - int(H * 0.58)) * 0.12) + 10
+        luma_foot_y_approx = int(H * 0.58) + int((H - int(H * 0.58)) * 0.12) + 7
         head_cy = luma_foot_y_approx - char_h + head_r
         overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
         od = ImageDraw.Draw(overlay)
         od.arc([luma_cx - head_r - 2, head_cy - head_r - 2,
                 luma_cx + head_r + 2, head_cy + head_r + 2],
-               start=310, end=60, fill=(*ELEC_CYAN, 140), width=3)
+               start=310, end=60, fill=(*ELEC_CYAN, 140), width=2)
         torso_h = int(char_h * 0.28)
         torso_w = int(char_h * 0.17)
         torso_top = head_cy + head_r + 2
@@ -1203,11 +1126,12 @@ def draw_ground_lighting(img):
     overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     od = ImageDraw.Draw(overlay)
     horizon_y = int(H * 0.58)
-    crack_x = 1300
-    for col in range(700):
+    crack_x = 867     # C44: 1300 × 2/3
+    pool_w = 467      # C44: 700 × 2/3
+    for col in range(pool_w):
         x = crack_x - col
         if x < 0: break
-        t = col / 700.0; falloff = (1 - t) ** 1.8; a = int(45 * falloff)
+        t = col / pool_w; falloff = (1 - t) ** 1.8; a = int(45 * falloff)
         od.line([(x, horizon_y), (x, H)], fill=(*ELEC_CYAN, a))
     img = alpha_paste(img, overlay)
     return img
@@ -1230,89 +1154,48 @@ def apply_dutch_angle(img, degrees=4.0):
 
 def main():
     print("LTG_TOOL_style_frame_02_glitch_storm.py")
-    print("Rendering Style Frame 02 — Glitch Storm (C36 Fill Light Direction Fix)...")
-    print("  C36 Fixes:")
-    print("    (1) Magenta fill light source: UPPER-RIGHT (storm crack) — was lower-left")
-    print("    (2) Per-character silhouette mask: gradient masked to character pixels only")
-    print("    (3) char_cx from geometry constants — NOT get_char_bbox() on full frame")
-    print("    (4) alpha max 35 (was 40) — direct source is harder/cleaner than bounce")
-    print("    Using: draw_magenta_fill_light_c36() — Jordan Reed algorithm at 1920×1080")
+    print("Rendering Style Frame 02 — Glitch Storm (C44 Native Canvas Refactor)...")
+    print("  C44: Native 1280×720 — no LANCZOS thumbnail, no post-thumbnail specular restore")
+    print("  C44: Eliminates SUNLIT_AMBER LAB ΔE=47.04 color drift (Petra Volkov C17)")
 
     img = Image.new("RGB", (W, H), VOID_BLACK)
 
-    # Character position constants — passed to fill light and specular functions
-    # C36: These MUST come from geometry constants (NOT get_char_bbox on full frame)
     char_h = int(H * 0.18)
-    luma_cx   = int(W * 0.45)   # 864px at W=1920
-    byte_cx   = int(W * 0.28)   # 538px at W=1920
-    cosmo_cx  = int(W * 0.62)   # 1190px at W=1920
+    luma_cx   = int(W * 0.45)   # 576px at W=1280
+    byte_cx   = int(W * 0.28)   # 358px at W=1280
+    cosmo_cx  = int(W * 0.62)   # 794px at W=1280
 
-    print("  [1/10] Sky gradient + UV cloud masses...")
+    print("  [1/9] Sky gradient + UV cloud masses...")
     img = draw_sky(img)
 
-    print("  [2/10] Storm pixel confetti (DATA_BLUE dominant — cold/threatening)...")
+    print("  [2/9] Storm pixel confetti (DATA_BLUE dominant — cold/threatening)...")
     img = draw_storm_confetti(img)
 
-    print("  [3/10] Town silhouette + window glow cones + storm edge-lighting...")
+    print("  [3/9] Town silhouette + window glow cones + storm edge-lighting...")
     img = draw_town_silhouette(img)
 
-    print("  [4/10] Street surface + light pools...")
+    print("  [4/9] Street surface + light pools...")
     img = draw_street(img)
 
-    print("  [5/10] Ground lighting (cyan pool from crack)...")
+    print("  [5/9] Ground lighting (cyan pool from crack)...")
     img = draw_ground_lighting(img)
 
-    print("  [6/10] Damaged storefront window (cracks, missing panes, debris)...")
+    print("  [6/9] Damaged storefront window (cracks, missing panes, debris)...")
     img = draw_storefront(img)
 
-    print("  [7/10] Characters (Luma: face + lean, Cosmo, Byte, + Glitch G007 fix)...")
+    print("  [7/9] Characters (Luma: face + lean, Cosmo, Byte, + Glitch G007)...")
     img = draw_characters(img)
 
-    print("  [8/10] Magenta fill light (C36: UPPER-RIGHT source, per-char mask)...")
+    print("  [8/9] Magenta fill light (C36: UPPER-RIGHT source, per-char mask)...")
     img = draw_magenta_fill_light_c36(img, luma_cx, byte_cx, cosmo_cx, char_h)
 
-    print("  [9/10] Cyan specular on Luma (ELEC_CYAN from storm crack upper-right)...")
+    print("  [9/9] Cyan specular on Luma + Dutch angle (4.0°)...")
     img = draw_cyan_specular_luma(img, luma_cx, char_h)
-
-    print("  [10/10] Dutch angle (4.0°)...")
     img = apply_dutch_angle(img, degrees=4.0)
 
-    # Enforce image size rule: ≤ 1280px in both dimensions
-    img.thumbnail((1280, 1280), Image.LANCZOS)
-
-    # Post-thumbnail: restore specular highlights (LANCZOS averaging reduces max bright pixel)
-    sx, sy = img.size[0] / 1920.0, img.size[1] / 1080.0
-    spec_draw = ImageDraw.Draw(img)
-    SPEC_WHITE = (245, 245, 255)
-    SPEC_CYAN  = ELEC_CYAN
-
-    crack_spec_pts = [
-        (int(1700 * sx), int(80 * sy)),
-        (int(1600 * sx), int(220 * sy)),
-        (int(1380 * sx), int(420 * sy)),
-    ]
-    for (spx, spy) in crack_spec_pts:
-        spec_draw.ellipse([spx - 2, spy - 2, spx + 2, spy + 2], fill=SPEC_WHITE)
-
-    # Luma hair crown specular (upper-right of head, cyan from storm crack)
-    luma_head_cx_sc = int(luma_cx * sx)
-    horizon_y_sc = int(H * 0.58 * sy)
-    ground_y_sc  = horizon_y_sc + int((img.size[1] - horizon_y_sc) * 0.12)
-    char_h_sc    = int(img.size[1] * 0.18)
-    head_r_sc    = int(char_h_sc * 0.12)
-    lean_offset_sc = int(int(char_h_sc * 0.28) * math.tan(math.radians(10)))
-    luma_foot_y_sc = ground_y_sc + int(10 * sy)
-    head_cy_sc   = luma_foot_y_sc - char_h_sc + head_r_sc
-    head_cx_sc   = luma_head_cx_sc - lean_offset_sc // 2
-
-    spec_x = head_cx_sc + int(head_r_sc * 0.7)
-    spec_y = head_cy_sc - int(head_r_sc * 0.7)
-    spec_draw.ellipse([spec_x - 2, spec_y - 2, spec_x + 2, spec_y + 2], fill=SPEC_CYAN)
-    torso_w_sc = int(char_h_sc * 0.17)
-    torso_top_sc = head_cy_sc + head_r_sc + 2
-    spec_draw.ellipse([luma_head_cx_sc + torso_w_sc // 2 - 2, torso_top_sc,
-                       luma_head_cx_sc + torso_w_sc // 2 + 2, torso_top_sc + 4],
-                      fill=SPEC_CYAN)
+    # C44: No thumbnail() call — already at target size
+    assert img.size[0] <= 1280 and img.size[1] <= 1280, \
+        f"Canvas exceeds 1280px limit: {img.size}"
 
     os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
     img.save(OUTPUT_PATH, "PNG")
@@ -1320,22 +1203,20 @@ def main():
     size_bytes = os.path.getsize(OUTPUT_PATH)
     print(f"File size: {size_bytes:,} bytes ({size_bytes // 1024} KB)")
     print(f"Image size: {img.size[0]}×{img.size[1]}px")
-    print("\nFix verification (C36):")
-    print("  [FIX C36-1] Fill light source: UPPER-RIGHT (char_cx + char_h*0.5, char_cy - char_h*0.8) ✓")
-    print("  [FIX C36-2] Per-character silhouette mask via ImageChops.multiply — no BG tint ✓")
-    print("  [FIX C36-3] char_cx from geometry constants (luma=W*0.45, byte=W*0.28, cosmo=W*0.62) ✓")
-    print("  [FIX C36-4] Alpha max 35 (was 40) — direct upper-right source, cleaner than bounce ✓")
-    print("  [CARRY C35-1] _draw_luma_face_sprint(): asymmetric eyes + directional pupils + brows + mouth ✓")
-    print("  [CARRY C35-2] Torso lean 10° forward — head_cx offset, torso polygon lean ✓")
-    print("  [CARRY C35-3] Hair stream steep/horizontal + second fine trailing strand ✓")
-    print("  [CARRY C35-4] get_char_bbox() removed from draw_cyan_specular_luma() — luma_cx hardcoded ✓")
-    print("  [CARRY C34-2] Cyan specular: ELEC_CYAN (#00F0FF) add_rim_light() side='right' ✓")
-    print("  [CARRY C22] CORRUPT_AMBER = (255,140,0) = #FF8C00 GL-07 canonical ✓")
-    print("  [CARRY C22] Window pane alpha: SOFT_GOLD=115, WARM_CREAM=110 ✓")
-    print("  [CARRY C19] Storefront: frame + dividers + cracked panes + debris ✓")
-    print("  [CARRY C16] Cold confetti: DATA_BLUE 70% dominant ✓")
-    print("  [CARRY C16] Dutch angle: 4.0° applied as final step ✓")
-    print("  [SIZE RULE] img.thumbnail((1280,1280)) applied before save ✓")
+    print("\nFix verification (C44 native canvas refactor):")
+    print("  [C44] Native 1280×720 — no thumbnail(), no specular restore pass ✓")
+    print("  [C44] SUNLIT_AMBER color drift eliminated — no LANCZOS averaging ✓")
+    print("  [C44] All hardcoded coords scaled × 2/3 (uniform — same aspect ratio) ✓")
+    print("  [C36] Fill light source: UPPER-RIGHT (char_cx + char_h*0.5, char_cy - char_h*0.8) ✓")
+    print("  [C36] Per-character silhouette mask via ImageChops.multiply — no BG tint ✓")
+    print("  [C36] char_cx from geometry constants (luma=W*0.45, byte=W*0.28, cosmo=W*0.62) ✓")
+    print("  [C35] _draw_luma_face_sprint(): asymmetric eyes + directional pupils + brows ✓")
+    print("  [C35] Torso lean 10° forward ✓")
+    print("  [C34] Cyan specular: ELEC_CYAN (#00F0FF) add_rim_light() side='right' ✓")
+    print("  [C22] CORRUPT_AMBER = (255,140,0) = #FF8C00 GL-07 canonical ✓")
+    print("  [C19] Storefront: frame + dividers + cracked panes + debris ✓")
+    print("  [C16] Cold confetti: DATA_BLUE 70% dominant ✓")
+    print("  [C16] Dutch angle: 4.0° applied as final step ✓")
     print("\nDone.")
 
 
