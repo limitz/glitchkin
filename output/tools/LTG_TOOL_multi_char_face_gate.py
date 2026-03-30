@@ -104,6 +104,7 @@ BYTE_MAG_RANGE = ((200, 20, 60), (255, 100, 150))     # magenta crack pixels
 #   W=1280, H=720, GROUND_Y=int(720*0.90)=648
 #   Miri: cx=int(1280*0.285)=364, HR=42, HU=84, total_h=int(84*3.2)=268
 #         head_cy = 648-268+42 = 422
+#         C49 elder lean: head_cx = 364 + int(84*0.04) = 367
 #   Luma: cx=int(1280*0.72)=921, HR=46, HU=92, total_h=int(92*3.5)=322
 #         head_cy = 648-322+46 = 372
 MANIFEST_SF06 = {
@@ -111,7 +112,7 @@ MANIFEST_SF06 = {
     "image": os.path.join(OUTPUT_DIR, "color", "style_frames",
                           "LTG_COLOR_sf_miri_luma_handoff.png"),
     "characters": [
-        {"char": "miri", "head_cx": 364, "head_cy": 422, "head_r": 42},
+        {"char": "miri", "head_cx": 367, "head_cy": 422, "head_r": 42},
         {"char": "luma", "head_cx": 921, "head_cy": 372, "head_r": 46},
     ],
 }

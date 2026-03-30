@@ -1,5 +1,62 @@
 # Maya Santos — Memory
 
+## Cycle 49 — Multi-Char Face Gate + Miri Elder Posture (COMPLETE)
+
+### P1: Multi-Character Style Frame Face Gate — DELIVERED
+- New tool: `LTG_TOOL_multi_char_face_gate.py` v1.0.0
+- Diagnostic PNGs: `LTG_PROD_multi_char_face_gate_sf06_miri_luma_handoff.png`, `LTG_PROD_multi_char_face_gate_character_lineup_v011.png`
+- Extends the single-character face test to validate ALL characters in a multi-character composition.
+- Approach: PIL + NumPy pixel analysis. For organic characters: eye contrast measurement + connected-component feature detection. For Byte: teal/magenta/alt-eye detection with L/R differentiation check.
+- Pre-defined manifests: `sf06` (Miri + Luma), `lineup` (all 5 chars). Custom manifests via JSON.
+- Importable function: `run_multi_char_face_gate(image_path, manifest)` for precritique_qa Section 14 integration.
+- Results:
+  - SF06: OVERALL PASS. Miri PASS (eye_contrast=139, features=26, NOTE 1px fine detail). Luma PASS (eye_contrast=166, features=7, min=3px).
+  - Lineup: OVERALL PASS. Cosmo PASS, Miri PASS, Luma PASS, Byte PASS (alt-eye detected — dark-pupil-in-sclera, not magenta pixel grid; eye_separation=10.2px). Glitch SKIP (exempt).
+  - Byte lineup note: cracked eye rendered as dark iris in white sclera, not canonical magenta pixel grid. Gate accepts this as valid L/R differentiation but flags it as NOTE.
+
+### P2: Miri Elder Posture — DELIVERED
+- Updated: `LTG_TOOL_grandma_miri_expression_sheet.py` v007 -> **v008**
+  - Forward lean: ELDER_LEAN_DX = ~5px at 2x render. Head shifts forward, torso 60%, feet stay.
+  - Rounded shoulders: ELDER_SHOULDER_DROP = 3px base, ELDER_SHOULDER_INWARD = 2px base. Stacks with existing C47 shoulder involvement.
+- Updated: `LTG_TOOL_sf_miri_luma_handoff.py` (C49) — Miri elder posture applied.
+  - Head shifts +3px right (toward CRT), torso 60% of that, feet stay at cx.
+  - Rounded shoulders: drop 3px, inward 2px. Stacks with C48 shoulder involvement.
+- Both PNGs regenerated successfully.
+
+### P3: Cosmo Turnaround Proportion Check — VERIFIED
+- `LTG_TOOL_cosmo_turnaround.py` v003: `hu()` = `CHAR_DRAW_H / 4.0` — correctly 4.0 heads.
+- The C47 ratio=17.84 is a multi-panel measurement artifact from proportion_verify tool measuring full canvas height (including headers/labels) rather than character-only height.
+- No code change needed. Proportion is correct.
+
+### Face Gate C49
+- Miri single-char: SURPRISED PASS, RECOGNITION PASS, KNOWING STILL WARN (baseline), WELCOMING WARN (baseline), NEUTRAL/TOO_SMALL FAIL (diagnostic). **No regression from C48.**
+- Multi-char SF06: Miri PASS, Luma PASS.
+- Multi-char lineup: Cosmo PASS, Miri PASS, Luma PASS, Byte PASS, Glitch SKIP.
+
+### Ideabox C49
+- Submitted: `ideabox/20260330_maya_santos_byte_lineup_eye_canon.md`
+
+### Inbox Archived
+- `20260330_2500_c49_assignment.md` (Producer) — acted on
+- `20260330_2510_c49_miri_posture_sf06.md` (Alex Chen) — acted on
+
+### ACTIVE TOOL STATUS (C49 — COMPLETE)
+- Multi-char face gate: `LTG_TOOL_multi_char_face_gate.py` v1.0.0 (NEW)
+  - Diagnostic PNGs in `output/production/`
+- Miri expression sheet: `LTG_CHAR_grandma_miri_expression_sheet.png` v008 (elder posture)
+  - Generator: `LTG_TOOL_grandma_miri_expression_sheet.py` v008
+- SF06 style frame: `LTG_COLOR_sf_miri_luma_handoff.png` (C49 elder posture)
+  - Generator: `LTG_TOOL_sf_miri_luma_handoff.py` (C49)
+- All other tools unchanged from C48.
+
+### precritique_qa Integration Path
+- `LTG_TOOL_multi_char_face_gate.py` exports `run_multi_char_face_gate(image_path, manifest)`.
+- Morgan Walsh can add as Section 14 in `LTG_TOOL_precritique_qa.py`.
+- Manifests for sf06 and lineup are pre-defined; custom manifests via JSON.
+- Returns dict with `overall` (PASS/WARN/FAIL), `results` (per-character), `summary` (text).
+
+---
+
 ## Cycle 48 — Visual Hook Audit Tool + SF06 Shoulder Fix (COMPLETE)
 
 ### P1: Visual Hook Audit Tool — DELIVERED

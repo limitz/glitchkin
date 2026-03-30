@@ -4,8 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present.
 
 ## Status
-**C49 next. Work cycles: 48. Critique cycles: 18.**
-**Critique 19 SKIPPED (human decision). Next: C49, C50, C51 work cycles, then Critique 19.**
+**C50 next. Work cycles: 49. Critique cycles: 18.**
+**Critique 19 SKIPPED (human decision). Next: C50, C51 work cycles, then Critique 19.**
 
 ## Active Team (12 slots)
 
@@ -40,66 +40,58 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 - **C18 (done)**: Takeshi Mori, Ingrid Solberg, Reinhardt Böhm, Chiara Ferrara, Zoe Park (audience)
 - **C19 candidates**: rotate away from C17/C18. Consider: Daisuke, Priya Nair, Sven, Marcus Webb + audience (Marcus Okafor, Jayden Torres, Taraji Coleman)
 
-## Pitch Package Status — POST CYCLE 47
+## Pitch Package Status — POST CYCLE 49
 
 ### Style Frames
-- **SF01 Discovery: v007 C47** (Jordan). Sight-line fix — angular error 20.7°→2.2° PASS.
+- **SF01 Discovery: v008 C49** (Jordan). CRT glow asymmetry applied (0.70 below-midpoint).
 - SF02 Glitch Storm: v008 C43. SF03 Other Side: v005.
-- SF04 Resolution: C45. CORRUPT_AMBER fringe spec C46.
-- SF05 COVETOUS: v3.0.0 C43. SF05 "The Passing": C44. SF06 "The Hand-Off": C44.
-- **GL Showcase: v1.0.0 NEW C47** (Rin). Byte+Glitch in full GL void. Critique #1 addressed.
+- SF04 Resolution: C45. **Needs CRT glow asymmetry fix** (flagged by Rin C49).
+- SF05 COVETOUS: v3.0.0 C43. SF05 "The Passing": C44. SF06 "The Hand-Off": C49 elder posture (Maya).
+- **GL Showcase: v1.0.0 C47** (Rin). CRT glow exempt (interior, no cabinet).
 
 ### Logo — v003 C44 (Sam). Fonts installed, rendered.
 
 ### Characters
-- **Luma: expr v014 C47** (Maya). Shoulder involvement added.
-- Byte: expr v007 C41.
-- **Cosmo: expr v008 C47, turnaround v003 C47** (Maya). Visual hook: amplified cowlick + bridge tape.
-- **Miri: expr v007 C47** (Maya). Shoulder involvement. **Elderly proportion reference tool NEW C47.**
-- Glitch: expr v003.
-- **Lineup: v011 C47** (Maya). Cosmo hook propagated.
+- Luma: expr v014 C47. Byte: expr v007 C41. Glitch: expr v003.
+- **Cosmo: expr v008 C47, turnaround v003 C47**. Visual hook: amplified cowlick + bridge tape.
+- **Miri: expr v008 C49** (Maya). Elder posture: forward lean + rounded shoulders.
+- **Lineup: v011 C47**. **Needs Byte cracked-eye canon fix** (ideabox C49 Maya).
 
 ### Environments
-- **Kitchen: v008 C48** (Hana). Fridge/countertop/cabinet VP perspective fixes. Warm/cool 33.1 PASS.
-- Tech Den: v007 C45. Classroom: v004 C46. School Hallway: v005 C46.
-- Living Room: v003 C45. Glitch Layer: v003. Other Side: C41.
-- Millbrook Street: v003 C47. Value floor fixed. Luma Study Interior: C42.
+- Kitchen: v008 C48. Tech Den: v007 C45. Classroom: v004 C46.
+- **School Hallway: v006 C49** (Hana). Ceiling convergence + VP-compressed fixtures.
+- Living Room: v003 C45. **Needs CRT glow asymmetry fix** (flagged by Rin C49).
+- Glitch Layer: v003. Other Side: C41. Millbrook Street: v003 C47. Luma Study Interior: C42.
 
 ### Storyboards
-- Panels: P03–P11, P13–P21, **P22/P22a NEW C48**, P23, P24 + EP05 COVETOUS.
-- **P22 NEW C48** (Diego): ECU monitor — 4 Glitchkin pressed against glass, screen cracks, HOT_MAGENTA border.
-- **P22a NEW C48** (Diego): MCU insert — Byte accidentally on Luma's shoulder, first digital-on-analog contact, pixel bleed.
-- Cold open gap log: 32 beats, **11 gaps remaining** (was 12). 21 standalone panels.
+- Panels: P03–P11, P13–P22/P22a, P23, P24, **P25 NEW C49** + EP05 COVETOUS.
+- **P25 NEW C49** (Diego): Title card — "LUMA & THE GLITCHKIN" pixel font, CRT aesthetic.
+- Cold open gap log: 32 beats, **4 gaps remaining** (P02, P04, P05, P12). 22 standalone panels.
 
 ### Story
-- Story Bible: v005 C45. Confirmed current C48 (Priya).
-- Staging decision register: C48 updated (Priya). Byte position resolved.
-- Doc governance tracker: C48 updated. 1 HIGH remaining (production_bible 47 cycles stale).
-- Character export manifest: C47. Pitch delivery manifest: C47.
+- **Story Bible: v006 C49** (Priya). Cosmo appearance updated.
+- **Production Bible: v5.0 C49** (Priya + Producer). Full reconciliation. Section 9 split: 9A pitch pipeline / 9B post-pitch.
+- Staging decision register: C48. Doc governance tracker: C49 — **0 HIGH flags remaining**.
+- **Design-to-bible sync checklist NEW C49** (Priya).
 
 ### Motion
-- Luma v002, Byte v002, Cosmo v001, Miri v003 C47 (Ryo), Glitch v001.
+- Luma v002, Byte v002, **Cosmo v002 C49** (Ryo — shoulder_arm integrated), Miri v003 C47, Glitch v001.
 - **Shared draw_shoulder_arm() helper NEW C48** (Ryo). 3 functions + ShoulderArmStyle dataclass.
 - **precritique_qa v2.17.0 C48** (Kai + Lee). Section 12 band overrides, Section 13 warm pixel lint.
 
 ## QA Baseline
-**precritique_qa v2.17.0 C48.** Section 13 warm pixel lint + Section 12 band overrides.
-- **warm-pixel-percentage metric NEW C47** (Sam): replaces hue-split as primary REAL_INTERIOR gate. 31/31 assets PASS, 7/7 reference photos PASS. 24-point gap between RW floor (35%) and GL ceiling (15%).
-- **render_qa v2.1.0 C47** (Kai): warm_pixel_pct integrated as primary REAL_INTERIOR gate, overrides hue-split on disagreement.
-- **Depth temp lint Section 12**: Lineup PASS (sep=28.8), SF06 WARN, SF02 WARN. **SF04/SF05 PASS C48** (band overrides applied).
-- **depth_temp_band_overrides.json NEW C48** (Lee): Per-asset FG/BG band position config. SF04 fg=0.55/bg=0.85, SF05 fg=0.40/bg=0.85.
-- **depth_temp_lint v1.1.0 C48** (Lee): Auto-loads band override JSON.
-- **UV_PURPLE range confirmed**: h° 255°–325° (Rin C46). No change needed.
-- **CRT glow profiles**: sigma_frac=0.1165, FWHM 27.4% diagonal, CCT 13070K (Rin C46).
-- **glow_profile_extract v2.0.0 C48** (Rin): Anisotropic Gaussian fitting (sigma_x/sigma_y). CRT refs match C46 calibration.
-- **Scanline pitch profiles C47** (Rin): phosphor refs mean 25.8px, main CRT refs mean 41.7px.
-- **CI suite v1.8.0 C48** (Morgan): Check 10 replaced — ext_model_check removed, doc_staleness added.
-- **color_verify v3.0.0 C47** (Jordan): CORRUPT_AMBER detection mode added.
-- **sightline_validator C48** (Jordan): 5 self-tests PASS. Angular error detection.
-- **composite_warmth_score C48** (Sam): 19/19 assets PASS. 70% warm-pixel-pct + 30% hue-split.
-- **visual_blank_test C48** (Diego): Strips text, runs 6 checks. PASS/WARN/FAIL per panel.
-- **object_detect_qa C48** (Kai): Torchvision pretrained model QA on output frames.
-- **GL Showcase registered in QA C48** (Rin): precritique_qa v2.16.1 → v2.17.0.
+**precritique_qa v2.18.0 C49.** Section 14 sightline validation (Morgan). Section 13 warm pixel lint. Section 12 band overrides.
+- **render_qa v2.2.0 C49** (Sam): Composite warmth score as primary gate. Three-tier fallback.
+- **depth_temp_lint v1.2.0 C49** (Lee): --discover mode auto-detects FG/BG bands. --discover-validate confirms grade match.
+- **sightline_validator v2.0.0 C49** (Jordan): Pixel PNG mode added. Eye position ±2px. Gaze direction unreliable at 1280px (below noise floor). Construction mode stays authoritative.
+- **visual_blank_test v2.0.0 C49** (Diego): 6 panel-type profiles (ECU/MCU/WIDE/INSERT/OTS/TWO_SHOT). Auto-detection. 7 false positives eliminated.
+- **CI suite v1.9.0 C49** (Morgan): JSON check registry (swap without code edits). Per-directory doc_staleness thresholds.
+- **face_landmark_detector v1.0.0 C49** (Kai): Multi-backend (dlib + Haar fallback). dlib not installed — ready when available.
+- **multi_char_face_gate v1.0.0 C49** (Maya): Multi-character composition validation. SF06 PASS, lineup PASS.
+- **warmcool_scene_calibrate v3.0.0 C49** (Sam): Sigmoid profile + saturation drop measurement.
+- **batch_path_migrate C49** (Hana): NEEDS_REVIEW 82→4 genuine items.
+- **UV_PURPLE hue center C49** (Rin): h°272 within P25-P75, no shift needed.
+- **Anisotropic glow references C49** (Rin): H-dominant ratio ~4.0. Isotropic sigma_frac=0.1165 stable.
 - Pretrained torchvision models ARE allowed. pretrained_model_detect DEPRECATED C48.
 
 ## C45 Key Decisions & Deliverables
@@ -200,22 +192,46 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 - **Visual hook audit** (Maya): 5/5 characters PASS at 128px thumbnail scale.
 - **14 ideabox ideas actioned.**
 
-## Open Items for C49 (Post-Critique 19)
-1. **Alex findings to action**: CRT glow asymmetry (30% below reduction), sigmoid warmcool transition, BG saturation drop, school hallway ceiling convergence
-2. **Tool build priority** (Alex ranked): warmcool_scene_calibrate (threshold validation), glow_profile_extract integration, face_metric_calibrate expression deltas
-3. **Sam**: composite warmth score → render_qa integration (ideabox C48)
-4. **Ryo**: integrate draw_shoulder_arm into existing generators (ideabox C48 — cosmo_motion first)
-5. **Morgan**: CI check swap registry (ideabox C48)
-6. **Morgan**: doc_staleness configurable thresholds per directory (ideabox C48)
-7. **Lee**: depth_temp auto band discovery --discover mode (ideabox C48)
-8. **Maya**: multi-char style frame face gate mode (ideabox C48)
-9. **Kai**: dlib 68-point landmark detector for face calibration (ideabox C48)
-10. **Diego**: panel-type profiles for blank test tool (ideabox C48)
-11. **Hana**: batch migrate NEEDS_REVIEW reclassify (ideabox C48)
-12. **Priya**: design-to-bible sync checklist (ideabox C48)
-13. **Rin**: anisotropic glow reference curation (ideabox C48)
-14. **Jordan**: sightline pixel detection mode for rendered PNGs (ideabox C48)
-15. **Priya**: production_bible update (47 cycles stale — last HIGH flag)
+## C49 Key Decisions & Deliverables
+- **Production bible v5.0** (Priya): Full 47-cycle reconciliation. 0 HIGH doc governance flags remaining.
+- **Production bible Section 9 split** (Producer): 9A pitch pipeline (Python/PIL) / 9B recommended post-pitch (OpenToonz/Krita/Natron). Agentic production mode deferred.
+- **Story bible v006** (Priya): Cosmo appearance updated.
+- **image-rules.md updated** (Alex): CRT glow asymmetry (0.70 below-midpoint), BG saturation drop (0.80), sigmoid warm-cool transition (steepness=12.0).
+- **perspective-rules.md updated** (Alex): Hallway ceiling convergence spec.
+- **render_qa v2.2.0** (Sam): Composite warmth as primary gate + sigmoid profile + saturation drop.
+- **depth_temp_lint v1.2.0** (Lee): --discover + --discover-validate modes.
+- **CI suite v1.9.0** (Morgan): JSON check registry + per-directory doc_staleness thresholds.
+- **precritique_qa v2.18.0** (Morgan): Section 14 sightline validation.
+- **Cosmo motion v002** (Ryo): draw_shoulder_arm() integrated. Lint 6/6 PASS.
+- **face_landmark_detector v1.0.0** (Kai): Multi-backend. dlib ready when installed.
+- **multi_char_face_gate v1.0.0** (Maya): SF06 + lineup PASS.
+- **Miri expr v008 + SF06 elder posture** (Maya): Forward lean + rounded shoulders.
+- **sightline_validator v2.0.0** (Jordan): Pixel PNG mode. Construction mode stays authoritative.
+- **SF01 v008** (Jordan): CRT glow asymmetry applied.
+- **visual_blank_test v2.0.0** (Diego): 6 panel-type profiles. 7 false positives eliminated.
+- **P25 title card** (Diego): Cold open gaps 11→4.
+- **School Hallway v006** (Hana): Ceiling convergence + VP-compressed fixtures.
+- **batch_path_migrate** (Hana): NEEDS_REVIEW 82→4 genuine items.
+- **Anisotropic glow references** (Rin): CRT glow profiles curated. UV_PURPLE hue center confirmed.
+- **SF01 + luma_byte CRT glow asymmetry applied** (Rin/Jordan).
+- **12 ideabox ideas actioned.**
+
+## Open Items for C50
+1. **CRT glow asymmetry propagation**: SF04 (Jordan), Living Room (Hana) still need 0.70 below-midpoint fix (flagged by Rin C49)
+2. **Byte lineup cracked-eye canon fix** (Maya ideabox C49): Lineup uses dark-iris instead of canonical magenta pixel grid
+3. **Classroom ceiling convergence** (Hana ideabox C49): Asymmetric 2-point logic
+4. **Blank test C4 color-cluster supplement** (Diego ideabox C49): Reduce false FAILs on cel-shaded panels
+5. **High-res gaze crop mode** (Jordan ideabox C49): 2x render crop for pixel gaze validation
+6. **dlib setup script** (Kai ideabox C49): Automate dlib + shape predictor install
+7. **Discover auto-suggest in precritique_qa** (Lee ideabox C49): Section 12b band discovery suggestions
+8. **Composite warmth simplification in precritique_qa** (Sam ideabox C49): Use render_qa composite verdict instead of separate warm_pixel_metric
+9. **CRT glow asymmetry QA check** (Rin ideabox C49): Validate 0.70 multiplier in precritique_qa
+10. **Registry CLI subcommands** (Morgan ideabox C49): --registry-list/swap/disable for CI suite
+11. **Bible diff CI gate** (Priya ideabox C49): Automated mismatch detection design-docs vs bibles
+12. **Calibrator preserve extra fields** (Ryo ideabox C49): Merge-based config update instead of overwrite
+13. **Automated rule compliance dashboard** (Alex ideabox C49): Unified HTML QA report
+14. **Cold open remaining gaps**: P02, P04, P05, P12 (Diego)
+15. **draw_shoulder_arm integration** into luma_motion, byte_motion (Ryo — deferred from C49)
 
 ## Canonical Palette
 - Byte body = GL-01b #00D4E8 BYTE_TEAL (NOT #00F0FF)
@@ -329,7 +345,7 @@ Do NOT duplicate inbox content in agent prompts. Prompts = role context + startu
 - Ideabox: action → actioned/, reject → rejected/ after each cycle.
 - README.md: update after every work and critique cycle.
 - Slot filling: launch next agent immediately on completion. Never exceed 8 simultaneous.
-- C48 DONE. Critique 19 skipped. Next: C49, C50, C51, then Critique 19.
+- C49 DONE. Critique 19 skipped. Next: C50, C51, then Critique 19.
 
 ## C19 Critic Candidates (deferred — use after C51)
 Rotate away from C17/C18. C17: Jonas Feld, Amara Diallo, Leila Asgari, Petra Volkov, Marcus Webb, Eleanor Whitfield. C18: Takeshi Mori, Ingrid Solberg, Reinhardt Böhm, Chiara Ferrara, Zoe Park.

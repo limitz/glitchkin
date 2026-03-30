@@ -153,7 +153,7 @@ Three-world palette system:
 
 ---
 
-## Team (Cycle 48)
+## Team (Cycle 49)
 
 | Member | Role | Status |
 |--------|------|--------|
@@ -174,50 +174,51 @@ Three-world palette system:
 
 ## Progress
 
-- **Work cycles:** 48 | **Critique cycles:** 18
-- **Next:** Critique 19
-- **Ideabox:** 14 ideas actioned C48
+- **Work cycles:** 49 | **Critique cycles:** 18
+- **Next:** C50 (work), then C51, then Critique 19
+- **Ideabox:** 12 ideas actioned C49
 - **Critics panel:** 20 total (15 professionals + 5 audience)
 - **Team:** 12 active
-- **C48 highlights:** P22/P22a panels, Kitchen v008 perspective fixes, SF06 shoulder update, precritique_qa v2.17.0, depth_temp_lint band overrides (SF04/SF05 PASS), glow_profile_extract v2.0.0, composite warmth score verified, visual blank test tool, shared draw_shoulder_arm helper, CI suite v1.8.0, sightline validator, 168 reference images reviewed
+- **C49 highlights:** Production bible v5.0 (47-cycle debt cleared), production bible pipeline split (pitch vs post-pitch), render_qa v2.2.0 composite warmth gate, depth_temp_lint --discover mode, CI suite v1.9.0 JSON check registry, precritique_qa v2.18.0 sightline validation, multi-char face gate tool, Miri elder posture, CRT glow asymmetry rule + SF01 applied, School Hallway ceiling convergence, P25 title card, sightline pixel PNG mode, face landmark detector, Cosmo motion shoulder_arm integrated
 
 ### Pitch Package Status
 | Asset | Latest | Notes |
 |-------|--------|-------|
-| SF01 Discovery | v007 C47 | Sight-line fix — angular error 2.2° PASS |
+| **SF01 Discovery** | **v008 C49** | CRT glow asymmetry applied (0.70 below-midpoint) |
 | SF02 Glitch Storm | v008 C43 | Native 1280×720 — SUNLIT_AMBER ΔE 1.1 PASS |
 | SF03 The Other Side | v005 | UV_PURPLE ΔE 0.0 C41 |
-| SF04 Resolution | C45 updated | **depth_temp_lint PASS C48** (was false FAIL) |
-| SF05 COVETOUS | v3.0.0 C43 | **depth_temp_lint PASS C48** (was false FAIL) |
+| SF04 Resolution | C45 updated | Needs CRT glow asymmetry fix |
+| SF05 COVETOUS | v3.0.0 C43 | depth_temp_lint PASS C48 |
 | SF05 "The Passing" | C44 | Jordan — kitchen pre-dawn |
-| **SF06 "The Hand-Off"** | **C48 updated** | Shoulder involvement applied — Miri/Luma polyline torso |
-| GL Showcase | v1.0.0 C47 | Rin — Byte+Glitch in full GL void. **Registered in QA C48** |
+| **SF06 "The Hand-Off"** | **C49 updated** | Elder posture: Miri forward lean + rounded shoulders |
+| GL Showcase | v1.0.0 C47 | CRT glow exempt (interior, no cabinet) |
 | Luma expressions | v014 C47 | Shoulder involvement |
 | Luma turnaround | v004 | unchanged |
 | Byte expressions | v007 C41 | unchanged |
 | Cosmo expressions | v008 C47 | Visual hook: amplified cowlick + bridge tape |
 | Cosmo turnaround | v003 C47 | Visual hook propagated |
-| Miri expressions | v007 C47 | Shoulder involvement |
+| **Miri expressions** | **v008 C49** | Elder posture: forward lean + rounded shoulders |
 | Glitch expressions | v003 | unchanged |
-| Character lineup | v011 C47 | Cosmo hook propagated |
+| Character lineup | v011 C47 | Needs Byte cracked-eye canon fix |
 | Logo | v003 C44 | Nunito Bold + Space Grotesk Bold |
-| **Kitchen** | **v008 C48** | Fridge/countertop/cabinet VP perspective fixes |
+| Kitchen | v008 C48 | Fridge/countertop/cabinet VP perspective fixes |
 | Tech Den | v007 C45 | Hardcoded path migrated |
-| Living Room | v003 C45 | CRT centered, warm-left/cool-right |
+| Living Room | v003 C45 | Needs CRT glow asymmetry fix |
 | Glitch Layer | v003 | UV_PURPLE range confirmed C46 |
-| Classroom | v004 C46 | unchanged |
+| Classroom | v004 C46 | Needs ceiling convergence |
 | Luma Study Interior | C42 | 33.1 PASS |
 | Other Side ENV | C41 | unchanged |
-| School Hallway | v005 C46 | unchanged |
+| **School Hallway** | **v006 C49** | Ceiling convergence + VP-compressed fixtures |
 | Millbrook Street | v003 C47 | Value floor fixed — warm/cool 21.0 PASS |
-| **Panels** | **P03–P11/P13–P22/P22a/P23/P24 + EP05** | **P22/P22a NEW C48** — 21 standalone total |
-| **Cold open gap log** | **C48 updated** | 32 beats, **11 gaps remaining** (was 12) |
-| Staging decision register | C48 updated | Byte position resolved, P20/P21 entries added |
-| Story Bible | v005 C45 | Confirmed current C48 |
-| Relationship frame brief | C44 | A1-01 kitchen morning |
+| **Panels** | **P03–P11/P13–P25 + EP05** | **P25 NEW C49** — 22 standalone, 4 gaps remain |
+| **Cold open gap log** | **C49 updated** | 32 beats, **4 gaps remaining** (P02, P04, P05, P12) |
+| **Story Bible** | **v006 C49** | Cosmo appearance updated |
+| **Production Bible** | **v5.0 C49** | Full reconciliation — 0 HIGH flags |
+| **Design-to-bible sync** | **NEW C49** | Manual protocol, 7 categories |
+| Staging decision register | C48 | Byte position resolved |
 | Motion — Luma | v002 C38 | unchanged |
 | Motion — Byte | v002 C38 | unchanged |
-| Cosmo motion spec | v001 C41 | unchanged |
+| **Cosmo motion** | **v002 C49** | draw_shoulder_arm() integrated |
 | Miri motion spec | v003 C47 | Full rework |
 | Glitch motion spec | v001 C44 | unchanged |
 
@@ -227,7 +228,7 @@ Three-world palette system:
 
 One `CLAUDE.md` starts a producer agent. The producer builds a team of AI agents, assigns work via inbox message files, runs critique cycles with 20 critics (15 professionals + 5 audience members), and iterates. No human drew these images.
 
-All output generated with Python + PIL (open source only). Generators in `output/tools/` — 190+ tools, compounding each cycle.
+All output generated with Python + PIL (open source only). Generators in `output/tools/` — 200+ tools, compounding each cycle.
 
 ---
 

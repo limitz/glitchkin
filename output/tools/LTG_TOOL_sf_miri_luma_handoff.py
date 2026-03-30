@@ -7,7 +7,14 @@
 """
 LTG_TOOL_sf_miri_luma_handoff.py
 Style Frame — "The Hand-Off" (SF_MIRI_LUMA_HANDOFF / SF06 candidate)
-"Luma & the Glitchkin" — Cycle 48 / Maya Santos
+"Luma & the Glitchkin" — Cycle 49 / Maya Santos
+
+Cycle 49 changes (Maya Santos, C49):
+  - MIRI ELDER POSTURE: Forward lean (3-5 degrees) via head/torso offset.
+    Head shifts +3px rightward (toward CRT), torso 60% of that, feet stay.
+    Rounded shoulders: shoulder rest drops 3px, inward 2px.
+    Stacks with existing C48 shoulder involvement.
+  - Per Alex Chen C49 brief (Miri posture update P1).
 
 Cycle 48 changes (Maya Santos, C48):
   - SHOULDER INVOLVEMENT: Both Miri and Luma torsos now use polyline shoulder
@@ -403,6 +410,7 @@ def draw_miri_character(img, draw, cx, ground_y):
     Right hand extended forward/toward CRT (the "hand-off" gesture).
     Expression: WARM ATTENTION — soft smile, slightly forward lean.
     Height: 3.2 heads (MIRI_HU × 3.2).
+    C49: Elder posture — forward lean + rounded shoulders.
     """
     HR = MIRI_HR
     HU = int(HR * 2)  # one head unit = 2 × head radius
@@ -410,6 +418,15 @@ def draw_miri_character(img, draw, cx, ground_y):
     total_h = int(HU * 3.2)
     head_cy = ground_y - total_h + HR
     head_cx = cx
+
+    # C49: ELDER POSTURE — forward lean (3-5 degrees from vertical).
+    # Head shifts rightward (toward CRT/Luma) relative to feet.
+    # Torso shifts proportionally less. Feet stay at cx.
+    elder_lean_dx = int(HU * 0.04)   # ~3px at SF scale
+    elder_sh_drop = 3                 # 3px shoulder drop (rounded shoulders)
+    elder_sh_inward = 2               # 2px inward shift
+    head_cx = cx + elder_lean_dx
+    torso_cx = cx + int(elder_lean_dx * 0.6)
 
     # ── Body (weathered torso with shoulder involvement) ────────────────────
     torso_top_y  = head_cy + HR + int(HU * 0.08)   # neck gap
@@ -422,52 +439,56 @@ def draw_miri_character(img, draw, cx, ground_y):
     r_sh_dy, r_sh_dx = _sf_shoulder_dy(0, int(HU * 0.62), mode="extended")
     sh_bump_w = int(HU * 0.07)  # deltoid bump width
 
+    # C49: Apply elder shoulder drop + inward shift
+    l_sh_dy += elder_sh_drop
+    r_sh_dy += elder_sh_drop
+
     # Cardigan body fill — polyline torso with shoulder bumps
     torso_pts = [
-        (cx - torso_w_half - sh_bump_w, torso_top_y),                 # outer left shoulder
-        (cx - torso_w_half + l_sh_dx, torso_top_y + l_sh_dy),        # left deltoid peak
-        (cx - int(torso_w_half * 0.3), torso_top_y),                  # inner left shoulder
-        (cx + int(torso_w_half * 0.3), torso_top_y),                  # inner right shoulder
-        (cx + torso_w_half + r_sh_dx, torso_top_y + r_sh_dy),        # right deltoid peak (forward pull)
-        (cx + torso_w_half + sh_bump_w + r_sh_dx, torso_top_y),      # outer right shoulder
-        (cx + torso_w_half, torso_bot_y),                              # bottom right
-        (cx - torso_w_half, torso_bot_y),                              # bottom left
+        (torso_cx - torso_w_half - sh_bump_w + elder_sh_inward, torso_top_y),   # outer left shoulder (inward)
+        (torso_cx - torso_w_half + l_sh_dx + elder_sh_inward, torso_top_y + l_sh_dy),  # left deltoid (dropped + inward)
+        (torso_cx - int(torso_w_half * 0.3), torso_top_y),                       # inner left shoulder
+        (torso_cx + int(torso_w_half * 0.3), torso_top_y),                       # inner right shoulder
+        (torso_cx + torso_w_half + r_sh_dx - elder_sh_inward, torso_top_y + r_sh_dy),  # right deltoid (dropped + inward)
+        (torso_cx + torso_w_half + sh_bump_w + r_sh_dx - elder_sh_inward, torso_top_y),  # outer right (inward)
+        (cx + torso_w_half, torso_bot_y),                                         # bottom right (feet at cx)
+        (cx - torso_w_half, torso_bot_y),                                         # bottom left (feet at cx)
     ]
     draw.polygon(torso_pts, fill=MIRI_CARDIGAN, outline=LINE_DARK, width=2)
 
     # Cardigan shadow (right side — warm light from left)
-    shadow_x = cx + int(torso_w_half * 0.35)
+    shadow_x = torso_cx + int(torso_w_half * 0.35)
     draw.rectangle([shadow_x, torso_top_y + 4,
-                    cx + torso_w_half - 2, torso_bot_y],
+                    torso_cx + torso_w_half - 2, torso_bot_y],
                    fill=MIRI_CARD_SH)
 
     # Cardigan V-neck
-    draw.line([(cx - int(torso_w_half * 0.2), torso_top_y),
-               (cx, torso_top_y + int(HU * 0.18))],
+    draw.line([(torso_cx - int(torso_w_half * 0.2), torso_top_y),
+               (torso_cx, torso_top_y + int(HU * 0.18))],
               fill=LINE_DARK, width=2)
-    draw.line([(cx + int(torso_w_half * 0.2), torso_top_y),
-               (cx, torso_top_y + int(HU * 0.18))],
+    draw.line([(torso_cx + int(torso_w_half * 0.2), torso_top_y),
+               (torso_cx, torso_top_y + int(HU * 0.18))],
               fill=LINE_DARK, width=2)
 
     # Cable-knit texture suggestion
     for ky in range(torso_top_y + 12, torso_bot_y - 4, 10):
-        draw.line([(cx - torso_w_half + 6, ky), (cx - torso_w_half + 6, ky + 5)],
+        draw.line([(torso_cx - torso_w_half + 6, ky), (torso_cx - torso_w_half + 6, ky + 5)],
                   fill=lerp_color(MIRI_CARDIGAN, MIRI_CARD_SH, 0.3), width=1)
-        draw.line([(cx - torso_w_half + 14, ky), (cx - torso_w_half + 14, ky + 5)],
+        draw.line([(torso_cx - torso_w_half + 14, ky), (torso_cx - torso_w_half + 14, ky + 5)],
                   fill=lerp_color(MIRI_CARDIGAN, MIRI_CARD_SH, 0.3), width=1)
 
     # ── Left arm (neutral — slightly bent, toward body) ───────────────────────
-    la_shoulder = (cx - torso_w_half, torso_top_y + int(HU * 0.10))
-    la_elbow    = (cx - torso_w_half - int(HU * 0.18), torso_top_y + int(HU * 0.45))
-    la_hand     = (cx - torso_w_half - int(HU * 0.08), torso_top_y + int(HU * 0.80))
+    la_shoulder = (torso_cx - torso_w_half, torso_top_y + int(HU * 0.10))
+    la_elbow    = (torso_cx - torso_w_half - int(HU * 0.18), torso_top_y + int(HU * 0.45))
+    la_hand     = (torso_cx - torso_w_half - int(HU * 0.08), torso_top_y + int(HU * 0.80))
     polyline(draw, [la_shoulder, la_elbow, la_hand], MIRI_CARDIGAN, width=10)
     polyline(draw, [la_shoulder, la_elbow, la_hand], LINE_DARK, width=2)
 
     # ── Right arm extended TOWARD CRT (the hand-off gesture) ─────────────────
     # Arm reaches rightward and slightly forward
-    ra_shoulder = (cx + torso_w_half, torso_top_y + int(HU * 0.10))
-    ra_elbow    = (cx + torso_w_half + int(HU * 0.35), torso_top_y + int(HU * 0.28))
-    ra_hand     = (cx + torso_w_half + int(HU * 0.62), torso_top_y + int(HU * 0.44))
+    ra_shoulder = (torso_cx + torso_w_half, torso_top_y + int(HU * 0.10))
+    ra_elbow    = (torso_cx + torso_w_half + int(HU * 0.35), torso_top_y + int(HU * 0.28))
+    ra_hand     = (torso_cx + torso_w_half + int(HU * 0.62), torso_top_y + int(HU * 0.44))
     polyline(draw, [ra_shoulder, ra_elbow, ra_hand], MIRI_CARDIGAN, width=10)
     polyline(draw, [ra_shoulder, ra_elbow, ra_hand], LINE_DARK, width=2)
 
@@ -508,9 +529,10 @@ def draw_miri_character(img, draw, cx, ground_y):
     face_cx = head_cx + int(HR * 0.06)
     face_cy = head_cy
 
-    # Neck
-    draw.rectangle([cx - int(HR * 0.18), head_cy + int(HR * 0.80),
-                    cx + int(HR * 0.18), head_cy + HR + int(HU * 0.10)],
+    # Neck — connects head (at head_cx) to torso (at torso_cx)
+    neck_cx = (head_cx + torso_cx) // 2
+    draw.rectangle([neck_cx - int(HR * 0.18), head_cy + int(HR * 0.80),
+                    neck_cx + int(HR * 0.18), head_cy + HR + int(HU * 0.10)],
                    fill=MIRI_SKIN)
 
     # Head circle
