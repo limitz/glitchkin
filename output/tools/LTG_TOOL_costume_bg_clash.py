@@ -479,7 +479,8 @@ def format_report(result: dict) -> str:
     else:
         lines.append(f"Background: {result['bg_label']}")
         lines.append(f"BG dominant colors:   {[_rgb_str(c) for c in result['bg_colors']]}")
-        lines.append(f"Costume colors: {[f\"{e['label']} {_rgb_str(e['rgb'])}\" for e in result['input_colors']]}")
+        costume_strs = [f"{e['label']} {_rgb_str(e['rgb'])}" for e in result['input_colors']]
+        lines.append(f"Costume colors: {costume_strs}")
 
     lines.append("-" * 70)
     lines.append("Pairs (worst first):")

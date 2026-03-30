@@ -43,6 +43,20 @@ Usage:
   python3 LTG_TOOL_object_detect_qa.py path/to/image.png --threshold 0.3
 
 Dependencies: PIL/Pillow, torch, torchvision (all authorized per pil-standards.md)
+
+COCO-to-Glitchkin Class Mapping
+--------------------------------
+The COCO-trained model produces consistent misclassifications on our stylized
+cartoon assets. These are *useful* — treat them as proxy detections:
+
+  Glitch character    → "kite"        (angular diamond silhouette)
+  CRT monitor/screen  → "tv", "laptop" (expected — these ARE screens)
+  CRT with Glitchkin  → "microwave"   (boxy shape + internal figures)
+  Circular UI / clocks in panels → "clock"
+  Glitch confetti / particles → "stop sign", "traffic light" (bright geometric shapes)
+
+When using --expect, use these proxy labels to validate character/prop presence
+in stylized scenes. E.g.: `--expect tv,kite` for a panel with CRT + Glitch.
 """
 from __future__ import annotations
 
@@ -590,8 +604,7 @@ def main():
         print("Install with: pip install torch torchvision")
         sys.exit(2)
 
-    global DEFAULT_THRESHOLD
-    DEFAULT_THRESHOLD = args.threshold
+    threshold = args.threshold
 
     expected = None
     if args.expect:
@@ -600,11 +613,11 @@ def main():
     results = []
     if args.batch:
         print(f"[object_detect_qa] Scanning directory: {args.batch}")
-        results = detect_batch(args.batch, threshold=args.threshold,
+        results = detect_batch(args.batch, threshold=threshold,
                               model_name=args.model, recursive=args.recursive)
     elif args.image:
         print(f"[object_detect_qa] Analyzing: {args.image}")
-        results = [detect_objects(args.image, threshold=args.threshold,
+        results = [detect_objects(args.image, threshold=threshold,
                                  model_name=args.model)]
     else:
         parser.print_help()
