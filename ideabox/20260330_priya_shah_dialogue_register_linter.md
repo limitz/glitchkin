@@ -1,0 +1,5 @@
+**Author:** Priya Shah
+**Cycle:** 42
+**Date:** 2026-03-30
+**Idea:** Build a lightweight dialogue register linter — a Python script that scans any story or script document for character dialogue lines and flags potential register violations. It would apply simple pattern rules per character: Luma's lines should not contain multi-clause formal sentences; Byte's lines should not contain filler words or multi-clause structures; Cosmo's lines should not be under a certain word count; Grandma Miri's lines should not contain declarative statements (she asks, not tells). The tool would output a list of flagged lines with character, line, and violation type. Not authoritative — flags only, human judgment required for each flag.
+**Benefits:** As the script develops and more writers or agents produce dialogue, voice drift is the first thing that breaks. This tool would catch the most mechanical violations before they reach the storyboard team. Primary users: Priya Shah (review pass) and Diego Vargas (checking that panels match character voice). Secondary benefit: any future script agent starts with a documented voice rule set that has already been operationalized.

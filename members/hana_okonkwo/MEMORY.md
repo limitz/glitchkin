@@ -6,23 +6,25 @@ Comedy-adventure cartoon. Three worlds: Real World (warm/domestic), Glitch World
 ## Joined
 Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style frames).
 
-## Existing Environments (as of C41)
+## Existing Environments (as of C42)
 - Kitchen (Grandma's): v004 — `output/backgrounds/environments/LTG_ENV_grandma_kitchen.png`
 - **Tech Den: v006** — `LTG_ENV_tech_den.png`
-  - C40 fixes (v005): floor planks converging to VP_X=820, warm overlay strengthened, value floor fixed, window specular added
-  - C41 fix (v006): in-generator cool bottom pass via numpy Porter-Duff (alpha=130, 60-row graduated transition). Replaces warmth_inject post-process. Warm/cool 102.9 PASS, line_weight outliers=1 PASS, grade WARN (pre-existing color fidelity only).
-  - `_warminjected.png` file no longer the canonical QA-passing version — canonical file passes directly.
+  - C41 fix (v006): in-generator cool bottom pass via numpy Porter-Duff (alpha=130, 60-row graduated transition). Warm/cool 102.9 PASS, line_weight outliers=1 PASS, grade WARN (pre-existing color fidelity only).
 - Glitch Layer: v003
 - School Hallway: **v004** (C40 re-run) — `LTG_ENV_school_hallway.png`
-  - SUNLIT_AMBER hue fix in source. QA: warm/cool 34.8 PASS, value PASS, grade WARN (pre-existing color fidelity)
 - Millbrook Street: v002
 - **Living Room (C39)**: **v002** — `LTG_ENV_grandma_living_room.png` — QA PASS
 - **Classroom: FULL REBUILD C41** — `LTG_ENV_classroom_bg.png`
-  - Prior generator failed (silhouette blob, warm/cool 9.3, line_weight outliers=3 FAIL)
-  - C41 rebuilt from ENV_REBUILD_SPEC_classroom_c41.md: 1280×720, 3/4 back-right camera VP_X=192, dual-temp top/bottom split (warm top alpha-70 gradient, cool bottom alpha-75), perspective checkerboard, depth anchor, inhabitant evidence, paper_texture for line-weight
   - QA C41: silhouette PASS, warm/cool 17.0 PASS, line_weight 2 outliers PASS, grade WARN (pre-existing only)
-- **Luma Study Interior**: HOLD for C42. Rebuild spec at `output/production/ENV_REBUILD_SPEC_luma_study_c41.md`. Legacy PNG exists, no generator.
-  - C39 addition: diamond-crystal figurine at (438, 328), top shelf of bookcase. Warm amber catch-light only. No GL palette.
+- **Luma Study Interior: BUILT C42** — `LTG_ENV_luma_study_interior.png`
+  - Generator: `output/tools/LTG_TOOL_bg_luma_study_interior.py`
+  - First-ever generator for this room (prior legacy PNG C8, no source script)
+  - 1280×720, VP_X=230 VP_Y=273, 3/4 front-right camera
+  - Three light sources: CRT key (gaussian_glow r=140), bedside lamp (SUNLIT_AMBER r=120), night window cool
+  - Cool bottom gradient alpha 0→140 (60 row transition) → warm/cool sep=33.1 PASS
+  - Deep shadows: NEAR_BLACK_WARM alpha 248–252 at corners/crevices → value floor=28 PASS
+  - Miri Easter eggs: framed photo on shelf, knitted toy on chair back
+  - QA C42: silhouette PASS, value PASS (min=28 max=248), warm/cool 33.1 PASS, line_weight outliers=2 PASS, ceiling=248 PASS, grade WARN (color fidelity pre-existing only)
 
 ## Key Palette References
 - Master palette: `output/color/palettes/master_palette.md`
@@ -31,10 +33,25 @@ Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style fr
 
 ## QA Pipeline
 - `LTG_TOOL_render_qa.py` (v1.6.0) — always run before submitting
+- `LTG_TOOL_render_lib.py` now **v1.2.0** (C42) — `flatten_rgba_to_rgb(img, background=(255,255,255))` added
   - REAL world warm/cool threshold: **REAL_INTERIOR = 12**, **REAL_STORM = 3** (C39 split — was 20 in v1.4.0, 12 flat in v1.5.0)
   - Value floor ≤30, value ceiling ≥225, range ≥150
 - `LTG_TOOL_warmth_inject.py` — fixes warm/cool failures (auto mode)
 - `LTG_TOOL_palette_warmth_lint.py --world-type [REAL|GLITCH|OTHER_SIDE]`
+
+## Cycle 42 — Luma Study Interior + flatten_rgba_to_rgb
+
+### Luma Study Interior
+- Legacy PNG (C8) had no generator. Full build from ENV_REBUILD_SPEC_luma_study_c41.md.
+- Cool bottom gradient: alpha=140 (not 105) required to push bottom half hue from green-amber (~27) to green (~61) for sep=33.1. Lesson: CRT_GLOW = (160,195,165) — blue-green, not pure blue — so hue in PIL scale is ~60-65, not ~130. Both halves end up with different green variants (warm amber vs cool blue-green) → separation ≥12 achieved.
+- Value floor: NEAR_BLACK_WARM must be at alpha 248–252 over extreme corners AND a full-width floor strip at bottom 6% to guarantee ≤30. A single corner rectangle at alpha=230 was not enough (pixel min was 39 on first pass).
+- flatten_rgba_to_rgb() now available in render_lib v1.2.0. Use this at save time. Simpler and cleaner than manual numpy.
+
+### Warm/Cool Separation — Green vs Blue-Green
+- CRT_GLOW = (160,195,165) reads as muted green (~PIL hue 60–70), not blue (~130).
+- Two-half split with amber top and green bottom still achieves ≥12 separation because amber hue (~18-27) vs green-cyan hue (~60-65) → circular distance ≥33.
+- This is different from the Tech Den pattern where PURE cool-blue was needed (floor was already amber, needed blue at ~130).
+- General rule: warm/cool QA cares about distance between top-half and bottom-half median hue. Any hue pair with circular distance ≥12 on the 0-255 PIL scale passes.
 
 ## Lessons Learned (C38)
 
