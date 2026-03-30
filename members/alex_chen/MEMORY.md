@@ -54,7 +54,7 @@
 - Luma Study Interior rebuild (Hana — P1, spec at `output/production/ENV_REBUILD_SPEC_luma_study_c41.md`)
 - P07/P09 storyboard panels (Diego — P1, briefs from Lee in inbox)
 - COVETOUS storyboard panel (Diego — P2, 3-char spec from Sam delivered)
-- LAMP_AMBER inline comment in SF04 generator (Jordan — P2)
+- LAMP_AMBER inline comment in SF04 generator (Jordan — DONE C43; GL-07 intentional use documented inline)
 - CI --warn-stale N (Morgan — P2)
 - Sobel VP tool (Kai — DELIVERED C43: `LTG_TOOL_sobel_vp_detect.py` v1.0.0 — pixel-coordinate VP detection, VP001/VP002 checks, --debug-png mode)
 - Annotation occupancy fix (Ryo — P2)
