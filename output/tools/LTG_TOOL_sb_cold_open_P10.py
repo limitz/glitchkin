@@ -13,6 +13,12 @@ Beat: Byte is floating just above and behind Luma's head.
       His POV — or near enough — looking down at her sleeping face.
       Byte as a cool silhouette in the foreground (camera-side edge).
       Luma warm and unaware in mid-frame. Cyan glow landing on her cheek
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
       from Byte's ambient field. The moment just before she wakes.
 
 Shot:   OTS (Over-The-Shoulder) — Byte's shoulder/body partially in FG
@@ -52,7 +58,7 @@ Output: output/storyboards/panels/LTG_SB_cold_open_P10.png
 from PIL import Image, ImageDraw, ImageFont
 import math, random, os
 
-PANELS_DIR  = "/home/wipkat/team/output/storyboards/panels"
+PANELS_DIR = output_dir('storyboards', 'panels')
 OUTPUT_PATH = os.path.join(PANELS_DIR, "LTG_SB_cold_open_P10.png")
 os.makedirs(PANELS_DIR, exist_ok=True)
 

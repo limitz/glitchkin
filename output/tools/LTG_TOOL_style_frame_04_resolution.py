@@ -51,6 +51,12 @@ Usage:
     precritique_qa.py.
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 import os
 import sys
 import math
@@ -66,8 +72,8 @@ from LTG_TOOL_procedural_draw import (
     get_char_bbox
 )
 
-OUTPUT_PATH  = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_sf04.png"
-NOLIGHT_PATH = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_sf04_nolight.png"
+OUTPUT_PATH = output_dir('color', 'style_frames', 'LTG_COLOR_styleframe_sf04.png')
+NOLIGHT_PATH = output_dir('color', 'style_frames', 'LTG_COLOR_styleframe_sf04_nolight.png')
 
 W, H = 1280, 720
 

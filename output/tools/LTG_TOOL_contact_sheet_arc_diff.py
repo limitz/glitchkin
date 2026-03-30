@@ -53,6 +53,12 @@ Constants:
   BORDER_PX          =  4   (border thickness in pixels around each thumbnail)
 
 Programmatic API (for LTG_TOOL_precritique_qa integration — Morgan Walsh):
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
   from LTG_TOOL_contact_sheet_arc_diff import compare_contact_sheets
   result = compare_contact_sheets(old_path, new_path, output_path=None)
   # Returns dict: ok, error, n_old, n_new, same, changed, added, removed,
@@ -78,7 +84,7 @@ BORDER_PX         =  4
 MAX_OUT_W         = 800
 MAX_OUT_H         = 600
 
-DEFAULT_OUTPUT = "/home/wipkat/team/output/storyboards/LTG_TOOL_arc_diff_output.png"
+DEFAULT_OUTPUT = output_dir('storyboards', 'LTG_TOOL_arc_diff_output.png')
 
 # Change status colours (RGB)
 COLOR_SAME    = (140, 140, 140)   # grey

@@ -49,6 +49,12 @@ CRITICAL RULES (inherited from style frame generator):
   - Never overwrite existing files.
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 import math
 import random
 from PIL import Image, ImageDraw
@@ -376,5 +382,5 @@ def generate(output_path):
 
 
 if __name__ == "__main__":
-    out_path = "/home/wipkat/team/output/backgrounds/environments/LTG_ENV_other_side_bg.png"
+    out_path = output_dir('backgrounds', 'environments', 'LTG_ENV_other_side_bg.png')
     generate(out_path)

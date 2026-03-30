@@ -30,12 +30,18 @@ Camera: MEDIUM / eye-level / hallway POV
 Shot type: MEDIUM / eye-level / hallway POV
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFont
 import random
 import os
 
-ACT2_PANELS_DIR = "/home/wipkat/team/output/storyboards/act2/panels"
-PANELS_DIR      = "/home/wipkat/team/output/storyboards/panels"
+ACT2_PANELS_DIR = output_dir('storyboards', 'act2', 'panels')
+PANELS_DIR = output_dir('storyboards', 'panels')
 OUTPUT_PATH     = os.path.join(ACT2_PANELS_DIR, "LTG_SB_act2_panel_a207b.png")
 
 os.makedirs(ACT2_PANELS_DIR, exist_ok=True)

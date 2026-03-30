@@ -28,6 +28,12 @@ Canvas: 900×560px
 Character-over-background saturation rule: all character colors must
 exceed BG saturation.
 """
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFont
 import math
 
@@ -477,7 +483,7 @@ def generate_luma_classroom_pose(output_path):
 
 if __name__ == '__main__':
     import os
-    out_dir = "/home/wipkat/team/output/characters/main"
+    out_dir = output_dir('characters', 'main')
     os.makedirs(out_dir, exist_ok=True)
     generate_luma_classroom_pose(
         os.path.join(out_dir, "LTG_CHAR_luma_classroom_pose.png")

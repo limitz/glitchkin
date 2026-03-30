@@ -33,7 +33,7 @@ Reference assets for analysis and art direction on *Luma & the Glitchkin*.
 - **ACQUIRED** `reference/drawing guides/body/` (6 files) — Pre-teen and child proportion charts, adult vs child comparisons. Verify Luma's 5.5-head canon against real ratios. Feed measurement tool comparing crown-chin height vs full body height.
 - **ACQUIRED** `reference/drawing guides/face/` (14 files) — Facial expression sheets, proportion guides, cartoon expression studies. Ground-truth geometry for face test gate calibration. Measure eye-to-nose, nose-to-mouth, brow height ratios.
 - **ACQUIRED** `reference/drawing guides/hand/` (9 files) — Hand anatomy breakdowns, scale references. Informs Luma/Miri interaction staging (mug handoff in SF06).
-- NOT YET — Elderly woman (age 65–80) standing proportions specifically (body guides cover pre-teen well; elderly coverage is thin).
+- **ACQUIRED** `reference/gesture/elderly.png` — 65-year-old woman standing proportions with head-count breakdown. Cross-check for Miri's body proportions.
 
 ---
 
@@ -64,8 +64,8 @@ Reference assets for analysis and art direction on *Luma & the Glitchkin*.
 ## Colour Reference Charts
 
 - **ACQUIRED** `reference/color/` (7 files) — Munsell colour wheels, indoor lighting datasets, colour montages. Load as reference for perceptual uniformity validation. Compare ΔE between palette swatches in CIELAB vs Munsell distance.
-- NOT YET — Macbeth ColorChecker chart (digitised, CC-licensed version). Known-good LAB reference to verify ΔE=5.0 threshold corresponds to visually meaningful differences.
-- NOT YET — Natural scene statistics study (CC-licensed dataset summary) — domestic interior warm/cool ratio empirical data.
+- **ACQUIRED** `reference/color/xrite.jpg` — Macbeth ColorChecker chart. Known-good LAB reference to verify ΔE=5.0 threshold corresponds to visually meaningful differences.
+- **ACQUIRED** `reference/color/domestic interior1.webp`, `reference/color/domesticinterior.jpg` — Domestic interior warm/cool ratio empirical data.
 
 ---
 
@@ -80,9 +80,9 @@ Reference assets for analysis and art direction on *Luma & the Glitchkin*.
 
 | Item | Priority | Why |
 |---|---|---|
-| Macbeth ColorChecker (digitised) | HIGH | Sam's top request — ΔE=5.0 threshold validation |
-| Natural scene statistics dataset | MEDIUM | Empirical baseline for REAL_INTERIOR/REAL_STORM thresholds |
-| Elderly woman proportions | MEDIUM | Miri silhouette ratio cross-check |
+| ~~Macbeth ColorChecker (digitised)~~ | ~~HIGH~~ | **ACQUIRED** `reference/color/xrite.jpg` |
+| ~~Natural scene statistics dataset~~ | ~~MEDIUM~~ | **ACQUIRED** `reference/color/domestic*.{webp,jpg}` |
+| ~~Elderly woman proportions~~ | ~~MEDIUM~~ | **ACQUIRED** `reference/gesture/elderly.png` |
 | Wooden table under warm lamplight | LOW | Kitchen surface rendering detail |
 | D50 vs D65 illuminant chart | LOW | Sam's colour-science addition — pitch-deck projection QA |
 | Simultaneous contrast swatch pairs | LOW | Sam — ΔE threshold stress testing |

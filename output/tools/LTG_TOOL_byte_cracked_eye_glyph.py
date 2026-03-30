@@ -38,10 +38,16 @@ Output: /home/wipkat/team/output/characters/main/LTG_CHAR_byte_cracked_eye_glyph
 Usage: python3 LTG_TOOL_byte_cracked_eye_glyph.py
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 import os
 from PIL import Image, ImageDraw, ImageFont
 
-OUTPUT_PATH = "/home/wipkat/team/output/characters/main/LTG_CHAR_byte_cracked_eye_glyph.png"
+OUTPUT_PATH = output_dir('characters', 'main', 'LTG_CHAR_byte_cracked_eye_glyph.png')
 
 # Colors from master_palette.md
 VOID_BLACK      = ( 10,  10,  20)

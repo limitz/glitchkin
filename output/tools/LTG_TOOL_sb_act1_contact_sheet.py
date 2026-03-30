@@ -30,12 +30,18 @@ Output:
   /home/wipkat/team/output/storyboards/LTG_SB_act1_coldopen_contact_sheet.png
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFont
 import os
 import subprocess
 
-PANELS_DIR  = "/home/wipkat/team/output/storyboards/panels"
-OUTPUT_DIR  = "/home/wipkat/team/output/storyboards"
+PANELS_DIR = output_dir('storyboards', 'panels')
+OUTPUT_DIR = output_dir('storyboards')
 OUTPUT_PATH = os.path.join(OUTPUT_DIR, "LTG_SB_act1_coldopen_contact_sheet.png")
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)

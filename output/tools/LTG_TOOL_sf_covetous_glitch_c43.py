@@ -67,6 +67,12 @@ SPEC COMPLIANCE (inheriting C42 — all preserved):
   G008: BILATERAL_EYES = True — COVETOUS interior state
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 import math
 import os
 import random
@@ -858,5 +864,5 @@ def generate(output_path):
 
 
 if __name__ == "__main__":
-    out_path = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_sf_covetous_glitch.png"
+    out_path = output_dir('color', 'style_frames', 'LTG_COLOR_sf_covetous_glitch.png')
     generate(out_path)

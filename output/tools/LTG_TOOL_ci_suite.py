@@ -12,6 +12,7 @@ v1.1.0: Morgan Walsh / Cycle 40 — --known-issues flag
 v1.2.0: Morgan Walsh / Cycle 42 — --warn-stale N flag
 v1.6.0: Morgan Walsh / Cycle 46 — --auto-seed flag
 v1.7.0: Morgan Walsh / Cycle 47 — --dry-run flag, Check 10 ext_model_check
+v1.8.0: Morgan Walsh / Cycle 48 — Remove Check 10, add Check 10 doc_staleness
 
 Runs all LTG tool-pipeline CI checks in sequence and produces a combined report.
 
@@ -22,6 +23,11 @@ Checks run (in order)
 3. glitch_spec_lint        — Glitchkin generator spec compliance (G001–G008)
 4. spec_sync_ci            — P1 character spec CI gate (Luma/Cosmo/Miri/Byte/Glitch)
 5. char_spec_lint          — Detailed character spec (L001–L005, S001–S005, M001–M005)
+6. dual_output_check       — dual-generator output file conflict detection
+7. hardcoded_path_check    — /home/-prefixed absolute paths in active generators
+8. thumbnail_lint          — unwhitelisted .thumbnail() calls
+9. motion_sheet_coverage   — motion sheet coverage for characters with expression sheets
+10. doc_staleness          — documentation freshness (WARN 5+ cycles, FAIL 10+ cycles)
 
 Pass/fail threshold
 -------------------
@@ -89,7 +95,7 @@ Auto-seeding new FAILs
 
   Supported checks for auto-seeding:
     hardcoded_path_check, thumbnail_lint, dual_output_check,
-    stub_linter, char_spec_lint, spec_sync_ci, ext_model_check
+    stub_linter, char_spec_lint, spec_sync_ci
 
 Exit codes
 ----------
@@ -119,7 +125,7 @@ API
     from LTG_TOOL_ci_suite import check_thumbnail_lint
     from LTG_TOOL_ci_suite import check_motion_coverage
     from LTG_TOOL_ci_suite import collect_new_fails, auto_seed_known_issues
-    from LTG_TOOL_ci_suite import check_ext_models
+    from LTG_TOOL_ci_suite import check_doc_staleness
 
     known     = load_known_issues("ci_known_issues.json")
     known_raw = load_known_issues_raw("ci_known_issues.json")
@@ -196,9 +202,17 @@ v1.7.0 (C47): --dry-run flag for --auto-seed. Previews what would be seeded
               with URL downloads). FAIL if found, with file + line number.
               check_ext_models() exported for programmatic use.
               (Morgan Walsh)
+v1.8.0 (C48): REMOVED Check 10 ext_model_check — pretrained models ARE
+              allowed (policy correction). check_ext_models() removed.
+              NEW Check 10 — doc_staleness. Uses LTG_TOOL_doc_governance_audit
+              to flag stale documentation. WARN for docs not updated in 5+
+              cycles, FAIL for 10+ cycles. Configurable thresholds via
+              doc_staleness_warn_age and doc_staleness_fail_age params.
+              check_doc_staleness() exported for programmatic use.
+              (Morgan Walsh)
 """
 
-__version__ = "1.7.0"
+__version__ = "1.8.0"
 
 import os
 import sys
@@ -990,103 +1004,125 @@ def _run_motion_coverage(tools_dir):
         return "ERROR", f"motion_coverage error: {exc}", ""
 
 
-# ── Check 10: External Model Detection ───────────────────────────────────────
-
-# Patterns that indicate pretrained model weight downloads or external model deps
-_EXT_MODEL_PATTERNS = [
-    (r'(?:from\s+|import\s+)torchvision\.models', "torchvision.models import"),
-    (r'torch\.hub\.load\s*\(', "torch.hub.load() call"),
-    (r'torch\.hub\.download_url_to_dest\s*\(', "torch.hub download call"),
-    (r'(?:from\s+|import\s+)transformers(?:\s|\.)', "transformers (HuggingFace) import"),
-    (r'(?:from\s+|import\s+)huggingface_hub', "huggingface_hub import"),
-    (r'\.from_pretrained\s*\(', ".from_pretrained() call"),
-    (r'\.load_state_dict\s*\(\s*(?:torch\.hub|load_url|urlretrieve|requests\.get|urllib)',
-     ".load_state_dict with URL download"),
-    (r'torchvision\.models\.\w+\s*\(\s*(?:pretrained\s*=\s*True|weights\s*=)',
-     "torchvision pretrained model instantiation"),
-]
-
-import re as _re_module
+# ── Check 10: Doc Staleness ───────────────────────────────────────────────────
 
 
-def check_ext_models(tools_dir):
+def check_doc_staleness(current_cycle=48, warn_age=5, fail_age=10, project_root=None):
     """
-    Scan all .py files in tools_dir for imports of pretrained model weights
-    or external model dependencies.
+    Check documentation freshness by delegating to LTG_TOOL_doc_governance_audit.
 
     Parameters
     ----------
-    tools_dir : str
-        Path to output/tools/.
+    current_cycle : int
+        Current cycle number (e.g. 48).
+    warn_age : int
+        Cycles after which a doc triggers WARN (default 5).
+    fail_age : int
+        Cycles after which a doc triggers FAIL (default 10).
+    project_root : str | None
+        Project root directory. Auto-detected if None.
 
     Returns
     -------
-    list[dict]
-        Each entry: {file: str, line: int, text: str, pattern_desc: str}
-        Empty list if no hits found.
+    dict
+        {
+          "warn_docs": list[dict],   # docs stale >= warn_age but < fail_age
+          "fail_docs": list[dict],   # docs stale >= fail_age
+          "no_cycle_ref": list[dict], # docs with no cycle reference
+          "recent_docs": list[dict],  # docs that are fresh
+          "total_scanned": int,
+        }
+        Each doc dict has: path, max_cycle (int or None), age (int or None).
     """
-    tools_dir = _tools_dir_or_default(tools_dir)
-    findings = []
-    skip_prefixes = ("deprecated", "legacy", "__pycache__")
-
-    for fname in sorted(os.listdir(tools_dir)):
-        if not fname.endswith(".py"):
-            continue
-        fpath = os.path.join(tools_dir, fname)
-        if not os.path.isfile(fpath):
-            continue
-        # Skip deprecated/legacy dirs
-        rel = os.path.relpath(fpath, tools_dir)
-        if any(rel.startswith(p) for p in skip_prefixes):
-            continue
-
-        try:
-            with open(fpath, "r", encoding="utf-8", errors="replace") as fh:
-                lines = fh.readlines()
-        except OSError:
-            continue
-
-        for line_no, line_text in enumerate(lines, start=1):
-            stripped = line_text.strip()
-            # Skip comments
-            if stripped.startswith("#"):
-                continue
-            # Skip docstrings — crude but effective: skip lines inside triple-quotes
-            # (the pattern matching is enough for our detection purpose)
-            for pattern, desc in _EXT_MODEL_PATTERNS:
-                if _re_module.search(pattern, line_text):
-                    findings.append({
-                        "file": fname,
-                        "line": line_no,
-                        "text": stripped[:120],
-                        "pattern_desc": desc,
-                    })
-                    break  # one match per line is enough
-
-    return findings
-
-
-def _run_ext_model_check(tools_dir):
-    """Run external model detection check. Returns (status, summary, details)."""
     try:
-        findings = check_ext_models(tools_dir)
-        if not findings:
-            return "PASS", "No external/pretrained model imports detected", ""
-        details_lines = []
-        for f in findings:
+        from LTG_TOOL_doc_governance_audit import audit_docs
+    except ImportError:
+        return {
+            "warn_docs": [], "fail_docs": [], "no_cycle_ref": [],
+            "recent_docs": [], "total_scanned": 0,
+            "_error": "Could not import LTG_TOOL_doc_governance_audit",
+        }
+
+    # Run the audit with fail_age as the stale threshold (we split WARN/FAIL ourselves)
+    result = audit_docs(
+        current_cycle=current_cycle,
+        stale_threshold=warn_age,
+        project_root=project_root,
+    )
+
+    # The audit returns "stale" (>= warn_age) and "recent" (< warn_age).
+    # We further split "stale" into WARN (warn_age <= age < fail_age) and FAIL (>= fail_age).
+    warn_docs = []
+    fail_docs = []
+    for entry in result.get("stale", []):
+        if entry["age"] >= fail_age:
+            fail_docs.append(entry)
+        else:
+            warn_docs.append(entry)
+
+    return {
+        "warn_docs": warn_docs,
+        "fail_docs": fail_docs,
+        "no_cycle_ref": result.get("no_cycle_ref", []),
+        "recent_docs": result.get("recent", []),
+        "total_scanned": result.get("total_scanned", 0),
+    }
+
+
+def _run_doc_staleness(tools_dir):
+    """Run doc staleness check. Returns (status, summary, details)."""
+    # Derive current cycle from env or default to 48
+    cycle_str = os.environ.get("CYCLE_LABEL", "C48")
+    try:
+        current_cycle = int(cycle_str.lstrip("Cc"))
+    except (ValueError, AttributeError):
+        current_cycle = 48
+
+    try:
+        result = check_doc_staleness(current_cycle=current_cycle)
+    except Exception as exc:
+        return "ERROR", f"doc_staleness error: {exc}", ""
+
+    if result.get("_error"):
+        return "ERROR", result["_error"], ""
+
+    fail_docs = result["fail_docs"]
+    warn_docs = result["warn_docs"]
+    no_ref = result["no_cycle_ref"]
+    total = result["total_scanned"]
+
+    details_lines = []
+    if fail_docs:
+        details_lines.append(f"FAIL — {len(fail_docs)} doc(s) stale 10+ cycles:")
+        for d in fail_docs:
             details_lines.append(
-                f"  FAIL  {f['file']}:{f['line']}  [{f['pattern_desc']}]  {f['text']}"
+                f"  FAIL  C{d['max_cycle']:<3d}  (age {d['age']:>2d})  {d['path']}"
             )
-        details = "\n".join(details_lines)
-        by_file = {}
-        for f in findings:
-            by_file.setdefault(f["file"], []).append(f)
+    if warn_docs:
+        details_lines.append(f"WARN — {len(warn_docs)} doc(s) stale 5-9 cycles:")
+        for d in warn_docs:
+            details_lines.append(
+                f"  WARN  C{d['max_cycle']:<3d}  (age {d['age']:>2d})  {d['path']}"
+            )
+    if no_ref:
+        details_lines.append(f"INFO — {len(no_ref)} doc(s) with no cycle reference (not scored)")
+
+    details = "\n".join(details_lines)
+
+    if fail_docs:
         summary = (
-            f"{len(findings)} external model import(s) in {len(by_file)} file(s)"
+            f"{len(fail_docs)} FAIL (10+ cycles) + {len(warn_docs)} WARN (5-9 cycles) "
+            f"out of {total} docs scanned"
         )
         return "FAIL", summary, details
-    except Exception as exc:
-        return "ERROR", f"ext_model_check error: {exc}", ""
+    elif warn_docs:
+        summary = (
+            f"{len(warn_docs)} WARN (5-9 cycles stale) out of {total} docs scanned"
+        )
+        return "WARN", summary, details
+    else:
+        summary = f"All {total} docs are fresh (< 5 cycles)"
+        return "PASS", summary, details
 
 
 # ── Suite runner ──────────────────────────────────────────────────────────────
@@ -1101,7 +1137,7 @@ _CHECKS = [
     ("hardcoded_path_check", _run_hardcoded_path_check, "Hardcoded Path Check"),
     ("thumbnail_lint",       _run_thumbnail_lint,       "Thumbnail Lint"),
     ("motion_sheet_coverage",_run_motion_coverage,      "Motion Sheet Coverage"),
-    ("ext_model_check",      _run_ext_model_check,      "External Model Detection"),
+    ("doc_staleness",         _run_doc_staleness,         "Doc Staleness Check"),
 ]
 
 
@@ -1484,28 +1520,6 @@ def collect_new_fails(suite_result, tools_dir=None):
                     "code": "P1",
                     "reason_suffix": f"spec sync P1 failure for {char_name}",
                 })
-
-    # ── ext_model_check: re-run raw check ──
-    emc = checks.get("ext_model_check", {})
-    if emc.get("status") == "FAIL":
-        try:
-            findings = check_ext_models(tools_dir)
-            if findings:
-                known_files = _existing.get("ext_model_check", set())
-                by_file = {}
-                for f in findings:
-                    by_file.setdefault(f["file"], []).append(f)
-                for fname in sorted(by_file):
-                    if fname not in known_files:
-                        hits = by_file[fname]
-                        new_entries.append({
-                            "check": "ext_model_check",
-                            "file": fname,
-                            "code": None,
-                            "reason_suffix": f"{len(hits)} external model import(s)",
-                        })
-        except Exception:
-            pass
 
     # Deduplicate (same check+file+code)
     seen = set()

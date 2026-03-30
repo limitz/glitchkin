@@ -7,7 +7,7 @@
 """
 LTG_TOOL_sb_cold_open_P14.py
 Cold Open Panel P14 — MED — Byte Ricochets Off Bookshelf
-Diego Vargas, Storyboard Artist — Cycle 45
+Diego Vargas, Storyboard Artist — Cycle 45 (C48: ALARMED expression + asymmetric arms at impact)
 
 Beat: Comedic escalation. Byte has launched himself (or been launched) across
       Grandma Miri's den and impacts the bookshelf. The ricochet arc is shown as
@@ -43,10 +43,16 @@ Image size rule: ≤ 1280px in both dimensions.
 Output: output/storyboards/panels/LTG_SB_cold_open_P14.png
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFont
 import math, random, os
 
-PANELS_DIR  = "/home/wipkat/team/output/storyboards/panels"
+PANELS_DIR = output_dir('storyboards', 'panels')
 OUTPUT_PATH = os.path.join(PANELS_DIR, "LTG_SB_cold_open_P14.png")
 os.makedirs(PANELS_DIR, exist_ok=True)
 
@@ -130,10 +136,14 @@ def draw_irregular_poly(draw, cx, cy, r, sides, color, rng, seed_offset=0):
     draw.polygon(pts, fill=color)
 
 
-def draw_byte_silhouette(draw, cx, cy, scale=1.0, alpha_factor=1.0, img=None):
+def draw_byte_silhouette(draw, cx, cy, scale=1.0, alpha_factor=1.0, img=None,
+                         alarmed=False, trail_arm_angle=None):
     """
     Draw a simplified Byte silhouette (body + head) for multi-exposure ghost trail.
     alpha_factor 0.0–1.0: opacity control for ghost trail.
+    alarmed: if True, draw ALARMED expression (cracked eye wider, asymmetric brows, mouth).
+    trail_arm_angle: if set, angle in radians from origin → impact for asymmetric arm recoil.
+      - Trailing arm (toward origin) extends backward; flung arm extends at impact reaction.
     Uses RGBA overlay when img is provided.
     """
     body_h = int(42 * scale)
@@ -161,7 +171,7 @@ def draw_byte_silhouette(draw, cx, cy, scale=1.0, alpha_factor=1.0, img=None):
             draw.rectangle([cx + ex_off * int(scale), ey - 3,
                              cx + ex_off * int(scale) + 4, ey + 2],
                             fill=VOID_BLACK)
-        # Arms
+        # Arms (symmetric — no trail angle in direct mode)
         draw.rectangle([cx - body_w // 2 - arm_l, cy - arm_w // 2,
                          cx - body_w // 2,        cy + arm_w // 2], fill=c)
         draw.rectangle([cx + body_w // 2,         cy - arm_w // 2,
@@ -180,15 +190,68 @@ def draw_byte_silhouette(draw, cx, cy, scale=1.0, alpha_factor=1.0, img=None):
         ld.ellipse([cx - bw2, cy - bh2, cx + bw2, cy + bh2], fill=color)
         ld.ellipse([cx - head_r, cy - bh2 - head_r,
                     cx + head_r, cy - bh2 + head_r], fill=color)
-        ld.rectangle([cx - bw2 - arm_l, cy - arm_w // 2,
-                       cx - bw2,        cy + arm_w // 2], fill=color)
-        ld.rectangle([cx + bw2,         cy - arm_w // 2,
-                       cx + bw2 + arm_l, cy + arm_w // 2], fill=color)
-        # pixel eyes — darker
+
+        # ── Arms: asymmetric if trail_arm_angle is set ──────────────────────
+        if trail_arm_angle is not None:
+            # Trailing arm: extends BACK toward origin (opposite of travel direction)
+            trail_dx = -int(arm_l * 1.3 * math.cos(trail_arm_angle))
+            trail_dy = -int(arm_l * 1.3 * math.sin(trail_arm_angle))
+            t_x0 = cx - bw2
+            t_y0 = cy - arm_w // 2
+            ld.line([(t_x0, t_y0 + arm_w // 2),
+                     (t_x0 + trail_dx, t_y0 + arm_w // 2 + trail_dy)],
+                    fill=color, width=arm_w)
+            # Flung arm: extends OUTWARD perpendicular to travel (impact reaction)
+            perp_angle = trail_arm_angle + math.pi / 2
+            flung_dx = int(arm_l * 1.5 * math.cos(perp_angle))
+            flung_dy = int(arm_l * 1.5 * math.sin(perp_angle))
+            f_x0 = cx + bw2
+            f_y0 = cy - arm_w // 2
+            ld.line([(f_x0, f_y0 + arm_w // 2),
+                     (f_x0 + flung_dx, f_y0 + arm_w // 2 + flung_dy)],
+                    fill=color, width=arm_w)
+        else:
+            # Symmetric arms (ghost trail positions)
+            ld.rectangle([cx - bw2 - arm_l, cy - arm_w // 2,
+                           cx - bw2,        cy + arm_w // 2], fill=color)
+            ld.rectangle([cx + bw2,         cy - arm_w // 2,
+                           cx + bw2 + arm_l, cy + arm_w // 2], fill=color)
+
+        # ── Eyes + expression ───────────────────────────────────────────────
         ey   = cy - bh2
         eye_c = (0, 0, 0, alpha)
-        for ex_off in [-6, 5]:
-            ld.rectangle([cx + ex_off, ey - 3, cx + ex_off + 4, ey + 2], fill=eye_c)
+
+        if alarmed:
+            # ALARMED EXPRESSION at impact — Lee Tanaka C47 staging review
+            # Left eye (normal) — wider than default: 6px tall instead of 5px
+            ne_x = cx - int(6 * scale)
+            ld.rectangle([ne_x, ey - 4, ne_x + int(5 * scale), ey + 3], fill=eye_c)
+            # Right eye (cracked) — even wider: 8px tall, with crack line
+            ce_x = cx + int(4 * scale)
+            ld.rectangle([ce_x, ey - 5, ce_x + int(5 * scale), ey + 4], fill=eye_c)
+            # Crack line across cracked eye (HOT_MAGENTA scar)
+            crack_c = (*HOT_MAGENTA, alpha)
+            ld.line([(ce_x - 1, ey - 3), (ce_x + int(5 * scale) + 1, ey + 2)],
+                    fill=crack_c, width=max(1, int(scale)))
+            # Asymmetric brows: left brow higher (alarm), right brow lower
+            brow_c = (*BYTE_BODY, alpha)
+            brow_y_l = ey - int(7 * scale)
+            brow_y_r = ey - int(5 * scale)
+            ld.line([(ne_x - 1, brow_y_l + 2), (ne_x + int(5 * scale) + 1, brow_y_l)],
+                    fill=brow_c, width=max(1, int(2 * scale)))
+            ld.line([(ce_x - 1, brow_y_r), (ce_x + int(5 * scale) + 1, brow_y_r + 2)],
+                    fill=brow_c, width=max(1, int(2 * scale)))
+            # Mouth: open O shape (alarmed gasp)
+            mouth_cx = cx
+            mouth_cy = ey + int(8 * scale)
+            mouth_r  = max(2, int(3 * scale))
+            ld.ellipse([mouth_cx - mouth_r, mouth_cy - mouth_r,
+                        mouth_cx + mouth_r, mouth_cy + mouth_r], fill=eye_c)
+        else:
+            # Default expressionless eyes for ghost trail positions
+            for ex_off in [-6, 5]:
+                ld.rectangle([cx + ex_off, ey - 3, cx + ex_off + 4, ey + 2], fill=eye_c)
+
         img.paste(Image.alpha_composite(img.convert('RGBA'), layer).convert('RGB'))
 
 
@@ -365,6 +428,12 @@ def draw_panel():
     ctrl_x = int(PW * 0.25)
     ctrl_y = int(DRAW_H * -0.08)   # above frame — high arc
 
+    # Compute travel angle at impact (tangent to Bezier at t=1.0)
+    # For quadratic Bezier: tangent at t=1 is 2*(P2-P1) where P1=ctrl, P2=impact
+    travel_dx = impact_cx - ctrl_x
+    travel_dy = impact_cy - ctrl_y
+    travel_angle = math.atan2(travel_dy, travel_dx)
+
     num_ghosts = 5
     for gi in range(num_ghosts):
         t = gi / (num_ghosts - 1)   # 0.0 = origin, 1.0 = impact
@@ -375,8 +444,11 @@ def draw_panel():
         alpha_f = 0.15 + 0.85 * t
         scale   = 0.7 + 0.3 * t    # gets larger as it gets closer (TENSE energy)
 
+        is_impact = (gi == num_ghosts - 1)  # t=1.0 = impact position
         draw_byte_silhouette(draw, gx, gy, scale=scale,
-                              alpha_factor=alpha_f, img=img)
+                              alpha_factor=alpha_f, img=img,
+                              alarmed=is_impact,
+                              trail_arm_angle=travel_angle if is_impact else None)
         draw = ImageDraw.Draw(img)
 
     # Draw arc arrow line (trajectory guide — storyboard annotation)
@@ -476,7 +548,7 @@ def draw_panel():
 
     # Metadata
     draw.text((PW - 276, DRAW_H + 56),
-              "LTG_SB_cold_open_P14  /  Diego Vargas  /  C45",
+              "LTG_SB_cold_open_P14  /  Diego Vargas  /  C48",
               font=font_meta, fill=TEXT_META)
 
     # Arc border — HOT_MAGENTA (TENSE)

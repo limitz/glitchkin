@@ -58,6 +58,12 @@ Usage: python3 LTG_TOOL_style_frame_02_glitch_storm.py [--save-nolight]
     precritique_qa.py. Dutch angle is still applied to both outputs.
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 import os
 import sys
 import math
@@ -75,8 +81,8 @@ except ImportError:
     PROCEDURAL_DRAW_AVAILABLE = False
     print("WARNING: LTG_TOOL_procedural_draw not found — rim light passes will use fallback.")
 
-OUTPUT_PATH  = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm.png"
-NOLIGHT_PATH = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm_nolight.png"
+OUTPUT_PATH = output_dir('color', 'style_frames', 'LTG_COLOR_styleframe_glitch_storm.png')
+NOLIGHT_PATH = output_dir('color', 'style_frames', 'LTG_COLOR_styleframe_glitch_storm_nolight.png')
 # C44: Native 1280×720 — no LANCZOS thumbnail pass
 W, H = 1280, 720
 

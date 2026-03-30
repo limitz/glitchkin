@@ -38,6 +38,12 @@ INTEGRATION:
   the corrected version from this module.
 
   Import:
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
     from LTG_TOOL_sf02_fill_light_fix_c35 import draw_magenta_fill_light_v007_fast
 
   Then call:
@@ -353,7 +359,7 @@ if __name__ == "__main__":
         test_img, luma_cx, byte_cx, cosmo_cx, char_h
     )
 
-    out_path = "/home/wipkat/team/output/tools/LTG_SNAP_sf02_fill_light_test.png"
+    out_path = output_dir('tools', 'LTG_SNAP_sf02_fill_light_test.png')
     result.thumbnail((1280, 1280), Image.LANCZOS)
     result.save(out_path)
     print(f"  Test output: {out_path}")

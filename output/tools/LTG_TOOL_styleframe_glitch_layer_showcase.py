@@ -38,6 +38,12 @@ CRITICAL RULES:
   - All RNG seeded for reproducibility.
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 import math
 import os
 import random
@@ -560,7 +566,7 @@ def draw_footer(draw):
 
 # ── Main Generator ──────────────────────────────────────────────────────────
 
-OUTPUT_PATH = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_layer_showcase.png"
+OUTPUT_PATH = output_dir('color', 'style_frames', 'LTG_COLOR_styleframe_glitch_layer_showcase.png')
 
 
 def generate(output_path=None):

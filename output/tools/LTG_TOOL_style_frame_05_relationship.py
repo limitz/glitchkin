@@ -73,6 +73,12 @@ Author note on Miri hair accessory:
   Variable named `hairpin_col` to future-proof the comment.
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 import os
 import sys
 import math
@@ -81,7 +87,7 @@ from PIL import Image, ImageDraw, ImageFilter
 
 _here = os.path.dirname(os.path.abspath(__file__))
 
-OUTPUT_PATH = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_sf05.png"
+OUTPUT_PATH = output_dir('color', 'style_frames', 'LTG_COLOR_styleframe_sf05.png')
 
 W, H = 1280, 720
 

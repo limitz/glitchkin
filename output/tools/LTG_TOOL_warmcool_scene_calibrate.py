@@ -8,24 +8,26 @@ LTG_TOOL_warmcool_scene_calibrate.py
 =====================================
 Warm/Cool Scene Calibration Tool for "Luma & the Glitchkin."
 
-Measures warm/cool pixel separation in real-world reference photos and compares
-against the REAL_INTERIOR threshold (12.0 PIL hue units) used in render_qa.
+Measures warm/cool metrics in real-world reference photos and outputs
+empirically validated threshold values for the production pipeline.
 
-Purpose: validate whether analytically-derived warm/cool thresholds match
-real-world interior scene measurements.
-
-Metric: identical to render_qa _check_warm_cool() — median PIL HSV hue of
-top half vs bottom half, circular distance on 0–255 scale.
+Two metrics measured per image:
+  1. Hue-split separation: median PIL HSV hue of top half vs bottom half,
+     circular distance on 0-255 scale (render_qa _check_warm_cool() metric).
+  2. Warm-pixel-percentage: fraction of chromatic pixels with PIL HSV hue
+     in the warm range (0-42 or 213-255). Added C48.
 
 Additionally reports:
-- Warm pixel percentage (hue 0–42 or 213–255 on PIL scale, i.e. reds/oranges/yellows)
-- Cool pixel percentage (hue 85–170 on PIL scale, i.e. cyans/blues)
+- Warm pixel percentage (hue 0-42 or 213-255 on PIL scale, i.e. reds/oranges/yellows)
+- Cool pixel percentage (hue 85-170 on PIL scale, i.e. cyans/blues)
 - Neutral pixel percentage (remainder, including achromatics with sat < 0.05)
 - Per-image verdict: VALIDATES threshold / CHALLENGES threshold
+- Empirical threshold recommendations (--output-thresholds mode)
 
 Author: Sam Kowalski (Color & Style Artist)
 Created: Cycle 46 — 2026-03-30
-Version: 1.0.0
+Updated: Cycle 48 — 2026-03-30 (warm-pixel-pct, --output-thresholds, composite)
+Version: 2.0.0
 
 Usage:
   # Single image
@@ -40,11 +42,15 @@ Usage:
   # Write calibration report
   python3 LTG_TOOL_warmcool_scene_calibrate.py --batch "reference/kitchen predawn" --batch "reference/living room night" --report output/production/warmcool_calibration_report.md
 
+  # Output threshold values (JSON to stdout)
+  python3 LTG_TOOL_warmcool_scene_calibrate.py --batch "reference/living room night" --batch "reference/kitchen predawn" --output-thresholds
+
 Dependencies: PIL/Pillow, NumPy (both authorized per pil-standards.md)
 """
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import sys
 import textwrap
@@ -517,6 +523,101 @@ def generate_report(batch_results: List[Dict], report_path: Optional[str] = None
 
 
 # ---------------------------------------------------------------------------
+# Empirical threshold derivation (C48)
+# ---------------------------------------------------------------------------
+
+def derive_thresholds(batch_results: List[Dict], safety_margin: float = 0.8) -> Dict:
+    """
+    Derive empirical threshold recommendations from reference photo measurements.
+
+    Args:
+        batch_results: list of batch_analyze() results
+        safety_margin: multiplier applied to min observed value (default 0.8 = 20% below min)
+
+    Returns dict with:
+        hue_split: recommended thresholds per metric
+        warm_pixel_pct: recommended thresholds per metric
+        composite: recommended composite thresholds
+        data_points: number of images used
+        raw_values: per-image measurements
+    """
+    separations = []
+    warm_pcts = []
+    raw_values = []
+
+    for batch in batch_results:
+        if "error" in batch:
+            continue
+        for r in batch.get("results", []):
+            if r.get("status") != "OK":
+                continue
+            if r["separation"].get("achromatic"):
+                continue
+
+            sep = r["separation"]["separation"]
+            wpct = r["pixels"]["warm_pct"]
+            separations.append(sep)
+            warm_pcts.append(wpct)
+            raw_values.append({
+                "file": r["filename"],
+                "hue_split": sep,
+                "warm_pct": wpct,
+            })
+
+    if not separations:
+        return {"error": "No valid data points", "data_points": 0}
+
+    # Derive thresholds with safety margin
+    min_sep = min(separations)
+    min_wpct = min(warm_pcts)
+    median_sep = float(np.median(separations))
+    median_wpct = float(np.median(warm_pcts))
+
+    # Hue-split threshold: floor at safety_margin * min observed
+    recommended_hue_split = round(min_sep * safety_margin, 2)
+
+    # Warm-pixel-pct threshold: floor at safety_margin * min observed
+    recommended_warm_pct = round(min_wpct * safety_margin, 2)
+
+    # Composite threshold (using weights from composite_warmth_score)
+    w_pixel = 0.7
+    w_split = 0.3
+    composites = []
+    for sep, wpct in zip(separations, warm_pcts):
+        c = w_pixel * (wpct / 100.0) + w_split * min(sep / 127.5, 1.0)
+        composites.append(round(c, 4))
+
+    min_composite = min(composites)
+    recommended_composite = round(min_composite * safety_margin, 4)
+
+    return {
+        "hue_split": {
+            "min_observed": round(min_sep, 2),
+            "median_observed": round(median_sep, 2),
+            "recommended_threshold": recommended_hue_split,
+            "current_threshold": REAL_INTERIOR_THRESHOLD,
+            "current_validated": min_sep >= REAL_INTERIOR_THRESHOLD,
+        },
+        "warm_pixel_pct": {
+            "min_observed": round(min_wpct, 2),
+            "median_observed": round(median_wpct, 2),
+            "recommended_threshold": recommended_warm_pct,
+            "current_threshold": 35.0,
+            "current_validated": min_wpct >= 35.0,
+        },
+        "composite": {
+            "min_observed": round(min_composite, 4),
+            "median_observed": round(float(np.median(composites)), 4),
+            "recommended_threshold": recommended_composite,
+            "weights": {"warm_pixel": w_pixel, "hue_split": w_split},
+        },
+        "data_points": len(separations),
+        "safety_margin": safety_margin,
+        "raw_values": raw_values,
+    }
+
+
+# ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
 
@@ -538,7 +639,15 @@ def main():
     )
     parser.add_argument(
         "--threshold", type=float, default=None,
-        help=f"Override REAL_INTERIOR threshold (default: {REAL_INTERIOR_THRESHOLD})"
+        help="Override REAL_INTERIOR threshold (default: {})".format(REAL_INTERIOR_THRESHOLD)
+    )
+    parser.add_argument(
+        "--output-thresholds", action="store_true",
+        help="Derive and output empirical threshold values as JSON"
+    )
+    parser.add_argument(
+        "--safety-margin", type=float, default=0.8,
+        help="Safety margin multiplier for threshold derivation (default: 0.8)"
     )
 
     args = parser.parse_args()
@@ -614,10 +723,16 @@ def main():
                 },
             })
 
+    # Threshold derivation
+    if args.output_thresholds and batch_results:
+        thresholds = derive_thresholds(batch_results, safety_margin=args.safety_margin)
+        print(json.dumps(thresholds, indent=2))
+        sys.exit(0)
+
     # Report
     if args.report:
         report_text = generate_report(batch_results, report_path=args.report)
-        print(f"\nReport written to: {args.report}")
+        print("\nReport written to: {}".format(args.report))
     elif batch_results:
         report_text = generate_report(batch_results)
         print("\n" + report_text)

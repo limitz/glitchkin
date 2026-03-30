@@ -40,10 +40,16 @@ Standards:
 - Image size rule: ≤ 1280px in both dimensions
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFont
 import os, math, random
 
-OUTPUT_DIR  = "/home/wipkat/team/output/storyboards"
+OUTPUT_DIR = output_dir('storyboards')
 OUTPUT_PATH = os.path.join(OUTPUT_DIR, "LTG_SB_pilot_cold_open.png")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 

@@ -21,6 +21,12 @@ Camera: Eye-level (child height). Very similar to A1-03 setup but now Byte is
 clearly visible on screen — full character reveal on screen.
 
 Luma expression: SURPRISED (wide eyes, jaw slightly dropped, leaning back slightly
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from pure reflex — she was leaning in a moment ago, now she recoils an inch).
 
 Byte (on screen): default glow (cyan/teal), slightly indignant expression —
@@ -33,7 +39,7 @@ Arc: SURPRISED — first contact. "Wait — that looked back at me."
 from PIL import Image, ImageDraw, ImageFont
 import math, random, os
 
-PANELS_DIR  = "/home/wipkat/team/output/storyboards/panels"
+PANELS_DIR = output_dir('storyboards', 'panels')
 OUTPUT_PATH = os.path.join(PANELS_DIR, "LTG_SB_act1_panel_a104.png")
 os.makedirs(PANELS_DIR, exist_ok=True)
 

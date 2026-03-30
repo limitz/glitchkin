@@ -38,6 +38,11 @@ Tools chained (in order):
      (docs/image-rules.md, codified C45). Samples FG (78%) and BG (70%) tier bands.
      PASS: separation >= threshold. WARN: correct direction, insufficient separation.
      FAIL: inverted. SKIP: GL exempt. Runs on registered DEPTH_TEMP_PNGS.
+ 13. Warm Pixel Percentage (scored) — world-type warm/cool pixel classification (Kai Nakamura C48)
+     LTG_TOOL_warm_pixel_metric.measure_warm_pixel_percentage() + evaluate_threshold().
+     Per-asset world_type tag determines threshold. REAL_INTERIOR >= 35%, GLITCH <= 15%, etc.
+     PASS: within threshold. FAIL: outside threshold. SKIP: file missing.
+     Runs on registered WARM_PIXEL_PNGS.
 
 Output:
     output/production/precritique_qa_c<NN>.md
@@ -56,6 +61,11 @@ Version: 2.14.0 (C45 Rin Yamamoto: LTG_TOOL_uv_purple_linter v1.1.0 GLITCH_DARK_
                COVETOUS assets previously FAIL (0.6% / 0.2% ΔE-match) now PASS via hue-angle
                matching (96.7% / 98.9% UV_PURPLE hue family h° 255°–325°).
                No change to ENV asset handling — glitchlayer_frame WARNs remain.)
+Version: 2.16.0 (C48 Kai Nakamura: Section 13 Warm Pixel Percentage added.
+               LTG_TOOL_warm_pixel_metric.measure_warm_pixel_percentage() +
+               evaluate_threshold() on WARM_PIXEL_PNGS registry. Each asset has
+               a world_type tag for threshold lookup. Scored section (PASS/WARN/FAIL).
+               CYCLE_LABEL bumped to C48. Step numbering updated 1-13/13.)
 Version: 2.15.0 (C47 Lee Tanaka: Section 12 Depth Temperature Lint added.
                LTG_TOOL_depth_temp_lint.run_depth_temp_check() on DEPTH_TEMP_PNGS registry.
                Checks warm=FG / cool=BG depth grammar per docs/image-rules.md.
@@ -139,7 +149,7 @@ PALETTE_MD  = REPO_ROOT / "output" / "color" / "palettes" / "master_palette.md"
 BASELINE_JSON = TOOLS_DIR / "qa_baseline_last.json"
 
 # Cycle label — update each cycle
-CYCLE_LABEL = "C47"
+CYCLE_LABEL = "C48"
 
 if str(TOOLS_DIR) not in sys.path:
     sys.path.insert(0, str(TOOLS_DIR))
@@ -218,6 +228,27 @@ def _load_depth_temp_lint():
         mod = _importlib_util.module_from_spec(spec)
         spec.loader.exec_module(mod)
         _depth_temp_lint_mod = mod
+        return mod
+    except Exception:
+        return None
+
+
+# Warm-pixel-metric tool: loaded lazily (requires PIL + numpy; skips gracefully if absent)
+_warm_pixel_metric_mod = None
+
+def _load_warm_pixel_metric():
+    """Lazily import LTG_TOOL_warm_pixel_metric. Returns module or None."""
+    global _warm_pixel_metric_mod
+    if _warm_pixel_metric_mod is not None:
+        return _warm_pixel_metric_mod
+    try:
+        spec = _importlib_util.spec_from_file_location(
+            "LTG_TOOL_warm_pixel_metric",
+            str(TOOLS_DIR / "LTG_TOOL_warm_pixel_metric.py"),
+        )
+        mod = _importlib_util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        _warm_pixel_metric_mod = mod
         return mod
     except Exception:
         return None
@@ -447,6 +478,55 @@ DEPTH_TEMP_PNGS = [
     ("SF02 Glitch Storm",        SF_DIR  / "LTG_COLOR_styleframe_glitch_storm.png"),
     # COVETOUS — three-character, Glitch Layer → expected SKIP
     ("COVETOUS Style Frame",     SF_DIR  / "LTG_COLOR_sf_covetous_glitch.png"),
+]
+
+
+# ---------------------------------------------------------------------------
+# Warm Pixel Percentage assets for Section 13 (Kai Nakamura C48)
+# ---------------------------------------------------------------------------
+# Style frames and environment backgrounds with assigned world types for
+# warm-pixel-percentage threshold validation. Uses Sam Kowalski's
+# LTG_TOOL_warm_pixel_metric.py (C47).
+#
+# Each entry: (label, path, world_type)
+# world_type must match LTG_TOOL_warm_pixel_metric.WARM_PCT_THRESHOLDS keys:
+#   REAL_INTERIOR, REAL_STORM, GLITCH, OTHER_SIDE
+
+WARM_PIXEL_PNGS = [
+    # Real World interiors — warm_pct >= 35%
+    ("SF01 Discovery",
+     SF_DIR / "LTG_COLOR_styleframe_discovery.png",
+     "REAL_INTERIOR"),
+    ("SF04 Resolution",
+     SF_DIR / "LTG_COLOR_styleframe_sf04.png",
+     "REAL_INTERIOR"),
+    ("SF05 The Passing",
+     SF_DIR / "LTG_COLOR_styleframe_sf05.png",
+     "REAL_INTERIOR"),
+    ("SF06 The Hand-Off",
+     SF_DIR / "LTG_COLOR_sf_miri_luma_handoff.png",
+     "REAL_INTERIOR"),
+    # Real World storm — warm_pct >= 5%
+    ("SF02 Glitch Storm",
+     SF_DIR / "LTG_COLOR_styleframe_glitch_storm.png",
+     "REAL_STORM"),
+    # Glitch Layer — warm_pct <= 15%
+    ("COVETOUS Style Frame",
+     SF_DIR / "LTG_COLOR_sf_covetous_glitch.png",
+     "GLITCH"),
+    ("COVETOUS v001",
+     SF_DIR / "LTG_SF_covetous_glitch_v001.png",
+     "GLITCH"),
+    ("Glitch Layer Frame",
+     ENV_DIR / "LTG_ENV_glitchlayer_frame.png",
+     "GLITCH"),
+    ("Glitch Layer Encounter",
+     ENV_DIR / "LTG_ENV_glitchlayer_encounter.png",
+     "GLITCH"),
+    # Other Side — warm_pct <= 5%
+    ("SF03 Other Side",
+     SF_DIR / "LTG_COLOR_styleframe_otherside.png",
+     "OTHER_SIDE"),
 ]
 
 

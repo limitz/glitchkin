@@ -28,6 +28,12 @@ Usage:
  in Cycle 28 — generator files use LTG_TOOL_ prefix. Output PNG names are unchanged.]
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 import os
 import sys
 import shutil
@@ -38,8 +44,8 @@ sys.path.insert(0, TOOLS_DIR)
 
 from LTG_TOOL_logo_asymmetric import generate as _gen_asymmetric
 
-CANONICAL_OUTPUT = "/home/wipkat/team/output/production/LTG_BRAND_logo.png"
-UNDERLYING_OUTPUT = "/home/wipkat/team/output/production/LTG_BRAND_logo_asymmetric.png"
+CANONICAL_OUTPUT = output_dir('production', 'LTG_BRAND_logo.png')
+UNDERLYING_OUTPUT = output_dir('production', 'LTG_BRAND_logo_asymmetric.png')
 
 
 def generate():

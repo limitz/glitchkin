@@ -22,6 +22,12 @@ Recalculated C18 — correct alpha-composite formula applied.
 Rules: Open source only (PIL). After img.paste(), always refresh draw = ImageDraw.Draw(img).
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFont
 import os
 
@@ -232,7 +238,7 @@ def generate():
     draw.text((MARGIN_LEFT, H - 30), "LTG_TOOL_luma_cold_overlay_swatches.py  ·  Sam Kowalski, Color & Style Artist  ·  Cycle 18  ·  Luma & the Glitchkin", fill=(100, 90, 80), font=font_small)
 
     # ── Save ──────────────────────────────────────────────────────────────
-    out_path = "/home/wipkat/team/output/characters/color_models/swatches/LTG_COLOR_luma_cold_overlay.png"
+    out_path = output_dir('characters', 'color_models', 'swatches', 'LTG_COLOR_luma_cold_overlay.png')
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     img.save(out_path)
     print(f"Saved: {out_path}")

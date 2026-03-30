@@ -71,7 +71,7 @@ def _get_max_cycle(filepath):
         return None
 
 
-def audit_docs(current_cycle=47, stale_threshold=10, project_root=None):
+def audit_docs(current_cycle=48, stale_threshold=10, project_root=None):
     """
     Scan all .md files under docs/ and output/ for cycle references.
 
@@ -231,8 +231,8 @@ def main():
     parser.add_argument(
         "--current-cycle",
         type=int,
-        default=47,
-        help="Current cycle number (default: 47)",
+        default=48,
+        help="Current cycle number (default: 48)",
     )
     parser.add_argument(
         "--stale-threshold",

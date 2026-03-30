@@ -61,6 +61,12 @@ Usage: python3 LTG_TOOL_styleframe_discovery.py [--save-nolight]
     Enables Section 10 (alpha_blend_lint) in precritique_qa.py.
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 import os
 import sys
 import math
@@ -76,8 +82,8 @@ from LTG_TOOL_procedural_draw import (
     add_rim_light, add_face_lighting
 )
 
-OUTPUT_PATH        = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery.png"
-NOLIGHT_PATH       = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery_nolight.png"
+OUTPUT_PATH = output_dir('color', 'style_frames', 'LTG_COLOR_styleframe_discovery.png')
+NOLIGHT_PATH = output_dir('color', 'style_frames', 'LTG_COLOR_styleframe_discovery_nolight.png')
 
 # Working at 1280x720 — fits <= 1280px rule directly
 W, H = 1280, 720

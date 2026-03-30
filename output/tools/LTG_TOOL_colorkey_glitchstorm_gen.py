@@ -36,12 +36,18 @@ Output: /home/wipkat/team/output/color/color_keys/thumbnails/
 Usage: python3 LTG_TOOL_colorkey_glitchstorm_gen.py
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 import os
 import math
 import random
 from PIL import Image, ImageDraw, ImageFont
 
-OUTPUT_DIR = "/home/wipkat/team/output/color/color_keys/thumbnails"
+OUTPUT_DIR = output_dir('color', 'color_keys', 'thumbnails')
 W, H = 640, 360  # 16:9 thumbnail
 
 # ── Palette constants (all inline tuples named) ──────────────────────────────

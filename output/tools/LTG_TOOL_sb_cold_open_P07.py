@@ -10,6 +10,12 @@ Cold Open Panel P07 — MED WIDE — Monitor Bulging / Dutch 8° CW / Byte Phase
 Diego Vargas, Storyboard Artist — Cycle 43
 
 Beat: The moment before Byte fully crosses. The CRT is under physical pressure
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
       from inside. Dutch tilt signals the room's geometry can no longer be trusted.
       Byte is mid-phase: lower half still inside (desaturated, behind glass),
       upper half emerging into the real world (full teal + confetti burst at threshold).
@@ -42,7 +48,7 @@ Output: output/storyboards/panels/LTG_SB_cold_open_P07.png
 from PIL import Image, ImageDraw, ImageFont
 import math, random, os
 
-PANELS_DIR  = "/home/wipkat/team/output/storyboards/panels"
+PANELS_DIR = output_dir('storyboards', 'panels')
 OUTPUT_PATH = os.path.join(PANELS_DIR, "LTG_SB_cold_open_P07.png")
 os.makedirs(PANELS_DIR, exist_ok=True)
 

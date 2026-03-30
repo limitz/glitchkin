@@ -7,7 +7,18 @@
 """
 LTG_TOOL_sf_miri_luma_handoff.py
 Style Frame — "The Hand-Off" (SF_MIRI_LUMA_HANDOFF / SF06 candidate)
-"Luma & the Glitchkin" — Cycle 44 / Maya Santos
+"Luma & the Glitchkin" — Cycle 48 / Maya Santos
+
+Cycle 48 changes (Maya Santos, C48):
+  - SHOULDER INVOLVEMENT: Both Miri and Luma torsos now use polyline shoulder
+    points with deltoid bumps that respond to arm position.
+    Miri: right shoulder shifts outward +5px (forward pull for hand-off gesture).
+    Luma: left shoulder slight rise -3px (curious lean), right shoulder outward
+    +5px (forward/outward arm).
+    Per image-rules.md Shoulder Involvement Rule (codified C47).
+    Per-character clothing reads: Miri = cardigan crease, Luma = hoodie bunch.
+
+Cycle 44 / Maya Santos (original)
 
 Concept: "The Hand-Off"
 Miri and Luma together in the living room, at the CRT. Miri's hand is on
@@ -38,6 +49,12 @@ Face test gate: Luma face drawn via draw_luma_face_handoff() at sprint scale.
 Output: output/color/style_frames/LTG_COLOR_sf_miri_luma_handoff.png
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 import math
 import os
 import random
@@ -341,10 +358,36 @@ def draw_crt_glow(img, scr_x1, scr_y1, scr_x2, scr_y2):
     return out.convert("RGB")
 
 
+# ── Shoulder Involvement (C48 — codified C47 image-rules.md) ─────────────────
+# When an arm moves past ~30 degrees from rest, the shoulder line must change.
+# Per-character clothing reads: Miri = cardigan shoulder crease; Luma = hoodie
+# fabric bunch. Implemented as torso polyline with deltoid bump vertices.
+
+def _sf_shoulder_dy(arm_dy, arm_dx, mode="standard"):
+    """Calculate shoulder displacement for style-frame characters.
+
+    arm_dy: vertical displacement of arm endpoint from shoulder (negative = raised)
+    arm_dx: horizontal displacement from shoulder (positive = extended outward)
+    mode: "extended" for forward/outward reach, "neutral" for relaxed
+    Returns (dy, dx_shift): dy is vertical shift (negative = up), dx is outward shift.
+    """
+    dy = 0
+    dx = 0
+    if mode == "extended":
+        # Shoulder point shifts outward 4-6px and drops 1-2px for forward extension
+        dy = -2
+        dx = 5
+    elif arm_dy < -10:
+        # Raised arm: shoulder rises proportional to raise
+        dy = max(-6, int(arm_dy * 0.20))
+    return dy, dx
+
+
 # ── Character Drawing ──────────────────────────────────────────────────────────
 # Characters at style-frame scale.
 # Head radius: HR = 42px (Miri), 46px (Luma) — readable faces at 1280×720.
 # Ground line: GROUND_Y = int(H * 0.90)
+# C48: Shoulder involvement applied per image-rules.md (Shoulder Involvement Rule).
 
 GROUND_Y = int(H * 0.90)
 
@@ -368,15 +411,29 @@ def draw_miri_character(img, draw, cx, ground_y):
     head_cy = ground_y - total_h + HR
     head_cx = cx
 
-    # ── Body (weathered rectangle torso) ─────────────────────────────────────
+    # ── Body (weathered torso with shoulder involvement) ────────────────────
     torso_top_y  = head_cy + HR + int(HU * 0.08)   # neck gap
     torso_bot_y  = head_cy + HR + int(HU * 1.13)   # torso bottom
     torso_w_half = int(HU * 0.52)
 
-    # Cardigan body fill
-    draw.rectangle([cx - torso_w_half, torso_top_y,
-                    cx + torso_w_half, torso_bot_y],
-                   fill=MIRI_CARDIGAN, outline=LINE_DARK, width=2)
+    # C48: Shoulder displacement — Miri's right arm is extended toward CRT.
+    # Left arm neutral: no displacement. Right arm forward: shoulder shifts out.
+    l_sh_dy, l_sh_dx = _sf_shoulder_dy(0, 0, mode="neutral")
+    r_sh_dy, r_sh_dx = _sf_shoulder_dy(0, int(HU * 0.62), mode="extended")
+    sh_bump_w = int(HU * 0.07)  # deltoid bump width
+
+    # Cardigan body fill — polyline torso with shoulder bumps
+    torso_pts = [
+        (cx - torso_w_half - sh_bump_w, torso_top_y),                 # outer left shoulder
+        (cx - torso_w_half + l_sh_dx, torso_top_y + l_sh_dy),        # left deltoid peak
+        (cx - int(torso_w_half * 0.3), torso_top_y),                  # inner left shoulder
+        (cx + int(torso_w_half * 0.3), torso_top_y),                  # inner right shoulder
+        (cx + torso_w_half + r_sh_dx, torso_top_y + r_sh_dy),        # right deltoid peak (forward pull)
+        (cx + torso_w_half + sh_bump_w + r_sh_dx, torso_top_y),      # outer right shoulder
+        (cx + torso_w_half, torso_bot_y),                              # bottom right
+        (cx - torso_w_half, torso_bot_y),                              # bottom left
+    ]
+    draw.polygon(torso_pts, fill=MIRI_CARDIGAN, outline=LINE_DARK, width=2)
 
     # Cardigan shadow (right side — warm light from left)
     shadow_x = cx + int(torso_w_half * 0.35)
@@ -637,15 +694,33 @@ def draw_luma_character(img, draw, cx, ground_y):
     # Forward lean: shift upper body left (toward Miri+CRT)
     lean_dx = -int(HU * 0.06)
 
-    # ── Body (hoodie rectangle, rounded corners) ───────────────────────────────
+    # ── Body (hoodie with shoulder involvement) ─────────────────────────────────
     torso_cx     = cx + lean_dx
     torso_top_y  = head_cy + HR + int(HU * 0.08)
     torso_bot_y  = head_cy + HR + int(HU * 1.10)
     torso_w_half = int(HU * 0.44)
 
-    draw.rectangle([torso_cx - torso_w_half, torso_top_y,
-                    torso_cx + torso_w_half, torso_bot_y],
-                   fill=LUMA_HOODIE, outline=LINE_DARK, width=2)
+    # C48: Shoulder displacement — Luma's left arm slightly raised (curious lean),
+    # right arm forward/outward toward CRT direction.
+    # Left arm dy: elbow at 0.40 HU below shoulder -> moderate raise
+    l_arm_dy = int(HU * 0.40) - int(HU * 0.08)  # elbow y relative to shoulder
+    l_sh_dy, l_sh_dx = _sf_shoulder_dy(-abs(int(HU * 0.12)), 0, mode="standard")
+    # Right arm: forward/outward
+    r_sh_dy, r_sh_dx = _sf_shoulder_dy(0, int(HU * 0.10), mode="extended")
+    sh_bump_w = int(HU * 0.06)  # hoodie fabric bunch width
+
+    # Hoodie torso — polyline with shoulder bumps
+    torso_pts = [
+        (torso_cx - torso_w_half - sh_bump_w, torso_top_y),              # outer left shoulder
+        (torso_cx - torso_w_half + l_sh_dx, torso_top_y + l_sh_dy),     # left deltoid peak (slight raise)
+        (torso_cx - int(torso_w_half * 0.3), torso_top_y),               # inner left shoulder
+        (torso_cx + int(torso_w_half * 0.3), torso_top_y),               # inner right shoulder
+        (torso_cx + torso_w_half + r_sh_dx, torso_top_y + r_sh_dy),     # right deltoid peak
+        (torso_cx + torso_w_half + sh_bump_w + r_sh_dx, torso_top_y),   # outer right shoulder
+        (torso_cx + torso_w_half, torso_bot_y),                           # bottom right
+        (torso_cx - torso_w_half, torso_bot_y),                           # bottom left
+    ]
+    draw.polygon(torso_pts, fill=LUMA_HOODIE, outline=LINE_DARK, width=2)
 
     # Shadow (right side — CRT cool light from right, warm from left)
     shadow_x = torso_cx - int(torso_w_half * 0.30)
@@ -884,7 +959,7 @@ def draw_caption(img):
     except Exception:
         font = None
 
-    label = "SF06 — THE HAND-OFF  |  Miri + Luma + CRT  |  REAL WORLD  |  C44 Maya Santos"
+    label = "SF06 — THE HAND-OFF  |  Miri + Luma + CRT  |  REAL WORLD  |  C48 Maya Santos"
     draw.rectangle([0, H - 22, W, H], fill=NEAR_BLACK_WARM)
     draw.text((8, H - 18), label, fill=AGED_CREAM, font=font)
 
@@ -894,7 +969,7 @@ def draw_caption(img):
 def main():
     random.seed(44)
 
-    out_dir  = "/home/wipkat/team/output/color/style_frames"
+    out_dir = output_dir('color', 'style_frames')
     out_path = os.path.join(out_dir, "LTG_COLOR_sf_miri_luma_handoff.png")
     os.makedirs(out_dir, exist_ok=True)
 
@@ -943,12 +1018,12 @@ def main():
     # Size rule compliance
     img.thumbnail((1280, 1280), Image.LANCZOS)
     img.save(out_path)
-    print(f"[Maya C44] Saved: {out_path}  ({img.width}×{img.height}px)")
+    print(f"[Maya C48] Saved: {out_path}  ({img.width}×{img.height}px)")
     print("  Composition: Miri (L) + CRT (C) + Luma (R) — The Hand-Off")
     print("  Palette: Real World only. No GL colors.")
+    print("  C48: Shoulder involvement applied — Miri R shoulder forward pull, Luma L rise + R outward.")
     print("  Face test note: Luma face at sprint scale — visual inspection.")
     print("    Miri face at sprint scale — visual inspection (no automated gate for Miri).")
-    print("  P0 PNG regeneration: complete (expression sheet v006, lineup v009, turnaround).")
 
 
 if __name__ == "__main__":

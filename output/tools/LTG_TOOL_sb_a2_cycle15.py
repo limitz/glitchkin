@@ -38,16 +38,22 @@ Outputs (480x270px each):
   /home/wipkat/team/output/storyboards/act2/LTG_SB_act2_contact_sheet.png
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFont
 import math
 import random
 import os
 import shutil
 
-PANELS_DIR     = "/home/wipkat/team/output/storyboards/panels"
-ACT2_PANELS    = "/home/wipkat/team/output/storyboards/act2/panels"
-SHEETS_DIR     = "/home/wipkat/team/output/storyboards"
-ACT2_SHEETS    = "/home/wipkat/team/output/storyboards/act2"
+PANELS_DIR = output_dir('storyboards', 'panels')
+ACT2_PANELS = output_dir('storyboards', 'act2', 'panels')
+SHEETS_DIR = output_dir('storyboards')
+ACT2_SHEETS = output_dir('storyboards', 'act2')
 PW, PH         = 480, 270
 CAPTION_H      = 48
 DRAW_H         = PH - CAPTION_H   # 222px scene area

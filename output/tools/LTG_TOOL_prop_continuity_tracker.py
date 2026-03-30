@@ -23,10 +23,16 @@ Usage:
 Output: report to stdout and optionally to output/production/prop_continuity_report.md
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 import os, sys, json
 from datetime import datetime
 
-OUTPUT_DIR = "/home/wipkat/team/output/production"
+OUTPUT_DIR = output_dir('production')
 REPORT_PATH = os.path.join(OUTPUT_DIR, "prop_continuity_report_c47.md")
 
 # ══════════════════════════════════════════════════════════════════════════════

@@ -23,6 +23,12 @@ Output: output/characters/motion/LTG_CHAR_byte_motion.png
 Canvas: 1280x720 (≤1280 limit)
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFilter
 import os
 import math
@@ -611,7 +617,7 @@ def main():
     # enforce ≤1280px
     img.thumbnail((1280, 1280), Image.LANCZOS)
 
-    out_dir = "/home/wipkat/team/output/characters/motion"
+    out_dir = output_dir('characters', 'motion')
     os.makedirs(out_dir, exist_ok=True)
     out_path = os.path.join(out_dir, "LTG_CHAR_byte_motion.png")
     img.save(out_path)

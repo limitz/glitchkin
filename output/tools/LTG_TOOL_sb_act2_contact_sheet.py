@@ -38,11 +38,17 @@ Output:
   /home/wipkat/team/output/storyboards/act2/LTG_SB_act2_contact_sheet.png
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFont
 import os
 
-PANELS_DIR  = "/home/wipkat/team/output/storyboards/panels"
-ACT2_DIR    = "/home/wipkat/team/output/storyboards/act2"
+PANELS_DIR = output_dir('storyboards', 'panels')
+ACT2_DIR = output_dir('storyboards', 'act2')
 ACT2_PANELS = os.path.join(ACT2_DIR, "panels")
 OUTPUT_PATH = os.path.join(ACT2_DIR, "LTG_SB_act2_contact_sheet.png")
 

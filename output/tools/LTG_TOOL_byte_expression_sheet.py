@@ -105,6 +105,12 @@ v006 CHANGES FROM v005:
 
 Output: output/characters/main/LTG_CHAR_byte_expression_sheet.png
 """
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFont
 import math
 import os
@@ -985,7 +991,7 @@ def generate_byte_expression_sheet(output_path):
 
 
 if __name__ == '__main__':
-    out_dir = "/home/wipkat/team/output/characters/main"
+    out_dir = output_dir('characters', 'main')
     os.makedirs(out_dir, exist_ok=True)
     generate_byte_expression_sheet(
         os.path.join(out_dir, "LTG_CHAR_byte_expression_sheet.png")

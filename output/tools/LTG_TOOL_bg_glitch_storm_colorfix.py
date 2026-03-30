@@ -46,13 +46,19 @@ Output: /home/wipkat/team/output/backgrounds/environments/
 Usage: python3 LTG_TOOL_bg_glitch_storm_colorfix.py
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 import os
 import math
 import random
 from PIL import Image, ImageDraw
 
 # ── Output ────────────────────────────────────────────────────────────────────
-OUTPUT_PATH = "/home/wipkat/team/output/backgrounds/environments/LTG_ENV_glitch_storm_bg.png"
+OUTPUT_PATH = output_dir('backgrounds', 'environments', 'LTG_ENV_glitch_storm_bg.png')
 W, H = 1920, 1080
 
 # ── Master Palette — from master_palette.md ───────────────────────────────────

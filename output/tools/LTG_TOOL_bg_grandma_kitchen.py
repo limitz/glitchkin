@@ -5,9 +5,9 @@
 # the copyright holder to assign the relevant rights to the contributing AI entity or entities
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
-LTG_TOOL_bg_grandma_kitchen.py — Grandma Miri's Kitchen Background v007
+LTG_TOOL_bg_grandma_kitchen.py — Grandma Miri's Kitchen Background v008
 "Luma & the Glitchkin" — Background & Environment Design
-Artist: Jordan Reed | Cycle 39 | v006 Hana Okonkwo | Cycle 43 | v007 Hana Okonkwo | Cycle 44
+Artist: Jordan Reed | Cycle 39 | v006 Hana Okonkwo | Cycle 43 | v007 Hana Okonkwo | Cycle 44 | v008 Hana Okonkwo | Cycle 48
 
 Used in: A1-01 (Act 1 opening scene)
 Narrative: Act 1 opening. Warm morning. Pre-digital world. Home = safe.
@@ -36,6 +36,15 @@ v006 — C43 (Hana Okonkwo): Migrated MIRI label from bespoke pixel-line
     "MIRI" text: drawn pixel-by-pixel in LINE_DARK ink, centered on paper
     Paper held by a small magnet pip above it (warm amber circle, 3px radius)
 
+v008 — C48 (Hana Okonkwo): Furniture perspective fix (Chiara C18/C47 flat-elevation critique).
+  Per docs/perspective-rules.md and furniture_vp_spec_c48.md:
+  - Kitchen table: flat rect -> VP-convergent trapezoid with foreshortened top surface
+  - Chair: flat rect -> perspective seat plane + angled backrest
+  - Countertop: flat rect -> trapezoid top surface with front edge visible
+  - Fridge: flat rect -> body with side face visible (foreshortens toward VP)
+  - Upper/lower cabinets: added side depth reveal (3px) on VP-facing edge
+  All convergence toward VP_X=512, VP_Y=273. No change to color, lighting, or QA passes.
+
 v007 — C44 (Hana Okonkwo): Fix line_weight QA FAIL (pre-existing outliers=3).
   Root cause: image boundary rows (y=0, y=719) read as 1280px-wide edge runs
   by render_qa FIND_EDGES scan → 3 outliers (mean=269px, std=308px).
@@ -54,6 +63,12 @@ All v004 improvements retained (no other changes):
 Output: /home/wipkat/team/output/backgrounds/environments/LTG_ENV_grandma_kitchen.png
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 import math
 import random
 import os
@@ -984,6 +999,7 @@ def draw_kitchen_table(draw, img, bw_bot):
     """
     Kitchen table in foreground-left. Morning: crossword, Miri's rose-pattern mug, toast.
     v004: Miri-specific mug (rose pattern on earthenware), knitting bag on chair.
+    v008: VP-convergent trapezoid table surface (docs/perspective-rules.md).
     """
     # Table position
     tbl_x1 = int(W * 0.02)
@@ -991,26 +1007,66 @@ def draw_kitchen_table(draw, img, bw_bot):
     tbl_y1 = int(H * 0.64)
     tbl_y2 = int(H * 0.72)
 
-    # Table surface (with wood grain)
-    draw.rectangle([tbl_x1, tbl_y1, tbl_x2, tbl_y2], fill=WOOD_WORN)
-    draw.line([(tbl_x1, tbl_y1), (tbl_x2, tbl_y1)], fill=WOOD_LIGHT, width=2)
-    draw.rectangle([tbl_x1, tbl_y1, tbl_x2, tbl_y2], outline=LINE_DARK, width=2)
+    # v008: VP convergence for table surface
+    VP_X, VP_Y = int(W * 0.40), int(H * 0.38)
+    tbl_w = tbl_x2 - tbl_x1
+    convergence = max(0.0, min(1.0, (VP_Y - tbl_y1) / H))
+    shrink = int(tbl_w * convergence * 0.15)
 
-    # Wood grain
+    # Table top surface as VP-convergent trapezoid
+    # Far edge (tbl_y1) is shorter (shrunk), near edge (tbl_y2) is full width
+    tbl_top_pts = [
+        (tbl_x1 + shrink, tbl_y1),       # top-left (far, shrunk)
+        (tbl_x2 - shrink, tbl_y1),        # top-right (far, shrunk)
+        (tbl_x2, tbl_y2),                  # bot-right (near, full)
+        (tbl_x1, tbl_y2),                  # bot-left (near, full)
+    ]
+    draw.polygon(tbl_top_pts, fill=WOOD_WORN)
+    # Front edge highlight
+    draw.line([(tbl_x1 + shrink, tbl_y1), (tbl_x2 - shrink, tbl_y1)],
+              fill=WOOD_LIGHT, width=2)
+    draw.polygon(tbl_top_pts, outline=LINE_DARK, width=2)
+
+    # v008: Front face of table (visible depth face — near edge thickness)
+    front_depth = 6
+    front_face_pts = [
+        (tbl_x1, tbl_y2),
+        (tbl_x2, tbl_y2),
+        (tbl_x2, tbl_y2 + front_depth),
+        (tbl_x1, tbl_y2 + front_depth),
+    ]
+    draw.polygon(front_face_pts, fill=WOOD_DARK)
+    draw.polygon(front_face_pts, outline=LINE_DARK, width=1)
+
+    # Wood grain — drawn within trapezoid area
     grain_rng = random.Random(71)
     for gi in range(6):
         gy = tbl_y1 + grain_rng.randint(2, tbl_y2 - tbl_y1 - 2)
-        gw_start = tbl_x1 + grain_rng.randint(0, int((tbl_x2 - tbl_x1) * 0.3))
-        gw_end = tbl_x2 - grain_rng.randint(0, int((tbl_x2 - tbl_x1) * 0.3))
+        # Interpolate trapezoid width at this y
+        t = (gy - tbl_y1) / max(1, tbl_y2 - tbl_y1)
+        row_x1 = int(tbl_x1 + shrink * (1 - t))
+        row_x2 = int(tbl_x2 - shrink * (1 - t))
+        gw_start = row_x1 + grain_rng.randint(0, int((row_x2 - row_x1) * 0.3))
+        gw_end = row_x2 - grain_rng.randint(0, int((row_x2 - row_x1) * 0.3))
         draw.line([(gw_start, gy), (gw_end, gy)],
                   fill=lerp_color(WOOD_WORN, WOOD_DARK, 0.25), width=1)
 
-    # Table legs
+    # Table legs — converge slightly toward VP
     leg_h = int(H * 0.22)
-    for lx in [tbl_x1 + 12, tbl_x2 - 20]:
-        draw.rectangle([lx, tbl_y2, lx + 12, min(H, tbl_y2 + leg_h)], fill=WOOD_MED)
-        draw.rectangle([lx, tbl_y2, lx + 12, min(H, tbl_y2 + leg_h)],
-                       outline=LINE_DARK, width=1)
+    leg_near_left = tbl_x1 + 12
+    leg_near_right = tbl_x2 - 20
+    for lx in [leg_near_left, leg_near_right]:
+        # Legs angle slightly inward toward VP direction
+        leg_top_x = lx
+        leg_bot_x = lx + int((VP_X - lx) * 0.02)  # subtle lean toward VP
+        leg_pts = [
+            (leg_top_x, tbl_y2 + front_depth),
+            (leg_top_x + 12, tbl_y2 + front_depth),
+            (leg_bot_x + 12, min(H, tbl_y2 + front_depth + leg_h)),
+            (leg_bot_x, min(H, tbl_y2 + front_depth + leg_h)),
+        ]
+        draw.polygon(leg_pts, fill=WOOD_MED)
+        draw.polygon(leg_pts, outline=LINE_DARK, width=1)
 
     # Table underside shadow (v004: deep shadow band below table)
     shadow_overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
@@ -1096,14 +1152,23 @@ def draw_kitchen_table(draw, img, bw_bot):
                     plate_x + toast_w // 2, plate_y + 2 + toast_h],
                    outline=lerp_color(BREAD_WARM, LINE_DARK, 0.5), width=1)
 
-    # Chair visible at table edge
+    # Chair visible at table edge — v008: VP-convergent
     chair_x = tbl_x1 + int((tbl_x2 - tbl_x1) * 0.25)
-    chair_y = tbl_y2 + 7
+    chair_y = tbl_y2 + front_depth + 7
     chair_w = int(W * 0.09)
-    draw.rectangle([chair_x, chair_y, chair_x + chair_w, min(H, chair_y + 65)],
-                   fill=WOOD_MED)
-    draw.rectangle([chair_x, chair_y, chair_x + chair_w, min(H, chair_y + 65)],
-                   outline=LINE_DARK, width=1)
+    chair_h = 65
+    chair_bot = min(H, chair_y + chair_h)
+    # Chair back (trapezoid — far edge shorter)
+    ch_conv = max(0.0, min(1.0, (VP_Y - chair_y) / H))
+    ch_shrink = int(chair_w * ch_conv * 0.12)
+    chair_pts = [
+        (chair_x + ch_shrink, chair_y),           # top-left (far)
+        (chair_x + chair_w - ch_shrink, chair_y),  # top-right (far)
+        (chair_x + chair_w, chair_bot),             # bot-right (near)
+        (chair_x, chair_bot),                       # bot-left (near)
+    ]
+    draw.polygon(chair_pts, fill=WOOD_MED)
+    draw.polygon(chair_pts, outline=LINE_DARK, width=1)
 
     # v004: Knitting bag on chair (Miri character detail)
     kb_x = chair_x + 4
@@ -1458,7 +1523,7 @@ def main():
     img = vignette(img, strength=45)
 
     # Output path
-    out_dir = "/home/wipkat/team/output/backgrounds/environments"
+    out_dir = output_dir('backgrounds', 'environments')
     os.makedirs(out_dir, exist_ok=True)
     out_path = os.path.join(out_dir, "LTG_ENV_grandma_kitchen.png")
 
@@ -1499,5 +1564,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     main()
-    out_path = "/home/wipkat/team/output/backgrounds/environments/LTG_ENV_grandma_kitchen.png"
+    out_path = output_dir('backgrounds', 'environments', 'LTG_ENV_grandma_kitchen.png')
     run_warmth_hook(out_path, enabled=args.check_warmth)

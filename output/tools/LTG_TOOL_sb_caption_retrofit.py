@@ -50,6 +50,12 @@ Usage:
     python3 LTG_TOOL_sb_caption_retrofit.py --panel P03  # retrofit one panel only
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 import os
 import sys
 import argparse
@@ -66,7 +72,7 @@ try:
     _spec.loader.exec_module(_mod)
     PANELS_DIR = str(_mod.resolve_output("storyboards/panels"))
 except Exception:
-    PANELS_DIR = "/home/wipkat/team/output/storyboards/panels"
+    PANELS_DIR = output_dir('storyboards', 'panels')
 
 # ── Dimensions ────────────────────────────────────────────────────────────────
 PW          = 800

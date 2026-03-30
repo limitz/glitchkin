@@ -24,10 +24,16 @@ one hand raised slightly (reflexive — something caught her eye).
 Arc: CURIOUS — first moment of noticing.
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFont
 import math, random, os
 
-PANELS_DIR  = "/home/wipkat/team/output/storyboards/panels"
+PANELS_DIR = output_dir('storyboards', 'panels')
 OUTPUT_PATH = os.path.join(PANELS_DIR, "LTG_SB_act1_panel_a102.png")
 os.makedirs(PANELS_DIR, exist_ok=True)
 

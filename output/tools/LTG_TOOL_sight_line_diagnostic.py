@@ -52,6 +52,12 @@ Usage (CLI):
   checks that gaze goes directly to target — miss will be ~0px for PASS).
 
 Batch / module usage:
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
   from LTG_TOOL_sight_line_diagnostic import run_sight_line_check
   result = run_sight_line_check(
       image_path  = "LTG_COLOR_styleframe_discovery.png",
@@ -123,7 +129,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 DEFAULT_THRESHOLD  = 15
-OUTPUT_DIR_DEFAULT = "/home/wipkat/team/output/production"
+OUTPUT_DIR_DEFAULT = output_dir('production')
 MAX_IMAGE_PX       = 1280
 
 COLOR_RAY        = (  0, 220, 240)   # ELEC_CYAN sight-line ray
@@ -820,8 +826,8 @@ def _run_sf01_tests(output_dir=OUTPUT_DIR_DEFAULT):
     """
     print("\n── SF01 sight-line tests ─────────────────────────────────────────")
 
-    SF01_V006 = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery.png"
-    SF01_V005 = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_discovery.png"
+    SF01_V006 = output_dir('color', 'style_frames', 'LTG_COLOR_styleframe_discovery.png')
+    SF01_V005 = output_dir('color', 'style_frames', 'LTG_COLOR_styleframe_discovery.png')
 
     # Byte position (emerge from CRT screen)
     target_xy  = (923, 219)

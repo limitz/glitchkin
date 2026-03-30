@@ -44,6 +44,12 @@ Usage:
 Cycle 41: Initial creation. Sam Kowalski.
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from __future__ import annotations
 import os
 import math
@@ -52,7 +58,7 @@ from typing import List, Tuple
 
 from PIL import Image, ImageDraw, ImageFont
 
-OUTPUT_PATH = "/home/wipkat/team/output/color/color_keys/LTG_COLOR_colorkey_glitch_covetous.png"
+OUTPUT_PATH = output_dir('color', 'color_keys', 'LTG_COLOR_colorkey_glitch_covetous.png')
 W, H = 640, 360  # 16:9 thumbnail
 
 # ── Palette constants — all named, no undocumented inline tuples ──────────────

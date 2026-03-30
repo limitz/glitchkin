@@ -7,7 +7,7 @@
 """
 LTG_TOOL_sb_cold_open_P15.py
 Cold Open Panel P15 — MED — Luma Hits Floor / Glitch Forced-Hair Circle
-Diego Vargas, Storyboard Artist — Cycle 45
+Diego Vargas, Storyboard Artist — Cycle 45 (C48: elbow bend + torso rotation + bent knee)
 
 Beat: Luma has hit the floor. Comedic fall. The Glitch energy briefly forces
       her hair into a PERFECT GEOMETRIC CIRCLE — against all natural physics.
@@ -46,10 +46,16 @@ Image size rule: ≤ 1280px in both dimensions.
 Output: output/storyboards/panels/LTG_SB_cold_open_P15.png
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFont
 import math, random, os
 
-PANELS_DIR  = "/home/wipkat/team/output/storyboards/panels"
+PANELS_DIR = output_dir('storyboards', 'panels')
 OUTPUT_PATH = os.path.join(PANELS_DIR, "LTG_SB_cold_open_P15.png")
 os.makedirs(PANELS_DIR, exist_ok=True)
 
@@ -160,29 +166,80 @@ def draw_panel():
 
     luma_floor_y = int(DRAW_H * 0.70)   # where her body contacts the floor
 
-    # ──── BODY: horizontal silhouette ────────────────────────────────────────
-    # Legs + feet (camera-right)
+    # ──── BODY: horizontal silhouette with torso rotation (C48 Lee fix) ────
+    # 5° clockwise rotation to sell "just hit the floor" vs "lying flat by choice"
+    torso_rot_deg = 5  # degrees CW
+    torso_rot_rad = math.radians(torso_rot_deg)
+
+    # Legs + feet (camera-right) — one leg bent (knee up) for impact read
     feet_x  = int(PW * 0.75)
     feet_y  = luma_floor_y - 12
     torso_x = int(PW * 0.38)  # shoulder/torso left edge
 
-    # Pants / legs (horizontal rectangle, perspective foreshortened)
-    draw.rectangle([torso_x + 60, feet_y - 22, feet_x, feet_y + 12],
+    # ── Straight leg (lower, closer to floor)
+    draw.rectangle([torso_x + 60, feet_y - 18, feet_x - 30, feet_y + 12],
                    fill=LUMA_PANTS)
-
-    # Shoes
-    draw.ellipse([feet_x - 10, feet_y - 12, feet_x + 28, feet_y + 12],
+    # Shoe on straight leg
+    draw.ellipse([feet_x - 40, feet_y - 8, feet_x - 10, feet_y + 12],
                  fill=LUMA_SHOES)
 
-    # Hoodie body (CANONICAL ORANGE — warm color anchor)
-    draw.rectangle([torso_x, feet_y - 38, torso_x + 80, feet_y + 8],
-                   fill=LUMA_HOODIE)
+    # ── Bent knee (upper leg angled UP, lower leg dropped back down)
+    knee_x = torso_x + 90
+    knee_y = feet_y - 34   # knee raised above floor plane
+    # Upper leg: hip to knee
+    draw.line([(torso_x + 65, feet_y - 4), (knee_x, knee_y)],
+              fill=LUMA_PANTS, width=20)
+    # Lower leg: knee back down toward floor
+    bent_foot_x = knee_x + 36
+    bent_foot_y = feet_y + 4
+    draw.line([(knee_x, knee_y), (bent_foot_x, bent_foot_y)],
+              fill=LUMA_PANTS, width=18)
+    # Shoe on bent leg
+    draw.ellipse([bent_foot_x - 6, bent_foot_y - 8, bent_foot_x + 20, bent_foot_y + 8],
+                 fill=LUMA_SHOES)
 
-    # Hoodie arm reaching forward (slightly off floor — post-impact sprawl)
-    arm_end_x = int(PW * 0.22)
-    arm_y     = luma_floor_y - 28
-    draw.line([(torso_x, arm_y), (arm_end_x, arm_y + 14)],
+    # ── Hoodie torso — rotated 5° CW for "just landed" asymmetry
+    # Draw on RGBA layer, rotate, composite
+    torso_layer = Image.new('RGBA', (PW, PH), (0, 0, 0, 0))
+    td = ImageDraw.Draw(torso_layer)
+    torso_w = 80
+    torso_h = 46
+    torso_cx = torso_x + torso_w // 2
+    torso_cy = feet_y - torso_h // 2 + 4
+    # Torso as rotated polygon (4 corners of rectangle, rotated around center)
+    cos_r = math.cos(torso_rot_rad)
+    sin_r = math.sin(torso_rot_rad)
+    torso_corners = [(-torso_w // 2, -torso_h // 2), (torso_w // 2, -torso_h // 2),
+                     (torso_w // 2, torso_h // 2), (-torso_w // 2, torso_h // 2)]
+    rotated_pts = [(int(torso_cx + lx * cos_r - ly * sin_r),
+                    int(torso_cy + lx * sin_r + ly * cos_r))
+                   for lx, ly in torso_corners]
+    td.polygon(rotated_pts, fill=(*LUMA_HOODIE, 255))
+    img.paste(Image.alpha_composite(img.convert('RGBA'), torso_layer).convert('RGB'))
+    draw = ImageDraw.Draw(img)
+
+    # ── Right arm: two-segment polyline with elbow bend + hand blob + sleeve bunching
+    # Shoulder origin (right side of torso, slightly offset for rotation)
+    shoulder_x = torso_x + 2
+    shoulder_y = torso_cy - 8
+    # Elbow (bend point — arm bends at roughly 120 degrees)
+    elbow_x = int(PW * 0.30)
+    elbow_y = luma_floor_y - 18
+    # Hand endpoint
+    hand_x = int(PW * 0.22)
+    hand_y = luma_floor_y - 8
+    # Upper arm segment (shoulder → elbow)
+    draw.line([(shoulder_x, shoulder_y), (elbow_x, elbow_y)],
               fill=LUMA_HOODIE, width=18)
+    # Hoodie sleeve bunching at elbow — small ellipse bump
+    draw.ellipse([elbow_x - 12, elbow_y - 10, elbow_x + 10, elbow_y + 8],
+                 fill=LUMA_HOODIE)
+    # Lower arm segment (elbow → hand)
+    draw.line([(elbow_x, elbow_y), (hand_x, hand_y)],
+              fill=LUMA_HOODIE, width=14)
+    # Hand blob at endpoint
+    draw.ellipse([hand_x - 8, hand_y - 6, hand_x + 8, hand_y + 6],
+                 fill=LUMA_SKIN)
 
     # ──── HEAD + FACE ──────────────────────────────────────────────────────
     head_cx = int(PW * 0.24)
@@ -350,7 +407,7 @@ def draw_panel():
 
     # Metadata
     draw.text((PW - 276, DRAW_H + 56),
-              "LTG_SB_cold_open_P15  /  Diego Vargas  /  C45",
+              "LTG_SB_cold_open_P15  /  Diego Vargas  /  C48",
               font=font_meta, fill=TEXT_META)
 
     # Arc border — HOT_MAGENTA (TENSE — weird Glitch world)

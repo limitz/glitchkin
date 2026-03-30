@@ -43,6 +43,12 @@ Output: /home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_luma_by
 Usage: python3 LTG_TOOL_styleframe_luma_byte.py
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 import os
 import sys
 import math
@@ -57,7 +63,7 @@ from LTG_TOOL_procedural_draw import (
     add_rim_light, add_face_lighting, silhouette_test, value_study
 )
 
-OUTPUT_PATH = "/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_luma_byte.png"
+OUTPUT_PATH = output_dir('color', 'style_frames', 'LTG_COLOR_styleframe_luma_byte.png')
 
 W, H = 1280, 720
 

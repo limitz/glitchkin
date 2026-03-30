@@ -1,5 +1,32 @@
 # Jordan Reed — Memory
 
+## Cycle 48 Deliverables
+- `LTG_TOOL_sightline_validator.py` v1.0.0 — SIGHT-LINE AUTO-VALIDATOR ✓
+  - Core API: `validate_sightline(gazer, target)` — raw eye/pupil coords → angular error, miss_px, grade
+  - Geometry API: `validate_sightline_from_geometry(head_cx, head_cy, scale, target_cx, target_cy)` — reconstructs eye positions from SF01 v007 draw_luma_head_v006 conventions
+  - Batch API: `validate_sightline_batch(entries)` — multi-asset runs with overall grade
+  - Thresholds: PASS < 5 deg, WARN 5-15 deg, FAIL > 15 deg
+  - Self-tests: 5 tests all PASS
+    - SF01 v007 fixed: 2.3 deg angular error (PASS) — matches C47 diagnostic
+    - Pre-C47 horizontal-only bug: 20.7 deg (FAIL) — correctly catches the old bug
+    - Opposite-gaze edge case: 180.0 deg (FAIL)
+    - Batch validation: mixed PASS/FAIL correctly reports overall FAIL
+    - Angle normalization: wraps correctly for all quadrants
+  - No external dependencies — stdlib math only
+  - Designed for precritique_qa Section 13 integration (Morgan Walsh)
+  - Registered in README.md (C48 New tools section) ✓
+- Ideabox: `20260330_jordan_reed_sightline_pixel_detection_mode.md` — pixel-based sight-line detection from rendered PNGs
+- Inbox archived ✓ (1 message: C48 brief)
+- README.md updated (C48 Jordan Reed section added) ✓
+
+## Cycle 48 Status: COMPLETE
+
+## Cycle 48 Notes
+- **Angular error vs miss distance**: Angular error is the primary metric (rotation-invariant, scale-independent). Miss distance (perpendicular offset at target range) is supplementary — useful for understanding pixel-level impact but depends on eye-to-target distance. A 2.3 deg error at 550px range = 21px miss; same 2.3 deg at 100px range = only 4px miss. Grade by angle, report both.
+- **Angle normalization matters**: atan2 returns -180 to +180. When gaze and ideal are near -180/+180 boundary, naive abs(a-b) gives ~360 instead of ~0. _normalize_angle_diff() handles this correctly via modular arithmetic.
+- **validate_sightline_from_geometry assumes SF01 v007 eye layout**: Eye positions are cx+p(4)/cy-p(10) and cx+p(38)/cy-p(8). Other generators with different eye placement conventions would need their own geometry reconstruction or should use the raw API directly.
+- **Integration path for precritique_qa**: The module is ready for lazy-load integration as Section 13. Morgan Walsh or next integrator needs: (1) SIGHTLINE_ASSETS registry (similar to FILL_LIGHT_ASSETS), (2) run_sightline_lint() runner function, (3) Section 13 in build_report(). The batch API returns a dict compatible with precritique_qa's section result format (overall, pass, warn, fail keys).
+
 ## Cycle 47 Deliverables
 - `LTG_TOOL_styleframe_discovery.py` v007 — SF01 SIGHT-LINE FIX ✓
   - ROOT CAUSE: pupil_shift was horizontal-only (dx=p(8), dy=0). Byte is at -20.7 deg from eye midpoint (above-right). Horizontal-only shift reads as "looking past" Byte.

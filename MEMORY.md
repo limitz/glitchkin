@@ -4,8 +4,36 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present.
 
 ## Status
-**Cycle 47 complete. Critique 18 complete. Work cycles: 47. Critique cycles: 18.**
-**Next: C48 work cycle (1 more before Critique 19).**
+**C48 IN PROGRESS. Work cycles: 48. Critique cycles: 18.**
+**Next after C48: Critique 19.**
+
+### C48 Resume State
+- **Batch 1 ALL KILLED mid-work.** Partial progress on disk (uncommitted). See completion table below.
+- **Batch 2 NOT LAUNCHED (4 agents):** Alex, Lee, Priya, Rin — inbox briefs written, ready to launch.
+- **Byte position decision:** APPROVED (Priya's rec). Diego briefed. Byte on CRT P19-P20, floats down P21.
+- **Reference images:** 168 files in `reference/` across 22 categories. Human added. All HIGH/MEDIUM gaps resolved. 4 LOW gaps remain (`docs/reference_gaps_c48.md`).
+- **Reference shopping list updated:** xrite.jpg = ColorChecker, domestic*.{webp,jpg} = scene stats, elderly.png = Miri proportions.
+- **Ideabox:** 3 new submissions (Jordan, Morgan, Ryo). Not yet processed.
+
+#### Batch 1 Agent Completion (all killed — work uncommitted)
+| Agent | ~Done? | Deliverables on disk | Still needed |
+|-------|--------|---------------------|--------------|
+| Jordan | ~YES | `LTG_TOOL_sightline_validator.py`, MEMORY updated | Completion report to Alex |
+| Morgan | ~YES | pretrained_model_detect→deprecated, CI suite updated | MEMORY update incomplete |
+| Ryo | ~YES | `LTG_TOOL_draw_shoulder_arm.py` + demo PNG | MEMORY update incomplete |
+| Sam | ~YES | `LTG_TOOL_composite_warmth_score.py`, warmcool_calibrate modified, 2 reports | May need final verification |
+| Maya | ~YES | `LTG_TOOL_visual_hook_audit.py` + audit PNG, SF06 modified | Face gate verification incomplete |
+| Kai | PARTIAL | `LTG_TOOL_object_detect_qa.py`, precritique warm_pixel started | warm_pixel_lint runner function incomplete |
+| Diego | PARTIAL | P14/P15 refinements applied (Lee's 4 items) | P22/P22a NOT created, blank test tool NOT built |
+| Hana | PARTIAL | `furniture_vp_spec_c48.md` written, kitchen gen started | Kitchen perspective fixes incomplete |
+
+#### On Restart
+1. Review uncommitted changes — verify partial work is safe to keep
+2. Re-launch Kai, Diego, Hana to finish incomplete tasks
+3. Launch batch 2 (Alex, Lee, Priya, Rin)
+4. Process 3 ideabox submissions
+5. Commit all completed work
+6. Update README.md
 
 ## Active Team (12 slots)
 
