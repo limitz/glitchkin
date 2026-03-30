@@ -33,7 +33,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from LTG_TOOL_render_lib import scanline_overlay  # noqa: E402
 
 # ── Canvas ──────────────────────────────────────────────────────────────────
-W, H = 1920, 1080
+W, H = 1280, 720  # C42: native 1280×720 (was 1920×1080 — size rule violation; geometry uses W*/H* fractions)
 
 # ── Palette (master_palette.md canonical) ───────────────────────────────────
 VOID_BLACK        = (10,  10,  20)

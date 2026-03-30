@@ -42,7 +42,7 @@ import random
 from PIL import Image, ImageDraw
 
 # ── Canvas ──────────────────────────────────────────────────────────────────
-W, H = 1920, 1080
+W, H = 1280, 720  # C42: native 1280×720 (was 1920×1080 — size rule violation; geometry uses W*/H* fractions)
 
 # ── Palette (master_palette.md canonical) ───────────────────────────────────
 VOID_BLACK        = (10,  10,  20)    # GL-08  #0A0A14 — base background
