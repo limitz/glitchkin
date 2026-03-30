@@ -4,8 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present.
 
 ## Status
-**Cycle 46 complete. Critique 17 complete. Work cycles: 46. Critique cycles: 17.**
-**C46 work done. Critique 18 due NOW — run critics next.**
+**Cycle 46 complete. Critique 18 complete. Work cycles: 46. Critique cycles: 18.**
+**Next: C47 work cycle.**
 
 ## Active Team (12 slots)
 
@@ -37,7 +37,7 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 - **Rotate each cycle. Min 1 audience critic per critique cycle.**
 - C16 critics: Daisuke Kobayashi, Priya Nair, Sven Halvorsen, Chiara Ferrara, Jayden Torres
 - C17 critics: Jonas Feld, Amara Diallo, Leila Asgari, Petra Volkov, Marcus Webb, Eleanor Whitfield
-- **C18 (run now)**: Takeshi Mori, Ingrid Solberg, Reinhardt Böhm, Chiara Ferrara, Zoe Park (audience)
+- **C18 (done)**: Takeshi Mori, Ingrid Solberg, Reinhardt Böhm, Chiara Ferrara, Zoe Park (audience)
 - **C19 candidates**: rotate away from C17/C18. Consider: Daisuke, Priya Nair, Sven, Marcus Webb + audience (Marcus Okafor, Jayden Torres, Taraji Coleman)
 
 ## Pitch Package Status — POST CYCLE 46
@@ -118,11 +118,36 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 - **11 ideabox ideas actioned** (all submitted).
 - **Lee carry-forward**: P1 SF06 staging review + P2 Byte P14/P15 staging check.
 
-## Critique 18 — RUN NOW
-- 5 critics: Takeshi Mori, Ingrid Solberg, Reinhardt Böhm, Chiara Ferrara + 1 audience (rotate: Zoe Park or Taraji Coleman — not from C16/C17)
-- C17 used: Jonas Feld, Amara Diallo, Leila Asgari, Petra Volkov, Marcus Webb, Eleanor Whitfield
-- C16 used: Daisuke Kobayashi, Priya Nair, Sven Halvorsen, Chiara Ferrara, Jayden Torres
-- **Key assets for review**: P18/P19 new panels, lineup v010, depth_temp_lint, warmcool calibration findings, CORRUPT_AMBER fringe spec, classroom/hallway path updates, CRT glow profiles, Story Bible v005, cold open gap log
+## Critique 18 Results
+**Critics:** Takeshi Mori, Ingrid Solberg, Reinhardt Böhm, Chiara Ferrara, Zoe Park (audience)
+
+### Cross-Critic Top Issues (action for C47)
+1. **No Glitch Layer in pitch sequence** (Zoe). The show's USP is invisible — need GL showcase panel/frame.
+2. **Systemic perspective: furniture in flat elevation** (Chiara). All Real World interiors affected. VP detect universal FAIL.
+3. **Arms without shoulder involvement** (Takeshi). Persistent since C15 across all human characters.
+4. **P13 still needs standalone panel** (Ingrid). Thematic fulcrum missing from storyboard.
+5. **P18 fails blank test** (Ingrid). Notebook insert is text-dependent — needs visual timestamps.
+6. **23 undocumented decisions / doc governance** (Reinhardt). Character export manifest frozen C24. Production bible untouched C01.
+7. **Miri motion v002 = weakest sheet** (Takeshi, 44/100). Poses labeled not performed.
+8. **Cosmo needs stronger visual hook** (Zoe). "Anxious kid in glasses" not distinctive enough.
+9. **Millbrook Street value floor persists** (Chiara, 55/100). 3 cycles unfixed.
+10. **SF01 sight-line still broken** (Ingrid). Persists across critique cycles.
+
+### Scores Summary
+| Critic | Focus | Overall/Top Score | Lowest |
+|--------|-------|-------------------|--------|
+| Takeshi Mori | Pose/performance | P16: 71, Byte ECU: 72 | Miri motion: 44 |
+| Ingrid Solberg | Visual narrative | Combined: 76 | Lineup: 70 |
+| Reinhardt Böhm | Production systems | Overall: 38 | Naming: 28 |
+| Chiara Ferrara | Environments | School Hallway: 74 | GL Frame: 52 |
+| Zoe Park (11) | Audience | Overall: 78 | — |
+
+### Positive Signals
+- Zoe wants episode 2 (core metric PASS)
+- Ingrid: combined score up from 72→76; gap log scored 85
+- Chiara: color infrastructure now solid
+- Takeshi: Byte COVETOUS barrier pose = best performance in pitch
+- Sam's warmcool calibration praised across critics
 
 ## Open Items for C47
 1. **Sam/Kai**: warm/cool metric revision (warm-pixel-percentage as complement to hue-split)
@@ -225,4 +250,4 @@ Do NOT duplicate inbox content in agent prompts. Prompts = role context + startu
 - Ideabox: action → actioned/, reject → rejected/ after each cycle.
 - README.md: update after every work and critique cycle.
 - Slot filling: launch next agent immediately on completion. Never exceed 8 simultaneous.
-- C46 work DONE. Critique 18 is due NOW — run 5 critics next.
+- C46 + Critique 18 DONE. Next: C47 work cycle.
