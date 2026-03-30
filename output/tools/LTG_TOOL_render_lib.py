@@ -24,7 +24,7 @@ All procedural functions use seeded RNG for reproducibility.
 No circular dependencies — importable standalone.
 """
 
-__version__ = "1.1.0"  # C24: added paper_texture()
+__version__ = "1.2.0"  # C24: added paper_texture(); C42: added flatten_rgba_to_rgb()
 
 import math
 import random
@@ -424,3 +424,69 @@ def paper_texture(img, scale=40, alpha=20, seed=42):
 
     img.alpha_composite(grain)
     return img
+
+
+def flatten_rgba_to_rgb(img, background=(255, 255, 255)):
+    """Flatten an RGBA image to RGB by compositing over a solid background.
+
+    Canonical replacement for the naive img.convert("RGB") call, which
+    discards the alpha channel by treating transparent pixels as black —
+    producing visible dark halos around any semi-transparent content.
+    This function performs a correct Porter-Duff "over" composite so that
+    transparent pixels become the background color.
+
+    Documented bug context (C41, Tech Den v006):
+        When an RGBA image is converted to RGB via numpy Porter-Duff using
+        a black background, semi-transparent warmth overlays produce incorrect
+        hue blends (alpha < 255 regions mix with black, shifting warm amber
+        toward dark greenish-brown). Using a WHITE background (or calling this
+        function before any Porter-Duff tonal correction) eliminates the issue.
+
+        This helper exists so every generator can safely flatten RGBA→RGB at
+        the final save step without manual numpy plumbing. It uses Pillow's
+        alpha_composite() which is both correct and efficient.
+
+    Args:
+        img        (PIL.Image): Source image. Accepted modes: "RGBA", "RGB",
+                                "L", "LA", "P", "PA". Non-RGBA images are
+                                returned as-is (converted to "RGB" only).
+        background (tuple): RGB background color to composite under transparent
+                            areas. Default (255, 255, 255) = white.
+                            Use (0, 0, 0) for black if the scene has no
+                            semi-transparent regions (legacy behavior).
+
+    Returns:
+        PIL.Image (mode="RGB"): Flat RGB image with no alpha channel.
+        Same pixel dimensions as input.
+
+    Usage:
+        from LTG_TOOL_render_lib import flatten_rgba_to_rgb
+        # At the end of any generator:
+        img = flatten_rgba_to_rgb(img)              # default white backing
+        img = flatten_rgba_to_rgb(img, (0, 0, 0))  # black backing (legacy)
+        img.thumbnail((1280, 1280), Image.LANCZOS)
+        img.save(out_path)
+
+    Example (replacing manual Porter-Duff in a generator):
+        # Old pattern (fragile — wrong when RGBA pipeline has alpha<255 pixels):
+        arr = np.array(img.convert("RGBA"))
+        alpha_ch = arr[..., 3:4] / 255.0
+        white = np.full((H, W, 3), 255, dtype=float)
+        rgb = arr[..., :3].astype(float) * alpha_ch + white * (1 - alpha_ch)
+        rgb_img = Image.fromarray(np.clip(rgb, 0, 255).astype(np.uint8), "RGB")
+
+        # New pattern (correct and concise):
+        rgb_img = flatten_rgba_to_rgb(img)
+    """
+    if img.mode == "RGB":
+        return img
+
+    # Ensure RGBA for alpha_composite
+    if img.mode != "RGBA":
+        img = img.convert("RGBA")
+
+    # Create solid-color backing plate
+    backing = Image.new("RGBA", img.size, background + (255,))
+    # Composite: source (img) over backing
+    backing.alpha_composite(img)
+    return backing.convert("RGB")

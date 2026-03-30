@@ -84,7 +84,10 @@ CEIL_DARK       = (155, 130,  90)   # ceiling shadow zone
 
 # Lighting sources
 SUNLIT_AMBER    = (212, 146,  58)   # canonical (212,146,58) — window top half
-LAMP_AMBER      = (255, 140,   0)   # canonical #FF8C00 indoor lamp
+LAMP_AMBER      = (255, 140,   0)   # GL-07 / #FF8C00 — intentional in SF04 (C42 Alex brief)
+                                    # Real World lamp halo reads as subtly Glitch-residue marked.
+                                    # Post-crossing kitchen: the room has been touched by the Layer.
+                                    # Low alpha (max ~55 = 22%) — not a character GL color.
 SPECULAR_WHITE  = (255, 252, 240)   # value ceiling ≥ 225
 
 # Kitchen props — Real World palette
