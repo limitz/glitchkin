@@ -145,6 +145,27 @@ Create motion spec sheets and timing documentation. Make the pitch FEEL like it 
 - `_get_zone_params()` now returns 5-tuple — any code calling it with 4-tuple unpacking will break; only called from lint_motion_spec() which was updated in same commit
 - Byte dark-panel annotation issue filed as ideabox: `20260330_ryo_hasegawa_byte_dark_panel_annotation_threshold.md`
 
+### C42 — COMPLETE
+- `LTG_TOOL_cosmo_motion.py` → `output/characters/motion/LTG_CHAR_cosmo_motion.png`
+  - New Cosmo Motion Spec Sheet v001 — first motion spec for Cosmo
+  - 4 panels: IDLE/OBSERVING | STARTLED | ANALYSIS LEAN | RELUCTANT MOVE
+  - Cosmo motion vocabulary defined: upright+contained, notebook as secondary mass anchor, glasses tilt as emotion indicator (neutral 7° → peak 14° at Startled)
+  - BEAT_COLOR=(80,120,200) — same blue convention as Luma sheet
+  - Beat badges added to all panels (B1-B4 colored boxes) — passes lint beat_badges check
+- `sheet_geometry_config.json` updated: cosmo family expected_panels=4, panel_top_abs=54, beat_color=[80,120,200]
+- `output/tools/README.md` updated: C42 Ryo Hasegawa section added; README sync PASS
+- Lint baseline: PASS=5 WARN=1 (annotation_occupancy — light-bg structural false positive)
+- Ideabox: `20260330_ryo_hasegawa_annotation_occupancy_lightbg_threshold.md` — fix annotation_occupancy for light-bg sheets
+
+## Cosmo Motion Vocabulary (C42)
+- Glasses tilt: neutral=7°, Startled peak=14°, recovery to 9° by beat 3, normal return by beat 4
+- Notebook secondary motion: lags +1.5 beats behind body on ALL sudden shifts
+- Notebook position as emotion signal: tucked=anxious/contained; extended=engaged/confident; absent=rare/letting go
+- Torso constraint: MAX lean = 12° (Reluctant Move). Cosmo never goes beyond this.
+- Arms DO NOT pump during running — a defining contrast with Luma sprint
+- Analysis lean: 6-8° only (controlled), head tilt = +8° toward subject
+- Startled: arms jut out then SNAP BACK by beat 3 (not gradually — snap is character)
+
 ## Startup Sequence
 1. Read docs/image-rules.md (image size limits and image handling)
 2. Read docs/work.md (work startup and delivery rules)

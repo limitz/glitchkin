@@ -31,18 +31,18 @@
       "_beat_color_note": "BEAT_COLOR=(0,190,215) from LTG_TOOL_byte_motion.py — cyan family (ELEC_CYAN adjacent)"
     },
     "cosmo": {
-      "header_h": 44,
-      "panel_top_abs": 56,
-      "annot_zone_y_start": 82,
-      "annot_zone_y_end": 230,
-      "badge_panel_top_abs": 60,
-      "expected_panels": 3,
+      "header_h": 40,
+      "panel_top_abs": 54,
+      "annot_zone_y_start": 68,
+      "annot_zone_y_end": 220,
+      "badge_panel_top_abs": 58,
+      "expected_panels": 4,
       "sheet_w": 1280,
       "sheet_h": 720,
-      "_source": "placeholder \u2014 no Cosmo sheet yet",
-      "beat_color": null,
+      "_source": "LTG_CHAR_cosmo_motion.png",
+      "beat_color": [80, 120, 200],
       "beat_color_tolerance": 40,
-      "_beat_color_note": "TBD — no Cosmo motion sheet yet; null falls back to legacy cyan-family range"
+      "_beat_color_note": "BEAT_COLOR=(80,120,200) from LTG_TOOL_cosmo_motion.py — blue family, matches Luma convention"
     }
   }
 }
