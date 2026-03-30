@@ -396,6 +396,78 @@ All three P1 priorities complete.
   NOT necessarily dialogue. Dialogue is annotated in-panel. Tier 2 = arc label (arc-colored).
   Tier 3 = action description. This is the P10/P11 standard, extended to all cold open panels.
 
+## Cycle 46 — Delivered
+
+### P1 — Panels P16 and P17 (Cold Open continuation)
+
+**P16** — `LTG_TOOL_sb_cold_open_P16.py` → `output/storyboards/panels/LTG_SB_cold_open_P16.png`
+- ECU — Luma's face pressed to floor, one eye WIDE OPEN, tracking.
+- Floor plank strip at bottom (she is pressed against it). Face fills full draw area.
+- Hair: natural chaos reasserted; one barely-too-straight strand = Glitch residue.
+- Cyan glow directional from Byte (camera-right). Cheek highlight.
+- Brow: inner corner lifted — involuntary registration.
+- Dialogue annotated: "...okay." (small, composure) + "...WHAT." (large, fracture).
+- Dotted gaze-tracking arrow from eye. "TRACKING" annotation.
+- Arc: TENSE / COMEDY (HOT_MAGENTA border).
+- 800×600px. Three-tier caption bar at CAPTION_H=72.
+
+**P17** — `LTG_TOOL_sb_cold_open_P17.py` → `output/storyboards/panels/LTG_SB_cold_open_P17.png`
+- MED, flat horizon, camera 4-5ft. Beat of stillness. First quiet after chaos.
+- Luma: cross-legged camera-left. ASSESSING expression. LUMA_HOODIE canonical orange.
+- Byte: hovering camera-right, pixel trails fading (last ghost wisps from ricochet arc).
+- Desaturation ring on floor below Byte's hover position.
+- CRT monitors BG returning to normal gray-green static (breach is over).
+- Falling pixel chip between them (one 6×6px ELEC_CYAN square) + dotted descent line.
+- "soft tick" annotation — only thing moving, cracks the standoff.
+- Depth temperature rule applied: Luma zone warm (SUNLIT_AMB), Byte zone cool (ELEC_CYAN).
+- Negative space between them annotated. Tracks P09 two-character-at-distance grammar.
+- Arc: CURIOUS / FIRST ENCOUNTER (ELEC_CYAN border — turning point).
+- PANEL_MAP updated: P16 + P17 PLANNED → EXISTS.
+- Next priorities: P18 (notebook doodles) + P19 (Byte "preferred term is Glitchkin").
+
+### P2 — Legacy Panel Migration
+- All legacy `LTG_SB_coldopen_panel_XX` files were ALREADY in `legacy/` before this cycle.
+- Nothing needed moving. Migration was complete. No further action.
+
+### Byte Face Test (Kai Nakamura brief)
+- Ran `LTG_TOOL_character_face_test.py --char byte --head-r 20`
+- NEUTRAL, GRUMPY, ALARMED: PASS (all gate checks FG-B01/B02/B03 pass)
+- POWERED DOWN: WARN on diff only (both eyes dark — acceptable for powered-down state)
+- PIXEL ONLY: FAIL (single-dot eye too small at sprint scale — not a production state)
+- P07 and P09 use ALARMED/BREACH and SPOTTED respectively — both pass the gate.
+- Report: face test output at `output/production/LTG_TOOL_face_test_byte_r20_v001.png`.
+
+### Inbox archived
+- `20260330_2000_c46_brief.md` (Alex Chen C46 brief)
+- `20260330_2404_byte_face_test_profile_live.md` (Kai Nakamura Byte face gate)
+
+### Ideabox submitted
+- `20260330_diego_vargas_still_beat_sound_annotation_standard.md`
+  — Standard in-panel annotation format for sound cues / dialogue timing marks.
+
+### Lessons Learned — Cycle 46
+- **ECU face panel (P16)**: Face fills the draw area like P11 (ECU eyes). Use scanline
+  lerp gradient for skin. Floor plank strip at bottom = character grounded to surface.
+  Hair is only a band at the top of frame. Keep key element (eye) in upper-center zone.
+- **Eye WIDE OPEN**: eye_rh = 38px at 800px wide reads as maximum aperture.
+  Do NOT drop top lid. Brow inner corner lift = involuntary registration (not anger).
+- **Dialogue annotation layering**: Small text for composure ("...okay."), LARGE BOLD
+  for the crack ("...WHAT."). Size differential carries the beat-timing for the reader.
+- **Two-character stillness (P17)**: Negative space between characters is itself a
+  staging element. 40%+ gap at MED scale makes the distance legible.
+- **Hovering character**: Byte feet 18" off floor — position body_cy well above floor_y.
+  Desaturation ring goes on the floor plane DIRECTLY BELOW, not at foot level.
+- **Pixel chip prop staging**: Single 6×6px cyan square + dotted descent line reads as
+  a falling object at MED scale. The contrast (one tiny still thing vs. two frozen
+  large things) sells the "only thing moving" annotation.
+- **Ghost trail wisps (fading)**: Use RGBA overlay with low alpha (35 → 8) and decreasing
+  radius away from current position. 4 steps is enough for "last wisps" — more reads as
+  active trail.
+- **Warm/cool depth temperature rule**: In interior two-shot, lamp side = warm, monitor
+  side = cool. Apply as horizontal gradient to floor and wall fills.
+- **draw.text_not_available pitfall**: Never set img attributes mid-function.
+  Always use the draw object for all drawing operations.
+
 ## Startup Sequence
 1. Read ROLE.md if present
 2. Read this MEMORY.md
