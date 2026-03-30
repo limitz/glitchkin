@@ -1,8 +1,29 @@
 #!/usr/bin/env python3
 """
 LTG_TOOL_byte_expression_sheet.py
-Byte Expression Sheet — v006 SILHOUETTE FIX
-"Luma & the Glitchkin" — Cycle 38 / Maya Santos
+Byte Expression Sheet — v007 UNGUARDED WARMTH BODY DELTA
+"Luma & the Glitchkin" — Cycle 41 / Maya Santos
+
+v007 CHANGES (C41 — Sam Kowalski body-pose delta brief, Daisuke flag resolution):
+  UNGUARDED WARMTH expression body language updated.
+  Problem: expression was color-only (gold confetti, SOFT_GOLD star, UV_PURPLE heart,
+  warm BG) with no body-language distinction. Daisuke flagged for multiple cycles.
+
+  Changes to UNGUARDED WARMTH body spec (per byte_unguarded_warmth_body_spec.md):
+    arm_l_dy: -5 → -14  (arms float high — buoyant, not reaching)
+    arm_r_dy: -5 → -16  (slight asymmetry to avoid triumphant read)
+    arm_x_scale: UNCHANGED at 1.0 (outward but not spread)
+    float_offset: -4  (drop float height 4px — settled, present; robot "leaning in")
+    body_tilt: -4  UNCHANGED (forward lean is correct — do NOT increase)
+    lower_l_angle: 8°  (left lower-limb toe-in — subtle vulnerability read)
+    lower_r_angle: 8°  (right lower-limb toe-in — mirrors left)
+
+  Bilateral symmetric arm raise = genuinely open, not performing reluctance.
+  Contrast with RELUCTANT JOY (asymmetric: arm_l_dy=-12, arm_r_dy=18).
+  Toe-in lower limbs: reads as "not braced" vs ALARMED's wide-braced stance.
+
+  Color elements RETAINED from v005/v006:
+    SOFT_GOLD confetti, star_gold right eye, heart_purple left eye, warm-cream BG.
 
 v005 ADDITION (Alex Chen C33 Directive):
   UNGUARDED WARMTH — 10th expression.
@@ -265,9 +286,16 @@ EXPRESSIONS = [
         "heart_purple",   # cracked/left eye: heart in UV_PURPLE — "broken open"
         "warmth",         # emotion: barely-there upward arc
         {
-            "arm_dy": -5, "arm_x_scale": 0.72, "leg_spread": 0.85,
+            "arm_dy": -14, "arm_x_scale": 1.0, "leg_spread": 0.85,
             "body_tilt": -4, "body_squash": 1.0,
-            "arm_l_dy": -5, "arm_r_dy": -5,
+            # v007: arms float HIGH — buoyant not reaching (bilateral symmetric)
+            "arm_l_dy": -14,   # was -5 — arms float high
+            "arm_r_dy": -16,   # slight asymmetry to avoid triumphant read
+            # v007: float_offset drops hover position 4px (settled, present)
+            "float_offset": -4,
+            # v007: toe-in lower limbs ~8° (reads as "not braced" / vulnerable)
+            "lower_l_angle": 8,
+            "lower_r_angle": 8,
             "unguarded_warmth": True,   # triggers gold confetti + star right eye
         },
         "star_gold",      # right/organic eye: STAR at full SOFT_GOLD
@@ -625,6 +653,12 @@ def draw_byte(draw, cx, cy, size, expression_name, cracked_symbol, emotion,
     arm_r_dy        = body_data.get("arm_r_dy", arm_dy)
     storm_damage    = body_data.get("storm_damage", False)
     unguarded_warmth = body_data.get("unguarded_warmth", False)
+    # v007: float_offset drops cy (lower float = more settled/present)
+    float_offset    = body_data.get("float_offset", 0)
+    cy              = cy + float_offset   # apply hover position offset
+    # v007: toe-in angles for lower limbs (degrees inward from vertical)
+    lower_l_angle   = body_data.get("lower_l_angle", 0)
+    lower_r_angle   = body_data.get("lower_r_angle", 0)
 
     body_rx = s // 2
     body_ry = int(s * 0.55 * body_squash)
@@ -813,12 +847,38 @@ def draw_byte(draw, cx, cy, size, expression_name, cracked_symbol, emotion,
     leg_l_offset = leg_offset + (2 if unguarded_warmth else 0)
     leg_h        = lh
     leg_w        = int(lw * 0.9)
-    draw.rectangle([bcx - leg_l_offset - leg_w // 2, bcy + body_ry,
-                    bcx - leg_l_offset + leg_w // 2, bcy + body_ry + leg_h],
-                   fill=BYTE_TEAL, outline=LINE, width=2)
-    draw.rectangle([bcx + leg_offset - leg_w // 2, bcy + body_ry,
-                    bcx + leg_offset + leg_w // 2, bcy + body_ry + leg_h],
-                   fill=BYTE_TEAL, outline=LINE, width=2)
+    leg_top_y    = bcy + body_ry
+
+    # v007: lower_l_angle / lower_r_angle — toe-in rendering
+    # Apply inward toe by offsetting leg bottom (tip) toward center.
+    # At expression-sheet scale: ~8° over leg_h distance ≈ int(leg_h * tan(8°)) ≈ 1-2px shift.
+    import math as _math
+    toe_l = int(leg_h * _math.tan(_math.radians(lower_l_angle)))  # left toe moves right (inward)
+    toe_r = int(leg_h * _math.tan(_math.radians(lower_r_angle)))  # right toe moves left (inward)
+
+    if toe_l > 0 or toe_r > 0:
+        # Draw as polygon (trapezoid) for toe-in effect
+        # Left leg: top edge at -leg_l_offset, bottom (tip) shifted inward by toe_l
+        draw.polygon([
+            (bcx - leg_l_offset - leg_w//2, leg_top_y),
+            (bcx - leg_l_offset + leg_w//2, leg_top_y),
+            (bcx - leg_l_offset + leg_w//2 + toe_l, leg_top_y + leg_h),
+            (bcx - leg_l_offset - leg_w//2 + toe_l, leg_top_y + leg_h),
+        ], fill=BYTE_TEAL, outline=LINE)
+        # Right leg: top at +leg_offset, bottom tip shifted inward by toe_r
+        draw.polygon([
+            (bcx + leg_offset - leg_w//2, leg_top_y),
+            (bcx + leg_offset + leg_w//2, leg_top_y),
+            (bcx + leg_offset + leg_w//2 - toe_r, leg_top_y + leg_h),
+            (bcx + leg_offset - leg_w//2 - toe_r, leg_top_y + leg_h),
+        ], fill=BYTE_TEAL, outline=LINE)
+    else:
+        draw.rectangle([bcx - leg_l_offset - leg_w // 2, leg_top_y,
+                        bcx - leg_l_offset + leg_w // 2, leg_top_y + leg_h],
+                       fill=BYTE_TEAL, outline=LINE, width=2)
+        draw.rectangle([bcx + leg_offset - leg_w // 2, leg_top_y,
+                        bcx + leg_offset + leg_w // 2, leg_top_y + leg_h],
+                       fill=BYTE_TEAL, outline=LINE, width=2)
 
     # Hover particles
     if unguarded_warmth:
@@ -861,8 +921,8 @@ def generate_byte_expression_sheet(output_path):
         font_title = font = font_sm = ImageFont.load_default()
 
     draw.text((PAD, 12),
-              "BYTE — Expression Sheet — Luma & the Glitchkin  |  v006  "
-              "(Silhouette fix: ALARMED/POWERED DOWN/RESIGNED arm differentiation)",
+              "BYTE — Expression Sheet — Luma & the Glitchkin  |  v007  "
+              "(UNGUARDED WARMTH body-pose delta: arms float high, toe-in, float_offset -4)",
               fill=(0, 240, 255), font=font_title)
 
     for i, (name, symbol, emotion, body_data, right_eye_style, panel_bg, prev_st, next_st) in \
@@ -925,10 +985,10 @@ if __name__ == '__main__':
     generate_byte_expression_sheet(
         os.path.join(out_dir, "LTG_CHAR_byte_expression_sheet.png")
     )
-    print("v006 silhouette differentiation fixes:")
-    print("  ALARMED: arm_x_scale 1.5→2.0, arm_l_dy -10→-18, arm_r_dy -22→-28")
-    print("  RELUCTANT JOY: arm_l_dy -2→-12, arm_r_dy 12→18 (more asymmetry)")
-    print("  POWERED DOWN: arm_x_scale 0.7→0.20, arm_l/r_dy 18→26 (limp)")
-    print("  RESIGNED: arm_x_scale 0.50→0.25, arm_l/r_dy 14→24 (defeated)")
-    print("  + warmth atmosphere background layer")
-    print("  + gold antenna tip")
+    print("v007 UNGUARDED WARMTH body-pose delta (Sam Kowalski brief, Daisuke flag):")
+    print("  arm_l_dy: -5 → -14 (arms float high, buoyant)")
+    print("  arm_r_dy: -5 → -16 (slight asymmetry, avoids triumphant read)")
+    print("  float_offset: -4 (hover position drops 4px — settled, present)")
+    print("  lower_l/r_angle: 8° toe-in (reads as 'not braced' / vulnerable)")
+    print("  body_tilt: -4 UNCHANGED (forward lean is correct)")
+    print("  All color elements retained: SOFT_GOLD confetti, star_gold, heart_purple")

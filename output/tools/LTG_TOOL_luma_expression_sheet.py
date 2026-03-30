@@ -1,26 +1,41 @@
 #!/usr/bin/env python3
 """
 LTG_TOOL_luma_expression_sheet.py
-Luma Expression Sheet — v012  FACE CURVES INTEGRATION
-"Luma & the Glitchkin" — Cycle 42 / Alex Chen
+Luma Expression Sheet — v013  TIER-1 SILHOUETTE BODY POSTURES
+"Luma & the Glitchkin" — Cycle 41 / Maya Santos
 
-v012 GOAL: Replace ad-hoc face drawing with the canonical bezier face system.
-  Face drawing for all expressions with a matching face curves expression
-  (THE NOTICING, THE NOTICING — DOUBT, WORRIED, FRUSTRATED, DETERMINED) now
+v013 CHANGES (C41 — Alex Chen C41 directive: luma_silhouette_strategy.md Option 3 Hybrid):
+  Tier-1 expression body posture upgrades. Goal: blur any Tier-1 panel to illegibility —
+  the outline must distinguish from all other Tier-1 expressions.
+
+  1. RECKLESS (replaces DELIGHTED) — Luma's signature expression added to sheet.
+     Body: wide stance, arms slightly spread outward (tips extend beyond torso width).
+     Lee Tanaka C41 brief: pupils at leading edge of iris (forward/lateral intent).
+     Head: level or very slight upward tilt (0–+3°). Full blush, excited hair.
+     Face: draw_luma_face("RECKLESS") via face curves system.
+
+  2. ALARMED (replaces SURPRISED) — recoil / threat-response.
+     Body: arms raised toward face — draw_alarmed_arms() (energy inward/upward).
+     Lee Tanaka C41 brief: slight backward lean, pupils centered/back-edge.
+     Small downward pupil drift for Byte-encounter P12 context.
+     Face: draw_luma_face("ALARMED") via face curves system.
+
+  3. FRUSTRATED — crossed arms already correct (draw_crossed_arms unchanged).
+     No body change needed. Already Tier-1 compliant.
+
+  4. THE NOTICING — gaze direction fix (Lee Tanaka C41 brief — CRITICAL).
+     Pupils must aim toward frame-RIGHT (screen-right territory, where the noticed
+     subject lives in P06/SF01). LI/RI_CENTER_dx +6px rightward shift via overrides.
+     Everything else unchanged (forward lean, noticing hand, brow asymmetry).
+
+  Tier-2 pairs (face-only — no body changes per strategy):
+     THE NOTICING / THE NOTICING — DOUBT (same attending body, doubt is internal).
+     WORRIED (stillness under worry IS the silhouette signal).
+
+v012 CHANGES preserved (Alex Chen, Cycle 42):
+  Face drawing for THE NOTICING, THE NOTICING — DOUBT, WORRIED, FRUSTRATED, DETERMINED
   routes through draw_luma_face() from LTG_TOOL_luma_face_curves.py v1.1.0.
-
-  This ensures:
-  - Eye geometry matches luma_face_curve_spec.md v002 (100px canonical eye width)
-  - All expression face deltas are driven by the canonical spec, not per-version
-    hand-coded overrides
-  - Future face spec updates automatically propagate to the expression sheet
-
-  Expressions NOT in face curves (CURIOUS, SURPRISED, DELIGHTED) retain the
-  v011 hand-coded face drawing. These will migrate in a future cycle.
-
-  Body, hair, arms, legs: unchanged from v011.
-  Face curves integration does NOT change body postures — that is Maya Santos
-  v012 silhouette work (still pending; will merge into v013 when delivered).
+  RECKLESS and ALARMED now also route through face curves (added in v013 mapping).
 
 v011 NOTES (preserved for history):
   v011 GOAL: Fix THE NOTICING right eye lid geometry.
@@ -758,10 +773,61 @@ def draw_self_hug_arms(draw, cx, neck_cx, torso_top_y, hoodie_col):
                  fill=SKIN, outline=LINE, width=3)
 
 
+def draw_alarmed_arms(draw, cx, neck_cx, torso_top_y, hoodie_col):
+    """
+    ALARMED v013: Arms raised — energy inward/upward, recoil geometry.
+
+    Alex Chen C41 directive: at least one arm raised or hands-to-face.
+    Lee Tanaka C41 brief: body orientation = arms up / hands to face, energy inward/upward.
+
+    Design: Both arms raise toward face level — a bilateral recoil. Left arm raises
+    higher (hand near chin, guarding), right arm also raised but slightly lower and
+    out (spreading to assess the threat). This creates a strong distinct silhouette
+    from FRUSTRATED (arms crossed, horizontal) and THE NOTICING (one arm at side).
+
+    The raised-hands configuration reads as "ALARMED" even when the face is blurred:
+    mass at upper body, away from torso sides, reaching toward head.
+    """
+    arm_w = int(HR * 0.28)
+    torso_top_w = int(HR * 0.70)
+    hand_r = int(HR * 0.22)
+
+    # Left arm: raises sharply up toward chin/cheek area — guard position
+    l_shoulder_x = neck_cx - torso_top_w + int(HR * 0.10)
+    l_shoulder_y = torso_top_y + int(HR * 0.15)
+    l_elbow_x = neck_cx - int(HR * 0.35)
+    l_elbow_y = l_shoulder_y - int(HR * 0.25)
+    l_hand_x  = neck_cx - int(HR * 0.55)
+    l_hand_y  = l_shoulder_y - int(HR * 0.55)   # hands raised to chin level
+    pts_l = bezier3((l_shoulder_x, l_shoulder_y), (l_elbow_x, l_elbow_y),
+                    (l_hand_x, l_hand_y))
+    polyline(draw, pts_l, hoodie_col, width=arm_w * 2)
+    polyline(draw, pts_l, LINE, width=3)
+    draw.ellipse([l_hand_x - hand_r, l_hand_y - int(hand_r * 0.7),
+                  l_hand_x + hand_r, l_hand_y + int(hand_r * 0.7)],
+                 fill=SKIN, outline=LINE, width=3)
+
+    # Right arm: raised outward and up — defensive spreading, assessing space
+    r_shoulder_x = neck_cx + torso_top_w - int(HR * 0.10)
+    r_shoulder_y = torso_top_y + int(HR * 0.15)
+    r_elbow_x = neck_cx + int(HR * 0.60)
+    r_elbow_y = r_shoulder_y - int(HR * 0.10)
+    r_hand_x  = neck_cx + int(HR * 0.72)
+    r_hand_y  = r_shoulder_y - int(HR * 0.40)   # raised but lower than left
+    pts_r = bezier3((r_shoulder_x, r_shoulder_y), (r_elbow_x, r_elbow_y),
+                    (r_hand_x, r_hand_y))
+    polyline(draw, pts_r, hoodie_col, width=arm_w * 2)
+    polyline(draw, pts_r, LINE, width=3)
+    draw.ellipse([r_hand_x - hand_r, r_hand_y - int(hand_r * 0.7),
+                  r_hand_x + hand_r, r_hand_y + int(hand_r * 0.7)],
+                 fill=SKIN, outline=LINE, width=3)
+
+
 def draw_body_pose(draw, cx, head_cy, hoodie_col, pose, expr_name=""):
     """
     Draw full body: torso, arms, legs, shoes.
     v009/v010: FRUSTRATED and WORRIED get custom arm drawing.
+    v013: ALARMED also gets custom arm drawing (raised arms).
     """
     tilt = pose.get("body_tilt", 0)
 
@@ -824,6 +890,9 @@ def draw_body_pose(draw, cx, head_cy, hoodie_col, pose, expr_name=""):
         # limitation for standing human characters. The visual design of self-hug
         # is the correct storytelling choice for WORRIED — retain it.
         draw_self_hug_arms(draw, cx, neck_cx, torso_top_y, hoodie_col)
+    elif expr_name == "ALARMED":
+        # v013: raised arms toward face — energy inward/upward (Tier-1 body posture)
+        draw_alarmed_arms(draw, cx, neck_cx, torso_top_y, hoodie_col)
     else:
         arm_specs = [
             ("arm_l", pose.get("arm_l"), neck_cx - torso_top_w + int(HR * 0.10), torso_top_y + int(HR * 0.10)),
@@ -1050,27 +1119,39 @@ EXPR_SPECS = {
         },
     },
     # ─────────────────────────────────────────────────────────────────────────
-    # DELIGHTED — unchanged from v009
+    # RECKLESS — v013 NEW (Tier-1 silhouette expression — Luma's signature state)
+    # Replaces DELIGHTED. Matches luma.md §9 "RECKLESS EXCITEMENT" description.
+    # Alex Chen C41 directive: wide stance, arms slightly out — energy-outward.
+    # Lee Tanaka C41 brief: pupils at leading edge of iris (forward/lateral intent,
+    # not panic). Head level to +3° up. Arm tips > torso width on each side.
+    # Face: via draw_luma_face("RECKLESS") — big grin, both eyes wide, brows high.
     # ─────────────────────────────────────────────────────────────────────────
-    "DELIGHTED": {
-        "hair": "excited",
-        "blush": 140,
-        "eyes": {
-            "l_open": 0.60, "r_open": 0.60,
-            "brow_l_dy": -int(HR * 0.16), "brow_r_dy": -int(HR * 0.16),
-            "gaze_dx": 0, "gaze_dy": 0,
-            "crinkle": True,
+    "RECKLESS": {
+        "hair": "excited",  # hair puffs up with energy
+        "blush": 140,       # full blush — RECKLESS EXCITEMENT spec says outer cheek full
+        "eyes": {           # fallback only — draw_luma_face() handles RECKLESS face
+            "l_open": 1.0, "r_open": 1.0,
+            "brow_l_dy": -int(HR * 0.28), "brow_r_dy": -int(HR * 0.28),
+            "gaze_dx": -0.3, "gaze_dy": -0.1,  # forward/slightly up — leading edge
+            "pupils_wide": True,
             "brow_furrow_l": False, "brow_furrow_r": False,
         },
-        "mouth": "smile_big",
-        "cy_offset": -int(HR * 0.10),
+        "mouth": "smile_big",  # fallback
+        "cy_offset": -int(HR * 0.08),  # head slightly up — confidence lift
         "pose": {
-            "body_tilt": -int(HR * 0.12),
-            "arm_l": (-int(HR * 1.00), -int(HR * 1.50), -int(HR * 0.10), -int(HR * 0.40)),
-            "arm_r": ( int(HR * 1.00), -int(HR * 1.50),  int(HR * 0.10), -int(HR * 0.40)),
-            "leg_l": (-int(HR * 0.10), -int(HR * 0.05), int(HR * 0.35)),
-            "leg_r": (int(HR * 0.15), int(HR * 0.05), int(HR * 0.20)),
-            "feet_off_ground": True,
+            # Very slight forward lean (energy forward, not backward)
+            "body_tilt": -int(HR * 0.06),
+            # Arms slightly out from body — energy-outward silhouette.
+            # Lee brief: arm tips must extend beyond torso width by at least 10%.
+            # torso_top_w = HR*0.70 → tips need to reach HR*0.70 + HR*0.10 = HR*0.80 from cx.
+            # Using arm spec: shoulder at -(HR*0.60), arm end extends to -(HR*0.85) from cx.
+            # This gives ~HR*0.85 extension = well beyond torso_top_w of HR*0.70.
+            "arm_l": (-int(HR * 0.80), int(HR * 0.55), -int(HR * 0.12), int(HR * 0.15)),
+            "arm_r": ( int(HR * 0.80), int(HR * 0.55),  int(HR * 0.12), int(HR * 0.15)),
+            # Wide stance — energy outward in legs too
+            "leg_l": (-int(HR * 0.22), -int(HR * 0.08)),
+            "leg_r": ( int(HR * 0.22),  int(HR * 0.08)),
+            "feet_off_ground": False,
         },
     },
     # ─────────────────────────────────────────────────────────────────────────
@@ -1154,16 +1235,19 @@ EXPR_SPECS = {
 def render_character(expr, panel_w, panel_h, panel_bg=None):
     """Render full-body character panel at 2x scale, return 1x via LANCZOS.
 
+    v013: RECKLESS and ALARMED added to face curves map; body postures updated.
+    Per-expression overrides passed to draw_luma_face() for iris shift adjustments
+    (e.g. THE NOTICING rightward gaze correction).
+
     v012: Face drawing routes through draw_luma_face() from
     LTG_TOOL_luma_face_curves v1.1.0 for all expressions that have a matching
     face curves expression. The canonical bezier system replaces the old
     draw_eyes_full() / draw_nose() / draw_mouth() calls for those expressions.
 
-    Fallback: CURIOUS, SURPRISED, DELIGHTED retain v011 hand-coded face drawing
-    (no matching expression in face curves).
+    Fallback: CURIOUS retains v011 hand-coded face drawing (no face curves expression).
 
     v011: panel_bg passed through to draw_eyes_full() for legacy squint_top_r
-    overdraw (only used by fallback path now).
+    overdraw (only used by fallback CURIOUS path now).
     """
     rw   = panel_w * RENDER_SCALE
     rh   = panel_h * RENDER_SCALE
@@ -1231,10 +1315,10 @@ def render_character(expr, panel_w, panel_h, panel_bg=None):
 EXPRESSIONS = [
     "CURIOUS",                  # slot 0
     "DETERMINED",               # slot 1
-    "SURPRISED",                # slot 2
+    "ALARMED",                  # slot 2 — v013: replaces SURPRISED (Tier-1 body posture)
     "WORRIED",                  # slot 3
     "THE NOTICING",             # slot 4 — CENTER (v010 change — was slot 0 in v009)
-    "DELIGHTED",                # slot 5
+    "RECKLESS",                 # slot 5 — v013: replaces DELIGHTED (Tier-1 body posture; Luma signature)
     "FRUSTRATED",               # slot 6
     "THE NOTICING — DOUBT",     # slot 7 — v011 addition (Lee Tanaka C38 brief)
     # slot 8 left blank
@@ -1242,7 +1326,7 @@ EXPRESSIONS = [
 
 
 def build_sheet(show_guides=False):
-    """Build full 1200×900 expression sheet (v012 — face curves integration)."""
+    """Build full 1200×900 expression sheet (v013 — Tier-1 silhouette body postures)."""
     sheet = Image.new("RGB", (TOTAL_W, TOTAL_H), CANVAS_BG)
     draw  = ImageDraw.Draw(sheet)
 
@@ -1261,10 +1345,10 @@ def build_sheet(show_guides=False):
         font_sub    = font_title
         font_anchor = font_title
 
-    title = "LUMA — Expression Sheet v012  |  Luma & the Glitchkin"
-    sub   = ("Designer: Maya Santos / Alex Chen  |  Cycle 42  |  "
+    title = "LUMA — Expression Sheet v013  |  Luma & the Glitchkin"
+    sub   = ("Designer: Maya Santos  |  Cycle 41  |  "
              "3.2 heads  |  ew = canonical 100px (face_curve_spec v002)  |  "
-             "v012: face curves integration — draw_luma_face() via LTG_TOOL_luma_face_curves v1.1.0")
+             "v013: Tier-1 silhouette body postures — RECKLESS/ALARMED added; THE NOTICING gaze fix")
     draw.text((PAD, 8),  title, fill=(59, 40, 32), font=font_title)
     draw.text((PAD, 34), sub,   fill=(110, 88, 68), font=font_sub)
 
@@ -1347,7 +1431,7 @@ def main():
     print(f"Saved: {os.path.abspath(out_path)}")
     print(f"Canvas: {sheet.size[0]}x{sheet.size[1]}")
     curves_status = "ACTIVE" if _FACE_CURVES_AVAILABLE else "NOT FOUND — using v011 fallback for all expressions"
-    print(f"v012: face curves integration (LTG_TOOL_luma_face_curves v1.1.0): {curves_status}")
+    print(f"v013: face curves integration (LTG_TOOL_luma_face_curves v1.1.0): {curves_status}")
     if _FACE_CURVES_AVAILABLE:
         print("  Expressions using draw_luma_face():")
         for sheet_name, curves_name in _FACE_CURVES_EXPR_MAP.items():
@@ -1356,10 +1440,13 @@ def main():
         for expr in EXPRESSIONS:
             if expr not in _FACE_CURVES_EXPR_MAP:
                 print(f"    {expr!r}")
-    print("v012 notes:")
-    print("  - Eye geometry: 100px canonical width per luma_face_curve_spec.md v002")
-    print("  - Body/hair/arms/legs: unchanged from v011")
-    print("  - Maya Santos body posture work (Tier 1 silhouette) = v013")
+    print("v013 Tier-1 silhouette body postures (Alex Chen C41 directive):")
+    print("  - RECKLESS: added (replaces DELIGHTED) — wide stance, arms slightly out, energy-outward")
+    print("  - ALARMED: added (replaces SURPRISED) — arms raised toward face, recoil geometry")
+    print("  - FRUSTRATED: crossed arms unchanged (already correct)")
+    print("  - THE NOTICING: gaze fix — pupils now rightward (+LI/RI_CENTER_dx +6)")
+    print("    per Lee Tanaka C41 brief: subject at screen-right in P06/SF01 context")
+    print("  - Eye geometry: 100px canonical width per luma_face_curve_spec.md v002 (v012)")
 
 
 if __name__ == "__main__":

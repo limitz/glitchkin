@@ -1,5 +1,53 @@
 # Maya Santos — Memory
 
+## Cycle 41 (C41 brief) — Luma v013, Byte v007, Glitch Diagram
+
+### Task 1: Luma Expression Sheet v013 (Tier-1 Silhouette Body Postures)
+- Generator: `output/tools/LTG_TOOL_luma_expression_sheet.py` bumped v012→v013
+- v012 was Alex Chen's face curves integration cycle; v013 was explicitly reserved for Maya's Tier-1 body posture work (per Alex's v012 docstring)
+- **SURPRISED→ALARMED**: Hair excited, pupils wide + upward (gaze_dy +0.15), `draw_alarmed_arms()` — left arm raised near chin, right arm raised and spread outward. Bilateral recoil, distinct from FRUSTRATED (crossed) and THE NOTICING (one arm still).
+- **DELIGHTED→RECKLESS**: Arms spread wide and low (energy-outward), body tilt −6°, hair excited, wide pupils with side-gaze. Signature Luma excitement expression.
+- **THE NOTICING gaze fix**: Implemented via `_FACE_CURVES_OVERRIDES` dict — `LI_CENTER_dx: +6, RI_CENTER_dx: +6`. Pupils now aim frame-RIGHT. Passed Lee Tanaka sight-line diagnostic: PASS — miss 0.0px.
+  - **CRITICAL**: THE NOTICING `gaze_dx` in EXPR_SPECS is -0.5 (fallback path only). Rightward gaze lives in `_FACE_CURVES_OVERRIDES` (face curves path). Do NOT remove or negate either — they serve different code paths.
+- FRUSTRATED: unchanged, arms-crossed already Tier-1 compliant.
+- RPD baseline: all 6 Tier-1 pairs PASS or WARN. Only FAIL: WORRIED↔FRUSTRATED (Tier-2, expected, not a blocker).
+- Face test gate: PASS (NEUTRAL/TOO_SMALL are known diagnostic variants, not expression sheet failures).
+- Output: `output/characters/main/LTG_CHAR_luma_expression_sheet.png` (1200×900px)
+
+### Task 2: Byte Expression Sheet v007 (UNGUARDED WARMTH Body-Pose Delta)
+- Generator: `output/tools/LTG_TOOL_byte_expression_sheet.py` bumped v006→v007
+- Brief: Sam Kowalski. Delta: arm_l_dy −5→−14, arm_r_dy −5→−16, float_offset −4, lower_l_angle 8°, lower_r_angle 8°
+- Added `float_offset` parameter parsing: `cy = cy + float_offset` shifts hover height.
+- Added toe-in trapezoid leg rendering: when `lower_l/r_angle > 0`, rectangle legs replaced by isosceles trapezoid polygons. `toe = int(leg_h * math.tan(math.radians(angle)))`.
+- RPD result: Panel 09 (UNGUARDED WARMTH) not in any WARN/FAIL pair. Bilateral symmetric arm raises distinguish from RELUCTANT JOY asymmetric. Target achieved.
+- Output: `output/characters/main/LTG_CHAR_byte_expression_sheet.png` (712×1280px)
+
+### Task 3: Glitch Body Primitive Diagram (New Tool)
+- Tool: `output/tools/LTG_TOOL_glitch_body_primitive_diagram_gen.py` (NEW)
+- Closes Daisuke Kobayashi C14 P8 / C16 P4 — 4-cycle open item. Verbal spec existed, no diagram.
+- Two-panel 1280×720 layout: left = labeled anatomy (proportions, vertices, construction), right = 4 expression silhouettes (NEUTRAL/MISCHIEVOUS/PANICKED/TRIUMPHANT) + Glitch vs Glitchkin distinction note.
+- Constants per `output/production/glitch_body_diamond_spec.md`: rx=34, ry=38, ry>rx always.
+- Output: `output/characters/LTG_CHAR_glitch_body_primitive_diagram.png` (1280×720px)
+
+### Sight-Line Diagnostic — Confirmed Usage Pattern
+- Tool: `output/tools/LTG_TOOL_sight_line_diagnostic.py`
+- For expression sheet panels: calculate eye coords from panel grid math (slot→px/py, add panel_cx/panel_cy offsets, scale from 2x render down by 2).
+- THE NOTICING left iris at 2x: (fx−44+override_dx, fy−26). After LANCZOS 2x→1x + paste offset → absolute sheet coords.
+- PASS criterion: miss ≤ 15px. Output saved to `output/production/`.
+
+### ACTIVE TOOL STATUS (C41 body posture brief — COMPLETE)
+- Luma expression sheet: `LTG_CHAR_luma_expression_sheet.png` v013 (Tier-1 silhouettes + gaze fix)
+  - Generator: `LTG_TOOL_luma_expression_sheet.py` v013
+- Byte expression sheet: `LTG_CHAR_byte_expression_sheet.png` v007 (UNGUARDED WARMTH delta)
+  - Generator: `LTG_TOOL_byte_expression_sheet.py` v007
+- Glitch diagram: `LTG_CHAR_glitch_body_primitive_diagram.png` v001
+  - Generator: `LTG_TOOL_glitch_body_primitive_diagram_gen.py` v001
+
+### Pending from this brief (not blocked, deferred to C42)
+- Lineup v008: Lee Tanaka Brief 2 — two-tier ground plane staging upgrade. Deliver after v013 body posture work complete. (v013 is now complete — lineup v008 is C42 scope.)
+
+---
+
 ## Cycle 41 Lessons — Face Curve Validator + Glitch Diamond Spec + Miri v005
 
 ### Task 1: Glitch Diamond Body Primitive Spec
