@@ -44,6 +44,10 @@ Tools chained (in order):
      Per-asset world_type tag determines threshold. REAL_INTERIOR >= 35%, GLITCH <= 15%, etc.
      PASS: within threshold. FAIL: outside threshold. SKIP: file missing.
      Runs on registered WARM_PIXEL_PNGS.
+ 14. Sightline Validation (scored) — gaze angular error validation (Morgan Walsh C49)
+     LTG_TOOL_sightline_validator.validate_sightline_from_png() pixel detection.
+     PASS < 5 deg, WARN 5-15 deg, FAIL > 15 deg angular error.
+     Runs on registered SIGHTLINE_PNGS.
 
 Output:
     output/production/precritique_qa_c<NN>.md
@@ -62,6 +66,12 @@ Version: 2.14.0 (C45 Rin Yamamoto: LTG_TOOL_uv_purple_linter v1.1.0 GLITCH_DARK_
                COVETOUS assets previously FAIL (0.6% / 0.2% ΔE-match) now PASS via hue-angle
                matching (96.7% / 98.9% UV_PURPLE hue family h° 255°–325°).
                No change to ENV asset handling — glitchlayer_frame WARNs remain.)
+Version: 2.18.0 (C49 Morgan Walsh: Section 14 Sightline Validation added.
+               LTG_TOOL_sightline_validator.validate_sightline_from_png() on
+               SIGHTLINE_PNGS registry. Pixel-based eye detection + angular error.
+               PASS < 5 deg, WARN 5-15 deg, FAIL > 15 deg. Step numbering 1-14/14.
+               build_report() + main() updated. SF01 registered as first sightline
+               asset.)
 Version: 2.17.0 (C48 Lee Tanaka: Section 12 per-asset band override config.
                depth_temp_band_overrides.json loaded by LTG_TOOL_depth_temp_lint v1.1.0.
                SF04 (fg=0.55, bg=0.85) and SF05 (fg=0.40, bg=0.85) false FAILs now PASS.
@@ -247,6 +257,7 @@ def _load_depth_temp_lint():
 
 # Warm-pixel-metric tool: loaded lazily (requires PIL + numpy; skips gracefully if absent)
 _warm_pixel_metric_mod = None
+_sightline_validator_mod = None
 
 def _load_warm_pixel_metric():
     """Lazily import LTG_TOOL_warm_pixel_metric. Returns module or None."""
@@ -261,6 +272,24 @@ def _load_warm_pixel_metric():
         mod = _importlib_util.module_from_spec(spec)
         spec.loader.exec_module(mod)
         _warm_pixel_metric_mod = mod
+        return mod
+    except Exception:
+        return None
+
+
+def _load_sightline_validator():
+    """Lazily import LTG_TOOL_sightline_validator. Returns module or None."""
+    global _sightline_validator_mod
+    if _sightline_validator_mod is not None:
+        return _sightline_validator_mod
+    try:
+        spec = _importlib_util.spec_from_file_location(
+            "LTG_TOOL_sightline_validator",
+            str(TOOLS_DIR / "LTG_TOOL_sightline_validator.py"),
+        )
+        mod = _importlib_util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        _sightline_validator_mod = mod
         return mod
     except Exception:
         return None
@@ -540,6 +569,27 @@ WARM_PIXEL_PNGS = [
     ("SF03 Other Side",
      SF_DIR / "LTG_COLOR_styleframe_otherside.png",
      "OTHER_SIDE"),
+]
+
+
+# ---------------------------------------------------------------------------
+# Sightline Validation assets for Section 14 (Morgan Walsh C49)
+# ---------------------------------------------------------------------------
+# Style frames with known gaze targets for sight-line angular error validation.
+# Uses LTG_TOOL_sightline_validator.validate_sightline_from_png() (Jordan Reed C48).
+#
+# Each entry: (label, path, target_xy, search_box_or_None)
+# target_xy: (x, y) the character should be looking at
+# search_box: (x0, y0, x1, y1) region to search for eyes, or None for full image
+
+SIGHTLINE_PNGS = [
+    # SF01 Discovery — Luma gazes at CRT/Byte emerge point
+    # Target: CRT screen center (~640, 230) at 1280x720
+    # Search box: Luma's head region (left third of frame, upper-mid)
+    ("SF01 Luma -> CRT",
+     SF_DIR / "LTG_COLOR_styleframe_discovery.png",
+     (640, 230),
+     (150, 200, 450, 450)),
 ]
 
 
@@ -1602,6 +1652,103 @@ def run_warm_pixel_lint() -> dict:
     }
 
 
+def run_sightline_lint() -> dict:
+    """
+    Section 14 — Sightline Validation (Morgan Walsh, Cycle 49).
+
+    Runs LTG_TOOL_sightline_validator.validate_sightline_from_png() on each
+    PNG registered in SIGHTLINE_PNGS. Validates eye/pupil angular error
+    against gaze target. PASS < 5 deg, WARN 5-15 deg, FAIL > 15 deg.
+
+    Returns:
+        {
+            "overall"  : "PASS" | "WARN" | "FAIL",
+            "pass"     : int,
+            "warn"     : int,
+            "fail"     : int,
+            "skip"     : int,
+            "per_file" : list of per-file result dicts
+        }
+    """
+    sv = _load_sightline_validator()
+
+    if sv is None:
+        return {
+            "overall":  "WARN",
+            "pass":     0,
+            "warn":     1,
+            "fail":     0,
+            "skip":     0,
+            "per_file": [],
+            "error":    "LTG_TOOL_sightline_validator could not be loaded",
+        }
+
+    pass_count = 0
+    warn_count = 0
+    fail_count = 0
+    skip_count = 0
+    per_file = []
+
+    for label, img_path, target_xy, search_box in SIGHTLINE_PNGS:
+        entry = {"label": label, "path": str(img_path), "target": target_xy}
+
+        if not img_path.exists():
+            entry["overall"] = "SKIP"
+            entry["message"] = "File not found"
+            skip_count += 1
+            per_file.append(entry)
+            continue
+
+        try:
+            result = sv.validate_sightline_from_png(
+                str(img_path),
+                target_xy,
+                search_box=search_box,
+            )
+
+            grade = result.get("grade", "SKIP")
+            entry["angular_error"] = result.get("angular_error")
+            entry["miss_px"] = result.get("miss_px")
+            entry["detail"] = result.get("detail", "")
+            entry["mode"] = result.get("mode", "pixel")
+
+            if grade == "PASS":
+                entry["overall"] = "PASS"
+                pass_count += 1
+            elif grade == "FAIL":
+                entry["overall"] = "FAIL"
+                fail_count += 1
+            elif grade == "WARN":
+                entry["overall"] = "WARN"
+                warn_count += 1
+            else:
+                # SKIP — detection failed
+                entry["overall"] = "SKIP"
+                skip_count += 1
+        except Exception as exc:
+            entry["overall"] = "WARN"
+            entry["error"] = str(exc)
+            warn_count += 1
+
+        per_file.append(entry)
+
+    if fail_count > 0:
+        overall = "FAIL"
+    elif warn_count > 0:
+        overall = "WARN"
+    else:
+        overall = "PASS"
+
+    return {
+        "overall":  overall,
+        "pass":     pass_count,
+        "warn":     warn_count,
+        "fail":     fail_count,
+        "skip":     skip_count,
+        "per_file": per_file,
+    }
+
+
 # ---------------------------------------------------------------------------
 # Report builder
 # ---------------------------------------------------------------------------
@@ -1620,6 +1767,7 @@ def build_report(
     uv_purple_res: dict,
     depth_temp_res: dict,
     warm_pixel_res: dict,
+    sightline_res: dict,
     delta: dict,
     run_ts: str,
 ) -> str:
@@ -2050,8 +2198,60 @@ def build_report(
 
     lines.append("---")
     lines.append("")
+
+    # Section 14: Sightline Validation
+    sl_badge = _grade_line(sightline_res["overall"])
+    lines.append(f"## 14. Sightline Validation — Gaze Angular Error — {sl_badge}")
+    lines.append("")
     lines.append(
-        "*Generated by LTG_TOOL_precritique_qa.py v2.17.0 — "
+        "_Validates sight-line angular accuracy using "
+        "Jordan Reed's LTG_TOOL_sightline_validator (C48). "
+        "Pixel-based eye/pupil detection on rendered PNGs. "
+        "PASS < 5 deg, WARN 5-15 deg, FAIL > 15 deg angular error._"
+    )
+    lines.append("")
+    lines.append(
+        f"PASS: {sightline_res['pass']}  "
+        f"WARN: {sightline_res['warn']}  "
+        f"FAIL: {sightline_res['fail']}  "
+        f"Skip: {sightline_res.get('skip', 0)}"
+    )
+    lines.append("")
+
+    if sightline_res.get("error"):
+        lines.append(f"  - *ERROR — {sightline_res['error']}*")
+        lines.append("")
+
+    for file_res in sightline_res.get("per_file", []):
+        f_badge = _grade_line(file_res["overall"])
+        label = file_res.get("label", os.path.basename(file_res.get("path", "")))
+        lines.append(f"### {label} — {f_badge}")
+        if file_res["overall"] == "SKIP":
+            msg = file_res.get("message", file_res.get("detail", ""))
+            lines.append(f"  - *SKIP — {msg}*")
+        elif file_res.get("error"):
+            lines.append(f"  - *ERROR — {file_res['error']}*")
+        else:
+            ang_err = file_res.get("angular_error")
+            miss_px = file_res.get("miss_px")
+            detail = file_res.get("detail", "")
+            if ang_err is not None:
+                lines.append(f"  - Angular error: {ang_err:.1f} deg")
+            if miss_px is not None:
+                lines.append(f"  - Miss distance: {miss_px:.1f} px")
+            if detail:
+                lines.append(f"  - {detail}")
+        lines.append("")
+
+    if not sightline_res.get("per_file"):
+        lines.append("_No sightline assets registered._")
+        lines.append("")
+
+    lines.append("---")
+    lines.append("")
+    lines.append(
+        "*Generated by LTG_TOOL_precritique_qa.py v2.18.0 — "
+        "Morgan Walsh (C49: Section 14 Sightline Validation added); "
         "Lee Tanaka (C48: Section 12 per-asset band overrides); "
         "Kai Nakamura (C48: Section 13 Warm Pixel Percentage added); "
         "Rin Yamamoto (C44: Section 11 UV_PURPLE Dominance Lint); "
@@ -2078,31 +2278,31 @@ def main():
     else:
         print("[precritique_qa] No baseline found — this run will establish the baseline.")
 
-    print("[1/13] Running Render QA on pitch PNGs...")
+    print("[1/14] Running Render QA on pitch PNGs...")
     render_qa_res = run_render_qa()
     print(f"      → {render_qa_res['overall']} (PASS={render_qa_res['pass']}, WARN={render_qa_res['warn']}, FAIL={render_qa_res['fail']}, MISSING={len(render_qa_res['missing'])})")
 
-    print("[2/13] Running Color Verify on style frames...")
+    print("[2/14] Running Color Verify on style frames...")
     color_verify_res = run_color_verify()
     print(f"      → {color_verify_res['overall']} (PASS={color_verify_res['pass']}, WARN={color_verify_res['warn']})")
 
-    print("[3/13] Running Proportion Verify on character turnarounds...")
+    print("[3/14] Running Proportion Verify on character turnarounds...")
     proportion_res = run_proportion_verify()
     print(f"      → {proportion_res['overall']} (PASS={proportion_res['pass']}, WARN={proportion_res['warn']}, FAIL={proportion_res['fail']})")
 
-    print("[4/13] Running Stub Linter on output/tools/...")
+    print("[4/14] Running Stub Linter on output/tools/...")
     stub_lint_res = run_stub_linter()
     print(f"      → {stub_lint_res['overall']} (PASS={stub_lint_res['pass']}, WARN={stub_lint_res['warn']}, ERROR={stub_lint_res['fail']})")
 
-    print("[5/13] Running Palette Warmth Lint on master_palette.md...")
+    print("[5/14] Running Palette Warmth Lint on master_palette.md...")
     palette_lint_res = run_palette_warmth_lint()
     print(f"      → {palette_lint_res['overall']} (checked={palette_lint_res['pass'] + palette_lint_res['warn']}, violations={palette_lint_res['warn']})")
 
-    print("[6/13] Running Glitch Spec Lint on generators...")
+    print("[6/14] Running Glitch Spec Lint on generators...")
     glitch_lint_res = run_glitch_spec_lint()
     print(f"      → {glitch_lint_res['overall']} (PASS={glitch_lint_res['pass']}, WARN={glitch_lint_res['warn']}, FAIL={glitch_lint_res['fail']}, SKIP={glitch_lint_res.get('skip',0)})")
 
-    print("[7/13] Running README Script Index Sync audit...")
+    print("[7/14] Running README Script Index Sync audit...")
     readme_sync_res = run_readme_sync()
     # Prominently report README WARN to console
     if readme_sync_res["warn"] > 0:
@@ -2110,11 +2310,11 @@ def main():
     else:
         print(f"      → {readme_sync_res['overall']} (OK={readme_sync_res['pass']}, UNLISTED/GHOST={readme_sync_res['warn']}, disk={readme_sync_res.get('disk_total','?')}, listed={readme_sync_res.get('listed_total','?')})")
 
-    print("[8/13] Running Motion Spec Lint on motion sheets...")
+    print("[8/14] Running Motion Spec Lint on motion sheets...")
     motion_spec_res = run_motion_spec_lint()
     print(f"      → {motion_spec_res['overall']} (PASS={motion_spec_res['pass']}, WARN={motion_spec_res['warn']}, FAIL={motion_spec_res['fail']}, MISSING={len(motion_spec_res['missing'])})")
 
-    print("[9/13] Running Arc-Diff Gate on contact sheet pairs...")
+    print("[9/14] Running Arc-Diff Gate on contact sheet pairs...")
     arc_diff_results = run_arc_diff_gate()
     for ad in arc_diff_results:
         sev = ad["severity"]
@@ -2124,21 +2324,25 @@ def main():
             msgs = "; ".join(m[:80] for m in ad.get("messages", [])[:2])
             print(f"      → {ad['label']}: {sev} — {msgs}")
 
-    print("[10/13] Running Alpha Blend Lint on fill-light assets...")
+    print("[10/14] Running Alpha Blend Lint on fill-light assets...")
     alpha_blend_res = run_alpha_blend_lint()
     print(f"      → {alpha_blend_res['overall']} (PASS={alpha_blend_res['pass']}, WARN={alpha_blend_res['warn']}, FAIL={alpha_blend_res['fail']}, SKIP={alpha_blend_res['skipped']})")
 
-    print("[11/13] Running UV_PURPLE Dominance Lint on Glitch Layer assets...")
+    print("[11/14] Running UV_PURPLE Dominance Lint on Glitch Layer assets...")
     uv_purple_res = run_uv_purple_lint()
     print(f"      → {uv_purple_res['overall']} (PASS={uv_purple_res['pass']}, WARN={uv_purple_res['warn']}, FAIL={uv_purple_res['fail']}, SKIP={uv_purple_res.get('skip',0)})")
 
-    print("[12/13] Running Depth Temperature Lint on multi-character assets...")
+    print("[12/14] Running Depth Temperature Lint on multi-character assets...")
     depth_temp_res = run_depth_temp_lint()
     print(f"      → {depth_temp_res['overall']} (PASS={depth_temp_res['pass']}, WARN={depth_temp_res['warn']}, FAIL={depth_temp_res['fail']}, SKIP={depth_temp_res.get('skip',0)})")
 
-    print("[13/13] Running Warm Pixel Percentage on world-typed assets...")
+    print("[13/14] Running Warm Pixel Percentage on world-typed assets...")
     warm_pixel_res = run_warm_pixel_lint()
     print(f"      → {warm_pixel_res['overall']} (PASS={warm_pixel_res['pass']}, WARN={warm_pixel_res['warn']}, FAIL={warm_pixel_res['fail']}, SKIP={warm_pixel_res.get('skip',0)})")
+
+    print("[14/14] Running Sightline Validation on gaze-target assets...")
+    sightline_res = run_sightline_lint()
+    print(f"      → {sightline_res['overall']} (PASS={sightline_res['pass']}, WARN={sightline_res['warn']}, FAIL={sightline_res['fail']}, SKIP={sightline_res.get('skip',0)})")
 
     # Build snapshot and compute delta
     current_snapshot = _make_snapshot(
@@ -2168,6 +2372,7 @@ def main():
         uv_purple_res,
         depth_temp_res,
         warm_pixel_res,
+        sightline_res,
         delta,
         run_ts,
     )
@@ -2191,6 +2396,7 @@ def main():
         uv_purple_res["overall"],
         depth_temp_res["overall"],
         warm_pixel_res["overall"],
+        sightline_res["overall"],
     )
 
     print(f"[precritique_qa] OVERALL: {overall}")

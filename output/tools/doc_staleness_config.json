@@ -1,0 +1,45 @@
+{
+  "_format": "Doc staleness thresholds per directory prefix. The CI suite doc_staleness check uses these thresholds instead of global defaults. Paths are matched by prefix (relative to project root). More specific prefixes take priority. 'warn_age' = cycles before WARN, 'fail_age' = cycles before FAIL.",
+  "default": {
+    "warn_age": 5,
+    "fail_age": 10
+  },
+  "overrides": [
+    {
+      "path_prefix": "output/tools/",
+      "warn_age": 8,
+      "fail_age": 15,
+      "reason": "Tools docs update less frequently — longer shelf life"
+    },
+    {
+      "path_prefix": "docs/",
+      "warn_age": 4,
+      "fail_age": 8,
+      "reason": "Core docs should stay fresh — shorter threshold"
+    },
+    {
+      "path_prefix": "output/production/",
+      "warn_age": 6,
+      "fail_age": 12,
+      "reason": "Production reports are reference material — moderate threshold"
+    },
+    {
+      "path_prefix": "output/storyboards/",
+      "warn_age": 10,
+      "fail_age": 20,
+      "reason": "Storyboard docs are stable once written — long threshold"
+    },
+    {
+      "path_prefix": "members/",
+      "warn_age": 3,
+      "fail_age": 6,
+      "reason": "Member files should update every few cycles"
+    },
+    {
+      "path_prefix": "critics/",
+      "warn_age": 10,
+      "fail_age": 20,
+      "reason": "Critic profiles are stable reference material"
+    }
+  ]
+}

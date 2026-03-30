@@ -1,0 +1,75 @@
+{
+  "_format": "CI Check Registry — config-driven check slot management. Each slot (1-10) maps to a check function. Swap a check by changing the 'check' field and adding an entry to 'swap_history'. The CI suite loads this registry at startup; no code edits needed to swap checks.",
+  "slots": [
+    {
+      "slot": 1,
+      "check": "stub_linter",
+      "label": "Stub Integrity Linter",
+      "enabled": true
+    },
+    {
+      "slot": 2,
+      "check": "draw_order_lint",
+      "label": "Draw Order Linter",
+      "enabled": true
+    },
+    {
+      "slot": 3,
+      "check": "glitch_spec_lint",
+      "label": "Glitch Spec Linter",
+      "enabled": true
+    },
+    {
+      "slot": 4,
+      "check": "spec_sync_ci",
+      "label": "Spec Sync CI Gate",
+      "enabled": true
+    },
+    {
+      "slot": 5,
+      "check": "char_spec_lint",
+      "label": "Char Spec Linter",
+      "enabled": true
+    },
+    {
+      "slot": 6,
+      "check": "dual_output_check",
+      "label": "Dual-Output File Check",
+      "enabled": true
+    },
+    {
+      "slot": 7,
+      "check": "hardcoded_path_check",
+      "label": "Hardcoded Path Check",
+      "enabled": true
+    },
+    {
+      "slot": 8,
+      "check": "thumbnail_lint",
+      "label": "Thumbnail Lint",
+      "enabled": true
+    },
+    {
+      "slot": 9,
+      "check": "motion_sheet_coverage",
+      "label": "Motion Sheet Coverage",
+      "enabled": true
+    },
+    {
+      "slot": 10,
+      "check": "doc_staleness",
+      "label": "Doc Staleness Check",
+      "enabled": true
+    }
+  ],
+  "swap_history": [
+    {
+      "slot": 10,
+      "old_check": "ext_model_check",
+      "new_check": "doc_staleness",
+      "cycle": "C48",
+      "date": "2026-03-28",
+      "reason": "Pretrained models ARE allowed per policy correction — ext_model_check removed, replaced with doc_staleness."
+    }
+  ]
+}

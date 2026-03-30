@@ -13,11 +13,54 @@ v1.2.0: Morgan Walsh / Cycle 42 — --warn-stale N flag
 v1.6.0: Morgan Walsh / Cycle 46 — --auto-seed flag
 v1.7.0: Morgan Walsh / Cycle 47 — --dry-run flag, Check 10 ext_model_check
 v1.8.0: Morgan Walsh / Cycle 48 — Remove Check 10, add Check 10 doc_staleness
+v1.9.0: Morgan Walsh / Cycle 49 — Check registry + per-directory doc_staleness thresholds
 
 Runs all LTG tool-pipeline CI checks in sequence and produces a combined report.
 
-Checks run (in order)
----------------------
+Check Registry (ci_check_registry.json)
+---------------------------------------
+Checks are now config-driven. The file ci_check_registry.json in the tools
+directory defines which check function occupies each slot (1-10). To swap a
+check, edit the JSON — no code changes needed. Swap history is tracked in
+the same file under "swap_history".
+
+If ci_check_registry.json is absent, the suite falls back to the hardcoded
+_CHECKS list (backwards compatible).
+
+Registry JSON format:
+    {
+      "slots": [
+        {"slot": 1, "check": "stub_linter", "label": "...", "enabled": true},
+        ...
+      ],
+      "swap_history": [
+        {"slot": 10, "old_check": "ext_model_check", "new_check": "doc_staleness",
+         "cycle": "C48", "date": "2026-03-28", "reason": "..."},
+        ...
+      ]
+    }
+
+Per-directory doc_staleness thresholds (doc_staleness_config.json)
+-----------------------------------------------------------------
+The doc_staleness check now loads per-directory thresholds from
+doc_staleness_config.json. Different directories age differently:
+output/tools/ docs have longer shelf life than docs/ core specs.
+
+Thresholds are matched by path prefix (relative to project root). More
+specific prefixes take priority. Falls back to global defaults if no
+config file is found.
+
+Config JSON format:
+    {
+      "default": {"warn_age": 5, "fail_age": 10},
+      "overrides": [
+        {"path_prefix": "output/tools/", "warn_age": 8, "fail_age": 15, "reason": "..."},
+        ...
+      ]
+    }
+
+Default checks (in order)
+-------------------------
 1. stub_linter             — broken import detection (old-style LTG_CHAR_/COLOR_ refs)
 2. draw_order_lint         — draw order violations (W001–W004, back-pose suppression)
 3. glitch_spec_lint        — Glitchkin generator spec compliance (G001–G008)
@@ -27,7 +70,7 @@ Checks run (in order)
 7. hardcoded_path_check    — /home/-prefixed absolute paths in active generators
 8. thumbnail_lint          — unwhitelisted .thumbnail() calls
 9. motion_sheet_coverage   — motion sheet coverage for characters with expression sheets
-10. doc_staleness          — documentation freshness (WARN 5+ cycles, FAIL 10+ cycles)
+10. doc_staleness          — documentation freshness (per-directory thresholds)
 
 Pass/fail threshold
 -------------------
@@ -126,6 +169,7 @@ API
     from LTG_TOOL_ci_suite import check_motion_coverage
     from LTG_TOOL_ci_suite import collect_new_fails, auto_seed_known_issues
     from LTG_TOOL_ci_suite import check_doc_staleness
+    from LTG_TOOL_ci_suite import load_check_registry
 
     known     = load_known_issues("ci_known_issues.json")
     known_raw = load_known_issues_raw("ci_known_issues.json")
@@ -210,9 +254,21 @@ v1.8.0 (C48): REMOVED Check 10 ext_model_check — pretrained models ARE
               doc_staleness_warn_age and doc_staleness_fail_age params.
               check_doc_staleness() exported for programmatic use.
               (Morgan Walsh)
+v1.9.0 (C49): CI Check Registry — config-driven check slot management.
+              ci_check_registry.json defines which check occupies each slot.
+              Checks can be swapped, enabled/disabled, or reordered by editing
+              the JSON — no code changes needed. Swap history tracked in the
+              same file. Falls back to hardcoded _CHECKS list if registry
+              absent (fully backwards compatible).
+              load_check_registry() exported for programmatic use.
+              Per-directory doc_staleness thresholds — doc_staleness_config.json
+              provides per-directory warn_age/fail_age overrides. Matched by
+              path prefix (most specific wins). Falls back to global defaults
+              if config absent.
+              (Morgan Walsh)
 """
 
-__version__ = "1.8.0"
+__version__ = "1.9.0"
 
 import os
 import sys
@@ -232,6 +288,172 @@ def _tools_dir_or_default(tools_dir):
 def _add_to_path(tools_dir):
     if tools_dir not in sys.path:
         sys.path.insert(0, tools_dir)
+
+
+# ── Check Registry ───────────────────────────────────────────────────────────
+
+def load_check_registry(tools_dir=None):
+    """
+    Load the CI check registry from ci_check_registry.json.
+
+    Parameters
+    ----------
+    tools_dir : str | None
+        Path to output/tools/. Defaults to the directory of this script.
+
+    Returns
+    -------
+    dict | None
+        The parsed registry dict, or None if the file is absent or invalid.
+        Registry structure: {"slots": [...], "swap_history": [...]}
+    """
+    td = _tools_dir_or_default(tools_dir)
+    reg_path = os.path.join(td, "ci_check_registry.json")
+    if not os.path.exists(reg_path):
+        return None
+    try:
+        with open(reg_path, "r", encoding="utf-8") as fh:
+            data = json.load(fh)
+        return data
+    except (OSError, json.JSONDecodeError):
+        return None
+
+
+def _resolve_checks_from_registry(registry):
+    """
+    Convert a registry dict into the _CHECKS list format.
+
+    Parameters
+    ----------
+    registry : dict
+        Parsed ci_check_registry.json data.
+
+    Returns
+    -------
+    list[tuple]
+        List of (check_name, runner_func, label) tuples, same format as _CHECKS.
+        Only enabled slots are included, sorted by slot number.
+    """
+    # Map check names to runner functions
+    _RUNNER_MAP = {
+        "stub_linter":          _run_stub_linter,
+        "draw_order_lint":      _run_draw_order_lint,
+        "glitch_spec_lint":     _run_glitch_spec_lint,
+        "spec_sync_ci":         _run_spec_sync_ci,
+        "char_spec_lint":       _run_char_spec_lint,
+        "dual_output_check":    _run_dual_output_check,
+        "hardcoded_path_check": _run_hardcoded_path_check,
+        "thumbnail_lint":       _run_thumbnail_lint,
+        "motion_sheet_coverage":_run_motion_coverage,
+        "doc_staleness":        _run_doc_staleness,
+    }
+
+    slots = registry.get("slots", [])
+    # Sort by slot number
+    slots_sorted = sorted(slots, key=lambda s: s.get("slot", 0))
+
+    checks = []
+    for slot in slots_sorted:
+        if not slot.get("enabled", True):
+            continue
+        check_name = slot.get("check", "")
+        label = slot.get("label", check_name)
+        runner = _RUNNER_MAP.get(check_name)
+        if runner is None:
+            # Unknown check name — create an error runner
+            def _make_unknown_runner(name):
+                def _unknown(tools_dir):
+                    return "ERROR", f"Unknown check '{name}' — not in runner map", ""
+                return _unknown
+            runner = _make_unknown_runner(check_name)
+        checks.append((check_name, runner, label))
+
+    return checks
+
+
+def _get_checks(tools_dir):
+    """
+    Get the check list, preferring the registry if available.
+    Falls back to the hardcoded _CHECKS list.
+
+    Parameters
+    ----------
+    tools_dir : str
+        Path to output/tools/.
+
+    Returns
+    -------
+    list[tuple]
+        List of (check_name, runner_func, label) tuples.
+    str
+        Source: "registry" or "hardcoded".
+    """
+    registry = load_check_registry(tools_dir)
+    if registry is not None:
+        checks = _resolve_checks_from_registry(registry)
+        if checks:
+            return checks, "registry"
+    return _CHECKS, "hardcoded"
+
+
+# ── Doc staleness config ─────────────────────────────────────────────────────
+
+def _load_doc_staleness_config(tools_dir=None):
+    """
+    Load per-directory doc staleness thresholds from doc_staleness_config.json.
+
+    Returns
+    -------
+    dict | None
+        The parsed config dict, or None if absent/invalid.
+        Structure: {"default": {warn_age, fail_age}, "overrides": [...]}
+    """
+    td = _tools_dir_or_default(tools_dir)
+    cfg_path = os.path.join(td, "doc_staleness_config.json")
+    if not os.path.exists(cfg_path):
+        return None
+    try:
+        with open(cfg_path, "r", encoding="utf-8") as fh:
+            return json.load(fh)
+    except (OSError, json.JSONDecodeError):
+        return None
+
+
+def _get_thresholds_for_path(rel_path, config):
+    """
+    Get (warn_age, fail_age) for a given relative path using the config.
+    Most specific (longest) matching path_prefix wins.
+
+    Parameters
+    ----------
+    rel_path : str
+        File path relative to project root (forward slashes).
+    config : dict
+        Parsed doc_staleness_config.json.
+
+    Returns
+    -------
+    tuple[int, int]
+        (warn_age, fail_age)
+    """
+    default_warn = config.get("default", {}).get("warn_age", 5)
+    default_fail = config.get("default", {}).get("fail_age", 10)
+
+    best_prefix_len = 0
+    best_warn = default_warn
+    best_fail = default_fail
+
+    # Normalise path separators
+    norm_path = rel_path.replace("\\", "/")
+
+    for override in config.get("overrides", []):
+        prefix = override.get("path_prefix", "").replace("\\", "/")
+        if norm_path.startswith(prefix) and len(prefix) > best_prefix_len:
+            best_prefix_len = len(prefix)
+            best_warn = override.get("warn_age", default_warn)
+            best_fail = override.get("fail_age", default_fail)
+
+    return best_warn, best_fail
 
 
 # ── Known-issues support ──────────────────────────────────────────────────────
@@ -1007,20 +1229,27 @@ def _run_motion_coverage(tools_dir):
 # ── Check 10: Doc Staleness ───────────────────────────────────────────────────
 
 
-def check_doc_staleness(current_cycle=48, warn_age=5, fail_age=10, project_root=None):
+def check_doc_staleness(current_cycle=49, warn_age=5, fail_age=10,
+                        project_root=None, tools_dir=None):
     """
     Check documentation freshness by delegating to LTG_TOOL_doc_governance_audit.
+
+    When doc_staleness_config.json is present in tools_dir, per-directory
+    thresholds override the global warn_age/fail_age defaults. Each doc is
+    evaluated against the most specific matching path prefix.
 
     Parameters
     ----------
     current_cycle : int
-        Current cycle number (e.g. 48).
+        Current cycle number (e.g. 49).
     warn_age : int
-        Cycles after which a doc triggers WARN (default 5).
+        Global default cycles for WARN (default 5). Overridden by config.
     fail_age : int
-        Cycles after which a doc triggers FAIL (default 10).
+        Global default cycles for FAIL (default 10). Overridden by config.
     project_root : str | None
         Project root directory. Auto-detected if None.
+    tools_dir : str | None
+        Path to output/tools/. Used to locate doc_staleness_config.json.
 
     Returns
     -------
@@ -1031,55 +1260,95 @@ def check_doc_staleness(current_cycle=48, warn_age=5, fail_age=10, project_root=
           "no_cycle_ref": list[dict], # docs with no cycle reference
           "recent_docs": list[dict],  # docs that are fresh
           "total_scanned": int,
+          "config_source": str,       # "per_directory" or "global"
         }
         Each doc dict has: path, max_cycle (int or None), age (int or None).
+        When per-directory config is active, docs also have: threshold_warn, threshold_fail.
     """
     try:
         from LTG_TOOL_doc_governance_audit import audit_docs
     except ImportError:
         return {
             "warn_docs": [], "fail_docs": [], "no_cycle_ref": [],
-            "recent_docs": [], "total_scanned": 0,
+            "recent_docs": [], "total_scanned": 0, "config_source": "global",
             "_error": "Could not import LTG_TOOL_doc_governance_audit",
         }
 
-    # Run the audit with fail_age as the stale threshold (we split WARN/FAIL ourselves)
+    # Load per-directory config if available
+    ds_config = _load_doc_staleness_config(tools_dir)
+
+    # Run the audit with a very low threshold (1) so we get ALL docs with cycle refs
+    # back as either "stale" or "recent". We then apply our own thresholds per doc.
+    # Use warn_age=1 to get everything classified.
     result = audit_docs(
         current_cycle=current_cycle,
-        stale_threshold=warn_age,
+        stale_threshold=1,  # get everything with age >= 1 as "stale"
         project_root=project_root,
     )
 
-    # The audit returns "stale" (>= warn_age) and "recent" (< warn_age).
-    # We further split "stale" into WARN (warn_age <= age < fail_age) and FAIL (>= fail_age).
+    # Combine stale + recent — we re-classify with per-directory thresholds
+    all_docs = list(result.get("stale", [])) + list(result.get("recent", []))
+
     warn_docs = []
     fail_docs = []
-    for entry in result.get("stale", []):
-        if entry["age"] >= fail_age:
-            fail_docs.append(entry)
-        else:
-            warn_docs.append(entry)
+    recent_docs = []
+
+    if ds_config is not None:
+        # Per-directory mode
+        config_source = "per_directory"
+        for entry in all_docs:
+            doc_warn, doc_fail = _get_thresholds_for_path(entry["path"], ds_config)
+            entry_out = dict(entry)
+            entry_out["threshold_warn"] = doc_warn
+            entry_out["threshold_fail"] = doc_fail
+            age = entry.get("age", 0)
+            if age >= doc_fail:
+                fail_docs.append(entry_out)
+            elif age >= doc_warn:
+                warn_docs.append(entry_out)
+            else:
+                recent_docs.append(entry_out)
+    else:
+        # Global mode (backwards compatible)
+        config_source = "global"
+        for entry in all_docs:
+            age = entry.get("age", 0)
+            if age >= fail_age:
+                fail_docs.append(entry)
+            elif age >= warn_age:
+                warn_docs.append(entry)
+            else:
+                recent_docs.append(entry)
+
+    # Sort
+    fail_docs.sort(key=lambda x: -x.get("age", 0))
+    warn_docs.sort(key=lambda x: -x.get("age", 0))
+    recent_docs.sort(key=lambda x: -x.get("age", 0))
 
     return {
         "warn_docs": warn_docs,
         "fail_docs": fail_docs,
         "no_cycle_ref": result.get("no_cycle_ref", []),
-        "recent_docs": result.get("recent", []),
+        "recent_docs": recent_docs,
         "total_scanned": result.get("total_scanned", 0),
+        "config_source": config_source,
     }
 
 
 def _run_doc_staleness(tools_dir):
-    """Run doc staleness check. Returns (status, summary, details)."""
-    # Derive current cycle from env or default to 48
-    cycle_str = os.environ.get("CYCLE_LABEL", "C48")
+    """Run doc staleness check. Returns (status, summary, details).
+
+    Loads per-directory thresholds from doc_staleness_config.json if present.
+    """
+    # Derive current cycle from env or default to 49
+    cycle_str = os.environ.get("CYCLE_LABEL", "C49")
     try:
         current_cycle = int(cycle_str.lstrip("Cc"))
     except (ValueError, AttributeError):
-        current_cycle = 48
+        current_cycle = 49
 
     try:
-        result = check_doc_staleness(current_cycle=current_cycle)
+        result = check_doc_staleness(current_cycle=current_cycle, tools_dir=tools_dir)
     except Exception as exc:
         return "ERROR", f"doc_staleness error: {exc}", ""
 
@@ -1090,19 +1359,30 @@ def _run_doc_staleness(tools_dir):
     warn_docs = result["warn_docs"]
     no_ref = result["no_cycle_ref"]
     total = result["total_scanned"]
+    config_source = result.get("config_source", "global")
 
     details_lines = []
+    if config_source == "per_directory":
+        details_lines.append("(Using per-directory thresholds from doc_staleness_config.json)")
+        details_lines.append("")
+
     if fail_docs:
-        details_lines.append(f"FAIL — {len(fail_docs)} doc(s) stale 10+ cycles:")
+        details_lines.append(f"FAIL — {len(fail_docs)} doc(s) past fail threshold:")
         for d in fail_docs:
+            threshold_note = ""
+            if "threshold_fail" in d:
+                threshold_note = f"  [threshold: {d['threshold_fail']}]"
             details_lines.append(
-                f"  FAIL  C{d['max_cycle']:<3d}  (age {d['age']:>2d})  {d['path']}"
+                f"  FAIL  C{d['max_cycle']:<3d}  (age {d['age']:>2d})  {d['path']}{threshold_note}"
             )
     if warn_docs:
-        details_lines.append(f"WARN — {len(warn_docs)} doc(s) stale 5-9 cycles:")
+        details_lines.append(f"WARN — {len(warn_docs)} doc(s) past warn threshold:")
         for d in warn_docs:
+            threshold_note = ""
+            if "threshold_warn" in d:
+                threshold_note = f"  [threshold: {d['threshold_warn']}]"
             details_lines.append(
-                f"  WARN  C{d['max_cycle']:<3d}  (age {d['age']:>2d})  {d['path']}"
+                f"  WARN  C{d['max_cycle']:<3d}  (age {d['age']:>2d})  {d['path']}{threshold_note}"
             )
     if no_ref:
         details_lines.append(f"INFO — {len(no_ref)} doc(s) with no cycle reference (not scored)")
@@ -1111,17 +1391,17 @@ def _run_doc_staleness(tools_dir):
 
     if fail_docs:
         summary = (
-            f"{len(fail_docs)} FAIL (10+ cycles) + {len(warn_docs)} WARN (5-9 cycles) "
-            f"out of {total} docs scanned"
+            f"{len(fail_docs)} FAIL + {len(warn_docs)} WARN "
+            f"out of {total} docs scanned ({config_source} thresholds)"
         )
         return "FAIL", summary, details
     elif warn_docs:
         summary = (
-            f"{len(warn_docs)} WARN (5-9 cycles stale) out of {total} docs scanned"
+            f"{len(warn_docs)} WARN out of {total} docs scanned ({config_source} thresholds)"
         )
         return "WARN", summary, details
     else:
-        summary = f"All {total} docs are fresh (< 5 cycles)"
+        summary = f"All {total} docs are fresh ({config_source} thresholds)"
         return "PASS", summary, details
 
 
@@ -1206,13 +1486,16 @@ def run_suite(tools_dir=None, fail_on="FAIL", known_issues=None,
     if warn_stale and known_issues_raw is not None:
         stale_known = check_stale_known_issues(known_issues_raw, current_cycle, warn_stale)
 
+    # Resolve checks from registry (config-driven) or fallback to hardcoded
+    active_checks, checks_source = _get_checks(tools_dir)
+
     results = {}
     any_error  = False
     any_fail   = False
     any_warn   = False
     total_known = 0
 
-    for (key, runner, label) in _CHECKS:
+    for (key, runner, label) in active_checks:
         status, summary, details = runner(tools_dir)
         # Annotate details with KNOWN markers where applicable
         annotated_details, known_count = _annotate_details_with_known(
@@ -1268,6 +1551,7 @@ def run_suite(tools_dir=None, fail_on="FAIL", known_issues=None,
         "total_known":      total_known,
         "stale_known":      stale_known,
         "stale_warn":       stale_warn,
+        "checks_source":    checks_source,
     }
 
 
@@ -1291,6 +1575,8 @@ def format_suite_report(suite_result, include_details=True):
     lines.append(f"LTG CI Suite v{__version__} — Combined Report")
     lines.append(f"Tools dir : {suite_result['tools_dir']}")
     lines.append(f"Fail-on   : {suite_result['fail_on']}")
+    checks_source = suite_result.get("checks_source", "hardcoded")
+    lines.append(f"Checks    : {checks_source}")
     lines.append("=" * 72)
 
     STATUS_ICONS = {"PASS": "✓", "WARN": "⚠", "FAIL": "✗", "ERROR": "!"}
