@@ -282,6 +282,47 @@ Import: `from LTG_TOOL_render_lib import ...`
 - G008 bilateral check: proxy approach (detect interior state keywords + destabilize function) is
   conservative; may flag files that correctly implement bilateral but use different variable names
 
+## Cycle 42 — C42 Face Curves Caller Audit
+
+**Status:** COMPLETE
+
+**No inbox message this cycle — self-directed from C41 open items list.**
+
+### P1 #5 — Stale v001 Eye Width Audit (COMPLETE)
+- **No generators import draw_luma_face() from luma_face_curves module.** All Luma face drawing is inline.
+- Expression sheet v011 uses `EW_CANON = HEAD_HEIGHT_2X * 0.22 = 45px at 2x` — proportional, not comparable to bezier absolute 100px. Not a migration risk.
+- 5 inline-drawing generators identified: luma_expression_sheet, luma_act2_standing_pose, luma_classroom_pose, style_frame_02 (sprint face), cycle13_panel_fixes, sb_panel_a201.
+- **Conclusion:** 56px error was ONLY in luma_face_curves.py itself (fixed C41). No downstream callers to fix.
+
+### P2 #12 Support — LTG_TOOL_face_curves_caller_audit.py (NEW)
+- v1.0.0: static regex scanner for inline Luma face drawing + migration readiness classification
+- Status: USING_API / INLINE_CANDIDATE / NO_LUMA_FACE
+- Readiness: READY_HIGH (proportion-scaled) / READY_MEDIUM (absolute pixels) / READY_LOW (complex)
+- Saves report to `LTG_TOOL_face_curves_caller_audit_report.txt`
+- CLI: `python LTG_TOOL_face_curves_caller_audit.py [tools_dir] [--save-report PATH]`
+- Ideabox: submitted face_curves_migration.md guide idea
+
+### README.md
+- Header updated to C42 (Kai entry)
+- face_curves_caller_audit v1.0.0 registered
+
+## LTG_TOOL_face_curves_caller_audit.py (C42 NEW)
+- `audit_file(filepath) → dict` — status, readiness, inline_fns, expression_refs, eye_geometry, notes
+- `audit_directory(directory, skip_legacy=True) → list`
+- `format_report(results, include_no_luma=False) → str`
+- Exit 0 = no INLINE_CANDIDATEs, exit 1 = candidates found
+
+## Key Facts (C42)
+- No generator currently uses draw_luma_face() bezier API. Migration is future work.
+- luma_expression_sheet v011 = READY_MEDIUM (mature 11-version system; hold migration)
+- Pose generators (act2_standing, classroom_pose) = READY_HIGH (proportional scaling; simpler migration)
+- SF02 sprint face has no matching bezier API expression — would need custom delta
+
+## Lessons Learned (C42)
+- When auditing for "callers using old API values" — first verify callers actually exist. In this case: zero imports, so zero update risk.
+- The 56px vs 100px eye width discrepancy only mattered inside luma_face_curves.py v1.0.0 itself (now fixed). The independent inline generators never used this module.
+- Proportional inline systems (HR/s) are READY_HIGH for migration; absolute-pixel systems are READY_MEDIUM. Both need mapping work, but proportional is cleaner.
+
 ## Cycle 41 — C41 Face Curves v1.1.0 Eye-Width Correction
 
 **Status:** COMPLETE
