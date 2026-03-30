@@ -475,3 +475,18 @@ Read inbox for directive. Two tasks: (1) SF02 staging brief for Luma interiority
 - **Band position calibration requires visual inspection of the composition.** The warmth-by-Y-fraction scan (30%-95% in 5% steps) reveals the warm/cool gradient structure of each scene. SF04 has a warm-to-cool top-to-bottom gradient; SF05 has warm characters above a cool counter/floor. Neither matches the lineup's 78/70 geometry.
 - **Override configs are better than per-tool heuristics.** An auto-detection algorithm would need to find characters in the image (expensive, fragile). A JSON config with per-asset overrides is simple, explicit, version-controlled, and can be updated by any team member without touching Python code.
 - **False positives erode trust in the QA pipeline.** Two persistent FAILs that the team knows are wrong cause everyone to ignore the depth_temp section. Fixing false positives is as important as catching real failures.
+
+## Cycle 49 Milestone
+- **depth_temp_lint v1.2.0 — auto-band discovery mode:** `--discover path.png` scans warmth at 5% Y increments (30%-95%), finds FG/BG pair maximizing warm-cool separation. Prints warmth profile + suggested override JSON entry. Module API: `discover_bands(path)` returns dict with `found`, `fg_y_frac`, `bg_y_frac`, `separation`, `profile`.
+- **`--discover-validate` mode:** Compares discovery against all manual overrides. Validates grade match (PASS/WARN/FAIL), not exact Y position match — discovery may find a better pair at different Y positions that still produces the same grade.
+- **Validation results:** SF04 GRADE MATCH (disc fg=0.35 sep=50.2, manual fg=0.55 sep=28.6, both PASS). SF05 GRADE MATCH + POSITION MATCH (disc fg=0.45, manual fg=0.40, both PASS).
+- **Backward compat confirmed:** Manual overrides always take precedence in normal lint mode. 7 self-tests all PASS.
+- **README updated:** v1.2.0 entry in C49 section.
+- **Ideabox:** `20260330_lee_tanaka_discover_precritique_auto_suggest.md` — auto-suggest discovered bands in precritique_qa for assets without overrides.
+- **Reported to Alex Chen** via inbox.
+- **Inbox archived:** C49 assignment.
+
+## Cycle 49 Lessons
+- **Discovery finds the globally optimal pair, not the semantically "correct" pair.** SF04 discovery picks fg=0.35 (character torso, warmest spot) vs manual fg=0.55 (character feet, calibrated by visual inspection). Both produce PASS. The discovery algorithm optimizes for maximum separation, which may differ from the manually chosen "character ground plane" position. This is fine — the purpose is to produce a working override quickly, not to replicate human spatial reasoning.
+- **Grade match is the right validation criterion, not position match.** Two different FG/BG pairs can both produce PASS if the image has a monotonic warm-to-cool gradient. Requiring exact Y position match would produce false negatives in validation for images with broad warm zones.
+- **Warmth profile visualization (ASCII bar chart) makes the tool self-documenting.** A user running `--discover` can see the full warmth structure of the image and understand WHY the tool chose those bands. This is more trustworthy than a pair of numbers with no context.

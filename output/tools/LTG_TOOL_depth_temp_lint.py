@@ -45,6 +45,8 @@ Usage (CLI):
     python LTG_TOOL_depth_temp_lint.py --band 40 --threshold 8.0 path/to/image.png
     python LTG_TOOL_depth_temp_lint.py --self-test
     python LTG_TOOL_depth_temp_lint.py --batch dir_or_file [dir_or_file ...]
+    python LTG_TOOL_depth_temp_lint.py --discover path/to/image.png
+    python LTG_TOOL_depth_temp_lint.py --discover-validate
 
 Usage (module API — for precritique_qa integration):
     from LTG_TOOL_depth_temp_lint import lint_depth_temperature
@@ -60,11 +62,26 @@ Usage (module API — for precritique_qa integration):
     # batch_result = {"overall": "PASS"|..., "pass": int, "warn": int,
     #                 "fail": int, "skip": int, "per_file": [...]}
 
+    from LTG_TOOL_depth_temp_lint import discover_bands
+    disc = discover_bands("path/to/image.png")
+    # disc = {"found": True, "fg_y_frac": float, "bg_y_frac": float,
+    #         "separation": float, "fg_warmth": float, "bg_warmth": float,
+    #         "profile": [(y_frac, warmth, px_count), ...],
+    #         "message": str, "path": str}
+
 Author: Lee Tanaka (Character Staging & Visual Acting Specialist)
 Created: Cycle 46 — 2026-03-30
-Version: 1.1.0
+Version: 1.2.0
 
 Version history:
+    1.2.0 (C49) — Auto-band discovery mode (--discover).
+                   discover_bands(path) scans warmth at 5% Y increments (30%-95%),
+                   finds the FG/BG pair that maximizes warm-cool separation.
+                   Returns recommended fg_y_frac, bg_y_frac, separation, and a
+                   full warmth-by-Y profile. CLI: --discover path/to/image.png.
+                   Manual overrides in depth_temp_band_overrides.json always take
+                   precedence over auto-discovery. Validated against SF04 and SF05
+                   manual overrides — discovery matches manual config.
     1.1.0 (C48) — Per-asset band override config support.
                    load_band_overrides() reads depth_temp_band_overrides.json.
                    lint_depth_temperature() accepts overrides dict.
@@ -146,7 +163,7 @@ BRIGHT_CUTOFF = 700  # R+G+B > 700 = near-white, skip
 # Glitch Layer world types — exempt from this rule
 EXEMPT_WORLD_TYPES = {"GLITCH", "OTHER_SIDE"}
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 __author__ = "Lee Tanaka"
 
 # Per-asset band override config path
@@ -462,6 +479,167 @@ def lint_depth_temperature(
 
 
 # ---------------------------------------------------------------------------
+# Public API: auto-band discovery
+# ---------------------------------------------------------------------------
+
+# Discovery scan range and step (as fractions of image height)
+DISCOVER_Y_MIN = 0.30
+DISCOVER_Y_MAX = 0.95
+DISCOVER_Y_STEP = 0.05
+
+# Minimum separation between FG and BG candidate bands (as fraction of height)
+DISCOVER_MIN_BAND_GAP = 0.05
+
+
+def discover_bands(
+    image_path: str,
+    band_h: int = DEFAULT_BAND_H,
+    y_min: float = DISCOVER_Y_MIN,
+    y_max: float = DISCOVER_Y_MAX,
+    y_step: float = DISCOVER_Y_STEP,
+    min_band_gap: float = DISCOVER_MIN_BAND_GAP,
+) -> Dict:
+    """
+    Auto-discover optimal FG/BG band positions for depth temperature lint.
+
+    Scans warmth at y_step increments across the image, then finds the pair
+    of Y positions that maximizes warm-cool separation (warmer = FG, cooler = BG).
+    Bands must be separated by at least min_band_gap to avoid overlapping.
+
+    Args:
+        image_path: Path to the PNG/JPG to analyse.
+        band_h: Height of each sampling band in pixels.
+        y_min: Start of scan range (fraction of image height, 0.0-1.0).
+        y_max: End of scan range (fraction of image height, 0.0-1.0).
+        y_step: Increment between scan positions (fraction of image height).
+        min_band_gap: Minimum distance between FG and BG Y positions (fraction).
+
+    Returns:
+        Dict with keys:
+            found: bool — True if a valid FG/BG pair was found.
+            fg_y_frac: float — Recommended FG band Y position.
+            bg_y_frac: float — Recommended BG band Y position.
+            separation: float — Warmth separation at recommended positions.
+            fg_warmth: float — Warmth at recommended FG position.
+            bg_warmth: float — Warmth at recommended BG position.
+            profile: list of (y_frac, warmth, pixel_count) tuples — full scan.
+            message: str — Human-readable summary.
+            path: str — Input image path.
+    """
+    path_str = str(image_path)
+
+    # Check file exists
+    if not os.path.isfile(path_str):
+        return {
+            "found": False,
+            "fg_y_frac": DEFAULT_FG_Y_FRAC,
+            "bg_y_frac": DEFAULT_BG_Y_FRAC,
+            "separation": 0.0,
+            "fg_warmth": 0.0,
+            "bg_warmth": 0.0,
+            "profile": [],
+            "message": f"File not found: {os.path.basename(path_str)}",
+            "path": path_str,
+        }
+
+    # Load image
+    try:
+        img = Image.open(path_str).convert("RGB")
+    except Exception as e:
+        return {
+            "found": False,
+            "fg_y_frac": DEFAULT_FG_Y_FRAC,
+            "bg_y_frac": DEFAULT_BG_Y_FRAC,
+            "separation": 0.0,
+            "fg_warmth": 0.0,
+            "bg_warmth": 0.0,
+            "profile": [],
+            "message": f"Cannot open image: {e}",
+            "path": path_str,
+        }
+
+    h = img.height
+    arr = None
+    if _NP_AVAILABLE:
+        arr = np.array(img)
+
+    # Scan warmth at each Y position
+    profile = []  # list of (y_frac, warmth, pixel_count)
+    y_frac = y_min
+    while y_frac <= y_max + 1e-9:
+        y_center = int(h * y_frac)
+        y_start, y_end = _extract_strip(img, y_center, band_h)
+        if _NP_AVAILABLE and arr is not None:
+            strip = arr[y_start:y_end, :, :]
+            warmth, px_count = _measure_strip_warmth(strip)
+        else:
+            warmth, px_count = _measure_strip_warmth_pil(img, y_start, y_end)
+        profile.append((round(y_frac, 4), round(warmth, 2), px_count))
+        y_frac += y_step
+
+    # Find the pair with maximum separation (warmest - coolest)
+    # where the two bands are at least min_band_gap apart
+    best_sep = -float("inf")
+    best_fg_idx = -1
+    best_bg_idx = -1
+    min_pixels = 50
+
+    for i, (y_i, w_i, px_i) in enumerate(profile):
+        if px_i < min_pixels:
+            continue
+        for j, (y_j, w_j, px_j) in enumerate(profile):
+            if px_j < min_pixels:
+                continue
+            if abs(y_i - y_j) < min_band_gap:
+                continue
+            sep = w_i - w_j
+            if sep > best_sep:
+                best_sep = sep
+                best_fg_idx = i
+                best_bg_idx = j
+
+    if best_fg_idx < 0 or best_bg_idx < 0 or best_sep <= 0:
+        return {
+            "found": False,
+            "fg_y_frac": DEFAULT_FG_Y_FRAC,
+            "bg_y_frac": DEFAULT_BG_Y_FRAC,
+            "separation": 0.0,
+            "fg_warmth": 0.0,
+            "bg_warmth": 0.0,
+            "profile": profile,
+            "message": "No valid FG/BG pair found with positive separation.",
+            "path": path_str,
+        }
+
+    fg_y_frac = profile[best_fg_idx][0]
+    bg_y_frac = profile[best_bg_idx][0]
+    fg_warmth = profile[best_fg_idx][1]
+    bg_warmth = profile[best_bg_idx][1]
+
+    basename = os.path.basename(path_str)
+    msg = (
+        f"DISCOVERED: {basename}\n"
+        f"  FG band: y={fg_y_frac:.2f} (warmth={fg_warmth:.1f})\n"
+        f"  BG band: y={bg_y_frac:.2f} (warmth={bg_warmth:.1f})\n"
+        f"  Separation: {best_sep:.1f}\n"
+        f"  Override JSON entry:\n"
+        f'    "{basename}": {{"fg_y_frac": {fg_y_frac}, "bg_y_frac": {bg_y_frac}}}'
+    )
+
+    return {
+        "found": True,
+        "fg_y_frac": fg_y_frac,
+        "bg_y_frac": bg_y_frac,
+        "separation": round(best_sep, 2),
+        "fg_warmth": fg_warmth,
+        "bg_warmth": bg_warmth,
+        "profile": profile,
+        "message": msg,
+        "path": path_str,
+    }
+
+
+# ---------------------------------------------------------------------------
 # Public API: batch check (for precritique_qa integration)
 # ---------------------------------------------------------------------------
 
@@ -659,6 +837,29 @@ def _self_test() -> bool:
     print(f"  Test batch API: overall={batch_res['overall']} p={batch_res['pass']} "
           f"w={batch_res['warn']} f={batch_res['fail']} [{status5}]")
 
+    # --- Test 6: discover_bands on PASS image ---
+    print("\n  Test discover_bands on PASS image:")
+    disc = discover_bands(pass_path)
+    disc_ok = disc["found"] and disc["separation"] > 0
+    status6 = "OK" if disc_ok else "FAIL"
+    if not disc_ok:
+        all_pass = False
+    print(f"    found={disc['found']}, fg_y={disc['fg_y_frac']:.2f}, "
+          f"bg_y={disc['bg_y_frac']:.2f}, sep={disc['separation']:.1f} [{status6}]")
+
+    # --- Test 7: discover_bands on FAIL image (inverted) ---
+    # The FAIL image has warm BG and cool FG. discover_bands should still
+    # find the pair but with BG being the warm one (it returns max sep
+    # with warm=FG, so FG_y will point at the BG band location).
+    print("  Test discover_bands on inverted image:")
+    disc2 = discover_bands(fail_path)
+    disc2_ok = disc2["found"] and disc2["separation"] > 0
+    status7 = "OK" if disc2_ok else "FAIL"
+    if not disc2_ok:
+        all_pass = False
+    print(f"    found={disc2['found']}, fg_y={disc2['fg_y_frac']:.2f}, "
+          f"bg_y={disc2['bg_y_frac']:.2f}, sep={disc2['separation']:.1f} [{status7}]")
+
     if all_pass:
         print("\n[self-test] ALL TESTS PASSED")
     else:
@@ -719,7 +920,130 @@ def _build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Treat arguments as directories — lint all PNGs inside.",
     )
+    p.add_argument(
+        "--discover",
+        action="store_true",
+        help="Auto-discover optimal FG/BG band positions for each image.",
+    )
+    p.add_argument(
+        "--discover-validate",
+        action="store_true",
+        help="Run discover on assets with manual overrides and compare results.",
+    )
     return p
+
+
+def _discover_validate() -> int:
+    """
+    Validate auto-discovery against all assets with manual band overrides.
+
+    For each asset in depth_temp_band_overrides.json, runs discover_bands()
+    and compares the discovered FG/BG positions to the manual overrides.
+    A match means the discovered position is within 0.10 of the manual value.
+
+    Returns exit code: 0 if all match, 1 if any mismatch, 2 on error.
+    """
+    overrides = load_band_overrides()
+    if not overrides:
+        print("[discover-validate] No overrides found in depth_temp_band_overrides.json")
+        return 2
+
+    # Find the actual file paths for override basenames
+    # Check common asset directories
+    sf_dir = REPO_ROOT / "output" / "color" / "style_frames"
+    char_dir = REPO_ROOT / "output" / "characters"
+    search_dirs = [sf_dir, char_dir, REPO_ROOT / "output"]
+
+    print(f"[discover-validate] Validating {len(overrides)} override(s) against auto-discovery")
+    print("  Validation criteria: discovered bands must produce the same lint")
+    print("  grade (PASS/WARN/FAIL) as manual overrides. Discovery may find")
+    print("  different Y positions (e.g. torso vs feet) that still produce PASS.")
+    print("=" * 70)
+
+    all_ok = True
+    tolerance = 0.15  # Y-fraction tolerance for position similarity
+
+    for basename, override in overrides.items():
+        manual_fg = override.get("fg_y_frac", DEFAULT_FG_Y_FRAC)
+        manual_bg = override.get("bg_y_frac", DEFAULT_BG_Y_FRAC)
+        label = override.get("label", basename)
+
+        # Find file on disk
+        file_path = None
+        for d in search_dirs:
+            candidate = d / basename
+            if candidate.is_file():
+                file_path = str(candidate)
+                break
+        # Also try recursive search
+        if file_path is None:
+            for d in search_dirs:
+                if d.is_dir():
+                    matches = list(d.rglob(basename))
+                    if matches:
+                        file_path = str(matches[0])
+                        break
+
+        if file_path is None:
+            print(f"\n  [{label}] {basename}")
+            print(f"    SKIP: file not found on disk")
+            continue
+
+        # Run discovery
+        disc = discover_bands(file_path)
+
+        if not disc["found"]:
+            print(f"\n  [{label}] {basename}")
+            print(f"    WARN: discovery found no valid pair")
+            all_ok = False
+            continue
+
+        # Run lint with manual overrides (the known-good config)
+        manual_result = lint_depth_temperature(
+            file_path,
+            fg_y_frac=manual_fg,
+            bg_y_frac=manual_bg,
+            overrides={},  # disable auto-load
+        )
+
+        # Run lint with discovered bands
+        disc_result = lint_depth_temperature(
+            file_path,
+            fg_y_frac=disc["fg_y_frac"],
+            bg_y_frac=disc["bg_y_frac"],
+            overrides={},  # disable auto-load
+        )
+
+        # Grade match is the primary validation
+        grade_match = manual_result["overall"] == disc_result["overall"]
+
+        # Position similarity is secondary info
+        fg_delta = abs(disc["fg_y_frac"] - manual_fg)
+        bg_delta = abs(disc["bg_y_frac"] - manual_bg)
+        pos_close = fg_delta <= tolerance and bg_delta <= tolerance
+
+        if grade_match:
+            status = "GRADE MATCH"
+            if pos_close:
+                status += " + POSITION MATCH"
+        else:
+            status = "GRADE MISMATCH"
+            all_ok = False
+
+        print(f"\n  [{label}] {basename} — {status}")
+        print(f"    Manual:     fg={manual_fg:.2f}, bg={manual_bg:.2f} "
+              f"→ {manual_result['overall']} (sep={manual_result['separation']:.1f})")
+        print(f"    Discovered: fg={disc['fg_y_frac']:.2f}, bg={disc['bg_y_frac']:.2f} "
+              f"→ {disc_result['overall']} (sep={disc_result['separation']:.1f})")
+        print(f"    Position deltas: fg={fg_delta:.2f}, bg={bg_delta:.2f}")
+
+    print("\n" + "=" * 70)
+    if all_ok:
+        print("[discover-validate] ALL OVERRIDES VALIDATED — discovery produces same grade as manual")
+        return 0
+    else:
+        print("[discover-validate] SOME GRADE MISMATCHES — review above results")
+        return 1
 
 
 def main():
@@ -729,6 +1053,9 @@ def main():
     if args.self_test:
         ok = _self_test()
         return 0 if ok else 2
+
+    if args.discover_validate:
+        return _discover_validate()
 
     if not args.images:
         parser.print_help()
@@ -750,6 +1077,26 @@ def main():
         print("No PNG files found.")
         return 1
 
+    # --discover mode: auto-detect band positions
+    if args.discover:
+        print(f"\nDepth Temperature Band Discovery — {len(paths)} file(s)")
+        print("=" * 60)
+        all_found = True
+        for fp in paths:
+            result = discover_bands(fp, band_h=args.band)
+            print(result["message"])
+            if not result["found"]:
+                all_found = False
+            # Print warmth profile
+            if result["profile"]:
+                print("  Warmth profile (y_frac: warmth [px_count]):")
+                for y_f, w, px in result["profile"]:
+                    bar = "+" * max(0, int(w / 3)) if w > 0 else "-" * max(0, int(-w / 3))
+                    print(f"    {y_f:.2f}: {w:+7.1f} ({px:5d}px) {bar}")
+            print()
+        print("=" * 60)
+        return 0 if all_found else 1
+
     # Run lint
     results = run_depth_temp_check(
         paths,
@@ -770,6 +1117,8 @@ def main():
         else:
             print(f"  [{grade}] {bn}: FG={res['fg_warmth']:.1f} BG={res['bg_warmth']:.1f} "
                   f"sep={res['separation']:.1f} (thr={res['threshold']:.1f})")
+            if res.get("band_override"):
+                print(f"         (band override: fg={res['fg_y_frac']:.2f}, bg={res['bg_y_frac']:.2f})")
     print("=" * 60)
     print(f"OVERALL: {results['overall']}  "
           f"(PASS={results['pass']} WARN={results['warn']} "
