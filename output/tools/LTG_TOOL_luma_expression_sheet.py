@@ -1,10 +1,29 @@
 #!/usr/bin/env python3
 """
 LTG_TOOL_luma_expression_sheet.py
-Luma Expression Sheet — v011  THE NOTICING RIGHT-EYE LID FIX
-"Luma & the Glitchkin" — Cycle 38 / Maya Santos
+Luma Expression Sheet — v012  FACE CURVES INTEGRATION
+"Luma & the Glitchkin" — Cycle 42 / Alex Chen
 
-v011 GOAL: Fix THE NOTICING right eye lid geometry.
+v012 GOAL: Replace ad-hoc face drawing with the canonical bezier face system.
+  Face drawing for all expressions with a matching face curves expression
+  (THE NOTICING, THE NOTICING — DOUBT, WORRIED, FRUSTRATED, DETERMINED) now
+  routes through draw_luma_face() from LTG_TOOL_luma_face_curves.py v1.1.0.
+
+  This ensures:
+  - Eye geometry matches luma_face_curve_spec.md v002 (100px canonical eye width)
+  - All expression face deltas are driven by the canonical spec, not per-version
+    hand-coded overrides
+  - Future face spec updates automatically propagate to the expression sheet
+
+  Expressions NOT in face curves (CURIOUS, SURPRISED, DELIGHTED) retain the
+  v011 hand-coded face drawing. These will migrate in a future cycle.
+
+  Body, hair, arms, legs: unchanged from v011.
+  Face curves integration does NOT change body postures — that is Maya Santos
+  v012 silhouette work (still pending; will merge into v013 when delivered).
+
+v011 NOTES (preserved for history):
+  v011 GOAL: Fix THE NOTICING right eye lid geometry.
   Takeshi Murakami (C38 critique): the right eye uses a wince (symmetric
   bottom-lid-rises approach). It must be a SQUINT — top lid drops ~20-25%,
   bottom lid stays neutral.
@@ -108,6 +127,44 @@ Cycle: 38
 from PIL import Image, ImageDraw, ImageFont
 import math
 import os
+import sys
+
+# ── Face Curves Integration ───────────────────────────────────────────────────
+# Import canonical bezier face system (v1.1.0 — 100px canonical eye width)
+# Path: output/tools/LTG_TOOL_luma_face_curves.py (same directory)
+_TOOLS_DIR = os.path.dirname(os.path.abspath(__file__))
+if _TOOLS_DIR not in sys.path:
+    sys.path.insert(0, _TOOLS_DIR)
+try:
+    from LTG_TOOL_luma_face_curves import draw_luma_face as _draw_luma_face_curves
+    _FACE_CURVES_AVAILABLE = True
+except ImportError:
+    _FACE_CURVES_AVAILABLE = False
+
+# Expression name mapping: expression sheet name → face curves expression name
+# Only expressions present in EXPRESSION_DELTAS in luma_face_curves are listed.
+_FACE_CURVES_EXPR_MAP = {
+    "THE NOTICING":         "THE_NOTICING",
+    "THE NOTICING — DOUBT": "THE_NOTICING_DOUBT",
+    "WORRIED":              "WORRIED",
+    "FRUSTRATED":           "FRUSTRATED",
+    "DETERMINED":           "DETERMINED",
+    "ALARMED":              "ALARMED",
+    "RECKLESS":             "RECKLESS",
+}
+# Note: CURIOUS retains v011 hand-coded face drawing (no matching face curves expression).
+
+# Per-expression overrides applied on top of the face curves expression delta.
+# Use to fine-tune iris shift, blush, or any scalar that differs at expression-sheet
+# scale from the spec default.
+# v013: THE NOTICING — gaze correction per Lee Tanaka C41 sight-line brief.
+#   Pupils MUST aim toward frame-right (screen-right territory, where the noticed
+#   subject lives in P06/SF01). LI_CENTER_dx/RI_CENTER_dx shift iris rightward.
+#   +6px at 2x render scale → visible pupil shift toward right of panel.
+_FACE_CURVES_OVERRIDES = {
+    "THE NOTICING":         {"LI_CENTER_dx": +6, "RI_CENTER_dx": +6},
+    "THE NOTICING — DOUBT": {"LI_CENTER_dx": +6, "RI_CENTER_dx": +6},  # same attending gaze
+}
 
 # ── Palette ──────────────────────────────────────────────────────────────────
 SKIN       = (200, 136, 90)
@@ -136,25 +193,25 @@ CANVAS_BG  = (235, 224, 206)   # warm parchment
 # Hoodie color tint per expression
 # v010: THE NOTICING hoodie is deeper/richer slate blue for better figure/ground separation
 HOODIE_MAP = {
-    "THE NOTICING": (105, 128, 162),   # v010: deeper slate blue (was 130,148,172 in v009)
-    "THE NOTICING — DOUBT": (112, 124, 152),  # v011: same cool family, slightly more muted (uncertainty)
+    "THE NOTICING": (105, 128, 162),   # v010: deeper slate blue
+    "THE NOTICING — DOUBT": (112, 124, 152),  # v011: same cool family, muted uncertainty
     "CURIOUS":      (150, 175, 200),   # cool blue-gray
     "DETERMINED":   (155,  85, 45),    # warm amber-red
-    "SURPRISED":    (232, 112, 42),    # full orange
+    "RECKLESS":     (232, 112, 42),    # full orange — Luma's signature energy (v013: replaces DELIGHTED)
+    "ALARMED":      (200,  90, 38),    # deeper burnt orange — stress-warm (v013: replaces SURPRISED)
     "WORRIED":      ( 80, 100, 140),   # muted indigo
-    "DELIGHTED":    (232, 112, 42),    # full orange
     "FRUSTRATED":   (135,  75, 65),    # muted terracotta
 }
 
 # v010: THE NOTICING BG is deeper blue-grey for more emotional charge
 BG = {
-    "THE NOTICING": (195, 210, 228),   # v010: deeper blue-grey (was 218,226,235 in v009)
-    "THE NOTICING — DOUBT": (186, 198, 218),  # v011: same family, slightly cooler/darker (uncertainty)
+    "THE NOTICING": (195, 210, 228),   # v010: deeper blue-grey
+    "THE NOTICING — DOUBT": (186, 198, 218),  # v011: same family, cooler/darker uncertainty
     "CURIOUS":      (230, 240, 235),   # soft warm mint
     "DETERMINED":   (238, 228, 210),   # warm parchment
-    "SURPRISED":    (245, 234, 210),   # warm cream
+    "RECKLESS":     (248, 236, 210),   # warm golden cream — signature excitement (v013)
+    "ALARMED":      (242, 230, 218),   # warm pale — adrenaline moment (v013)
     "WORRIED":      (225, 230, 242),   # pale blue-gray
-    "DELIGHTED":    (250, 238, 215),   # warm golden cream
     "FRUSTRATED":   (235, 220, 220),   # pale rose
 }
 
@@ -937,26 +994,35 @@ EXPR_SPECS = {
         },
     },
     # ─────────────────────────────────────────────────────────────────────────
-    # SURPRISED — unchanged from v009
+    # ALARMED — v013 NEW (Tier-1 silhouette expression, Alex Chen C41 directive)
+    # Replaces SURPRISED. Body: at least one arm raised / hands-to-face.
+    # Energy inward/upward. Slight backward tilt (recoil geometry).
+    # Face: via draw_luma_face("ALARMED") — wide eyes, brows shoot up, jaw drop.
+    # Lee Tanaka sight-line brief: pupils centered or back-edge; slight downward
+    # shift (~5px at expression sheet scale) for Byte-encounter context (Byte is
+    # much shorter than Luma — P12 context).
+    # draw_alarmed_arms() handles the body silhouette requirement.
     # ─────────────────────────────────────────────────────────────────────────
-    "SURPRISED": {
-        "hair": "excited",
-        "blush": 0,
-        "eyes": {
+    "ALARMED": {
+        "hair": "excited",  # hair puffs up in alarm
+        "blush": 0,         # adrenaline drains blush
+        "eyes": {           # fallback only — draw_luma_face() handles ALARMED face
             "l_open": 1.0, "r_open": 1.0,
             "brow_l_dy": -int(HR * 0.32), "brow_r_dy": -int(HR * 0.32),
-            "gaze_dx": 0, "gaze_dy": 0,
+            "gaze_dx": 0, "gaze_dy": 0.15,  # slightly down (Byte scale)
             "pupils_wide": True,
             "brow_furrow_l": False, "brow_furrow_r": False,
         },
-        "mouth": "open_oval",
-        "cy_offset": -int(HR * 0.06),
+        "mouth": "open_oval",  # fallback
+        "cy_offset": -int(HR * 0.06),  # head back slightly (recoil)
         "pose": {
-            "body_tilt": int(HR * 0.15),
-            "arm_l": (-int(HR * 1.50), -int(HR * 0.55), -int(HR * 0.08), -int(HR * 0.60)),
-            "arm_r": ( int(HR * 1.50), -int(HR * 0.55),  int(HR * 0.08), -int(HR * 0.60)),
-            "leg_l": (-int(HR * 0.05), int(HR * 0.10)),
-            "leg_r": (int(HR * 0.20), -int(HR * 0.05)),
+            # Slight backward tilt — 2-5° back per Lee Tanaka brief
+            "body_tilt": int(HR * 0.12),  # lean back
+            "arm_l": None,  # ALARMED arms handled by draw_alarmed_arms()
+            "arm_r": None,
+            # Wide stance — body braced
+            "leg_l": (-int(HR * 0.18), int(HR * 0.05)),
+            "leg_r": ( int(HR * 0.18), -int(HR * 0.05)),
             "feet_off_ground": False,
         },
     },
@@ -1088,8 +1154,16 @@ EXPR_SPECS = {
 def render_character(expr, panel_w, panel_h, panel_bg=None):
     """Render full-body character panel at 2x scale, return 1x via LANCZOS.
 
-    v011: panel_bg passed through to draw_eyes_full() so the squint_top_r
-    overdraw uses the correct panel background color (not the default canvas).
+    v012: Face drawing routes through draw_luma_face() from
+    LTG_TOOL_luma_face_curves v1.1.0 for all expressions that have a matching
+    face curves expression. The canonical bezier system replaces the old
+    draw_eyes_full() / draw_nose() / draw_mouth() calls for those expressions.
+
+    Fallback: CURIOUS, SURPRISED, DELIGHTED retain v011 hand-coded face drawing
+    (no matching expression in face curves).
+
+    v011: panel_bg passed through to draw_eyes_full() for legacy squint_top_r
+    overdraw (only used by fallback path now).
     """
     rw   = panel_w * RENDER_SCALE
     rh   = panel_h * RENDER_SCALE
@@ -1115,15 +1189,33 @@ def render_character(expr, panel_w, panel_h, panel_bg=None):
 
     draw = ImageDraw.Draw(img)
 
-    # Draw head on top (head_cx may be offset from body center for chin-forward thrust)
-    draw_head(draw, head_cx, head_cy)
-    draw_ears(draw, head_cx, head_cy)
-    draw_hair(draw, head_cx, head_cy, variant=spec["hair"])
-    draw_blush(draw, head_cx, head_cy, alpha=spec["blush"])
-    # v011: pass panel_bg for squint_top_r lid overdraw
-    draw_eyes_full(draw, head_cx, head_cy, spec["eyes"], bg_color=panel_bg)
-    draw_nose(draw, head_cx, head_cy)
-    draw_mouth(draw, head_cx, head_cy, style=spec["mouth"])
+    # Determine face curves expression name (if available)
+    curves_expr = _FACE_CURVES_EXPR_MAP.get(expr, None)
+    use_curves  = _FACE_CURVES_AVAILABLE and curves_expr is not None
+
+    if use_curves:
+        # v012: canonical bezier face system path.
+        # Hair first (behind face), then draw_luma_face() for all facial geometry.
+        # draw_head() is NOT called — draw_luma_face() provides the face oval.
+        # draw_ears() is also skipped — ear/cheek nubs were part of draw_head().
+        draw_hair(draw, head_cx, head_cy, variant=spec["hair"])
+        draw = ImageDraw.Draw(img)
+        # draw_luma_face() handles: face oval, blush, eye outlines, irises,
+        # pupils, highlights, nose bridge, mouth, brows — per spec v002.
+        # v013: pass per-expression overrides (e.g. iris shift for THE NOTICING gaze).
+        face_overrides = _FACE_CURVES_OVERRIDES.get(expr, None)
+        _draw_luma_face_curves(draw, fc=(head_cx, head_cy), expression=curves_expr,
+                               overrides=face_overrides)
+    else:
+        # Fallback: v011 hand-coded face drawing (CURIOUS only in v013)
+        draw_head(draw, head_cx, head_cy)
+        draw_ears(draw, head_cx, head_cy)
+        draw_hair(draw, head_cx, head_cy, variant=spec["hair"])
+        draw_blush(draw, head_cx, head_cy, alpha=spec["blush"])
+        # v011: pass panel_bg for squint_top_r lid overdraw
+        draw_eyes_full(draw, head_cx, head_cy, spec["eyes"], bg_color=panel_bg)
+        draw_nose(draw, head_cx, head_cy)
+        draw_mouth(draw, head_cx, head_cy, style=spec["mouth"])
 
     return img.resize((panel_w, panel_h), Image.LANCZOS)
 
@@ -1150,7 +1242,7 @@ EXPRESSIONS = [
 
 
 def build_sheet(show_guides=False):
-    """Build full 1200×900 expression sheet."""
+    """Build full 1200×900 expression sheet (v012 — face curves integration)."""
     sheet = Image.new("RGB", (TOTAL_W, TOTAL_H), CANVAS_BG)
     draw  = ImageDraw.Draw(sheet)
 
@@ -1169,10 +1261,10 @@ def build_sheet(show_guides=False):
         font_sub    = font_title
         font_anchor = font_title
 
-    title = "LUMA — Expression Sheet v011  |  Luma & the Glitchkin"
-    sub   = ("Designer: Maya Santos  |  Cycle 38  |  "
-             "3.2 heads  |  ew = head_height\u00d70.22  |  "
-             "v011: THE NOTICING — right eye squint fix (top lid drops, bottom neutral)")
+    title = "LUMA — Expression Sheet v012  |  Luma & the Glitchkin"
+    sub   = ("Designer: Maya Santos / Alex Chen  |  Cycle 42  |  "
+             "3.2 heads  |  ew = canonical 100px (face_curve_spec v002)  |  "
+             "v012: face curves integration — draw_luma_face() via LTG_TOOL_luma_face_curves v1.1.0")
     draw.text((PAD, 8),  title, fill=(59, 40, 32), font=font_title)
     draw.text((PAD, 34), sub,   fill=(110, 88, 68), font=font_sub)
 
@@ -1254,12 +1346,20 @@ def main():
     sheet.save(out_path)
     print(f"Saved: {os.path.abspath(out_path)}")
     print(f"Canvas: {sheet.size[0]}x{sheet.size[1]}")
-    print("v011: THE NOTICING right eye lid fix:")
-    print("  - squint_top_r=True: top lid drops ~22%, bottom lid stays neutral")
-    print("  - Fixes v010 wince (r_open=0.65 symmetric shrink) -> proper focusing squint")
-    print("  - All v010 improvements retained:")
-    print("    brow asymmetry, lateral gaze, noticing_hand_v010, deeper BG/hoodie,")
-    print("    subtle blush, body_tilt lean, center slot position")
+    curves_status = "ACTIVE" if _FACE_CURVES_AVAILABLE else "NOT FOUND — using v011 fallback for all expressions"
+    print(f"v012: face curves integration (LTG_TOOL_luma_face_curves v1.1.0): {curves_status}")
+    if _FACE_CURVES_AVAILABLE:
+        print("  Expressions using draw_luma_face():")
+        for sheet_name, curves_name in _FACE_CURVES_EXPR_MAP.items():
+            print(f"    {sheet_name!r} -> {curves_name!r}")
+        print("  Expressions using v011 fallback (no face curves expression):")
+        for expr in EXPRESSIONS:
+            if expr not in _FACE_CURVES_EXPR_MAP:
+                print(f"    {expr!r}")
+    print("v012 notes:")
+    print("  - Eye geometry: 100px canonical width per luma_face_curve_spec.md v002")
+    print("  - Body/hair/arms/legs: unchanged from v011")
+    print("  - Maya Santos body posture work (Tier 1 silhouette) = v013")
 
 
 if __name__ == "__main__":

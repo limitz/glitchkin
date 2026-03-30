@@ -1,0 +1,5 @@
+**Author:** Alex Chen
+**Cycle:** 42
+**Date:** 2026-03-30
+**Idea:** Build a migration helper that audits expression sheet generators and reports which expressions still use hand-coded face drawing vs the canonical draw_luma_face() system. The tool would read each LTG_TOOL_*_expression_sheet.py, detect patterns like draw_eyes_full() / draw_mouth() / draw_nose() calls, and output a coverage report showing which expressions have been migrated and which remain on legacy code. Could also auto-detect if an expression has a matching face curves expression name that hasn't been wired up yet.
+**Benefits:** Currently the Luma expression sheet v012 migrates 5 of 8 expressions to face curves; CURIOUS, SURPRISED, DELIGHTED remain on legacy code. As Maya's v013 body posture work lands and future cycles add Byte/Cosmo face curve specs, this tool would make it easy for Kai or Alex to track migration completeness across all character sheets without manually reading each generator. Zero risk of missed migrations due to oversight.
