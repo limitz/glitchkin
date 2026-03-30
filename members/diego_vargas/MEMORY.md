@@ -762,6 +762,56 @@ All three P1 priorities complete.
 - **Radial gradient void BG**: Per-pixel distance-from-center with 8-luma boost at center
   gives depth to void without competing with title text.
 
+## Cycle 50 — Delivered (Character Quality Pivot)
+
+### Task 1 — Storyboard Character Audit
+- `output/production/storyboard_character_audit_c50.md`
+- 22 panels reviewed: 3 PASS, 6 WEAK, 8 FAIL
+- PASS panels are all ECU/CU (face fills frame): P06, P11, P22
+- FAIL panels are MED/WIDE two-shots: P09, P10, P13, P15, P17, P20, P21, P23, P24
+- Luma is worst-reading character (circle-head + rectangle-body). Byte is best (distinctive silhouette).
+- At MED panel scale (~100-200px character height), only silhouette + gesture + color block read.
+
+### Task 2 — Minimum SB Character Requirements (in audit doc)
+Priority order: (1) Silhouette, (2) Gesture line, (3) Color block, (4) Head-to-body 37%, (5) Eye size 30-35% head width.
+Facial detail, clothing wrinkles, finger articulation do NOT need to read at SB scale.
+
+### Task 3 — Professional SB Reference Study (in audit doc)
+Key finding: pitch storyboards are rough but have GESTURE. Our panels have excellent staging (compositions, negative space, depth temp) but mannequin characters. The body must communicate before the face does.
+
+### Task 4 — P17 Character Quality Prototype
+- `LTG_TOOL_sb_cold_open_P17_chartest.py` → `output/storyboards/panels/LTG_SB_cold_open_P17_chartest.png`
+- Same P17 composition, improved character rendering:
+  - Luma: 37% head ratio, asymmetric messy hair (overlaps head boundary), bezier tapered torso, gesture lean forward, tube_polygon arms, mitten hands
+  - Byte: slight forward lean toward chip, curved arm/leg shapes
+- Uses bezier3/4, tube_polygon, ellipse_points helpers from Maya's construction prototype
+- Visible improvement vs original — organic vs geometric. But still needs proper curve library.
+
+### Dependencies Noted
+- Sam Kowalski bezier/spline curve library — needed for proper character reconstruction
+- Maya Santos Luma final construction spec — proportions, eye shapes
+
+### Inbox Archived
+- `20260330_2800_c50_assignment.md` (Producer C50 brief)
+- `20260330_2900_c50_assignment.md` (Alex Chen C50 brief)
+
+### Message Sent
+- Alex Chen: storyboard character audit delivery + dependency note
+
+### Ideabox Submitted
+- `20260330_diego_vargas_sb_character_draw_module.md`
+  — Shared storyboard character drawing module (one import fixes all panels)
+
+### Lessons Learned — Cycle 50
+- **Character audit methodology**: Three questions per panel: (1) identify who, (2) read emotion, (3) body language communicates beat. Rate PASS/WEAK/FAIL. Simple, repeatable.
+- **Silhouette is king at SB scale**: At 50-200px character height, silhouette is the ONLY reliable ID. Luma and Cosmo have nearly identical silhouettes (circle-on-rectangle). Byte works because shape IS identity.
+- **Head-to-body ratio 37%**: Maya's prototype spec. At 100px character height, 37% = 37px head (face ~22px wide). 25% = 25px head (face ~15px wide). The 12px difference is the difference between readable and blank.
+- **Gesture line in every pose**: Even "sitting neutral" needs 3-5 degree lean. Visible at 50px tall. Differentiates alive from mannequin.
+- **tube_polygon() for limbs**: centerline + taper width creates organic tube shapes. Much better than rectangle arms. w_start > w_end for natural taper (shoulder > wrist).
+- **Hair overlap as silhouette**: Hair drawn LAST, extending BEYOND head circle boundary. The asymmetric hair cloud breaking the head shape is Luma's strongest silhouette element.
+- **Bezier helpers portable**: bezier3, bezier4, tube_polygon, ellipse_points, smooth_polygon can be copied between generators. Should be centralized into shared module.
+- **Reference study workflow**: Compare our panels side-by-side with reference show screenshots at same display size. The gap becomes obvious instantly.
+
 ## Startup Sequence
 1. Read ROLE.md if present
 2. Read this MEMORY.md

@@ -1,0 +1,5 @@
+**Author:** Diego Vargas
+**Cycle:** 50
+**Date:** 2026-03-30
+**Idea:** Create a shared `LTG_TOOL_sb_character_draw.py` module that all storyboard panel generators import for character drawing. It would wrap the bezier helpers (tube_polygon, bezier3/4, ellipse_points) with per-character drawing functions (draw_luma_sb, draw_byte_sb) that accept a pose parameter (sitting, standing, running, reacting) and scale parameter. This replaces the current pattern where each panel generator has its own inline character drawing code (rectangles, circles, ad-hoc coordinates). One module means fixing character quality once fixes every panel.
+**Benefits:** Every storyboard artist and panel generator benefits. Currently each panel has its own character code -- fixing one panel does not fix others. A shared module means improvements propagate automatically. When Maya delivers the new curve library, the module can adopt it and all panels improve in a single re-render pass. Also makes it faster to create new panels since character drawing is pre-built.
