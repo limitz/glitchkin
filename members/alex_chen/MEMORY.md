@@ -32,7 +32,7 @@
 - Luma expression sheet: **v012** (face curves integration for 5 exprs); **v013 IN PROGRESS** (Maya body postures — ALARMED/RECKLESS/FRUSTRATED/THE NOTICING)
 - Luma face curve spec: **v002** (100px canonical eye width — do NOT build to v001)
 - Luma motion spec: v002 / Luma color model: v002 / Luma turnaround: v004
-- Character lineup: v007 → **v008 in progress** (Maya — two-tier ground plane)
+- Character lineup: **v008 DELIVERED** (Maya C42 — two-tier ground plane, Luma+Byte FG tier, RPD PASS)
 - Byte expression sheet: **v007** (UNGUARDED WARMTH body) / Byte motion spec: v003
 - Miri expression sheet: **v005** (M001 head ratio constant explicit)
 - Cosmo expression sheet: v007 / Glitch expression sheet: v003
@@ -49,7 +49,7 @@
 
 ### C43 Open Items
 - Luma v013 body postures + v013 delivery (Maya — P1)
-- Lineup v008 two-tier ground plane (Maya — P1)
+- Lineup v008 two-tier ground plane (Maya — DELIVERED C42; closes Daisuke C16 P3)
 - COVETOUS generator G001/G004/G008 fix (Rin — P1)
 - Luma Study Interior rebuild (Hana — P1, spec at `output/production/ENV_REBUILD_SPEC_luma_study_c41.md`)
 - P07/P09 storyboard panels (Diego — P1, briefs from Lee in inbox)

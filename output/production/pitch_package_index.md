@@ -1202,13 +1202,13 @@ All critical path assets verified on disk. No blocking issues found. The package
 | Glitch expression sheet | v003 GEOMETRY CORRECTED (unchanged) |
 | Glitch body primitive diagram | **NEW** — `LTG_CHAR_glitch_body_primitive_diagram.png`. Anatomy diagram + 4 expression silhouettes. Closes Daisuke C14 P8 / C16 P4. |
 | Luma turnaround | v004 PITCH PRIMARY (unchanged) |
-| Character lineup | v007 PITCH PRIMARY (v008 two-tier ground plane — Maya, in progress) |
+| Character lineup | **v008 PITCH PRIMARY** — two-tier ground plane (Luma+Byte FG tier, RPD PASS). Closes Daisuke C16 P3. |
 | Canonical logo | `LTG_BRAND_logo.png` (unchanged) |
 | Environments | Classroom REBUILT (C41 Hana), Tech Den v006 (C41 Hana), School Hallway v003 regenerated (C42 Jordan SUNLIT_AMBER fix), Luma Study Interior rebuild (Hana C43) |
 | Storyboards | Cold Open P06/P08 sight-line fixed; P23 PROMISE SHOT NEW; P24 CHAOS APEX NEW; P07/P09 briefs delivered (Diego C43) |
 | Motion specs | Luma v002, Byte v003, Cosmo v001 (unchanged) |
 | Story documents | Story Bible v003 PITCH PRIMARY (unchanged) |
 | QA tools | face_curves_caller_audit v1.0.0 (Kai C42), precritique_qa v2.9.0, sight_line_diagnostic v002 (unchanged) |
-| Open items C43 | **P1: Luma v013 body postures** (Maya — RECKLESS/ALARMED/FRUSTRATED/THE NOTICING); **P1: Lineup v008 two-tier** (Maya); **P1: COVETOUS generator G001/G004/G008 fix** (Rin); **P1: Luma Study Interior** (Hana); **P1: P07/P09 panels** (Diego); LAMP_AMBER comment in SF04 generator (Jordan — P2); Sight-line P06/P08 confirmations from Diego done — no carry |
+| Open items C43 | **P1: Luma v013 body postures** (Maya — RECKLESS/ALARMED/FRUSTRATED/THE NOTICING delivered C41, expression sheet v013 in progress); **P1: COVETOUS generator G001/G004/G008 fix** (Rin); **P1: P07 delivered** (Diego C42 — on disk); P09 panels (Diego — in progress); Luma Study Interior (Hana C42 — ON DISK, no report yet); LAMP_AMBER comment in SF04 generator (Jordan — P2) |
 
 *Updated by Alex Chen, Art Director — Cycles 41–42 — 2026-03-30*
