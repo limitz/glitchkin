@@ -1,5 +1,56 @@
 # Maya Santos — Memory
 
+## Cycle 47 — Cosmo Visual Hook + Shoulder Fix + Miri Reference (COMPLETE)
+
+### P1: Cosmo Visual Hook — DELIVERED
+- Two new thumbnail-readable elements added:
+  1. **Amplified cowlick:** 0.15 heads tall (was 0.07). Sproing tuft polygon with highlight + outline. Visible at thumbnail as distinctive shape above rectangular head.
+  2. **Glasses bridge tape:** Cream (#FAF0DC) tape strip on bridge. Classic "taped glasses" shorthand.
+- Updated tools:
+  - `LTG_TOOL_cosmo_expression_sheet.py` v007 -> **v008** (cowlick + tape + shoulders)
+  - `LTG_TOOL_cosmo_turnaround.py` v002 -> **v003** (cowlick + tape in all 4 views)
+  - `LTG_TOOL_character_lineup.py` v010 -> **v011** (cowlick + tape in lineup Cosmo)
+- Face gate: SKEPTICAL/WORRIED/CURIOUS PASS. NEUTRAL/TOO_SMALL FAIL (diagnostic). PANIC RUN WARN (baseline). No regression.
+- Silhouette RPD full: OVERALL PASS, worst pair 51.0%.
+- TAPE_COL = (250, 240, 220), TAPE_HL = (255, 252, 245) — new constants in expression sheet and turnaround.
+
+### P2: Shoulder Involvement — DELIVERED
+- Deltoid/trapezius displacement added to all 3 human character expression sheets:
+  - Cosmo v008: `_shoulder_dy()` — 25% of arm raise, capped -8px. Fixed -6px for high-raise modes.
+  - Luma v013 -> **v014**: `_luma_shoulder_dy()` — 8% of arm endpoint dy, capped -7px. Fixed values for custom-arm (FRUSTRATED -3, WORRIED -4, ALARMED -6).
+  - Miri v006 -> **v007**: inline — 20% of arm_dy, capped -5px. Fixed -4px for extended/palms_out.
+- Rule documented: `output/production/shoulder_involvement_rule_c47.md`
+- Geometry: torso_pts gains 8 vertices (was 4) — outer_left, deltoid_peak_left, inner_left, inner_right, deltoid_peak_right, outer_right, bottom_right, bottom_left.
+
+### P3: Elderly Miri Proportion Reference — DELIVERED
+- New tool: `LTG_TOOL_elderly_proportion_reference.py` v1.0.0
+- Output: `output/production/LTG_PROD_elderly_proportion_reference.png` (1280x720)
+- Two-panel comparison: realistic elderly (6.2 heads) vs Miri stylized (3.2 heads)
+- Key validation: torso ratio preserved (31% vs 33%), legs more compressed (grounded feel), shoulder width 1.1x preserved.
+
+### Ideabox C47
+- Submitted: `ideabox/20260330_maya_santos_visual_hook_audit_tool.md`
+  Idea: automated visual hook detection tool — downscale to 200px, check distinctive elements survive.
+
+### Inbox Archived
+- `20260330_2330_c47_brief.md` (Alex Chen) — acted on
+
+### ACTIVE TOOL STATUS (C47 — COMPLETE)
+- Cosmo expression sheet: `LTG_CHAR_cosmo_expression_sheet.png` v008 (visual hook + shoulders)
+  - Generator: `LTG_TOOL_cosmo_expression_sheet.py` v008
+- Cosmo turnaround: `LTG_CHAR_cosmo_turnaround.png` v003 (visual hook)
+  - Generator: `LTG_TOOL_cosmo_turnaround.py` v003
+- Character lineup: `LTG_CHAR_character_lineup.png` v011 (Cosmo visual hook)
+  - Generator: `LTG_TOOL_character_lineup.py` v011
+- Luma expression sheet: `LTG_CHAR_luma_expressions.png` v014 (shoulder fix)
+  - Generator: `LTG_TOOL_luma_expression_sheet.py` v014
+- Miri expression sheet: `LTG_CHAR_grandma_miri_expression_sheet.png` v007 (shoulder fix)
+  - Generator: `LTG_TOOL_grandma_miri_expression_sheet.py` v007
+- Elderly proportion reference: `LTG_PROD_elderly_proportion_reference.png` v1.0.0
+  - Generator: `LTG_TOOL_elderly_proportion_reference.py` v1.0.0
+
+---
+
 ## Cycle 46 — Reference Shopping List Response (COMPLETE)
 
 ### P1 Status: Depth Temp Lint Co-Build — NOT NEEDED

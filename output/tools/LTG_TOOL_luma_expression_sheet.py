@@ -6,8 +6,18 @@
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
 LTG_TOOL_luma_expression_sheet.py
-Luma Expression Sheet — v013  TIER-1 SILHOUETTE BODY POSTURES
-"Luma & the Glitchkin" — Cycle 41 / Maya Santos
+Luma Expression Sheet — v014  SHOULDER INVOLVEMENT
+"Luma & the Glitchkin" — Cycle 47 / Maya Santos
+
+v014 CHANGES (C47 — Takeshi critique #3: arms without shoulder involvement):
+  Shoulder displacement added to torso silhouette. When arms raise, the
+  deltoid/trapezius lines on that side shift upward. Applies to all expressions:
+  - Standard arm poses: proportional to arm endpoint dy (8% of raise, capped -7px)
+  - FRUSTRATED (crossed arms): -3px bilateral
+  - WORRIED (self-hug): -4px bilateral
+  - ALARMED (raised arms): -6px bilateral
+  - RECKLESS, DETERMINED: arms are low/neutral, so no displacement (correct)
+  The shoulder bump is drawn as a triangular protrusion at each torso-top corner.
 
 v013 CHANGES (C41 — Alex Chen C41 directive: luma_silhouette_strategy.md Option 3 Hybrid):
   Tier-1 expression body posture upgrades. Goal: blur any Tier-1 panel to illegibility —
@@ -828,11 +838,35 @@ def draw_alarmed_arms(draw, cx, neck_cx, torso_top_y, hoodie_col):
                  fill=SKIN, outline=LINE, width=3)
 
 
+def _luma_shoulder_dy(arm_data, expr_name):
+    """Calculate shoulder displacement for Luma based on arm raise.
+
+    v014 C47: When an arm is raised (negative arm endpoint dy), the shoulder
+    on that side lifts. Returns a negative value (upward shift).
+    Custom-arm expressions (FRUSTRATED=crossed, WORRIED=self-hug, ALARMED=raised)
+    get fixed displacement values since their arm_data is None.
+    """
+    if expr_name == "FRUSTRATED":
+        return -3   # crossed arms — slight bilateral rise
+    if expr_name == "WORRIED":
+        return -4   # self-hug arms — moderate bilateral rise
+    if expr_name == "ALARMED":
+        return -6   # raised arms — strong bilateral rise
+    if arm_data is None:
+        return 0
+    # arm_data is (dx, dy, ...) — negative dy = raised
+    arm_dy = arm_data[1] if len(arm_data) > 1 else 0
+    if arm_dy < 0:
+        return max(-7, int(arm_dy * 0.08))  # 8% of raise distance, capped
+    return 0
+
+
 def draw_body_pose(draw, cx, head_cy, hoodie_col, pose, expr_name=""):
     """
     Draw full body: torso, arms, legs, shoes.
     v009/v010: FRUSTRATED and WORRIED get custom arm drawing.
     v013: ALARMED also gets custom arm drawing (raised arms).
+    v014 C47: Shoulder involvement — deltoid/trapezius displacement on arm raise.
     """
     tilt = pose.get("body_tilt", 0)
 
@@ -847,16 +881,28 @@ def draw_body_pose(draw, cx, head_cy, hoodie_col, pose, expr_name=""):
 
     hip_cx = neck_cx + tilt // 2
 
+    # v014: SHOULDER INVOLVEMENT — deltoid/trapezius displacement
+    l_sh_dy = _luma_shoulder_dy(pose.get("arm_l"), expr_name)
+    r_sh_dy = _luma_shoulder_dy(pose.get("arm_r"), expr_name)
+    sh_bump_w = int(HR * 0.10)
+    l_top_y = torso_top_y + l_sh_dy
+    r_top_y = torso_top_y + r_sh_dy
+
     torso_pts = [
-        (neck_cx - torso_top_w, torso_top_y),
-        (neck_cx + torso_top_w, torso_top_y),
+        (neck_cx - torso_top_w - sh_bump_w, torso_top_y),   # outer left shoulder
+        (neck_cx - torso_top_w, l_top_y),                     # left deltoid peak
+        (neck_cx - int(torso_top_w * 0.3), torso_top_y),     # inner left
+        (neck_cx + int(torso_top_w * 0.3), torso_top_y),     # inner right
+        (neck_cx + torso_top_w, r_top_y),                     # right deltoid peak
+        (neck_cx + torso_top_w + sh_bump_w, torso_top_y),    # outer right shoulder
         (hip_cx  + torso_bot_w, torso_bot_y),
         (hip_cx  - torso_bot_w, torso_bot_y),
     ]
     draw.polygon(torso_pts, fill=hoodie_col)
     shadow_pts = [
         (neck_cx + torso_top_w - int(HR * 0.15), torso_top_y),
-        (neck_cx + torso_top_w, torso_top_y),
+        (neck_cx + torso_top_w + sh_bump_w, torso_top_y),
+        (neck_cx + torso_top_w, r_top_y),
         (hip_cx  + torso_bot_w, torso_bot_y),
         (hip_cx  + torso_bot_w - int(HR * 0.20), torso_bot_y),
     ]

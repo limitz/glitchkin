@@ -7,7 +7,11 @@
 """
 LTG_TOOL_character_lineup.py
 Character Lineup Generator — Luma & the Glitchkin
-Cycle 45 / v010: Dual-warmth tier depth indicator bands (Lee Tanaka C45 recommendation).
+Cycle 47 / v011: Cosmo visual hook pass (Maya Santos C47).
+
+Cycle 47 changes (Maya Santos, C47):
+  - COSMO VISUAL HOOK: Amplified cowlick (0.15 heads tall, visible sproing tuft)
+    and glasses bridge tape added to draw_cosmo_lineup(). Both read at lineup scale.
 
 Cycle 45 changes (Maya Santos, C45):
   - TWO-TIER DEPTH BANDS (Option C per Lee Tanaka C45 recommendation):
@@ -500,6 +504,18 @@ def draw_cosmo_lineup(draw, cx, base_y, h):
                  fill=COSMO_HAIR)
     draw.ellipse([cx - hw - 2, hy - int(hu*0.22), cx - int(hw*0.2), hy + int(hu*0.05)],
                  fill=COSMO_HAIR)
+    # v011 C47: Amplified cowlick — visible sproing tuft above head
+    cowlick_cx = cx + int(hw * 0.10)
+    cowlick_base = hy - int(hu * 0.08)
+    cowlick_tip = cowlick_base - int(hu * 0.15)
+    cw = int(hu * 0.06)
+    cowlick_pts = [
+        (cowlick_cx - cw, cowlick_base),
+        (cowlick_cx, cowlick_tip),
+        (cowlick_cx + cw, cowlick_base),
+    ]
+    draw.polygon(cowlick_pts, fill=COSMO_HAIR)
+    draw.line(cowlick_pts, fill=LINE_COL, width=max(1, int(hu * 0.02)))
     draw.rounded_rectangle([cx - hw, hy, cx + hw, hy + hh],
                             radius=6, fill=COSMO_SKIN, outline=LINE_COL, width=2)
     ey = hy + int(hh * 0.50)
@@ -526,6 +542,12 @@ def draw_cosmo_lineup(draw, cx, base_y, h):
     draw.ellipse([lcx - gr, gy - gr, lcx + gr, gy + gr], fill=COSMO_LENS_BG)
     draw.ellipse([rcx - gr, gy - gr, rcx + gr, gy + gr], fill=COSMO_LENS_BG)
     draw.rectangle([lcx + gr, gy - 2, rcx - gr, gy + 2], fill=COSMO_FRAMES)
+    # v011 C47: Bridge tape
+    tape_cx = cx
+    tape_w = max(2, int(hu * 0.04))
+    tape_h = max(2, int(hu * 0.03))
+    draw.rectangle([tape_cx - tape_w, gy - tape_h, tape_cx + tape_w, gy + tape_h],
+                   fill=(250, 240, 220), outline=LINE_COL, width=1)
     draw.arc([lcx - gr + 2, gy - gr + 2, lcx + gr - 2, gy - 2],
              start=200, end=340, fill=(240,240,240), width=2)
     draw.arc([rcx - gr + 2, gy - gr + 2, rcx + gr - 2, gy - 2],

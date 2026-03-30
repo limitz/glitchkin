@@ -6,8 +6,14 @@
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
 LTG_TOOL_grandma_miri_expression_sheet.py
-Grandma Miri Expression Sheet — v006 Wooden Hairpin Rename (P0 C44)
-"Luma & the Glitchkin" — Cycle 44 / Maya Santos
+Grandma Miri Expression Sheet — v007 Shoulder Involvement (C47)
+"Luma & the Glitchkin" — Cycle 47 / Maya Santos
+
+v007 CHANGES (C47 — Takeshi critique #3: shoulder involvement):
+  - Added deltoid/trapezius displacement to draw_body_miri().
+    When arms are in "extended" or "palms_out" mode, shoulders rise -4px.
+    For standard arms with negative arm_dy, proportional displacement (20%, capped -5px).
+    Torso top polygon now has shoulder bump vertices like Luma/Cosmo.
 
 v006 CHANGES (C44 — Alex Chen P0 — cultural identity correction):
   - Renamed draw_hair_bun() vars: chop_x1/chop_x2 → hairpin_x1/hairpin_x2.
@@ -393,9 +399,23 @@ def draw_body_miri(draw, cx, body_top_y, body_data):
     th      = int(HR * 1.10)
     torso_bot = body_top_y + th
 
+    # v007 C47: SHOULDER INVOLVEMENT — deltoid displacement on arm raise
+    arm_l_dy = body_data.get("arm_l_dy", 0)
+    arm_r_dy = body_data.get("arm_r_dy", 0)
+    l_style = body_data.get("arm_l_style", "hanging")
+    r_style = body_data.get("arm_r_style", "hanging")
+    # Calculate shoulder displacement per side
+    l_sh_dy = -4 if l_style in ("extended", "palms_out") else (max(-5, int(arm_l_dy * 0.20)) if arm_l_dy < 0 else 0)
+    r_sh_dy = -4 if r_style in ("extended", "palms_out") else (max(-5, int(arm_r_dy * 0.20)) if arm_r_dy < 0 else 0)
+    sh_bump_w = int(HR * 0.10)
+
     torso_pts = [
-        (cx - tw + tilt, body_top_y),
-        (cx + tw + tilt, body_top_y),
+        (cx - tw + tilt - sh_bump_w, body_top_y),           # outer left shoulder
+        (cx - tw + tilt, body_top_y + l_sh_dy),              # left deltoid peak
+        (cx - int(tw * 0.3) + tilt, body_top_y),             # inner left
+        (cx + int(tw * 0.3) + tilt, body_top_y),             # inner right
+        (cx + tw + tilt, body_top_y + r_sh_dy),              # right deltoid peak
+        (cx + tw + tilt + sh_bump_w, body_top_y),            # outer right shoulder
         (cx + tw,        torso_bot),
         (cx - tw,        torso_bot),
     ]
@@ -425,10 +445,7 @@ def draw_body_miri(draw, cx, body_top_y, body_data):
     arm_w = int(HR * 0.20)
     arm_h = int(HR * 0.70)
     arm_y = body_top_y + int(HR * 0.06)
-    l_style = body_data.get("arm_l_style", "hanging")
-    r_style = body_data.get("arm_r_style", "hanging")
-    arm_l_dy = body_data.get("arm_l_dy", 0)
-    arm_r_dy = body_data.get("arm_r_dy", 0)
+    # l_style, r_style, arm_l_dy, arm_r_dy already read above for shoulder displacement
 
     lax = cx - tw + tilt + int(HR * 0.04)
     rax = cx + tw + tilt - int(HR * 0.04)

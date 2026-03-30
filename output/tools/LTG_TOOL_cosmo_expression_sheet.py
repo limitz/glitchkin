@@ -8,36 +8,39 @@
 LTG_TOOL_cosmo_expression_sheet.py
 Cosmo Expression Sheet Generator — "Luma & the Glitchkin"
 
-v007 — C38 P2 Fix: SKEPTICAL arm geometry (Maya Santos)
+v008 — C47 Visual Hook + Shoulder Fix (Maya Santos)
 
-  KEY CHANGES from v006:
-  - SKEPTICAL ARM FIX (3+ cycles flagged as unresolved):
-    In v006 SKEPTICAL used arm_mode="standard" with arm_l_dy=-18, arm_r_dy=-12.
-    Standard mode draws rectangular arms at the shoulder/torso edge. At body_tilt=8
-    the arms visually merged with the body silhouette — unreadable at any scale.
+  KEY CHANGES from v007:
 
-    New arm_mode="skeptical_crossed":
-      - Left arm: forearm crosses ACROSS body at mid-torso height, ending to the
-        RIGHT of center — classic dismissive half-fold.
-        (left arm, right of center = visible crossing motion)
-      - Right arm: elbow COCKED OUT away from body at shoulder level, forearm
-        angling back inward — arms-akimbo skeptical body language.
-        (elbow sticks RIGHT of torso = clear silhouette hook)
-    Both arms are now clearly visible outside the body silhouette.
+  P1: COSMO VISUAL HOOK (Zoe Park critique #8: "anxious kid in glasses" not distinctive)
+    Two new thumbnail-readable elements:
 
-  Silhouette differentiation:
-    SKEPTICAL: elbow out right + hand crossing left = strong asymmetric arm profile.
-    DETERMINED: standard forward-hang arms.
-    DELIGHTED: both arms raised forward at chest height.
-    → SKEPTICAL reads as distinct at thumbnail scale.
+    1. AMPLIFIED COWLICK: The existing cowlick (0.07 heads) was invisible at thumbnail.
+       Now 0.15 heads tall — a visible sproing/antenna tuft rising from the crown.
+       Drawn as a curved arc with highlight, reads as a distinctive silhouette element
+       at any size. The cowlick is Cosmo's struggle made visible: he tried to flatten
+       it (he always tries), and it defied him (it always does).
 
-  All v006 content preserved:
+    2. GLASSES BRIDGE TAPE: A small strip of cream-white tape wrapped around the
+       glasses bridge. Classic "taped glasses" visual shorthand — his glasses are always
+       breaking because his life keeps getting chaotic. The tape is warm cream (#FAF0DC)
+       with a highlight line, visible at medium and close distance. At thumbnail the
+       tape thickens the bridge area, reinforcing the glasses read.
+
+  P2: SHOULDER INVOLVEMENT (Takeshi critique #3, persistent since C15)
+    Arms now trigger deltoid/trapezius displacement on the torso silhouette.
+    _draw_cosmo_shoulder_lines() draws angled shoulder bumps at the torso-top
+    corners that shift upward when the arm on that side is raised. The shoulder
+    displacement is proportional to arm_l_dy/arm_r_dy: negative dy (raised arm)
+    = shoulder bump rises. This applies to ALL arm modes.
+
+  All v007 content preserved:
     S003 compliance (all glasses_tilt ≤ 9° ± 2° from 7°),
-    all other 5 expressions (AWKWARD, WORRIED, SURPRISED, DETERMINED, FRUSTRATED).
+    SKEPTICAL arm_mode='skeptical_crossed', all 6 expressions.
 
 Output: output/characters/main/LTG_CHAR_cosmo_expression_sheet.png
-Author: Maya Santos — Cycle 38 (SKEPTICAL arm fix)
-Date: 2026-03-29
+Author: Maya Santos — Cycle 47
+Date: 2026-03-30
 """
 from PIL import Image, ImageDraw, ImageFont
 import math
@@ -68,6 +71,8 @@ NOTEBOOK_SP = (61, 107, 138)
 LINE        = (59, 40, 32)
 BLUSH       = (210, 128, 80)
 BLUSH_HI    = (228, 162, 120)
+TAPE_COL    = (250, 240, 220)   # warm cream — glasses bridge tape
+TAPE_HL     = (255, 252, 245)   # tape highlight
 
 # v005/v006: Panel backgrounds deliberately chosen to be well-separated from all
 # character colors to ensure silhouette tool correctly detects character pixels.
@@ -231,11 +236,29 @@ def _draw_cosmo_hair(draw, cx, cy, hu):
     draw.ellipse([cx - int(hw * 0.2), hair_top + 2, cx + hw + 2, hair_bot + 4], fill=HAIR)
     part_x = cx + int(hw * 0.12)
     draw.line([(part_x, hair_top + 4), (part_x, hair_bot)], fill=SKIN, width=2)
+
+    # v008: AMPLIFIED COWLICK — 0.15 heads tall (was 0.07). Visible sproing/antenna tuft.
+    # Reads at thumbnail as a distinctive shape above the rectangular head.
     cowlick_x = cx + int(hw * 0.05)
-    cowlick_y = hair_top
-    draw.arc([cowlick_x - int(hu * 0.07), cowlick_y - int(hu * 0.05),
-              cowlick_x + int(hu * 0.07), cowlick_y + int(hu * 0.08)],
-             start=280, end=80, fill=HAIR_HL, width=3)
+    cowlick_base_y = hair_top
+    cowlick_tip_y = cowlick_base_y - int(hu * 0.15)
+    cowlick_w = int(hu * 0.08)
+    # Draw the tuft as a filled shape: base at hair top, curves up and forward
+    tuft_pts = [
+        (cowlick_x - cowlick_w // 2, cowlick_base_y + 2),
+        (cowlick_x - int(cowlick_w * 0.3), cowlick_tip_y + int(hu * 0.04)),
+        (cowlick_x + int(cowlick_w * 0.1), cowlick_tip_y),
+        (cowlick_x + int(cowlick_w * 0.6), cowlick_tip_y + int(hu * 0.06)),
+        (cowlick_x + cowlick_w // 2, cowlick_base_y + 2),
+    ]
+    draw.polygon(tuft_pts, fill=HAIR)
+    # Highlight stroke on the leading edge of the cowlick
+    draw.line([tuft_pts[1], tuft_pts[2], tuft_pts[3]], fill=HAIR_HL, width=2)
+    # Outline for silhouette weight
+    draw.line([tuft_pts[0], tuft_pts[1], tuft_pts[2], tuft_pts[3], tuft_pts[4]],
+              fill=LINE, width=2)
+
+    # Subtle hair shine arc (preserved from v007)
     draw.arc([cx - int(hw * 0.6), hair_top + 2, cx + int(hw * 0.6), hair_top + int(hu * 0.12)],
              start=200, end=340, fill=HAIR_HL, width=2)
 
@@ -273,6 +296,20 @@ def _draw_cosmo_glasses(draw, cx, cy, hu, tilt_deg):
     bridge_l = rot(-bridge, 0)
     bridge_r = rot(+bridge, 0)
     draw.line([bridge_l, bridge_r], fill=GLASS_FRAME, width=frame_w)
+
+    # v008: GLASSES BRIDGE TAPE — cream tape strip wrapped around the bridge.
+    # Classic "taped glasses" shorthand. Visible at medium/close distance.
+    # At thumbnail, thickens the bridge area and reinforces glasses read.
+    tape_w = max(4, int(hu * 0.04))
+    tape_half_h = max(3, int(hu * 0.03))
+    tape_cx = (bridge_l[0] + bridge_r[0]) // 2
+    tape_cy = (bridge_l[1] + bridge_r[1]) // 2
+    draw.rectangle([tape_cx - tape_w, tape_cy - tape_half_h,
+                    tape_cx + tape_w, tape_cy + tape_half_h],
+                   fill=TAPE_COL, outline=LINE, width=1)
+    # Highlight line across center of tape
+    draw.line([(tape_cx - tape_w + 1, tape_cy - 1),
+               (tape_cx + tape_w - 1, tape_cy - 1)], fill=TAPE_HL, width=1)
 
     l_temple_start = rot(-eye_sep - lens_r, 0)
     l_temple_end   = rot(-eye_sep - lens_r - int(hu * 0.06), int(hu * 0.02))
@@ -360,6 +397,24 @@ def _draw_cosmo_mouth(draw, cx, cy, hu, mouth_data):
                  start=10, end=170, fill=LINE, width=3)
 
 
+def _shoulder_dy(arm_dy, arm_mode):
+    """Calculate shoulder displacement from arm raise.
+
+    v008: When an arm is raised (negative arm_dy), the shoulder on that side
+    lifts. Returns a negative value (upward shift) proportional to arm raise.
+    Capped to avoid exaggerated distortion. Special arm modes that already
+    involve raised arms get a fixed displacement.
+    """
+    if arm_mode in ("head_grab", "wide_startle", "delighted", "alarmed"):
+        return -6  # fixed moderate shoulder rise for high-raise modes
+    if arm_mode in ("awkward",):
+        return 0   # awkward has one arm hanging — per-arm calculation used
+    # For standard/skeptical modes: proportional to raise amount
+    if arm_dy < 0:
+        return max(-8, int(arm_dy * 0.25))  # 25% of raise, capped at -8px
+    return 0
+
+
 def _draw_cosmo_body(draw, cx, body_top_y, hu, body_data):
     arm_l_dy    = body_data.get("arm_l_dy", 0)
     arm_r_dy    = body_data.get("arm_r_dy", 0)
@@ -374,11 +429,29 @@ def _draw_cosmo_body(draw, cx, body_top_y, hu, body_data):
     tilt_off  = int(body_tilt * 2.5)
     torso_bot_y = body_top_y + torso_h
 
+    # v008: SHOULDER INVOLVEMENT — deltoid/trapezius displacement.
+    # When arms are raised, the shoulder line on that side lifts.
+    l_sh_dy = _shoulder_dy(arm_l_dy, arm_mode)
+    r_sh_dy = _shoulder_dy(arm_r_dy, arm_mode)
+    # For awkward mode: left arm hangs (no rise), right arm raised (rise)
+    if arm_mode == "awkward":
+        l_sh_dy = 0
+        r_sh_dy = -5
+
+    # Shoulder bump points: small triangular bumps at torso top corners
+    sh_bump_w = int(hu * 0.08)  # width of shoulder bump
+    l_top_y = body_top_y + l_sh_dy
+    r_top_y = body_top_y + r_sh_dy
+
     shirt_pts = [
-        (cx - torso_hw + tilt_off, body_top_y),
-        (cx + torso_hw + tilt_off, body_top_y),
-        (cx + torso_hw,            torso_bot_y),
-        (cx - torso_hw,            torso_bot_y),
+        (cx - torso_hw + tilt_off - sh_bump_w, body_top_y),        # outer left shoulder
+        (cx - torso_hw + tilt_off, l_top_y),                        # left deltoid peak
+        (cx - int(torso_hw * 0.3) + tilt_off, body_top_y),         # inner left shoulder
+        (cx + int(torso_hw * 0.3) + tilt_off, body_top_y),         # inner right shoulder
+        (cx + torso_hw + tilt_off, r_top_y),                        # right deltoid peak
+        (cx + torso_hw + tilt_off + sh_bump_w, body_top_y),        # outer right shoulder
+        (cx + torso_hw,            torso_bot_y),                     # bottom right
+        (cx - torso_hw,            torso_bot_y),                     # bottom left
     ]
     draw.polygon(shirt_pts, fill=STRIPE_A, outline=LINE, width=2)
 
@@ -677,7 +750,7 @@ def generate_cosmo_expression_sheet(output_path):
         font_title = font = font_sm = ImageFont.load_default()
 
     draw.text((PAD, 14),
-              "COSMO — Expression Sheet — Luma & the Glitchkin  |  v007  |  C38: SKEPTICAL arm fix (skeptical_crossed)",
+              "COSMO — Expression Sheet — Luma & the Glitchkin  |  v008  |  C47: visual hook + shoulder fix",
               fill=(91, 141, 184), font=font_title)
 
     # v006: character scaled to ~19% of panel height (same as v005)
@@ -727,11 +800,10 @@ def generate_cosmo_expression_sheet(output_path):
     img.thumbnail((1280, 1280), Image.LANCZOS)
     img.save(output_path)
     print(f"Saved: {output_path}  ({img.size[0]}x{img.size[1]}px)")
-    print("v007 fix: SKEPTICAL arm_mode='skeptical_crossed'")
-    print("  - Left arm crosses body (hand right of center — dismissive fold)")
-    print("  - Right elbow cocks OUT (arms-akimbo — visible outside torso right)")
-    print("  - Both arms now clearly readable outside body silhouette")
-    print("v006 preserved: S003 glasses_tilt compliance, all other expressions unchanged")
+    print("v008 changes (C47 Maya Santos):")
+    print("  P1: Visual hook — amplified cowlick (0.15 heads) + glasses bridge tape")
+    print("  P2: Shoulder involvement — deltoid displacement on arm raise")
+    print("  All v007 content preserved: S003 compliance, skeptical_crossed, 6 expressions")
 
 
 if __name__ == '__main__':

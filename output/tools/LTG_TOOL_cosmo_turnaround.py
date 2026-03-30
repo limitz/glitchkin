@@ -6,9 +6,15 @@
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
 LTG_TOOL_cosmo_turnaround.py
-Cosmo — 4-View Character Turnaround v002
-"Luma & the Glitchkin" — Cycle 25 / Maya Santos
-Rebuilt C32 (Kai Nakamura) — original LTG_CHAR_ source deleted by C29 cleanup.
+Cosmo — 4-View Character Turnaround v003
+"Luma & the Glitchkin" — Cycle 47 / Maya Santos
+
+v003 CHANGES (C47 — visual hook pass):
+  - AMPLIFIED COWLICK: 0.15 heads tall (was ~0.04). Visible sproing tuft on
+    crown reads at thumbnail. Applied to all 4 views.
+  - GLASSES BRIDGE TAPE: Cream tape strip on the bridge. Applied to FRONT and
+    3/4 views (not visible in SIDE or BACK).
+  - All v002 content preserved.
 
 v002 FIX from v001 (per pitch_package_index.md):
   - Side view had no 3D depth (architecturally broken).
@@ -20,6 +26,8 @@ Cosmo spec (cosmo.md + cosmo_color_model.md):
   - Rectangular head (height:width = 1.16:1), corner radius 0.12 units
   - 4.0 heads tall
   - Glasses: always present, 7° CCW tilt, thick warm espresso frames
+  - Bridge tape: cream (#FAF0DC), always present
+  - Amplified cowlick: 0.15 heads, always visible
   - Notebook: tucked under left arm (right side in FRONT view)
   - Striped shirt: cerulean + sage horizontal stripes
   - Slim chinos, low-profile shoes
@@ -59,6 +67,8 @@ SHOE        = ( 92,  58,  32)   # #5C3A20 Warm Espresso
 SHOE_SOLE   = (184, 154, 120)   # #B89A78 Warm Sand
 NOTEBOOK    = ( 91, 141, 184)   # #5B8DB8 Cerulean Blue
 LINE        = ( 59,  40,  32)   # #3B2820 Deep Cocoa
+TAPE_COL    = (250, 240, 220)   # warm cream — glasses bridge tape
+TAPE_HL     = (255, 252, 245)   # tape highlight
 CANVAS_BG   = (248, 244, 238)
 SHADOW_COL  = (210, 200, 185)
 PANEL_BG    = (242, 238, 232)
@@ -121,9 +131,19 @@ def draw_glasses(draw, cx, cy, h, tilt_deg=7, lens_r_x=None, lens_r_y=None):
                  start=200, end=340, fill=GLASS_GLARE, width=3)
     # Bridge
     bridge_y = cy - int(lens_r_y * 0.15)
-    draw.line([cx - sep // 2 + lens_r_x - 3, bridge_y,
-               cx + sep // 2 - lens_r_x + 3, bridge_y],
+    bridge_l_x = cx - sep // 2 + lens_r_x - 3
+    bridge_r_x = cx + sep // 2 - lens_r_x + 3
+    draw.line([bridge_l_x, bridge_y, bridge_r_x, bridge_y],
               fill=GLASS_FRAME, width=4)
+    # v003: BRIDGE TAPE — cream tape strip on bridge
+    tape_cx = (bridge_l_x + bridge_r_x) // 2
+    tape_w = max(6, int(h * 0.04))
+    tape_hh = max(4, int(h * 0.03))
+    draw.rectangle([tape_cx - tape_w, bridge_y - tape_hh,
+                    tape_cx + tape_w, bridge_y + tape_hh],
+                   fill=TAPE_COL, outline=LINE, width=1)
+    draw.line([(tape_cx - tape_w + 1, bridge_y - 1),
+               (tape_cx + tape_w - 1, bridge_y - 1)], fill=TAPE_HL, width=1)
     # Temple arms
     for side in [-1, 1]:
         lx = cx + side * sep // 2
@@ -179,14 +199,29 @@ def draw_eyes_on_rect(draw, cx, cy, h):
 
 
 def draw_hair_cosmo(draw, cx, head_top_y, h):
-    """Minimal flat hair (barely adds height in silhouette — cosmo spec)."""
+    """Flat hair with amplified cowlick — v003 visual hook upgrade."""
     hw = int(h * 0.86 / 2)
     hair_top = head_top_y - int(h * 0.06)
     # Hair fill (flat cap shape)
     draw.rectangle([cx - hw + 4, hair_top, cx + hw - 4, head_top_y + 4], fill=HAIR)
-    # Slight cowlick at right
-    draw.ellipse([cx + int(hw * 0.55), hair_top - int(h * 0.04),
-                  cx + int(hw * 0.95), hair_top + int(h * 0.07)], fill=HAIR)
+
+    # v003: AMPLIFIED COWLICK — 0.15 heads tall (was 0.04). Visible sproing tuft.
+    cowlick_x = cx + int(hw * 0.10)
+    cowlick_base_y = hair_top
+    cowlick_tip_y = cowlick_base_y - int(h * 0.15)
+    cowlick_w = int(h * 0.08)
+    tuft_pts = [
+        (cowlick_x - cowlick_w // 2, cowlick_base_y + 2),
+        (cowlick_x - int(cowlick_w * 0.3), cowlick_tip_y + int(h * 0.04)),
+        (cowlick_x + int(cowlick_w * 0.1), cowlick_tip_y),
+        (cowlick_x + int(cowlick_w * 0.6), cowlick_tip_y + int(h * 0.06)),
+        (cowlick_x + cowlick_w // 2, cowlick_base_y + 2),
+    ]
+    draw.polygon(tuft_pts, fill=HAIR)
+    draw.line([tuft_pts[1], tuft_pts[2], tuft_pts[3]], fill=HAIR_HL, width=3)
+    draw.line([tuft_pts[0], tuft_pts[1], tuft_pts[2], tuft_pts[3], tuft_pts[4]],
+              fill=LINE, width=3)
+
     # Hair highlight
     draw.arc([cx - int(hw * 0.4), hair_top,
               cx + int(hw * 0.4), hair_top + int(h * 0.12)],
@@ -352,8 +387,21 @@ def render_three_quarter(draw, cx, base_y):
     # Hair
     hair_top = head_cy - hh - int(h * 0.06)
     draw.rectangle([cx - hw34 + 4, hair_top, cx + hw34 - 4, head_cy - hh + 4], fill=HAIR)
-    draw.ellipse([cx + int(hw34 * 0.50), hair_top - int(h * 0.04),
-                  cx + int(hw34 * 0.90), hair_top + int(h * 0.07)], fill=HAIR)
+    # v003: amplified cowlick in 3/4 view
+    cowlick_x = cx + int(hw34 * 0.15)
+    cowlick_tip_y = hair_top - int(h * 0.14)
+    cowlick_w = int(h * 0.07)
+    tuft_pts = [
+        (cowlick_x - cowlick_w // 2, hair_top + 2),
+        (cowlick_x - int(cowlick_w * 0.2), cowlick_tip_y + int(h * 0.03)),
+        (cowlick_x + int(cowlick_w * 0.15), cowlick_tip_y),
+        (cowlick_x + int(cowlick_w * 0.55), cowlick_tip_y + int(h * 0.05)),
+        (cowlick_x + cowlick_w // 2, hair_top + 2),
+    ]
+    draw.polygon(tuft_pts, fill=HAIR)
+    draw.line([tuft_pts[1], tuft_pts[2], tuft_pts[3]], fill=HAIR_HL, width=3)
+    draw.line([tuft_pts[0], tuft_pts[1], tuft_pts[2], tuft_pts[3], tuft_pts[4]],
+              fill=LINE, width=3)
 
     # 3/4 eyes (asymmetric: L eye slightly occluded)
     eye_y  = head_cy + int(h * 0.04)
@@ -388,8 +436,17 @@ def render_three_quarter(draw, cx, base_y):
                   l_ex + lens_lx_small, eye_y + lens_ry],
                  fill=GLASS_LENS, outline=GLASS_FRAME, width=5)
     # Bridge
-    draw.line([l_ex + lens_lx_small, eye_y, r_ex - lens_rx, eye_y],
+    bridge_34_lx = l_ex + lens_lx_small
+    bridge_34_rx = r_ex - lens_rx
+    draw.line([bridge_34_lx, eye_y, bridge_34_rx, eye_y],
               fill=GLASS_FRAME, width=4)
+    # v003: bridge tape (3/4 view)
+    tape_34_cx = (bridge_34_lx + bridge_34_rx) // 2
+    tape_34_w = max(5, int(h * 0.035))
+    tape_34_hh = max(3, int(h * 0.025))
+    draw.rectangle([tape_34_cx - tape_34_w, eye_y - tape_34_hh,
+                    tape_34_cx + tape_34_w, eye_y + tape_34_hh],
+                   fill=TAPE_COL, outline=LINE, width=1)
 
     # Neck
     neck_top = head_cy + int(h * 0.50)
@@ -493,6 +550,17 @@ def render_side(draw, cx, base_y):
     # Side hair rear bump
     draw.ellipse([cx - hw_side - int(h * 0.08), head_cy - hh - int(h * 0.03),
                   cx - hw_side + int(h * 0.05), head_cy - hh + int(h * 0.14)], fill=HAIR)
+    # v003: amplified cowlick (side view — visible as forward-pointing tuft)
+    cowlick_side_x = cx + int(hw_side * 0.10)
+    cowlick_side_tip_y = hair_top - int(h * 0.13)
+    cowlick_side_w = int(h * 0.06)
+    tuft_side = [
+        (cowlick_side_x - cowlick_side_w // 2, hair_top + 2),
+        (cowlick_side_x + int(cowlick_side_w * 0.2), cowlick_side_tip_y),
+        (cowlick_side_x + cowlick_side_w // 2, hair_top + 2),
+    ]
+    draw.polygon(tuft_side, fill=HAIR)
+    draw.line(tuft_side, fill=LINE, width=3)
 
     # Side profile features (nose, mouth — visible from side)
     # Nose (slight bump on front face)
@@ -638,6 +706,17 @@ def render_back(draw, cx, base_y):
     # Hair (back — full cap)
     hair_top = head_cy - hh - int(h * 0.06)
     draw.rectangle([cx - hw + 4, hair_top, cx + hw - 4, head_cy - hh + 4], fill=HAIR)
+    # v003: amplified cowlick (back view — visible rising from crown)
+    cowlick_bk_x = cx + int(hw * 0.10)
+    cowlick_bk_tip_y = hair_top - int(h * 0.13)
+    cowlick_bk_w = int(h * 0.07)
+    tuft_bk = [
+        (cowlick_bk_x - cowlick_bk_w // 2, hair_top + 2),
+        (cowlick_bk_x, cowlick_bk_tip_y),
+        (cowlick_bk_x + cowlick_bk_w // 2, hair_top + 2),
+    ]
+    draw.polygon(tuft_bk, fill=HAIR)
+    draw.line(tuft_bk, fill=LINE, width=3)
     draw.ellipse([cx - int(hw * 0.7), hair_top - int(h * 0.03),
                   cx + int(hw * 0.7), hair_top + int(h * 0.10)], fill=HAIR)
     # Neck (back visible)
@@ -752,10 +831,10 @@ def build_turnaround():
 
     # Header
     draw.text((20 * SCALE, 6 * SCALE),
-              "COSMO — 4-View Character Turnaround v002  |  Luma & the Glitchkin",
+              "COSMO — 4-View Character Turnaround v003  |  Luma & the Glitchkin",
               fill=LINE, font=font_title)
     draw.text((20 * SCALE, 30 * SCALE),
-              "Maya Santos / Cycle 25  |  4.0 heads  |  Rectangular head  |  Glasses always present  |  Notebook always tucked  |  v002: side view 3D depth fix",
+              "Maya Santos / Cycle 47  |  4.0 heads  |  Rectangular head  |  Glasses + bridge tape  |  Amplified cowlick  |  Notebook always tucked  |  v003: visual hook pass",
               fill=(140, 120, 100), font=font_sub)
 
     # Dividers
@@ -806,7 +885,7 @@ def main():
     img.save(out_path)
     print(f"Saved: {out_path}")
     print(f"  Size: {img.size[0]}x{img.size[1]}px")
-    print("  v002: Side view 3D depth fix (profile head, visible sole, proper arm placement)")
+    print("  v003: Visual hook pass — amplified cowlick + glasses bridge tape (all 4 views)")
 
 
 if __name__ == "__main__":
