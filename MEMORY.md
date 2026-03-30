@@ -4,8 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present.
 
 ## Status
-**Cycle 41 complete. Critique 16 complete. Work cycles: 41. Critique cycles: 16.**
-**C42 = next work cycle + Critique 17 (every 3 work cycles).**
+**Cycle 42 complete. Critique 16 complete. Work cycles: 42. Critique cycles: 16.**
+**C43 = next work cycle. Critique 17 runs NOW (every 3 cycles — after C42 commit).**
 
 ## Active Team (12 slots)
 
@@ -39,17 +39,14 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 - **C16 ran**: Daisuke Kobayashi, Priya Nair, Sven Halvorsen, Chiara Ferrara, Jayden Torres (audience, age 13)
 - C17 candidates: rotate in Jonas Feld, Amara Diallo, Leila Asgari, Petra Volkov, Marcus Webb (+ 1 audience not from C15/C16: Marcus Okafor, Eleanor Whitfield)
 
-## Pitch Package Status — POST CYCLE 41
+## Pitch Package Status — POST CYCLE 42
 
 ### Style Frames
 - **SF01 Discovery**: v006
-- **SF02 Glitch Storm**: v008
+- **SF02 Glitch Storm**: v008 ⚠️ LAST 1920×1080+LANCZOS generator — Jordan to refactor C43
 - **SF03 Other Side**: v005 (UV_PURPLE ΔE 0.0 C41 — root cause fixed)
-- **SF04**: ⚠️ TWO VERSIONS — Alex must decide C42 canonical:
-  - v005 C40 (Jordan): domestic lamp scene, warm/cool 36.6
-  - "Resolution" C41 (Jordan): Luma post-crossing in kitchen, Byte as CRT ghost, warm/cool 13.2
-- **SF05 COVETOUS Glitch: v001 C40** (Rin) — spec updated C41 to 3-char staging (Glitch/Byte/Luma); execution pending
-- COVETOUS generator has G001/G004/G008 violations (Morgan C41) — Rin to fix C42
+- **SF04 Resolution**: CANONICAL C42 (Jordan) — Luma post-crossing in kitchen, Byte as CRT ghost, warm/cool 13.2 PASS. Alex decision broadcast C42.
+- **SF05 COVETOUS Glitch**: v2.0.0 C42 (Rin) — G001/G004/G008 all PASS, 3-char triangulation (Glitch→Byte→Luma)
 
 ### Logo
 - **LTG_BRAND_logo.png** — DECIDED C25
@@ -63,25 +60,26 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 - Cosmo: expr v007 C38. **Motion spec v001 NEW C41** (IDLE/STARTLED/ANALYSIS_LEAN/RELUCTANT_MOVE)
 - Miri: expr v005 C40 (M001 fixed)
 - Glitch: expr v003. Diamond body primitive spec + diagram `LTG_CHAR_glitch_body_primitive_diagram.png` C41. G007 = VOID_BLACK outline is CORRECT per spec (Alex clarified C41).
-- Character lineup: v007 (v008 staging plan: two-tier ground plane — Lee brief C41)
+- Character lineup: **v008 C42** (Maya) — two-tier ground plane, Luma center-protagonist, RPD PASS
 
 ### Environments
 - Kitchen: v005 C39 (MIRI fridge label)
 - **Tech Den: v006 C41** — warm/cool 102.9 PASS in-generator (no warminjected needed; RGBA→RGB flatten fix)
-- Glitch Layer: v003
-- School Hallway: v004 C40 (SUNLIT_AMBER regenerated)
+- Glitch Layer: v003 (3 generators fixed native 1280×720 C42 — bg_glitchlayer_frame, bg_glitch_layer_frame, bg_glitch_layer_encounter)
+- School Hallway: v003 C42 regenerated (Jordan)
 - Millbrook Street: v002
 - Living Room: v001
 - Other Side: C41 (UV_PURPLE ΔE 0.0 — root cause: native 1280×720 canvas; was 1920×1080+LANCZOS)
-- **Classroom: v001 NEW C41** — warm/cool 17.0 PASS, dual-temp split, perspective-correct floor
-- Luma Study Interior: rebuild spec ready → execute C42 (Hana)
+- **Classroom: v001 C41** — warm/cool 17.0 PASS
+- **Luma Study Interior: NEW C42** (Hana) — warm/cool 33.1 PASS, 3 light sources, Miri Easter eggs, first-ever generator
 
 ### Storyboards
 - Cold Open: v003 C39 (night/den canonical)
 - **Standalone panels C41**: P06 (cracked-eye divergence fixed), P08 (gaze contempt corrected), P23 (Promise Shot — Luma+Byte backs to monitors), P24 (Chaos Apex — 28 Glitchkin swarm, Dutch angle, PITCH BEAT)
-- All panels: P03/P06/P08/P23/P24 EXISTS. P07/P09 next (Lee staging briefs written C41).
+- All panels: P03/P06/P07/P08/P09/P23/P24 EXISTS. **EP05 COVETOUS panel NEW C42** (Diego).
 - Canon: Night/Grandma's den. School/daytime = pre-credits Act 1 tag.
-- **pilot_episode_outline_v001.md NEW C41** — "Dead Pixels" scene-by-scene, Pre-credits tag + Acts 1–3, 5-character arc table
+- **pilot_episode_outline_v001.md C41** — "Dead Pixels" scene-by-scene
+- **scene_handoff_briefs_v001.md NEW C42** (Priya) — per-scene execution briefs for Acts 1–3, keyed to PANEL_MAP.md. A3-02 = highest storyboard priority.
 
 ### Story
 - **Story Bible: v003 NEW C39** (cold open = night/den canonical, Glitch = Corruption's avatar)
@@ -92,11 +90,22 @@ Score (0–100) → bullet issues (≤2 lines each) → single Bottom line. ≤1
 - **Luma motion: v002 NEW C38** (CG polygon fix, shoulder mass, hair annotation)
 - **Byte motion: v002 NEW C38** (crack scar side, glow radius annotated)
 
-## QA Baseline (C41)
+## QA Baseline (C41 — C42 baseline not yet run)
 precritique_qa **v2.9.0**: **255 PASS / 31 WARN / 0 FAIL** (Morgan C41 baseline).
 Section 10 alpha_blend_lint: all 3 SF assets SKIP (no `*_nolight.png` bases yet).
-Native resolution fix: UV_PURPLE ΔE 0.0 in SF03 + Other Side ENV (was 27°+ due to 1920→1280 LANCZOS).
-RGBA→RGB compositing bug documented (Tech Den fix C41 — flatten before numpy Porter-Duff pass).
+Native resolution fix: UV_PURPLE ΔE 0.0 in SF03 + Other Side ENV + 3 Glitch Layer ENV generators (C42).
+render_lib v1.2.0: `flatten_rgba_to_rgb()` helper added (Hana C42) — correct Porter-Duff via Pillow alpha_composite.
+Motion spec lint: annotation occupancy false WARNs fixed (Ryo C42) — per-family bg color spec in sheet_geometry_config.json.
+
+## C42 Key Decisions & Deliverables
+- **SF04 canonical = "Resolution"** (Jordan C42, Alex decision broadcast). Warm/cool 13.2 PASS. C41 lamp scene v005 superseded.
+- **LAMP_AMBER = GL-07 intentional** in SF04 (post-crossing kitchen "touched by the Layer", alpha max 22%). Inline comment added.
+- **Rin's native res audit**: Only SF02 remains at 1920×1080+LANCZOS (complex refactor). All ENV generators now fixed or legacy-flagged.
+- **Luma Study Interior**: First-ever generator built from scratch (31 cycles of legacy PNG closed).
+- **render_lib v1.2.0**: `flatten_rgba_to_rgb()` canonical pattern replacing manual numpy Porter-Duff.
+- **ci_suite v1.2.0**: `--warn-stale N` flag operational, all 38 suppressions tagged `since_cycle: C39`.
+- **Sobel VP detect v1.0.0**: HoughLines-based VP coordinate detection with tolerance PASS/WARN/FAIL.
+- **Scene handoff briefs v001**: Full pilot Acts 1–3 briefs keyed to PANEL_MAP.md (A3-02 = pilot's emotional center).
 
 ## C39 Key Decisions & Deliverables
 - **Bezier face system**: `output/production/luma_face_curve_spec.md` — 10 named curves, 6 expression deltas. **HOLD on tool implementation** — Maya found critical eye width discrepancy (spec 56px vs generator ~100px at 600px canvas). Alex must resolve before Kai builds tool.
@@ -120,24 +129,22 @@ RGBA→RGB compositing bug documented (Tech Den fix C41 — flatten before numpy
 | Kitchen v005 | — | — | — | 76 | — |
 | Cross-pitch coherence | — | 45 | — | — | — |
 
-## Open Items for C42
+## Open Items for C43
 **P1 — Mandated:**
-1. **Alex**: Decide canonical SF04 — v005 (warm/cool 36.6) vs "Resolution" (warm/cool 13.2)
-2. **Hana**: Luma Study Interior rebuild (spec ready, C41 hold)
-3. **Rin**: Fix COVETOUS generator G001/G004/G008 violations + regenerate 3-char staging
-4. **Diego**: Cold open panels P07/P09 (Lee staging briefs written C41)
-5. **Maya**: Lineup v008 — two-tier ground plane (Lee brief written C41)
+1. **Jordan**: SF02 native canvas refactor (last 1920×1080+LANCZOS generator — complex, 300+ lines)
+2. **Kai**: Byte face test profile (`--char byte` support in face_test tool — Diego blocked on P07/P09 gate)
+3. **Lee/Diego**: COVETOUS style frame execution (Rin's generator now fixed, spec ready)
 
-**P2:**
-6. **Rin**: Native resolution audit — flag all generators still at 1920×1080+LANCZOS (systemic UV hue drift risk)
-7. **Kai**: Sobel vanishing point tool (carried from C40)
-8. **Hana**: `flatten_rgba_to_rgb()` helper for render_lib (ideabox C41)
-9. **Morgan**: CI `--warn-stale N` auto-age flag (ideabox C40)
-10. **Lee/Diego**: COVETOUS style frame execution (3-char spec ready; pending Rin generator fix)
-11. **Ryo**: Annotation occupancy light-bg threshold fix (false WARN on Cosmo/Luma sheets)
-12. **Priya**: Storyboard scene list → scene handoff briefs for acts 1–3 (ideabox C41)
+**P2 — Actioned from C42 ideabox:**
+4. **Kai**: `vp_spec_config.json` + VP003 CI check (auto-lookup canonical VP per generator)
+5. **Morgan**: `--apply-stale-review` auto-close for stale suppressions (ci_suite v1.3.0)
+6. **Morgan/Jordan**: `# GLITCH-COLOR-IN-REAL-WORLD` sentinel comment + INFORMATIONAL ci_suite check
+7. **Hana or Kai**: `LTG_TOOL_env_lighting_audit.py` (warm/cool zone preview tool for ENV development)
+8. **Priya or Kai**: Dialogue register linter (character voice drift detection)
+9. **Maya**: Lineup tier depth indicator band (low-cost v008 polish)
+10. **Ryo**: Extend annotation_bg_color to Byte sheet family when Byte gets a light-bg variant
 
-**C42 = CRITIQUE 17** (after work). Critics: rotate in Jonas Feld, Amara Diallo, Leila Asgari, Petra Volkov, Marcus Webb + 1 audience (Marcus Okafor or Eleanor Whitfield)
+**C43 = work cycle. Critique 17 runs after C42 commit** (this session). Critics: Jonas Feld, Amara Diallo, Leila Asgari, Petra Volkov, Marcus Webb + Eleanor Whitfield (audience — not from C15/C16)
 
 ## Canonical Palette
 - Byte body = GL-01b #00D4E8 BYTE_TEAL (NOT #00F0FF)
@@ -174,7 +181,18 @@ RGBA→RGB compositing bug documented (Tech Den fix C41 — flatten before numpy
 - Python 3.8 compat: `from __future__ import annotations`
 - REAL_INTERIOR warm/cool threshold = 12.0 (render_qa v2.0.0)
 
-## Shared Library (updated C40)
+## Shared Library (updated C42)
+`LTG_TOOL_render_lib.py` — **v1.2.0 C42** (Hana). `flatten_rgba_to_rgb()` helper added — correct Porter-Duff via Pillow alpha_composite
+`LTG_TOOL_ci_suite.py` — **v1.2.0 C42** (Morgan). `--warn-stale N` flag; all 38 known-issue entries tagged `since_cycle: C39`
+`LTG_TOOL_sobel_vp_detect.py` — **v1.0.0 NEW C42** (Kai). Sobel/HoughLines VP coordinate detection, `--vp-x-expected`/`--vp-y-expected` flags, debug overlay
+`LTG_TOOL_sf_covetous_glitch.py` — **v2.0.0 C42** (Rin). G001/G004/G008 PASS; 3-char triangulation
+`LTG_TOOL_motion_spec_lint.py` — **C42** (Ryo). Per-family `annotation_bg_color` in sheet_geometry_config.json; Luma/Cosmo annotation_occupancy WARN→PASS
+`LTG_TOOL_bg_luma_study_interior.py` — **NEW C42** (Hana). 1280×720, warm/cool 33.1 PASS, 3 light sources
+`LTG_TOOL_character_lineup.py` — **v008 C42** (Maya). Two-tier ground plane, Luma center, RPD PASS
+`LTG_TOOL_sb_cold_open_P07.py` / `P09.py` — **NEW C42** (Diego). P07: Dutch 8° CW, Byte mid-phase; P09: CURIOUS/FIRST ENCOUNTER
+`LTG_TOOL_sb_ep05_covetous.py` — **NEW C42** (Diego). 3-char triangulation storyboard panel
+
+## Shared Library (historical C40)
 `LTG_TOOL_render_qa.py` — **v2.0.0 C39**. numpy/cv2 LAB ΔE, comparison report CLI
 `LTG_TOOL_precritique_qa.py` — **v2.8.0 C40**. arc_diff JSON config + LAB ΔE + Section 10 alpha_blend_lint (Morgan+Kai+Rin)
 `LTG_TOOL_ci_suite.py` — **v1.1.0 C40**. `--known-issues` flag; `ci_known_issues.json` seeded (Morgan)

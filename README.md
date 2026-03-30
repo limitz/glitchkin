@@ -37,20 +37,25 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 *The Glitch Layer. UV_PURPLE_DARK saturation corrected. Zero warm light — UV ambient only.*
 ![SF03 The Other Side](output/color/style_frames/LTG_COLOR_styleframe_otherside.png)
 
-### SF04 — Luma + Byte (v004)
-*The core relationship. Byte teal at reduced luminance — intentional dual-lighting blend.*
-![SF04 Luma and Byte](output/color/style_frames/LTG_COLOR_styleframe_luma_byte.png)
+### SF04 — Resolution (C42 canonical)
+*Luma returns to the Real World. Byte appears as a faded CRT ghost through the kitchen doorway. Post-crossing kitchen: the room has been touched. Warm/cool 13.2 PASS.*
+![SF04 Resolution](output/color/style_frames/LTG_COLOR_styleframe_sf04.png)
+
+### SF05 — COVETOUS Glitch (v2.0.0)
+*Episode 5 debut. Three-character triangulation: Glitch (desire) → Byte (barrier) → Luma (the wanted thing). Glitch spec PASS — G001/G004/G008 all clear.*
+![SF05 Covetous](output/color/style_frames/LTG_COLOR_sf_covetous_glitch.png)
 
 ---
 
 ## Characters
 
-### Full Lineup (v007 — Byte shadow + Miri slipper fixes)
+### Full Lineup (v008 — two-tier ground plane)
+*C42: FG tier Luma+Byte, BG tier Cosmo+Miri+Glitch. Luma center-protagonist. Addresses C16 flat-baseline critique.*
 ![Character Lineup](output/characters/main/LTG_CHAR_character_lineup.png)
 
-### Luma — Expression Sheet (v011)
-*C38: Right eye squint fixed (top lid drops). DOUBT VARIANT added — disagreeing eyes, corrugator kink, backward lean. Chin-forward thrust for visual power.*
-![Luma Expressions](output/characters/main/LTG_CHAR_luma_expressions.png)
+### Luma — Expression Sheet (v013)
+*C41: Tier-1 body postures added — RECKLESS (wide-arm), ALARMED (bilateral recoil). THE_NOTICING gaze RIGHT fixed (sight-line PASS).*
+![Luma Expressions](output/characters/main/LTG_CHAR_luma_expression_sheet.png)
 
 ### Luma — Turnaround (v004 — construction master, 3.2 heads)
 ![Luma Turnaround](output/characters/main/turnarounds/LTG_CHAR_luma_turnaround.png)
@@ -58,8 +63,8 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 ### Luma — Color Model (v002)
 ![Luma Color Model](output/characters/color_models/LTG_COLOR_luma_color_model.png)
 
-### Byte — Expression Sheet (v006)
-*C38: Silhouette gate run, worst-pair RPD fixed.*
+### Byte — Expression Sheet (v007)
+*C41: UNGUARDED WARMTH added — bilateral arm raise, float −4px, toe-in trapezoid legs.*
 ![Byte Expressions](output/characters/main/LTG_CHAR_byte_expression_sheet.png)
 
 ### Byte — Turnaround (v001)
@@ -87,13 +92,21 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 
 ## Backgrounds & Environments
 
-### Grandma's Kitchen (v004)
-*C35: Value floor 62→20, warm/cool separation 1.7→32.95, Miri-specific spatial identity added.*
+### Grandma's Kitchen (v005)
+*C39: MIRI fridge label confirmed. Dual spatial identity.*
 ![Kitchen](output/backgrounds/environments/LTG_ENV_grandma_kitchen.png)
 
-### Tech Den — Cosmo's Workspace (v004 warminjected)
-*C36: Warm/cool separation fixed 7.9→23.2 PASS via new warmth inject utility.*
-![Tech Den](output/backgrounds/environments/LTG_ENV_tech_den_warminjected.png)
+### Tech Den — Cosmo's Workspace (v006)
+*C41: In-generator warm/cool — numpy Porter-Duff replacing warmth_inject post-process. 102.9 PASS.*
+![Tech Den](output/backgrounds/environments/LTG_ENV_tech_den.png)
+
+### Luma's Study Interior (NEW C42)
+*First-ever generator built from scratch. CRT monitor key light, warm bedside lamp, cool night window. Warm/cool 33.1 PASS.*
+![Luma Study Interior](output/backgrounds/environments/LTG_ENV_luma_study_interior.png)
+
+### Classroom (v001 NEW C41)
+*Dual-temp split (warm amber top / cool fluorescent bottom), perspective-correct floor. Warm/cool 17.0 PASS.*
+![Classroom](output/backgrounds/environments/LTG_ENV_classroom.png)
 
 ### The Other Side — Glitch Layer (v003)
 ![Other Side BG](output/backgrounds/environments/LTG_ENV_glitchlayer_frame.png)
@@ -101,8 +114,8 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 ### Millbrook Street (v002)
 ![Millbrook Street](output/backgrounds/environments/LTG_ENV_millbrook_main_street.png)
 
-### School Hallway (v003)
-*C38: Figure-ground fix — locker lavender was identical to Cosmo's cardigan. Remapped for ~34-unit value separation.*
+### School Hallway (v003 regenerated C42)
+*SUNLIT_AMBER hue fix applied.*
 ![School Hallway](output/backgrounds/environments/LTG_ENV_school_hallway.png)
 
 ---
@@ -131,7 +144,7 @@ Three-world palette system:
 
 ---
 
-## Team (Cycle 38)
+## Team (Cycle 42)
 
 | Member | Role | Status |
 |--------|------|--------|
@@ -152,37 +165,46 @@ Three-world palette system:
 
 ## Progress
 
-- **Work cycles:** 38 | **Critique cycles:** 15
-- **Next:** Cycle 39 (critique at C39)
-- **Ideabox:** 13 ideas actioned C38, 1 rejected
+- **Work cycles:** 42 | **Critique cycles:** 16
+- **Next:** Critique 17, then Cycle 43
+- **Ideabox:** 10 ideas actioned C42 (all 10 submitted)
 - **Critics panel:** 20 total (15 professionals + 5 audience)
 - **Team:** 12 active
-- **QA baseline:** 343 PASS / 38 WARN / 0 FAIL
+- **QA baseline (C41):** 255 PASS / 31 WARN / 0 FAIL
 
 ### Pitch Package Status
 | Asset | Latest | Notes |
 |-------|--------|-------|
-| **SF01 Discovery** | **v006** | C38: sight-line fixed, visual power boost |
-| SF02 Glitch Storm | v008 | unchanged |
-| SF03 The Other Side | v005 | unchanged |
-| SF04 Luma + Byte | v004 | unchanged |
-| **Luma expressions** | **v011** | C38: right eye squint fixed, DOUBT VARIANT added |
+| SF01 Discovery | v006 | Sight-line fixed C38 |
+| SF02 Glitch Storm | v008 | ⚠️ Last 1920×1080+LANCZOS generator — C43 refactor |
+| SF03 The Other Side | v005 | UV_PURPLE ΔE 0.0 C41 |
+| **SF04 Resolution** | **C42 canonical** | Warm/cool 13.2 PASS — Alex decision C42 |
+| **SF05 COVETOUS** | **v2.0.0 C42** | G001/G004/G008 PASS, 3-char triangulation |
+| **Luma expressions** | **v013 C41** | Tier-1 body postures, THE_NOTICING gaze fixed |
 | Luma turnaround | v004 | unchanged |
-| **Byte expressions** | **v006** | C38: silhouette gate, RPD fixed |
-| **Cosmo expressions** | **v007** | C38: SKEPTICAL arm geometry fixed |
-| **Miri expressions** | **v004** | C38: slipper color CHAR-M-11 corrected, regenerated |
-| Character lineup | v007 | unchanged |
-| Logo | v001 | Canonical |
-| Kitchen | v004 | unchanged (v005 Dual-Miri plant: C39) |
-| Tech Den | v004_warminjected | unchanged |
+| **Byte expressions** | **v007 C41** | UNGUARDED WARMTH body delta |
+| Cosmo expressions | v007 | unchanged |
+| Miri expressions | v005 C40 | M001 head ratio constant |
+| Glitch expressions | v003 | unchanged |
+| **Glitch body primitive diagram** | **NEW C41** | rx/ry proportions, vertex formulas |
+| **Character lineup** | **v008 C42** | Two-tier ground plane — Luma center |
+| Logo | v001 | Canonical C25 |
+| Kitchen | v005 C39 | MIRI fridge label |
+| **Tech Den** | **v006 C41** | In-generator warm/cool 102.9 PASS |
 | Living Room | v001 | unchanged |
-| Glitch Layer | v003 | unchanged |
-| **School Hallway** | **v003** | C38: figure-ground fix (locker vs Cosmo cardigan) |
+| Glitch Layer | v003 | 3 generators native 1280×720 C42 |
+| **Classroom** | **v001 C41** | Dual-temp split, 17.0 PASS |
+| **Luma Study Interior** | **NEW C42** | 33.1 PASS, first-ever generator |
+| Other Side ENV | C41 | UV_PURPLE ΔE 0.0 |
+| School Hallway | v003 C42 | SUNLIT_AMBER regenerated |
 | Millbrook Street | v002 | unchanged |
-| **Storyboard** | **cold open v002** | C38: hoodie fix, W004 fix, P4/P6 staging |
-| **Story Bible** | **v002** | C38: social world depth, Luma doubt arc, Byte non-verbal |
-| **Motion — Luma** | **v002** | C38: CG polygon fix, shoulder mass, annotation fix |
-| **Motion — Byte** | **v002** | C38: crack scar side, glow radius annotated |
+| **Cold open storyboard** | **v003 C39** | Night/den canonical |
+| **Panels** | **P03/P06/P07/P08/P09/P23/P24 + EP05 COVETOUS** | All on disk |
+| **Story Bible** | **v003 C39** | Glitch = Corruption's avatar canonical |
+| **Scene handoff briefs** | **NEW C42** | Acts 1–3 + pre-credits, A3-02 highest priority |
+| Motion — Luma | v002 C38 | unchanged |
+| Motion — Byte | v002 C38 | unchanged |
+| Cosmo motion spec | v001 C41 | IDLE/STARTLED/ANALYSIS_LEAN/RELUCTANT_MOVE |
 
 ---
 
@@ -194,4 +216,4 @@ All output generated with Python + PIL (open source only). Generators in `output
 
 ---
 
-*Cycle 38 — 2026-03-29*
+*Cycle 42 — 2026-03-30*
