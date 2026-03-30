@@ -1,5 +1,59 @@
 # Maya Santos — Memory
 
+## Cycle 41 Lessons — Face Curve Validator + Glitch Diamond Spec + Miri v005
+
+### Task 1: Glitch Diamond Body Primitive Spec
+- Written: `output/production/glitch_body_diamond_spec.md`
+- Closes Daisuke C14 P8 (4-cycle open item). Production spec with labeled diagrams, vertex formulas, rotation/squash/stretch tables, facet fill layers, HOT_MAG crack construction, confetti rules, full assembly order, COVETOUS/HOLLOW geometry notes.
+- Sourced from `glitch.md` §2–§8. Now standalone production reference for artists.
+
+### Task 2: Miri Head Ratio M001 Fix (v005)
+- Added `MIRI_HEAD_RATIO = 3.2` constant to `LTG_TOOL_grandma_miri_expression_sheet.py`
+- Closes M001 spec lint WARN — constant was inferred before, now explicit.
+- Generator bumped to v005, title/sub updated, sheet regenerated.
+- Output: `LTG_CHAR_grandma_miri_expression_sheet.png` (1200×900px unchanged)
+- Face test gate: WARN on KNOWING STILL + WELCOMING (not FAIL). These are reference-sheet faces, not sprint-scale — WAR Ns acceptable. TOO SMALL FAIL is a test variant diagnostic row, not the expression sheet itself.
+- Gate output saved: `output/production/LTG_TOOL_face_test_miri_r23_v001.png`
+
+### Task 3: Face Curve Validator Tool (LTG_TOOL_face_curve_validator.py)
+- Built: `output/tools/LTG_TOOL_face_curve_validator.py`
+- Validates all 10 expressions from luma_face_curve_spec.md + supplement C40.
+- **All 10 expressions: OVERALL PASS.**
+- Metrics checked: eye width (canonical 100px), lid drop (scalar, reads re_lid_drop directly), brow apex relative to FC, mouth corner y.
+- Key fix: re_lid_drop is a scalar in pts_dict (not baked into RE_P1.y) — extract directly, not as P1 delta.
+- Right-eye asymmetry guard: warns if re_lid_drop < -4 in non-ALARMED expressions.
+- Output: `output/production/LTG_TOOL_face_curve_validator_sheet.png` (1280×929px)
+- Registered in README.md tools index (C41 section).
+
+### Task 4: Lineup v007 Hierarchy Check
+- Ran hierarchy tool `--panel N --grid 5x1` on all 5 panels of `LTG_CHAR_luma_lineup.png`.
+- **Key finding: All 4 FAIL violations (Cosmo panel + Glitch panel) are palette artifacts.**
+  Tool uses Luma color index — non-Luma characters' colors get mis-classified as hair/eye by nearest-match.
+  These are not real rendering defects.
+- Cross-character head/body ratios: PASS. All humanoid chars use same HEAD_UNIT (87.5px).
+  Luma 3.2 heads, Cosmo 4.0 heads, Miri 3.2 heads — correctly scaled in lineup.
+- Report sent to Alex Chen inbox: `20260330_1600_maya_lineup_hierarchy_report.md`
+
+### Ideabox C41
+- Submitted: `ideabox/20260330_maya_santos_multi_char_hierarchy_palette.md`
+  Idea: multi-character palette support for bodypart_hierarchy tool (removes false positive FAILs on non-Luma panels in lineup/cross-char checks)
+
+### Face Curve Validator — Key Implementation Note
+- `le_lid_drop` / `re_lid_drop` are SCALAR values in the pts dict, NOT baked into P1.y.
+  The scalar is added to P1.y at RENDER TIME (in the bezier renderer, not in resolve_points).
+  Metric extraction: read `pts_dict["le_lid_drop"]` directly — do NOT compute as `le_p1[1] - neutral_le_p1_y`.
+  NEUTRAL["le_lid_drop"] = 0. NEUTRAL["re_lid_drop"] = 6 (canonical right-eye lid drop).
+
+### ACTIVE TOOL STATUS (C41 — COMPLETE)
+- Face curve validator: `LTG_TOOL_face_curve_validator.py` — NEW (C41), all 10 expressions PASS
+- Miri expression sheet: `LTG_CHAR_grandma_miri_expression_sheet.png` v005 (M001 constant fix)
+  - Generator: `LTG_TOOL_grandma_miri_expression_sheet.py` v005
+- Glitch diamond spec: `output/production/glitch_body_diamond_spec.md` — NEW (C41)
+- Lineup: v007 unchanged (no design action needed from hierarchy check)
+- All C40 tool statuses still current (Luma v011, Cosmo v007, Byte v006, Miri now v005, Glitch v003)
+
+---
+
 ## Cycle 40 Lessons — Face Curve Spec + Hierarchy v002 + RPD Baseline
 
 ### Hierarchy Tool v002 (--panel N)

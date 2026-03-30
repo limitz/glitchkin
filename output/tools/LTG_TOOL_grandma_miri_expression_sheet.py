@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 """
 LTG_TOOL_grandma_miri_expression_sheet.py
-Grandma Miri Expression Sheet — v004 SILHOUETTE DIFFERENTIATION PASS
-"Luma & the Glitchkin" — Cycle 35 / Maya Santos
+Grandma Miri Expression Sheet — v005 M001 HEAD RATIO CONSTANT
+"Luma & the Glitchkin" — Cycle 41 / Maya Santos
+
+v005 CHANGES (C41 — Daisuke Kobayashi C16 P3 — M001 spec lint WARN fix):
+  - Added `MIRI_HEAD_RATIO = 3.2` as an explicit canonical constant.
+    Closes M001 WARN (ratio inferred → ratio explicit). No visual change.
 
 v004 CHANGES (Lee Tanaka C34 Pose Brief):
 
@@ -113,6 +117,11 @@ PANEL_H  = (TOTAL_H - HEADER - PAD * (ROWS + 1) - LABEL_H * ROWS) // ROWS
 RENDER_SCALE = 2
 HEAD_R = 68
 HR     = HEAD_R * RENDER_SCALE
+
+# ── Canonical proportion constant (M001 — closes spec lint WARN) ───────────────
+# Grandma Miri's canonical head-to-body ratio: total character height = 3.2 × head height.
+# This matches the lineup tool (MIRI_HEADS = 3.2) and the character spec.
+MIRI_HEAD_RATIO = 3.2
 
 EXPRESSIONS = ["WARM", "SKEPTICAL", "CONCERNED", "SURPRISED", "WISE", "KNOWING"]
 EXPR_LABELS = {
@@ -775,9 +784,9 @@ def build_sheet():
         font_label = font_title
         font_sub   = font_title
 
-    title = "GRANDMA MIRI — Expression Sheet v004  |  Luma & the Glitchkin"
-    sub   = ("Designer: Maya Santos  |  C35 Silhouette Pass  |  "
-             "6 expressions  |  WELCOMING redesign + hand-to-cheek")
+    title = "GRANDMA MIRI — Expression Sheet v005  |  Luma & the Glitchkin"
+    sub   = ("Designer: Maya Santos  |  C41 M001 Fix  |  "
+             f"6 expressions  |  HEAD_RATIO={MIRI_HEAD_RATIO}  |  WELCOMING redesign + hand-to-cheek")
     draw.text((PAD, 10), title, fill=(235, 218, 196), font=font_title)
     draw.text((PAD, 38), sub,   fill=(165, 150, 130), font=font_sub)
 

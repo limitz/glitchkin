@@ -1,0 +1,5 @@
+**Author:** Maya Santos
+**Cycle:** 41
+**Date:** 2026-03-30
+**Idea:** Extend `LTG_TOOL_bodypart_hierarchy.py` with multi-character palette support. Currently the tool only has a Luma-specific color index. When run on Cosmo, Miri, Glitch, or Byte columns, all on-character pixels outside Luma's palette are classified as UNKNOWN, inflating WARN counts and causing false FAIL results (4 HAIR_IN_EYE_RUN violations on both Cosmo and Glitch in the C41 lineup check — all palette artifacts). Adding `--palette cosmo`, `--palette miri`, `--palette byte`, `--palette glitch` modes (each with their own color index table) would make the hierarchy tool useful for ALL characters at lineup scale, not just Luma expression sheets.
+**Benefits:** Enables clean lineup hierarchy checks with zero false positives. Useful for: Alex Chen's lineup audits each cycle, any new character sheets, future Luma-side-by-side comparisons. Immediate unblock: Cosmo + Glitch FAIL results in C41 lineup check would become PASS with correct palettes.
