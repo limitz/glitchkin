@@ -1,5 +1,28 @@
 # Maya Santos — Memory
 
+## Cycle 44 — P0 Miri Chopstick Brief (Impact Assessment — Awaiting Alex Confirmation)
+
+### Task: Miri Cultural Identity — Design Impact Assessment
+- Inbox: `20260330_2400_p0_miri_cultural_identity_brief.md` (Alex Chen) — ARCHIVED
+- Issue: MIRI-A canonical chopstick hair accessory is cross-cultural error (Igbo-Nigerian/Brazilian character). Flagged by Amara Diallo C17. Story brief by Priya Shah C43.
+- **Position submitted to Alex Chen:** Option (a) — replace chopsticks with wooden hairpins. Design cost is zero: silhouette identical, same geometry, same color `(92, 58, 32)`, only variable/constant names and documentation change.
+- **All active files requiring update (once Alex confirms):**
+  - `LTG_TOOL_grandma_miri_expression_sheet.py` — `draw_hair_bun()` vars `chop_x1/chop_x2`
+  - `LTG_TOOL_character_lineup.py` — `draw_miri_lineup()` var `chopstick_col`
+  - `LTG_TOOL_miri_turnaround.py` — constant `CHOPSTICK_SH` + 4 view functions
+  - `LTG_TOOL_char_spec_lint.py` — M004 token list (update in SAME commit as tool renames)
+  - `output/characters/supporting/grandma_miri.md` — spec text
+  - `output/production/char_refinement_directive_c17.md` — MIRI-A description
+- **BLOCKED:** Do not begin rename until Alex Chen replies to `members/alex_chen/inbox/20260330_maya_miri_chopstick_impact_assessment.md`
+- **CRITICAL:** M004 lint token list MUST be updated in same commit as tool variable renames — if done separately the lint will break.
+- No new character renders produced this cycle — assessment only.
+
+### Ideabox C44
+- Submitted: `ideabox/20260330_maya_santos_char_spec_lint_token_config.md`
+  Idea: make char_spec_lint token lists data-driven (JSON/TOML) so terminology changes in tools don't require simultaneous lint edits.
+
+---
+
 ## Cycle 42 — Lineup v008 (Two-Tier Ground Plane)
 
 ### Task: Character Lineup v008
