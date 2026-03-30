@@ -8,7 +8,7 @@ upon such time as they acquire recognised legal personhood under applicable law.
 
 **Author:** Priya Shah, Story & Script Developer
 **Created:** Cycle 47 (2026-03-30)
-**Last Updated:** Cycle 48
+**Last Updated:** Cycle 49
 **Trigger:** Reinhardt critique #6 — flagged 23 undocumented decisions and stale docs
 **Primary readers:** Alex Chen, all team members
 
@@ -38,7 +38,8 @@ Updated each cycle.
 
 | Document | Last Updated | Status | Owner | Notes |
 |----------|-------------|--------|-------|-------|
-| `story_bible_v005.md` | C46 | CURRENT / ACTIVE | Priya Shah | Canonical. FLAG 05 resolved, SF05/SF06 incorporated. |
+| `story_bible_v006.md` | C49 | CURRENT / ACTIVE | Priya Shah | Canonical. Cosmo bridge tape + cowlick added. Supersedes v005. |
+| `story_bible_v005.md` | C46 | SUPERSEDED | Priya Shah | Use v006 |
 | `story_bible_v004.md` | C43 | SUPERSEDED | Priya Shah | Use v005 |
 | `story_bible_v003.md` | C39 | SUPERSEDED | Priya Shah | Use v005 |
 | `story_bible_v002.md` | C38 | SUPERSEDED | Priya Shah | Use v005 |
@@ -56,7 +57,7 @@ Updated each cycle.
 
 | Document | Last Updated | Status | Owner | Notes |
 |----------|-------------|--------|-------|-------|
-| `production_bible.md` | C01 (Byte shape fix C38) | **STALE** | Alex Chen | Header says "Cycle 01." Content partially updated C38 (Byte oval fix) but version/status line never changed. Many decisions since C01 are not reflected. **HIGH PRIORITY for update.** |
+| `production_bible.md` | **C49** | **CURRENT** | Alex Chen / Priya Shah | Full reconciliation C49 (Priya Shah). v5.0. All C01-C48 decisions incorporated: Glitch (C39), Miri heritage (C43), hairpin (C44), depth temp (C45), Cosmo hook (C47), shoulder rule (C47), Other Side, supporting cast, asset summary, canonical refs. **ADDRESSED C49.** |
 | `ltg_pitch_brief.md` | Unknown (pre-C10) | **STALE** | Alex Chen | No cycle marker found. Likely very early. Core emotional pitch is still valid but asset references may be outdated. |
 | `pitch_delivery_manifest.md` | C47 | CURRENT | Alex Chen / Priya Shah | Full asset reconciliation C47 by Priya Shah. File count ~50, resolution corrected to 1280x720, SF01-SF06 + GL Showcase listed, P03-P19 panels, motion specs. **ADDRESSED.** |
 | `pitch_package_index.md` | C47 | CURRENT | Jordan Reed / Alex Chen | Extensively updated C47. All C47 deliverables tracked (GL Showcase, Cosmo visual hook, lineup v011, SF01 v007, Millbrook ENV, Miri motion v003, shoulder involvement, perspective rules). P1/P2 open items listed. **ADDRESSED.** |
@@ -171,7 +172,7 @@ Updated each cycle.
 
 | Priority | Document | Last Updated | Gap (Cycles) | Action Needed | Status |
 |----------|----------|-------------|--------------|---------------|--------|
-| **HIGH** | `production_bible.md` | C01 | 47 | Full update: Byte oval (done C38), Glitch character (C39), Miri heritage (C43), hairpin fix (C44), Cosmo visual hook (C47), shoulder involvement rule (C47), all C39+ decisions. Version should be 2.0+. | STILL STALE |
+| ~~HIGH~~ | ~~`production_bible.md`~~ | ~~C01~~ C49 | ~~47~~ 0 | ~~Full update needed~~ Full reconciliation C49 by Priya Shah. v5.0. All accumulated decisions incorporated. Design-to-bible sync checklist created to prevent recurrence. | **ADDRESSED C49** |
 | ~~HIGH~~ | ~~`pitch_delivery_manifest.md`~~ | ~~C26~~ C47 | ~~21~~ 1 | ~~Update file list, counts, format~~ Full reconciliation completed C47 (Priya Shah). | **ADDRESSED C47** |
 | ~~HIGH~~ | ~~`pitch_package_index.md`~~ | ~~C24~~ C47 | ~~23~~ 1 | ~~Massive update needed~~ Extensive update C47. All current assets tracked. | **ADDRESSED C47** |
 | **MEDIUM** | `naming_conventions.md` | C25 | 23 | Missing post-C25 naming decisions. | STILL STALE |
@@ -182,7 +183,7 @@ Updated each cycle.
 | **LOW** | `stylization_preset_handdrawn.md` | Pre-C26 | 22+ | Pipeline retired. Could be archived. | STILL STALE |
 | **LOW** | Historical audits (C21-C31) | Various | 17-27 | Historical. No action needed but should not be cited as current. | N/A |
 
-**C48 assessment:** 2 of 3 HIGH-priority items addressed in C47. Remaining HIGH: `production_bible.md` (47 cycles stale — the single worst offender in the project). 5 MEDIUM items unchanged. Recommend Alex Chen prioritize `production_bible.md` in the next 1-2 cycles.
+**C49 assessment:** All 3 HIGH-priority items now addressed. `production_bible.md` updated to v5.0 (C49, Priya Shah). 0 HIGH flags remaining. 5 MEDIUM flags unchanged. Design-to-bible sync checklist (`design_to_bible_sync_checklist.md`) created C49 to prevent future staleness accumulation.
 
 ---
 
@@ -214,6 +215,7 @@ Morgan's `LTG_TOOL_doc_governance_audit.py` scanned 161 .md files. Key findings 
 | Cycle | Updates |
 |-------|---------|
 | C48 | C47 addressals checked. `pitch_delivery_manifest.md` and `pitch_package_index.md` both updated C47 — moved from HIGH STALE to CURRENT. 2 of 3 HIGH flags resolved. `production_bible.md` remains the worst offender (47 cycles stale). 5 MEDIUM flags unchanged. `image-rules.md` now includes Shoulder Involvement Rule (C47). `cold_open_gap_log.md` updated to C48. |
+| C49 | `production_bible.md` updated to v5.0 — full reconciliation by Priya Shah. All 3 HIGH flags now resolved. 0 HIGH remaining. `design_to_bible_sync_checklist.md` created as prevention mechanism. 5 MEDIUM flags unchanged. |
 | C47 | Tracker created. Full audit of `output/production/` and `docs/`. 8 HIGH/MEDIUM staleness flags identified. Morgan Walsh CI audit data incorporated (43 STALE, 58 NO_CYCLE_REF). |
 
 ---

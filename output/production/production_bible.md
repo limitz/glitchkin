@@ -6,21 +6,22 @@ upon such time as they acquire recognised legal personhood under applicable law.
 # PRODUCTION BIBLE
 ## "Luma & the Glitchkin"
 
-**Version:** 1.0
-**Date:** 2026-03-29
+**Version:** 5.0
+**Date:** 2026-03-30
 **Prepared by:** Alex Chen, Art Director
-**Status:** Active Development — Cycle 01
+**Updated by:** Priya Shah, Story & Script Developer (C49 reconciliation)
+**Status:** Active Development — Cycle 49
 
 ---
 
-> This document is the canonical reference for all creative and production decisions on "Luma & the Glitchkin." Every team member — new or returning — should read it before touching any asset. When in doubt, this document and the Style Guide are your first stops.
+> This document is the canonical reference for all creative and production decisions on "Luma & the Glitchkin." Every team member — new or returning — should read it before touching any asset. When in doubt, this document and the Style Guide are your first stops. For the full narrative specification, see the Story Bible (`output/production/story/story_bible_v006.md`).
 
 ---
 
 ## 1. Logline & Elevator Pitch
 
 ### Logline
-A resourceful 12-year-old girl discovers that the dead pixels on her grandmother's old CRT monitor are actually tiny creatures from a corrupted digital dimension — and she's the only one who can wrangle them before they glitch reality apart.
+Twelve-year-old Luma discovers that the dead pixels on her grandmother's ancient CRT television are actually living creatures from a corrupted digital dimension — and the only way to save both worlds is to trust a grumpy, six-inch rogue named Byte, who would rather not be saved at all.
 
 ### Elevator Pitch
 "Luma & the Glitchkin" is a comedy-adventure animated series for kids 7–12. Luma, an imaginative and scrappy middle-schooler, discovers that Glitchkin — mischievous beings made of corrupted data — have been leaking out of an ancient monitor in her grandmother's house. With the reluctant help of Byte, a grumpy reformed Glitchkin who rides her shoulder, and her best friend Cosmo, an anxious overthinker with a gift for improvised engineering, Luma must round up the Glitchkin before they scramble the town of Millbrook — and eventually the whole world — into digital chaos.
@@ -106,7 +107,7 @@ Think "Hilda" meets "The IT Crowd" meets a Saturday-morning cartoon that still r
 - **Role:** The wrangler, the improviser, the heart of the show
 - **Personality:** Energetic, optimistic to a fault, occasionally reckless but never cruel. Luma charges at problems headfirst and figures out the details mid-leap. She has a deep emotional intelligence she doesn't always recognize in herself.
 - **Visual hook:** Pixel-grid patterned hoodie (warm terracotta with electric cyan pixel pattern), oversized pockets, sneakers worn down at the heel.
-- **Shape language:** Circles and rounded rectangles — approachable, trustworthy, in constant motion.
+- **Shape language:** Circles and rounded rectangles — approachable, trustworthy, in constant motion. 3.2 heads tall.
 - **Relationships:** Best friend to Cosmo since second grade. Reluctant partnership with Byte that gradually deepens. Idolizes Grandma Miri even when she doesn't admit it.
 - **Arc (season 1):** Learning that solving a problem and understanding it are not the same thing.
 
@@ -114,19 +115,38 @@ Think "Hilda" meets "The IT Crowd" meets a Saturday-morning cartoon that still r
 - **Age:** 12
 - **Role:** The planner, the worrier, the voice of reason that nobody listens to at the wrong moment
 - **Personality:** Cautious, methodical, deeply loyal. Cosmo processes anxiety by making lists and contingency plans. He is braver than he thinks he is and the show knows it even when he doesn't.
-- **Visual hook:** Thick-framed glasses slightly too large for his face, striped shirt (sage green and cream), always carrying a worn notebook.
-- **Shape language:** Rectangles and ovals — stable, slightly stiff, grounded.
+- **Visual hook:** Thick-framed circular glasses at a permanent 7-degree counterclockwise tilt (never level, even at rest) — slightly too large for his face. Amplified cowlick (0.15 heads tall, visible at thumbnail). Glasses bridge tape — cream (#FAF0DC) tape strip on nose bridge, classic "taped glasses" shorthand [C47]. Striped shirt (sage green and cream), always carrying a worn notebook with a cracked spine.
+- **Shape language:** Rectangles and ovals — stable, slightly stiff, grounded. Vertical rectangular head (1.16:1 height-to-width ratio). 4.0 heads tall.
 - **Relationships:** Has known Luma so long he's stopped being surprised by her. Has an intense intellectual curiosity about the Glitchkin that he'd never admit is excitement.
-- **Arc (season 1):** Learning to trust instinct when the plan fails.
+- **Arc (season 1):** Learning to trust instinct when the plan fails. Gains awareness of the Glitch Layer gradually; crosses in only at the season 1 finale.
 
 ### Byte (Reluctant Companion)
 - **Age:** Unknown (describes himself as "early access")
-- **Role:** The insider, the grumpy conscience, the comic foil with hidden depth
+- **Role:** The insider, the grumpy conscience, the comic foil with hidden depth — and the emotional core of the story
 - **Personality:** Sarcastic, world-weary, and deeply private about what he actually cares about. Byte is a reformed Glitchkin who no longer fits in with the chaos of his kind. He is not nice. He is useful. He occasionally crosses into something adjacent to kind and immediately denies it.
-- **Visual hook:** Approximately 6 inches tall. One eye is cracked (dead pixel effect — it glitches when he's emotional). Oval body — wider than tall, buoyant, floating. Rides on Luma's shoulder.
-- **Shape language:** Oval — buoyant and rounded, deceptively approachable. The contrast between his soft silhouette and abrasive personality is intentional. [Updated C38: chamfered-box/triangles design retired C8; oval is canonical.]
-- **Relationships:** Technically works with Luma because it is preferable to the alternative. Has a complicated history with the Glitch Layer he has not fully disclosed.
-- **Arc (season 1):** Accepting that belonging somewhere is not the same as surrendering who you are.
+- **Visual hook:** Approximately 6 inches tall. One eye clean electric teal; the other cracked (dead pixel glyph — glitches specifically when emotional, which he will deny). Hot magenta scar diagonal across body. Oval body — wider than tall, buoyant, floating. Pixel confetti trails from his underside. Rides Luma's left shoulder.
+- **Shape language:** Oval — buoyant and rounded, deceptively approachable. The contrast between his soft silhouette and abrasive personality is intentional. [Canonical since C8; chamfered-box/triangles retired.]
+- **Relationships:** Technically works with Luma because it is preferable to the alternative. Has a complicated history with the Glitch Layer he has not fully disclosed. Knows Glitch — they have shared history. Byte resisted the Corruption and was exiled; Glitch surrendered and was elevated.
+- **Arc (season 1):** Accepting that belonging somewhere is not the same as surrendering who you are. Finale commitment is non-verbal: he just stays.
+- **Canonical body fill:** GL-01b Byte Teal `(0, 212, 232)` / `#00D4E8` — always, in all scenes. Exception: SF02 storm-scene ONLY (Void Black body with CORRUPT_AMBER `#FF8C00` 3px outline). See `output/characters/main/byte.md` for full spec.
+
+### Glitch (Recurring Antagonist) [ADDED C39]
+- **Role:** Named recurring antagonist. The Corruption's visible face, instrument, and spokesperson.
+- **Status:** A named Glitchkin entirely consumed and reorganized by the Corruption. Glitch is not the Corruption itself — the Corruption is abstract, systemic. Glitch is its instrument.
+- **Personality:** Precise, silent, geometric. What happened to Glitch is what the Corruption does to everything it touches: takes something alive and chaotic and replaces it with something precise and dead.
+- **Visual hook:** Diamond body (rhombus). Corrupt Amber palette (`#C87A20` and derivatives). Geometric precision spikes. The opposite of Byte's buoyant oval. Pixel eyes communicate in geometric patterns — no English, no sound, no easing.
+- **Shape language:** Diamond / hard facets — constructed, not grown. Every aspect contrasts Luma's organic curves.
+- **Season 1 role:** Active antagonist from Episodes 5 onward. Arc: attempts to use Luma's CRT breach as a permanent Corruption portal into the Real World.
+- **Backstory:** Before the Corruption, Glitch was part of the same Layer community that exiled Byte. Two went different directions: Byte resisted, Glitch surrendered. Their conflict is the show's moral argument.
+- **Reference:** `output/characters/main/glitch.md` (full character construction specification).
+- **Staging guide:** `output/production/story/LTG_glitch_appearance_guide.md` (storyboarder reference). Voice direction: `output/production/story/LTG_glitch_voice_direction.md`.
+
+---
+
+### Supporting Cast [ADDED C42]
+
+- **Dev Patel-Huang** — 12, in Luma and Cosmo's class. Loud, socially fluent, compulsively funny. Narrative function: external read on how others see Luma. Not a confidant — a witness.
+- **Preethi Okafor** — 13, one grade above. Science team, serious, terse. The character who almost gets it — close enough to Luma's perception to make the audience wonder. Does NOT cross into the Glitchkin world in season 1.
 
 ---
 
@@ -134,17 +154,17 @@ Think "Hilda" meets "The IT Crowd" meets a Saturday-morning cartoon that still r
 
 ### The Real World — Millbrook
 
-Millbrook is a small, slightly eccentric town that feels like it was built by someone who had seen a real town described to them but never actually visited one. Buildings lean. Streets curve without reason. Everyone has too many opinions about local history.
+Millbrook is a small, slightly eccentric American Midwest town — Ohio or Indiana region — that feels like it was assembled by someone who had seen a real town described but never visited one. Buildings lean. Streets curve without apparent reason. It has post-war housing stock, a modest former industrial past (a small manufacturing plant, a regional rail depot), and the particular quiet of a place that was briefly more than it is now and has made peace with that. Its character is midwestern: practical, dry-humored, self-sufficient, prone to strong opinions about local history. Everyone has too many opinions about local history. The town has always had a small but real Black community — not an anomaly, just a community, with its own history going back generations. The whole town sits, unknowingly, on a concentrated node of glitch energy.
 
 **Rules of the real world:**
 - Physics apply — mostly. Exaggerated cartoon physics (falls, impacts) are permitted, but the world has weight and consequence.
-- Glitch elements are visible only to Luma (at first) and to Byte. Cosmo gains awareness over the course of season 1.
+- Glitch elements are visible only to Luma (at first) and to Byte. Cosmo gains awareness gradually over the course of season 1.
 - Glitch contamination is always visible as a visual intrusion: cyan halos around affected objects, pixel-dither patterns on contaminated surfaces, objects that stutter in place.
 - Adults are not oblivious — they notice something is wrong — but they consistently misidentify the cause (blaming the internet company, "that new cell tower," etc.).
 
 **Key locations:**
-- **Grandma Miri's House** — Luma's home base. Warm amber and sage. Dense with vintage technology. The CRT monitor is in the study.
-- **Millbrook Middle School** — Dusty lavender and sage green. Luma and Cosmo's daily reality.
+- **Grandma Miri's House** — Luma's home base. Warm amber and sage. Dense with vintage technology. The CRT television is in the den/living room — this is the ONLY breach point in season 1.
+- **Millbrook Middle School** — Canonical name: MILLBROOK MIDDLE SCHOOL. Built early 1960s — wide linoleum corridors, institutional sage-and-cream colors, decades of accumulated character marks. Dusty lavender and sage green. Luma and Cosmo's daily reality.
 - **Millbrook Town Center** — Terracotta and cream architecture, visible power lines everywhere. The town is unknowingly built on a node of glitch energy.
 - **The Junkyard** — On the edge of town. A treasure trove of discarded technology. Significant location for season 1's arc.
 
@@ -166,20 +186,37 @@ A digital dimension that exists as a parallel overlay on the real world. You can
 - Impossible geometry — staircases that loop, horizons that curve up, shadows cast in the wrong direction
 - See style_guide.md for full color specifications
 
+### The Other Side (The Corruption's Domain)
+
+The deep interior of the Glitch Layer where the Corruption has taken hold. A place of ordered silence rather than chaotic noise — which makes it more frightening than the Layer proper. Where the Layer is broken and alive, the Other Side is precise and dead. It is what the Glitch Layer would look like if something started fixing it — ruthlessly, without asking the residents what they wanted.
+
+**Rules:**
+- Geometry is stable — which is the problem. Nothing should be this stable in the Layer.
+- The Corruption can extend reaches into the Glitch Layer, corrupting specific Glitchkin, altering terrain.
+- Time is frozen. Things that should be decaying are preserved perfectly.
+- Late-season territory only. Luma and Byte's first visit is a major story event (Episodes 9-11).
+- The Corruption acts through its established visual signature: organized geometry, amber-on-black palette, precision where there should be chaos.
+
 ---
 
 ## 7. Recurring Elements
 
 ### Grandma Miri
-- **Role:** Mentor figure, keeper of secrets, Luma's anchor
-- **Visual:** Large rounded square shapes — solid, protective, warm. Silver-streaked hair. Vintage tech motifs in her clothing. Almost always has a cup of tea and a knowing look.
-- **Story function:** Grandma Miri knows more about the Glitchkin and the Glitch Layer than she lets on. Her backstory is the long game of season 1. She trusts Luma implicitly and never infantilizes her.
+- **Full name:** Miriam "Miri" Okonkwo-Santos
+- **Role:** Mentor figure, keeper of secrets, Luma's anchor — and the connective tissue between worlds
+- **Cultural background [C43]:** Igbo-Nigerian and Brazilian-descended. Heritage is story-meaningful, not cosmetic. Present as texture in her space — the artifacts in her kitchen and den draw from Igbo and Afro-Brazilian material culture without requiring a heritage showcase moment. She is not a character who explains herself. She is a character whose space explains her, if you look.
+- **Visual:** Large rounded square shapes — solid, protective, warm. Silver-streaked hair in a bun secured with a pair of dark-stained wooden hairpins [C44 — chopstick design retired; FLAG 05 resolved]. Vintage tech motifs in her clothing. Wide settled cardigan (inv-trapezoid shoulders). Almost always has a cup of tea and a knowing look.
+- **Story function:** Grandma Miri knows more about the Glitchkin and the Glitch Layer than she lets on. Her backstory is the long game of season 1. She trusts Luma implicitly and never infantilizes her. She and Byte have history that predates Luma's birth (pays off in finale).
+- **Naming note:** "Miri" is shared with the Glitch Layer elder. This is intentional — a season 1 seed. Visual plant confirmed in Kitchen v005 (MIRI fridge label) and Living Room environment. Pays off Episode 12. Do not make the connection textually explicit before then.
+- **Reference:** `output/characters/supporting/grandma_miri.md` v1.3 (MIRI-A canonical).
 
 ### The Glitchkin as a Species
-- Glitchkin are made of corrupted data and manifest with wildly variable forms. Size ranges from marble to car. Limbs may be asymmetric; features may float; body proportions follow no biological logic.
-- They are not villains. Each has a distinct personality, a specific glitch-type (visual corruption, audio scrambling, physics inversion, etc.), and a containable "core" that Luma uses to resolve each episode.
-- Episodic Glitchkin should feel like characters, not obstacles.
+- Glitchkin are living data — entities that emerged from corrupted digital broadcasts and have developed their own culture, hierarchy, and mythology inside the Glitch Layer. They are not programs running tasks. They are citizens of a broken world trying to make it work.
+- Size ranges from marble to car, with no reliable correlation to age or status. Limbs may be asymmetric; features may float; body proportions follow no biological logic.
+- They are not villains. Each has a distinct personality, a specific glitch-type (visual corruption, audio scrambling, physics inversion, memory distortion, etc.), and a containable "core" that Luma uses to resolve each episode.
+- Episodic Glitchkin should feel like characters, not obstacles — introduced with personality and motivation, not as monsters with a health bar.
 - The Glitchkin have their own social dynamics within the Glitch Layer. Byte is an exile from this society.
+- **The Corruption is NOT a Glitchkin species.** It is a force that has taken hold of specific Glitchkin, reorganizing them from the inside. A corrupted Glitchkin looks organized, not chaotic — this is how you know something has gone wrong. Glitch is the Corruption's named instrument, not the Corruption itself. The Corruption remains abstract/unseen in season 1.
 
 ### "Pixel Confetti"
 The show's visual signature: tiny floating square particles that appear near any glitch activity. They are never explained in-world. They are always present near Luma in the Glitch Layer. This is intentional. It becomes significant in later episodes.
@@ -202,10 +239,15 @@ The full visual specification is maintained in the **Style Guide** (`/home/wipka
 - **Signature element:** Pixel confetti particles near all glitch activity
 
 **Shape language summary:**
-- Luma: circles/rounded rectangles
-- Cosmo: rectangles/ovals
-- Byte: oval (buoyant, wider-than-tall) — canonical since C8. Glitchkin vary by type (triangles/jagged polygons for generic Glitchkin species; Byte's oval is the exception that marks his reformed status)
-- Grandma Miri: large rounded squares
+- Luma: circles/rounded rectangles — 3.2 heads tall
+- Cosmo: rectangles/ovals — 4.0 heads tall, rectangular head (1.16:1), 7-degree glasses tilt
+- Byte: oval (buoyant, wider-than-tall) — canonical since C8. ~6 inches. Glitchkin vary by type (triangles/jagged polygons for generic Glitchkin species; Byte's oval is the exception that marks his reformed status)
+- Grandma Miri: large rounded squares — weathered rectangle torso, wooden hairpin bun
+- Glitch: diamond/rhombus — hard facets, Corrupt Amber palette, geometric precision spikes [C39]
+
+**Production rules (visual):**
+- **Shoulder Involvement Rule [C47]:** When a human character's arm moves past ~30 degrees from rest, the shoulder line must change shape. Applies to Luma, Cosmo, Miri. Byte and Glitch exempt. Full spec: `docs/image-rules.md`.
+- **Depth Temperature Rule [C45]:** Warm color = foreground, cool color = background in all multi-character/multi-tier compositions. Full spec: `docs/image-rules.md`.
 
 ---
 
@@ -296,35 +338,43 @@ The full unified naming system is maintained in the above document. All team mem
 output/
   style_guide.md                  — Master visual reference
   characters/
-    main/                         — Luma, Cosmo, Byte design sheets
+    main/                         — Luma, Cosmo, Byte, Glitch design sheets + expression sheets
     supporting/                   — Grandma Miri, recurring cast
     extras/                       — Crowd/incidental characters
     turnarounds/                  — Full rotation model sheets
+    color_models/                 — Character color model references
   backgrounds/
-    environments/                 — Key location paintings
+    environments/                 — Key location paintings (kitchen, living room, classroom, etc.)
     props/                        — Interactive object designs
     layouts/                      — Composition/staging layouts
   storyboards/
     sequences/                    — Full scene storyboards
     thumbnails/                   — Rough planning thumbnails
+    panels/                       — Individual storyboard panels (P03-P24)
   color/
     palettes/                     — Color palette reference files
     color_keys/                   — Per-scene color mood paintings
-    style_frames/                 — Finished "hero" frames
+    style_frames/                 — Finished "hero" frames (SF01-SF06 + GL Showcase)
   production/
     production_bible.md           — This document
-    statement_of_work_cycle_01.md — Cycle 01 SOW
-    tools/                        — Reusable scripts, brushes, templates
-    templates/                    — File templates
+    story/                        — Story bible, pilot outline, scene handoffs, voice guides
+    staging_decision_register.md  — All staging decisions indexed (C47+)
+    doc_governance_tracker.md     — Document staleness tracker (C47+)
+    pitch_delivery_manifest.md    — Pitch package file list and delivery spec
+    pitch_package_index.md        — Pitch package asset index
+  tools/                          — Pipeline automation scripts (Python/PIL). See tools/README.md
 ```
 
 ### Workflow and Review
 
-1. **All work begins with the INBOX.** Check `/[member]/INBOX.md` for current assignments before opening any software.
+1. **All work begins with the INBOX.** Check your `members/<name>/inbox/` for current assignments before starting any work.
 2. **No asset ships without Art Director review.** Alex Chen signs off on all character designs, key backgrounds, and style frames before they move to the production folder.
-3. **Version at every save.** Increment the version number. Do not save over previous versions.
+3. **Overwrite files in place** — git tracks history. No version suffixes in filenames for visual assets. Story documents use version numbering (v001, v002...).
 4. **Reference the style guide before you start.** Not during. Before.
 5. **Flag dependencies immediately.** If your work is blocked by another team member's output, report it to Alex Chen immediately — do not wait until your deadline.
+6. **Face test gate [C45+]:** All human character face renders must pass the face test gate before delivery. See `docs/face-test-gate.md`.
+7. **PIL coding standards:** All Python/PIL code must follow `docs/pil-standards.md`.
+8. **Image size rule:** All saved images must be 1280px or smaller in both dimensions. See `docs/image-rules.md`.
 
 ---
 
@@ -349,9 +399,61 @@ During Critique 9, Naomi Bridges identified that the SF03 v002 generator (`LTG_T
 
 ---
 
+---
+
+## 13. Current Asset Summary (C49)
+
+### Style Frames
+| Frame | Subject | Status |
+|-------|---------|--------|
+| SF01 "Discovery" | Luma + Byte + CRT first contact | v007 C47 |
+| SF02 "Glitch Storm" | Luma sprint through contamination | Current |
+| SF03 "Other Side" | Byte in the Other Side environment | v003 C19 (Byte body fix) |
+| SF04 "Resolution" | Luma returns to kitchen post-adventure | Current |
+| SF05 "The Passing" | Kitchen, pre-dawn — Miri + Luma watching CRT | C44 |
+| SF06 "The Hand-Off" | Living room — Miri arm extended toward CRT, Luma at side | C44 |
+| GL Showcase | Byte + Glitch in full GL void, zero warm light | C47 |
+
+### Storyboard Panels (Cold Open)
+18 standalone panels on disk (P03-P24). Active gaps tracked in `output/production/story/cold_open_gap_log.md`. Primary storyboarder: Diego Vargas.
+
+### Character Lineup
+v011 C47 — five characters: Cosmo / Miri / Luma / Byte / Glitch. Two-tier ground plane with warm/cool depth bands (Option C, C45).
+
+### Story Documents
+Canonical story bible: `output/production/story/story_bible_v006.md` (C46). Pilot episode outline v001 (C42). Scene handoff briefs v001 (C42). Beat outline v001 (C46). Cold open gap log (C48, active). Staging decision register (C48, active). Doc governance tracker (C48, active).
+
+---
+
+## 14. Key Canonical References
+
+| Topic | Document | Location |
+|-------|----------|----------|
+| Story bible (canonical) | story_bible_v006.md | `output/production/story/` |
+| Style guide | style_guide.md | `output/` |
+| Image rules (size, depth temp, shoulder) | image-rules.md | `docs/` |
+| PIL coding standards | pil-standards.md | `docs/` |
+| Face test gate | face-test-gate.md | `docs/` |
+| Naming conventions | naming_conventions.md | `output/production/` |
+| Glitch character spec | glitch.md | `output/characters/main/` |
+| Byte character spec | byte.md | `output/characters/main/` |
+| Grandma Miri spec | grandma_miri.md v1.3 | `output/characters/supporting/` |
+| Glitch staging guide | LTG_glitch_appearance_guide.md | `output/production/story/` |
+| Glitch voice direction | LTG_glitch_voice_direction.md | `output/production/story/` |
+| Staging decision register | staging_decision_register.md | `output/production/` |
+| Doc governance tracker | doc_governance_tracker.md | `output/production/` |
+| Pitch delivery manifest | pitch_delivery_manifest.md | `output/production/` |
+| Tools index | README.md | `output/tools/` |
+
+---
+
 *This is a living document. It will be updated each production cycle to reflect new decisions, critic feedback, and lessons learned.*
 
-*"Luma & the Glitchkin" — Production Bible v4.0 — Alex Chen, Art Director — 2026-03-29*
-*v2.0 changes: Added Section 9 (Software & Pipeline), Section 10 (Crew Roles / Continuity Supervisor), unified Naming Conventions reference, bit depth standard.*
-*v3.0 changes: Section 9 updated — replaced proprietary tools (Toon Boom Harmony, Adobe After Effects) with approved open source pipeline: OpenToonz, Krita, Inkscape, Natron, Python/Pillow, ImageMagick. Blend mode terminology updated to Natron standard. Tools index established.*
-*v4.0 changes: Section 12 added — Production Notes / Critique Findings. Cycle 9 critical spec violation (SF03 Byte body fill = Void Black) permanently documented.*
+*"Luma & the Glitchkin" — Production Bible v5.0 — 2026-03-30*
+
+### Version History
+*v1.0 (C01): Initial production bible — Alex Chen.*
+*v2.0: Added Section 9 (Software & Pipeline), Section 10 (Crew Roles / Continuity Supervisor), unified Naming Conventions reference, bit depth standard.*
+*v3.0: Section 9 updated — replaced proprietary tools with approved open source pipeline: OpenToonz, Krita, Inkscape, Natron, Python/Pillow, ImageMagick.*
+*v4.0: Section 12 added — Production Notes / Critique Findings. Cycle 9 critical spec violation documented.*
+*v5.0 (C49): Full reconciliation by Priya Shah. 47 cycles of accumulated decisions incorporated: Glitch antagonist (C39), Grandma Miri heritage (C43), Millbrook midwestern specificity (C43), school name (C43), wooden hairpin fix (C44), depth temperature rule (C45), Cosmo visual hook and bridge tape (C47), shoulder involvement rule (C47), Other Side world (story bible v003+), supporting cast (Dev, Preethi), all style frame and storyboard status. Sections 13-14 added (asset summary, canonical references). Directory structure updated. Workflow section updated for face test gate, PIL standards, image size rule.*

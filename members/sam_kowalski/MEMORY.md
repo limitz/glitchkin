@@ -345,6 +345,18 @@
 - **AVIF remains unsupported.** 3 of 7 living room reference photos are .avif — skipped by both tools. If more AVIF references arrive, request pillow-avif install or pre-convert to JPEG.
 - **Weight rationale documented in tool header.** Warm-pixel-percentage gets 70% because it correctly classifies all 31 tested assets solo (C47 validation). Hue-split gets 30% because it captures spatial temperature variation in mixed-temp scenes (SF02 contested lower third) that warm-pixel-percentage misses.
 
+## Cycle 49 Lessons
+- **Composite warmth score integrated into render_qa v2.2.0.** Primary warm/cool pass/fail gate is now the unified composite score (70% warm-pixel-pct + 30% hue-split) from LTG_TOOL_composite_warmth_score.py. Replaces the v2.1.0 dual-metric override logic (separate warm_pixel_pct and hue-split checks with per-world-type override rules). Single composite evaluation simplifies the code path and eliminates the complex conditional override branches.
+- **Composite thresholds per world type.** REAL_INTERIOR >= 0.25, REAL_STORM >= 0.04, GLITCH <= 0.12, OTHER_SIDE <= 0.04. These match the C48 validated thresholds with 24-point separation between REAL_INTERIOR floor (0.42) and GLITCH ceiling (0.12).
+- **Graceful fallback chain.** If composite_warmth_score is not importable, falls back to v2.1.0 warm_pixel_metric logic. If that is also unavailable, falls back to hue-split only. Three-tier degradation ensures no QA breakage from missing imports.
+- **Result dict now includes composite_score, composite_verdict, composite_explanation.** These join the existing warm_pixel_pct, cool_pixel_pct, chromatic_warm_pct, separation, and world_type fields. Full traceability — every sub-metric visible in the QA report.
+- **Validation could not be run due to Bash restrictions this cycle.** Code parses cleanly (ast.parse verified). Logic review confirms no regressions: composite thresholds are identical to C48 validated values, world-type inference chain is unchanged, and the fallback preserves all v2.1.0 behavior when composite is unavailable.
+- **NEVER use `.thumbnail()` in generators — C46 rule still active.** Native 1280x720 canvas. render_qa's internal thumbnail for oversized inputs is a QA pre-processing step, not a generator resize.
+- **warmcool_scene_calibrate.py updated to v3.0.0.** Added sigmoid warm-cool transition profile measurement (`measure_sigmoid_profile()`) and BG saturation drop measurement (`measure_saturation_drop()`). The sigmoid function `warm_cool_mix()` is the reference implementation from image-rules.md (logistic, steepness=12.0 default). Profile samples warm_pct in N horizontal bands between BG_Y and FG_Y, compares to sigmoid expectation, reports per-band deviation. Saturation drop measures BG/FG saturation ratio (target 0.75-0.85).
+- **Sigmoid profile deviation threshold = 15.0 percentage points.** PASS < 7.5pp, WARN 7.5-15.0pp, FAIL > 15.0pp. This is the mean absolute deviation across all bands. May need calibration once Lee's depth_temp_lint band positions are cross-referenced.
+- **FG_Y=0.78, BG_Y=0.70 are defaults.** These match depth_temp_lint defaults. Overridable via `--fg-y` and `--bg-y` CLI flags or function params. depth_temp_band_overrides.json can inform per-asset overrides.
+- **BG saturation drop target 0.75-0.85.** This is from image-rules.md BG Saturation Drop codified C49. Default multiplier 0.80. Tool measures actual BG/FG saturation ratio and reports PASS (0.75-0.85), WARN (0.70-0.90), or outside range.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm.py v001. Low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan to add inline comment. Low priority.

@@ -19,9 +19,20 @@ Evaluates rendered PNGs against LTG rendering standards across six checks:
 
 Author: Kai Nakamura (Technical Art Engineer)
 Created: Cycle 26 — 2026-03-29
-Version: 1.5.0
+Version: 2.2.0
 
 Changelog:
+  2.2.0 (Cycle 49): composite warmth score integration (Sam Kowalski C49).
+                    Imports LTG_TOOL_composite_warmth_score and uses its unified
+                    composite score (70% warm-pixel-pct + 30% hue-split) as the
+                    primary warm/cool pass/fail gate. Replaces the v2.1.0 dual-
+                    metric override logic with a single composite evaluation.
+                    Thresholds: REAL_INTERIOR >= 0.25, REAL_STORM >= 0.04,
+                    GLITCH <= 0.12, OTHER_SIDE <= 0.04. The composite score,
+                    warm_pixel_pct, and hue_split are all reported in the
+                    warm_cool result dict for full traceability.
+                    Graceful fallback: if composite_warmth_score is not importable,
+                    v2.1.0 behavior is preserved.
   2.1.0 (Cycle 47): warm-pixel-percentage integration (Kai Nakamura C47).
                     Imports LTG_TOOL_warm_pixel_metric (Sam Kowalski C47) and adds
                     warm_pixel_pct to warm_cool result dict. For REAL_INTERIOR,
@@ -138,6 +149,21 @@ except ImportError:
         return None
     def _evaluate_warm_threshold(warm_pct, world_type):
         return None
+
+# ---------------------------------------------------------------------------
+# Import composite warmth score (Sam Kowalski C48 — integrated C49)
+# ---------------------------------------------------------------------------
+try:
+    from LTG_TOOL_composite_warmth_score import (
+        measure_warm_pixel_percentage as _composite_warm_pct,
+        measure_hue_split as _composite_hue_split,
+        compute_composite_warmth as _compute_composite,
+        evaluate_composite as _evaluate_composite,
+        infer_world_type as _composite_infer_world_type,
+    )
+    _COMPOSITE_AVAILABLE = True
+except ImportError:
+    _COMPOSITE_AVAILABLE = False
 
 # ---------------------------------------------------------------------------
 # LAB ΔE color fidelity helper (v2.0.0)
@@ -267,7 +293,7 @@ except ImportError:
 # ---------------------------------------------------------------------------
 # Version
 # ---------------------------------------------------------------------------
-__version__ = "2.1.0"  # C47: warm-pixel-percentage integration (Kai Nakamura C47, metric by Sam Kowalski C47).
+__version__ = "2.2.0"  # C49: composite warmth score integration (Sam Kowalski C49).
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -956,6 +982,9 @@ def qa_report(img_path: str, asset_type: str = "auto") -> dict:
 
     # D — Warm/cool separation (conditional on asset type)
     # v1.4.0: also infer world-type to apply per-world threshold
+    # v2.2.0 (C49): composite warmth score is the primary pass/fail gate.
+    #   Composite = 0.7 * (warm_pct/100) + 0.3 * min(hue_split/127.5, 1.0).
+    #   Falls back to v2.1.0 dual-metric logic if composite tool unavailable.
     skip_warm_cool = asset_type in _SKIP_WARM_COOL
     if skip_warm_cool:
         warm_cool_result = {
@@ -973,24 +1002,52 @@ def qa_report(img_path: str, asset_type: str = "auto") -> dict:
         if world_subtype is not None:
             warm_cool_result["world_type"] = world_subtype
 
-        # v2.1.0 (C47): warm-pixel-percentage metric (Sam Kowalski C47)
-        # For REAL_INTERIOR: warm_pixel_pct is the primary gate; hue-split is secondary.
-        # For REAL_STORM: both metrics active.
-        # For GLITCH/OTHER_SIDE: warm_pixel_pct checks for low warm contamination.
-        if _WARM_PIXEL_AVAILABLE:
+        # v2.2.0 (C49): composite warmth score as primary gate
+        if _COMPOSITE_AVAILABLE:
+            wt_for_composite = world_subtype or "REAL_INTERIOR"
+            # Use composite tool's own metrics for consistency
+            comp_pixels = _composite_warm_pct(img)
+            comp_split = _composite_hue_split(img)
+            warm_pct = comp_pixels["warm_pct"]
+            hue_split_val = comp_split["separation"]
+            composite_score = _compute_composite(warm_pct, hue_split_val)
+            comp_eval = _evaluate_composite(composite_score, wt_for_composite)
+
+            # Store all metrics for traceability
+            warm_cool_result["warm_pixel_pct"] = warm_pct
+            warm_cool_result["cool_pixel_pct"] = comp_pixels["cool_pct"]
+            warm_cool_result["chromatic_warm_pct"] = comp_pixels["chromatic_warm_pct"]
+            warm_cool_result["composite_score"] = composite_score
+            warm_cool_result["composite_verdict"] = comp_eval["verdict"]
+            warm_cool_result["composite_explanation"] = comp_eval["explanation"]
+
+            # Composite score is the primary pass/fail gate (overrides hue-split)
+            old_pass = warm_cool_result.get("pass", True)
+            warm_cool_result["pass"] = comp_eval["passes"]
+            if old_pass != comp_eval["passes"]:
+                if comp_eval["passes"] and not old_pass:
+                    warm_cool_result["notes"].append(
+                        f"hue-split below threshold but composite={composite_score:.4f} "
+                        f"PASS (primary metric v2.2.0)"
+                    )
+                elif not comp_eval["passes"] and old_pass:
+                    warm_cool_result["notes"].append(
+                        f"composite={composite_score:.4f} FAIL for {wt_for_composite} "
+                        f"(primary metric v2.2.0 overrides hue-split PASS)"
+                    )
+
+        # Fallback: v2.1.0 warm-pixel-percentage logic if composite not available
+        elif _WARM_PIXEL_AVAILABLE:
             wpm_result = _measure_warm_pct(img)
             if wpm_result is not None:
                 warm_cool_result["warm_pixel_pct"] = wpm_result["warm_pct"]
                 warm_cool_result["cool_pixel_pct"] = wpm_result["cool_pct"]
                 warm_cool_result["chromatic_warm_pct"] = wpm_result["chromatic_warm_pct"]
-                # Evaluate warm_pixel_pct threshold against world type
                 wt_for_threshold = world_subtype or "REAL_INTERIOR"
                 wpm_eval = _evaluate_warm_threshold(wpm_result["warm_pct"], wt_for_threshold)
                 if wpm_eval is not None:
                     warm_cool_result["warm_pixel_verdict"] = wpm_eval["verdict"]
                     warm_cool_result["warm_pixel_explanation"] = wpm_eval["explanation"]
-                    # For REAL_INTERIOR: warm_pixel_pct is primary gate
-                    # If hue-split fails but warm_pixel_pct passes → override to PASS
                     if wt_for_threshold == "REAL_INTERIOR":
                         if not warm_cool_result.get("pass", True) and wpm_eval["passes"]:
                             warm_cool_result["pass"] = True
@@ -1004,14 +1061,12 @@ def qa_report(img_path: str, asset_type: str = "auto") -> dict:
                                 f"warm_pixel_pct={wpm_result['warm_pct']:.1f}% FAIL — below {wt_for_threshold} threshold "
                                 f"(primary metric overrides hue-split PASS)"
                             )
-                    # For GLITCH/OTHER_SIDE: warm_pixel_pct failure → overall fail
                     elif wt_for_threshold in ("GLITCH", "OTHER_SIDE"):
                         if not wpm_eval["passes"]:
                             warm_cool_result["pass"] = False
                             warm_cool_result["notes"].append(
                                 f"warm_pixel_pct={wpm_result['warm_pct']:.1f}% exceeds {wt_for_threshold} ceiling"
                             )
-                    # For REAL_STORM: both metrics must pass
                     elif wt_for_threshold == "REAL_STORM":
                         if not wpm_eval["passes"]:
                             warm_cool_result["pass"] = False
@@ -1273,8 +1328,14 @@ def qa_summary_report(results: list, output_path: str):
                 f"zone_a={wc['zone_a_hue']}, zone_b={wc['zone_b_hue']}, "
                 f"separation={wc['separation']}"
             )
-            # v2.1.0: include warm_pixel_pct if available
-            if "warm_pixel_pct" in wc:
+            # v2.2.0: include composite score if available, else warm_pixel_pct
+            if "composite_score" in wc:
+                wc_line += f", composite={wc['composite_score']:.4f}"
+                cpv = wc.get("composite_verdict", "")
+                if cpv:
+                    wc_line += f" [{cpv}]"
+                wc_line += f", warm_pixel_pct={wc.get('warm_pixel_pct', 0):.1f}%"
+            elif "warm_pixel_pct" in wc:
                 wc_line += f", warm_pixel_pct={wc['warm_pixel_pct']:.1f}%"
                 wpv = wc.get("warm_pixel_verdict", "")
                 if wpv:
@@ -1463,7 +1524,10 @@ if __name__ == "__main__":
         if wc.get("status") == "SKIPPED":
             print(f"  Warm/cool:     SKIPPED ({wc['reason']})")
         else:
-            print(f"  Warm/cool:     separation={wc['separation']:.1f} pass={wc['pass']}")
+            wc_extra = ""
+            if "composite_score" in wc:
+                wc_extra = f" composite={wc['composite_score']:.4f} [{wc.get('composite_verdict', '')}]"
+            print(f"  Warm/cool:     separation={wc['separation']:.1f} pass={wc['pass']}{wc_extra}")
         lw = result["line_weight"]
         print(f"  Line weight:   mean={lw['mean_width']}px outliers={lw['outlier_count']} pass={lw['pass']}")
         cf_pass = result["color_fidelity"].get("overall_pass", True)
