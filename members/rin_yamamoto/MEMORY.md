@@ -1,5 +1,46 @@
 # Rin Yamamoto — MEMORY
 
+## C51 Completed Work
+- **P0 — DRAWING ENGINE DECISION** (blocks all character work)
+  - **WINNER: pycairo** — official drawing engine for all character rendering going forward
+  - Benchmarked: pycairo vs PIL 2x+LANCZOS vs PIL baseline (Byte character, 640x640)
+  - skia-python and aggdraw could not be installed (pip blocked) — but pycairo results definitive
+  - Key metrics (5-run avg):
+    - pycairo: 3.1ms render, 0.2142 AA ratio, native bezier/gradient/stroke
+    - PIL 2x+LANCZOS: 81.8ms render (26x slower), 0.2238 AA ratio, no native curves
+    - PIL baseline: 4.7ms render, 0.0449 AA ratio (5x worse), no features
+  - Cairo→PIL conversion: 0.44ms (negligible, numpy byte reorder)
+  - `LTG_TOOL_cairo_primitives.py` (v1.0.0, new) — shared foundation library:
+    - `draw_bezier_path()`, `draw_tapered_stroke()`, `draw_gradient_fill()`
+    - `draw_wobble_path()`, `draw_smooth_polygon()`, `draw_ellipse()`
+    - `create_surface()`, `to_pil_image()`, `to_pil_rgba()`
+    - Three-tier line weight: anchor=3.5, structure=2.0, detail=1.0
+    - `stroke_path()`, `set_color()`, `fill_background()`, `paste_pil_onto_cairo()`
+    - `shoulder_offset()` (C47 rule), `flatten_path()`
+  - `LTG_TOOL_engine_benchmark_c51.py` (v1.0.0, new) — benchmark tool
+  - Report: `output/production/engine_benchmark_report_c51.md`
+  - Output PNGs: 6 files in `output/production/LTG_RENDER_engine_*_c51.png`
+  - Messages sent: Alex Chen inbox + Producer inbox (engine decision unblock)
+  - Inbox: archived C51 assignment + C50 messages (Sam, Alex, Lee)
+  - Ideabox: cairo migration cookbook
+
+## C51 Lessons
+- pycairo is 26x faster than PIL 2x+LANCZOS for equivalent quality — the supersampling
+  approach is too expensive when native AA exists. C50 recommendation of B+C was pragmatic
+  but pycairo is strictly superior now that it's officially approved.
+- Cairo's path model (move_to, curve_to, fill, stroke) is a better abstraction for character
+  art than PIL's shape model. Separating geometry from style enables fill_preserve+stroke
+  on the same path — no redrawing needed.
+- `draw_tapered_stroke()` works by computing perpendicular offsets at each sample point
+  along a resampled path, building a filled polygon. Round caps via small arcs at endpoints.
+- `draw_wobble_path()` adds organic quality by perturbing bezier control points with sine
+  noise + random jitter. Seeded RNG ensures reproducibility across runs.
+- PIL interop is trivial: numpy byte reorder BGRA→RGB from cairo's ARGB32 format.
+  0.44ms for 640x640 — less than 1% of render time.
+- `docs/pil-standards.md` already authorizes pycairo — the C50 concern is resolved.
+- Migration strategy: character generators → cairo; background generators → stay PIL.
+  Compositing remains PIL-based (paste, alpha_composite). Clean separation.
+
 ## C50 Completed Work
 - **P1 — Alternative Rendering Exploration** (C50 full-team character quality pivot)
   - `LTG_TOOL_rendering_comparison.py` (v1.0.0, new)
