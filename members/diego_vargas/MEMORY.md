@@ -334,6 +334,18 @@ All three P1 priorities complete.
 
 ## Cycle 45 — Delivered
 
+### Caption Retrofit (C44 Brief — acted in C45)
+
+**Tool:** `LTG_TOOL_sb_caption_retrofit.py` (new)
+- Strips bottom 72px of existing PNG, replaces with fresh three-tier caption bar
+- 528px draw area preserved (top of old 540px zone, 12px sacrificed at bottom)
+- `--dry-run` and `--panel PXX` flags; uses `LTG_TOOL_project_paths.py`
+- Panels retrofitted: P03, P06, P07, P08, P09, P23, P24 (7/7)
+- Classification: all captions are action/technical only — Tier 1 = shot code (no dialogue present)
+- Report sent to Alex Chen inbox
+
+**P2 hallway check**: No hallway SB panels exist yet — seal is in ENV background only. No action.
+
 ### New Panels P14 and P15
 
 **P14** — `LTG_TOOL_sb_cold_open_P14.py` → `output/storyboards/panels/LTG_SB_cold_open_P14.png`
@@ -377,6 +389,12 @@ All three P1 priorities complete.
   Must crop DRAW_H only, not full PH, before rotating.
 - **W004 draw context refresh**: Must refresh `draw = ImageDraw.Draw(img)` after every
   `img.paste(...)` call on alpha composited layers.
+- **Caption retrofit approach**: Crop top DRAW_H (528) of existing PNG, repaste on new canvas,
+  draw new caption bar below. Sacrifices bottom 12px of old draw area (540-528=12). Acceptable
+  for retrofit — old panels never placed critical content in the lowest 12px.
+- **Caption classification: storyboard vs. animation**: Tier 1 (largest) = shot code for SB panels,
+  NOT necessarily dialogue. Dialogue is annotated in-panel. Tier 2 = arc label (arc-colored).
+  Tier 3 = action description. This is the P10/P11 standard, extended to all cold open panels.
 
 ## Startup Sequence
 1. Read ROLE.md if present

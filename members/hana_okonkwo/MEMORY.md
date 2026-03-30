@@ -76,7 +76,18 @@ Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style fr
   - Check source for paper_texture() call; if absent, image borders will create false line_weight outliers
 - Submitted ideabox idea: systematic audit of all ENV generators for missing final passes
 
+### Pixel Font Perspective Helper (P2)
+- Built `draw_pixel_text_perspective()` in LTG_TOOL_pixel_font_v001.py (v001.1)
+- Signature: (draw, text, x, y, scale, vp_x, vp_y, char_spacing=1, color, canvas_w=1280, canvas_h=720)
+- Distance from (x,y) to VP / max_dist to canvas corners → t → scale_factor = 0.65 + 0.35*t
+- Effective scale = max(1, round(scale * factor)); fallback to draw_pixel_text() when VP is None
+- Classroom chalkboard: text is at t=0.084, effective_scale=max(1,round(1*0.679))=1 — same as flat
+  → classroom NOT updated (no visual improvement at scale=1 far camera). Per Alex brief: leave it.
+- Kitchen MIRI label: same — scale=1 at far position, no change. Not updated.
+- Helper is available for future close-panel text at scale>=2.
+
 ### Inbox — C44
+- `20260330_1507_c44_pixel_font_perspective_helper.md` — built + archived.
 - Duplicate P0/P1 brief (from C43) was still unarchived in inbox/. Archived as _c44_dup. Work already done in C43.
 - P0 kitchen cultural identity still BLOCKED pending Alex Chen broadcast — do not change kitchen content.
 

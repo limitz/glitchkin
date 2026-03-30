@@ -8,9 +8,13 @@
 LTG_TOOL_pixel_font_v001.py — Pixel Font Utility
 "Luma & the Glitchkin" — Production Pipeline
 Author: Jordan Reed | Cycle 40
+v001.1 — Hana Okonkwo | Cycle 44 — draw_pixel_text_perspective() added
 
 Provides `draw_pixel_text(draw, x, y, text, color, scale=1)` for drawing
 hand-lettered-style pixel text directly onto a PIL ImageDraw canvas.
+
+Also provides `draw_pixel_text_perspective()` for mild perspective-correct
+text scaling in 3/4-view environments (Alex Chen C44 brief).
 
 Designed for in-world prop labels (e.g. fridge notes, sticky labels, signage)
 where:
@@ -23,10 +27,14 @@ Lowercase input is auto-upcased. Unrecognised characters are rendered as a
 blank space (glyph width + 1 px kerning).
 
 Usage:
-    from LTG_TOOL_pixel_font_v001 import draw_pixel_text
+    from LTG_TOOL_pixel_font_v001 import draw_pixel_text, draw_pixel_text_perspective
 
     draw_pixel_text(draw, x=10, y=10, text="MIRI", color=(88, 60, 32))
     draw_pixel_text(draw, x=10, y=30, text="MIRI", color=(88, 60, 32), scale=2)
+
+    # Perspective-scale variant (classroom chalkboard, VP_X=192, VP_Y=230):
+    draw_pixel_text_perspective(draw, text="1011 XOR 0110", x=300, y=180,
+                                scale=1, vp_x=192, vp_y=230, color=(200,220,200))
 
 Each glyph is 5 columns × 7 rows. Kerning between glyphs: 1 pixel at scale 1
 (scaled by `scale`). The `draw` parameter must be an ImageDraw.Draw instance
@@ -36,8 +44,10 @@ CLI self-test: generates a 480×120 test PNG with "MIRI" at scale 1 and scale 2.
 Output: output/production/LTG_TEST_pixel_font_v001.png
 """
 
-from PIL import Image, ImageDraw
+import math
 import os
+
+from PIL import Image, ImageDraw
 
 # ── 5×7 Bitmap Glyph Map ────────────────────────────────────────────────────
 # Each glyph is a flat list of 35 bits (row-major, 5 columns × 7 rows).
@@ -448,6 +458,82 @@ def measure_pixel_text(text, scale=1):
     width = (n * (_GLYPH_W + 1) - 1) * scale
     height = _GLYPH_H * scale
     return (width, height)
+
+
+def draw_pixel_text_perspective(
+    draw, text, x, y, scale, vp_x, vp_y,
+    char_spacing=1, color=(255, 255, 255),
+    canvas_w=1280, canvas_h=720,
+):
+    """
+    Draw pixel-bitmap text with mild perspective scale correction.
+
+    Characters positioned closer to the vanishing point (vp_x, vp_y) are drawn
+    at a smaller effective scale (min scale * 0.65). Characters farther from the
+    VP are drawn at full scale (scale * 1.0). Linear interpolation between the
+    two extremes based on Euclidean distance from (x, y) to the VP, normalized
+    by the maximum possible distance within the canvas.
+
+    This is a simple linear approximation of perspective foreshortening — it is
+    NOT a full projective transform. It reads naturally for text on angled boards
+    or signs in 3/4-view scenes where the board is at a shallow 3D angle.
+
+    Graceful fallback: if vp_x is None or vp_y is None, delegates to
+    draw_pixel_text() at the specified flat scale.
+
+    Parameters
+    ----------
+    draw         : ImageDraw.Draw — draw context (attached to current image).
+    text         : str — text to render. Auto-upcased. Unknown chars → blank.
+    x            : int — left edge of first character (pixels).
+    y            : int — top edge of first character (pixels).
+    scale        : int — base pixel size (scale=1 → 5×7px per glyph at full dist).
+    vp_x         : int or None — vanishing point X in pixels.
+    vp_y         : int or None — vanishing point Y in pixels.
+    char_spacing : int — extra pixels between glyphs (added to kerning). Default 1.
+    color        : tuple — RGB or RGBA fill for text pixels.
+    canvas_w     : int — canvas width for max-distance reference. Default 1280.
+    canvas_h     : int — canvas height for max-distance reference. Default 720.
+
+    Returns
+    -------
+    (end_x, end_y) : pixel position just after the last character.
+
+    Notes
+    -----
+    - Scale factor range: 0.65 (at VP) to 1.0 (at canvas far edge from VP).
+    - The effective scale is clamped to max(1, round(scale * t)) so it is always
+      a whole number of pixels. At scale=1, the clamp means t<0.5 still draws
+      at 1px (can't go below 1). The foreshortening is most visible at scale>=2.
+    - char_spacing adds extra gap between characters (default 1 matches the
+      standard kerning convention from draw_pixel_text).
+    """
+    if vp_x is None or vp_y is None:
+        return draw_pixel_text(draw, x, y, text, color, scale)
+
+    # Distance from text anchor to VP
+    dist_to_vp = math.sqrt((x - vp_x) ** 2 + (y - vp_y) ** 2)
+
+    # Reference max distance: farthest canvas corner from VP
+    corners = [
+        (0, 0), (canvas_w, 0), (0, canvas_h), (canvas_w, canvas_h)
+    ]
+    max_dist = max(
+        math.sqrt((cx - vp_x) ** 2 + (cy - vp_y) ** 2)
+        for cx, cy in corners
+    )
+    if max_dist < 1:
+        max_dist = 1.0  # degenerate guard
+
+    # Normalised position: 0.0 = at VP, 1.0 = at canvas far corner
+    t = max(0.0, min(1.0, dist_to_vp / max_dist))
+
+    # Scale factor: 0.65 at VP, 1.0 at far edge (linear)
+    scale_factor = 0.65 + 0.35 * t
+    effective_scale = max(1, round(scale * scale_factor))
+
+    # Draw with effective scale using the standard function
+    return draw_pixel_text(draw, x, y, text, color, effective_scale)
 
 
 # ── CLI self-test ─────────────────────────────────────────────────────────────
