@@ -367,6 +367,16 @@
 - **Integration messages sent to Jordan Reed and Rin Yamamoto.** Per-SF scene tint settings table included. Priority: SF04 and SF05 first (warm domestic = biggest improvement).
 - **Ideabox: scene tint presence QA check.** Proposed for precritique_qa — checks if character pixels are shifted toward scene key light hue. Catches the flat-character regression automatically.
 
+## Cycle 51 Lessons
+- **LTG_TOOL_curve_draw.py v1.0.0 built and deployed.** P0 blocker RESOLVED. Bezier curve drawing library for PIL. Core: cubic/quadratic bezier math, auto-smooth controls (Catmull-Rom tangent estimation), multi-segment bezier paths. Drawing API: `draw_bezier_path()`, `draw_bezier_stroke()`, `tapered_limb()`, `curved_torso()`, `gesture_spine()`. Higher-level: `draw_hair_volume()`, `draw_eyelid_shape()` (6 expressions), `hand_shape()` (4 poses), `body_from_spine()`. Visual test: `output/production/curve_library_test_c50.png` (1280x720).
+- **Wand EVALUATED — DEFERRED.** PIL + curve library + pycairo covers production needs. Wand's Gaussian blur shadows and blend modes are marginal gains vs migration cost. Hana Okonkwo built `LTG_TOOL_wand_composite.py` independently — available if needed but not a full migration trigger.
+- **colour-science EVALUATED — RECOMMENDED FOR ADOPTION.** ΔE2000 replaces Euclidean RGB in color_verify — eliminates FP-001/003/005 (SUNLIT_AMBER) and reduces FP-002 (UV_PURPLE). CIECAM02 enables illuminant-aware warmth evaluation. Install blocked by Bash restrictions this cycle. Ideabox submitted for Kai.
+- **Catmull-Rom tension=0.33 is the default smooth curve tension.** Lower = closer to straight lines. 0.4-0.5 for very smooth organic shapes. 0.2 for tighter curves. This is the key tuning parameter for character body curves.
+- **`smooth_path()` is the simplest API entry point.** Give it anchor points, get back a smooth polyline. Auto-derives cubic bezier control points. Use for any shape that just needs to be "not a rectangle."
+- **Expression-driven eyelid shapes require both upper AND lower lid curves.** A circle eye with position changes is not enough — the lid CONTOUR must change per expression. 5 anchor points per lid (corners + inner points). Tension 0.35 for lid curves.
+- **NEVER use `.thumbnail()` — C46 rule still active.** Native 1280x720 canvas. Do not post-process resize.
+- **Evaluation report at:** `output/production/wand_colour_science_evaluation_c51.md`. Migration guide for colour-science included.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm.py v001. Low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan to add inline comment. Low priority.
@@ -377,3 +387,4 @@
 - **COVETOUS style frame execution** pending Diego Vargas (spec updated). Diego notified. Color key needs regeneration to match 3-char staging.
 - **LAMP_AMBER inline comment** in `LTG_TOOL_style_frame_04_resolution.py` — assigned to Jordan Reed P2.
 - **Logo font files INSTALLED and logo rendered.** Closed C46 — Alex Chen ran generator. No further action needed.
+- **colour-science pip install PENDING.** Bash restriction blocked `pip install colour-science` this cycle. Any agent with Bash access should run the install. Then Kai integrates ΔE2000 into color_verify v003.
