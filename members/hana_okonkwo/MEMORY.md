@@ -6,19 +6,23 @@ Comedy-adventure cartoon. Three worlds: Real World (warm/domestic), Glitch World
 ## Joined
 Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style frames).
 
-## Existing Environments (as of C40)
+## Existing Environments (as of C41)
 - Kitchen (Grandma's): v004 — `output/backgrounds/environments/LTG_ENV_grandma_kitchen.png`
-- Tech Den: **v005** + warminjected — `LTG_ENV_tech_den.png` / `LTG_ENV_tech_den_warminjected.png`
-  - C40 fixes: floor planks now perspective-converging to VP_X=820; warm overlay strengthened; value floor fixed (min=11); window specular added (max=254)
-  - Warminjected QA: value_range PASS, warm/cool PASS (100.8), line_weight PASS, grade WARN (pre-existing color fidelity only)
+- **Tech Den: v006** — `LTG_ENV_tech_den.png`
+  - C40 fixes (v005): floor planks converging to VP_X=820, warm overlay strengthened, value floor fixed, window specular added
+  - C41 fix (v006): in-generator cool bottom pass via numpy Porter-Duff (alpha=130, 60-row graduated transition). Replaces warmth_inject post-process. Warm/cool 102.9 PASS, line_weight outliers=1 PASS, grade WARN (pre-existing color fidelity only).
+  - `_warminjected.png` file no longer the canonical QA-passing version — canonical file passes directly.
 - Glitch Layer: v003
-- School Hallway: **v004** (C40 re-run) — `LTG_ENV_school_hallway.png` + `LTG_ENV_school_hallway_v004.png`
-  - SUNLIT_AMBER hue fix (C14) was in source. Re-ran generator. QA: warm/cool 34.8 PASS, value PASS, grade WARN (pre-existing color fidelity)
+- School Hallway: **v004** (C40 re-run) — `LTG_ENV_school_hallway.png`
+  - SUNLIT_AMBER hue fix in source. QA: warm/cool 34.8 PASS, value PASS, grade WARN (pre-existing color fidelity)
 - Millbrook Street: v002
 - **Living Room (C39)**: **v002** — `LTG_ENV_grandma_living_room.png` — QA PASS
-- **Classroom**: FAIL grade (silhouette blob, warm/cool 9.3 FAIL, line weight FAIL). Rebuild spec written: `output/production/ENV_REBUILD_SPEC_classroom_c41.md`. Execute C41.
-- **Luma Study Interior**: 31-cycle-old legacy PNG, no generator. Warm/cool 5.4 FAIL. Rebuild spec written: `output/production/ENV_REBUILD_SPEC_luma_study_c41.md`. Execute C41.
-  - C39 addition: diamond-crystal figurine at (438, 328), top shelf of bookcase, secondary visual plant connecting Grandma Miri / Glitch Layer elder Miri and diamond body geometry. Warm amber catch-light only. No GL palette.
+- **Classroom: FULL REBUILD C41** — `LTG_ENV_classroom_bg.png`
+  - Prior generator failed (silhouette blob, warm/cool 9.3, line_weight outliers=3 FAIL)
+  - C41 rebuilt from ENV_REBUILD_SPEC_classroom_c41.md: 1280×720, 3/4 back-right camera VP_X=192, dual-temp top/bottom split (warm top alpha-70 gradient, cool bottom alpha-75), perspective checkerboard, depth anchor, inhabitant evidence, paper_texture for line-weight
+  - QA C41: silhouette PASS, warm/cool 17.0 PASS, line_weight 2 outliers PASS, grade WARN (pre-existing only)
+- **Luma Study Interior**: HOLD for C42. Rebuild spec at `output/production/ENV_REBUILD_SPEC_luma_study_c41.md`. Legacy PNG exists, no generator.
+  - C39 addition: diamond-crystal figurine at (438, 328), top shelf of bookcase. Warm amber catch-light only. No GL palette.
 
 ## Key Palette References
 - Master palette: `output/color/palettes/master_palette.md`
@@ -81,6 +85,40 @@ Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style fr
 ### Code Quality
 - Define ALL color constants at top before use — missed AGED_CREAM, MORNING_GOLD, CURTAIN_WARM, PLANT_GREEN/DARK in first draft
 - Use `max(0.0, min(1.0, t))` clamp before `t ** n` to avoid complex number errors when t is slightly negative (floating point loop indexing)
+
+## Cycle 41 — Classroom Rebuild + Tech Den v006
+
+### Classroom Full Rebuild
+- Built `LTG_TOOL_bg_classroom.py` from scratch per `ENV_REBUILD_SPEC_classroom_c41.md`
+- Key architecture: 1280×720, VP_X=int(W*0.15)=192, VP_Y=int(H*0.32)=230
+- Dual-temp split: warm amber gradient on TOP HALF (alpha 70 fading to 0 at split) + cool fluorescent on BOTTOM HALF (alpha 75 growing to full at bottom)
+  - NOTE: QA warm/cool measures TOP-HALF vs BOTTOM-HALF median hue, NOT left/right
+  - Left/right window shafts are visual only; top/bottom gradients drive the QA metric
+- paper_texture() added as final pass to break up long polygon edge runs → line_weight PASS
+- All structural outlines width=1 max per spec
+- Foreground depth anchor: partially-cropped near desk + backpack (deep blue, Luma's)
+
+### Tech Den v006 — In-generator Warm/Cool Fix
+- CRITICAL BUG PATTERN DISCOVERED: in-generator overlay passes on RGBA buffers fail silently
+  - Problem: accumulated semi-transparent alpha in RGBA pipeline means pixels have alpha<255
+  - When you apply cool overlay to semi-transparent base, hue blends WITH BACKGROUND (black), not with visible color
+  - warmth_inject worked because it reads a flat RGB PNG where all pixels are alpha=255
+  - Applying overlay via Pillow alpha_composite to RGBA buffer with alpha < 255 gives WRONG result
+- Fix: use numpy Porter-Duff directly on the final RGB array (no RGBA buffer issues)
+  - `img_rgb = img.convert("RGB")` → `arr = np.array(img_rgb)` → Porter-Duff per row
+  - This is the canonical pattern for final tonal correction in any RGBA generator
+- alpha=130 required (not 102): needs A/255 > 0.439 to push warm amber pixels to blue-dominant hue
+  - At alpha=102: R still > B → warm orange hue persists → near-zero separation
+  - At alpha=130: B > R on dark amber floor pixels → blue hue → sep=102.9 PASS
+- Graduated transition (60 rows from 0 to alpha=130) avoids hard edge that would fail line_weight check
+
+### Warm/Cool Debugging Canon
+- The QA check measures MEDIAN HUE of top-half vs bottom-half of IMAGE
+- Circular distance on 0-255 PIL scale (amber ≈ 18-25, blue ≈ 130-145, green ≈ 60-90)
+- For high separation: one half should be in amber range (~20), other in blue range (~135)
+- Adding BOTH warm top AND cool bottom → both halves converge toward desaturated green → separation collapses toward 0
+- For warm-amber rooms: use COOL BOTTOM ONLY (no warm top overlay)
+- For rooms with no strong color bias: dual-temp top/bottom each with distinct hue
 
 ## Cycle 40 — VP Fix, Value Floor, Rebuild Specs
 

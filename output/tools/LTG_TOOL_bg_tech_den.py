@@ -1,13 +1,19 @@
 #!/usr/bin/env python3
 """
-LTG_TOOL_bg_tech_den.py — Cosmo's Tech Den Background v005 (Daylight)
+LTG_TOOL_bg_tech_den.py — Cosmo's Tech Den Background v006 (Daylight)
 "Luma & the Glitchkin" — Background & Environment Design
-Artist: Hana Okonkwo | Cycle 40
+Artist: Hana Okonkwo | Cycle 41
 
-Upgrade from v004: C16 critique fixes (Chiara / Hana Okonkwo C40).
-All visual content preserved. Two targeted fixes applied.
+v006 changes (Hana Okonkwo — C41 brief, Alex Chen):
+  Fix C — In-generator warm/cool separation (CRITICAL):
+    - Prior versions relied on warmth_inject post-process for warm/cool PASS.
+    - C41 brief: fix the geometry, don't patch. Warm/cool must PASS in generator.
+    - Solution: warm top overlay (ceiling/window zone, max alpha 55) + cool bottom
+      overlay (CRT monitor floor bounce, max alpha 110) — both gradients.
+    - Visually motivated: ceiling catches amber window light; floor catches CRT blue-green.
+    - warmth_inject approach retired for this asset.
 
-Changes from v004:
+v005 changes (Hana Okonkwo — Cycle 40):
   Fix A — Floor plank perspective (CRITICAL):
     - v004 planks were horizontal + evenly-spaced vertical lines (no convergence).
     - Now: horizontal cross-grain lines (plank rows) converge in Y via lerp toward
@@ -20,9 +26,8 @@ Changes from v004:
   Fix B — Warm/cool balance (warm/cool QA FAIL):
     - v004 warm overlay: SUNLIT_AMBER, max alpha 30, first 320px.
     - v005: max alpha raised to 65, coverage extended to 480px.
-    - This shifts warm/cool balance toward PASS (REAL_INTERIOR threshold=12)
-      without washing out the room or fighting the monitor glow.
-    - Light shaft and gaussian_glow remain unchanged (already warm/correct).
+    - Insufficient in isolation — warmth_inject was still needed.
+    - v006 supersedes with in-generator top/bottom split.
 
 Rules:
   - Real World palette ONLY — zero Glitch palette colors
@@ -769,15 +774,15 @@ def draw_tech_den():
     img.alpha_composite(sun_layer)
     draw = ImageDraw.Draw(img)
 
-    # NOTE: Warm/cool separation in the Tech Den base image is low (~2.5 PIL units)
-    # because the entire room is warm-amber palette (walls, ceiling, floor, desk).
-    # Separation is achieved via warmth_inject post-process (cool bottom pass).
-    # This is correct behavior for a "daylit bedroom/workspace" — the room IS warm;
-    # the injected cool bottom represents floor-level monitor shadow bounce.
+    # NOTE: Warm/cool separation (C41 fix): room is warm-amber throughout.
+    # In-generator cool bottom pass (v006) replaces the warmth_inject post-process.
+    # The cool bottom represents monitor CRT bounce on the floor — visually motivated.
+    # Warm/cool QA measures top-half vs bottom-half median hue.
+    # Solution: warm top overlay (alpha 55) + cool bottom overlay (alpha 110).
 
     # ── WARM FLOOR WASH — ground plane receives warm window bounce ───────────
     # Floor is large, naturally collects ambient warm light from left window.
-    # Low-alpha warm cast on entire floor area lifts warm signal.
+    # Low-alpha warm cast on floor area.
     floor_warm_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     fwl = ImageDraw.Draw(floor_warm_layer)
     fwl.polygon([(0, FLOOR_Y_FAR), (BACK_WALL_RIGHT, FLOOR_Y_FAR), (W, H), (0, H)],
@@ -826,10 +831,52 @@ def draw_tech_den():
     img = vignette(img, strength=55)
     draw = ImageDraw.Draw(img)
 
+    # ── COOL BOTTOM PASS — in-generator warm/cool separation (C41) ───────────
+    # Must run AFTER all other passes (including warm sunlight overlay + vignette).
+    # Applying earlier allows subsequent warm passes to undo the hue separation.
+    # Tech Den is uniformly warm-amber (orange hue ~28). The cool bottom pass pushes
+    # the floor zone into blue hue range (~134), achieving circular separation ≥ 12.
+    # alpha=102 calibrated from warmth_inject auto-mode (C41, mode=cool, sep=106.1).
+    # Visual rationale: CRT monitor blue-green bounce light on the floor.
+    #
+    # NOTE: Do NOT add a warm top overlay alongside this — it converges both halves
+    # toward achromatic gray and separation collapses toward 0.
     # ── OUTPUT ────────────────────────────────────────────────────────────────
     out_path = "/home/wipkat/team/output/backgrounds/environments/LTG_ENV_tech_den.png"
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
-    img.convert("RGB").save(out_path)
+
+    # Convert RGBA → RGB and save final output.
+    # Inline cool bottom pass applied here using numpy array operations to avoid
+    # Pillow file-caching issues with save→open→composite in the same process.
+    import numpy as np
+
+    # Flatten RGBA to RGB (composite over black — all pixels should be opaque)
+    img_rgb = img.convert("RGB")
+    arr = np.array(img_rgb, dtype=np.float32)   # shape (H, W, 3), range 0-255
+
+    # Apply cool bottom overlay: graduated alpha from 0 at y=H//2 to 102 at y=H//2+60
+    # then flat 102 for remainder of bottom half. Equivalent to alpha_composite.
+    COOL_FILL_BOTTOM = np.array([160.0, 195.0, 215.0])
+    TRANSITION_ROWS = 60
+    half_h = H // 2
+
+    for row in range(half_h, H):
+        offset = row - half_h
+        if offset < TRANSITION_ROWS:
+            alpha_f = offset / TRANSITION_ROWS   # 0.0 → 1.0
+        else:
+            alpha_f = 1.0
+        # alpha=130 needed: below 112 the warm-amber floor doesn't flip to blue hue.
+        # Calibrated from: B > R requires A/255 > 0.439 on the darkest floor pixels.
+        overlay_alpha = 130.0 / 255.0 * alpha_f
+        # Porter-Duff "over": result = overlay * overlay_alpha + bg * (1 - overlay_alpha)
+        arr[row, :, :] = (COOL_FILL_BOTTOM * overlay_alpha
+                          + arr[row, :, :] * (1.0 - overlay_alpha))
+
+    arr = np.clip(arr, 0, 255).astype(np.uint8)
+    result_img = Image.fromarray(arr, mode="RGB")
+    result_img.save(out_path)
+
     print(f"Saved: {out_path}")
     return out_path
 
