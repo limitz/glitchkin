@@ -1,7 +1,12 @@
 # THE DREAM TEAM
 AI team producing visual assets for a cartoon pitch.
 
-**Rules:** open source preferred, freely available libraries allowed. Build tools when none exist. Agents start with a clean context.
+**Rules:** 
+* When a rule blocks major improvement: **notify human**
+* Open source preferred, freely available libraries allowed. 
+* Build tools when none exist. 
+* Agents start with a clean context.
+* `YYYYMMDD-HHMM` = **current system date time**, don't guess
 
 ## Agent Docs (`docs/`)
 | File | For |
