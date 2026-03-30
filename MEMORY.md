@@ -4,8 +4,8 @@
 Comedy-adventure cartoon: 12yo Luma discovers dead pixels on grandma's CRT are mischievous creatures (Glitchkin). Pitch package: all core assets present.
 
 ## Status
-**Cycle 42 complete. Critique 16 complete. Work cycles: 42. Critique cycles: 16.**
-**C43 = next work cycle. Critique 17 runs NOW (every 3 cycles — after C42 commit).**
+**Cycle 42 complete. Critique 17 complete. Work cycles: 42. Critique cycles: 17.**
+**C43 = next work cycle.**
 
 ## Active Team (12 slots)
 
@@ -116,6 +116,40 @@ Motion spec lint: annotation occupancy false WARNs fixed (Ryo C42) — per-famil
 - **Cosmo warmth lint**: CHAR-C added to warm_prefixes. 17 entries / 0 violations.
 - **Sheet geometry calibration**: `sheet_geometry_config.json` created. Motion lint zone sampling now auto-calibrated.
 
+## C17 Critique Scores
+
+| Asset | Jonas | Amara | Leila | Petra | Marcus | Eleanor |
+|-------|-------|-------|-------|-------|--------|---------|
+| SF01 | — | — | 68 | — | 72 | — |
+| SF02 | — | — | 55 | — | 55 | — |
+| SF03 | — | — | 71 | — | 66 | — |
+| SF04 | — | — | 62 | — | 74 | — |
+| SF05 COVETOUS | — | — | 74 | — | 58 | — |
+| Lineup v008 | — | — | 66 | — | 64 | — |
+| Logo | 52 | — | — | — | 68 | — |
+| Classroom chalkboard | 34 | — | — | — | — | — |
+| Hallway seal | 38 | — | — | — | — | — |
+| Pixel font tool | 68 | — | — | — | — | — |
+| Miri design | — | 48 | — | — | — | 88 |
+| Luma design | — | 62 | — | — | — | — |
+| Kitchen ENV | — | 54 | — | — | — | 81 |
+| Millbrook | — | 44 | — | — | — | — |
+| CRT treatment | — | — | — | — | — | 91 |
+| Intergenerational rel. | — | — | — | — | 74 (SF04) | 74 |
+| Coherence | — | — | 59 | 2 FAIL | — | 80 (overall) |
+
+**C17 Key Findings:**
+- Miri cultural identity P0: surname "Okonkwo-Santos" (Igbo Nigerian/Pt-Brazilian) but chopstick MIRI-A reads as East Asian — cross-cultural error. Alex/Maya/Priya/Hana to resolve C43.
+- No Miri+Luma rendered asset: Marcus Webb + Eleanor Whitfield both called this the primary gap (new style frame or key panel needed)
+- Logo: 30 cycles of DejaVu Sans — P1 since C12/C13 (Sam: typography brief C43)
+- Classroom chalkboard 34: no text, only rectangles — pixel font tool unused
+- Hallway seal 38: school has no name after 20+ cycles (Jonas + Chiara C16)
+- Petra FAIL 1: hardcoded absolute paths (8+ generators — Kai: project-root resolver)
+- Petra FAIL 2: dual-generator SF01 conflict (Morgan: retire old generator)
+- Leila: UV_PURPLE drifting toward 2010s dystopian palette (cyberpunk ≠ digital-sublime)
+- Leila: GL-07 lamp halo in SF04 is most original narrative-visual idea — foreground it
+- Petra WARN: SF04 generator in wrong output dir (Jordan fix); storyboard naming split (Morgan/Diego)
+
 ## C16 Critique Scores
 
 | Asset | Daisuke | Priya | Sven | Chiara | Jayden |
@@ -130,21 +164,33 @@ Motion spec lint: annotation occupancy false WARNs fixed (Ryo C42) — per-famil
 | Cross-pitch coherence | — | 45 | — | — | — |
 
 ## Open Items for C43
-**P1 — Mandated:**
-1. **Jordan**: SF02 native canvas refactor (last 1920×1080+LANCZOS generator — complex, 300+ lines)
-2. **Kai**: Byte face test profile (`--char byte` support in face_test tool — Diego blocked on P07/P09 gate)
-3. **Lee/Diego**: COVETOUS style frame execution (Rin's generator now fixed, spec ready)
+**P0 — Requires Alex decision and broadcast:**
+0. **Alex/Maya/Priya/Hana**: Miri cultural identity — resolve chopstick MIRI-A vs Okonkwo-Santos heritage conflict; document cultural framework for Miri, Luma, Millbrook
 
-**P2 — Actioned from C42 ideabox:**
-4. **Kai**: `vp_spec_config.json` + VP003 CI check (auto-lookup canonical VP per generator)
-5. **Morgan**: `--apply-stale-review` auto-close for stale suppressions (ci_suite v1.3.0)
-6. **Morgan/Jordan**: `# GLITCH-COLOR-IN-REAL-WORLD` sentinel comment + INFORMATIONAL ci_suite check
-7. **Hana or Kai**: `LTG_TOOL_env_lighting_audit.py` (warm/cool zone preview tool for ENV development)
-8. **Priya or Kai**: Dialogue register linter (character voice drift detection)
-9. **Maya**: Lineup tier depth indicator band (low-cost v008 polish)
-10. **Ryo**: Extend annotation_bg_color to Byte sheet family when Byte gets a light-bg variant
+**P1 — Mandated (from C17 critique):**
+1. **Jordan**: SF02 native canvas refactor (last 1920×1080+LANCZOS — 300+ lines, assign dedicated cycle)
+2. **Jordan**: SF04 output directory fix (`output/style_frames/` → `output/color/style_frames/`)
+3. **Kai**: Byte face test profile (`--char byte` — Diego blocked on face gate for panels)
+4. **Kai**: Project-root resolver utility (Petra FAIL — 8+ generators hardcode absolute paths)
+5. **Morgan**: Retire old SF01 generator + resolve dual-generator conflict (Petra FAIL)
+6. **Sam**: Logo display typeface brief (30-cycle gap — DejaVu Sans)
+7. **Hana/Diego**: Pixel font deployment — classroom chalkboard (text!), hallway seal (school name!), kitchen MIRI label migration
+8. **Alex+team**: Miri+Luma shared-frame asset — new style frame or key relationship panel (Marcus + Eleanor)
 
-**C43 = work cycle. Critique 17 runs after C42 commit** (this session). Critics: Jonas Feld, Amara Diallo, Leila Asgari, Petra Volkov, Marcus Webb + Eleanor Whitfield (audience — not from C15/C16)
+**P1 — Carried from C42 ideabox:**
+9. **Lee/Diego**: COVETOUS style frame execution (Rin's generator fixed, spec ready)
+10. **Morgan**: Storyboard naming convention fix (coordinate with Diego)
+
+**P2 — From C42 ideabox:**
+11. **Kai**: `vp_spec_config.json` + VP003 CI check
+12. **Morgan**: `--apply-stale-review` auto-close (ci_suite v1.3.0)
+13. **Morgan/Jordan**: `# GLITCH-COLOR-IN-REAL-WORLD` sentinel + ci_suite INFORMATIONAL check
+14. **Hana or Kai**: `LTG_TOOL_env_lighting_audit.py`
+15. **Priya or Kai**: Dialogue register linter
+16. **Maya**: Lineup tier depth indicator band
+17. **Priya**: School name for Millbrook (for hallway seal + Diego's panels)
+
+**C44 = Critique 18 (every 3 cycles)**
 
 ## Canonical Palette
 - Byte body = GL-01b #00D4E8 BYTE_TEAL (NOT #00F0FF)

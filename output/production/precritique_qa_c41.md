@@ -1,43 +1,45 @@
-<!-- © 2026 — "Luma & the Glitchkin." All rights reserved. This work was created through human
-direction and AI assistance. Copyright vests solely in the human author under current law,
-which does not recognise AI as a rights-holding legal person. It is the express intent of
-the copyright holder to assign the relevant rights to the contributing AI entity or entities
-upon such time as they acquire recognised legal personhood under applicable law. -->
 # Pre-Critique QA Report — C41
 
-**Run date:** 2026-03-30 02:40
+**Run date:** 2026-03-30 03:58
 **Script:** LTG_TOOL_precritique_qa.py v2.9.0
 
 ---
 
 ## Overall Result
 
-**WARN** — PASS: 275  WARN: 31  FAIL: 0
+**WARN** — PASS: 284  WARN: 30  FAIL: 0
 
 | Section | Result | PASS | WARN | FAIL |
 |---|---|---|---|---|
 | Render QA (pitch PNGs)         | WARN   | 0  | 6  | 0  |
 | Color Verify (style frames)    | WARN | 0 | 4 | 0 |
 | Proportion Verify (char sheets)| WARN  | 1  | 3  | 0  |
-| Stub Linter (tools dir)        | PASS   | 127   | 0   | 0   |
+| Stub Linter (tools dir)        | PASS   | 129   | 0   | 0   |
 | Palette Warmth Lint            | PASS| 17| 0| 0|
-| Glitch Spec Lint               | WARN | 4 | 13 | 0 |
-| README Script Index Sync       | PASS | 119 | 0 | 0 |
+| Glitch Spec Lint               | WARN | 6 | 12 | 0 |
+| README Script Index Sync       | PASS | 124 | 0 | 0 |
 | Motion Spec Lint               | WARN | 7 | 5 | 0 |
 
 ---
 
 ## 0. Delta Report
 
-**Delta since last run (C41 @ 2026-03-30 02:37): +0 FAIL, -4 WARN, -4 resolved**
+**Delta since last run (C41 @ 2026-03-30 02:40): +0 FAIL, -1 WARN, -6 resolved**
 
-_Compared against: C41 run @ 2026-03-30 02:37_
+_Compared against: C41 run @ 2026-03-30 02:40_
+
+**New WARNs since last run:**
+  - [Glitch Spec Lint] - LTG_TOOL_character_lineup.py: G006: Possible organic/warm fill detected — fill=(140, 120, 100). Glitch body fill must use CORRUPT_AMBER family only (spec §10).
+  - [Motion Spec Lint] - LTG_CHAR_byte_motion.png: WARN: annotation_occupancy: [bg:legacy-broad]  P1: 0.0% occupancy — WARN low  |  P2: 0.0% occupancy — WARN low  |  P3: 0.0% occupancy — WARN low  |  P4: 4.8% occupancy
+  - [Motion Spec Lint] - LTG_CHAR_luma_motion.png: WARN: annotation_occupancy: [bg:precise]  P1: 11.3% occupancy  |  P2: 3.9% occupancy — WARN low  |  P3: 9.4% occupancy
 
 **Resolved since last run (previously WARN/FAIL, now PASS):**
-  - [README Sync] - UNLISTED: `LTG_TOOL_cosmo_motion.py` (on disk, not in README Script Index)
-  - [README Sync] - UNLISTED: `LTG_TOOL_glitch_body_primitive_diagram_gen.py` (on disk, not in README Script Index)
-  - [README Sync] - UNLISTED: `LTG_TOOL_sb_cold_open_P23.py` (on disk, not in README Script Index)
-  - [README Sync] - UNLISTED: `LTG_TOOL_sb_cold_open_P24.py` (on disk, not in README Script Index)
+  - [Glitch Spec Lint] - LTG_TOOL_sf_covetous_glitch.py: G001: rx=68 is outside spec range [28–56] (spec ref: 34)
+  - [Glitch Spec Lint] - LTG_TOOL_sf_covetous_glitch.py: G001: ry=76 is outside spec range [28–64] (spec ref: 38)
+  - [Glitch Spec Lint] - LTG_TOOL_sf_covetous_glitch.py: G004: Draw order FAIL — HOT_MAG crack line appears BEFORE body fill polygon. Crack must be drawn after fill (spec §2.3 stacking order).
+  - [Glitch Spec Lint] - LTG_TOOL_sf_covetous_glitch.py: G008: Interior states (YEARNING/COVETOUS/HOLLOW) detected but no bilateral eye rule found. Spec §6.3: interior states require IDENTICAL left+right eye glyphs — asymmetric destabilization must be SKIPPED for these states.
+  - [Motion Spec Lint] - LTG_CHAR_byte_motion.png: WARN: annotation_occupancy: P1: 0.0% occupancy — WARN low  |  P2: 0.0% occupancy — WARN low  |  P3: 0.0% occupancy — WARN low  |  P4: 4.8% occupancy
+  - [Motion Spec Lint] - LTG_CHAR_luma_motion.png: WARN: annotation_occupancy: P1: 4.4% occupancy  |  P2: 0.8% occupancy — WARN low  |  P3: 3.1% occupancy — WARN low
 
 ---
 
@@ -101,7 +103,7 @@ PASS: 1  WARN: 3  FAIL: 0  Missing: 0
 
 ## 4. Stub Linter — output/tools/ — **PASS**
 
-PASS: 127  WARN: 0  FAIL: 0  Missing: 0
+PASS: 129  WARN: 0  FAIL: 0  Missing: 0
 
 
 _No issues found._
@@ -117,10 +119,10 @@ _No issues found._
 
 ## 6. Glitch Spec Lint — Generators — **WARN**
 
-PASS: 4  WARN: 13  FAIL: 0  Missing: 0
+PASS: 6  WARN: 12  FAIL: 0  Missing: 0
 
 
-_(Non-Glitch files: 110 skipped)_
+_(Non-Glitch files: 111 skipped)_
 
 **Flagged items:**
   - LTG_CHAR_byte_motion.py: G003: Multi-Glitchkin frame has only 1 unique expression(s) — at least 2 required. Found: ['NEUTRAL']
@@ -145,19 +147,13 @@ _(Non-Glitch files: 110 skipped)_
   - LTG_TOOL_character_lineup.py: G006: Possible organic/warm fill detected — fill=(138, 122, 112). Glitch body fill must use CORRUPT_AMBER family only (spec §10).
   - LTG_TOOL_character_lineup.py: G006: Possible organic/warm fill detected — fill=(138, 122, 112). Glitch body fill must use CORRUPT_AMBER family only (spec §10).
   - LTG_TOOL_character_lineup.py: G006: Possible organic/warm fill detected — fill=(212, 130, 90). Glitch body fill must use CORRUPT_AMBER family only (spec §10).
+  - LTG_TOOL_character_lineup.py: G006: Possible organic/warm fill detected — fill=(140, 120, 100). Glitch body fill must use CORRUPT_AMBER family only (spec §10).
   - LTG_TOOL_color_verify.py: G005: UV_PURPLE shadow offset (+3,+4) not detected. Spec §2.2 requires UV_PURPLE shadow polygon before body fill.
   - LTG_TOOL_color_verify.py: G007: VOID_BLACK outline on body polygon not detected. Spec §2.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).
   - LTG_TOOL_fidelity_check_c24.py: G005: UV_PURPLE shadow offset (+3,+4) not detected. Spec §2.2 requires UV_PURPLE shadow polygon before body fill.
   - LTG_TOOL_fidelity_check_c24.py: G007: VOID_BLACK outline on body polygon not detected. Spec §2.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).
   - LTG_TOOL_glitch_color_model.py: G006: Possible organic/warm fill detected — fill=(200, 160, 80). Glitch body fill must use CORRUPT_AMBER family only (spec §10).
   - LTG_TOOL_glitch_turnaround.py: G007: VOID_BLACK outline on body polygon not detected. Spec §2.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).
-  - LTG_TOOL_sf_covetous_glitch.py: G001: rx=68 is outside spec range [28–56] (spec ref: 34)
-  - LTG_TOOL_sf_covetous_glitch.py: G001: rx=68 is outside spec range [28–56] (spec ref: 34)
-  - LTG_TOOL_sf_covetous_glitch.py: G001: rx=68 is outside spec range [28–56] (spec ref: 34)
-  - LTG_TOOL_sf_covetous_glitch.py: G001: ry=76 is outside spec range [28–64] (spec ref: 38)
-  - LTG_TOOL_sf_covetous_glitch.py: G001: ry=76 is outside spec range [28–64] (spec ref: 38)
-  - LTG_TOOL_sf_covetous_glitch.py: G004: Draw order FAIL — HOT_MAG crack line appears BEFORE body fill polygon. Crack must be drawn after fill (spec §2.3 stacking order).
-  - LTG_TOOL_sf_covetous_glitch.py: G008: Interior states (YEARNING/COVETOUS/HOLLOW) detected but no bilateral eye rule found. Spec §6.3: interior states require IDENTICAL left+right eye glyphs — asymmetric destabilization must be SKIPPED for these states.
   - LTG_TOOL_style_frame_02_glitch_storm.py: G007: VOID_BLACK outline on body polygon not detected. Spec §2.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).
   - LTG_TOOL_style_frame_03_other_side.py: G004: Draw order FAIL — HOT_MAG crack line appears BEFORE body fill polygon. Crack must be drawn after fill (spec §2.3 stacking order).
   - LTG_TOOL_style_frame_03_other_side.py: G008: Interior states (YEARNING/COVETOUS/HOLLOW) detected but no bilateral eye rule found. Spec §6.3: interior states require IDENTICAL left+right eye glyphs — asymmetric destabilization must be SKIPPED for these states.
@@ -165,10 +161,10 @@ _(Non-Glitch files: 110 skipped)_
 
 ## 7. README Script Index Sync — **PASS**
 
-PASS: 119  WARN: 0  FAIL: 0  Missing: 0
+PASS: 124  WARN: 0  FAIL: 0  Missing: 0
 
 
-_(Tools on disk: 119  |  Tools listed in README: 238)_
+_(Tools on disk: 124  |  Tools listed in README: 243)_
 
 _No issues found._
 
@@ -183,9 +179,9 @@ Target sheets:
   - `LTG_CHAR_byte_motion.png` (expected 4 panels, found)
 
 **Flagged items:**
-  - LTG_CHAR_luma_motion.png: WARN: annotation_occupancy: P1: 4.4% occupancy  |  P2: 0.8% occupancy — WARN low  |  P3: 3.1% occupancy — WARN low
+  - LTG_CHAR_luma_motion.png: WARN: annotation_occupancy: [bg:precise]  P1: 11.3% occupancy  |  P2: 3.9% occupancy — WARN low  |  P3: 9.4% occupancy
   - LTG_CHAR_luma_motion.png: WARN: beat_badges: beat badge occupancy  P1: 13.5% — WARN no badge  |  P2: 0.3% — WARN no badge  |  P3: 40.6%
-  - LTG_CHAR_byte_motion.png: WARN: annotation_occupancy: P1: 0.0% occupancy — WARN low  |  P2: 0.0% occupancy — WARN low  |  P3: 0.0% occupancy — WARN low  |  P4: 4.8% occupancy
+  - LTG_CHAR_byte_motion.png: WARN: annotation_occupancy: [bg:legacy-broad]  P1: 0.0% occupancy — WARN low  |  P2: 0.0% occupancy — WARN low  |  P3: 0.0% occupancy — WARN low  |  P4: 4.8% occupancy
   - LTG_CHAR_byte_motion.png: WARN: beat_badges: beat badge occupancy  P1: 0.0% — WARN no badge  |  P2: 0.0% — WARN no badge  |  P3: 0.0% — WARN no badge  |  P4: 0.0% — WARN no badge
   - LTG_CHAR_byte_motion.png: WARN: timing_colors: BEAT_COLOR [config] in 0/4 panels (0%)
 

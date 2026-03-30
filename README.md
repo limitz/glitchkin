@@ -165,8 +165,8 @@ Three-world palette system:
 
 ## Progress
 
-- **Work cycles:** 42 | **Critique cycles:** 16
-- **Next:** Critique 17, then Cycle 43
+- **Work cycles:** 42 | **Critique cycles:** 17
+- **Next:** Cycle 43
 - **Ideabox:** 10 ideas actioned C42 (all 10 submitted)
 - **Critics panel:** 20 total (15 professionals + 5 audience)
 - **Team:** 12 active

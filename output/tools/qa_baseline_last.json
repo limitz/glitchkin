@@ -1,6 +1,6 @@
 {
   "cycle": "C41",
-  "run_ts": "2026-03-30 02:40",
+  "run_ts": "2026-03-30 03:58",
   "sections": {
     "render_qa": {
       "section": "Render QA",
@@ -61,7 +61,7 @@
     "stub_linter": {
       "section": "Stub Linter",
       "overall": "PASS",
-      "pass": 127,
+      "pass": 129,
       "warn": 0,
       "fail": 0,
       "missing": [],
@@ -79,8 +79,8 @@
     "glitch_spec": {
       "section": "Glitch Spec Lint",
       "overall": "WARN",
-      "pass": 4,
-      "warn": 13,
+      "pass": 6,
+      "warn": 12,
       "fail": 0,
       "missing": [],
       "flagged": [
@@ -106,19 +106,13 @@
         "  - LTG_TOOL_character_lineup.py: G006: Possible organic/warm fill detected \u2014 fill=(138, 122, 112). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
         "  - LTG_TOOL_character_lineup.py: G006: Possible organic/warm fill detected \u2014 fill=(138, 122, 112). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
         "  - LTG_TOOL_character_lineup.py: G006: Possible organic/warm fill detected \u2014 fill=(212, 130, 90). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
+        "  - LTG_TOOL_character_lineup.py: G006: Possible organic/warm fill detected \u2014 fill=(140, 120, 100). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
         "  - LTG_TOOL_color_verify.py: G005: UV_PURPLE shadow offset (+3,+4) not detected. Spec \u00a72.2 requires UV_PURPLE shadow polygon before body fill.",
         "  - LTG_TOOL_color_verify.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
         "  - LTG_TOOL_fidelity_check_c24.py: G005: UV_PURPLE shadow offset (+3,+4) not detected. Spec \u00a72.2 requires UV_PURPLE shadow polygon before body fill.",
         "  - LTG_TOOL_fidelity_check_c24.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
         "  - LTG_TOOL_glitch_color_model.py: G006: Possible organic/warm fill detected \u2014 fill=(200, 160, 80). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
         "  - LTG_TOOL_glitch_turnaround.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
-        "  - LTG_TOOL_sf_covetous_glitch.py: G001: rx=68 is outside spec range [28\u201356] (spec ref: 34)",
-        "  - LTG_TOOL_sf_covetous_glitch.py: G001: rx=68 is outside spec range [28\u201356] (spec ref: 34)",
-        "  - LTG_TOOL_sf_covetous_glitch.py: G001: rx=68 is outside spec range [28\u201356] (spec ref: 34)",
-        "  - LTG_TOOL_sf_covetous_glitch.py: G001: ry=76 is outside spec range [28\u201364] (spec ref: 38)",
-        "  - LTG_TOOL_sf_covetous_glitch.py: G001: ry=76 is outside spec range [28\u201364] (spec ref: 38)",
-        "  - LTG_TOOL_sf_covetous_glitch.py: G004: Draw order FAIL \u2014 HOT_MAG crack line appears BEFORE body fill polygon. Crack must be drawn after fill (spec \u00a72.3 stacking order).",
-        "  - LTG_TOOL_sf_covetous_glitch.py: G008: Interior states (YEARNING/COVETOUS/HOLLOW) detected but no bilateral eye rule found. Spec \u00a76.3: interior states require IDENTICAL left+right eye glyphs \u2014 asymmetric destabilization must be SKIPPED for these states.",
         "  - LTG_TOOL_style_frame_02_glitch_storm.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
         "  - LTG_TOOL_style_frame_03_other_side.py: G004: Draw order FAIL \u2014 HOT_MAG crack line appears BEFORE body fill polygon. Crack must be drawn after fill (spec \u00a72.3 stacking order).",
         "  - LTG_TOOL_style_frame_03_other_side.py: G008: Interior states (YEARNING/COVETOUS/HOLLOW) detected but no bilateral eye rule found. Spec \u00a76.3: interior states require IDENTICAL left+right eye glyphs \u2014 asymmetric destabilization must be SKIPPED for these states."
@@ -127,7 +121,7 @@
     "readme_sync": {
       "section": "README Sync",
       "overall": "PASS",
-      "pass": 119,
+      "pass": 124,
       "warn": 0,
       "fail": 0,
       "missing": [],
@@ -141,17 +135,17 @@
       "fail": 0,
       "missing": [],
       "flagged": [
-        "  - LTG_CHAR_luma_motion.png: WARN: annotation_occupancy: P1: 4.4% occupancy  |  P2: 0.8% occupancy \u2014 WARN low  |  P3: 3.1% occupancy \u2014 WARN low",
+        "  - LTG_CHAR_luma_motion.png: WARN: annotation_occupancy: [bg:precise]  P1: 11.3% occupancy  |  P2: 3.9% occupancy \u2014 WARN low  |  P3: 9.4% occupancy",
         "  - LTG_CHAR_luma_motion.png: WARN: beat_badges: beat badge occupancy  P1: 13.5% \u2014 WARN no badge  |  P2: 0.3% \u2014 WARN no badge  |  P3: 40.6%",
-        "  - LTG_CHAR_byte_motion.png: WARN: annotation_occupancy: P1: 0.0% occupancy \u2014 WARN low  |  P2: 0.0% occupancy \u2014 WARN low  |  P3: 0.0% occupancy \u2014 WARN low  |  P4: 4.8% occupancy",
+        "  - LTG_CHAR_byte_motion.png: WARN: annotation_occupancy: [bg:legacy-broad]  P1: 0.0% occupancy \u2014 WARN low  |  P2: 0.0% occupancy \u2014 WARN low  |  P3: 0.0% occupancy \u2014 WARN low  |  P4: 4.8% occupancy",
         "  - LTG_CHAR_byte_motion.png: WARN: beat_badges: beat badge occupancy  P1: 0.0% \u2014 WARN no badge  |  P2: 0.0% \u2014 WARN no badge  |  P3: 0.0% \u2014 WARN no badge  |  P4: 0.0% \u2014 WARN no badge",
         "  - LTG_CHAR_byte_motion.png: WARN: timing_colors: BEAT_COLOR [config] in 0/4 panels (0%)"
       ]
     }
   },
   "totals": {
-    "pass": 275,
-    "warn": 31,
+    "pass": 284,
+    "warn": 30,
     "fail": 0
   }
 }
