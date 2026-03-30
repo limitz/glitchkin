@@ -357,6 +357,16 @@
 - **FG_Y=0.78, BG_Y=0.70 are defaults.** These match depth_temp_lint defaults. Overridable via `--fg-y` and `--bg-y` CLI flags or function params. depth_temp_band_overrides.json can inform per-asset overrides.
 - **BG saturation drop target 0.75-0.85.** This is from image-rules.md BG Saturation Drop codified C49. Default multiplier 0.80. Tool measures actual BG/FG saturation ratio and reports PASS (0.75-0.85), WARN (0.70-0.90), or outside range.
 
+## Cycle 50 Lessons
+- **Characters look flat because they do not receive scene lighting — not because the fills are wrong.** Reference shows (Hilda, Owl House) use the same flat base fills we do. The difference: their characters are tinted by environmental light overlays. Our backgrounds get warm/cool overlays; our characters did not. This is the single biggest quality gap.
+- **Scene tint alpha must be capped at 30 (~12%) on characters.** This preserves warmth guarantees. HOODIE_ORANGE (#E8703A) needs alpha >= 41% cyan to violate R-dominant (C18 threshold analysis). A 12% cap provides a 3x safety margin.
+- **Form-describing shadow shapes replace flat left/right splits.** "torso_diagonal" = curved band from shoulder-to-hip. "limb_underside" = crescent on the bottom of cylindrical limbs. These are still flat cel-shadows (single color) but their SHAPE follows the body form.
+- **Hair absorbs 2x more scene light than skin/clothing.** Dark hair in a warm room should read warm-dark; in a purple environment, dark-purple. apply_hair_absorption() at 2x alpha (capped at 50) handles this.
+- **Scene-responsive outline color is a subtle but real integration cue.** Warm scenes: (59,40,32). Cool scenes: (48,36,44). Other Side: (38,30,48). Shift the outline color toward the scene ambient.
+- **LTG_TOOL_character_color_enhance.py v1.0.0 deployed.** 5 overlay functions. All post-draw — do not modify base character code. Integration = one function call after character is drawn. Registered in tools/README.md.
+- **Integration messages sent to Jordan Reed and Rin Yamamoto.** Per-SF scene tint settings table included. Priority: SF04 and SF05 first (warm domestic = biggest improvement).
+- **Ideabox: scene tint presence QA check.** Proposed for precritique_qa — checks if character pixels are shifted toward scene key light hue. Catches the flat-character regression automatically.
+
 ## Carry Forward
 - ENV-06 (#96ACA2) not yet updated in LTG_TOOL_style_frame_02_glitch_storm.py v001. Low priority.
 - SHADOW_COOL #7A9080 in classroom generator: Jordan to add inline comment. Low priority.
