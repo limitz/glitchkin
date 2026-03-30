@@ -1,5 +1,37 @@
 # Rin Yamamoto — MEMORY
 
+## C41 Completed Work
+- `LTG_TOOL_style_frame_03_other_side.py` — UV_PURPLE hue drift fix (8-cycle C16 backlog)
+  - Root cause: 1920×1080 draw canvas + LANCZOS thumbnail() → anti-aliased UV_PURPLE
+    outlines blended with surrounding dark fill, creating blended pixels near UV_PURPLE
+    in RGB space but with shifted LAB hue. render_qa ΔE was 27.78 >> 5.0 threshold.
+  - Fix 1: Native canvas W,H = 1280,720. Eliminates LANCZOS downscale entirely.
+  - Fix 2: Ring megastructure outline alpha 60→18 (blended pixels exit radius-60 zone)
+  - Fix 3: Slab outlines (rect + polygon) width 1→2 (extra resilience to anti-aliasing)
+  - Fix 4: Data gradient endpoint lerp(DATA_BLUE_90,UV_PURPLE)→lerp(DATA_BLUE_90,UV_PURPLE_MID)
+  - Result: UV_PURPLE LAB ΔE = 0.0 PASS (was 27.78). Output regenerated 1280×720.
+- `LTG_TOOL_bg_other_side.py` — same fixes, same results
+  - UV_PURPLE LAB ΔE = 0.0 PASS (was 27.37). Output regenerated 1280×720.
+- Reported to Alex Chen inbox
+- Ideabox: `ideabox/20260330_rin_yamamoto_native_resolution_audit.md`
+  - Audit all generators still at 1920×1080 + thumbnail — systematic source of LAB ΔE noise
+
+## C41 Lessons
+- The render_qa LAB ΔE color fidelity check is silently broken for ANY generator that:
+  (a) draws at 1920×1080 with thin (1px) colored outlines, and
+  (b) uses LANCZOS thumbnail() to downscale to 1280×720.
+  The LANCZOS resampling anti-aliases 1px outlines with adjacent fill colors, creating
+  blended pixels that fall within the radius-60 RGB sample zone but have shifted LAB values.
+  ΔE of 27+ is the predictable result. Fix: native 1280×720 draw canvas (one-line change).
+- Alpha-blended overlays of canonical colors (e.g. UV_PURPLE at alpha 60 over VOID_BLACK)
+  can also create near-canonical blended pixels in the radius-60 zone. Safe threshold for
+  UV_PURPLE over VOID_BLACK: alpha ≤ ~20 keeps composited pixels outside radius-60.
+- lerp() gradients ending at a canonical color produce near-canonical blended pixels for
+  t near 1.0. End gradients at UV_PURPLE_MID/UV_PURPLE_DARK instead.
+- render_qa SUNLIT_AMBER false-positives in cold digital scenes (Other Side): SUNLIT_AMBER
+  is always in the canonical palette checked, even in scenes that intentionally exclude it.
+  These are expected FAIL results for Other Side generators — not scope of UV_PURPLE fix.
+
 ## C40 (Second Pass) Completed Work
 - `LTG_TOOL_bg_other_side.py` — UV_PURPLE_DARK saturation fix
   - Was (43, 32, 80) = #2B2050 = 31% sat — hue 253.75°, delta 18.15° from canonical

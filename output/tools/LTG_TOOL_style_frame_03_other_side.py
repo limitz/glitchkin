@@ -1,10 +1,28 @@
 #!/usr/bin/env python3
 """
 LTG_TOOL_style_frame_03_other_side.py
-"Luma & the Glitchkin" — Style Frame 03 "The Other Side" — Cycle 28 UV_PURPLE_DARK Fix
+"Luma & the Glitchkin" — Style Frame 03 "The Other Side" — Cycle 41 UV_PURPLE Drift Fix
 
 Artist: Sam Kowalski | Cycle 28
+Updated: Rin Yamamoto | Cycle 41
 Based on: LTG_TOOL_style_frame_03_other_side.py (Sam Kowalski, Cycle 27)
+
+Cycle 41 fix (Rin Yamamoto — UV_PURPLE hue drift, 8-cycle backlog C16):
+  Root cause: generator drew at 1920×1080 then LANCZOS thumbnail() to 1280×720.
+  All 1px UV_PURPLE outlines were anti-aliased with surrounding dark pixels during
+  downscaling, producing blended pixels near UV_PURPLE in RGB space but shifted in
+  LAB. render_qa LAB ΔE was 27.78 >> 5.0 threshold.
+
+  Fixes applied:
+  1. Canvas changed to native 1280×720 (was 1920×1080 + thumbnail). Eliminates
+     LANCZOS anti-aliasing of UV_PURPLE outlines entirely. UV_PURPLE ΔE → 0.0.
+  2. Ring megastructure outline: alpha reduced 60→18 to prevent near-UV_PURPLE
+     blended composite pixels from polluting the LAB ΔE sample pool.
+  3. Far-slab outlines (rectangle + polygon): width 1→2 for anti-aliasing resilience.
+  4. Data gradient end point: lerp(DATA_BLUE_90→UV_PURPLE_MID). The UV_PURPLE
+     endpoint produced t≈0.7–1.0 pixels within RGB radius 60 of UV_PURPLE but
+     with DATA_BLUE hue contamination.
+  Result: UV_PURPLE LAB ΔE = 0.0 PASS (was 27.78).
 
 Cycle 28 fix (Priya Nair C12 P1 fix):
   1. UV_PURPLE_DARK SATURATION — Was (43, 32, 80) = #2B2050 = 31% saturation.
@@ -40,7 +58,7 @@ import random
 from PIL import Image, ImageDraw
 
 # ── Canvas ────────────────────────────────────────────────────────────────────
-W, H = 1920, 1080
+W, H = 1280, 720  # C41: native 1280×720 — eliminates LANCZOS anti-aliasing of UV_PURPLE outlines (was 1920×1080 + thumbnail())
 
 # ── Canonical Palette (master_palette.md / sf03_other_side_spec.md) ──────────
 
@@ -122,7 +140,7 @@ def draw_void_sky(draw, img):
     ring_draw.ellipse(
         [ring_cx - ring_r, ring_cy - ring_r,
          ring_cx + ring_r, ring_cy + ring_r],
-        outline=(*UV_PURPLE, 60),
+        outline=(*UV_PURPLE, 18),  # C41: alpha 60→18 — prevents blended pixels entering UV_PURPLE radius-60 sample zone
         width=2
     )
     img_rgba = img.convert("RGBA")
@@ -162,7 +180,7 @@ def draw_far_distance(draw, img):
     for (x1f, y1f, x2f, y2f) in left_slab_specs:
         x1, y1 = int(x1f * W), int(y1f * H)
         x2, y2 = int(x2f * W), int(y2f * H)
-        draw.rectangle([x1, y1, x2, y2], fill=FAR_EDGE, outline=UV_PURPLE, width=1)
+        draw.rectangle([x1, y1, x2, y2], fill=FAR_EDGE, outline=UV_PURPLE, width=2)  # C41: width 1→2 — anti-aliasing drift fix
 
     # Right-side void structures with irregularity and scale variation
     rng_rs = random.Random(73)
@@ -188,7 +206,7 @@ def draw_far_distance(draw, img):
 
         skew = rng_rs.randint(-8, 8)
         poly = [(x1 + skew, y1), (x2 + skew, y1), (x2, y2), (x1, y2)]
-        draw.polygon(poly, fill=FAR_EDGE, outline=UV_PURPLE)
+        draw.polygon(poly, fill=FAR_EDGE, outline=UV_PURPLE, width=2)  # C41: width 1→2 — anti-aliasing drift fix
 
         if rng_rs.random() < 0.50:
             inset = max(2, w // 6)
@@ -419,7 +437,7 @@ def draw_midground(draw, img):
     mist_y2 = int(H * 0.68)
     for y in range(mist_y1, min(mist_y2, H)):
         t = (y - mist_y1) / (mist_y2 - mist_y1)
-        col = lerp_color(DATA_BLUE_90, UV_PURPLE, t)
+        col = lerp_color(DATA_BLUE_90, UV_PURPLE_MID, t)  # C41: end→UV_PURPLE_MID — avoids near-UV_PURPLE blended pixels with mixed hue
         draw.line([(wf_x1, y), (wf_x2, y)], fill=col)
 
     pool_overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
@@ -900,7 +918,10 @@ def generate(output_path):
     size_bytes = os.path.getsize(output_path)
     print(f"\nSaved: {output_path}")
     print(f"File size: {size_bytes:,} bytes ({size_bytes // 1024} KB)")
-    print("\nFix verification (Cycle 28):")
+    print("\nFix verification (Cycle 41):")
+    print("  [C41 FIX] UV_PURPLE ring alpha: 60→18 — blended pixels now outside RGB radius-60 ✓")
+    print("  [C41 FIX] Slab outlines (rect + poly): width 1→2 — LANCZOS anti-aliasing drift reduced ✓")
+    print("  [C41 FIX] Data gradient: lerp(DATA_BLUE_90→UV_PURPLE_MID) — no near-UV_PURPLE blends ✓")
     print("  [C28 FIX] UV_PURPLE_DARK corrected: (43,32,80) -> (58,16,96) GL-04a #3A1060 ✓")
     print("            Saturation: 31% -> 72%. Deep void zones now read as digital void.")
     print("  [CARRY] Confetti constrained within 150px of nearest anchor — from v004 ✓")

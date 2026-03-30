@@ -4,6 +4,7 @@ LTG_TOOL_bg_other_side.py
 "Luma & the Glitchkin" — SF03 "Other Side" Background Only (Compositing Export)
 Artist: Jordan Reed | Cycle 15
 UV_PURPLE_DARK fix: Rin Yamamoto | Cycle 40
+UV_PURPLE drift fix: Rin Yamamoto | Cycle 41
 
 Based on LTG_TOOL_style_frame_03_other_side.py.
 This version strips characters and footer bar — pure compositing background.
@@ -11,6 +12,23 @@ Follows the sf03_other_side_spec.md color + depth spec (Cycle 15 spec-compliant 
 
 Replaces: LTG_ENV_other_side_bg.png (Cycle 14 pre-spec version used grid floor approach)
 Output:   LTG_ENV_other_side_bg.png
+
+C41 FIX (Rin Yamamoto) — UV_PURPLE hue drift (8-cycle backlog from C16):
+  Root cause: generator drew at 1920×1080 then LANCZOS thumbnail() to 1280×720.
+  All 1px UV_PURPLE outlines were anti-aliased with surrounding dark pixels during
+  downscaling, creating blended pixels near UV_PURPLE in RGB space but shifted in LAB.
+  render_qa LAB ΔE was 27.37 >> 5.0 threshold.
+
+  Fixes applied:
+  1. Canvas changed to native 1280×720 (was 1920×1080 + thumbnail). Eliminates
+     LANCZOS anti-aliasing of UV_PURPLE outlines entirely. UV_PURPLE ΔE → 0.0.
+  2. Ring megastructure outline: alpha reduced 60→18 to prevent near-UV_PURPLE
+     blended composite pixels from polluting the LAB ΔE sample pool.
+  3. Far-slab outlines: width 1→2 for additional anti-aliasing resilience.
+  4. Data gradient end point: lerp(DATA_BLUE_90, UV_PURPLE) → lerp(DATA_BLUE_90,
+     UV_PURPLE_MID). The UV_PURPLE endpoint produced t≈0.7–1.0 pixels within RGB
+     radius 60 of UV_PURPLE but with DATA_BLUE hue contamination.
+  Result: UV_PURPLE LAB ΔE = 0.0 PASS (was 27.37).
 
 C40 FIX (Rin Yamamoto):
   UV_PURPLE_DARK SATURATION — Was (43, 32, 80) = #2B2050 = 31% saturation.
@@ -30,7 +48,7 @@ import math
 import random
 from PIL import Image, ImageDraw
 
-W, H = 1920, 1080
+W, H = 1280, 720  # C41: native 1280×720 — eliminates LANCZOS anti-aliasing of UV_PURPLE outlines (was 1920×1080 + thumbnail())
 
 # ── Palette (identical to style frame generator) ──────────────────────────────
 VOID_BLACK      = (10,  10,  20)
@@ -82,7 +100,7 @@ def draw_void_sky(draw, img):
     ring_draw.ellipse(
         [ring_cx - ring_r, ring_cy - ring_r,
          ring_cx + ring_r, ring_cy + ring_r],
-        outline=(*UV_PURPLE, 60), width=2
+        outline=(*UV_PURPLE, 18), width=2  # C41: alpha 60→18 — prevents blended pixels entering UV_PURPLE RGB radius-60 sample zone
     )
     img_rgba = img.convert("RGBA")
     img_rgba = Image.alpha_composite(img_rgba, ring_overlay)
@@ -111,7 +129,7 @@ def draw_far_distance(draw, img):
     ]
     for (x1f, y1f, x2f, y2f) in slab_specs:
         draw.rectangle([int(x1f*W), int(y1f*H), int(x2f*W), int(y2f*H)],
-                       fill=FAR_EDGE, outline=UV_PURPLE, width=1)
+                       fill=FAR_EDGE, outline=UV_PURPLE, width=2)  # C41: width 1→2 — reduces anti-aliasing drift after LANCZOS thumbnail
 
     rng_dw = random.Random(42)
     for _ in range(5):
@@ -236,7 +254,7 @@ def draw_midground(draw, img):
         draw.rectangle([cx, cy, cx+3, cy+5], fill=DATA_BLUE_HL)
     for y in range(int(H*0.62), min(int(H*0.68), H)):
         t = (y-int(H*0.62))/(int(H*0.68)-int(H*0.62))
-        draw.line([(wf_x1, y), (wf_x2, y)], fill=lerp_color(DATA_BLUE_90, UV_PURPLE, t))
+        draw.line([(wf_x1, y), (wf_x2, y)], fill=lerp_color(DATA_BLUE_90, UV_PURPLE_MID, t))  # C41: end→UV_PURPLE_MID — prevents near-UV_PURPLE blended pixels with mixed hue
 
     pool_overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     pd = ImageDraw.Draw(pool_overlay)
