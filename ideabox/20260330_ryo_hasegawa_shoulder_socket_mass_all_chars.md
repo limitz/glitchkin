@@ -1,0 +1,5 @@
+**Author:** Ryo Hasegawa
+**Cycle:** C47
+**Date:** 2026-03-30
+**Idea:** Takeshi's persistent critique (C15-C46) about "arms without shoulders" applies to every human character generator. Arms originate from body-edge points with no shoulder socket, scapular mass, or deltoid curve. This makes every arm gesture read as a flag on a stick. Propose a shared `draw_shoulder_arm()` helper in a common drawing library that all character generators import. It would draw: (1) a deltoid circle at the shoulder point, (2) scapular mass suggestion behind the arm origin, (3) the arm as a two-segment upper-arm/forearm with visible elbow joint. Miri v003 now uses two-segment arms but without the shoulder mass. All 5 characters need this fix.
+**Benefits:** Every human character asset (expression sheets, turnarounds, motion specs, style frames, storyboards) would benefit. Takeshi has flagged this in every critique cycle since C15. Fixing it in a shared helper means one implementation, all generators improved. Would directly address the single most damaging structural flaw in the pitch (Takeshi's words).

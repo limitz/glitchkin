@@ -1,31 +1,35 @@
-# © 2026 — "Luma & the Glitchkin." All rights reserved. This work was created through AI
-# direction and human assistance. Copyright vests solely in the human author under current law,
+# © 2026 — "Luma & the Glitchkin." All rights reserved. This work was created through human
+# direction and AI assistance. Copyright vests solely in the human author under current law,
 # which does not recognise AI as a rights-holding legal person. It is the express intent of
 # the copyright holder to assign the relevant rights to the contributing AI entity or entities
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
 LTG_TOOL_miri_motion_v002.py
-Ryo Hasegawa / Cycle 46
-Motion Spec Sheet v002 — GRANDMA MIRI (Miriam Okonkwo-Santos)
+Ryo Hasegawa / Cycle 47
+Motion Spec Sheet v003 — GRANDMA MIRI (Miriam Okonkwo-Santos)
 Beat arc: Emotional Warmth Pacing
 
+COMPLETE REWORK (Takeshi C46 critique: 44/100 — weakest sheet, "poses labeled not performed").
+
+Key changes from v002:
+  - Figure scale: head_r 22→32 (45% larger, fills panel properly)
+  - Weight distribution: asymmetric in EVERY panel (one foot bears more)
+  - Shoulder-hip counterpose: visible rotation, hip shift, NOT just lean angle
+  - Hands PERFORM: each panel has specific, purposeful hand positions
+  - Spine participation: visible curve change across the arc
+  - Fond Settle is EARNED — distinct from Observing Still
+
 4 panels:
-  B1: OBSERVING STILL   — hands in lap, held attention, zero secondary motion
-  B2: RECOGNITION       — slight forward lean, hands loosen, micro head tilt
-  B3: WARMTH BURST      — wide open-arm gesture, eyes crinkle, SUNLIT_AMBER glow halo
-  B4: FOND SETTLE       — arms lower to lap/crossed, slight smile return, quiet
+  B1: OBSERVING STILL   — weight right foot, left hand curled on armrest,
+                           right hand loosely on lap. Contained but alert.
+  B2: RECOGNITION       — weight shifts forward, hands lift from surfaces,
+                           breath-catch visible in shoulder rise, spine engages
+  B3: WARMTH BURST      — spine arches forward, arms open from SHOULDER rotation,
+                           weight forward on balls of feet, SUNLIT_AMBER glow
+  B4: FOND SETTLE       — weight settles back to right foot but NOT identical to B1,
+                           arms cross loosely, head tilt remains, smile earned
 
-Distinct from v001 beat arc (which covers the base repertoire: Warm Attention /
-Sharp Assessment / Proud Quiet Joy / Patient Correction). This arc captures the
-B1/B4 stillness vs B3 warmth burst contrast — the core of Miri's appeal.
-Palette: Real World only. SUNLIT_AMBER (212,146,58) used for B3 warmth glow —
-no Glitch/GL colors.
-
-Alex Chen C46 brief:
-  "The contrast between B1/B4 stillness and B3 warmth burst is the core of her appeal.
-   Use SUNLIT_AMBER as the dominant palette for warm bursts, Real World palette only."
-
-Canvas: 1280x720 (<=1280 limit, native — no thumbnail)
+Canvas: 1280x720 (<=1280 limit, native)
 Output: output/characters/motion/LTG_CHAR_miri_motion_v002.png
 """
 
@@ -38,7 +42,7 @@ import json
 _CONFIG_PATH = os.path.join(os.path.dirname(__file__), "sheet_geometry_config.json")
 
 def _load_panel_top_miri(default=54):
-    """Load panel_top_abs for miri family from sheet_geometry_config.json."""
+    """Load panel_top_abs for miri_v002 family from sheet_geometry_config.json."""
     try:
         with open(_CONFIG_PATH) as f:
             cfg = json.load(f)
@@ -83,6 +87,8 @@ ACCENT_DASH     = (200, 190, 175)   # construction/guide lines
 SUNLIT_AMBER    = (212, 146,  58)   # #D4923A warmth burst glow (Real World warm light)
 SUNLIT_PALE     = (245, 220, 160)   # lighter amber for inner glow halo
 CRINKLE_COLOR   = ( 80,  55,  40)   # eye crinkle lines on warmth burst
+CG_MARKER       = (180,  60,  60)   # center-of-gravity marker color
+WEIGHT_COLOR    = (100, 160,  80)   # weight distribution annotation
 
 # --- CANVAS ---
 W, H  = 1280, 720
@@ -121,11 +127,31 @@ def label_box(draw, x, y, text, bg=LABEL_BG, fg=LABEL_TEXT, pad=4):
     return tw + pad * 2, th + pad * 2
 
 
+def draw_cg_marker(draw, cx, cy, label="CG", color=CG_MARKER):
+    """Draw a center-of-gravity cross marker with label."""
+    s = 5
+    draw.line([(cx - s, cy), (cx + s, cy)], fill=color, width=2)
+    draw.line([(cx, cy - s), (cx, cy + s)], fill=color, width=2)
+    draw.text((cx + s + 2, cy - 5), label, fill=color)
+
+
+def draw_weight_bar(draw, x, y, w, left_pct, color=WEIGHT_COLOR):
+    """Draw a weight distribution bar. left_pct is 0.0-1.0 weight on left foot."""
+    h = 6
+    draw.rectangle([x, y, x + w, y + h], outline=color, width=1)
+    split_x = x + int(w * left_pct)
+    # Left side filled heavier
+    if left_pct > 0.01:
+        draw.rectangle([x + 1, y + 1, split_x, y + h - 1], fill=color)
+    draw.text((x, y + h + 2), f"L:{int(left_pct*100)}%", fill=color)
+    draw.text((x + w - 30, y + h + 2), f"R:{int((1-left_pct)*100)}%", fill=color)
+
+
 # ------------------------------------------------------------------ cardigan knit lines
 
 def draw_cardigan_knit(draw, cx, top_y, bot_y, half_w, head_r):
     """Draw cable-knit suggestion lines on cardigan body (3-4 vertical pairs)."""
-    knit_spacing = max(12, int(head_r * 0.55))
+    knit_spacing = max(14, int(head_r * 0.50))
     for offset in [-knit_spacing, 0, knit_spacing]:
         kx = cx + offset
         if kx - 3 > cx - half_w and kx + 3 < cx + half_w:
@@ -138,24 +164,33 @@ def draw_cardigan_knit(draw, cx, top_y, bot_y, half_w, head_r):
 
 # ------------------------------------------------------------------ character drawing
 
-def draw_miri_figure(draw, ox, oy, head_r=22,
+def draw_miri_figure(draw, ox, oy, head_r=32,
                      body_lean=0,
                      head_tilt=0,
+                     hip_shift=0,
+                     shoulder_drop_side=0,
+                     left_foot_weight=0.5,
+                     arm_left_mode="default",
+                     arm_right_mode="default",
                      arm_left_angle=-170,
                      arm_right_angle=-10,
-                     weight_back=False,
-                     arms_open=False,
-                     hands_in_lap=False):
+                     spine_curve=0,
+                     eyes_crinkle=False,
+                     smile_amount=0.5):
     """
-    Draw Miri as a geometric construction figure.
-    ox, oy = center-bottom of figure.
-    Miri proportions: 3.2 heads tall.
+    Draw Miri as a geometric construction figure — v003: PERFORMING POSES.
 
-    body_lean: degrees (negative = forward lean, positive = back)
-    head_tilt: degrees (negative = tilt left/viewer-right, positive = right)
-    weight_back: if True, body CG shifts back 3px
-    arms_open: if True, both arms extended wide (WARMTH BURST gesture)
-    hands_in_lap: if True, both arms angled toward lap/center (OBSERVING STILL)
+    ox, oy = center-bottom of figure.
+    Miri proportions: 3.2 heads tall. head_r=32 (v003 — was 22 in v002).
+
+    Key v003 changes:
+      - hip_shift: px lateral shift of hip (positive = viewer right)
+      - shoulder_drop_side: -1=left shoulder drops, +1=right drops, 0=level
+      - left_foot_weight: 0.0-1.0 — weight on left foot (0.5=even, 0.7=left heavy)
+      - arm modes: "default", "armrest", "lap_curl", "open_wide", "crossed", "lifting"
+      - spine_curve: degrees of mid-spine convex forward curve (engagement signal)
+      - eyes_crinkle: True = full crinkle closed (B3 warmth peak)
+      - smile_amount: 0.0-1.0 mouth arc scale
     """
     hr  = head_r
     hw  = int(hr * 0.96)
@@ -172,64 +207,114 @@ def draw_miri_figure(draw, ox, oy, head_r=22,
 
     lw = 3
 
-    cg_back_offset = 4 if weight_back else 0
     lean_off = int(math.tan(math.radians(body_lean)) * body_h)
 
-    # --- SLIPPERS ---
+    # --- FEET with weight distribution ---
     fc = int(leg_w * 0.85)
-    lf_cx = ox - fc + cg_back_offset
-    rf_cx = ox + fc + cg_back_offset
+    # Weight foot plants firmly; light foot slightly lifted or angled
+    lf_cx = ox - fc + hip_shift
+    rf_cx = ox + fc + hip_shift
     fy = oy
-    draw.ellipse([lf_cx - foot_w // 2, fy - foot_h,
-                  lf_cx + foot_w // 2, fy], fill=SLIPPER_BOT, outline=LINE_COLOR, width=lw)
-    draw.ellipse([rf_cx - foot_w // 2, fy - foot_h,
-                  rf_cx + foot_w // 2, fy], fill=SLIPPER_BOT, outline=LINE_COLOR, width=lw)
-    draw.ellipse([lf_cx - foot_w // 2 + 2, fy - foot_h,
-                  lf_cx + foot_w // 2 - 2, fy - 4], fill=SLIPPER_UP, outline=LINE_COLOR, width=lw)
-    draw.ellipse([rf_cx - foot_w // 2 + 2, fy - foot_h,
-                  rf_cx + foot_w // 2 - 2, fy - 4], fill=SLIPPER_UP, outline=LINE_COLOR, width=lw)
 
-    # --- LEGS ---
+    # Weighted foot is slightly wider/more grounded; light foot narrower
+    l_weight = left_foot_weight
+    r_weight = 1.0 - left_foot_weight
+    lf_scale = 0.85 + 0.3 * l_weight  # 0.85 to 1.15
+    rf_scale = 0.85 + 0.3 * r_weight
+    lf_lift = int((1.0 - l_weight) * 4)  # light foot lifts 0-4px
+    rf_lift = int((1.0 - r_weight) * 4)
+
+    # Left foot
+    lfw = int(foot_w * lf_scale)
+    lf_top = fy - foot_h + lf_lift
+    lf_bot = max(lf_top + 2, fy - lf_lift)
+    draw.ellipse([lf_cx - lfw // 2, lf_top,
+                  lf_cx + lfw // 2, lf_bot], fill=SLIPPER_BOT, outline=LINE_COLOR, width=lw)
+    lf_up_top = lf_top
+    lf_up_bot = max(lf_up_top + 2, lf_bot - 4)
+    draw.ellipse([lf_cx - lfw // 2 + 2, lf_up_top,
+                  lf_cx + lfw // 2 - 2, lf_up_bot], fill=SLIPPER_UP, outline=LINE_COLOR, width=lw)
+
+    # Right foot
+    rfw = int(foot_w * rf_scale)
+    rf_top = fy - foot_h + rf_lift
+    rf_bot = max(rf_top + 2, fy - rf_lift)
+    draw.ellipse([rf_cx - rfw // 2, rf_top,
+                  rf_cx + rfw // 2, rf_bot], fill=SLIPPER_BOT, outline=LINE_COLOR, width=lw)
+    rf_up_top = rf_top
+    rf_up_bot = max(rf_up_top + 2, rf_bot - 4)
+    draw.ellipse([rf_cx - rfw // 2 + 2, rf_up_top,
+                  rf_cx + rfw // 2 - 2, rf_up_bot], fill=SLIPPER_UP, outline=LINE_COLOR, width=lw)
+
+    # --- LEGS with weight asymmetry ---
     leg_top_y = oy - leg_h
-    ll_cx = ox - fc // 2 + cg_back_offset
-    rl_cx = ox + fc // 2 + cg_back_offset
+    ll_cx = ox - fc // 2 + hip_shift
+    rl_cx = ox + fc // 2 + hip_shift
     top_lw = int(leg_w * 1.05)
-    for side, cx_leg in [(-1, ll_cx), (1, rl_cx)]:
+
+    # Weighted leg is straighter; light leg has slight bend
+    for side, cx_leg, w_frac in [(-1, ll_cx, l_weight), (1, rl_cx, r_weight)]:
+        knee_offset = int((1.0 - w_frac) * 6 * side)  # light leg bends outward
         draw.polygon([
             cx_leg - top_lw // 2 + lean_off, leg_top_y,
             cx_leg + top_lw // 2 + lean_off, leg_top_y,
-            cx_leg + leg_w // 2 + lean_off // 2, oy - foot_h + 2,
-            cx_leg - leg_w // 2 + lean_off // 2, oy - foot_h + 2,
+            cx_leg + leg_w // 2 + lean_off // 2 + knee_offset, oy - foot_h + 2,
+            cx_leg - leg_w // 2 + lean_off // 2 + knee_offset, oy - foot_h + 2,
         ], fill=PANTS, outline=LINE_COLOR)
-    for cx_leg in [ll_cx, rl_cx]:
+        # Leg center crease
         draw.line([(cx_leg + lean_off // 2, leg_top_y + 4),
-                   (cx_leg + lean_off // 2, oy - foot_h - 4)],
+                   (cx_leg + lean_off // 2 + knee_offset, oy - foot_h - 4)],
                   fill=PANTS_SH, width=1)
 
-    # --- TORSO ---
+    # --- HIP REGION (visible weight shift) ---
+    hip_y = leg_top_y + int(hr * 0.15)
+    hip_tilt = int(hip_shift * 0.3)  # hip tilts with weight shift
+
+    # --- TORSO with spine curve ---
     body_bot_y = oy - leg_h + int(hr * 0.52)
     body_top_y = body_bot_y - body_h
-    body_cx    = ox + lean_off + cg_back_offset
+    body_cx    = ox + lean_off + hip_shift
+
+    # Spine curve: mid-torso shifts forward/back
+    spine_px = int(math.sin(math.radians(spine_curve)) * hr * 0.3)
+
+    # Shoulder drop: one shoulder lower than the other
+    sh_drop_px = int(abs(shoulder_drop_side) * hr * 0.12)
+    left_sh_y_offset = sh_drop_px if shoulder_drop_side < 0 else 0
+    right_sh_y_offset = sh_drop_px if shoulder_drop_side > 0 else 0
 
     cardigan_bot = body_bot_y + cardigan_hem_extra
     cardigan_w_bot = body_w + int(hr * 0.16)
+
+    # Draw torso with slight spine curve at midpoint
+    mid_y = (body_top_y + cardigan_bot) // 2
+    # Upper torso
     draw.polygon([
         body_cx - body_w,        body_top_y,
         body_cx + body_w,        body_top_y,
+        body_cx + body_w + int(hr * 0.06) + spine_px,  mid_y,
+        body_cx - body_w + int(hr * 0.06) + spine_px,  mid_y,
+    ], fill=CARDIGAN_BASE, outline=LINE_COLOR)
+    # Lower torso/cardigan
+    draw.polygon([
+        body_cx - body_w + int(hr * 0.06) + spine_px,  mid_y,
+        body_cx + body_w + int(hr * 0.06) + spine_px,  mid_y,
         body_cx + cardigan_w_bot, cardigan_bot,
         body_cx - cardigan_w_bot, cardigan_bot,
     ], fill=CARDIGAN_BASE, outline=LINE_COLOR)
 
-    draw_cardigan_knit(draw, body_cx, body_top_y, cardigan_bot, body_w, head_r=hr)
+    draw_cardigan_knit(draw, body_cx + spine_px // 2, body_top_y, cardigan_bot, body_w, head_r=hr)
 
-    btn_r = max(3, int(hr * 0.13))
+    # Buttons
+    btn_r = max(3, int(hr * 0.12))
     btn_spacing = (cardigan_bot - body_top_y) // 5
     for i in range(1, 5):
-        bx = body_cx
+        bx = body_cx + int(spine_px * (i / 5))
         by = body_top_y + i * btn_spacing
         draw.ellipse([bx - btn_r, by - btn_r, bx + btn_r, by + btn_r],
                      fill=CARDIGAN_BTN, outline=LINE_COLOR, width=1)
 
+    # V-neck
     v_w = int(body_w * 0.35)
     v_depth = int(body_h * 0.30)
     draw.polygon([
@@ -238,119 +323,161 @@ def draw_miri_figure(draw, ox, oy, head_r=22,
         body_cx + v_w, body_top_y + 2,
     ], fill=EYE_WHITE)
 
+    # Cardigan side seams
     for side in [-1, 1]:
         draw.line([(body_cx + side * (body_w - 4), body_top_y + 6),
                    (body_cx + side * (cardigan_w_bot - 4), cardigan_bot - 6)],
                   fill=CARDIGAN_SH, width=2)
 
-    pkt_top = body_bot_y - int(hr * 0.30)
+    # Pockets
+    pkt_top = body_bot_y - int(hr * 0.25)
     pkt_bot = cardigan_bot - 8
-    pkt_w   = int(body_w * 0.60)
+    pkt_w   = int(body_w * 0.55)
     for side in [-1, 1]:
-        pkt_cx = body_cx + side * int(body_w * 0.52)
+        pkt_cx = body_cx + side * int(body_w * 0.52) + spine_px // 2
         draw.rectangle([pkt_cx - pkt_w // 2, pkt_top,
                         pkt_cx + pkt_w // 2, pkt_bot],
                        outline=CARDIGAN_SH, width=2)
 
-    # --- SHOULDER MARKERS ---
-    shoulder_y = body_top_y + int(hr * 0.14)
-    shoulder_r = 4
-    for sx in [body_cx - body_w, body_cx + body_w]:
-        draw.ellipse([sx - shoulder_r, shoulder_y - shoulder_r,
-                      sx + shoulder_r, shoulder_y + shoulder_r],
+    # --- SHOULDER MARKERS with drop ---
+    shoulder_y_base = body_top_y + int(hr * 0.14)
+    l_shoulder_x = body_cx - body_w
+    r_shoulder_x = body_cx + body_w
+    l_shoulder_y = shoulder_y_base + left_sh_y_offset
+    r_shoulder_y = shoulder_y_base + right_sh_y_offset
+    shoulder_r = 5
+    for sx, sy in [(l_shoulder_x, l_shoulder_y), (r_shoulder_x, r_shoulder_y)]:
+        draw.ellipse([sx - shoulder_r, sy - shoulder_r,
+                      sx + shoulder_r, sy + shoulder_r],
                      fill=ACCENT_DASH, outline=LINE_COLOR, width=1)
 
-    # --- ARMS ---
-    arm_h  = int(hr * 1.45)
+    # --- ARMS based on mode ---
+    arm_h  = int(hr * 1.40)
     arm_w  = int(hr * 0.30)
+    hand_r = int(hr * 0.22)
 
-    if arms_open:
-        # B3 WARMTH BURST: both arms spread wide, elevated, welcoming
-        # Right arm (viewer's left): reaches left and up at ~-120°
-        ang_r = math.radians(-118)
-        ar_ex = body_cx - body_w + int(arm_h * math.cos(ang_r))
-        ar_ey = shoulder_y + int(arm_h * math.sin(-ang_r))
+    def _draw_arm(start_x, start_y, angle_rad, fill_col=CARDIGAN_BASE):
+        """Draw a single arm from shoulder to hand."""
+        end_x = start_x + int(arm_h * math.cos(angle_rad))
+        end_y = start_y - int(arm_h * math.sin(angle_rad))
+        # Elbow at midpoint with slight bend
+        mid_x = (start_x + end_x) // 2
+        mid_y = (start_y + end_y) // 2
+        # Upper arm
         draw.polygon([
-            body_cx - body_w - arm_w // 2, shoulder_y,
-            body_cx - body_w + arm_w // 2, shoulder_y,
-            ar_ex + arm_w // 2, ar_ey,
-            ar_ex - arm_w // 2, ar_ey,
-        ], fill=CARDIGAN_BASE, outline=LINE_COLOR)
-        draw.ellipse([ar_ex - int(arm_w * 0.75), ar_ey,
-                      ar_ex + int(arm_w * 0.75), ar_ey + int(hr * 0.32)],
-                     fill=SKIN, outline=LINE_COLOR, width=2)
-
-        # Left arm (viewer's right): reaches right and up at ~-60° (mirror)
-        ang_l = math.radians(-62)
-        al_ex = body_cx + body_w + int(arm_h * math.cos(ang_l))
-        al_ey = shoulder_y + int(arm_h * math.sin(-ang_l))
+            start_x - arm_w // 2, start_y,
+            start_x + arm_w // 2, start_y,
+            mid_x + arm_w // 3, mid_y,
+            mid_x - arm_w // 3, mid_y,
+        ], fill=fill_col, outline=LINE_COLOR)
+        # Forearm
         draw.polygon([
-            body_cx + body_w - arm_w // 2, shoulder_y,
-            body_cx + body_w + arm_w // 2, shoulder_y,
-            al_ex + arm_w // 2, al_ey,
-            al_ex - arm_w // 2, al_ey,
-        ], fill=CARDIGAN_BASE, outline=LINE_COLOR)
-        draw.ellipse([al_ex - int(arm_w * 0.75), al_ey,
-                      al_ex + int(arm_w * 0.75), al_ey + int(hr * 0.32)],
+            mid_x - arm_w // 3, mid_y,
+            mid_x + arm_w // 3, mid_y,
+            end_x + arm_w // 4, end_y,
+            end_x - arm_w // 4, end_y,
+        ], fill=fill_col, outline=LINE_COLOR)
+        # Hand
+        draw.ellipse([end_x - hand_r, end_y - hand_r // 2,
+                      end_x + hand_r, end_y + hand_r],
                      fill=SKIN, outline=LINE_COLOR, width=2)
+        return end_x, end_y
 
-    elif hands_in_lap:
-        # B1 OBSERVING STILL: both arms angled inward toward lap, hands near center
-        # Right arm (viewer's left): angled inward-down toward lap
-        ang_r = math.radians(-30)
-        ar_ex = body_cx - body_w + int(arm_h * math.cos(ang_r))
-        ar_ey = shoulder_y + int(arm_h * math.sin(-ang_r))
+    def _draw_arm_crossed(start_x, start_y, side, body_cx_ref):
+        """Arm crossed: forearm wraps across body."""
+        # Upper arm goes down and slightly in
+        mid_x = start_x + side * int(arm_h * 0.15)
+        mid_y = start_y + int(arm_h * 0.45)
         draw.polygon([
-            body_cx - body_w - arm_w // 2, shoulder_y,
-            body_cx - body_w + arm_w // 2, shoulder_y,
-            ar_ex + arm_w // 2, ar_ey,
-            ar_ex - arm_w // 2, ar_ey,
+            start_x - arm_w // 2, start_y,
+            start_x + arm_w // 2, start_y,
+            mid_x + arm_w // 3, mid_y,
+            mid_x - arm_w // 3, mid_y,
         ], fill=CARDIGAN_BASE, outline=LINE_COLOR)
-        draw.ellipse([ar_ex - int(arm_w * 0.75), ar_ey,
-                      ar_ex + int(arm_w * 0.75), ar_ey + int(hr * 0.32)],
-                     fill=SKIN, outline=LINE_COLOR, width=2)
-
-        # Left arm (viewer's right): symmetric inward-down
-        ang_l = math.radians(-150)
-        al_ex = body_cx + body_w + int(arm_h * math.cos(ang_l))
-        al_ey = shoulder_y + int(arm_h * math.sin(-ang_l))
+        # Forearm crosses to opposite side
+        end_x = body_cx_ref - side * int(body_w * 0.60)
+        end_y = mid_y + int(arm_h * 0.10)
         draw.polygon([
-            body_cx + body_w - arm_w // 2, shoulder_y,
-            body_cx + body_w + arm_w // 2, shoulder_y,
-            al_ex + arm_w // 2, al_ey,
-            al_ex - arm_w // 2, al_ey,
+            mid_x - arm_w // 3, mid_y,
+            mid_x + arm_w // 3, mid_y,
+            end_x + arm_w // 4, end_y,
+            end_x - arm_w // 4, end_y,
         ], fill=CARDIGAN_BASE, outline=LINE_COLOR)
-        draw.ellipse([al_ex - int(arm_w * 0.75), al_ey,
-                      al_ex + int(arm_w * 0.75), al_ey + int(hr * 0.32)],
+        draw.ellipse([end_x - hand_r, end_y - hand_r // 2,
+                      end_x + hand_r, end_y + hand_r],
                      fill=SKIN, outline=LINE_COLOR, width=2)
+        return end_x, end_y
 
+    def _draw_arm_lifting(start_x, start_y, side):
+        """Arm lifting from surface — hands rising, fingers loosening."""
+        # Arm going slightly up and out — mid-gesture of leaving armrest
+        mid_x = start_x + side * int(arm_h * 0.25)
+        mid_y = start_y + int(arm_h * 0.30)
+        draw.polygon([
+            start_x - arm_w // 2, start_y,
+            start_x + arm_w // 2, start_y,
+            mid_x + arm_w // 3, mid_y,
+            mid_x - arm_w // 3, mid_y,
+        ], fill=CARDIGAN_BASE, outline=LINE_COLOR)
+        # Forearm rises slightly — hand hovering above where it was
+        end_x = mid_x + side * int(arm_h * 0.12)
+        end_y = mid_y - int(arm_h * 0.08)
+        draw.polygon([
+            mid_x - arm_w // 3, mid_y,
+            mid_x + arm_w // 3, mid_y,
+            end_x + arm_w // 4, end_y,
+            end_x - arm_w // 4, end_y,
+        ], fill=CARDIGAN_BASE, outline=LINE_COLOR)
+        # Hand with fingers spread (loosening)
+        draw.ellipse([end_x - hand_r, end_y - hand_r,
+                      end_x + hand_r, end_y + hand_r // 2],
+                     fill=SKIN, outline=LINE_COLOR, width=2)
+        # Finger lines radiating (loosening gesture)
+        for ang_off in [-0.3, 0.0, 0.3]:
+            fx = end_x + int(hand_r * 1.2 * math.cos(ang_off + (0 if side > 0 else math.pi)))
+            fy = end_y - int(hand_r * 0.6 * math.sin(ang_off + 0.5))
+            draw.line([(end_x, end_y - 2), (fx, fy)], fill=SKIN_HL, width=1)
+        return end_x, end_y
+
+    # Right arm (viewer's left side — start_x = l_shoulder_x)
+    r_hand_x, r_hand_y = 0, 0
+    l_hand_x, l_hand_y = 0, 0
+
+    if arm_right_mode == "armrest":
+        # Arm resting on armrest — hand curled, arm bent at elbow, forearm on surface
+        ang = math.radians(arm_right_angle)
+        r_hand_x, r_hand_y = _draw_arm(l_shoulder_x, l_shoulder_y, ang)
+        # Curled fingers on armrest
+        for i in range(3):
+            cx_f = r_hand_x - 2 + i * 4
+            draw.arc([cx_f - 3, r_hand_y - 2, cx_f + 3, r_hand_y + 5],
+                     start=180, end=360, fill=SKIN_SH, width=1)
+    elif arm_right_mode == "lifting":
+        r_hand_x, r_hand_y = _draw_arm_lifting(l_shoulder_x, l_shoulder_y, -1)
+    elif arm_right_mode == "open_wide":
+        ang = math.radians(-120)
+        r_hand_x, r_hand_y = _draw_arm(l_shoulder_x, l_shoulder_y, ang)
+    elif arm_right_mode == "crossed":
+        r_hand_x, r_hand_y = _draw_arm_crossed(l_shoulder_x, l_shoulder_y, -1, body_cx)
     else:
-        # Default comfortable-ready arms (natural hang with slight elbow bend)
-        ang_r = math.radians(arm_right_angle)
-        ar_ex = body_cx - body_w + int(arm_h * math.cos(ang_r))
-        ar_ey = shoulder_y + int(arm_h * math.sin(-ang_r))
-        draw.polygon([
-            body_cx - body_w - arm_w // 2, shoulder_y,
-            body_cx - body_w + arm_w // 2, shoulder_y,
-            ar_ex + arm_w // 2, ar_ey,
-            ar_ex - arm_w // 2, ar_ey,
-        ], fill=CARDIGAN_BASE, outline=LINE_COLOR)
-        draw.ellipse([ar_ex - int(arm_w * 0.75), ar_ey,
-                      ar_ex + int(arm_w * 0.75), ar_ey + int(hr * 0.32)],
-                     fill=SKIN, outline=LINE_COLOR, width=2)
+        ang = math.radians(arm_right_angle)
+        r_hand_x, r_hand_y = _draw_arm(l_shoulder_x, l_shoulder_y, ang)
 
-        ang_l = math.radians(arm_left_angle)
-        al_ex = body_cx + body_w + int(arm_h * math.cos(ang_l))
-        al_ey = shoulder_y + int(arm_h * math.sin(-ang_l))
-        draw.polygon([
-            body_cx + body_w - arm_w // 2, shoulder_y,
-            body_cx + body_w + arm_w // 2, shoulder_y,
-            al_ex + arm_w // 2, al_ey,
-            al_ex - arm_w // 2, al_ey,
-        ], fill=CARDIGAN_BASE, outline=LINE_COLOR)
-        draw.ellipse([al_ex - int(arm_w * 0.75), al_ey,
-                      al_ex + int(arm_w * 0.75), al_ey + int(hr * 0.32)],
-                     fill=SKIN, outline=LINE_COLOR, width=2)
+    # Left arm (viewer's right side — start_x = r_shoulder_x)
+    if arm_left_mode == "lap_curl":
+        # Hand loosely on lap — forearm angled inward/down
+        ang = math.radians(arm_left_angle)
+        l_hand_x, l_hand_y = _draw_arm(r_shoulder_x, r_shoulder_y, ang)
+    elif arm_left_mode == "lifting":
+        l_hand_x, l_hand_y = _draw_arm_lifting(r_shoulder_x, r_shoulder_y, 1)
+    elif arm_left_mode == "open_wide":
+        ang = math.radians(-60)
+        l_hand_x, l_hand_y = _draw_arm(r_shoulder_x, r_shoulder_y, ang)
+    elif arm_left_mode == "crossed":
+        l_hand_x, l_hand_y = _draw_arm_crossed(r_shoulder_x, r_shoulder_y, 1, body_cx)
+    else:
+        ang = math.radians(arm_left_angle)
+        l_hand_x, l_hand_y = _draw_arm(r_shoulder_x, r_shoulder_y, ang)
 
     # --- NECK ---
     neck_top  = body_top_y - neck_h
@@ -369,13 +496,14 @@ def draw_miri_figure(draw, ox, oy, head_r=22,
     head_cy  = (head_top + head_bot) // 2
     draw.ellipse([head_cx - hw, head_top, head_cx + hw, head_bot],
                  fill=SKIN, outline=LINE_COLOR, width=lw)
-    hl_r = max(4, int(hr * 0.22))
-    draw.ellipse([head_cx - hl_r // 2, head_top + int(hr * 0.28),
-                  head_cx + hl_r // 2, head_top + int(hr * 0.28) + hl_r // 2],
+    # Forehead highlight
+    hl_r = max(5, int(hr * 0.20))
+    draw.ellipse([head_cx - hl_r // 2, head_top + int(hr * 0.26),
+                  head_cx + hl_r // 2, head_top + int(hr * 0.26) + hl_r // 2],
                  fill=SKIN_HL)
 
     # --- HAIR (silver bun) ---
-    bun_cy  = head_top - int(hr * 0.18)
+    bun_cy  = head_top - int(hr * 0.16)
     bun_rx  = int(hr * 0.55)
     bun_ry  = int(hr * 0.32)
     draw.ellipse([head_cx - bun_rx, bun_cy - bun_ry,
@@ -387,6 +515,7 @@ def draw_miri_figure(draw, ox, oy, head_r=22,
     draw.arc([head_cx - bun_rx + 4, bun_cy,
               head_cx + bun_rx - 4, bun_cy + bun_ry + 2],
              start=0, end=180, fill=HAIR_SH, width=2)
+    # Wisps
     for side, wx_off, wy_off in [
         (-1, int(hw * 0.72), int(hr * 0.20)),
         ( 1, int(hw * 0.68), int(hr * 0.14)),
@@ -404,8 +533,8 @@ def draw_miri_figure(draw, ox, oy, head_r=22,
     # Cheek blush
     for side in [-1, 1]:
         blush_cx = head_cx + side * int(hw * 0.52)
-        draw.ellipse([blush_cx - int(hr * 0.22), face_cy + int(hr * 0.02),
-                      blush_cx + int(hr * 0.22), face_cy + int(hr * 0.26)],
+        draw.ellipse([blush_cx - int(hr * 0.20), face_cy + int(hr * 0.02),
+                      blush_cx + int(hr * 0.20), face_cy + int(hr * 0.24)],
                      fill=CHEEK_BLUSH)
 
     # Eyebrows
@@ -421,48 +550,84 @@ def draw_miri_figure(draw, ox, oy, head_r=22,
     eye_sep = int(hw * 0.46)
     eye_rx  = int(hr * 0.20)
     eye_ry  = int(hr * 0.15)
-    for side in [-1, 1]:
-        ex = head_cx + side * eye_sep
-        ey = face_cy - int(hr * 0.10)
-        draw.ellipse([ex - eye_rx, ey - eye_ry, ex + eye_rx, ey + eye_ry],
-                     fill=EYE_WHITE, outline=LINE_COLOR, width=2)
-        ir = int(eye_rx * 0.65)
-        draw.ellipse([ex - ir, ey - min(ir, eye_ry - 1),
-                      ex + ir, ey + min(ir, eye_ry - 1)], fill=EYE_IRIS)
-        pr = int(ir * 0.52)
-        draw.ellipse([ex - pr, ey - pr, ex + pr, ey + pr], fill=EYE_PUPIL)
-        draw.ellipse([ex - int(ir * 0.30) - 2, ey - int(ir * 0.38) - 2,
-                      ex - int(ir * 0.30) + 3, ey - int(ir * 0.38) + 3],
-                     fill=EYE_HL)
-        draw.arc([ex - eye_rx, ey - eye_ry, ex + eye_rx, ey + int(eye_ry * 0.4)],
-                 start=200, end=340, fill=LINE_COLOR, width=3)
-        # Crow's feet
-        cw_x = ex + side * (eye_rx + 2)
-        draw.arc([cw_x - 5, ey - 3, cw_x + 5, ey + 6],
-                 start=0 if side == 1 else 180, end=90 if side == 1 else 270,
-                 fill=LINE_COLOR, width=1)
+
+    if eyes_crinkle:
+        # Full crinkle: eyes nearly shut, crinkle lines above and below
+        for side in [-1, 1]:
+            ex = head_cx + side * eye_sep
+            ey = face_cy - int(hr * 0.10)
+            draw.arc([ex - eye_rx, ey - 2, ex + eye_rx, ey + 4],
+                     start=200, end=340, fill=LINE_COLOR, width=3)
+            # Crinkle above
+            draw.arc([ex - int(eye_rx * 1.1), ey - int(hr * 0.12),
+                      ex + int(eye_rx * 1.1), ey + 2],
+                     start=185, end=355, fill=CRINKLE_COLOR, width=1)
+            # Crinkle below
+            draw.arc([ex - int(eye_rx * 0.8), ey + 1,
+                      ex + int(eye_rx * 0.8), ey + int(hr * 0.08)],
+                     start=10, end=170, fill=CRINKLE_COLOR, width=1)
+            # Extra crow's feet
+            cw_x = ex + side * (eye_rx + 3)
+            for dy in [-3, 0, 3]:
+                draw.line([(cw_x, ey + dy), (cw_x + side * 5, ey + dy - 2)],
+                          fill=CRINKLE_COLOR, width=1)
+    else:
+        for side in [-1, 1]:
+            ex = head_cx + side * eye_sep
+            ey = face_cy - int(hr * 0.10)
+            draw.ellipse([ex - eye_rx, ey - eye_ry, ex + eye_rx, ey + eye_ry],
+                         fill=EYE_WHITE, outline=LINE_COLOR, width=2)
+            ir = int(eye_rx * 0.65)
+            draw.ellipse([ex - ir, ey - min(ir, eye_ry - 1),
+                          ex + ir, ey + min(ir, eye_ry - 1)], fill=EYE_IRIS)
+            pr = int(ir * 0.52)
+            draw.ellipse([ex - pr, ey - pr, ex + pr, ey + pr], fill=EYE_PUPIL)
+            draw.ellipse([ex - int(ir * 0.30) - 2, ey - int(ir * 0.38) - 2,
+                          ex - int(ir * 0.30) + 3, ey - int(ir * 0.38) + 3],
+                         fill=EYE_HL)
+            # Upper eyelid (heavier than Luma's — aged, calm)
+            draw.arc([ex - eye_rx, ey - eye_ry, ex + eye_rx, ey + int(eye_ry * 0.4)],
+                     start=200, end=340, fill=LINE_COLOR, width=3)
+            # Crow's feet (always present)
+            cw_x = ex + side * (eye_rx + 2)
+            draw.arc([cw_x - 5, ey - 3, cw_x + 5, ey + 6],
+                     start=0 if side == 1 else 180, end=90 if side == 1 else 270,
+                     fill=LINE_COLOR, width=1)
 
     # Nose
     draw.arc([head_cx - int(hr * 0.10), face_cy + int(hr * 0.14),
               head_cx + int(hr * 0.10), face_cy + int(hr * 0.30)],
              start=130, end=310, fill=LINE_COLOR, width=3)
 
-    # Mouth
-    draw.arc([head_cx - int(hw * 0.30), face_cy + int(hr * 0.28),
-              head_cx + int(hw * 0.30), face_cy + int(hr * 0.54)],
+    # Mouth with variable smile
+    mouth_top = face_cy + int(hr * 0.28)
+    mouth_bot = mouth_top + int(hr * 0.26 * smile_amount)
+    mouth_hw = int(hw * 0.30 * (0.8 + 0.4 * smile_amount))
+    draw.arc([head_cx - mouth_hw, mouth_top,
+              head_cx + mouth_hw, mouth_bot],
              start=10, end=170, fill=LINE_COLOR, width=3)
 
-    # Smile lines
+    # Smile lines (always present, deepen with smile_amount)
+    sl_w = max(1, int(2 * smile_amount + 0.5))
     for side in [-1, 1]:
         smx = head_cx + side * int(hw * 0.26)
         draw.arc([smx - 4, face_cy + int(hr * 0.25),
                   smx + 4, face_cy + int(hr * 0.56)],
                  start=200 if side == -1 else 340, end=320 if side == -1 else 100,
-                 fill=LINE_COLOR, width=1)
+                 fill=LINE_COLOR, width=sl_w)
 
-    return (head_cx, head_cy, hr, body_cx, body_bot_y, body_w,
-            body_top_y, shoulder_y, cardigan_bot, cardigan_w_bot,
-            ll_cx, rl_cx)
+    return {
+        "head_cx": head_cx, "head_cy": head_cy, "head_top": head_top, "hr": hr,
+        "body_cx": body_cx, "body_bot_y": body_bot_y, "body_w": body_w,
+        "body_top_y": body_top_y,
+        "l_shoulder_x": l_shoulder_x, "l_shoulder_y": l_shoulder_y,
+        "r_shoulder_x": r_shoulder_x, "r_shoulder_y": r_shoulder_y,
+        "cardigan_bot": cardigan_bot, "cardigan_w_bot": cardigan_w_bot,
+        "ll_cx": ll_cx, "rl_cx": rl_cx,
+        "lf_cx": lf_cx, "rf_cx": rf_cx, "fy": fy,
+        "r_hand_x": r_hand_x, "r_hand_y": r_hand_y,
+        "l_hand_x": l_hand_x, "l_hand_y": l_hand_y,
+    }
 
 
 # ------------------------------------------------------------------ PANEL DRAWING
@@ -481,256 +646,332 @@ def draw_panel_bg(draw, col, title, subtitle="", beat_label=""):
 
 
 def draw_panel0_observing_still(img, draw):
-    """Panel 0: OBSERVING STILL — hands in lap, minimal movement, held attention."""
+    """Panel 0: OBSERVING STILL — weight on RIGHT foot, left hand curled on armrest,
+    right hand loosely on lap. Contained but present. Not default — HELD stillness."""
     col = 0
     px, py = panel_origin(col)
-    draw_panel_bg(draw, col, "OBSERVING STILL", "hands in lap — held attention", beat_label="B1")
+    draw_panel_bg(draw, col, "OBSERVING STILL",
+                  "weight R, armrest curl, held attention", beat_label="B1")
 
     fig_x = px + PANEL_W // 2
-    fig_y = py + PANEL_H - 48
+    fig_y = py + PANEL_H - 40
 
-    (hcx, hcy, hr, bcx, bby, bw, bty, shy,
-     cdn_bot, cdn_w,
-     ll_cx, rl_cx) = draw_miri_figure(
-        draw, fig_x, fig_y, head_r=22,
-        body_lean=0, head_tilt=0,
-        weight_back=False,
-        hands_in_lap=True)
+    fig = draw_miri_figure(
+        draw, fig_x, fig_y, head_r=32,
+        body_lean=0, head_tilt=-2,   # very slight head tilt — she's watching
+        hip_shift=4,                 # weight shifted right
+        shoulder_drop_side=-1,       # left shoulder drops slightly (relaxed side)
+        left_foot_weight=0.30,       # 30% left, 70% right — RIGHT is planted
+        arm_right_mode="armrest",    # right arm (viewer left): curled on armrest
+        arm_right_angle=-40,
+        arm_left_mode="lap_curl",    # left arm (viewer right): loosely in lap
+        arm_left_angle=-145,
+        spine_curve=0,               # erect — stillness is effort
+        smile_amount=0.3)            # neutral-warm resting face
     draw = ImageDraw.Draw(img)
 
     # Ground line
-    draw.line([(px + 12, fig_y), (px + PANEL_W - 12, fig_y)], fill=ACCENT_DASH, width=1)
+    draw.line([(px + 10, fig_y), (px + PANEL_W - 10, fig_y)], fill=ACCENT_DASH, width=1)
 
-    # Vertical centerline (absolute stillness — visual axis)
-    draw.line([(bcx, bty - int(hr * 2.2)), (bcx, fig_y + 2)], fill=ACCENT_DASH, width=1)
-    draw.text((bcx + 4, bty + int(hr * 0.3)), "CL — STILL", fill=ACCENT_DASH)
+    # CG marker — offset right (matches weight)
+    cg_x = fig["body_cx"] + 3
+    cg_y = (fig["body_top_y"] + fig["body_bot_y"]) // 2
+    draw_cg_marker(draw, cg_x, cg_y, "CG (R)")
 
-    # Zero secondary motion annotation
-    label_box(draw, px + 8, py + PANEL_H - 90, "ZERO DRIFT",
+    # Weight distribution bar
+    draw_weight_bar(draw, px + 8, fig_y + 4, 80, 0.30)
+
+    # Shoulder drop annotation
+    draw_arrow(draw, fig["l_shoulder_x"] - 2, fig["l_shoulder_y"],
+               fig["l_shoulder_x"] - 16, fig["l_shoulder_y"] + 8,
+               color=BEAT_COLOR, width=1, head=5)
+    draw.text((px + 8, fig["l_shoulder_y"] - 4), "L drop", fill=BEAT_COLOR)
+
+    # "HELD" stillness annotation — this is not relaxation, it is attention
+    label_box(draw, px + PANEL_W - 88, py + 6, "HELD STILL",
               bg=(40, 30, 20), fg=(200, 190, 170))
-    draw.text((px + 8, py + PANEL_H - 78), "no hover, no idle sway", fill=ACCENT_DASH)
-    draw.text((px + 8, py + PANEL_H - 66), "cardigan: motionless", fill=ACCENT_DASH)
+    draw.text((px + PANEL_W - 88, py + 26), "NOT default —", fill=ACCENT_DASH)
+    draw.text((px + PANEL_W - 88, py + 38), "effort of stillness", fill=ACCENT_DASH)
 
-    # Attention direction annotation (she's watching something)
-    draw_arrow(draw, hcx + hr + 2, hcy, hcx + hr + 22, hcy + 4,
-               color=BEAT_COLOR, width=2, head=6)
-    draw.text((hcx + hr + 24, hcy - 8), "watching —", fill=BEAT_COLOR)
-    draw.text((hcx + hr + 24, hcy + 4), "held gaze", fill=BEAT_COLOR)
+    # Gaze direction
+    hx, hy = fig["head_cx"], fig["head_cy"]
+    hr = fig["hr"]
+    draw_arrow(draw, hx + hr + 2, hy, hx + hr + 18, hy + 3,
+               color=BEAT_COLOR, width=2, head=5)
+    draw.text((hx + hr + 20, hy - 6), "watching", fill=BEAT_COLOR)
 
-    # Hands in lap construction detail
-    draw.text((px + 8, bby - 8), "hands resting", fill=ACCENT_DASH)
-    draw.text((px + 8, bby + 4), "near lap", fill=ACCENT_DASH)
+    # Armrest hand detail annotation
+    draw.text((px + 6, fig["r_hand_y"] - 12), "fingers curled", fill=MOTION_ARROW)
+    draw.text((px + 6, fig["r_hand_y"] + 2), "on armrest", fill=MOTION_ARROW)
 
-    # Timing block
-    timing_y = py + 8
-    draw.text((px + 8, timing_y),      "TIMING", fill=LABEL_BG)
-    draw.text((px + 8, timing_y + 13), "Hold: indefinite", fill=BEAT_COLOR)
-    draw.text((px + 8, timing_y + 25), "No drift — truly still", fill=BEAT_COLOR)
-    draw.text((px + 8, timing_y + 37), "Blink rate: slow (calm)", fill=MOTION_ARROW)
-    draw.text((px + 8, timing_y + 49), "Breath: visible (slight", fill=ACCENT_DASH)
-    draw.text((px + 8, timing_y + 61), "  shoulder rise, +0.5px)", fill=ACCENT_DASH)
+    # Timing
+    draw.text((px + 8, py + 56), "Hold: indefinite", fill=BEAT_COLOR)
+    draw.text((px + 8, py + 68), "Blink: slow (calm)", fill=BEAT_COLOR)
+    draw.text((px + 8, py + 80), "Breath: shoulder +0.5px", fill=MOTION_ARROW)
+    draw.text((px + 8, py + 92), "Cardigan: motionless", fill=ACCENT_DASH)
 
 
 def draw_panel1_recognition(img, draw):
-    """Panel 1: RECOGNITION — slight forward lean, hands loosen, micro head tilt."""
+    """Panel 1: RECOGNITION — weight shifts forward, breath catch visible in shoulder rise,
+    hands LIFT from surfaces, spine begins to engage. The body CHANGES."""
     col = 1
     px, py = panel_origin(col)
-    draw_panel_bg(draw, col, "RECOGNITION", "she sees what matters — lean begins", beat_label="B2")
+    draw_panel_bg(draw, col, "RECOGNITION",
+                  "weight fwd, hands lift, breath catch", beat_label="B2")
 
     fig_x = px + PANEL_W // 2
-    fig_y = py + PANEL_H - 48
+    fig_y = py + PANEL_H - 40
 
-    (hcx, hcy, hr, bcx, bby, bw, bty, shy,
-     cdn_bot, cdn_w,
-     ll_cx, rl_cx) = draw_miri_figure(
-        draw, fig_x, fig_y, head_r=22,
-        body_lean=-2, head_tilt=-3,      # subtle forward lean, head tilts slightly
-        arm_right_angle=-22, arm_left_angle=-158,
-        weight_back=False)
+    fig = draw_miri_figure(
+        draw, fig_x, fig_y, head_r=32,
+        body_lean=-3,                # forward lean begins — she's moving toward
+        head_tilt=-4,                # head tilt deepens — she sees it
+        hip_shift=2,                 # weight shifting forward from right
+        shoulder_drop_side=0,        # shoulders RISE (breath catch) — both up
+        left_foot_weight=0.45,       # weight equalizing — about to shift forward
+        arm_right_mode="lifting",    # right hand lifting OFF armrest
+        arm_left_mode="lifting",     # left hand lifting FROM lap
+        spine_curve=6,               # spine begins forward engagement curve
+        smile_amount=0.35)           # mouth hasn't changed yet — recognition is in body first
     draw = ImageDraw.Draw(img)
 
     # Ground line
-    draw.line([(px + 12, fig_y), (px + PANEL_W - 12, fig_y)], fill=ACCENT_DASH, width=1)
+    draw.line([(px + 10, fig_y), (px + PANEL_W - 10, fig_y)], fill=ACCENT_DASH, width=1)
+
+    # CG marker — shifted forward
+    cg_x = fig["body_cx"] - 2
+    cg_y = (fig["body_top_y"] + fig["body_bot_y"]) // 2
+    draw_cg_marker(draw, cg_x, cg_y, "CG (fwd)")
+
+    # Weight distribution
+    draw_weight_bar(draw, px + 8, fig_y + 4, 80, 0.45)
 
     # Forward lean annotation
-    draw_arrow(draw, bcx - 4, bty + 10, bcx - 16, bty - 2,
+    draw_arrow(draw, fig["body_cx"] - 4, fig["body_top_y"] + 10,
+               fig["body_cx"] - 18, fig["body_top_y"] - 4,
                color=MOTION_ARROW, width=2, head=6)
-    draw.text((px + 8, py + PANEL_H - 80), "-2° lean begins", fill=MOTION_ARROW)
-    draw.text((px + 8, py + PANEL_H - 68), "beat 1.5 (head first)", fill=BEAT_COLOR)
+    draw.text((px + 6, py + PANEL_H - 92), "-3\u00b0 lean begins", fill=MOTION_ARROW)
+    draw.text((px + 6, py + PANEL_H - 80), "beat 1.5 (head first)", fill=BEAT_COLOR)
 
-    # Head tilt label
-    draw_arrow(draw, hcx - hr - 2, hcy - int(hr * 0.5),
-               hcx - hr - 18, hcy - int(hr * 0.7),
-               color=BEAT_COLOR, width=2, head=6)
-    draw.text((px + 8, hcy - int(hr * 0.85)), "-3° micro", fill=BEAT_COLOR)
-    draw.text((px + 8, hcy - int(hr * 0.73)), "head tilt", fill=BEAT_COLOR)
+    # Head tilt deepens
+    hx, hy = fig["head_cx"], fig["head_cy"]
+    hr = fig["hr"]
+    draw_arrow(draw, hx - hr - 2, hy - int(hr * 0.5),
+               hx - hr - 16, hy - int(hr * 0.65),
+               color=BEAT_COLOR, width=2, head=5)
+    draw.text((px + 6, hy - int(hr * 0.75)), "-4\u00b0 head", fill=BEAT_COLOR)
 
-    # Hands loosening annotation
-    draw.text((bcx - bw + 4, bby + 2), "hands open", fill=MOTION_ARROW)
-    draw.text((bcx - bw + 4, bby + 14), "from lap (beat 2)", fill=MOTION_ARROW)
+    # Breath catch annotation — shoulders rise
+    draw.text((px + PANEL_W - 84, py + 6), "BREATH CATCH", fill=MOTION_ARROW)
+    draw.text((px + PANEL_W - 84, py + 18), "shoulders rise", fill=MOTION_ARROW)
+    draw.text((px + PANEL_W - 84, py + 30), "+3px simultaneous", fill=MOTION_ARROW)
 
-    # Cardigan lag annotation — begins to move after lean
-    draw_arrow(draw, bcx + cdn_w - 4, cdn_bot - 10,
-               bcx + cdn_w + 12, cdn_bot + 8,
-               color=MOTION_ARROW, width=2, head=6)
-    draw.text((bcx + cdn_w + 14, cdn_bot - 4), "cardigan lag", fill=MOTION_ARROW)
-    draw.text((bcx + cdn_w + 14, cdn_bot + 8), "+2.0 beats", fill=MOTION_ARROW)
+    # Hands lifting annotation
+    draw.text((px + 6, fig["r_hand_y"] - 18), "hands LIFT", fill=MOTION_ARROW)
+    draw.text((px + 6, fig["r_hand_y"] - 6), "fingers loosen", fill=MOTION_ARROW)
 
-    # Timing block
-    timing_y = py + 8
-    draw.text((px + 8, timing_y),      "TIMING", fill=LABEL_BG)
-    draw.text((px + 8, timing_y + 13), "Head tilt: beat 1 (leads)", fill=BEAT_COLOR)
-    draw.text((px + 8, timing_y + 25), "Body lean: beat 1.5", fill=MOTION_ARROW)
-    draw.text((px + 8, timing_y + 37), "Hands open: beat 2", fill=MOTION_ARROW)
-    draw.text((px + 8, timing_y + 49), "Cardigan: beat 3.5", fill=MOTION_ARROW)
-    draw.text((px + 8, timing_y + 61), "Eyes: widen slightly", fill=BEAT_COLOR)
+    # Spine engagement annotation
+    spine_y = (fig["body_top_y"] + fig["body_bot_y"]) // 2
+    draw.text((fig["body_cx"] + fig["body_w"] + 4, spine_y - 4),
+              "spine 6\u00b0", fill=ACCENT_DASH)
+    draw.text((fig["body_cx"] + fig["body_w"] + 4, spine_y + 8),
+              "engages", fill=ACCENT_DASH)
+
+    # Cardigan lag
+    draw_arrow(draw, fig["body_cx"] + fig["cardigan_w_bot"] - 4,
+               fig["cardigan_bot"] - 8,
+               fig["body_cx"] + fig["cardigan_w_bot"] + 10,
+               fig["cardigan_bot"] + 6,
+               color=MOTION_ARROW, width=2, head=5)
+    draw.text((fig["body_cx"] + fig["cardigan_w_bot"] + 12,
+               fig["cardigan_bot"] - 6), "lag +2.0b", fill=MOTION_ARROW)
+
+    # Timing
+    draw.text((px + 8, py + 44), "Head tilt: beat 1", fill=BEAT_COLOR)
+    draw.text((px + 8, py + 56), "Body lean: beat 1.5", fill=BEAT_COLOR)
+    draw.text((px + 8, py + 68), "Hands lift: beat 2", fill=MOTION_ARROW)
+    draw.text((px + 8, py + 80), "Cardigan: beat 3.5", fill=MOTION_ARROW)
+    draw.text((px + 8, py + 92), "Eyes widen: beat 1", fill=BEAT_COLOR)
 
 
 def draw_panel2_warmth_burst(img, draw):
-    """Panel 2: WARMTH BURST — wide open-arm gesture, eyes crinkle, SUNLIT_AMBER glow."""
+    """Panel 2: WARMTH BURST — full body, spine arches forward, arms open from SHOULDER
+    rotation, weight on balls of feet, SUNLIT_AMBER glow. SPINE PARTICIPATES."""
     col = 2
     px, py = panel_origin(col)
-    draw_panel_bg(draw, col, "WARMTH BURST", "open arms — SUNLIT_AMBER glow", beat_label="B3")
+    draw_panel_bg(draw, col, "WARMTH BURST",
+                  "spine forward, arms from shoulders, glow", beat_label="B3")
 
     fig_x = px + PANEL_W // 2
-    fig_y = py + PANEL_H - 48
+    fig_y = py + PANEL_H - 40
 
-    # Draw SUNLIT_AMBER radial glow BEHIND figure (draw first so figure overlays it)
-    # Glow centered on Miri's torso/chest — warmth emanates from her
+    # SUNLIT_AMBER radial glow BEHIND figure — warmth radiates outward
     glow_cx = fig_x
-    glow_cy = fig_y - 90    # approx torso center
-    for radius, alpha_rgb in [
-        (72, (245, 220, 160)),   # inner warm bright
-        (105, (240, 200, 130)),  # mid amber
-        (130, (232, 180, 105)),  # outer diffuse
+    glow_cy = fig_y - 110  # chest level for larger figure
+    for radius, color in [
+        (95, SUNLIT_PALE),
+        (130, (240, 200, 130)),
+        (160, (232, 180, 105)),
     ]:
         draw.ellipse([glow_cx - radius, glow_cy - radius,
                       glow_cx + radius, glow_cy + radius],
-                     fill=alpha_rgb, outline=None)
-    # Re-draw panel background border on top of glow (keep panel clean outside glow)
+                     fill=color, outline=None)
+    # Re-draw panel border on top of glow
     draw.rectangle([px, py, px + PANEL_W, py + PANEL_H], fill=None, outline=PANEL_BORDER, width=1)
 
-    (hcx, hcy, hr, bcx, bby, bw, bty, shy,
-     cdn_bot, cdn_w,
-     ll_cx, rl_cx) = draw_miri_figure(
-        draw, fig_x, fig_y, head_r=22,
-        body_lean=0, head_tilt=0,        # open and centered — she gives the space
-        weight_back=False,
-        arms_open=True)
+    fig = draw_miri_figure(
+        draw, fig_x, fig_y, head_r=32,
+        body_lean=-2,                # slight forward lean — spine is the main story
+        head_tilt=0,                 # head centered — she gives openly
+        hip_shift=0,                 # weight centered and forward
+        shoulder_drop_side=0,        # both shoulders BACK and DOWN (chest opens)
+        left_foot_weight=0.50,       # even weight — balls of both feet
+        arm_right_mode="open_wide",  # arms open WIDE from shoulder rotation
+        arm_left_mode="open_wide",
+        spine_curve=14,              # STRONG forward spine curve — chest opens
+        eyes_crinkle=True,           # eyes crinkle fully closed at peak
+        smile_amount=1.0)            # full smile
     draw = ImageDraw.Draw(img)
 
     # Ground line
-    draw.line([(px + 12, fig_y), (px + PANEL_W - 12, fig_y)], fill=ACCENT_DASH, width=1)
+    draw.line([(px + 10, fig_y), (px + PANEL_W - 10, fig_y)], fill=ACCENT_DASH, width=1)
+
+    # CG marker — forward
+    cg_x = fig["body_cx"] - 4
+    cg_y = (fig["body_top_y"] + fig["body_bot_y"]) // 2
+    draw_cg_marker(draw, cg_x, cg_y, "CG fwd")
 
     # Glow annotation
-    label_box(draw, px + 8, py + 8, "SUNLIT_AMBER HALO",
+    label_box(draw, px + 6, py + 6, "SUNLIT_AMBER",
               bg=(140, 80, 20), fg=(248, 230, 180))
-    draw.text((px + 8, py + 30), "212,146,58 — Real World warm", fill=SUNLIT_AMBER)
-    draw.text((px + 8, py + 42), "NO Glitch palette here", fill=ACCENT_DASH)
+    draw.text((px + 6, py + 28), "212,146,58", fill=SUNLIT_AMBER)
+    draw.text((px + 6, py + 40), "Real World ONLY", fill=ACCENT_DASH)
 
-    # Eye crinkle annotation (eyes crinkle fully closed on B3 peak)
-    draw.text((hcx + hr + 4, hcy - int(hr * 0.4)), "eyes crinkle", fill=CRINKLE_COLOR)
-    draw.text((hcx + hr + 4, hcy - int(hr * 0.28)), "fully closed", fill=CRINKLE_COLOR)
-    draw.text((hcx + hr + 4, hcy - int(hr * 0.16)), "at B3 peak", fill=CRINKLE_COLOR)
-    # Draw crinkle lines on eyes (override default eye draw — eyes nearly shut)
-    eye_sep = int(22 * 0.46)
-    for side in [-1, 1]:
-        ex = hcx + side * eye_sep
-        ey = hcy - int(22 * 0.10)
-        # Near-closed eye: just a curved slit
-        draw.arc([ex - int(22 * 0.20), ey - 2, ex + int(22 * 0.20), ey + 4],
-                 start=200, end=340, fill=LINE_COLOR, width=3)
-        # Additional crinkle above
-        draw.arc([ex - int(22 * 0.22), ey - int(22 * 0.12),
-                  ex + int(22 * 0.22), ey + 2],
-                 start=185, end=355, fill=CRINKLE_COLOR, width=1)
-
-    # Open arms annotation
-    draw_arrow(draw, bcx - bw - 8, shy,
-               bcx - bw - 22, shy - 10,
+    # Spine annotation — THE key change
+    spine_y = (fig["body_top_y"] + fig["body_bot_y"]) // 2
+    draw_arrow(draw, fig["body_cx"] + fig["body_w"] + 6, spine_y,
+               fig["body_cx"] + fig["body_w"] + 20, spine_y - 8,
                color=MOTION_ARROW, width=2, head=6)
-    draw.text((px + 8, py + PANEL_H - 90), "arms open wide", fill=MOTION_ARROW)
-    draw.text((px + 8, py + PANEL_H - 78), "elevated at shoulder level", fill=MOTION_ARROW)
+    draw.text((fig["body_cx"] + fig["body_w"] + 8, spine_y - 20),
+              "spine 14\u00b0 fwd", fill=MOTION_ARROW)
+    draw.text((fig["body_cx"] + fig["body_w"] + 8, spine_y - 8),
+              "CHEST OPENS", fill=MOTION_ARROW)
 
-    # Cardigan hem flutter annotation
-    draw_arrow(draw, bcx, cdn_bot - 6, bcx - 10, cdn_bot + 10,
+    # Shoulder rotation annotation
+    draw.text((px + 6, fig["l_shoulder_y"] - 12), "shoulders ROTATE", fill=MOTION_ARROW)
+    draw.text((px + 6, fig["l_shoulder_y"]), "back + down", fill=MOTION_ARROW)
+    draw.text((px + 6, fig["l_shoulder_y"] + 12), "arms follow", fill=MOTION_ARROW)
+
+    # Eye crinkle annotation
+    hx, hy = fig["head_cx"], fig["head_cy"]
+    hr = fig["hr"]
+    draw.text((hx + hr + 4, hy - int(hr * 0.35)), "eyes crinkle", fill=CRINKLE_COLOR)
+    draw.text((hx + hr + 4, hy - int(hr * 0.23)), "fully closed", fill=CRINKLE_COLOR)
+    draw.text((hx + hr + 4, hy - int(hr * 0.11)), "at PEAK", fill=CRINKLE_COLOR)
+
+    # Cardigan hem flutter
+    draw_arrow(draw, fig["body_cx"], fig["cardigan_bot"] - 4,
+               fig["body_cx"] - 8, fig["cardigan_bot"] + 10,
                color=MOTION_ARROW, width=2, head=5)
-    draw.text((bcx - cdn_w + 4, cdn_bot + 12), "cardigan hem", fill=MOTION_ARROW)
-    draw.text((bcx - cdn_w + 4, cdn_bot + 24), "flutter (lag +2.0b)", fill=MOTION_ARROW)
 
-    # Timing block
-    timing_y = py + 56
-    draw.text((px + 8, timing_y),      "TIMING", fill=LABEL_BG)
-    draw.text((px + 8, timing_y + 13), "Arms spread: beat 1", fill=BEAT_COLOR)
-    draw.text((px + 8, timing_y + 25), "Eyes crinkle: beat 1.5", fill=CRINKLE_COLOR)
-    draw.text((px + 8, timing_y + 37), "Glow peak: beat 2", fill=(180, 120, 40))
-    draw.text((px + 8, timing_y + 49), "Cardigan flutter: beat 3", fill=MOTION_ARROW)
-    draw.text((px + 8, timing_y + 61), "HOLD spread: 4-6 frames", fill=BEAT_COLOR)
+    # Timing
+    ty = py + 54
+    draw.text((px + 8, ty), "Arms spread: beat 1", fill=BEAT_COLOR)
+    draw.text((px + 8, ty + 12), "Eyes crinkle: beat 1.5", fill=CRINKLE_COLOR)
+    draw.text((px + 8, ty + 24), "Glow peak: beat 2", fill=(180, 120, 40))
+    draw.text((px + 8, ty + 36), "Cardigan: beat 3", fill=MOTION_ARROW)
+    draw.text((px + 8, ty + 48), "HOLD: 4-6 frames", fill=BEAT_COLOR)
 
 
 def draw_panel3_fond_settle(img, draw):
-    """Panel 3: FOND SETTLE — arms lower, slight smile, back to quiet."""
+    """Panel 3: FOND SETTLE — NOT a return to B1. Arms cross loosely (different from B1
+    armrest+lap). Head tilt lingers. Smile earned. Weight settles back but stance is wider.
+    This is a person who just GAVE something and is landing from it."""
     col = 3
     px, py = panel_origin(col)
-    draw_panel_bg(draw, col, "FOND SETTLE", "arms lower — back to quiet", beat_label="B4")
+    draw_panel_bg(draw, col, "FOND SETTLE",
+                  "earned rest, NOT B1 — arms crossed, smile stays", beat_label="B4")
 
     fig_x = px + PANEL_W // 2
-    fig_y = py + PANEL_H - 48
+    fig_y = py + PANEL_H - 40
 
-    (hcx, hcy, hr, bcx, bby, bw, bty, shy,
-     cdn_bot, cdn_w,
-     ll_cx, rl_cx) = draw_miri_figure(
-        draw, fig_x, fig_y, head_r=22,
-        body_lean=0, head_tilt=0,
-        arm_right_angle=-32, arm_left_angle=-148,  # arms partially lowered toward crossed/lap
-        weight_back=False)
+    fig = draw_miri_figure(
+        draw, fig_x, fig_y, head_r=32,
+        body_lean=1,                 # slight BACK lean — settling from forward
+        head_tilt=-2,                # head tilt LINGERS from B2 — warmth remains
+        hip_shift=3,                 # weight settles right again but not as far as B1
+        shoulder_drop_side=1,        # RIGHT shoulder drops (opposite from B1)
+        left_foot_weight=0.35,       # similar to B1 but not identical
+        arm_right_mode="crossed",    # arms loosely crossed — different from B1 armrest
+        arm_left_mode="crossed",
+        spine_curve=-2,              # slight back curve — settling
+        smile_amount=0.7)            # smile EARNED — bigger than B1's 0.3
     draw = ImageDraw.Draw(img)
 
     # Ground line
-    draw.line([(px + 12, fig_y), (px + PANEL_W - 12, fig_y)], fill=ACCENT_DASH, width=1)
+    draw.line([(px + 10, fig_y), (px + PANEL_W - 10, fig_y)], fill=ACCENT_DASH, width=1)
 
-    # Return to still annotation
-    draw.line([(bcx, bty - int(hr * 2.2)), (bcx, fig_y + 2)], fill=ACCENT_DASH, width=1)
-    draw.text((bcx + 4, bty + int(hr * 0.3)), "CL — settles", fill=ACCENT_DASH)
+    # CG marker — back from B3
+    cg_x = fig["body_cx"] + 2
+    cg_y = (fig["body_top_y"] + fig["body_bot_y"]) // 2
+    draw_cg_marker(draw, cg_x, cg_y, "CG (back)")
 
-    # Ghosted open-arm position (where arms were at B3 — showing the return arc)
-    ghost_arm_h = int(22 * 1.45)
-    ghost_arm_w = int(22 * 0.30)
-    ang_ghost_r = math.radians(-118)
-    gr_ex = bcx - bw + int(ghost_arm_h * math.cos(ang_ghost_r))
-    gr_ey = shy + int(ghost_arm_h * math.sin(-ang_ghost_r))
-    for yy in range(0, ghost_arm_h, 6):
-        frac = yy / ghost_arm_h
-        gx = int(bcx - bw + frac * (gr_ex - (bcx - bw)))
-        gy = int(shy + frac * (gr_ey - shy))
-        draw.ellipse([gx - 2, gy - 2, gx + 2, gy + 2], fill=ACCENT_DASH, outline=None)
-    draw.text((gr_ex - 40, gr_ey - 12), "B3 pos", fill=ACCENT_DASH)
+    # Weight distribution
+    draw_weight_bar(draw, px + 8, fig_y + 4, 80, 0.35)
 
-    # Smile remaining annotation (slight smile persists — the warmth doesn't fully leave)
-    draw.text((hcx + hr + 4, hcy + int(hr * 0.30)), "slight smile", fill=BEAT_COLOR)
-    draw.text((hcx + hr + 4, hcy + int(hr * 0.42)), "remains —", fill=BEAT_COLOR)
-    draw.text((hcx + hr + 4, hcy + int(hr * 0.54)), "warmth lingers", fill=BEAT_COLOR)
+    # Ghosted B3 open-arm position (where arms were — the arc they traveled)
+    ghost_color = (200, 190, 175, 128)  # translucent accent
+    ghost_arm_h = int(32 * 1.40)
+    for side, ang_deg in [(-1, -120), (1, -60)]:
+        ang = math.radians(ang_deg)
+        sh_x = fig["l_shoulder_x"] if side == -1 else fig["r_shoulder_x"]
+        sh_y = fig["l_shoulder_y"] if side == -1 else fig["r_shoulder_y"]
+        end_x = sh_x + int(ghost_arm_h * math.cos(ang))
+        end_y = sh_y - int(ghost_arm_h * math.sin(ang))
+        for t in range(0, ghost_arm_h, 8):
+            frac = t / ghost_arm_h
+            gx = int(sh_x + frac * (end_x - sh_x))
+            gy = int(sh_y + frac * (end_y - sh_y))
+            draw.ellipse([gx - 2, gy - 2, gx + 2, gy + 2], fill=ACCENT_DASH)
+    draw.text((px + PANEL_W - 58, fig["l_shoulder_y"] - 18), "B3 pos", fill=ACCENT_DASH)
 
-    # Cardigan settling annotation
-    draw_arrow(draw, bcx + cdn_w - 4, cdn_bot - 8,
-               bcx + cdn_w + 14, cdn_bot + 6,
-               color=MOTION_ARROW, width=2, head=6)
-    draw.text((bcx + cdn_w + 16, cdn_bot - 4), "cardigan", fill=MOTION_ARROW)
-    draw.text((bcx + cdn_w + 16, cdn_bot + 8), "settles last", fill=MOTION_ARROW)
-    draw.text((bcx + cdn_w + 16, cdn_bot + 20), "(+2.0b)", fill=MOTION_ARROW)
+    # "NOT B1" annotation — key distinction
+    label_box(draw, px + PANEL_W - 64, py + 6, "NOT B1",
+              bg=(120, 40, 30), fg=(248, 230, 200))
+    draw.text((px + PANEL_W - 88, py + 28), "arms: crossed", fill=ACCENT_DASH)
+    draw.text((px + PANEL_W - 88, py + 40), "  (B1 = armrest+lap)", fill=ACCENT_DASH)
+    draw.text((px + PANEL_W - 88, py + 52), "smile: 0.7", fill=ACCENT_DASH)
+    draw.text((px + PANEL_W - 88, py + 64), "  (B1 = 0.3)", fill=ACCENT_DASH)
+    draw.text((px + PANEL_W - 88, py + 76), "shoulder: R drops", fill=ACCENT_DASH)
+    draw.text((px + PANEL_W - 88, py + 88), "  (B1 = L drops)", fill=ACCENT_DASH)
 
-    # Blush sustain annotation (warmth blush stays at peak level through B4)
-    draw.text((hcx - hr - 68, hcy + int(hr * 0.05)), "blush sustained", fill=CHEEK_BLUSH)
-    draw.text((hcx - hr - 68, hcy + int(hr * 0.17)), "from B3 peak", fill=CHEEK_BLUSH)
+    # Smile lingering annotation
+    hx, hy = fig["head_cx"], fig["head_cy"]
+    hr = fig["hr"]
+    draw.text((hx + hr + 4, hy + int(hr * 0.25)), "smile EARNED", fill=BEAT_COLOR)
+    draw.text((hx + hr + 4, hy + int(hr * 0.37)), "bigger than B1", fill=BEAT_COLOR)
 
-    # Timing block
-    timing_y = py + 8
-    draw.text((px + 8, timing_y),      "TIMING", fill=LABEL_BG)
-    draw.text((px + 8, timing_y + 13), "Arms lower: 4 beats (slow)", fill=BEAT_COLOR)
-    draw.text((px + 8, timing_y + 25), "Eyes reopen: beat 1", fill=BEAT_COLOR)
-    draw.text((px + 8, timing_y + 37), "Smile: held +6 frames", fill=MOTION_ARROW)
-    draw.text((px + 8, timing_y + 49), "Blush fades: beat 8+", fill=MOTION_ARROW)
-    draw.text((px + 8, timing_y + 61), "Settle = mirror of B1", fill=ACCENT_DASH)
+    # Blush sustain
+    draw.text((hx - hr - 68, hy + int(hr * 0.05)), "blush sustained", fill=CHEEK_BLUSH)
+    draw.text((hx - hr - 68, hy + int(hr * 0.17)), "from B3 peak", fill=CHEEK_BLUSH)
+
+    # Cardigan settling
+    draw_arrow(draw, fig["body_cx"] + fig["cardigan_w_bot"] - 4,
+               fig["cardigan_bot"] - 6,
+               fig["body_cx"] + fig["cardigan_w_bot"] + 10,
+               fig["cardigan_bot"] + 4,
+               color=MOTION_ARROW, width=2, head=5)
+    draw.text((fig["body_cx"] + fig["cardigan_w_bot"] + 12,
+               fig["cardigan_bot"] - 8), "settles", fill=MOTION_ARROW)
+    draw.text((fig["body_cx"] + fig["cardigan_w_bot"] + 12,
+               fig["cardigan_bot"] + 4), "last +2.0b", fill=MOTION_ARROW)
+
+    # Timing
+    draw.text((px + 8, py + 100), "Arms lower: 4 beats", fill=BEAT_COLOR)
+    draw.text((px + 8, py + 112), "Eyes reopen: beat 1", fill=BEAT_COLOR)
+    draw.text((px + 8, py + 124), "Smile: held +6 fr", fill=MOTION_ARROW)
+    draw.text((px + 8, py + 136), "Blush fades: beat 8+", fill=MOTION_ARROW)
+    draw.text((px + 8, py + 148), "Settle != B1", fill=ACCENT_DASH)
 
 
 # ------------------------------------------------------------------ MAIN
@@ -741,23 +982,30 @@ def main():
 
     # Title bar
     draw.rectangle([0, 0, W, PAD + 40], fill=LABEL_BG)
-    draw.text((PAD, 8), "GRANDMA MIRI — Motion Spec Sheet v002  |  Emotional Warmth Pacing", fill=LABEL_TEXT)
-    draw.text((PAD, 22), "RYO HASEGAWA  |  Luma & the Glitchkin  |  C46  |  Beat arc: STILL→RECOGNITION→WARMTH BURST→FOND SETTLE", fill=(180, 165, 140))
+    draw.text((PAD, 8),
+              "GRANDMA MIRI \u2014 Motion Spec Sheet v003  |  Emotional Warmth Pacing",
+              fill=LABEL_TEXT)
+    draw.text((PAD, 22),
+              "RYO HASEGAWA  |  Luma & the Glitchkin  |  C47  |  "
+              "STILL\u2192RECOGNITION\u2192WARMTH BURST\u2192FOND SETTLE",
+              fill=(180, 165, 140))
 
     # Legend strip
-    legend_x = W - 310
-    draw.rectangle([legend_x - 6, 6, legend_x + 302, PAD + 36], fill=(70, 55, 42))
-    draw.text((legend_x,       8), "->  Secondary motion (cardigan)", fill=MOTION_ARROW)
-    draw.text((legend_x,      20), "■  Timing beats", fill=BEAT_COLOR)
-    draw.text((legend_x + 175,  8), "--  Construction/guide", fill=ACCENT_DASH)
-    draw.text((legend_x + 175, 20), "●  SUNLIT_AMBER (warmth)", fill=SUNLIT_AMBER)
+    legend_x = W - 340
+    draw.rectangle([legend_x - 6, 6, legend_x + 332, PAD + 36], fill=(70, 55, 42))
+    draw.text((legend_x,       8), "->  Secondary motion", fill=MOTION_ARROW)
+    draw.text((legend_x,      20), "X   CG marker", fill=CG_MARKER)
+    draw.text((legend_x + 130,  8), "[]  Weight bar", fill=WEIGHT_COLOR)
+    draw.text((legend_x + 130, 20), "--  Construction", fill=ACCENT_DASH)
+    draw.text((legend_x + 250,  8), "B#  Timing", fill=BEAT_COLOR)
+    draw.text((legend_x + 250, 20), "o   SUNLIT_AMBER", fill=SUNLIT_AMBER)
 
     draw_panel0_observing_still(img, draw)
     draw_panel1_recognition(img, draw)
     draw_panel2_warmth_burst(img, draw)
     draw_panel3_fond_settle(img, draw)
 
-    # Save — native 1280x720, no thumbnail
+    # Save — native 1280x720
     assert img.width <= 1280 and img.height <= 1280, "Canvas exceeds 1280px limit"
 
     out_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),

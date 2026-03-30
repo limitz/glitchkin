@@ -227,6 +227,37 @@ Create motion spec sheets and timing documentation. Make the pitch FEEL like it 
 - SUNLIT_AMBER (212,146,58) for warmth glow — canonical from grandma_kitchen.py
 - Miri B3 WARMTH BURST arms = shoulder level (NOT above head) — open wide, welcoming posture
 
+### C47 — COMPLETE
+- `LTG_TOOL_miri_motion_v002.py` rewritten (v003 content, overwrite in place)
+- `output/characters/motion/LTG_CHAR_miri_motion_v002.png` regenerated
+- Complete rework responding to Takeshi C46 critique (44/100 — weakest sheet)
+- Key changes:
+  1. Figure scale: head_r 22→32 (45% larger, fills panel properly)
+  2. Weight distribution: asymmetric in every panel (left_foot_weight param, weight bars, CG markers)
+  3. Shoulder-hip counterpose: hip_shift + shoulder_drop_side params, annotated
+  4. Performing hands: B1=armrest curl+lap, B2=lifting/loosening, B3=open wide, B4=crossed
+  5. Spine participation: spine_curve param (0→6→14→-2 across arc), two-segment torso
+  6. Fond Settle != Observing Still: 6 explicit differences annotated ("NOT B1" label)
+  7. Two-segment arms (upper+forearm with elbow) — better than single-segment
+- draw_miri_figure() returns dict (was tuple) — richer data for annotation placement
+- Arm modes: "default", "armrest", "lap_curl", "open_wide", "crossed", "lifting"
+- Lint: PASS=6 WARN=0 FAIL=0
+- Precritique QA section 8: PASS=32 WARN=4 FAIL=0 (4 WARNs pre-existing Byte dark panel)
+- Ideabox: `20260330_ryo_hasegawa_shoulder_socket_mass_all_chars.md` — shared shoulder+arm helper
+- Completion report sent to Alex Chen inbox
+- Reference images in reference/gesture/ reviewed — tray refs useful for Miri arm-at-rest
+
+### C47 Key Findings
+- Takeshi's core critique: "poses labeled not performed" — the body must DO the emotion
+- Figure-to-frame ratio was the #1 visual problem (head_r=22 too small for 720px panels)
+- Weight distribution is the difference between "standing figure" and "acting figure"
+- Shoulder-hip counterpose is character-specific: Miri's is subtle (3-4px hip shift, one shoulder drop)
+- Spine curve is the most impactful single parameter for showing engagement/giving/settling
+- B4 FOND SETTLE must be explicitly DIFFERENT from B1 — same rest pose = no arc
+- Two-segment arm draw (upper+forearm) improves arm reads but still lacks shoulder mass
+- "Arms without shoulders" is the #1 persistent structural flaw across ALL characters (Takeshi C15-C46)
+- Reference gesture images available in reference/gesture/ (11 files) — ricochet, running, tray carrying
+
 ### C43 Key Findings
 - `_get_zone_params()` now returns 6-tuple — any code calling it must be updated (only lint_motion_spec() calls it)
 - Precise bg matching works by max-channel-delta: pixel is bg only if ALL channels within ±tol of known bg color
