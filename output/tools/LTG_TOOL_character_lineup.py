@@ -7,35 +7,32 @@
 """
 LTG_TOOL_character_lineup.py
 Character Lineup Generator — Luma & the Glitchkin
-Cycle 33: Byte shadow color fix + Miri slipper warm palette fix.
+Cycle 42 / v008: Two-tier ground plane staging (Lee Tanaka brief C42).
+
+Cycle 42 changes (Maya Santos, Character Designer):
+  - TWO-TIER GROUND PLANE: FG tier (Luma + Byte) at canvas_h×0.78;
+    BG tier (Cosmo + Miri + Glitch) at canvas_h×0.70.
+  - NEW CHARACTER ORDER (left → right): Cosmo | Miri | Luma | Byte | Glitch
+    (Luma center-protagonist; Byte at her right on same FG tier;
+    Cosmo bookends left; Miri flanks right of center; Glitch rightmost)
+  - FG_SCALE = 1.03: Luma and Byte drawn at +3% height post-calculation.
+    Proportion constants unchanged — uniform post-scale only.
+  - SHADOW LINES: subtle 2px line at each tier (warm gray FG, cool gray BG).
+  - CANVAS HEIGHT bumped to 560px body for BG/FG tier geometry.
+  - Annotation bar notes FG/BG tier staging.
+  - Addresses Daisuke C16 "inventory not cast" flag + C15 Luma power balance.
+  - Closes lineup_staging_brief_c42.md spec (Lee Tanaka).
 
 Cycle 33 changes (Alex Chen, Art Director):
   - BYTE_SH: (0, 144, 176) → (0, 168, 180) — canonical Deep Cyan GL-01a #00A8B4
-    (was #0090B0, incorrect; 2-cycle P2 backlog resolved)
   - MIRI_SLIPPER: (90, 122, 90) → (196, 144, 122) — warm apricot #C4907A
-    (was #5A7A5A Deep Sage, a cool green violating Miri's warm palette guarantee;
-    correction per Sam Kowalski C32 master_palette.md update)
-  - Title + footer updated to C33 / v007.
-  - Output: LTG_CHAR_character_lineup.png (never overwrites v006).
-
-Cycle 29: Updated Luma to v007 canonical proportions (3.2 heads + eye h×0.22).
 
 Cycle 29 changes (Maya Santos, Character Designer):
   - LUMA_HEADS: 3.5 → 3.2 (canonical proportion directive C28)
-  - draw_luma_lineup: hu = h / 3.5 → h / 3.2 (head unit recalculated)
-  - Eye width: int(s*28) = HR*0.28 → int(r*0.22) per canonical spec from turnaround v003
-  - Label updated: "3.5 heads" → "3.2 heads"
-  - Other characters (Byte, Cosmo, Miri, Glitch) unchanged from v005.
-  - Output: LTG_CHAR_luma_lineup.png (never overwrites v005).
+  - Eye width: int(s*28) → int(r*0.22) per canonical spec
 
 Cycle 27 changes (Maya Santos, Character Designer):
-  - Luma draw_luma_lineup completely rebuilt to match v006 canonical style:
-      * Hair: 8 overlapping ellipses (curl cloud) scaled from classroom reference.
-      * Head: circle + lower chin fill + CHEEK NUBS at sides.
-      * Eyes: near-circular ovals with iris, pupil, highlight, eyelid arc.
-      * Nose: two nostril dots + bridge arc.
-      * Mouth: neutral slight-smile bezier arc.
-  - Other characters (Byte, Cosmo, Miri, Glitch) unchanged from v004.
+  - Luma rebuilt to v006 canonical style (curl cloud hair, cheek nubs, bezier mouth).
 
 Prior history:
   Cycle 24 (Maya Santos): Added Glitch.
@@ -43,7 +40,7 @@ Prior history:
   Cycle 12 (Alex Chen): Ground-floor annotation.
   Cycle 10 (Alex Chen): Initial four-character lineup.
 
-Output: /home/wipkat/team/output/characters/main/LTG_CHAR_luma_lineup.png
+Output: /home/wipkat/team/output/characters/main/LTG_CHAR_character_lineup.png
 Usage: python3 LTG_TOOL_character_lineup.py
 """
 from PIL import Image, ImageDraw, ImageFont
@@ -79,33 +76,62 @@ LEFT_MARGIN   = 100
 N_CHARS       = 5
 IMG_W         = LEFT_MARGIN * 2 + CHAR_SPACING * (N_CHARS - 1) + 180
 TITLE_H       = 50
-HEADROOM      = int(COSMO_H * 1.15)
-LABEL_AREA    = 80
-IMG_H         = TITLE_H + HEADROOM + LABEL_AREA
+LABEL_AREA    = 90     # slightly taller for tier annotation
+IMG_H         = 560    # bumped for two-tier geometry (was computed from HEADROOM)
 
-BASELINE_Y    = TITLE_H + HEADROOM
+# ── Two-tier ground planes (v008) ─────────────────────────────────────────────
+# FG tier: Luma + Byte — visually closest to camera
+# BG tier: Cosmo + Miri + Glitch — one step behind
+FG_GROUND_Y  = int(IMG_H * 0.78)   # ~436 — FG chars stand here
+BG_GROUND_Y  = int(IMG_H * 0.70)   # ~392 — BG chars stand here
 
-CHAR_ORDER    = ["luma", "byte", "cosmo", "miri", "glitch"]
+# Legacy alias: BASELINE_Y used by existing height-marker + annotation helpers
+# Points to FG tier (the reference tier for head-unit comparisons)
+BASELINE_Y   = FG_GROUND_Y
+
+# ── FG scale factor (post-calculation, proportion constants unchanged) ────────
+FG_SCALE     = 1.03   # +3% height for FG characters (Luma + Byte)
+BG_SCALE     = 1.00   # baseline for BG characters
+
+# Scaled render heights (used for drawing and labels)
+LUMA_RENDER_H_FG  = int(LUMA_RENDER_H * FG_SCALE)   # ~288px
+BYTE_H_FG         = int(BYTE_H * FG_SCALE)           # ~167px
+GLITCH_H_BG       = GLITCH_H                          # unscaled
+
+# ── Character order: left → right ────────────────────────────────────────────
+# Cosmo (left bookend) | Miri | Luma (center protagonist) | Byte | Glitch (right)
+CHAR_ORDER    = ["cosmo", "miri", "luma", "byte", "glitch"]
 CHAR_X        = {
-    "luma":   LEFT_MARGIN + 60,
-    "byte":   LEFT_MARGIN + 60 + CHAR_SPACING - 40,
-    "cosmo":  LEFT_MARGIN + 60 + CHAR_SPACING * 2 - 20,
-    "miri":   LEFT_MARGIN + 60 + CHAR_SPACING * 3,
-    "glitch": LEFT_MARGIN + 60 + CHAR_SPACING * 4 + 10,
+    "cosmo":  LEFT_MARGIN + 60,
+    "miri":   LEFT_MARGIN + 60 + CHAR_SPACING,
+    "luma":   LEFT_MARGIN + 60 + CHAR_SPACING * 2,
+    "byte":   LEFT_MARGIN + 60 + CHAR_SPACING * 3 - 20,
+    "glitch": LEFT_MARGIN + 60 + CHAR_SPACING * 4,
 }
+
+# Ground Y per character (FG or BG tier)
+CHAR_GROUND_Y = {
+    "luma":   FG_GROUND_Y,
+    "byte":   FG_GROUND_Y,
+    "cosmo":  BG_GROUND_Y,
+    "miri":   BG_GROUND_Y,
+    "glitch": BG_GROUND_Y,
+}
+
+# Draw heights (FG chars use scaled height)
 CHAR_HEIGHTS  = {
-    "luma":   LUMA_RENDER_H,
-    "byte":   BYTE_H,
+    "luma":   LUMA_RENDER_H_FG,
+    "byte":   BYTE_H_FG,
     "cosmo":  COSMO_H,
     "miri":   MIRI_H,
-    "glitch": GLITCH_H,
+    "glitch": GLITCH_H_BG,
 }
 CHAR_LABELS   = {
-    "luma":   f"LUMA\n3.2 heads / {LUMA_RENDER_H}px",
-    "byte":   f"BYTE\n~Luma chest / {BYTE_H}px",
-    "cosmo":  f"COSMO\n4.0 heads / {COSMO_H}px",
-    "miri":   f"MIRI\n3.2 heads / {MIRI_H}px",
-    "glitch": f"GLITCH\n~Byte scale / {GLITCH_H}px",
+    "luma":   f"LUMA [FG]\n3.2 heads / {LUMA_RENDER_H}px (+3%)",
+    "byte":   f"BYTE [FG]\n~Luma chest / {BYTE_H}px (+3%)",
+    "cosmo":  f"COSMO [BG]\n4.0 heads / {COSMO_H}px",
+    "miri":   f"MIRI [BG]\n3.2 heads / {MIRI_H}px",
+    "glitch": f"GLITCH [BG]\n~Byte scale / {GLITCH_H}px",
 }
 
 # ── Colors ────────────────────────────────────────────────────────────────────
@@ -761,15 +787,16 @@ def draw_glitch_lineup(draw, cx, base_y, h):
 # ══════════════════════════════════════════════════════════════════════════════
 
 def draw_height_markers(draw, font_small):
-    luma_top   = BASELINE_Y - CHAR_HEIGHTS["luma"]
-    cosmo_top  = BASELINE_Y - CHAR_HEIGHTS["cosmo"]
-    luma_chest = BASELINE_Y - int(CHAR_HEIGHTS["luma"] * 0.62)
-    miri_top   = BASELINE_Y - CHAR_HEIGHTS["miri"]
+    # Heights measured from each character's own ground tier
+    luma_top   = FG_GROUND_Y - CHAR_HEIGHTS["luma"]
+    cosmo_top  = BG_GROUND_Y - CHAR_HEIGHTS["cosmo"]
+    luma_chest = FG_GROUND_Y - int(CHAR_HEIGHTS["luma"] * 0.62)
+    miri_top   = BG_GROUND_Y - CHAR_HEIGHTS["miri"]
 
     lines = [
-        (cosmo_top,  TICK_COL,           "Cosmo top"),
-        (luma_top,   (180, 140, 80),      "Luma top"),
-        (miri_top,   (140, 160, 120),     "Miri top"),
+        (cosmo_top,  TICK_COL,           "Cosmo top [BG]"),
+        (luma_top,   (180, 140, 80),      "Luma top [FG]"),
+        (miri_top,   (140, 160, 120),     "Miri top [BG]"),
         (luma_chest, (80, 160, 200),      "Byte / Glitch height ref"),
     ]
 
@@ -792,13 +819,15 @@ def draw_byte_float_dimension(draw, font_small):
     GROUNDFLOOR_COL = (100, 168, 200)
 
     byte_cx   = CHAR_X["byte"]
+    # Use unscaled BYTE_H for the float-gap engineering annotation
+    # (the gap proportions are a characteristic of Byte's design, not the FG scale)
     s         = BYTE_H
     float_gap = int(s * 0.18)
     body_rx   = s // 2
 
-    arrow_x = byte_cx + body_rx + 10
-    top_y   = BASELINE_Y - float_gap
-    bot_y   = BASELINE_Y
+    arrow_x = byte_cx + body_rx + 14
+    top_y   = FG_GROUND_Y - float_gap
+    bot_y   = FG_GROUND_Y
 
     if bot_y - top_y < 6:
         return
@@ -828,7 +857,7 @@ def draw_byte_float_dimension(draw, font_small):
 
     gf_x0 = byte_cx - 70
     gf_x1 = byte_cx + 70
-    gf_y  = BASELINE_Y
+    gf_y  = FG_GROUND_Y
     x = gf_x0
     while x < gf_x1:
         draw.line([(x, gf_y), (min(x + 10, gf_x1), gf_y)],
@@ -856,11 +885,26 @@ def generate_lineup(output_path):
 
     draw.rectangle([0, 0, IMG_W, IMG_H], fill=BG)
 
-    title = "LUMA & THE GLITCHKIN — Full Cast Height Lineup — Cycle 33 (v007: Byte shadow fix, Miri slipper warm)"
+    title = ("LUMA & THE GLITCHKIN — Full Cast Lineup — C42 v008"
+             " (two-tier staging: Luma+Byte FG / Cosmo+Miri+Glitch BG)")
     draw.text((20, 14), title, fill=LABEL_COL, font=font_title)
     draw.line([(0, TITLE_H - 4), (IMG_W, TITLE_H - 4)], fill=TICK_COL, width=1)
 
-    draw.line([(40, BASELINE_Y), (IMG_W - 20, BASELINE_Y)], fill=BASELINE_COL, width=2)
+    # ── Two-tier shadow lines ──────────────────────────────────────────────────
+    # BG tier shadow (cool gray) — drawn first so FG line sits on top
+    FG_SHADOW_COL = (165, 148, 128)   # warm gray shadow for FG
+    BG_SHADOW_COL = (148, 158, 170)   # cool gray shadow for BG
+    draw.line([(40, BG_GROUND_Y), (IMG_W - 20, BG_GROUND_Y)],
+              fill=BG_SHADOW_COL, width=2)
+    # FG tier shadow (warm gray)
+    draw.line([(40, FG_GROUND_Y), (IMG_W - 20, FG_GROUND_Y)],
+              fill=FG_SHADOW_COL, width=2)
+
+    # Tier labels
+    draw.text((IMG_W - 95, BG_GROUND_Y + 5), "BG tier",
+              fill=BG_SHADOW_COL, font=font_small)
+    draw.text((IMG_W - 95, FG_GROUND_Y + 5), "FG tier",
+              fill=FG_SHADOW_COL, font=font_small)
 
     draw_byte_float_dimension(draw, font_small)
     draw = ImageDraw.Draw(img)  # refresh after annotations
@@ -877,40 +921,53 @@ def generate_lineup(output_path):
     }
 
     for char in CHAR_ORDER:
-        cx = CHAR_X[char]
-        h  = CHAR_HEIGHTS[char]
-        char_drawers[char](draw, cx, BASELINE_Y, h)
+        cx       = CHAR_X[char]
+        h        = CHAR_HEIGHTS[char]
+        ground_y = CHAR_GROUND_Y[char]
+        char_drawers[char](draw, cx, ground_y, h)
         draw = ImageDraw.Draw(img)  # refresh after each character
 
-    # Character name labels below baseline
+    # Character name labels below their respective ground lines
     for char in CHAR_ORDER:
-        cx    = CHAR_X[char]
-        lines = CHAR_LABELS[char].split("\n")
-        label_y = BASELINE_Y + 12
+        cx      = CHAR_X[char]
+        ground_y = CHAR_GROUND_Y[char]
+        lines   = CHAR_LABELS[char].split("\n")
+        label_y = ground_y + 8
         for line in lines:
             lw = len(line) * 6
             draw.text((cx - lw // 2, label_y), line, fill=LABEL_COL, font=font_small)
-            label_y += 14
+            label_y += 13
 
-    # Vertical height brackets for each character
+    # Vertical height brackets — measured from each char's own ground tier
     for char in CHAR_ORDER:
-        cx    = CHAR_X[char] - 40
-        h     = CHAR_HEIGHTS[char]
-        top_y = BASELINE_Y - h
+        cx       = CHAR_X[char] - 44
+        h        = CHAR_HEIGHTS[char]
+        ground_y = CHAR_GROUND_Y[char]
+        top_y    = ground_y - h
         if char in ("byte", "glitch"):
             s         = h
             float_gap = int(s * 0.18)
             body_ry   = int(s * 0.55)
-            top_y     = BASELINE_Y - float_gap - body_ry * 2
-        draw.line([(cx, top_y), (cx, BASELINE_Y)], fill=TICK_COL, width=1)
+            top_y     = ground_y - float_gap - body_ry * 2
+        draw.line([(cx, top_y), (cx, ground_y)], fill=TICK_COL, width=1)
         draw.line([(cx - 4, top_y), (cx + 4, top_y)], fill=TICK_COL, width=1)
-        draw.line([(cx - 4, BASELINE_Y), (cx + 4, BASELINE_Y)], fill=TICK_COL, width=1)
-        draw.text((cx - 20, (top_y + BASELINE_Y)//2 - 5), f"{h}px", fill=TICK_COL, font=font_small)
+        draw.line([(cx - 4, ground_y), (cx + 4, ground_y)], fill=TICK_COL, width=1)
+        draw.text((cx - 20, (top_y + ground_y)//2 - 5),
+                  f"{h}px", fill=TICK_COL, font=font_small)
+
+    # Staging annotation bar
+    annotation = (
+        f"Staging: FG tier (y={FG_GROUND_Y}) = Luma+Byte @+3% scale.  "
+        f"BG tier (y={BG_GROUND_Y}) = Cosmo+Miri+Glitch @baseline scale.  "
+        "Proportion constants unchanged — uniform post-scale only.  "
+        "Closes Daisuke C16 P3 (inventory→cast) + C15 Luma power balance."
+    )
+    draw.text((20, IMG_H - 34), annotation, fill=(140, 120, 100), font=font_small)
 
     footer = (
-        f"Full cast: Luma, Byte, Cosmo, Miri, Glitch. "
-        f"Reference: 1 head unit = {HEAD_UNIT:.0f}px. "
-        "Colors per master_palette.md (canonical). Cycle 33 — Byte shadow GL-01a Deep Cyan; Miri slipper warm apricot."
+        f"Full cast: Cosmo | Miri | LUMA | Byte | Glitch.  "
+        f"Reference: 1 head unit = {HEAD_UNIT:.0f}px.  "
+        "Colors per master_palette.md (canonical).  C42 v008."
     )
     draw.text((20, IMG_H - 18), footer, fill=TICK_COL, font=font_small)
 
@@ -928,10 +985,13 @@ def main():
     out_dir = "/home/wipkat/team/output/characters/main"
     os.makedirs(out_dir, exist_ok=True)
     generate_lineup(os.path.join(out_dir, "LTG_CHAR_character_lineup.png"))
-    print("Character lineup v007 generation complete.")
-    print("  C33 fixes: Byte shadow #00A8B4 Deep Cyan (was #0090B0), Miri slipper #C4907A warm apricot (was #5A7A5A Deep Sage)")
-    print("  Cast: Luma (v007 style: 3.2 heads, eye h×0.22), Byte, Cosmo, Miri, Glitch (5 characters)")
-    print(f"  Luma: {LUMA_RENDER_H}px tall, {LUMA_HEADS} heads, head unit = {HEAD_UNIT:.1f}px")
+    print("Character lineup v008 generation complete.")
+    print("  C42 changes: two-tier ground plane (FG=Luma+Byte, BG=Cosmo+Miri+Glitch)")
+    print(f"  FG_GROUND_Y={FG_GROUND_Y}, BG_GROUND_Y={BG_GROUND_Y}, FG_SCALE={FG_SCALE}")
+    print(f"  Character order (L→R): cosmo | miri | luma | byte | glitch")
+    print(f"  Luma: {LUMA_RENDER_H_FG}px drawn ({LUMA_RENDER_H}px base ×{FG_SCALE}), "
+          f"{LUMA_HEADS} heads, head unit = {HEAD_UNIT:.1f}px")
+    print(f"  Byte: {BYTE_H_FG}px drawn ({BYTE_H}px base ×{FG_SCALE})")
 
 
 if __name__ == '__main__':

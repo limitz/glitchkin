@@ -1,5 +1,37 @@
 # Maya Santos — Memory
 
+## Cycle 42 — Lineup v008 (Two-Tier Ground Plane)
+
+### Task: Character Lineup v008
+- Generator: `output/tools/LTG_TOOL_character_lineup.py` bumped v007 → v008
+- Brief: Lee Tanaka `output/production/lineup_staging_brief_c42.md`
+- **Two-tier ground plane:**
+  - FG tier: `FG_GROUND_Y = canvas_h × 0.78` (y=436) — Luma + Byte
+  - BG tier: `BG_GROUND_Y = canvas_h × 0.70` (y=392) — Cosmo + Miri + Glitch
+- **New character order (L→R):** Cosmo | Miri | Luma | Byte | Glitch
+- **FG_SCALE = 1.03**: post-calculation scale factor for Luma + Byte. Proportion constants unchanged. Luma drawn at 288px (base 280px), Byte at 166px (base 162px).
+- Shadow lines: 2px warm gray at FG tier, 2px cool gray at BG tier.
+- Canvas: 1280×535px. Used `IMG_H = 560` fixed value for two-tier geometry (replaces old `TITLE_H + HEADROOM + LABEL_AREA` calculation).
+- `CHAR_GROUND_Y` dict: each char references its own tier's ground Y. All character drawing functions (and labels, height brackets) now receive `ground_y` from this dict — not a single `BASELINE_Y`.
+- `BASELINE_Y` retained as alias for `FG_GROUND_Y` (used by legacy height-marker function signature).
+- Output: `output/characters/main/LTG_CHAR_character_lineup.png` (1280×535px)
+- Closes Daisuke C16 P3 (inventory→cast) + C15 Luma power-balance note.
+
+### Gate Results (C42 Lineup v008)
+- Silhouette RPD mode=full: OVERALL PASS. Worst pair 49.8% (Cosmo+Miri). All pairs below 70% WARN.
+- Face test gate: Luma PASS (FOCUSED DET./DETERMINED+/EYES ONLY). Cosmo PASS (SKEPTICAL/WORRIED/CURIOUS). Miri PASS (SURPRISED/RECOGNITION). WARNs match prior cycle baselines. NEUTRAL/TOO_SMALL FAILs are diagnostic variants.
+
+### Ideabox C42
+- Submitted: `ideabox/20260330_maya_santos_lineup_tier_depth_indicator.md`
+  Idea: visual depth band between BG and FG ground lines in lineup renders.
+
+### ACTIVE TOOL STATUS (C42 — COMPLETE)
+- Character lineup: `LTG_CHAR_character_lineup.png` v008 (two-tier staging)
+  - Generator: `LTG_TOOL_character_lineup.py` v008
+- All C41 tool statuses still current (Luma v013, Byte v007, Glitch diagram v001, Miri v005, face curve validator)
+
+---
+
 ## Cycle 41 (C41 brief) — Luma v013, Byte v007, Glitch Diagram
 
 ### Task 1: Luma Expression Sheet v013 (Tier-1 Silhouette Body Postures)
