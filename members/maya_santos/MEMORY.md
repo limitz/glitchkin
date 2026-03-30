@@ -1,5 +1,34 @@
 # Maya Santos — Memory
 
+## Cycle 46 — Reference Shopping List Response (COMPLETE)
+
+### P1 Status: Depth Temp Lint Co-Build — NOT NEEDED
+- Lee built `LTG_TOOL_depth_temp_lint.py` v1.0.0 independently using tier-band sampling (horizontal strips at FG 78% / BG 70% Y positions). No per-character bounding box detection needed.
+- His approach measures average warmth (R-B) per tier band, which is sufficient for lineup and multi-character compositions without character-region detection.
+- If per-character temperature measurement is ever needed (e.g., "is Luma individually warmer than Cosmo?"), the character-region helper could be revisited. Not currently blocking.
+
+### P2: Reference Shopping List Response — DELIVERED
+- Reviewed all references in `reference/drawing guides/` (body: 6 files, face: 14 files, hand: 9 files)
+- Response sent to Alex Chen: `members/alex_chen/inbox/20260330_2400_maya_reference_shopping_list_response.md`
+- **Key findings:**
+  - Most useful body refs: `3-adult-vs-child.jpg` (proportion error demo), `360_F_520729056...jpg` (age 3-17 head-unit chart)
+  - Most useful face refs: `68643b98...jpg` (16 labeled expressions), `ca1e4f82...jpg` (28 expression grid on consistent head)
+  - Hand refs: MEDIUM value — most useful for Miri staging gesture (SF06 handoff), less critical for Luma mitten-hand design
+  - **Proportion canon clarification:** Luma = 3.2 heads (NOT 5.5). The 5.5-6 range is adults per style guide. Task brief had an error.
+  - **Luma 3.2 heads validated:** Real 12yo = ~6.5 heads. Our 3.2 is a ~2:1 compression. Internal ratios (head-to-torso, leg length) compress consistently EXCEPT legs, which are more compressed (intentional: grounded toy-figure feel).
+  - **Gap flagged:** No elderly proportion reference for Miri (65-80 years). Recommended upgrade from MEDIUM to HIGH priority.
+  - **Face metric calibration tool:** Endorsed as HIGH priority. Reference face sheets provide external ground-truth for face test gate threshold calibration.
+
+### Ideabox C46
+- Submitted: `ideabox/20260330_maya_santos_elderly_proportion_reference.md`
+  Idea: Acquire elderly woman proportion reference + build comparison overlay tool for Miri calibration.
+
+### Inbox Archived
+- `20260330_2100_reference_shopping_list_review.md` (Producer) — acted on
+- `20260330_2300_reference_images_acquired.md` (Producer) — acted on
+
+---
+
 ## Cycle 45 — Lineup v010 Dual-Warmth Tier Depth Bands (COMPLETE)
 
 ### Task: Character Lineup v010 (Option C Depth Bands)
@@ -281,93 +310,18 @@
 
 ---
 
-## Cycle 39 Lessons — QA Tools (Expression Isolator, Hierarchy, viz-rpd)
+## Cycles 38-39 Summary (Compressed)
 
-- **LTG_TOOL_expression_isolator.py** — NEW (C39)
-  - Renders single expression from any char sheet at large format (default 800×800px, ≤1280px)
-  - `--char luma|byte|cosmo --expr NAME` (case-insensitive, partial match)
-  - Byte special path: no render_character() in v006 — calls draw_byte() directly
-  - Smoke tests: Luma v011 THE NOTICING ✓, DOUBT VARIANT ✓, Byte v006 ALARMED ✓
-  - Output dir: `output/characters/extras/`
+### C39 — QA Tools
+- `LTG_TOOL_expression_isolator.py` — renders single expression at 800x800px. `--char luma|byte|cosmo --expr NAME`.
+- `LTG_TOOL_bodypart_hierarchy.py` — palette color-index per pixel, EYE_UNDER_HAIR detection. Use `--panel N` to reduce noise.
+- `LTG_TOOL_expression_silhouette.py` — added `--viz-rpd` heatmap mode.
 
-- **LTG_TOOL_bodypart_hierarchy.py** — NEW (C39)
-  - Assigns palette color-index per pixel; scans transitions; detects EYE_UNDER_HAIR + HAIR_IN_EYE_RUN
-  - Luma v011: 42+627 FAIL violations (real eye-inside-hair artifact from LANCZOS downsample)
-  - UNKNOWN_IN_HEAD WARNs inflated on full sheets (label text, borders) — use on cropped panels
-  - Byte v006: 0 FAIL — clean
-  - TODO: add --panel N flag (submitted to ideabox) to reduce noise on full sheets
-
-- **LTG_TOOL_expression_silhouette.py** — UPDATED (--viz-rpd added in-place, C39)
-  - `--viz-rpd`: per-pair pixel diff heatmap (A-only=red, B-only=cyan, shared=zone-tinted)
-  - New functions: viz_rpd_pair(), generate_viz_rpd()
-  - Separate from `--output-zones` (contact sheet zone bars, C37)
-
-- **Ideabox C39:** `ideabox/20260329_maya_santos_hierarchy_panel_mode.md`
-  - `--panel N` flag + `--chain` pipeline for hierarchy tool
-
-## ACTIVE TOOL STATUS (C39 — COMPLETE)
-- Silhouette tool: `LTG_TOOL_expression_silhouette.py` — --viz-rpd added (C39)
-- Luma current: `LTG_CHAR_luma_expressions.png` (right eye squint fixed + DOUBT VARIANT slot 7)
-  - Generator: `LTG_TOOL_luma_expression_sheet.py`
-- Cosmo current: `LTG_CHAR_cosmo_expression_sheet.png`
-- Byte current: `LTG_CHAR_byte_expression_sheet.png`
-- Expression isolator: `LTG_TOOL_expression_isolator.py` (new C39)
-- Hierarchy tool: `LTG_TOOL_bodypart_hierarchy.py` (new C39)
-
----
-
-## Cycle 38 Lessons — LUMA v011 + COSMO v007 + BYTE v006 (Silhouette + Eye Lid Fix)
-
-- **Luma expression sheet v011 COMPLETE (THE NOTICING right eye lid fix).**
-  - Generator: `output/tools/LTG_TOOL_luma_expression_sheet.py`
-  - Output: `output/characters/main/LTG_CHAR_luma_expressions.png` (1200×900px)
-  - Fix: `squint_top_r=True` parameter added to `draw_eyes_full()`.
-    - v010 used r_open=0.65 → symmetric shrink (WINCE). Wrong lid.
-    - v011: full eye height, top ~22% masked out with BG overdraw + thick lid line.
-    - Bottom lid stays neutral. This is a focusing squint (upper lid drops).
-    - pass `panel_bg` to `render_character()` → `draw_eyes_full()` for correct overdraw color.
-  - Silhouette (RPD full): worst pair 97.9% (WORRIED↔FRUSTRATED) — KNOWN tool limitation.
-  - Arms mode worst pair: 100.0% (WORRIED↔FRUSTRATED) — KNOWN.
-
-- **Cosmo expression sheet v007 COMPLETE (SKEPTICAL arm fix).**
-  - Generator: `output/tools/LTG_TOOL_cosmo_expression_sheet.py`
-  - Output: `output/characters/main/LTG_CHAR_cosmo_expression_sheet.png` (1182×1114px)
-  - Fix: `arm_mode="skeptical_crossed"` replaces "standard" for SKEPTICAL.
-    - Left arm: angles inward, notebook arm, hand at left-of-center.
-    - Right arm: from shoulder inward, hand crossing to left-center (folded).
-    - Both arms now visible outside torso silhouette.
-  - Silhouette (RPD full): worst pair 88.5% (AWKWARD↔SKEPTICAL) — HEAD zone 100% artifact.
-  - S003 compliance preserved (all glasses_tilt ≤ 9°).
-
-- **Byte expression sheet v006 COMPLETE (silhouette differentiation).**
-  - Generator: `output/tools/LTG_TOOL_byte_expression_sheet.py`
-  - Output: `output/characters/main/LTG_CHAR_byte_expression_sheet.png` (712×1280px)
-  - Fixes: ALARMED arm_x_scale 1.5→2.0, RELUCTANT JOY arm asymmetry increased,
-    POWERED DOWN arm_x_scale 0.7→0.20 (limp), RESIGNED arm_x_scale 0.50→0.25 (defeated).
-  - Silhouette (RPD full): worst pair still 90.2% (RELUCTANT JOY↔RESIGNED).
-    Root cause: Byte's oval body at 88px dominates column projection at 240px panel width.
-    Arm changes register visually but not in RPD measurement. Known tool limitation for
-    small oval characters.
-
-- **Luma v011 DOUBT VARIANT added (Lee Tanaka C38 brief + Alex Chen power-balance).**
-  - Slot 7: "THE NOTICING — DOUBT" — same scene, reduced conviction.
-  - Eyes disagree: l_open=1.0 (certain), r_open=0.88 + brow_furrow_r (hedging).
-  - Mouth: `doubt_corner` style — right corner slightly down, lower lip present.
-  - Body: backward lean (-HR*0.03), no cx_offset (doubt pulls back vs chin-forward certainty).
-  - Chin-touch (`noticing_hand_v010=True`) preserved per brief.
-  - DETERMINED updated: body_tilt -HR*0.08 (forward lean, weight on front foot).
-  - THE NOTICING updated: cx_offset +HR*0.02 (chin-forward thrust per Alex Chen note).
-  - DOUBT VARIANT silhouette gate: panel 7 appears in NO WARN/FAIL pairs → RPD vs THE NOTICING
-    well below 70% (below WARN threshold). Lee Tanaka brief required ≤82% — strong PASS.
-  - Face test gate: PASS (FOCUSED DET., DETERMINED+, EYES ONLY).
-  - Final v011 output: 1200×900px, 8 expressions, 1 blank slot.
-
-- **Ideabox C38 submitted.** `ideabox/20260329_maya_santos_squint_vs_wince_eye_test_tool.md`
-  - Idea: lid geometry diagnostic for face test tool (distinguish wince/squint/neutral lid).
-
-- **Inbox archived.** All 3 C38 messages → `inbox/archived/`.
-- **Completion report sent** to Alex Chen's inbox (20260329_2300_maya_c38_completion.md).
-  Note: report sent before DOUBT VARIANT was added. Alex has the full list of deliverables.
+### C38 — Luma v011 + Cosmo v007 + Byte v006
+- Luma v011: THE NOTICING right eye squint fix (`squint_top_r=True`), DOUBT VARIANT (slot 7).
+- Cosmo v007: SKEPTICAL arm fix (`arm_mode="skeptical_crossed"`).
+- Byte v006: silhouette arm scale fixes. RPD worst pair 90.2% — known oval-body measurement limit.
+- Key: `squint_top_r` uses BG overdraw + thick lid line (NOT r_open scaling). Needs `panel_bg` passed through.
 
 ## KEY LESSON C38: squint_top_r implementation
 - For "focusing squint" (top lid drops): DO NOT use r_open to scale eye height.
