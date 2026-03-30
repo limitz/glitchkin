@@ -47,7 +47,9 @@
 - **P1**: Story bible v005 (Priya C46 — FLAG 05 close + pilot structure)
 - **P1**: P16/P17 panels + legacy file migration (Diego C46)
 - **P2**: COVETOUS linter subtype fix (Rin C46 — creative intent modeling); CI integration (Morgan C46)
-- **P2**: SF06 staging review (Lee C46); SF02 GL-07 lamp halo v009 (Jordan C46)
+- **RESOLVED**: SF04 GL-07 lamp halo + CRT contamination fringe — Jordan delivered concurrently C45. Warm/cool 13.1 PASS.
+- **RESOLVED**: Depth Temperature Rule codified in docs/image-rules.md — Lee C45.
+- **P2**: SF06 staging review (Lee C46); SF02 no further lamp halo work needed this cycle
 - **P2**: Miri motion spec v002 warmth pacing (Ryo C46); Living room v003 (Hana C46)
 - **P2**: Color script analysis SF01–SF06 (Sam C46)
 

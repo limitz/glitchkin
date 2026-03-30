@@ -5,9 +5,14 @@
 # the copyright holder to assign the relevant rights to the contributing AI entity or entities
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
-LTG_TOOL_bg_tech_den.py — Cosmo's Tech Den Background v006 (Daylight)
+LTG_TOOL_bg_tech_den.py — Cosmo's Tech Den Background v007 (Daylight)
 "Luma & the Glitchkin" — Background & Environment Design
-Artist: Hana Okonkwo | Cycle 41
+Artist: Hana Okonkwo | Cycle 41, v007 C46
+
+v007 changes (Hana Okonkwo — C46 brief, Alex Chen):
+  Naming compliance: migrated hardcoded /home/wipkat/team path to
+  LTG_TOOL_project_paths.output_dir() — closes C44 backlog item in
+  ci_known_issues.json (hardcoded_path_check). No visual changes.
 
 v006 changes (Hana Okonkwo — C41 brief, Alex Chen):
   Fix C — In-generator warm/cool separation (CRITICAL):
@@ -40,7 +45,8 @@ Rules:
   - Never overwrite outputs — versioned v004
   - All procedural elements use seeded RNG
 
-Output: /home/wipkat/team/output/backgrounds/environments/LTG_ENV_tech_den.png
+Output: output/backgrounds/environments/LTG_ENV_tech_den.png
+  (resolved at runtime via LTG_TOOL_project_paths.output_dir())
 """
 
 import math
@@ -49,11 +55,12 @@ import os
 import sys
 from PIL import Image, ImageDraw, ImageFilter
 
-# Import shared rendering library (same directory)
+# Import shared rendering library and project paths (same directory)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from LTG_TOOL_render_lib import (  # noqa: E402
     light_shaft, dust_motes, gaussian_glow, vignette
 )
+from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
 
 W, H = 1280, 720
 
@@ -847,8 +854,8 @@ def draw_tech_den():
     # NOTE: Do NOT add a warm top overlay alongside this — it converges both halves
     # toward achromatic gray and separation collapses toward 0.
     # ── OUTPUT ────────────────────────────────────────────────────────────────
-    out_path = "/home/wipkat/team/output/backgrounds/environments/LTG_ENV_tech_den.png"
-    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    out_path = output_dir("backgrounds", "environments", "LTG_ENV_tech_den.png")
+    ensure_dir(out_path.parent)
 
     # Convert RGBA → RGB and save final output.
     # Inline cool bottom pass applied here using numpy array operations to avoid

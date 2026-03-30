@@ -62,6 +62,15 @@ Usage (standalone):
 
 Changelog
 ---------
+v1.3.0 (C46): Filename pattern fix — Kai Nakamura (Alex Chen P1 brief).
+    All _CHAR_REGISTRY patterns now include the canonical no-version-suffix form
+    (e.g. "LTG_TOOL_grandma_miri_expression_sheet.py") alongside the original
+    "_v*.py" glob for backward compatibility. Miri was the only character
+    explicitly flagged (M004 always WARN because glob never matched), but the
+    same issue affected luma_expression_sheet, cosmo_expression_sheet,
+    luma_turnaround, cosmo_turnaround, and byte_expression_sheet — all use
+    canonical files without version suffixes. The _v*.py patterns are retained
+    for any legacy versioned copies that may still exist on disk.
 v1.2.0 (C45): Token config data-driven — Kai Nakamura.
     M004/M005 token lists now loaded from char_spec_token_config.json.
     _load_token_config(), _get_tokens() added. Fallback to built-in defaults.
@@ -84,7 +93,7 @@ API:
     print(format_report(results))
 """
 
-__version__ = "1.2.0"  # C45: token config data-driven (char_spec_token_config.json) — Kai Nakamura
+__version__ = "1.3.0"  # C46: filename pattern fix — added no-version-suffix forms to _CHAR_REGISTRY (Alex Chen P1)
 
 import os
 import re
@@ -788,33 +797,47 @@ def _lint_byte(source, filepath):
 # ── Character registry ────────────────────────────────────────────────────────
 
 # Maps short name → (generator glob pattern(s), lint function)
+# NOTE (C46): All canonical generators use the no-version-suffix form on disk
+# (e.g. LTG_TOOL_grandma_miri_expression_sheet.py — NO "_v*" suffix).
+# The _v*.py patterns are retained for any legacy versioned copies that may
+# still exist. _resolve_generators picks the last (highest-sort) match per
+# pattern and deduplicates — the no-suffix entry ensures the canonical file
+# is always found even when no _v*.py copies exist.
 _CHAR_REGISTRY = {
     "luma": {
         "patterns": [
-            "LTG_TOOL_luma_expression_sheet_v*.py",
-            "LTG_TOOL_luma_turnaround_v*.py",
+            "LTG_TOOL_luma_expression_sheet.py",    # canonical (no version suffix)
+            "LTG_TOOL_luma_expression_sheet_v*.py", # legacy versioned copies
+            "LTG_TOOL_luma_turnaround.py",          # canonical (no version suffix)
+            "LTG_TOOL_luma_turnaround_v*.py",       # legacy versioned copies
         ],
         "lint_fn": _lint_luma,
         "label": "Luma",
     },
     "cosmo": {
         "patterns": [
-            "LTG_TOOL_cosmo_expression_sheet_v*.py",
-            "LTG_TOOL_cosmo_turnaround_v*.py",
+            "LTG_TOOL_cosmo_expression_sheet.py",    # canonical (no version suffix)
+            "LTG_TOOL_cosmo_expression_sheet_v*.py", # legacy versioned copies
+            "LTG_TOOL_cosmo_turnaround.py",          # canonical (no version suffix)
+            "LTG_TOOL_cosmo_turnaround_v*.py",       # legacy versioned copies
         ],
         "lint_fn": _lint_cosmo,
         "label": "Cosmo",
     },
     "miri": {
         "patterns": [
-            "LTG_TOOL_grandma_miri_expression_sheet_v*.py",
+            # Miri's canonical file has NO version suffix — always has been this way.
+            # The _v*.py form was a bug in the original registry (C34).
+            "LTG_TOOL_grandma_miri_expression_sheet.py",    # canonical (P1 fix C46)
+            "LTG_TOOL_grandma_miri_expression_sheet_v*.py", # legacy versioned copies
         ],
         "lint_fn": _lint_miri,
         "label": "Grandma Miri",
     },
     "byte": {
         "patterns": [
-            "LTG_TOOL_byte_expression_sheet_v*.py",
+            "LTG_TOOL_byte_expression_sheet.py",    # canonical (no version suffix)
+            "LTG_TOOL_byte_expression_sheet_v*.py", # legacy versioned copies
             "LTG_TOOL_byte_expressions_generator.py",
         ],
         "lint_fn": _lint_byte,
@@ -824,15 +847,24 @@ _CHAR_REGISTRY = {
 
 
 def _resolve_generators(char_name, tools_dir):
-    """Return list of matching generator paths for *char_name* in *tools_dir*."""
+    """Return list of matching generator paths for *char_name* in *tools_dir*.
+
+    Deduplicates results — a no-version-suffix pattern and a _v*.py glob may
+    both match the same file (e.g. when the canonical file sorts last in the
+    versioned glob). Order is preserved; duplicates are silently dropped.
+    """
     cfg = _CHAR_REGISTRY[char_name]
     paths = []
+    seen = set()
     for pattern in cfg["patterns"]:
         full = os.path.join(tools_dir, pattern)
         found = sorted(_glob.glob(full))
         # Return only the latest version (highest sort order) per pattern
         if found:
-            paths.append(found[-1])
+            candidate = found[-1]
+            if candidate not in seen:
+                paths.append(candidate)
+                seen.add(candidate)
     return paths
 
 

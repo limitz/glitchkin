@@ -426,8 +426,9 @@
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_bg_tech_den.py",
       "code": null,
-      "reason": "C44 migration backlog — hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
-      "since_cycle": "C44"
+      "reason": "RESOLVED C46 (Hana Okonkwo): migrated to output_dir() in v007. Entry kept for history — remove next ci_known_issues audit.",
+      "since_cycle": "C44",
+      "resolved_cycle": "C46"
     },
     {
       "check": "hardcoded_path_check",
