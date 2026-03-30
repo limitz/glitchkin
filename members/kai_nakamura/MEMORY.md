@@ -3,6 +3,61 @@
 ## Identity
 Technical Art Engineer for "Luma & the Glitchkin." Joined Cycle 21. Mission: upgrade PIL toolchain with procedural rendering techniques and build a reusable shared library.
 
+## Cycle 47 — C47 Warm Pixel Integration + Pretrained Model Detect
+
+**Status:** COMPLETE
+
+**Tasks completed:**
+
+**P1 — Warm-Pixel-Percentage Integration into render_qa (COMPLETE):**
+- Updated `LTG_TOOL_render_qa.py` → v2.1.0
+- Imports `LTG_TOOL_warm_pixel_metric` (Sam Kowalski C47): `measure_warm_pixel_percentage()`, `evaluate_threshold()`
+- For REAL_INTERIOR: warm_pixel_pct is primary gate (overrides hue-split on disagreement)
+- For REAL_STORM: both hue-split and warm_pixel_pct must pass
+- For GLITCH/OTHER_SIDE: warm_pixel_pct ceiling enforced
+- Graceful fallback if warm_pixel_metric not importable → v2.0.0 behavior preserved
+- New warm_cool result keys: warm_pixel_pct, cool_pixel_pct, chromatic_warm_pct, warm_pixel_verdict, warm_pixel_explanation
+- Report section D now shows warm_pixel_pct and verdict in detailed output
+
+**P2 — Photorealistic Face References (DEFERRED):**
+- No new reference images acquired; C46 calibration showed no threshold changes needed
+- Would require sourcing open-license frontal human photos for Haar cascade detection
+
+**P3 — Torchvision Pretrained Model Detection (COMPLETE):**
+- Built `LTG_TOOL_pretrained_model_detect.py` v1.0.0
+- 8 checks: PM001 torchvision, PM002 torch.hub, PM003 timm, PM004 keras, PM005 load_state_dict, PM006 model_zoo, PM007 HuggingFace, PM008 ONNX
+- Regex-based static analysis with docstring/comment skip
+- `--pre-commit` flag exits 1 on any finding (CI gate)
+- API: scan_file(), scan_directory(), format_report()
+- Stdlib only (no dependencies)
+
+**Other:**
+- README.md updated: header C47 (Kai entry), pretrained_model_detect registered, render_qa v2.1.0 update entry
+- Inbox: 2 messages archived (c47_brief + warm_pixel_metric_integration)
+- Ideabox: submitted precritique_warm_pixel_section idea
+- Completion report sent to Alex Chen
+
+## LTG_TOOL_pretrained_model_detect.py (C47 NEW)
+- `scan_file(filepath) → dict` — PASS/WARN/SKIP + findings list
+- `scan_directory(directory, pattern, skip_legacy) → list`
+- `format_report(results, include_pass) → str`
+- Checks PM001–PM008; comments/docstrings skipped
+- CLI: `python LTG_TOOL_pretrained_model_detect.py [dir] [--pre-commit] [--save-report PATH]`
+
+## LTG_TOOL_render_qa.py — v2.1.0 (C47 UPDATED)
+- Now imports LTG_TOOL_warm_pixel_metric for warm_pixel_pct check
+- REAL_INTERIOR: warm_pixel_pct is primary gate (overrides hue-split)
+- REAL_STORM: both metrics must pass
+- GLITCH/OTHER_SIDE: warm_pixel_pct ceiling enforced
+- Fallback: _WARM_PIXEL_AVAILABLE=False → v2.0.0 hue-split-only behavior
+- All v2.0.0 features unchanged
+
+## Lessons Learned (C47)
+- Sam's warm_pixel_metric uses PIL HSV hue 0-255 scale (same as render_qa) — seamless integration
+- Primary/secondary gate pattern: when two metrics measure the same concept differently, designate one as primary and the other as override-only-on-disagreement. Clear escalation logic.
+- Pretrained model detection: regex static analysis sufficient for import/call patterns. Docstring/comment skip avoids false positives on documentation text.
+- REAL_INTERIOR hue-split failure was a known calibration gap since C46 — warm_pixel_pct closes it with a 24-point safety margin.
+
 ## Cycle 46 — C46 Face Metric Calibrate Tool + README Catch-Up
 
 **Status:** COMPLETE

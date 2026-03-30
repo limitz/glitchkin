@@ -1,5 +1,35 @@
 # Jordan Reed — Memory
 
+## Cycle 47 Deliverables
+- `LTG_TOOL_styleframe_discovery.py` v007 — SF01 SIGHT-LINE FIX ✓
+  - ROOT CAUSE: pupil_shift was horizontal-only (dx=p(8), dy=0). Byte is at -20.7 deg from eye midpoint (above-right). Horizontal-only shift reads as "looking past" Byte.
+  - FIX: pupil_shift computed as aimed vector from mid-eye to (byte_cx_target, byte_cy_target). Both X and Y components applied. Same magnitude p(8).
+  - draw_luma_head_v006() gains byte_cy_target parameter (backward-compatible, defaults to mid_eye_y).
+  - Sight-line diagnostic: PASS — 0.9px miss (threshold 15px), angular error 2.2 deg (was 20.7 deg)
+  - render_qa: warm/cool separation=17.4 PASS | value range 14-242 PASS | GRADE: WARN (pre-existing)
+  - color_verify: all 6 canonical PASS
+  - Face test gate: head_r=44px pitch scale — not triggered; key expressions PASS
+  - Title strip updated: C47 — sight-line gaze-lock fix v007
+- `LTG_TOOL_color_verify.py` v3.0.0 — CORRUPT_AMBER DETECTION MODE ✓
+  - New function: `detect_corrupt_amber(img, crt_box=None, rgb_radius=30, max_value=0.45)`
+  - Uses RGB Euclidean distance (radius 30) to match GL-07 pixels — excludes SUNLIT_AMBER (~50 dist away)
+  - Classifies pixels as sanctioned (within CRT box + low composited V) or violation (full-opacity or outside box)
+  - CLI: `--corrupt-amber` flag + `--crt-box X0 Y0 X1 Y1`
+  - Self-tests: all 6 existing tests PASS
+  - Tested on SF01 (808 full-opacity GL-07 outline pixels detected as violations — correct, those are the portal outline)
+  - Tested on SF04 (0 CORRUPT_AMBER at full opacity — correct, fringe is at 15% alpha)
+- Diagnostic script: `output/production/sf01_sightline_debug_c47.py` — geometry verification
+- Ideabox: `20260330_jordan_reed_sight_line_auto_validator.md` — precritique_qa sight-line auto-validation
+- Inbox archived ✓ (1 message: C47 brief)
+- README.md updated (C47 Jordan Reed section added) ✓
+
+## Cycle 47 Status: COMPLETE
+
+## Cycle 47 Notes
+- **Sight-line geometry lesson**: When computing gaze direction from pupil shift within eye whites, ALWAYS aim the shift vector at the actual target (both X and Y). A purely horizontal shift only works when the target is exactly eye-level. For targets above or below, the vertical component is essential for correct gaze read.
+- **RGB radius vs hue for CORRUPT_AMBER detection**: Hue-based detection (8 deg tolerance) catches SUNLIT_AMBER because the two are only 1.4 deg apart in hue. RGB Euclidean distance (radius 30) cleanly separates them (~50 dist). For composited images where alpha varies, RGB distance is more reliable than hue alone.
+- **SF01 amber outline is intentional full-opacity GL-07**: The `draw_amber_outline()` around the CRT emerge portal is at full opacity — this would be flagged as a violation by CORRUPT_AMBER detection. This is expected for SF01's CRT portal frame. The distinction between portal outline and fringe is spatial + alpha.
+
 ## Cycle 46 Deliverables
 - `output/production/corrupt_amber_fringe_spec.md` — CREATED ✓
   - Formal specification for the CORRUPT_AMBER CRT fringe band visual pattern

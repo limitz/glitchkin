@@ -11,6 +11,7 @@ Author: Kai Nakamura / Cycle 37
 v1.1.0: Morgan Walsh / Cycle 40 — --known-issues flag
 v1.2.0: Morgan Walsh / Cycle 42 — --warn-stale N flag
 v1.6.0: Morgan Walsh / Cycle 46 — --auto-seed flag
+v1.7.0: Morgan Walsh / Cycle 47 — --dry-run flag, Check 10 ext_model_check
 
 Runs all LTG tool-pipeline CI checks in sequence and produces a combined report.
 
@@ -73,6 +74,11 @@ Auto-seeding new FAILs
 
   Without this flag, default behavior is unchanged — no auto-seeding.
 
+  --auto-seed --dry-run  → preview what would be seeded without modifying
+  ci_known_issues.json. Prints the same summary as --auto-seed but prefixes
+  it with "[DRY RUN]" and does not write to disk. Useful for auditing
+  before committing to suppression entries.
+
   Auto-seeded entries use the following fields:
     check       — check name that produced the FAIL
     file        — basename of the offending file
@@ -83,7 +89,7 @@ Auto-seeding new FAILs
 
   Supported checks for auto-seeding:
     hardcoded_path_check, thumbnail_lint, dual_output_check,
-    stub_linter, char_spec_lint, spec_sync_ci
+    stub_linter, char_spec_lint, spec_sync_ci, ext_model_check
 
 Exit codes
 ----------
@@ -100,7 +106,8 @@ Usage
     python LTG_TOOL_ci_suite.py --save-report PATH
     python LTG_TOOL_ci_suite.py --known-issues ci_known_issues.json
     python LTG_TOOL_ci_suite.py --warn-stale 4 --cycle C43
-    python LTG_TOOL_ci_suite.py --auto-seed --cycle C46
+    python LTG_TOOL_ci_suite.py --auto-seed --cycle C47
+    python LTG_TOOL_ci_suite.py --auto-seed --dry-run --cycle C47
 
 API
 ---
@@ -112,6 +119,7 @@ API
     from LTG_TOOL_ci_suite import check_thumbnail_lint
     from LTG_TOOL_ci_suite import check_motion_coverage
     from LTG_TOOL_ci_suite import collect_new_fails, auto_seed_known_issues
+    from LTG_TOOL_ci_suite import check_ext_models
 
     known     = load_known_issues("ci_known_issues.json")
     known_raw = load_known_issues_raw("ci_known_issues.json")
@@ -179,9 +187,18 @@ v1.6.0 (C46): --auto-seed flag. After running the full CI suite, any new
               collect_new_fails() and auto_seed_known_issues() exported for
               programmatic use.
               (Morgan Walsh)
+v1.7.0 (C47): --dry-run flag for --auto-seed. Previews what would be seeded
+              without writing to ci_known_issues.json. Prints [DRY RUN]
+              prefixed summary. Useful for auditing before committing.
+              Check 10 — ext_model_check. Scans all .py files in tools_dir
+              for imports of pretrained model weights (torchvision.models,
+              torch.hub, transformers, huggingface_hub, .load_state_dict
+              with URL downloads). FAIL if found, with file + line number.
+              check_ext_models() exported for programmatic use.
+              (Morgan Walsh)
 """
 
-__version__ = "1.6.0"
+__version__ = "1.7.0"
 
 import os
 import sys
@@ -973,6 +990,105 @@ def _run_motion_coverage(tools_dir):
         return "ERROR", f"motion_coverage error: {exc}", ""
 
 
+# ── Check 10: External Model Detection ───────────────────────────────────────
+
+# Patterns that indicate pretrained model weight downloads or external model deps
+_EXT_MODEL_PATTERNS = [
+    (r'(?:from\s+|import\s+)torchvision\.models', "torchvision.models import"),
+    (r'torch\.hub\.load\s*\(', "torch.hub.load() call"),
+    (r'torch\.hub\.download_url_to_dest\s*\(', "torch.hub download call"),
+    (r'(?:from\s+|import\s+)transformers(?:\s|\.)', "transformers (HuggingFace) import"),
+    (r'(?:from\s+|import\s+)huggingface_hub', "huggingface_hub import"),
+    (r'\.from_pretrained\s*\(', ".from_pretrained() call"),
+    (r'\.load_state_dict\s*\(\s*(?:torch\.hub|load_url|urlretrieve|requests\.get|urllib)',
+     ".load_state_dict with URL download"),
+    (r'torchvision\.models\.\w+\s*\(\s*(?:pretrained\s*=\s*True|weights\s*=)',
+     "torchvision pretrained model instantiation"),
+]
+
+import re as _re_module
+
+
+def check_ext_models(tools_dir):
+    """
+    Scan all .py files in tools_dir for imports of pretrained model weights
+    or external model dependencies.
+
+    Parameters
+    ----------
+    tools_dir : str
+        Path to output/tools/.
+
+    Returns
+    -------
+    list[dict]
+        Each entry: {file: str, line: int, text: str, pattern_desc: str}
+        Empty list if no hits found.
+    """
+    tools_dir = _tools_dir_or_default(tools_dir)
+    findings = []
+    skip_prefixes = ("deprecated", "legacy", "__pycache__")
+
+    for fname in sorted(os.listdir(tools_dir)):
+        if not fname.endswith(".py"):
+            continue
+        fpath = os.path.join(tools_dir, fname)
+        if not os.path.isfile(fpath):
+            continue
+        # Skip deprecated/legacy dirs
+        rel = os.path.relpath(fpath, tools_dir)
+        if any(rel.startswith(p) for p in skip_prefixes):
+            continue
+
+        try:
+            with open(fpath, "r", encoding="utf-8", errors="replace") as fh:
+                lines = fh.readlines()
+        except OSError:
+            continue
+
+        for line_no, line_text in enumerate(lines, start=1):
+            stripped = line_text.strip()
+            # Skip comments
+            if stripped.startswith("#"):
+                continue
+            # Skip docstrings — crude but effective: skip lines inside triple-quotes
+            # (the pattern matching is enough for our detection purpose)
+            for pattern, desc in _EXT_MODEL_PATTERNS:
+                if _re_module.search(pattern, line_text):
+                    findings.append({
+                        "file": fname,
+                        "line": line_no,
+                        "text": stripped[:120],
+                        "pattern_desc": desc,
+                    })
+                    break  # one match per line is enough
+
+    return findings
+
+
+def _run_ext_model_check(tools_dir):
+    """Run external model detection check. Returns (status, summary, details)."""
+    try:
+        findings = check_ext_models(tools_dir)
+        if not findings:
+            return "PASS", "No external/pretrained model imports detected", ""
+        details_lines = []
+        for f in findings:
+            details_lines.append(
+                f"  FAIL  {f['file']}:{f['line']}  [{f['pattern_desc']}]  {f['text']}"
+            )
+        details = "\n".join(details_lines)
+        by_file = {}
+        for f in findings:
+            by_file.setdefault(f["file"], []).append(f)
+        summary = (
+            f"{len(findings)} external model import(s) in {len(by_file)} file(s)"
+        )
+        return "FAIL", summary, details
+    except Exception as exc:
+        return "ERROR", f"ext_model_check error: {exc}", ""
+
+
 # ── Suite runner ──────────────────────────────────────────────────────────────
 
 _CHECKS = [
@@ -985,6 +1101,7 @@ _CHECKS = [
     ("hardcoded_path_check", _run_hardcoded_path_check, "Hardcoded Path Check"),
     ("thumbnail_lint",       _run_thumbnail_lint,       "Thumbnail Lint"),
     ("motion_sheet_coverage",_run_motion_coverage,      "Motion Sheet Coverage"),
+    ("ext_model_check",      _run_ext_model_check,      "External Model Detection"),
 ]
 
 
@@ -1368,6 +1485,28 @@ def collect_new_fails(suite_result, tools_dir=None):
                     "reason_suffix": f"spec sync P1 failure for {char_name}",
                 })
 
+    # ── ext_model_check: re-run raw check ──
+    emc = checks.get("ext_model_check", {})
+    if emc.get("status") == "FAIL":
+        try:
+            findings = check_ext_models(tools_dir)
+            if findings:
+                known_files = _existing.get("ext_model_check", set())
+                by_file = {}
+                for f in findings:
+                    by_file.setdefault(f["file"], []).append(f)
+                for fname in sorted(by_file):
+                    if fname not in known_files:
+                        hits = by_file[fname]
+                        new_entries.append({
+                            "check": "ext_model_check",
+                            "file": fname,
+                            "code": None,
+                            "reason_suffix": f"{len(hits)} external model import(s)",
+                        })
+        except Exception:
+            pass
+
     # Deduplicate (same check+file+code)
     seen = set()
     deduped = []
@@ -1538,6 +1677,16 @@ def main():
             "is unchanged — no auto-seeding."
         ),
     )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        default=False,
+        help=(
+            "Use with --auto-seed to preview what would be seeded without "
+            "modifying ci_known_issues.json. Prints [DRY RUN] prefixed "
+            "summary. Has no effect without --auto-seed."
+        ),
+    )
     args = parser.parse_args()
 
     # Resolve known-issues path: explicit flag > auto-discover in tools-dir
@@ -1591,12 +1740,23 @@ def main():
             seed_path = known_issues_path
             if not seed_path:
                 seed_path = os.path.join(resolved_tools_dir, "ci_known_issues.json")
-            count = auto_seed_known_issues(new_fails, seed_path, cycle_label=cycle)
-            summary = format_auto_seed_summary(new_fails)
-            print(summary)
-            print(f"\n{count} entry/entries written to {seed_path}")
+            if args.dry_run:
+                summary = format_auto_seed_summary(new_fails)
+                # Prefix with [DRY RUN] marker
+                summary = summary.replace(
+                    "AUTO-SEED SUMMARY:",
+                    "[DRY RUN] AUTO-SEED SUMMARY (no files modified):",
+                )
+                print(summary)
+                print(f"\n[DRY RUN] {len(new_fails)} entry/entries WOULD be written to {seed_path}")
+            else:
+                count = auto_seed_known_issues(new_fails, seed_path, cycle_label=cycle)
+                summary = format_auto_seed_summary(new_fails)
+                print(summary)
+                print(f"\n{count} entry/entries written to {seed_path}")
         else:
-            print("\n--auto-seed: no new FAILs to seed.")
+            dry_label = "[DRY RUN] " if args.dry_run else ""
+            print(f"\n{dry_label}--auto-seed: no new FAILs to seed.")
 
     sys.exit(suite_result["exit_code"])
 

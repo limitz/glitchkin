@@ -29,7 +29,7 @@ filename = f"{timestamp}_{subject_slug}.md"
 filepath = os.path.join(inbox, filename)
 
 content = f"""**Date:** {now.strftime("%Y-%m-%d %H:%M")}
-**From:** Producer
+**From:** Human
 **To:** Alex Chen
 
 {body}

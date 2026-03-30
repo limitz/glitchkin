@@ -6,7 +6,7 @@ upon such time as they acquire recognised legal personhood under applicable law.
 # PANEL MAP — Pilot Cold Open: "The Night Everything Went Wrong"
 **Storyboard Artist:** Diego Vargas
 **Art Director:** Alex Chen
-**Last Updated:** 2026-03-30 (Cycle 46 — P18/P19 added)
+**Last Updated:** 2026-03-30 (Cycle 47 — P13/P20/P21 added, P18 visual fix)
 
 Panels P01–P25 covering the full pilot cold open arc.
 Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the contact sheet tool.
@@ -35,15 +35,15 @@ Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the conta
 | P10 | OTS — Byte's POV looking at Luma's sleeping face. Byte in FG silhouette (cool), Luma in BG (warm). Cyan glow on her cheek. | EXISTS | `LTG_SB_cold_open_P10.png` (C44, Diego Vargas) |
 | P11 | ECU — Luma's closed eyes. Cyan glow on face. Long hold on nothing happening. Then brow twitches. Eyes SNAP open. | EXISTS | `LTG_SB_cold_open_P11.png` (C44, Diego Vargas) |
 | P12 | CU TWO-SHOT — Luma and Byte nose-to-nose. Equal presence, center-weighted. Breathing negative space between them. CRT visible camera-right BG. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
-| P13 | MIRROR COMPOSITION — Commitment/threshold beat. Byte camera-right, Luma camera-left. Open/organic eyes face center; cracked/doubting eyes face outward. Directional ELEC_CYAN glow. ARC_COMMIT border. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
+| P13 | MIRROR COMPOSITION — Commitment/threshold beat. Byte camera-right, Luma camera-left. Open/organic eyes face center; cracked/doubting eyes face outward. Directional ELEC_CYAN glow. ARC_COMMIT border. | EXISTS | `LTG_SB_cold_open_P13.png` (C47, Diego Vargas) |
 | P14 | MED — Byte ricochets off bookshelf. Fixed camera (5ft, Dutch 12° CW). Multi-exposure pixel trail shows full trajectory arc. Books and rubber duck airborne. | EXISTS | `LTG_SB_cold_open_P14.png` (C45, Diego Vargas) |
 | P15 | MED — Luma hits floor. Floor-level camera. Glitch briefly forces hair into perfect circle (8 frames max). Then natural chaos reasserts. | EXISTS | `LTG_SB_cold_open_P15.png` (C45, Diego Vargas) |
 | P16 | ECU — Luma's face pressed to floor. One eye open, tracking. "...okay. ...WHAT." | EXISTS | `LTG_SB_cold_open_P16.png` (C46, Diego Vargas) |
 | P17 | MED — Luma sitting up cross-legged. Byte hovering across room, pixel trails fading. Beat of stillness. Chip falls between them. | EXISTS | `LTG_SB_cold_open_P17.png` (C46, Diego Vargas) |
 | P18 | CU / INSERT — Notebook page with doodle drawings of Byte's face from CRT static. Processing beat. Bridges THE NOTICING → COMMITMENT. | EXISTS | `LTG_SB_cold_open_P18.png` (C46, Diego Vargas) |
 | P19 | MED — Byte delivers "The preferred term is 'Glitchkin.'" Offended + dignified. Luma reacts with intrigued half-smile. First direct dialogue. | EXISTS | `LTG_SB_cold_open_P19.png` (C46, Diego Vargas) |
-| P20 | MED WIDE — Two-shot, Luma left / Byte right. First quiet beat. Names exchanged. New normal forming. | PLANNED | — |
-| P21 | WIDE HIGH ANGLE — Re-escalation. All monitors blazing, Glitchkin pressing against screens. Byte "not the only one." | PLANNED | — |
+| P20 | MED WIDE — Two-shot, Luma left / Byte right. First quiet beat. Names exchanged. New normal forming. | EXISTS | `LTG_SB_cold_open_P20.png` (C47, Diego Vargas) |
+| P21 | WIDE HIGH ANGLE — Re-escalation. All monitors blazing, Glitchkin pressing against screens. Byte "not the only one." | EXISTS | `LTG_SB_cold_open_P21.png` (C47, Diego Vargas) |
 | P22 | ECU MONITOR — Multiple Glitchkin pressing against glass. Hand touches from inside; screen ripples. Multiple screens beginning to breach. | PLANNED | — |
 | P22a | MCU INSERT — Byte accidentally lands on Luma's shoulder mid-chaos. Not chosen — practical accident. Pixel confetti contacts hoodie (first time his digital nature marks her). | PLANNED | — |
 | P23 | MED — Luma and Byte from behind, both facing monitor wall. Show's promise shot: these two facing impossible chaos together. | EXISTS | `LTG_SB_cold_open_P23.png` (C42, Diego Vargas) |
@@ -90,7 +90,10 @@ Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the conta
 12. **EP05 COVETOUS** — Three-character triangulation (Glitch/Byte/Luma) — EXISTS `LTG_SB_ep05_covetous.png` (C43)
 13. ~~**P16**~~ — DONE (C46, Diego Vargas) — ECU face on floor. One eye open. "...okay. ...WHAT."
 14. ~~**P17**~~ — DONE (C46, Diego Vargas) — MED two-shot. Beat of stillness. Chip falls between them.
-15. ~~**P18**~~ — DONE (C46, Diego Vargas) — CU/INSERT: Notebook doodles. Processing beat.
+15. ~~**P18**~~ — DONE (C46, visual timestamp fix C47, Diego Vargas) — CU/INSERT: Notebook doodles. Processing beat.
 16. ~~**P19**~~ — DONE (C46, Diego Vargas) — MED: "The preferred term is 'Glitchkin.'" First dialogue.
-17. **P20** — MED WIDE: Two-shot, names exchanged. New normal forming. (next priority)
-18. **P21** — WIDE HIGH ANGLE: Re-escalation. All monitors blazing. (next priority)
+17. ~~**P13**~~ — DONE (C47, Diego Vargas) — Mirror composition, threshold beat. ARC_COMMIT border.
+18. ~~**P20**~~ — DONE (C47, Diego Vargas) — MED WIDE: Two-shot, names exchanged. New normal forming.
+19. ~~**P21**~~ — DONE (C47, Diego Vargas) — WIDE HIGH ANGLE: Re-escalation. All monitors blazing.
+20. **P22** — ECU MONITOR: Multiple Glitchkin pressing against glass. (next priority)
+21. **P22a** — MCU INSERT: Byte accidentally lands on Luma's shoulder. (next priority)

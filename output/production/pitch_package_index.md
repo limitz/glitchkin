@@ -1339,4 +1339,67 @@ All critical path assets verified on disk. No blocking issues found. The package
 | P1 Open items C46 | Char_spec_lint Miri filename pattern (Kai); Story bible v005 + pilot structure (Priya); P16/P17 panels + legacy file migration (Diego); Glitch motion G004 draw-order fix (Ryo) |
 | P2 Open items C46 | UV_PURPLE linter COVETOUS subtype (Rin + Morgan CI); SF06 staging review (Lee); SF02 GL-07 lamp halo (Jordan); Miri motion spec v002 (Ryo); Living room v003 (Hana); Color script analysis SF01–SF06 (Sam) |
 
-*Updated by Alex Chen, Art Director — Cycle 45 — 2026-03-30*
+---
+
+### Cycle 47 Additions
+
+| Asset | Path | Notes |
+|---|---|---|
+| Glitch Layer Showcase style frame | `output/color/style_frames/LTG_COLOR_styleframe_glitch_layer_showcase.png` | NEW — Dedicated GL visual identity pitch frame. Byte foreground + Glitch background in deep GL void. VOID_BLACK base, UV_PURPLE ambient, ELEC_CYAN circuit accents, scanline overlay, data aurora. Zero warm light. Responds to Zoe Park C47 feedback. (Cycle 47 — Rin Yamamoto) |
+| Scanline Pitch Extraction Tool | `output/tools/LTG_TOOL_scanline_pitch_extract.py` | NEW v1.0.0 — CRT scanline pitch analysis via autocorrelation. Complements glow_profile_extract. C47 calibration: phosphor refs mean pitch=25.8px, main CRT refs mean pitch=41.7px. (Cycle 47 — Rin Yamamoto) |
+| Warm Pixel Metric Tool | `output/tools/LTG_TOOL_warm_pixel_metric.py` | NEW — Replaces hue-split for REAL_INTERIOR warm/cool classification. 31/31 assets PASS. 24-point gap between REAL_INTERIOR floor and GLITCH ceiling. (Cycle 47 — Sam Kowalski) |
+| Miri Motion Spec v003 (rework) | `output/characters/motion/LTG_CHAR_miri_motion_v002.png` | REWORK — Takeshi 44/100 response. head_r 22->32 (45% scale increase), weight distribution, shoulder-hip counterpose, performing hands, spine_curve, B4 fond settle differentiated from B1. Lint PASS=6. (Cycle 47 — Ryo Hasegawa) |
+| Millbrook Street v003 | `output/environments/LTG_ENV_millbrook_main_street.png` | Value floor fixed (min=20). VP-convergent parked car trapezoids. 3-cycle backlog cleared. (Cycle 47 — Hana Okonkwo) |
+| Batch Path Migration Tool | `output/tools/LTG_TOOL_batch_path_migrate.py` | NEW — Scans 79 files, finds 150 hardcoded paths (85 auto-migratable). Safe --apply flag. (Cycle 47 — Hana Okonkwo) |
+| Depth Temperature Lint (precritique_qa Section 12) | `output/tools/LTG_TOOL_precritique_qa.py` v2.15.0 | Section 12 integrated. 6 assets registered. C47: PASS=1 (Lineup), WARN=2 (SF06/SF02), FAIL=2 (SF05/SF04 — band position mismatch, not true violations). GL exempt. (Cycle 47 — Lee Tanaka) |
+| Staging Review SF06/P14/P15 | `output/production/staging_review_c47_sf06_p14_p15.md` | SF06: 2 WARNs (Miri shoulder, Luma lean). P14: 1 WARN (Byte impact expression). P15: 1 WARN (arm elbow bend). No blockers. (Cycle 47 — Lee Tanaka) |
+| Shoulder Mechanics Reference | `output/production/shoulder_mechanics_reference_c47.md` | Per-character shoulder involvement guide (Luma/Miri/Cosmo). Addresses Takeshi C15 persistent critique. (Cycle 47 — Lee Tanaka) |
+| Perspective Rules | `docs/perspective-rules.md` | NEW — Art direction doc codifying 2-point perspective for Real World interiors. References vp_spec_config.json. Camera height conventions. Furniture convergence requirements. (Cycle 47 — Alex Chen) |
+| Shoulder Involvement Rule | `docs/image-rules.md` | NEW rule added — when arms move past ~30 degrees, shoulder line must change shape. Applies to Luma/Cosmo/Miri. (Cycle 47 — Alex Chen) |
+| SF01 Discovery v007 | `output/color/style_frames/LTG_COLOR_styleframe_discovery.png` | Sight-line fix: pupil_shift now vector-aimed at Byte target (was horizontal-only). Angular error 20.7->2.2 deg PASS. (Cycle 47 — Jordan Reed) |
+| CORRUPT_AMBER Detection | `output/tools/LTG_TOOL_color_verify.py` v3.0.0 | --corrupt-amber flag. RGB distance radius 30. Classifies sanctioned (CRT box + dim) vs violation (full-opacity/outside). (Cycle 47 — Jordan Reed) |
+| CI Suite v1.7.0 | `output/tools/LTG_TOOL_ci_suite.py` | Check 10: ext_model_check (external pretrained model detection). --dry-run flag for --auto-seed. (Cycle 47 — Morgan Walsh) |
+| Doc Governance Audit | `output/tools/LTG_TOOL_doc_governance_audit.py` | NEW v1.0.0 — Scans 161 .md files. Found 43 STALE (10+ cycles), 58 NO_CYCLE_REF. Report: doc_governance_audit_c47.md. (Cycle 47 — Morgan Walsh) |
+| Render QA v2.1.0 | `output/tools/LTG_TOOL_render_qa.py` | warm_pixel_pct integrated as primary REAL_INTERIOR gate (overrides hue-split). GLITCH/OTHER_SIDE ceiling enforced. (Cycle 47 — Kai Nakamura) |
+| Pretrained Model Detect | `output/tools/LTG_TOOL_pretrained_model_detect.py` | NEW v1.0.0 — 8 checks (torchvision/torch.hub/timm/keras/HuggingFace/ONNX). --pre-commit flag. Stdlib only. (Cycle 47 — Kai Nakamura) |
+| Luma expression sheet v014 | `output/characters/main/LTG_CHAR_luma_expression_sheet.png` | Shoulder involvement added (_luma_shoulder_dy). Face gate: no regression. (Cycle 47 — Maya Santos) |
+| Cosmo expression sheet v008 | `output/characters/main/LTG_CHAR_cosmo_expression_sheet.png` | Cowlick amplified (0.07->0.15 heads) + glasses bridge tape + shoulder involvement. Silhouette RPD PASS (worst 51.0%). (Cycle 47 — Maya Santos) |
+| Cosmo turnaround v003 | `output/characters/main/LTG_CHAR_cosmo_turnaround.png` | Cowlick + bridge tape in all 4 views. (Cycle 47 — Maya Santos) |
+| Character lineup v011 | `output/characters/main/LTG_CHAR_character_lineup.png` | Cosmo cowlick + bridge tape integrated. (Cycle 47 — Maya Santos) |
+| Miri expression sheet v007 | `output/characters/main/LTG_CHAR_miri_expression_sheet.png` | Shoulder involvement added. (Cycle 47 — Maya Santos) |
+| Elderly Miri Proportion Reference | `output/production/LTG_PROD_elderly_proportion_reference.png` | Two-panel realistic vs stylized comparison. Validates 2:1 compression ratio. (Cycle 47 — Maya Santos) |
+| P18 visual timestamp fix | `output/storyboards/panels/LTG_SB_cold_open_P18.png` | Rebuilt with 3-tier visual time arc (ghost/earlier/hero doodles). No text dependency. (Cycle 47 — Diego Vargas) |
+| P13 standalone | `output/storyboards/panels/LTG_SB_cold_open_P13.png` | Thematic fulcrum: mirror composition, trust/damage eye pairs. ARC_COMMIT border. (Cycle 47 — Diego Vargas) |
+| P20 + P21 NEW | `output/storyboards/panels/LTG_SB_cold_open_P20.png`, `P21.png` | P20: MED WIDE two-shot, names exchanged. P21: WIDE HIGH ANGLE Dutch 5 CCW, all monitors blazing, act break. (Cycle 47 — Diego Vargas) |
+| Prop Continuity Tracker | `output/tools/LTG_TOOL_prop_continuity_tracker.py` | NEW — Tracks 5 props across panels. --gaps flag for continuity breaks. (Cycle 47 — Diego Vargas) |
+
+#### Cycle 47 Pitch Package Status (CURRENT)
+
+| Requirement | C47 Status |
+|---|---|
+| **SF01** | **v007 C47** (Jordan — sight-line fix, angular error 2.2 deg PASS) |
+| **SF02 Glitch Storm** | v008 NATIVE (unchanged) |
+| **SF03 Other Side** | v005 PITCH PRIMARY (unchanged) |
+| **SF04 Resolution** | CANONICAL (unchanged) — depth temp lint FAIL is band-position mismatch |
+| **SF05 COVETOUS** | v3.0.0 (unchanged) — depth temp lint FAIL is band-position mismatch |
+| **SF05 "The Passing"** | C45 (unchanged) |
+| **SF06 "The Hand-Off"** | C45 (unchanged) — staging review 2 WARNs (shoulder, lean) |
+| **GL Showcase** | **NEW C47** (Rin Yamamoto) — dedicated Glitch Layer pitch frame |
+| Luma expression sheet | **v014 C47** (Maya — shoulder involvement) |
+| Byte expression sheet | v007 (unchanged) |
+| Cosmo expression sheet | **v008 C47** (Maya — cowlick + bridge tape + shoulder involvement) |
+| Cosmo turnaround | **v003 C47** (Maya — cowlick + bridge tape). Proportion check ratio=17.84 — likely measurement artifact on multi-panel. |
+| Miri expression sheet | **v007 C47** (Maya — shoulder involvement) |
+| Glitch expression sheet | v003 (unchanged) |
+| Character lineup | **v011 C47** (Maya — Cosmo visual hook) |
+| Logo | v003 (unchanged) |
+| Story Bible | v004. **v005 still pending** (Priya) |
+| Storyboards | **19 standalone panels**: P03–P11/P13–P21/P23/P24 + EP05. P18 FIXED (visual time arc). P13/P20/P21 NEW. P22/P22a next. |
+| Environments | Millbrook **v003 NEW** (Hana C47). Kitchen v007, Living Room v003. Others unchanged. |
+| Motion | Miri **v003 REWORKED** (Ryo C47 — Takeshi response). Others unchanged. All 5 characters covered. |
+| QA/Pipeline | precritique_qa **v2.15.0** (S12 depth temp). render_qa **v2.1.0** (warm pixel primary gate). CI **v1.7.0** (Check 10 ext model). color_verify **v3.0.0** (CORRUPT_AMBER). + 5 new tools (warm pixel metric, scanline pitch, batch path migrate, prop continuity, doc governance, pretrained model detect). |
+| Art Direction docs | **Perspective rules NEW** (Alex C47). **Shoulder involvement rule NEW** (Alex C47 + Lee C47 ref). |
+| P1 Open items C48 | Cosmo turnaround proportion check (manual verify); README sync UNLISTED tools; Furniture perspective interior audit (per-room VP spec needed first); Story bible v005 (Priya); Doc governance 43 stale docs (Priya notified) |
+| P2 Open items C48 | Depth temp lint per-asset band overrides (SF04/SF05); SF06 shoulder + Luma lean generator fix (Maya); Glitch G004 draw-order WARN (3 generators); Color script analysis SF01–SF06 (Sam); P22/P22a panels (Diego); Shoulder involvement in style frame + storyboard generators (cross-team) |
+
+*Updated by Alex Chen, Art Director — Cycle 47 — 2026-03-30*

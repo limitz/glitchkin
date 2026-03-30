@@ -33,6 +33,11 @@ Tools chained (in order):
      LTG_TOOL_uv_purple_linter.run_glitch_layer_dominance_check(). Checks UV_PURPLE + ELEC_CYAN
      combined ≥ 20% non-black pixels (FAIL < 10%, WARN 10-19%). Also checks warm-hue
      contamination < 5% total pixels (WARN if ≥ 5%). Runs on registered GLITCH_LAYER_PNGS.
+ 12. Depth Temperature Lint (scored) — warm=FG / cool=BG depth grammar (Lee Tanaka C47)
+     LTG_TOOL_depth_temp_lint.run_depth_temp_check(). Validates Depth Temperature Rule
+     (docs/image-rules.md, codified C45). Samples FG (78%) and BG (70%) tier bands.
+     PASS: separation >= threshold. WARN: correct direction, insufficient separation.
+     FAIL: inverted. SKIP: GL exempt. Runs on registered DEPTH_TEMP_PNGS.
 
 Output:
     output/production/precritique_qa_c<NN>.md
@@ -51,6 +56,11 @@ Version: 2.14.0 (C45 Rin Yamamoto: LTG_TOOL_uv_purple_linter v1.1.0 GLITCH_DARK_
                COVETOUS assets previously FAIL (0.6% / 0.2% ΔE-match) now PASS via hue-angle
                matching (96.7% / 98.9% UV_PURPLE hue family h° 255°–325°).
                No change to ENV asset handling — glitchlayer_frame WARNs remain.)
+Version: 2.15.0 (C47 Lee Tanaka: Section 12 Depth Temperature Lint added.
+               LTG_TOOL_depth_temp_lint.run_depth_temp_check() on DEPTH_TEMP_PNGS registry.
+               Checks warm=FG / cool=BG depth grammar per docs/image-rules.md.
+               GL scenes auto-exempt via world_type_infer. CYCLE_LABEL bumped to C47.
+               Step numbering updated 1-12/12.)
 Version: 2.14.1 (C46 Ryo Hasegawa: CYCLE_LABEL bumped to C46. motion_spec_lint C46 update
                (dark-sheet annotation_occupancy fix) — byte + glitch annotation_occupancy
                now PASS with 1% bright-pixel threshold. Eliminates 2 persistent false WARNs.
@@ -129,7 +139,7 @@ PALETTE_MD  = REPO_ROOT / "output" / "color" / "palettes" / "master_palette.md"
 BASELINE_JSON = TOOLS_DIR / "qa_baseline_last.json"
 
 # Cycle label — update each cycle
-CYCLE_LABEL = "C46"
+CYCLE_LABEL = "C47"
 
 if str(TOOLS_DIR) not in sys.path:
     sys.path.insert(0, str(TOOLS_DIR))
@@ -187,6 +197,27 @@ def _load_uv_purple_linter():
         mod = _importlib_util.module_from_spec(spec)
         spec.loader.exec_module(mod)
         _uv_purple_lint_mod = mod
+        return mod
+    except Exception:
+        return None
+
+
+# Depth-temperature-lint tool: loaded lazily (requires numpy; skips gracefully if absent)
+_depth_temp_lint_mod = None
+
+def _load_depth_temp_lint():
+    """Lazily import LTG_TOOL_depth_temp_lint. Returns module or None."""
+    global _depth_temp_lint_mod
+    if _depth_temp_lint_mod is not None:
+        return _depth_temp_lint_mod
+    try:
+        spec = _importlib_util.spec_from_file_location(
+            "LTG_TOOL_depth_temp_lint",
+            str(TOOLS_DIR / "LTG_TOOL_depth_temp_lint.py"),
+        )
+        mod = _importlib_util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        _depth_temp_lint_mod = mod
         return mod
     except Exception:
         return None
@@ -388,6 +419,34 @@ GLITCH_LAYER_PNGS = [
     ENV_DIR / "LTG_ENV_glitchlayer_encounter.png",
     ENV_DIR / "bg_glitch_layer_encounter.png",
     ENV_DIR / "glitch_layer_frame.png",
+]
+
+
+# ---------------------------------------------------------------------------
+# Depth Temperature Lint assets for Section 12 (Lee Tanaka C47)
+# ---------------------------------------------------------------------------
+# Multi-character and multi-tier compositions that must obey warm=FG / cool=BG
+# depth grammar (docs/image-rules.md Depth Temperature Rule, codified C45).
+# Glitch Layer scenes auto-exempt via world_type_infer. Single-character scenes
+# are excluded (no FG/BG tier separation to test).
+#
+# Each entry: (label, path)
+
+CHAR_DIR = OUTPUT_DIR / "characters" / "main"
+
+DEPTH_TEMP_PNGS = [
+    # Character lineup — canonical multi-tier composition (FG/BG ground planes)
+    ("Character Lineup",         CHAR_DIR / "LTG_CHAR_character_lineup.png"),
+    # SF05 The Passing — Miri + Luma, warm/cool split, Real World
+    ("SF05 The Passing",         SF_DIR  / "LTG_COLOR_styleframe_sf05.png"),
+    # SF06 The Hand-Off — Miri + Luma + CRT, warm/cool split, Real World
+    ("SF06 The Hand-Off",        SF_DIR  / "LTG_COLOR_sf_miri_luma_handoff.png"),
+    # SF04 Resolution — Luma + Byte (faded), warm/cool split, Real World
+    ("SF04 Resolution",          SF_DIR  / "LTG_COLOR_styleframe_sf04.png"),
+    # SF02 Glitch Storm — multi-character, but Glitch Layer → expected SKIP
+    ("SF02 Glitch Storm",        SF_DIR  / "LTG_COLOR_styleframe_glitch_storm.png"),
+    # COVETOUS — three-character, Glitch Layer → expected SKIP
+    ("COVETOUS Style Frame",     SF_DIR  / "LTG_COLOR_sf_covetous_glitch.png"),
 ]
 
 
@@ -1303,6 +1362,62 @@ def run_uv_purple_lint() -> dict:
     return result
 
 
+def run_depth_temp_lint() -> dict:
+    """
+    Section 12 — Depth Temperature Lint (Lee Tanaka, Cycle 47).
+
+    Runs LTG_TOOL_depth_temp_lint.run_depth_temp_check() on each PNG registered
+    in DEPTH_TEMP_PNGS. Glitch Layer scenes auto-exempt via world_type_infer.
+
+    Thresholds (from C46 results):
+        - PASS: separation >= threshold (auto from world_type_infer, default 12.0)
+        - WARN: correct direction (FG warmer) but under threshold
+        - FAIL: inverted depth grammar
+        - SKIP: Glitch Layer exempt, or file missing
+
+    Returns:
+        {
+            "overall"  : "PASS" | "WARN" | "FAIL",
+            "pass"     : int,
+            "warn"     : int,
+            "fail"     : int,
+            "skip"     : int,
+            "per_file" : list of per-file result dicts
+        }
+    """
+    dt_mod = _load_depth_temp_lint()
+
+    if dt_mod is None:
+        return {
+            "overall":  "WARN",
+            "pass":     0,
+            "warn":     1,
+            "fail":     0,
+            "skip":     0,
+            "per_file": [],
+            "error":    "LTG_TOOL_depth_temp_lint could not be loaded",
+        }
+
+    existing = []
+    missing_count = 0
+    label_map = {}
+    for label, p in DEPTH_TEMP_PNGS:
+        if p.exists():
+            existing.append(str(p))
+            label_map[str(p)] = label
+        else:
+            missing_count += 1
+
+    result = dt_mod.run_depth_temp_check(existing)
+
+    # Attach labels to per-file results
+    for r in result.get("per_file", []):
+        r["label"] = label_map.get(r.get("path", ""), os.path.basename(r.get("path", "")))
+
+    result["skip"] = result.get("skip", 0) + missing_count
+    return result
+
+
 # ---------------------------------------------------------------------------
 # Report builder
 # ---------------------------------------------------------------------------
@@ -1319,6 +1434,7 @@ def build_report(
     arc_diff_results: list,
     alpha_blend_res: dict,
     uv_purple_res: dict,
+    depth_temp_res: dict,
     delta: dict,
     run_ts: str,
 ) -> str:
@@ -1403,6 +1519,7 @@ def build_report(
         f"| Motion Spec Lint               | {motion_spec_res['overall']} | {motion_spec_res['pass']} | {motion_spec_res['warn']} | {motion_spec_res['fail']} |",
         f"| Alpha Blend Lint               | {alpha_blend_res['overall']} | {alpha_blend_res['pass']} | {alpha_blend_res['warn']} | {alpha_blend_res['fail']} |",
         f"| UV_PURPLE Dominance Lint       | {uv_purple_res['overall']}   | {uv_purple_res['pass']}   | {uv_purple_res['warn']}   | {uv_purple_res['fail']}   |",
+        f"| Depth Temperature Lint         | {depth_temp_res['overall']}   | {depth_temp_res['pass']}   | {depth_temp_res['warn']}   | {depth_temp_res['fail']}   |",
         "",
         "---",
         "",
@@ -1642,7 +1759,63 @@ def build_report(
 
     lines.append("---")
     lines.append("")
-    lines.append("*Generated by LTG_TOOL_precritique_qa.py v2.13.0 — Rin Yamamoto (C44: Section 11 UV_PURPLE Dominance Lint added; world_type_infer v1.2.0); Ryo Hasegawa (C45: glitch motion; C44: cosmo+miri, luma panel count); Rin Yamamoto (C43: SF04 FILL_LIGHT_ASSETS path fix)*")
+
+    # Section 12: Depth Temperature Lint
+    dt_badge = _grade_line(depth_temp_res["overall"])
+    lines.append(f"## 12. Depth Temperature Lint — Warm=FG / Cool=BG Grammar — {dt_badge}")
+    lines.append("")
+    lines.append(
+        "_Validates the Depth Temperature Rule (docs/image-rules.md, codified C45): "
+        "warm color = foreground, cool color = background. Checks multi-character and "
+        "multi-tier compositions. Glitch Layer scenes exempt. "
+        "PASS: FG warmer than BG by >= threshold. "
+        "WARN: correct direction but insufficient separation. "
+        "FAIL: inverted depth grammar._"
+    )
+    lines.append("")
+    lines.append(
+        f"PASS: {depth_temp_res['pass']}  "
+        f"WARN: {depth_temp_res['warn']}  "
+        f"FAIL: {depth_temp_res['fail']}  "
+        f"Skip: {depth_temp_res.get('skip', 0)}"
+    )
+    lines.append("")
+
+    if depth_temp_res.get("error"):
+        lines.append(f"  - *ERROR — {depth_temp_res['error']}*")
+        lines.append("")
+
+    for file_res in depth_temp_res.get("per_file", []):
+        f_badge = _grade_line(file_res["overall"])
+        label = file_res.get("label", os.path.basename(file_res.get("path", "")))
+        lines.append(f"### {label} — {f_badge}")
+        if file_res["overall"] == "SKIP":
+            lines.append(f"  - *SKIP — {file_res.get('message', '')}*")
+        else:
+            lines.append(
+                f"  - FG warmth: {file_res['fg_warmth']:.1f}  "
+                f"BG warmth: {file_res['bg_warmth']:.1f}  "
+                f"separation: {file_res['separation']:.1f}  "
+                f"threshold: {file_res['threshold']:.1f}"
+            )
+            wt = file_res.get("world_type", "")
+            if wt:
+                lines.append(f"  - World type: {wt}")
+        lines.append("")
+
+    if not depth_temp_res.get("per_file"):
+        lines.append("_No depth temperature assets registered._")
+        lines.append("")
+
+    lines.append("---")
+    lines.append("")
+    lines.append(
+        "*Generated by LTG_TOOL_precritique_qa.py v2.15.0 — "
+        "Lee Tanaka (C47: Section 12 Depth Temperature Lint added); "
+        "Rin Yamamoto (C44: Section 11 UV_PURPLE Dominance Lint); "
+        "Ryo Hasegawa (C46: motion spec dark-sheet fix, C45: glitch motion); "
+        "Rin Yamamoto (C43: SF04 FILL_LIGHT_ASSETS path fix)*"
+    )
 
     return "\n".join(lines)
 
@@ -1663,31 +1836,31 @@ def main():
     else:
         print("[precritique_qa] No baseline found — this run will establish the baseline.")
 
-    print("[1/8] Running Render QA on pitch PNGs...")
+    print("[1/12] Running Render QA on pitch PNGs...")
     render_qa_res = run_render_qa()
     print(f"      → {render_qa_res['overall']} (PASS={render_qa_res['pass']}, WARN={render_qa_res['warn']}, FAIL={render_qa_res['fail']}, MISSING={len(render_qa_res['missing'])})")
 
-    print("[2/8] Running Color Verify on style frames...")
+    print("[2/12] Running Color Verify on style frames...")
     color_verify_res = run_color_verify()
     print(f"      → {color_verify_res['overall']} (PASS={color_verify_res['pass']}, WARN={color_verify_res['warn']})")
 
-    print("[3/8] Running Proportion Verify on character turnarounds...")
+    print("[3/12] Running Proportion Verify on character turnarounds...")
     proportion_res = run_proportion_verify()
     print(f"      → {proportion_res['overall']} (PASS={proportion_res['pass']}, WARN={proportion_res['warn']}, FAIL={proportion_res['fail']})")
 
-    print("[4/8] Running Stub Linter on output/tools/...")
+    print("[4/12] Running Stub Linter on output/tools/...")
     stub_lint_res = run_stub_linter()
     print(f"      → {stub_lint_res['overall']} (PASS={stub_lint_res['pass']}, WARN={stub_lint_res['warn']}, ERROR={stub_lint_res['fail']})")
 
-    print("[5/8] Running Palette Warmth Lint on master_palette.md...")
+    print("[5/12] Running Palette Warmth Lint on master_palette.md...")
     palette_lint_res = run_palette_warmth_lint()
     print(f"      → {palette_lint_res['overall']} (checked={palette_lint_res['pass'] + palette_lint_res['warn']}, violations={palette_lint_res['warn']})")
 
-    print("[6/8] Running Glitch Spec Lint on generators...")
+    print("[6/12] Running Glitch Spec Lint on generators...")
     glitch_lint_res = run_glitch_spec_lint()
     print(f"      → {glitch_lint_res['overall']} (PASS={glitch_lint_res['pass']}, WARN={glitch_lint_res['warn']}, FAIL={glitch_lint_res['fail']}, SKIP={glitch_lint_res.get('skip',0)})")
 
-    print("[7/8] Running README Script Index Sync audit...")
+    print("[7/12] Running README Script Index Sync audit...")
     readme_sync_res = run_readme_sync()
     # Prominently report README WARN to console
     if readme_sync_res["warn"] > 0:
@@ -1695,11 +1868,11 @@ def main():
     else:
         print(f"      → {readme_sync_res['overall']} (OK={readme_sync_res['pass']}, UNLISTED/GHOST={readme_sync_res['warn']}, disk={readme_sync_res.get('disk_total','?')}, listed={readme_sync_res.get('listed_total','?')})")
 
-    print("[8/10] Running Motion Spec Lint on motion sheets...")
+    print("[8/12] Running Motion Spec Lint on motion sheets...")
     motion_spec_res = run_motion_spec_lint()
     print(f"      → {motion_spec_res['overall']} (PASS={motion_spec_res['pass']}, WARN={motion_spec_res['warn']}, FAIL={motion_spec_res['fail']}, MISSING={len(motion_spec_res['missing'])})")
 
-    print("[9/10] Running Arc-Diff Gate on contact sheet pairs...")
+    print("[9/12] Running Arc-Diff Gate on contact sheet pairs...")
     arc_diff_results = run_arc_diff_gate()
     for ad in arc_diff_results:
         sev = ad["severity"]
@@ -1709,13 +1882,17 @@ def main():
             msgs = "; ".join(m[:80] for m in ad.get("messages", [])[:2])
             print(f"      → {ad['label']}: {sev} — {msgs}")
 
-    print("[10/11] Running Alpha Blend Lint on fill-light assets...")
+    print("[10/12] Running Alpha Blend Lint on fill-light assets...")
     alpha_blend_res = run_alpha_blend_lint()
     print(f"      → {alpha_blend_res['overall']} (PASS={alpha_blend_res['pass']}, WARN={alpha_blend_res['warn']}, FAIL={alpha_blend_res['fail']}, SKIP={alpha_blend_res['skipped']})")
 
-    print("[11/11] Running UV_PURPLE Dominance Lint on Glitch Layer assets...")
+    print("[11/12] Running UV_PURPLE Dominance Lint on Glitch Layer assets...")
     uv_purple_res = run_uv_purple_lint()
     print(f"      → {uv_purple_res['overall']} (PASS={uv_purple_res['pass']}, WARN={uv_purple_res['warn']}, FAIL={uv_purple_res['fail']}, SKIP={uv_purple_res.get('skip',0)})")
+
+    print("[12/12] Running Depth Temperature Lint on multi-character assets...")
+    depth_temp_res = run_depth_temp_lint()
+    print(f"      → {depth_temp_res['overall']} (PASS={depth_temp_res['pass']}, WARN={depth_temp_res['warn']}, FAIL={depth_temp_res['fail']}, SKIP={depth_temp_res.get('skip',0)})")
 
     # Build snapshot and compute delta
     current_snapshot = _make_snapshot(
@@ -1743,6 +1920,7 @@ def main():
         arc_diff_results,
         alpha_blend_res,
         uv_purple_res,
+        depth_temp_res,
         delta,
         run_ts,
     )
@@ -1764,6 +1942,7 @@ def main():
         motion_spec_res["overall"],
         alpha_blend_res["overall"],
         uv_purple_res["overall"],
+        depth_temp_res["overall"],
     )
 
     print(f"[precritique_qa] OVERALL: {overall}")

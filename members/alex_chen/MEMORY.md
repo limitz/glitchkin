@@ -8,50 +8,63 @@
 ## Pipeline Update (C39)
 - **numpy, OpenCV (cv2), and PyTorch now authorized** for the pipeline. numpy for array ops (faster than PIL loops), OpenCV for LAB color space + SSIM, PyTorch if neural analysis needed. OpenCV default is BGR — convert on load. Use Pillow for I/O/drawing; numpy/cv2 for analysis/math. Broadcast sent to all team members.
 
-## Cycle 45 State (current — C45 Alex briefs dispatched)
+## Cycle 47 State (current)
+
+**C47 Alex Chen work complete. All inbox messages archived.**
+
+### C47 Alex Chen Actions (this session)
+1. **Archived** 12 inbox messages: Producer (C47 brief + refs), Rin (GL showcase + scanline tool), Sam (warm pixel metric), Hana (Millbrook v003 + furniture partial + batch migrate), Lee (depth temp lint S12 + staging review + shoulder mechanics), Ryo (Miri motion v003 rework), Morgan (CI v1.7.0 + ext model detect + doc governance), Jordan (SF01 sight-line fix + CORRUPT_AMBER detect), Kai (warm pixel integration + pretrained model detect), Diego (P18 fix + P13 + P20/P21 + prop tracker), Maya (Cosmo visual hook + shoulder fix + elderly Miri ref).
+2. **Perspective rules doc written**: `docs/perspective-rules.md` — codifies 2-point perspective for Real World interiors, camera height conventions, furniture convergence requirements. References vp_spec_config.json and sobel_vp_detect. Responds to Chiara C47 critique.
+3. **Shoulder involvement rule added**: New section in `docs/image-rules.md` — arms past ~30 degrees require shoulder line shape change. Per-character clothing reads. References Lee's `shoulder_mechanics_reference_c47.md`. Addresses Takeshi persistent critique since C15.
+4. **C47 output reviewed**: Full team delivery received. Key: Maya delivered shoulder involvement across all 3 human characters + Cosmo visual hook (cowlick + bridge tape). Jordan fixed SF01 sight-line (was 20.7deg miss, now 2.2deg PASS). Diego delivered P18/P13/P20/P21 (19 standalone panels now). Morgan CI v1.7.0 (Check 10 ext model). Kai integrated warm_pixel_metric into render_qa v2.1.0.
+5. **Pitch package index updated**: C47 additions + status table.
+6. **Ideabox**: submitted `20260330_alex_chen_per_asset_depth_temp_band_overrides.md`.
+
+### C47 Canonical Asset Versions
+- **Luma expression sheet: v014** (Maya C47 — shoulder involvement added)
+- Luma face curve spec: v002 / motion spec: v002 / color model: v002 / turnaround: v004
+- **Character lineup: v011** (Maya C47 — Cosmo cowlick + bridge tape)
+- Byte expression sheet: v007 / Byte motion spec: v003
+- **Miri expression sheet: v007** (Maya C47 — shoulder involvement)
+- **Miri motion spec: v003 REWORKED** (Ryo C47 — Takeshi response: scale, weight, counterpose, hands, spine)
+- **Cosmo expression sheet: v008** (Maya C47 — cowlick + bridge tape + shoulder involvement)
+- **Cosmo turnaround: v003** (Maya C47 — cowlick + bridge tape)
+- Glitch expression sheet: v003 / Glitch motion spec: v001
+- **SF01: v007** (Jordan C47 — sight-line fix, angular error 20.7->2.2 deg PASS)
+- SF02: v008 / SF03: v005 / SF04: CANONICAL / SF05 COVETOUS: v3.0.0
+- SF05 "The Passing": C45 (Jordan) / SF06 "The Hand-Off": C45 (Maya)
+- **GL Showcase: NEW C47** (Rin) — dedicated Glitch Layer pitch frame
+- Kitchen: v007 / Classroom: v003 / Hallway: v004 / Living Room: v003 (Hana C46) / **Millbrook: v003 NEW** (Hana C47)
+- Story Bible: v004 → **v005 still pending** (Priya)
+- Logo: v003 RENDERED
+- Cold Open: P03–P11/**P13**/P14/P15/P16/P17/**P18 FIXED**/**P19**/**P20**/**P21**/P23/P24 + EP05 COVETOUS. **19 standalone panels.** P22/P22a next (Diego).
+- QA: precritique_qa **v2.15.0** (Section 12 depth temp). render_qa **v2.1.0** (warm pixel primary gate). CI **v1.7.0** (Check 10 ext model). color_verify **v3.0.0** (CORRUPT_AMBER detect). warm_pixel_metric NEW. scanline_pitch_extract NEW. batch_path_migrate NEW. prop_continuity_tracker NEW. doc_governance_audit NEW. pretrained_model_detect NEW.
+- Art direction docs: **perspective-rules.md NEW** (Alex C47). **Shoulder rule NEW** in image-rules.md (Alex C47).
+
+### C47 Key Decisions + Open Items
+- **RESOLVED**: Shoulder implementation — Maya delivered across all 3 human character expression sheets (Luma v014, Cosmo v008, Miri v007) + lineup v011. Cross-team fix complete for expression sheets. Style frames and storyboard generators still need updates.
+- **RESOLVED**: SF01 sight-line — Jordan fixed pupil_shift to vector (was horizontal-only). Angular error 20.7->2.2 deg. PASS.
+- **RESOLVED**: Warm pixel metric CI integration — Kai integrated into render_qa v2.1.0 as primary REAL_INTERIOR gate.
+- **RESOLVED**: P16/P17 panels — Diego delivered. Plus P18 fixed, P13 standalone, P20, P21 NEW. 19 panels total.
+- **P1**: Cosmo turnaround proportion FAIL (ratio=17.84 vs spec=3.2) — likely multi-panel turnaround measurement artifact; Cosmo now v003 with visual hook. Needs manual check.
+- **P1**: README sync UNLISTED tools — still needs registration pass
+- **P1**: Furniture perspective interior audit — Hana recommends per-room VP spec doc first
+- **P1**: Story bible v005 (Priya — still pending from C46)
+- **P1**: Doc governance: 43 STALE docs, critical stale byte.md (C12, age 35) — Morgan C47 audit. Priya notified.
+- **P2**: Depth temp lint per-asset band overrides for SF04/SF05 false FAILs (ideabox submitted)
+- **P2**: SF06 shoulder + Luma lean fixes (Maya — Lee staging review WARNs). Shoulder done in expression sheets; SF06 generator still needs update.
+- **P2**: Glitch G004 draw-order WARN in 3 generators (glitch_motion, sf03_other_side, gl_showcase)
+- **P2**: Color script analysis SF01–SF06 (Sam — carried from C46)
+- **P2**: P22/P22a next storyboard panels (Diego)
+- **NOTE**: Hana's furniture perspective recommendation is sound — schedule a dedicated cycle after VP spec doc exists per room
+- **NOTE**: Producer added reference images to reference dir as requested
+
+---
+
+## Cycle 45 State (archived — superseded by C47)
 
 **C45 Alex Chen work complete. All briefs out. All inbox messages archived.**
-
-### C45 Alex Chen Actions (this session)
-1. **Archived** 10 inbox messages: Diego (caption retrofit + P14/P15), Hana (perspective font + kitchen v007), Morgan (CI v1.4.0), Ryo (Glitch motion + spec conflict), Sam (font pipeline), Maya (hairpin rename + SF06), Rin (UV_PURPLE linter), Lee (lineup tier depth Option C), Kai (Byte face gate), Jordan (SF05).
-2. **Spec conflict resolved**: My C44 brief had CORRUPT_AMBER wrong — said it was Byte's crack, but it is Glitch's body color. Byte's crack is HOT_MAGENTA. Ryo followed glitch.md (canonical) correctly. No regen needed. Error acknowledged to Ryo in C46 brief.
-3. **Logo v003 rendered**: Font files (Nunito-Bold.ttf, SpaceGrotesk-Bold.ttf) were already in assets/fonts/. Ran `LTG_TOOL_logo_asymmetric.py` directly — `LTG_BRAND_logo_asymmetric.png` updated with correct fonts. Notified Sam.
-4. **P0 CLOSED**: FLAG 05 (Miri chopstick → wooden hairpins) complete. Maya executed atomic 6-file update. Maya notified Priya. Priya can now close in bible v005.
-5. **C46 briefs dispatched** to all 11 active non-Alex members.
-6. **Pitch package index updated**: C45 additions section + C45 status table appended.
-7. **Ideabox**: submitted `20260330_alex_chen_covetous_world_subtype_linter.md` — QA tools should model creative intent, not override it.
-
-### C45 Canonical Asset Versions
-- Luma expression sheet: **v013** (Tier-1 silhouette body postures — confirmed C41 delivery, was stale in C44 memory)
-- Luma face curve spec: v002 / Luma motion spec: v002 / Luma color model: v002 / Luma turnaround: v004
-- Character lineup: **v010 DELIVERED** (Maya C45/C46 concurrent — dual-warmth depth bands, warm=FG/cool=BG, PASS)
-- Byte expression sheet: v007 / Byte motion spec: v003
-- Miri expression sheet: **v006** (hairpin rename, regenerated)
-- Cosmo expression sheet: v007 / Glitch expression sheet: v003
-- Glitch motion spec: **v001 NEW** (Ryo C45)
-- Miri motion spec: v001 → v002 COMMISSIONED (Ryo C46 — warmth pacing arc)
-- SF01: v006 / **SF02: v008** / SF03: v005 / **SF04: CANONICAL** / **SF05 COVETOUS: v3.0.0**
-- **SF05 "The Passing": NEW C45** (Jordan) — Miri+Luma kitchen pre-dawn
-- **SF06 "The Hand-Off": NEW C45** (Maya) — Miri+Luma living room at CRT — closes pitch gap
-- Kitchen: **v007** / Classroom: v003 / Hallway: v004 / Living Room: v002 (v003 COMMISSIONED Hana C46)
-- **Story Bible: v004** → v005 COMMISSIONED (Priya C46 — FLAG 05 close + SF05/SF06 incorporation)
-- **Logo: v003 RENDERED** (Nunito Bold + Space Grotesk Bold)
-- Cold Open: P03–P11/P14/P15/P23/P24 + EP05 COVETOUS. P16/P17 COMMISSIONED (Diego C46).
-
-### C45 Key Decisions + Open Items
-- **RESOLVED**: CORRUPT_AMBER = Glitch body fill (canonical). Byte crack = HOT_MAGENTA. My C44 brief had this wrong.
-- **RESOLVED**: Logo v003 fonts now correct and rendered.
-- **RESOLVED**: FLAG 05 (Miri hairpins) closed. All 6 files updated atomically.
-- **P1**: char_spec_lint Miri filename pattern (Kai C46 — M004 never matched no-suffix file)
-- **RESOLVED**: Lineup v010 tier depth indicator — Maya delivered concurrently. Dual-warmth bands PASS.
-- **P1**: Story bible v005 (Priya C46 — FLAG 05 close + pilot structure)
-- **P1**: P16/P17 panels + legacy file migration (Diego C46)
-- **P2**: COVETOUS linter subtype fix (Rin C46 — creative intent modeling); CI integration (Morgan C46)
-- **RESOLVED**: SF04 GL-07 lamp halo + CRT contamination fringe — Jordan delivered concurrently C45. Warm/cool 13.1 PASS.
-- **RESOLVED**: Depth Temperature Rule codified in docs/image-rules.md — Lee C45.
-- **P2**: SF06 staging review (Lee C46); SF02 no further lamp halo work needed this cycle
-- **P2**: Miri motion spec v002 warmth pacing (Ryo C46); Living room v003 (Hana C46)
-- **P2**: Color script analysis SF01–SF06 (Sam C46)
+Key: Perspective rules + shoulder rule written as art direction docs. GL Showcase style frame new. Miri motion v003 rework addresses Takeshi. Millbrook v003 value floor fixed. Warm pixel metric replaces hue-split. Depth temp lint integrated as precritique_qa S12. Batch path migrate tool ready.
 
 ---
 

@@ -6,6 +6,37 @@ Comedy-adventure cartoon. Three worlds: Real World (warm/domestic), Glitch World
 ## Joined
 Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style frames).
 
+## Cycle 47 — Millbrook Street v003 + Batch Path Migration Tool
+
+### Millbrook Street v003 (P1 — 3-cycle value floor fix)
+- Value floor fixed: NEAR_BLACK_WARM (20,12,8) deep shadows at building bases, alley crevices, sidewalk-road junctions, far corners
+  - QA C47: min=20 (was 45) → PASS
+- Window specular restoration: post-overlay highlight dots at (W-180, H*0.26+30) and (85, H*0.26+130)
+  - QA C47: max=235 → PASS
+- Cool bottom gradient: numpy Porter-Duff with CRT_COOL_SPILL alpha=100, 60-row transition
+  - QA C47: warm/cool separation=21.0 PASS (was 21.2, stable)
+- paper_texture(alpha=16) + vignette(strength=45) + flatten_rgba_to_rgb() final passes
+  - QA C47: line_weight outliers=2 PASS
+- Parked cars: VP-convergent trapezoid bodies replacing flat rectangles (P2 furniture perspective)
+- Hardcoded output path migrated to output_dir() from LTG_TOOL_project_paths
+- ci_known_issues.json: millbrook hardcoded_path_check marked resolved_cycle=C47
+- QA C47: silhouette PASS, value PASS (min=20 max=235 range=215), warm/cool 21.0 PASS, line_weight outliers=2 PASS, grade WARN (color fidelity pre-existing only)
+
+### Batch Path Migration Tool (P3)
+- Built `LTG_TOOL_batch_path_migrate.py` — scans all .py files for hardcoded /home/wipkat/team paths
+- Classifies each: SAFE_AUTO (85), SAFE_MANUAL (52 in comments/docstrings), NEEDS_REVIEW (13)
+- --apply flag auto-migrates SAFE_AUTO patterns (adds output_dir() import + replaces assignment)
+- --report-json for machine-readable output
+- Did NOT apply batch — tool is ready for incremental use by team
+
+### Furniture Perspective (P2 partial)
+- Millbrook parked cars fixed (VP-convergent trapezoid bodies)
+- Full audit of Kitchen/Living Room/Classroom deferred — these are interior scenes where "furniture in flat elevation" is more complex (needs per-object VP alignment rework, not just lean parameter)
+- Recommendation: furniture perspective fix should be a dedicated cycle task with VP spec per room
+
+### Inbox
+- `20260330_2330_c47_brief.md` from Alex Chen — archived after acting on all 3 priorities
+
 ## Cycle 46 — Living Room v003 + Tech Den v007 + Classroom v004 + School Hallway v005
 
 ### Living Room v003 (SF06 Alignment)
@@ -76,7 +107,7 @@ Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style fr
   - C41 fix (v006): in-generator cool bottom pass via numpy Porter-Duff (alpha=130, 60-row graduated transition). Warm/cool 102.9 PASS, line_weight outliers=1 PASS, grade WARN (pre-existing color fidelity only).
 - Glitch Layer: v003
 - School Hallway: **v005 (C46)** — `LTG_ENV_school_hallway.png` — C46 path migration
-- Millbrook Street: v002
+- **Millbrook Street: v003 (C47)** — `LTG_ENV_millbrook_main_street.png` — value floor fix, cool bottom, final passes, path migration
 - **Living Room**: **v003 (C46)** — `LTG_ENV_grandma_living_room.png` — QA PASS (SF06 aligned, CRT center, warm-left/cool-right staging)
 - **Classroom: FULL REBUILD C41** — `LTG_ENV_classroom_bg.png`
   - QA C41: silhouette PASS, warm/cool 17.0 PASS, line_weight 2 outliers PASS, grade WARN (pre-existing only)

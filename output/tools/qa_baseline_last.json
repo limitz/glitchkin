@@ -1,6 +1,6 @@
 {
-  "cycle": "C46",
-  "run_ts": "2026-03-30 11:31",
+  "cycle": "C47",
+  "run_ts": "2026-03-30 15:39",
   "sections": {
     "render_qa": {
       "section": "Render QA",
@@ -45,14 +45,14 @@
     },
     "proportion": {
       "section": "Proportion Verify",
-      "overall": "WARN",
+      "overall": "FAIL",
       "pass": 1,
-      "warn": 3,
-      "fail": 0,
+      "warn": 2,
+      "fail": 1,
       "missing": [],
       "flagged": [
         "  - LTG_CHAR_luma_turnaround.png: head gap not found (no-gap) \u2014 multi-panel turnaround may require manual proportion check \u2014 WARN",
-        "  - LTG_CHAR_cosmo_turnaround.png: head gap not found (no-gap) \u2014 multi-panel turnaround may require manual proportion check \u2014 WARN",
+        "  - LTG_CHAR_cosmo_turnaround.png: FAIL \u2014 ratio=17.84 (spec=3.2, tol=\u00b15%)",
         "  - LTG_CHAR_miri_turnaround.png: head gap not found (no-gap) \u2014 multi-panel turnaround may require manual proportion check \u2014 WARN",
         "  - LTG_CHAR_glitch_turnaround.png: SKIP proportion check (Glitch non-humanoid)"
       ]
@@ -60,7 +60,7 @@
     "stub_linter": {
       "section": "Stub Linter",
       "overall": "PASS",
-      "pass": 143,
+      "pass": 156,
       "warn": 0,
       "fail": 0,
       "missing": [],
@@ -79,7 +79,7 @@
       "section": "Glitch Spec Lint",
       "overall": "WARN",
       "pass": 7,
-      "warn": 14,
+      "warn": 15,
       "fail": 0,
       "missing": [],
       "flagged": [
@@ -119,27 +119,29 @@
         "  - LTG_TOOL_style_frame_03_other_side.py: G008: Interior states (YEARNING/COVETOUS/HOLLOW) detected but no bilateral eye rule found. Spec \u00a76.3: interior states require IDENTICAL left+right eye glyphs \u2014 asymmetric destabilization must be SKIPPED for these states.",
         "  - LTG_TOOL_style_frame_04_resolution.py: G006: Possible organic/warm fill detected \u2014 fill=(175, 140, 95). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
         "  - LTG_TOOL_style_frame_04_resolution.py: G006: Possible organic/warm fill detected \u2014 fill=(190, 140, 70). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
-        "  - LTG_TOOL_style_frame_04_resolution.py: G006: Possible organic/warm fill detected \u2014 fill=(160, 155, 148). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710)."
+        "  - LTG_TOOL_style_frame_04_resolution.py: G006: Possible organic/warm fill detected \u2014 fill=(160, 155, 148). Glitch body fill must use CORRUPT_AMBER family only (spec \u00a710).",
+        "  - LTG_TOOL_styleframe_glitch_layer_showcase.py: G004: Draw order FAIL \u2014 HOT_MAG crack line appears BEFORE body fill polygon. Crack must be drawn after fill (spec \u00a72.3 stacking order)."
       ]
     },
     "readme_sync": {
       "section": "README Sync",
       "overall": "WARN",
-      "pass": 135,
-      "warn": 4,
+      "pass": 146,
+      "warn": 5,
       "fail": 0,
       "missing": [],
       "flagged": [
-        "  - UNLISTED: `LTG_TOOL_sb_caption_retrofit.py` (on disk, not in README Script Index)",
-        "  - UNLISTED: `LTG_TOOL_sb_cold_open_P16.py` (on disk, not in README Script Index)",
-        "  - UNLISTED: `LTG_TOOL_sb_cold_open_P17.py` (on disk, not in README Script Index)",
-        "  - GHOST: `LTG_TOOL_style_frame_01_discovery.py` (in README, not on disk)"
+        "  - UNLISTED: `LTG_TOOL_batch_path_migrate.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_face_metric_calibrate.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_sb_cold_open_P13.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_sb_cold_open_P18.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_sb_cold_open_P19.py` (on disk, not in README Script Index)"
       ]
     },
     "motion_spec": {
       "section": "Motion Spec Lint",
       "overall": "WARN",
-      "pass": 26,
+      "pass": 32,
       "warn": 4,
       "fail": 0,
       "missing": [],
@@ -152,8 +154,8 @@
     }
   },
   "totals": {
-    "pass": 329,
-    "warn": 35,
-    "fail": 0
+    "pass": 359,
+    "warn": 36,
+    "fail": 1
   }
 }

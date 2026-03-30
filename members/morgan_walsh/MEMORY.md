@@ -6,6 +6,43 @@ Pipeline Automation Specialist. Core mandate: reduce LLM token cost by maximisin
 ## Joined
 C34 (first active cycle).
 
+## C47 Work Done
+
+### P1: ci_suite v1.7.0 — `--dry-run` flag
+- `--dry-run` flag added to `--auto-seed` in `LTG_TOOL_ci_suite.py`.
+- `--auto-seed --dry-run` prints [DRY RUN] prefixed summary without modifying ci_known_issues.json.
+- `--dry-run` without `--auto-seed` has no effect.
+- Closes C46 ideabox item.
+
+### P2: ci_suite Check 10 — `ext_model_check`
+- New CI check scans all .py files in tools_dir for pretrained model imports.
+- Patterns: torchvision.models, torch.hub.load, transformers, huggingface_hub, .from_pretrained(), .load_state_dict with URL downloads, torchvision pretrained model instantiation.
+- FAIL if any hit found (file + line + pattern description).
+- `check_ext_models(tools_dir)` exported for programmatic use.
+- Auto-seed support included (ext_model_check entries can be auto-seeded).
+- Note: Kai also built standalone `LTG_TOOL_pretrained_model_detect.py` (8 checks PM001-PM008) this cycle. My Check 10 integrates detection into the CI suite gate; Kai's tool is standalone with --pre-commit flag. They complement each other.
+
+### P3: Doc Governance Audit
+- Built `LTG_TOOL_doc_governance_audit.py` v1.0.0 — scans .md files for cycle references, reports STALE/NO_REF/RECENT.
+- C47 audit: 161 files scanned, 43 STALE (10+ cycles), 58 NO_CYCLE_REF, 60 RECENT.
+- Critical stale: byte.md (C12, age 35), ep01_cold_open.md (C3, age 44), character_export_manifest.md (no cycle ref).
+- Report: output/production/doc_governance_audit_c47.md
+- Findings sent to Priya Shah inbox.
+
+### Deliverables
+- ci_suite v1.7.0 (from v1.6.0): --dry-run + Check 10 ext_model_check
+- LTG_TOOL_doc_governance_audit.py v1.0.0 (NEW)
+- output/production/doc_governance_audit_c47.md
+- Report sent to Alex Chen inbox
+- Doc audit sent to Priya Shah inbox
+- Archived 1 inbox message (C47 brief)
+- Ideabox: CI doc staleness check idea submitted
+
+## CI Suite Status (C47)
+- ci_suite v1.7.0 — --dry-run flag + Check 10 ext_model_check
+- 10 checks total (was 9)
+- Checks: stub_linter, draw_order_lint, glitch_spec_lint, spec_sync_ci, char_spec_lint, dual_output_check, hardcoded_path_check, thumbnail_lint, motion_sheet_coverage, ext_model_check
+
 ## C46 Work Done
 
 ### Task: ci_suite v1.6.0 — `--auto-seed` flag

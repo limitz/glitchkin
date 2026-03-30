@@ -529,6 +529,94 @@ All three P1 priorities complete.
 - **Two-shot speaker grammar**: Speaker (Byte) camera-left, reactor (Luma) camera-right.
   This is standard SB dialogue grammar — audience reads left-to-right = speaker first.
 
+## Cycle 47 — Delivered
+
+### P1 — P18 Visual Timestamp Fix (Ingrid critique #5)
+- `LTG_TOOL_sb_cold_open_P18.py` updated → visual timestamp system
+- Panel now reads WITHOUT captions via 3-tier visual time arc:
+  - TIER 1 (GHOST): top-left, PENCIL_GHOST=(195,188,172), detail_level=0, scale 0.45
+  - TIER 2 (EARLIER): mid-page, PENCIL_LIGHT=(155,145,128), detail_level=1, scale 0.75
+  - TIER 3 (TONIGHT): center hero, PENCIL_DARK=(40,32,22), detail_level=2, scale 2.0
+- Size + darkness + detail all increase together = time passing visually
+- Emphasis burst (12 radiating lines) around hero doodle = eureka convention
+- Star mark on hero circle = importance marker (visual, not text)
+- Luma's finger now POINTS at the hero doodle (active gesture)
+- Dotted guide trail connects ghost → earlier → hero (unconscious eye flow)
+- Output: `output/storyboards/panels/LTG_SB_cold_open_P18.png` (800x600px)
+
+### P2 — P13 Standalone Panel
+- `LTG_TOOL_sb_cold_open_P13.py` (NEW) → `output/storyboards/panels/LTG_SB_cold_open_P13.png`
+- MED TWO-SHOT. MIRROR COMPOSITION. Thematic fulcrum of the pitch.
+- Luma camera-left (3/4 right), Byte camera-right (full-frontal, -3-4 deg lean)
+- Mirror: open/organic eyes face CENTER (trust inward); cracked/doubting eyes face OUTWARD (damage outward)
+- Byte: ELEC_CYAN glow directional (brighter toward Luma), level lids, barely-there WARMTH arc mouth
+- Eye-level guideline + mirror gaze arrows annotated (cyan inward, magenta outward)
+- ARC_COMMIT = (60, 200, 140) border. CRT visible camera-right BG.
+- Negative space annotated between them.
+- 800x600px. Three-tier caption bar.
+
+### P3 — P20 Panel (Names Exchanged)
+- `LTG_TOOL_sb_cold_open_P20.py` (NEW) → `output/storyboards/panels/LTG_SB_cold_open_P20.png`
+- MED WIDE two-shot. First quiet after naming beat.
+- Luma camera-left sitting cross-legged, notebook in lap (P18 continuity), pencil in hand.
+- Byte camera-right floating at Luma's eye level (concession).
+- Key staging: negative space ~25% (CLOSER than P17's 40%+ — they moved closer).
+- Byte: WARY ACCEPTANCE — 70% lid, cracked eye processing dots, neutral mouth.
+- Bookshelf BG left, CRT monitors BG right (gray-green static, NOT blazing).
+- ELEC_CYAN border. 800x600px.
+
+### P3 — P21 Panel (Re-Escalation)
+- `LTG_TOOL_sb_cold_open_P21.py` (NEW) → `output/storyboards/panels/LTG_SB_cold_open_P21.png`
+- WIDE HIGH ANGLE, Dutch 5 CCW. Second crisis / act break driver.
+- 7 CRT monitors ALL BLAZING — Glitchkin hands + faces pressing against glass.
+- Screen ripples (distortion rings). Cyan/magenta flood washes room.
+- Byte: camera-right, facing monitors, RIGID (arms pulled in tight — he KNOWS).
+- Luma: camera-left, rising from floor, eyes UP (ALARMED but processing).
+- 30+ pixel confetti (full density return). HOT_MAGENTA border.
+- Dutch tilt: built on canvas_w+40, rotated 5 deg, cropped to PW x DRAW_H.
+- 800x600px.
+
+### P4 — Prop Continuity Tracker
+- `LTG_TOOL_prop_continuity_tracker.py` (NEW)
+- Tracks 5 props: notebook, pencil, hero CRT, pixel confetti, hoodie
+- CLI flags: --prop, --panel, --gaps, --save
+- Report: `output/production/prop_continuity_report_c47.md`
+- Prop density arc for confetti documented (burst > settle > single chip > return)
+- CRT state progression documented (pixel > cluster > face > breach > normal > swarm)
+
+### PANEL_MAP updates
+- P13: ON CONTACT SHEET → EXISTS
+- P20: PLANNED → EXISTS
+- P21: PLANNED → EXISTS
+- Next priorities: P22 (ECU multiple Glitchkin pressing), P22a (Byte shoulder insert)
+
+### Inbox archived
+- `20260330_2330_c47_brief.md` (Alex Chen C47 brief)
+
+### Ideabox submitted
+- `20260330_diego_vargas_visual_blank_test_checklist.md`
+  — Pre-delivery blank test tool: strips text, outputs text-free version for self-evaluation
+
+### Lessons Learned — Cycle 47
+- **Visual timestamp system**: Use pencil tone + detail level + scale as coupled
+  progression indicators. Ghost (barely there) > Light (forming) > Dark (eureka).
+  When all three escalate together, TIME reads without text.
+- **Emphasis burst convention**: 12 radiating lines outside a circle reads as
+  "realization" without text — manga/comics visual grammar works at board scale.
+- **Blank test for storyboards**: Every prop/insert panel must communicate its beat
+  with the text layer removed. If the beat is only in the captions, redraw.
+- **Mirror composition eye grammar**: Organic/trust eyes face CENTER. Damaged/doubt
+  eyes face OUTWARD. Annotate with colored arrows (cyan=trust, magenta=damage).
+- **Negative space as character metric**: Track the % gap between characters across
+  panels. P17=40%, P20=25% — the shrinking IS the relationship story.
+- **Re-escalation staging**: High angle makes characters SMALL against the threat.
+  Dutch tilt + monitor flood = instability. Byte RIGID + Luma RISING = differential
+  knowledge (he knows what this means, she doesn't).
+- **Dutch tilt on high-angle wide**: Build on oversized canvas (+40px each dim),
+  rotate, crop to target size. This avoids black corners in the final image.
+- **Prop tracker value**: Tracking CRT state progression + confetti density arc
+  across panels catches continuity errors before they get drawn wrong.
+
 ## Startup Sequence
 1. Read ROLE.md if present
 2. Read this MEMORY.md

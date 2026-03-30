@@ -12,7 +12,8 @@ Evaluates rendered PNGs against LTG rendering standards across six checks:
   A. Silhouette readability
   B. Value range
   C. Color fidelity (wraps LTG_TOOL_color_verify)
-  D. Warm/cool separation (with per-world-type thresholds in v1.4.0)
+  D. Warm/cool separation (with per-world-type thresholds in v1.4.0;
+     v2.1.0 adds warm-pixel-percentage as primary gate for REAL_INTERIOR)
   E. Line weight consistency
   F. Value ceiling guard (thumbnail downscale brightness loss detection)
 
@@ -21,6 +22,14 @@ Created: Cycle 26 — 2026-03-29
 Version: 1.5.0
 
 Changelog:
+  2.1.0 (Cycle 47): warm-pixel-percentage integration (Kai Nakamura C47).
+                    Imports LTG_TOOL_warm_pixel_metric (Sam Kowalski C47) and adds
+                    warm_pixel_pct to warm_cool result dict. For REAL_INTERIOR,
+                    warm_pixel_pct is the primary gate (overrides hue-split if they
+                    disagree). For REAL_STORM, both metrics must pass. For
+                    GLITCH/OTHER_SIDE, warm_pixel_pct ceiling enforced. Graceful
+                    fallback: if warm_pixel_metric is not importable, v2.0.0
+                    hue-split-only behavior is preserved.
   2.0.0 (Cycle 39): numpy vectorization for value/warm-cool checks; LAB ΔE for
                     color fidelity (Kai Nakamura C39). Replaces per-pixel Python
                     loops in _check_value_range, _check_warm_cool, and
@@ -113,6 +122,22 @@ if str(_TOOLS_DIR) not in sys.path:
     sys.path.insert(0, str(_TOOLS_DIR))
 
 from LTG_TOOL_color_verify import verify_canonical_colors, get_canonical_palette
+
+# ---------------------------------------------------------------------------
+# Import warm-pixel-percentage metric (Sam Kowalski C47)
+# ---------------------------------------------------------------------------
+try:
+    from LTG_TOOL_warm_pixel_metric import (
+        measure_warm_pixel_percentage as _measure_warm_pct,
+        evaluate_threshold as _evaluate_warm_threshold,
+    )
+    _WARM_PIXEL_AVAILABLE = True
+except ImportError:
+    _WARM_PIXEL_AVAILABLE = False
+    def _measure_warm_pct(img):
+        return None
+    def _evaluate_warm_threshold(warm_pct, world_type):
+        return None
 
 # ---------------------------------------------------------------------------
 # LAB ΔE color fidelity helper (v2.0.0)
@@ -242,7 +267,7 @@ except ImportError:
 # ---------------------------------------------------------------------------
 # Version
 # ---------------------------------------------------------------------------
-__version__ = "2.0.0"  # C39: numpy vectorization + LAB ΔE color fidelity (Kai Nakamura).
+__version__ = "2.1.0"  # C47: warm-pixel-percentage integration (Kai Nakamura C47, metric by Sam Kowalski C47).
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -948,6 +973,52 @@ def qa_report(img_path: str, asset_type: str = "auto") -> dict:
         if world_subtype is not None:
             warm_cool_result["world_type"] = world_subtype
 
+        # v2.1.0 (C47): warm-pixel-percentage metric (Sam Kowalski C47)
+        # For REAL_INTERIOR: warm_pixel_pct is the primary gate; hue-split is secondary.
+        # For REAL_STORM: both metrics active.
+        # For GLITCH/OTHER_SIDE: warm_pixel_pct checks for low warm contamination.
+        if _WARM_PIXEL_AVAILABLE:
+            wpm_result = _measure_warm_pct(img)
+            if wpm_result is not None:
+                warm_cool_result["warm_pixel_pct"] = wpm_result["warm_pct"]
+                warm_cool_result["cool_pixel_pct"] = wpm_result["cool_pct"]
+                warm_cool_result["chromatic_warm_pct"] = wpm_result["chromatic_warm_pct"]
+                # Evaluate warm_pixel_pct threshold against world type
+                wt_for_threshold = world_subtype or "REAL_INTERIOR"
+                wpm_eval = _evaluate_warm_threshold(wpm_result["warm_pct"], wt_for_threshold)
+                if wpm_eval is not None:
+                    warm_cool_result["warm_pixel_verdict"] = wpm_eval["verdict"]
+                    warm_cool_result["warm_pixel_explanation"] = wpm_eval["explanation"]
+                    # For REAL_INTERIOR: warm_pixel_pct is primary gate
+                    # If hue-split fails but warm_pixel_pct passes → override to PASS
+                    if wt_for_threshold == "REAL_INTERIOR":
+                        if not warm_cool_result.get("pass", True) and wpm_eval["passes"]:
+                            warm_cool_result["pass"] = True
+                            warm_cool_result["notes"].append(
+                                f"hue-split below threshold but warm_pixel_pct={wpm_result['warm_pct']:.1f}% "
+                                f"PASS (primary metric for REAL_INTERIOR)"
+                            )
+                        elif warm_cool_result.get("pass", True) and not wpm_eval["passes"]:
+                            warm_cool_result["pass"] = False
+                            warm_cool_result["notes"].append(
+                                f"warm_pixel_pct={wpm_result['warm_pct']:.1f}% FAIL — below {wt_for_threshold} threshold "
+                                f"(primary metric overrides hue-split PASS)"
+                            )
+                    # For GLITCH/OTHER_SIDE: warm_pixel_pct failure → overall fail
+                    elif wt_for_threshold in ("GLITCH", "OTHER_SIDE"):
+                        if not wpm_eval["passes"]:
+                            warm_cool_result["pass"] = False
+                            warm_cool_result["notes"].append(
+                                f"warm_pixel_pct={wpm_result['warm_pct']:.1f}% exceeds {wt_for_threshold} ceiling"
+                            )
+                    # For REAL_STORM: both metrics must pass
+                    elif wt_for_threshold == "REAL_STORM":
+                        if not wpm_eval["passes"]:
+                            warm_cool_result["pass"] = False
+                            warm_cool_result["notes"].append(
+                                f"warm_pixel_pct={wpm_result['warm_pct']:.1f}% FAIL — below {wt_for_threshold} floor"
+                            )
+
     # E — Line weight consistency
     line_weight_result = _check_line_weight(img)
 
@@ -1197,11 +1268,18 @@ def qa_summary_report(results: list, output_path: str):
             lines.append(f"**D. Warm/Cool Separation:** SKIPPED — {wc['reason']}")
         else:
             wc_status = "PASS" if wc.get("pass", True) else "WARN"
-            lines.append(
+            wc_line = (
                 f"**D. Warm/Cool Separation:** {wc_status} — "
                 f"zone_a={wc['zone_a_hue']}, zone_b={wc['zone_b_hue']}, "
                 f"separation={wc['separation']}"
             )
+            # v2.1.0: include warm_pixel_pct if available
+            if "warm_pixel_pct" in wc:
+                wc_line += f", warm_pixel_pct={wc['warm_pixel_pct']:.1f}%"
+                wpv = wc.get("warm_pixel_verdict", "")
+                if wpv:
+                    wc_line += f" [{wpv}]"
+            lines.append(wc_line)
             if wc.get("notes"):
                 for note in wc["notes"]:
                     lines.append(f"  - {note}")

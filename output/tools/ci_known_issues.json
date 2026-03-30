@@ -419,8 +419,9 @@
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_bg_classroom.py",
       "code": null,
-      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
-      "since_cycle": "C44"
+      "reason": "RESOLVED C46 (Hana Okonkwo): migrated to output_dir() in v004. Entry kept for history \u2014 remove next ci_known_issues audit.",
+      "since_cycle": "C44",
+      "resolved_cycle": "C46"
     },
     {
       "check": "hardcoded_path_check",
@@ -434,8 +435,9 @@
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_bg_school_hallway.py",
       "code": null,
-      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
-      "since_cycle": "C44"
+      "reason": "RESOLVED C46 (Hana Okonkwo): migrated to output_dir() in v005. Entry kept for history \u2014 remove next ci_known_issues audit.",
+      "since_cycle": "C44",
+      "resolved_cycle": "C46"
     },
     {
       "check": "hardcoded_path_check",
@@ -462,8 +464,9 @@
       "check": "hardcoded_path_check",
       "file": "LTG_TOOL_bg_millbrook_main_street.py",
       "code": null,
-      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrate to output_dir() from LTG_TOOL_project_paths when next touched.",
-      "since_cycle": "C44"
+      "reason": "C44 migration backlog \u2014 hardcoded /home/wipkat/team prefix. Migrated to output_dir() C47.",
+      "since_cycle": "C44",
+      "resolved_cycle": "C47"
     },
     {
       "check": "hardcoded_path_check",

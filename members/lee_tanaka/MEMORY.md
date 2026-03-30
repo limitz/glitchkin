@@ -430,3 +430,29 @@ Read inbox for directive. Two tasks: (1) SF02 staging brief for Luma interiority
 - **Band sampling at ground-plane Y positions is more reliable than full-image half-split.** The ground plane is where the depth cue matters most (shadow bands, character feet, environment floor). Sampling a 50px band centered on each tier's Y position captures the depth temperature signal without dilution from sky, title bars, or label areas.
 - **Lineup warm/cool separation (9.1) is close to but under the 12.0 threshold.** The dual-warmth shadow bands from C45 are present and working (correct direction), but the temperature differential could be stronger. This is useful feedback for Maya's next lineup iteration.
 - **Tool self-tests with synthetic geometry are the most reliable first validation.** Same lesson as C39 sight-line tool: synthetic PASS/WARN/FAIL generation confirms the scoring logic works before testing on real assets (where multiple variables interact).
+
+## Cycle 47 Milestone
+- **depth_temp_lint Section 12 INTEGRATED into precritique_qa:** `LTG_TOOL_precritique_qa.py` v2.15.0.
+  - DEPTH_TEMP_PNGS registry: Lineup, SF04, SF05, SF06, SF02, COVETOUS (6 assets)
+  - Lazy loader `_load_depth_temp_lint()` + `run_depth_temp_lint()` runner
+  - Section 12 in build_report(), main() [12/12], overall exit-code
+  - C47 results: PASS=1 (Lineup sep=28.8), WARN=2 (SF06 11.0, SF02 1.1), FAIL=2 (SF05 -10.3 inverted, SF04 -11.2 inverted), SKIP=1 (COVETOUS GL exempt)
+  - NOTE: SF04/SF05 FAILs may be false positives — default band positions (78%/70%) are lineup-calibrated. Ideabox: per-asset band override config.
+- **SF06 + P14/P15 Staging Review DELIVERED:** `output/production/staging_review_c47_sf06_p14_p15.md`
+  - SF06: 2 WARNs (Miri shoulder engagement, Luma attentive lean), 2 NOTEs. Sent to Maya.
+  - P14: 1 WARN (Byte impact expression missing), 1 NOTE (arm recoil). Sent to Diego.
+  - P15: 1 WARN (straight arm needs elbow bend), 1 NOTE (body sprawl too neat). Sent to Diego.
+  - No blocking issues across all three assets.
+- **Shoulder Mechanics Reference DELIVERED:** `output/production/shoulder_mechanics_reference_c47.md`
+  - Rule: when arm moves, shoulder line shifts. Deltoid rise 3-5px (arm up), spread 4-6px (arm out).
+  - Per-character: Luma (hoodie bunch), Miri (cardigan crease), Cosmo (rounded corner).
+  - Addresses Takeshi C15 persistent critique. Sent to Maya Santos.
+- **Ideabox:** `20260330_lee_tanaka_depth_temp_per_asset_bands.md`
+- **Reported to Alex Chen** via inbox
+- **Inbox archived:** C47 brief
+
+## Cycle 47 Lessons
+- **Default band positions are scene-geometry-specific.** The 78% FG / 70% BG bands match lineup v008/v010 tier geometry exactly — the lineup PASS (sep=28.8) confirms this. But SF04 and SF05 have characters at different Y positions, producing false FAILs. A per-asset override config (like arc_diff_config.json) would fix this without weakening the rule.
+- **Horizontal warm/cool splits (left=warm, right=cool) produce low vertical depth-temp separation.** SF06 has a deliberate warm/cool horizontal split (Miri left in lamp zone, Luma right in CRT zone). The vertical band sampling reads this as "weak separation" (11.0) because both tiers contain both warm and cool zones. This is a valid different use of the warm/cool grammar — horizontal thematic, not vertical depth. The tool correctly reports it as WARN, not FAIL.
+- **Shoulder mechanics is a silhouette problem, not an anatomy problem.** At our stylization level (3.2-3.5 heads), the shoulder shift is a 3-6px asymmetry on the torso outline. It is invisible as anatomical detail but clearly visible as silhouette shape change — which is exactly where our differentiation crisis lives.
+- **Staging reviews with specific pixel-level fixes are more useful than general notes.** "Add shoulder engagement" means nothing to a generator. "`shoulder_x += HU * 0.06` when arm extends" is actionable in one edit.

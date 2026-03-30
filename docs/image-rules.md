@@ -32,6 +32,29 @@ In any composition with depth tiers, the warm/cool split is the primary depth cu
 
 **This rule does not override scene color keys.** In a GL (Glitch Layer) scene where cool is ambient and UV_PURPLE is dominant, cool is everywhere — the rule applies within Real World scenes and mixed-space compositions where natural depth reads are needed.
 
+## Shoulder Involvement Rule
+*Codified C47 — applies to all human characters (Luma, Cosmo, Miri). Byte and Glitch are exempt.*
+
+**When an arm moves past ~30 degrees from rest, the shoulder line must change shape.**
+
+This is a persistent critique (Takeshi, since C15). Arms that swing from a static shoulder socket read as puppet arms. The shoulder mass (deltoid region) must respond to arm position.
+
+| Arm Position | Shoulder Response |
+|---|---|
+| Raised above horizontal | Shoulder point rises 3-5px; torso top edge becomes asymmetric |
+| Extended forward/outward | Shoulder point shifts outward 4-6px; torso widens on that side |
+| Crossed over body | Shoulder point drops 1-2px, shifts inward 3-4px; neck base widens |
+| Both arms raised | Both shoulders rise; neck appears shorter; torso top edge arches |
+| Relaxed at side | Neutral — shoulder is a rounded bump, not a sharp rectangle corner |
+
+**Implementation:** Replace rectangle torso top edges with polyline shoulder points that derive from arm angle. Add a small deltoid bump (ellipse or arc, 4-6px at style-frame scale) at the shoulder-arm junction that follows the arm's initial direction.
+
+**Per-character clothing reads:** Luma = hoodie fabric bunch; Miri = cardigan shoulder crease; Cosmo = fitted shirt rounded corner.
+
+**Does not apply to:** Byte (digital body), Glitch (non-humanoid), or sprint-scale characters where head_r < 20px (shoulder shift would be sub-pixel).
+
+**Full reference:** `output/production/shoulder_mechanics_reference_c47.md` (Lee Tanaka C47).
+
 ## Before Sending an Image to Claude
 1. Can a tool give you the insight instead? **Build the tool.**
 2. Can you downscale and still get what you need? **Downscale.**

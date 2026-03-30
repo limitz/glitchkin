@@ -6,12 +6,23 @@
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
 LTG_TOOL_styleframe_discovery.py
-Style Frame 01 — The Discovery (C38 sight-line + visual power fix)
-"Luma & the Glitchkin" — Cycle 38
+Style Frame 01 — The Discovery (C47 sight-line gaze-lock fix)
+"Luma & the Glitchkin" — Cycle 47
 
 Art Director: Alex Chen
-Procedural Art Engineer: Rin Yamamoto
-Cycle: 38
+Procedural Art Engineer: Rin Yamamoto (C38), Jordan Reed (C47)
+Cycle: 47
+
+C47 changes (Jordan Reed):
+  Sight-line gaze-lock fix (Ingrid critique #10 — persistent):
+    - ROOT CAUSE: pupil_shift was horizontal-only (dx=p(8), dy=0). Byte is above-right
+      of Luma (angle ~-21 deg from eye midpoint), so horizontal-only shift makes gaze
+      read as "looking past" Byte rather than AT Byte.
+    - FIX: pupil_shift now computed as a vector aimed from mid-eye to (byte_cx_target,
+      byte_cy_target). Both X and Y components applied. Same magnitude p(8).
+    - draw_luma_head_v006() gains byte_cy_target parameter (defaults to mid_eye_y
+      for backward compat).
+    - Both left and right eye pupils + catch-lights shifted along the gaze vector.
 
 C38 changes (Rin Yamamoto):
   Sight-line fix (Ingrid critique C15 P2 + Lee Tanaka staging brief):
@@ -606,9 +617,12 @@ def draw_luma_body(draw, luma_cx, luma_base_y, facing_monitor_x):
     }
 
 
-def draw_luma_head_v006(img, draw, cx, cy, scale, byte_cx_target):
+def draw_luma_head_v006(img, draw, cx, cy, scale, byte_cx_target, byte_cy_target=None):
     """
     C38 SIGHT-LINE VERSION: Luma's head turned toward Byte/screen.
+    C47 SIGHT-LINE FIX: Pupil shift now aims at (byte_cx_target, byte_cy_target)
+      with both X and Y components, not horizontal-only. Fixes persistent
+      Ingrid critique #10 — gaze now geometrically locks on Byte.
     Key changes from v005 draw_luma_head():
     - Eyes: both eyes shifted RIGHT (toward byte_cx_target direction)
       left eye = screen-side, slightly wider (full wonder)
@@ -700,13 +714,25 @@ def draw_luma_head_v006(img, draw, cx, cy, scale, byte_cx_target):
     draw.ellipse([rex - ew, rey - reh, rex + ew, rey + reh], fill=EYE_W_C, outline=LINE, width=sp(2))
     draw.chord([rex - iris_r, rey - iris_r + p(2), rex + iris_r, rey + iris_r + p(2)],
                start=15, end=345, fill=EYE_IRIS)
-    # Away-side pupil also shifted toward screen (strong rightward gaze)
-    pupil_shift = p(8)  # stronger shift (was p(5)) — both eyes tracking right/Byte
-    draw.ellipse([rex - p(9) + pupil_shift, rey - p(7), rex + p(9) + pupil_shift, rey + p(9)], fill=EYE_PUP)
-    draw.ellipse([rex + p(2) + pupil_shift, rey - p(10), rex + p(10) + pupil_shift, rey - p(2)], fill=EYE_W_C)
+    # C47 SIGHT-LINE FIX: Compute pupil shift as a VECTOR aimed at Byte target,
+    # not just a horizontal offset. Byte is above-right of Luma — pupils must shift
+    # both right AND up. Without the vertical component, gaze reads as "looking past"
+    # Byte horizontally (persistent Ingrid critique #10).
+    mid_eye_x = (lex + rex) // 2
+    mid_eye_y = (ley + rey) // 2
+    _byte_cy = byte_cy_target if byte_cy_target is not None else mid_eye_y
+    aim_dx = byte_cx_target - mid_eye_x
+    aim_dy = _byte_cy - mid_eye_y
+    aim_dist = max(1, (aim_dx**2 + aim_dy**2) ** 0.5)
+    pupil_mag = p(8)  # same magnitude as C38 — now properly directed
+    pupil_shift_x = int(pupil_mag * aim_dx / aim_dist)
+    pupil_shift_y = int(pupil_mag * aim_dy / aim_dist)
+    # Away-side pupil shifted toward Byte (both x and y components)
+    draw.ellipse([rex - p(9) + pupil_shift_x, rey - p(7) + pupil_shift_y, rex + p(9) + pupil_shift_x, rey + p(9) + pupil_shift_y], fill=EYE_PUP)
+    draw.ellipse([rex + p(2) + pupil_shift_x, rey - p(10) + pupil_shift_y, rex + p(10) + pupil_shift_x, rey - p(2) + pupil_shift_y], fill=EYE_W_C)
     draw.arc([rex - ew, rey - reh, rex + ew, rey + reh], start=200, end=340, fill=LINE, width=p(4))
-    # Also shift left eye pupil strongly toward screen
-    draw.ellipse([lex - p(9) + pupil_shift, ley - p(7), lex + p(9) + pupil_shift, ley + p(9)], fill=EYE_PUP)
+    # Left eye pupil also shifted toward Byte
+    draw.ellipse([lex - p(9) + pupil_shift_x, ley - p(7) + pupil_shift_y, lex + p(9) + pupil_shift_x, ley + p(9) + pupil_shift_y], fill=EYE_PUP)
 
     # ─── C38: BROWS — surprise/wonder asymmetry ──────────────────────────────
     # Screen-side (left) brow: RAISED HIGH — surprise/wonder (eyebrow up)
@@ -1039,7 +1065,8 @@ def generate(skip_fill_light=False):
     head_cy = body_data["head_cy"] + sp(6)  # chin down: tracking-in, focusing posture
     draw, head_r = draw_luma_head_v006(img, draw, head_cx, head_cy,
                                        scale=0.92,
-                                       byte_cx_target=emerge_cx)
+                                       byte_cx_target=emerge_cx,
+                                       byte_cy_target=emerge_cy)
 
     # STEP 5b: Face lighting — warm lamp from upper-left (domestic real-world scene)
     # Skipped when skip_fill_light=True — unlit base for alpha_blend_lint.
@@ -1090,7 +1117,7 @@ def generate(skip_fill_light=False):
     font_xs = load_font(11)
     draw.rectangle([0, H - 30, W, H], fill=(20, 12, 8))
     draw.text((10, H - 22),
-              "LUMA & THE GLITCHKIN — Frame 01: The Discovery  |  C38 — sight-line + visual power v006",
+              "LUMA & THE GLITCHKIN — Frame 01: The Discovery  |  C47 — sight-line gaze-lock fix v007",
               fill=(180, 150, 100), font=font_xs)
 
     # STEP 9: Size rule enforcement (<=1280px — already at 1280x720, no resize needed)

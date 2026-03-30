@@ -7,22 +7,26 @@
 LTG_TOOL_color_verify.py
 ==============================
 Canonical color verification utility for "Luma & the Glitchkin."
-Version 2.0.0 — adds hue histogram mode.
+Version 3.0.0 — adds CORRUPT_AMBER fringe detection mode.
 
-All v001 API is preserved unchanged. A new optional parameter ``histogram``
-is added to :func:`verify_canonical_colors`. When enabled, the per-color
-result includes a ``hue_histogram`` key showing pixel counts per 5° hue band,
-and the canonical color's exact hue band is highlighted. This allows callers
-to distinguish genuine hue drift from false positives caused by small
-populations of outlier pixels.
+All v001/v002 API is preserved unchanged. New function
+:func:`detect_corrupt_amber` validates that GL-07 (#FF8C00) pixels in a
+Real World scene are sanctioned fringe (low composited intensity, within
+CRT bounding box) vs accidental full-opacity GL palette leaks.
 
 Author: Kai Nakamura (Technical Art Engineer)
 Created: Cycle 25 — 2026-03-29  (v001)
 Updated: Cycle 31 — 2026-03-29  (v002 — histogram mode)
-Version: 2.0.0
+Updated: Cycle 47 — 2026-03-30  (v003 — CORRUPT_AMBER detection mode, Jordan Reed)
+Version: 3.0.0
 
 CHANGELOG
 ---------
+v3.0.0  C47 — Add ``detect_corrupt_amber()`` function. Given a composited RGB image
+               and CRT bounding box, finds GL-07 hue pixels, validates they are
+               spatially contained and have composited intensity consistent with
+               alpha <= 38/255 (15%). Flags full-opacity GL-07 as violations.
+               Reference: output/production/corrupt_amber_fringe_spec.md (C46).
 v2.0.0  C31 — Add ``histogram=True`` parameter to verify_canonical_colors().
                Per-color result gains optional ``hue_histogram`` (list of dicts),
                ``histogram_bucket_deg`` (int), ``canonical_bucket_index`` (int).
@@ -377,6 +381,139 @@ def verify_canonical_colors(img, palette_dict, max_delta_hue=5, histogram=False)
 
 
 # ---------------------------------------------------------------------------
+# CORRUPT_AMBER Detection Mode (v003 — C47)
+# ---------------------------------------------------------------------------
+
+# GL-07 / CORRUPT_AMBER canonical RGB
+_CORRUPT_AMBER_RGB = (255, 140, 0)
+# Maximum composited brightness (Value in HSV) for alpha-38 fringe.
+# At alpha=38/255 (~15%) over black, peak V = 255*0.149 = 0.149.
+# Over a mid-dark bg (V~0.15), composited V ~ 0.15 + 0.85*0.15 = 0.28.
+# We use V <= 0.45 as ceiling to allow some bg brightness tolerance.
+_CORRUPT_AMBER_MAX_VALUE = 0.45
+# Spatial margin around CRT box — fringe may extend a few pixels past box edge
+_CRT_BOX_MARGIN_PX = 12
+
+
+def detect_corrupt_amber(img, crt_box=None, rgb_radius=30,
+                         max_value=_CORRUPT_AMBER_MAX_VALUE,
+                         box_margin=_CRT_BOX_MARGIN_PX):
+    """
+    Detect CORRUPT_AMBER (GL-07, #FF8C00) pixels in a composited RGB image
+    and classify them as sanctioned fringe or palette violations.
+
+    A pixel is flagged as CORRUPT_AMBER if it is within *rgb_radius* Euclidean
+    distance of the canonical GL-07 RGB value (255, 140, 0). This tight radius
+    excludes SUNLIT_AMBER (212, 146, 58) which is ~50 RGB distance away.
+
+    A flagged pixel is classified as:
+      - **sanctioned**: composited value (HSV V) <= *max_value* AND within
+        *crt_box* (expanded by *box_margin*). Consistent with alpha <= 38/255.
+      - **violation**: composited value > *max_value* OR outside the CRT box.
+        Indicates full-opacity or near-full-opacity GL-07 in a Real World scene.
+
+    If *crt_box* is None, spatial containment is not checked (all flagged pixels
+    are classified by intensity only).
+
+    Parameters
+    ----------
+    img : PIL.Image
+        Composited RGB image (the final rendered PNG).
+    crt_box : tuple (x0, y0, x1, y1) or None
+        CRT glow bounding box in pixel coordinates. If provided, flagged pixels
+        outside this box (plus margin) are violations regardless of intensity.
+    rgb_radius : int
+        Euclidean RGB distance threshold for matching GL-07 (default 30).
+        SUNLIT_AMBER is ~50 away — radius 30 cleanly excludes it.
+    max_value : float
+        Maximum HSV Value for sanctioned fringe (default 0.45).
+    box_margin : int
+        Spatial margin (px) around crt_box (default 12).
+
+    Returns
+    -------
+    dict
+        {
+            "total_amber_pixels": int,     # total pixels matching GL-07
+            "sanctioned": int,             # within box + low intensity
+            "violations": int,             # outside box or high intensity
+            "violation_pixels": list,      # [(x, y, r, g, b, hsv_v), ...] (up to 50)
+            "pass": bool,                  # True if violations == 0
+            "max_violation_value": float,  # highest V among violations (0 if none)
+            "message": str,
+        }
+    """
+    if img.mode != "RGB":
+        work = img.convert("RGB")
+    else:
+        work = img
+
+    w, h = work.size
+    pixels = list(work.getdata())
+    tr, tg, tb = _CORRUPT_AMBER_RGB
+    radius_sq = rgb_radius * rgb_radius
+
+    # Expand CRT box by margin
+    if crt_box is not None:
+        bx0 = crt_box[0] - box_margin
+        by0 = crt_box[1] - box_margin
+        bx1 = crt_box[2] + box_margin
+        by1 = crt_box[3] + box_margin
+    else:
+        bx0, by0, bx1, by1 = 0, 0, w, h  # no spatial filter
+
+    total_amber = 0
+    sanctioned = 0
+    violations = 0
+    violation_list = []
+    max_viol_v = 0.0
+
+    for idx, (r, g, b) in enumerate(pixels):
+        dr, dg, db = r - tr, g - tg, b - tb
+        if dr * dr + dg * dg + db * db > radius_sq:
+            continue
+
+        rf, gf, bf = r / 255.0, g / 255.0, b / 255.0
+        _, s, v = colorsys.rgb_to_hsv(rf, gf, bf)
+
+        total_amber += 1
+        x = idx % w
+        y = idx // w
+        in_box = (bx0 <= x <= bx1 and by0 <= y <= by1)
+        low_intensity = (v <= max_value)
+
+        if in_box and low_intensity:
+            sanctioned += 1
+        else:
+            violations += 1
+            if v > max_viol_v:
+                max_viol_v = v
+            if len(violation_list) < 50:
+                violation_list.append((x, y, r, g, b, round(v, 3)))
+
+    is_pass = violations == 0
+
+    if total_amber == 0:
+        msg = "No CORRUPT_AMBER pixels detected (no pixels within RGB radius of GL-07)."
+    elif is_pass:
+        msg = (f"PASS — {total_amber} CORRUPT_AMBER pixels, all sanctioned "
+               f"(within CRT box, V <= {max_value:.2f}).")
+    else:
+        msg = (f"FAIL — {violations}/{total_amber} CORRUPT_AMBER pixel(s) are violations "
+               f"(max V={max_viol_v:.3f}, threshold {max_value:.2f}).")
+
+    return {
+        "total_amber_pixels": total_amber,
+        "sanctioned": sanctioned,
+        "violations": violations,
+        "violation_pixels": violation_list,
+        "pass": is_pass,
+        "max_violation_value": round(max_viol_v, 4),
+        "message": msg,
+    }
+
+
+# ---------------------------------------------------------------------------
 # CLI / unit tests
 # ---------------------------------------------------------------------------
 
@@ -386,7 +523,7 @@ if __name__ == "__main__":
     from PIL import Image, ImageDraw
 
     parser = argparse.ArgumentParser(
-        description="LTG color verification utility — v2.0.0",
+        description="LTG color verification utility — v3.0.0",
     )
     parser.add_argument(
         "image", nargs="?", default=None,
@@ -395,6 +532,14 @@ if __name__ == "__main__":
     parser.add_argument(
         "--histogram", action="store_true",
         help="Show hue distribution histogram for each sampled color",
+    )
+    parser.add_argument(
+        "--corrupt-amber", action="store_true",
+        help="Run CORRUPT_AMBER fringe detection (v003). Reports sanctioned vs violation pixels.",
+    )
+    parser.add_argument(
+        "--crt-box", nargs=4, type=int, metavar=("X0", "Y0", "X1", "Y1"),
+        help="CRT glow bounding box for CORRUPT_AMBER spatial containment check",
     )
     args = parser.parse_args()
 
@@ -422,7 +567,25 @@ if __name__ == "__main__":
                 if args.histogram and "hue_histogram" in v:
                     print(f"    Hue histogram ({v['histogram_bucket_deg']}° buckets):")
                     print(format_histogram(v["hue_histogram"], v["canonical_bucket_index"]))
-        sys.exit(0 if report["overall_pass"] else 1)
+
+        overall = report["overall_pass"]
+
+        # CORRUPT_AMBER detection (v003)
+        if args.corrupt_amber:
+            crt_box = tuple(args.crt_box) if args.crt_box else None
+            ca_report = detect_corrupt_amber(img_in, crt_box=crt_box)
+            print(f"\nCORRUPT_AMBER detection:")
+            print(f"  {ca_report['message']}")
+            print(f"  Total amber pixels: {ca_report['total_amber_pixels']}")
+            print(f"  Sanctioned: {ca_report['sanctioned']}")
+            print(f"  Violations: {ca_report['violations']}")
+            if ca_report['violations'] > 0:
+                print(f"  Max violation V: {ca_report['max_violation_value']:.3f}")
+                for vp in ca_report['violation_pixels'][:10]:
+                    print(f"    ({vp[0]},{vp[1]}) RGB=({vp[2]},{vp[3]},{vp[4]}) V={vp[5]}")
+            overall = overall and ca_report["pass"]
+
+        sys.exit(0 if overall else 1)
 
     # ------------------------------------------------------------------
     # Self-tests (no image argument)

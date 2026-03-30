@@ -7,16 +7,19 @@ upon such time as they acquire recognised legal personhood under applicable law.
 
 **Prepared by:** Maya Santos, Character Designer
 **Date:** 2026-03-29
-**Cycle:** 23
+**Last Updated:** 2026-03-30 (Cycle 47 — Priya Shah, full reconciliation per Reinhardt critique #6)
+**Cycle:** 47
 **Status:** Pitch-Ready Export Set
 
 ---
 
-## QC Pass Summary (Cycle 23)
+## QC Pass Summary (Cycle 23, updated C47)
 
-QC performed against `output/production/character_sheet_standards.md`.
+QC originally performed against `output/production/character_sheet_standards.md` at C23.
 All exports checked for: show_guides=False, format (RGB PNG), canvas dimensions,
 expression count, grid layout, turnaround completeness, and color model presence.
+
+**C47 update notes:** Miri expression sheet updated to v006 (wooden hairpins, C44). Lineup updated to v010 (two-tier staging, warmth bands, C45). Motion spec sheets added for all 5 characters (Ryo Hasegawa C39-C45). Face gate Byte profile added (Kai Nakamura C45). Luma face curves system active (Kai Nakamura C40-C41). Pipeline resolution now 1280x720 native (C42 onward).
 
 ---
 
@@ -84,6 +87,8 @@ expression count, grid layout, turnaround completeness, and color model presence
 
 **QC notes:** Standards compliant. 1600×800 turnaround is above minimum standard — accepted. Line weight Warm Dark Brown (#4A2810) confirmed distinct from Deep Cocoa. Permanent cheek blush present on warm states, removed on CONCERNED (canonical). Crow's feet at detail weight (2px at 2× render). Body posture differentiation per expression confirmed (Cycle 19 unique-silhouette rule applied).
 
+**C44 update:** Expression sheet updated to v006. MIRI-A hair accessory changed from chopsticks to dark-stained wooden hairpins (FLAG 05 resolved). Maya Santos executed atomic update across expression sheet + lineup + turnaround + grandma_miri.md. All active Miri PNGs regenerated.
+
 ---
 
 ## Glitch (Antagonist) — Cycle 23/24
@@ -112,13 +117,13 @@ expression count, grid layout, turnaround completeness, and color model presence
 
 ## Character Design Summary Table
 
-| Character | Expression Sheet | Grid | Count | Turnaround | Color Model | Pitch Status |
-|---|---|---|---|---|---|---|
-| Luma | v004 | 3×2 | 6 | v001 (4-view) | v001 | PITCH-READY |
-| Byte | v004 | 3×3 | 9 | v001 (4-view) | v001 | PITCH-READY |
-| Cosmo | v004 | 3×2 | 6 | v002 (4-view) | v001 | PITCH-READY |
-| Grandma Miri | v002 | 3×2 | 5 | v001 (4-view) | v001 | PITCH-READY |
-| Glitch | v002 | 3×2 | 6 | **v002** (4-view) | v001 | PITCH-READY |
+| Character | Expression Sheet | Grid | Count | Turnaround | Color Model | Motion Spec | Pitch Status |
+|---|---|---|---|---|---|---|---|
+| Luma | v004 | 3×2 | 6 | v001 (4-view) | v001 | v001 (Ryo Hasegawa) | PITCH-READY |
+| Byte | v004 | 3×3 | 9 | v001 (4-view) | v001 | v003 (COMMITMENT beat, C39) | PITCH-READY |
+| Cosmo | v004 | 3×2 | 6 | v002 (4-view) | v001 | v001 (Ryo Hasegawa) | PITCH-READY |
+| Grandma Miri | **v006** | 3×2 | 5 | v001 (4-view) | v001 | v001 (Ryo Hasegawa) | PITCH-READY |
+| Glitch | v002 | 3×2 | 6 | **v002** (4-view) | v001 | **v001** (C45, 4-panel) | PITCH-READY |
 
 ---
 
@@ -143,11 +148,12 @@ expression count, grid layout, turnaround completeness, and color model presence
 
 | Asset | File | Dimensions | Format | Status |
 |---|---|---|---|---|
-| Full Cast Lineup | `LTG_CHAR_lineup.png` | 1340×498 | RGB PNG | PITCH-READY |
+| Full Cast Lineup | `LTG_CHAR_character_lineup.png` | 1280×535 | RGB PNG | PITCH-READY |
 
-**Cast:** Luma, Byte, Cosmo, Miri, Glitch (all 5 characters at correct relative scale)
-**Reference:** 1 head unit = 80px. Luma=280px, Byte=162px (floating), Cosmo=320px, Miri=256px, Glitch=170px (floating).
-**Notes:** Glitch added in Cycle 24. Engineering dimension arrow (Byte float gap = 0.25 HU) retained from v003. Height reference lines updated with Glitch scale annotation.
+**Cast:** Luma, Byte, Cosmo, Miri, Glitch (all 5 characters)
+**Staging (v008+):** Two-tier ground plane — FG tier (Luma + Byte) at canvas 78%, BG tier (Cosmo + Miri + Glitch) at canvas 70%. FG_SCALE 1.03. Order: Cosmo / Miri / Luma / Byte / Glitch.
+**v010 (C45):** Dual-warmth tier depth indicator bands — BG tier 8px cool-slate (#B4C3D2), FG tier 10px warm-amber (#DCC8A0). Annotation bar includes "WARM = FG / COOL = BG" grammar note.
+**Notes:** Supersedes flat-baseline lineup (v007 and earlier). Reads as cast dynamics, not character inventory.
 
 ---
 
@@ -160,6 +166,31 @@ expression count, grid layout, turnaround completeness, and color model presence
 
 ---
 
+## Motion Spec Sheets (Added C47 Update)
+
+All 5 characters now have motion spec sheets (Ryo Hasegawa, C39-C45). These define canonical motion vocabulary: movement beats, timing, and action states per character.
+
+| Character | File | Panels | Key Beats | Cycle |
+|---|---|---|---|---|
+| Luma | Motion spec sheet | 4 | Movement vocabulary | Ryo Hasegawa |
+| Byte | Motion spec sheet v003 | 4 | COMMITMENT beat arc | C39 |
+| Cosmo | Motion spec sheet | 4 | Movement vocabulary | Ryo Hasegawa |
+| Grandma Miri | Motion spec sheet | 4 | Movement vocabulary | Ryo Hasegawa |
+| Glitch | Motion spec sheet v001 | 4 | NEUTRAL HOVER / MISCHIEVOUS APPROACH / COVETOUS LOCK / PANICKED SCATTER | C45 |
+
+**QA:** Motion spec lint (Ryo Hasegawa) PASS for all 5 characters as of C46 (dark-sheet annotation fix applied for Byte + Glitch).
+
+---
+
+## Face Gate System (Added C47 Update)
+
+The face test gate system (`LTG_TOOL_character_face_test.py`) now supports all 4 main characters (luma, cosmo, miri, byte). Byte profile added C45 (Kai Nakamura): 5x5 pixel-grid eye system, left eye DEEP_CYAN normal grid, right eye HOT_MAGENTA crack diagonal + dead-zone upper-right.
+
+Luma face curves system (`luma_face_curves` v1.1.0, Kai Nakamura C41): bezier face system with 9 canonical expressions, `draw_luma_face()` API for generator integration.
+
+---
+
 *character_export_manifest.md — Maya Santos, Character Designer*
-*Cycle 24 update — 2026-03-29*
 *Original Cycle 23 — 2026-03-29*
+*Cycle 24 update — 2026-03-29*
+*Cycle 47 update — 2026-03-30 — Priya Shah — Full reconciliation: Miri v006 hairpin update, lineup v010 two-tier staging, motion specs (5 chars), face gate Byte profile, face curves system. Per Reinhardt critique #6.*
