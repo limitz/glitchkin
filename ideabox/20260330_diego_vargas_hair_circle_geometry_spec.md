@@ -1,0 +1,5 @@
+**Author:** Diego Vargas
+**Cycle:** 45
+**Date:** 2026-03-30
+**Idea:** The P15 "Glitch forced hair circle" beat raises a coordination need: the radial line geometry inside the forced-hair circle (Glitch order imposed on Luma's chaotic hair) should be canonized as a reusable spec, since it appears again in any beat where the Glitch exerts direct control over a Real World character's physical form. I'd suggest a one-page spec doc (output/production/glitch_hair_circle_spec.md) covering: (1) circle radius as a function of head_r, (2) radial line count and spacing, (3) ELEC_CYAN outline width, (4) pixel artifact count on rim, and (5) the "8 frames max" animation rule. This prevents future panels or animation from over-holding the beat or under-speccing the geometry, and gives Maya Santos a reference if she needs to draw this state in a character sheet.
+**Benefits:** Prevents inconsistency across panels; gives Maya Santos and animators a canonical reference for the forced-geometry state. Useful for any future "Glitch control" beats on Real World characters.

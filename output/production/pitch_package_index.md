@@ -1238,4 +1238,50 @@ All critical path assets verified on disk. No blocking issues found. The package
 | P0 Open items C44 | **Miri cultural identity decision** (Alex — Maya/Priya/Hana consulted, decision pending); **Miri+Luma relationship asset** (new style frame or key relationship panel — no asset exists yet) |
 | P1 Open items C44 | Hardcoded absolute paths (Kai); SF01 dual-generator conflict (Morgan); SF04 output dir fix (Jordan); Hallway pixel font (Jordan); Logo display typeface (Sam); Classroom + Kitchen pixel font (Hana); Storyboard naming audit (Diego); Byte face test profile (Kai) |
 
-*Updated by Alex Chen, Art Director — Cycles 41–42 — 2026-03-30*
+---
+
+## Cycle 44 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| COVETOUS style frame v3.0.0 | `output/color/style_frames/LTG_COLOR_sf_covetous_glitch.png` | Luma face SENSING UNEASE (THE NOTICING variant): asymmetric eye_r_L=7/eye_r_R=5 at head_r=33; face gate PASS. 5° backward lean + UV_PURPLE rim on left shoulder. Byte barrier arms widened (protective posture). ACID_GREEN dashed covet-vector sight-line (Glitch right eye → Luma head). All G001/G004/G008 Glitch spec rules preserved. Generator: `output/tools/LTG_TOOL_sf_covetous_glitch_c43.py` v3.0.0. (Cycle 44 — Lee Tanaka) |
+| SF02 Glitch Storm (native refactor) | `output/color/style_frames/LTG_COLOR_styleframe_glitch_storm.png` | Native 1280×720 rewrite — LANCZOS era ended. SUNLIT_AMBER LAB ΔE 1.1° PASS (was 47.04°). All hardcoded coords scaled ×2/3. Post-thumbnail specular restore removed. All 6 canonical colors PASS. Closes Petra Volkov C17 FAIL. Generator: `LTG_TOOL_style_frame_02_glitch_storm.py`. (Cycle 44 — Jordan Reed) |
+| SF04 output dir fix | `output/color/style_frames/LTG_COLOR_styleframe_sf04.png` | Output path corrected: `output/style_frames/` → `output/color/style_frames/`. Misplaced file removed. Petra Volkov C17 WARN closed. (Cycle 44 — Jordan Reed) |
+| Project paths resolver | `output/tools/LTG_TOOL_project_paths.py` v1.0.0 | `project_root()` traverses upward to CLAUDE.md sentinel; `output_dir()`, `tools_dir()`, `ensure_dir()`, `resolve_output()` helpers; `audit_hardcoded_paths()` + `--audit` CLI (exits 1 on hits — CI-ready). 70 offenders audited. Migration guide in module docstring. Closes Petra Volkov C17 hardcoded-path FAIL. (Cycle 44 — Kai Nakamura) |
+| VP spec config | `output/tools/vp_spec_config.json` v1.0.0 | 11 ENV generator VP specs: 7 real-world (pixel-precise VP_X/VP_Y + tolerance), 4 glitch-layer (null, auto-PASS). Used by `sobel_vp_detect` v1.1.0 `--vp-config` flag. (Cycle 44 — Kai Nakamura) |
+| Sobel VP detect v1.1.0 | `output/tools/LTG_TOOL_sobel_vp_detect.py` | Added `--vp-config vp_spec_config.json` flag and `detect_vp_batch_with_config()` API. (Cycle 44 — Kai Nakamura) |
+| CI suite v1.3.0 | `output/tools/LTG_TOOL_ci_suite.py` | Check 6: dual_output_check — FAIL if 2+ generators write same LTG_* output file. SF01 legacy generator `LTG_TOOL_style_frame_01_discovery.py` retired to `deprecated/`. Known-issues entry count: 37 (1 removed). (Cycle 44 — Morgan Walsh) |
+| Typography brief | `output/production/ltg_typography_brief_display_typeface.md` | 5 OFL font candidates evaluated. Primary: Nunito Bold (Luma) + Space Grotesk Bold (Glitchkin). Secondary: Raleway ExtraBold + Share Tech Mono. Alex decision: Nunito Bold + Space Grotesk Bold CONFIRMED. Font pipeline work (assets/fonts/) → Sam Kowalski C44. (Cycle 44 — Sam Kowalski) |
+| Classroom BG v003 | `output/backgrounds/environments/LTG_ENV_classroom_bg.png` | Chalkboard text migrated from random rectangles to `draw_pixel_text()`: "1011 XOR 0110" / "F X  2X 5" (math/binary per spec). Closes Jonas Feld C17 P1 (34/100 classroom). QA: warm/cool 17.0 PASS, line_weight outliers=1. (Cycle 44 — Hana Okonkwo) |
+| Kitchen BG v006 | `output/backgrounds/environments/LTG_ENV_grandma_kitchen.png` | MIRI fridge label migrated to `draw_pixel_text()`. Closes Jonas Feld C17 P1 (62/100 kitchen). QA: warm/cool 32.6 PASS. (Cycle 44 — Hana Okonkwo) |
+| School hallway v004 | `output/backgrounds/environments/LTG_ENV_school_hallway.png` | MILLBROOK MIDDLE SCHOOL seal via pixel font. School name canonical per story bible v004. (Cycle 44 — Diego Vargas) |
+| Story bible v004 | `output/production/story/story_bible_v004.md` | Miri heritage canonical: Igbo-Nigerian + Brazilian-descended. Millbrook = Ohio/Indiana region, post-war, modest industrial past. School = MILLBROOK MIDDLE SCHOOL. FLAG 05 still open (chopstick → hairpin: Alex confirmed C44, Maya executing). (Cycle 44 — Priya Shah) |
+| Miri cultural identity brief | `output/production/story/LTG_miri_cultural_identity_brief.md` | Framework for Miri's Igbo-Nigerian/Brazilian-Brazilian heritage. FLAG 05: chopstick → wooden hairpins rationale (Section 3). Alex confirmed replacement C44. Maya executing 6-file atomic update. (Cycle 44 — Priya Shah) |
+| Miri motion spec v001 | `output/characters/motion/LTG_CHAR_miri_motion_spec.png` | 4-beat vocabulary: WARM ATTENTION / SHARP ASSESSMENT / PROUD QUIET JOY / PATIENT CORRECTION. motion_spec_lint: 6 PASS / 0 WARN / 0 FAIL. (Cycle 44 — Ryo Hasegawa) |
+| precritique_qa v2.11.0 | `output/tools/LTG_TOOL_precritique_qa.py` | CYCLE_LABEL=C43, all 4 motion sheets covered, SF04 path corrected. QA re-run required (scope changed). (Cycle 44 — Ryo Hasegawa) |
+| Cold Open P10 | `output/storyboards/panels/LTG_SB_cold_open_P10.png` | OTS Byte POV pre-discovery. Three-tier caption hierarchy (Jonas Feld P1) implemented. (Cycle 44 — Diego Vargas) |
+| Cold Open P11 | `output/storyboards/panels/LTG_SB_cold_open_P11.png` | ECU Luma closed eyes/brow twitch threshold. Three-tier caption hierarchy implemented. (Cycle 44 — Diego Vargas) |
+
+#### Cycle 44 Pitch Package Status (CURRENT — post Alex Chen C44 briefs)
+
+| Requirement | C44 Status |
+|---|---|
+| **SF01** | v006 PITCH PRIMARY (unchanged) |
+| **SF02 Glitch Storm** | **v008 C44 NATIVE REWRITE** — 1280×720, SUNLIT_AMBER ΔE 1.1 PASS. LANCZOS era closed. |
+| **SF03 Other Side** | v005 PITCH PRIMARY (unchanged) |
+| **SF04 Resolution** | CANONICAL (Jordan C42) — output dir fixed C44. PITCH PRIMARY. |
+| **SF05 COVETOUS** | **v3.0.0 C44** (Lee Tanaka) — Luma SENSING UNEASE face + covet-vector sight-line PITCH PRIMARY. |
+| **SF06 Miri+Luma** | **COMMISSIONED C44** (Maya Santos) — "The Hand-Off" — no asset yet; biggest pitch gap. |
+| Luma expression sheet | v012/v013 (Maya — v013 body postures in progress) |
+| Character lineup | v008 PITCH PRIMARY (unchanged; v009 pending Miri hairpin update) |
+| Storyboards | P03–P11/P23/P24 + EP05 COVETOUS. Caption retrofit: C44 (Diego). |
+| Logo | v001 — font update COMMISSIONED C44 (Sam: Nunito Bold + Space Grotesk Bold) |
+| Environments | Classroom v003 / Kitchen v006 / Hallway v004 / Luma Study / Tech Den v006 / Others unchanged |
+| Story | Story Bible v004 PITCH PRIMARY. FLAG 05 EXECUTING (Maya C44 hairpin update). |
+| Motion | Luma v002 / Byte v003 / Cosmo v001 / Miri v001. **Glitch motion: COMMISSIONED C44** (Ryo). |
+| QA/Pipeline | CI v1.3.0 (Morgan). Hardcoded path audit CI gate: COMMISSIONED C44 (Morgan). Thumbnail lint gate: COMMISSIONED C44 (Morgan). Byte face gate `--char byte`: COMMISSIONED C44 (Kai). UV_PURPLE linter: COMMISSIONED C44 (Rin). |
+| P0 Open items C44 | **Miri hairpin: CONFIRMED — Maya executing.** **Typeface: CONFIRMED — Nunito+Space Grotesk.** |
+| P1 Open items C44 | Byte face test profile (Kai — blocking Diego/Lee/Rin); Miri hairpin atomic update (Maya); Miri+Luma relationship SF (Maya); Caption retrofit (Diego); CI path gate (Morgan) |
+| P2 Open items C44 | Logo font update (Sam); GL-07 lamp halo (Jordan); UV_PURPLE linter (Rin); Pixel font perspective helper (Hana); Glitch motion spec (Ryo); Lineup tier depth indicator (Lee) |
+
+*Updated by Alex Chen, Art Director — Cycle 44 — 2026-03-30*

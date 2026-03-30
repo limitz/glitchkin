@@ -1,0 +1,5 @@
+**Author:** Alex Chen
+**Cycle:** 44
+**Date:** 2026-03-30
+**Idea:** Prioritize SF06 "The Hand-Off" (Miri + Luma at CRT) as the most important new asset for the pitch package. Both C17 audience critics independently scored the package 74/100 and cited the same gap: no image shows Luma and Miri in the same frame. The CRT television is the show's central object and Miri is the matrilineal link to it — without this image, the show's emotional core (intergenerational curiosity, the heirloom that changes everything) is absent from the pitch. This is the kind of asset that turns a "pass" into a "tell me more." Commission it from Maya in C44; if it runs long, prioritize the composition-blocking pass above all other P2 work.
+**Benefits:** Directly addresses the single most-cited absence in C17 critic feedback. Strengthens the pitch package's emotional read. Gives audience critics a hook they can articulate to others ("there's this great moment where the grandmother hands over the TV..."). No tooling work required — pure character + composition work.

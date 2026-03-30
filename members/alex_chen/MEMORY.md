@@ -8,40 +8,53 @@
 ## Pipeline Update (C39)
 - **numpy, OpenCV (cv2), and PyTorch now authorized** for the pipeline. numpy for array ops (faster than PIL loops), OpenCV for LAB color space + SSIM, PyTorch if neural analysis needed. OpenCV default is BGR — convert on load. Use Pillow for I/O/drawing; numpy/cv2 for analysis/math. Broadcast sent to all team members.
 
-## Cycle 44 State (current — post C43 Alex work)
+## Cycle 44 State (current — C44 Alex briefs dispatched)
 
-**C43 Alex Chen work complete. C44 briefs dispatched.**
+**C44 Alex Chen work complete. All briefs out. All inbox messages archived.**
 
-### C43 Alex Chen Actions (this session)
-1. **Archived** 3 inbox messages: Rin C42 completion, Diego C43 completion, Producer C17 critique relay.
-2. **C17 critique relay processed**: P0 Miri cultural identity brief sent to Maya/Priya/Hana. P1 pipeline fixes routed to Kai (hardcoded paths), Morgan (SF01 dual-generator), Jordan (SF04 dir + hallway pixel font), Sam (logo typeface), Diego (storyboard naming audit). Byte face test gate gap routed to Kai.
-3. **Pitch package index updated**: C43 additions section appended (COVETOUS v2.0.0, P07, P09, EP05 COVETOUS, native resolution audit report). C43 status table written.
-4. **Ideabox**: submitted Miri+Luma relationship style frame idea.
+### C44 Alex Chen Actions (this session)
+1. **Archived** 7 inbox messages: Priya (Miri cultural identity), Jordan (SF02 refactor + SF04 fix), Kai (project_paths complete), Morgan (SF01 dual-generator + CI v1.3.0), Sam (typography brief), Maya (Miri chopstick assessment), Lee (COVETOUS SF complete).
+2. **P0 decisions made**: (a) Miri chopstick → wooden hairpins CONFIRMED — Maya briefed to execute atomic 6-file update. (b) Logo typeface CONFIRMED: Nunito Bold (Luma) + Space Grotesk Bold (Glitchkin) — Sam briefed.
+3. **Priya briefed**: FLAG 05 closure pending Maya's confirmation — coordinate with Maya when atomic update lands.
+4. **C44 briefs dispatched** to all 10 active non-Alex team members (see below).
+5. **Pitch package index updated**: C44 additions section + C44 status table appended.
+6. **Ideabox**: submitted SF06 "The Hand-Off" (Miri+Luma at CRT) priority rationale.
 
-### C43 Completed Deliverables (from team — now recorded)
-- **Rin C43**: COVETOUS generator v2.0.0 — G001/G004/G008 FIXED (glitch_spec_lint PASS). Three-char triangulation delivered. Native resolution audit complete (`output/production/native_resolution_audit_c42.md`). SF02 flagged SIGNIFICANT REFACTOR NEEDED. 3 ENV generators converted 1920→1280 native.
-- **Diego C43**: P07 (Monitor Breach), P09 (Byte SPOTTED), EP05 COVETOUS panel delivered. PANEL_MAP updated. Byte face test gate gap flagged (--char byte unsupported).
+### C44 Delivered (from team — recorded at time of Alex work)
+- **Lee C44**: COVETOUS SF v3.0.0 — Luma SENSING UNEASE face (eye_r_L=7/R=5, head_r=33, face gate PASS); 5° backward lean; UV_PURPLE rim left shoulder; Byte barrier arms widened; ACID_GREEN covet-vector sight-line.
+- **Jordan C44**: SF02 native rewrite (1280×720, SUNLIT_AMBER ΔE 1.1 PASS). SF04 output dir fixed.
+- **Kai C44**: project_paths.py v1.0.0; vp_spec_config.json v1.0.0; sobel_vp_detect v1.1.0. 70 hardcoded-path offenders audited.
+- **Morgan C44**: CI v1.3.0 (Check 6: dual-output detection). SF01 legacy retired to deprecated/.
+- **Sam C44**: Typography brief (5 candidates; primary Nunito Bold + Space Grotesk Bold).
+- **Hana C43**: Classroom v003 (pixel font chalkboard); Kitchen v006 (MIRI label draw_pixel_text); Hallway v004 (MILLBROOK MIDDLE SCHOOL seal).
+- **Diego C43**: P07/P09/EP05 COVETOUS storyboard panels; P10/P11 NEW (3-tier caption hierarchy). PANEL_MAP updated.
+- **Priya C43**: Story Bible v004; Miri cultural identity brief. Miri = Igbo-Nigerian + Brazilian. Millbrook = Ohio/Indiana.
 
 ### C44 Canonical Asset Versions
-- Luma expression sheet: **v012** (face curves integration); **v013 IN PROGRESS** (Maya — body postures)
-- Luma face curve spec: **v002** (100px canonical eye width)
-- Luma motion spec: v002 / Luma color model: v002 / Luma turnaround: v004
-- Character lineup: **v008 PITCH PRIMARY** (two-tier ground plane, RPD PASS)
+- Luma expression sheet: **v012** (v013 in progress — Maya)
+- Luma face curve spec: **v002** / Luma motion spec: v002 / Luma color model: v002 / Luma turnaround: v004
+- Character lineup: **v008 PITCH PRIMARY** (two-tier ground plane) → v009 pending Miri hairpin update
 - Byte expression sheet: **v007** / Byte motion spec: v003
-- Miri expression sheet: **v005** / Cosmo expression sheet: v007 / Glitch expression sheet: v003
-- **SF04: "Resolution" CANONICAL** (Jordan C42). SF01: v006 / SF02: v008 / SF03: v005
-- COVETOUS Glitch style frame: **v2.0.0** (Rin C43 — glitch_spec_lint PASS, 3-char triangulation)
-- Glitch body primitive diagram: v001
-- Kitchen: v005 / Living Room: v002 / School Hallway: v003 / Classroom: REBUILT / Tech Den: v006 / Luma Study Interior: ON DISK (Hana C42)
-- Story Bible: v003 / Logo: v001
-- Cold Open storyboard: v003 + P06/P08/P23/P24 (C42) + P07/P09/EP05 COVETOUS (C43)
+- Miri expression sheet: **v005** → update pending hairpin rename
+- Cosmo expression sheet: v007 / Glitch expression sheet: v003
+- SF01: v006 / **SF02: v008 C44 NATIVE** / SF03: v005 / **SF04: CANONICAL C42** / **SF05 COVETOUS: v3.0.0 C44**
+- **SF06 Miri+Luma: COMMISSIONED** (Maya C44 — "The Hand-Off")
+- Kitchen: **v006** / Classroom: **v003** / Hallway: **v004** / Living Room: v002 / Tech Den: v006
+- Luma Study Interior: ON DISK (Hana C42) / Other Side: C41
+- **Story Bible: v004** (Priya C43) / Logo: v001 (font update commissioned Sam C44)
+- Cold Open: v003 + P06/P07/P08/P09/P10/P11/P23/P24 + EP05 COVETOUS
+- **Miri motion spec: v001** (Ryo C43) / Glitch motion spec: COMMISSIONED (Ryo C44)
 
 ### C44 Key Decisions + Open Items
-- **P0: Miri cultural identity** — chopstick hair accessory (MIRI-A) may be cultural mismatch vs surname Okonkwo-Santos (Igbo/Portuguese-Brazilian). Decision pending responses from Maya/Priya/Hana. Blocks C44+ Miri work.
-- **P0: Miri+Luma relationship asset** — no asset shows them together. Critics Marcus Webb + Eleanor Whitfield both scored 74, both flagged it. Ideabox idea filed: new SF05 or relationship key at CRT together.
-- **P1 C44 pipeline**: Hardcoded paths (Kai), SF01 dual-generator (Morgan), SF04 output dir (Jordan), hallway pixel font (Jordan), logo typeface (Sam), classroom+kitchen pixel font (Hana), storyboard naming audit (Diego), Byte face test profile (Kai).
-- **SF02 refactor**: Flagged SIGNIFICANT REFACTOR NEEDED (Rin audit). 1920×1080 + LANCZOS + inlined fill light. Assigned to Jordan — scope requires dedicated cycle. Hold until C45+.
-- **Luma v013** (Maya — P1 carry)
+- **P0 RESOLVED**: Miri chopstick → wooden hairpins CONFIRMED. Maya executing atomic 6-file update.
+- **P0 RESOLVED**: Logo typeface = Nunito Bold + Space Grotesk Bold. Sam building font pipeline.
+- **P0 OPEN**: FLAG 05 story bible closure — waiting on Maya confirmation (then Priya closes).
+- **P1**: Byte face gate `--char byte` (Kai — blocking Diego/Lee/Rin)
+- **P1**: Miri hairpin atomic commit (Maya — char_spec_lint M004 must update in same commit)
+- **P1**: SF06 Miri+Luma relationship frame (Maya — biggest pitch gap, commission in progress)
+- **P1**: Caption retrofit P03–P09/P23/P24 (Diego — Jonas Feld P1)
+- **P1**: CI hardcoded-path gate + thumbnail lint (Morgan — ci_suite v1.4.0)
+- **P2**: Logo font update (Sam); GL-07 lamp halo (Jordan); UV_PURPLE linter (Rin); Pixel font perspective helper (Hana); Glitch motion spec (Ryo); Lineup tier depth indicator (Lee)
 
 ---
 

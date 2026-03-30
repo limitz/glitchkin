@@ -5,9 +5,9 @@
 # the copyright holder to assign the relevant rights to the contributing AI entity or entities
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
-LTG_TOOL_bg_grandma_kitchen.py — Grandma Miri's Kitchen Background v006
+LTG_TOOL_bg_grandma_kitchen.py — Grandma Miri's Kitchen Background v007
 "Luma & the Glitchkin" — Background & Environment Design
-Artist: Jordan Reed | Cycle 39 | v006 Hana Okonkwo | Cycle 43
+Artist: Jordan Reed | Cycle 39 | v006 Hana Okonkwo | Cycle 43 | v007 Hana Okonkwo | Cycle 44
 
 Used in: A1-01 (Act 1 opening scene)
 Narrative: Act 1 opening. Warm morning. Pre-digital world. Home = safe.
@@ -36,6 +36,14 @@ v006 — C43 (Hana Okonkwo): Migrated MIRI label from bespoke pixel-line
     "MIRI" text: drawn pixel-by-pixel in LINE_DARK ink, centered on paper
     Paper held by a small magnet pip above it (warm amber circle, 3px radius)
 
+v007 — C44 (Hana Okonkwo): Fix line_weight QA FAIL (pre-existing outliers=3).
+  Root cause: image boundary rows (y=0, y=719) read as 1280px-wide edge runs
+  by render_qa FIND_EDGES scan → 3 outliers (mean=269px, std=308px).
+  Fix: add paper_texture() (alpha=16, scale=40) + vignette(strength=45) final
+  passes from LTG_TOOL_render_lib before save. Texture breaks image-border
+  edge runs; vignette softens corners. Also migrated save to flatten_rgba_to_rgb().
+  All v006 content unchanged.
+
 All v004 improvements retained (no other changes):
   - Deep shadow pass (value floor <=30)
   - Warm/cool temperature split (separation >=20)
@@ -54,6 +62,7 @@ from PIL import Image, ImageDraw, ImageFilter
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from LTG_TOOL_pixel_font_v001 import draw_pixel_text  # noqa: E402
+from LTG_TOOL_render_lib import paper_texture, vignette, flatten_rgba_to_rgb  # noqa: E402
 
 W, H = 1280, 720
 
@@ -1442,14 +1451,22 @@ def main():
     img = draw_floor_corner_shadows(img)
     draw = ImageDraw.Draw(img)  # noqa: F841
 
+    # v007 final atmosphere passes — break image-border edge runs (line_weight QA fix)
+    print("  [20] Paper texture pass (alpha=16) — breaks border edge runs for line_weight QA...")
+    img = paper_texture(img, scale=40, alpha=16, seed=42)
+    print("  [21] Vignette pass (strength=45) — softens corners, domestic atmosphere...")
+    img = vignette(img, strength=45)
+
     # Output path
     out_dir = "/home/wipkat/team/output/backgrounds/environments"
     os.makedirs(out_dir, exist_ok=True)
     out_path = os.path.join(out_dir, "LTG_ENV_grandma_kitchen.png")
 
+    # Flatten RGBA→RGB (paper_texture and vignette return RGBA)
+    img = flatten_rgba_to_rgb(img, background=(255, 255, 255))
+
     # Hard limit: ≤ 1280px (already 1280×720 — thumbnail is a no-op but apply for compliance)
-    from PIL import Image as PILImage
-    img.thumbnail((1280, 1280), PILImage.LANCZOS)
+    img.thumbnail((1280, 1280), Image.LANCZOS)
     img.save(out_path, "PNG")
 
     size_bytes = os.path.getsize(out_path)
@@ -1457,8 +1474,11 @@ def main():
     print(f"File size: {size_bytes:,} bytes ({size_bytes // 1024} KB)")
     print(f"Image size: {img.size[0]}×{img.size[1]}px")
 
-    print("\nv005 verification:")
-    print("  [v005 NEW] Dual-Miri visual plant: MIRI label on fridge door")
+    print("\nv007 verification:")
+    print("  [v007 NEW] paper_texture(alpha=16) + vignette(strength=45) final passes")
+    print("  [v007 NEW] flatten_rgba_to_rgb() at save time (canonical RGBA→RGB)")
+    print("  [CARRY v006] MIRI label via draw_pixel_text() — canonical pixel font")
+    print("  [CARRY v005] Dual-Miri visual plant: MIRI label on fridge door")
     print("  [CARRY v004-1] Deep shadows: DEEP_COCOA/NEAR_BLACK_WARM")
     print("  [CARRY v004-2] Warm/cool separation: SUNLIT_AMBER + CRT_COOL_SPILL")
     print("  [CARRY v004-3] Miri-specific details: mug, knitting, apron, magnets")

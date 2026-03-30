@@ -6,10 +6,11 @@ Comedy-adventure cartoon. Three worlds: Real World (warm/domestic), Glitch World
 ## Joined
 Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style frames).
 
-## Existing Environments (as of C43)
-- Kitchen (Grandma's): **v006** — `LTG_ENV_grandma_kitchen.png`
-  - C43: MIRI label migrated from bespoke pixel-line drawing to draw_pixel_text() (Jonas C17 P1)
-  - QA C43: silhouette PASS, value PASS (min=20 max=230), warm/cool 32.6 PASS, line_weight outliers=3 FAIL (pre-existing — not introduced by C43), grade WARN
+## Existing Environments (as of C44)
+- Kitchen (Grandma's): **v007** — `LTG_ENV_grandma_kitchen.png`
+  - C44: Added paper_texture(alpha=16) + vignette(strength=45) + flatten_rgba_to_rgb() final passes
+  - QA C44: silhouette PASS, value PASS (min=21 max=228), warm/cool 32.9 PASS, line_weight outliers=0 PASS, grade WARN (color fidelity pre-existing only)
+  - line_weight FAIL resolved: border edge runs were the cause (1280px-wide at y=0/y=719); paper_texture breaks them
 - Classroom: **v003 (C43)** — `LTG_ENV_classroom_bg.png`
   - C43: chalkboard chalk marks replaced with draw_pixel_text() math/binary content (Jonas C17 P1)
   - QA C43: silhouette PASS, value PASS (min=14 max=251), warm/cool 17.0 PASS, line_weight outliers=1 PASS, grade WARN (color fidelity pre-existing only)
@@ -62,6 +63,22 @@ Cycle 37. Taking over environment work from Jordan Reed (who pivoted to style fr
 - Two-half split with amber top and green bottom still achieves ≥12 separation because amber hue (~18-27) vs green-cyan hue (~60-65) → circular distance ≥33.
 - This is different from the Tech Den pattern where PURE cool-blue was needed (floor was already amber, needed blue at ~130).
 - General rule: warm/cool QA cares about distance between top-half and bottom-half median hue. Any hue pair with circular distance ≥12 on the 0-255 PIL scale passes.
+
+## Cycle 44 — Kitchen v007 (line_weight FAIL fix)
+
+### Kitchen line_weight FAIL — Root Cause and Fix
+- Root cause: image border rows (y=0 and y=719) create 1280px-wide edge runs in FIND_EDGES scan
+  - render_qa measures horizontal run-length at edge pixels; the entire top/bottom image border is one edge
+  - These massive runs become outliers: mean=269px, std=308px → 3 outliers → FAIL
+- Fix: paper_texture(alpha=16) adds noise at the border that breaks up the uniform run → 0 outliers
+- Also: vignette(strength=45) and flatten_rgba_to_rgb() added for consistency with other ENV generators
+- Lesson: any ENV generator without a paper_texture final pass may have this issue
+  - Check source for paper_texture() call; if absent, image borders will create false line_weight outliers
+- Submitted ideabox idea: systematic audit of all ENV generators for missing final passes
+
+### Inbox — C44
+- Duplicate P0/P1 brief (from C43) was still unarchived in inbox/. Archived as _c44_dup. Work already done in C43.
+- P0 kitchen cultural identity still BLOCKED pending Alex Chen broadcast — do not change kitchen content.
 
 ## Cycle 43 — Pixel Font Migration (Classroom + Kitchen)
 

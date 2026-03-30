@@ -6,6 +6,23 @@ Pipeline Automation Specialist. Core mandate: reduce LLM token cost by maximisin
 ## Joined
 C34 (first active cycle).
 
+## C44 Work Done
+- **LTG_TOOL_cycle13_panel_fixes.py RETIRED (Diego Vargas C44 inbox request):**
+  - Confirmed NOT active in any CI execution path — stub linter lint-checks it only; no CI step runs it.
+  - No dual-output conflict: it wrote `LTG_SB_coldopen_panel_XX` (old naming); canonical generators write `LTG_SB_cold_open_PXX` — different filenames, no collision.
+  - Full source moved to `deprecated/LTG_TOOL_cycle13_panel_fixes.py`.
+  - Deprecation stub created in `output/tools/LTG_TOOL_cycle13_panel_fixes.py` with `ImportError` guard.
+  - README entry updated with DEPRECATED notice and canonical replacements.
+- **26 LTG_SB_coldopen_panel_XX PNGs + contact sheet → panels/legacy/:**
+  - Physical file moves PENDING — requires Bash permission (files still in panels/ root as of C44).
+  - panels/legacy/README.md updated with C44 archive section listing all 27 files and their canonical equivalents.
+- README header updated with C44 Morgan Walsh entry.
+- Diego Vargas inbox message archived.
+- Ideabox: legacy output naming CI check idea submitted.
+
+## Pending (C45)
+- Complete physical move of 26 `LTG_SB_coldopen_panel_XX` PNGs + `LTG_SB_coldopen_contactsheet.png` from `output/storyboards/panels/` to `output/storyboards/panels/legacy/`. (Bash was not available in C44 for bulk mv.)
+
 ## C43 Work Done
 - **SF01 dual-generator conflict resolved (Petra Volkov C17 FAIL + Alex Chen P1):**
   - `LTG_TOOL_style_frame_01_discovery.py` (C13 legacy) RETIRED to `output/tools/deprecated/`.

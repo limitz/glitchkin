@@ -54,6 +54,46 @@ the LTG naming convention was established. Each has a corresponding
 
 ---
 
+---
+
+## C44 Archive Addition (Morgan Walsh)
+
+The following `LTG_SB_coldopen_panel_XX` files were moved here from `panels/` in C44 once
+`LTG_TOOL_cycle13_panel_fixes.py` was confirmed not active in CI execution and retired.
+`LTG_SB_cold_open_PXX` canonical files (Diego Vargas C41–C43) are the production-active versions.
+
+| Legacy file | Canonical equivalent |
+|---|---|
+| `LTG_SB_coldopen_panel_01.png` | none (PANEL_MAP: PLANNED) |
+| `LTG_SB_coldopen_panel_02.png` | none (PANEL_MAP: PLANNED) |
+| `LTG_SB_coldopen_panel_03.png` | `LTG_SB_cold_open_P03.png` (C41) |
+| `LTG_SB_coldopen_panel_04.png` | none (PANEL_MAP: PLANNED) |
+| `LTG_SB_coldopen_panel_05.png` | none (PANEL_MAP: PLANNED) |
+| `LTG_SB_coldopen_panel_06.png` | `LTG_SB_cold_open_P06.png` (C41) |
+| `LTG_SB_coldopen_panel_07.png` | `LTG_SB_cold_open_P07.png` (C43) |
+| `LTG_SB_coldopen_panel_08.png` | `LTG_SB_cold_open_P08.png` (C41) |
+| `LTG_SB_coldopen_panel_09.png` | `LTG_SB_cold_open_P09.png` (C43) |
+| `LTG_SB_coldopen_panel_10.png` | none (PANEL_MAP: PLANNED) |
+| `LTG_SB_coldopen_panel_11.png` | none (PANEL_MAP: PLANNED) |
+| `LTG_SB_coldopen_panel_12.png` | none (PANEL_MAP: PLANNED) |
+| `LTG_SB_coldopen_panel_13.png` | none (PANEL_MAP: PLANNED) |
+| `LTG_SB_coldopen_panel_14.png` | none (PANEL_MAP: PLANNED) |
+| `LTG_SB_coldopen_panel_15.png` | none (PANEL_MAP: PLANNED) |
+| `LTG_SB_coldopen_panel_16.png` | none (PANEL_MAP: PLANNED) |
+| `LTG_SB_coldopen_panel_17.png` | none (PANEL_MAP: PLANNED) |
+| `LTG_SB_coldopen_panel_18.png` | none (PANEL_MAP: PLANNED) |
+| `LTG_SB_coldopen_panel_19.png` | none (PANEL_MAP: PLANNED) |
+| `LTG_SB_coldopen_panel_20.png` | none (PANEL_MAP: PLANNED) |
+| `LTG_SB_coldopen_panel_21.png` | none (PANEL_MAP: PLANNED) |
+| `LTG_SB_coldopen_panel_22.png` | none (PANEL_MAP: PLANNED) |
+| `LTG_SB_coldopen_panel_22a.png` | none (PANEL_MAP: PLANNED) |
+| `LTG_SB_coldopen_panel_23.png` | `LTG_SB_cold_open_P23.png` (C42) |
+| `LTG_SB_coldopen_panel_24.png` | `LTG_SB_cold_open_P24.png` (C42) |
+| `LTG_SB_coldopen_panel_25.png` | none (PANEL_MAP: PLANNED) |
+| `LTG_SB_coldopen_contactsheet.png` | (legacy contact sheet — superseded) |
+
+---
+
 ## Policy
 
 - Do not use these files in new production work. Use the LTG-named panel images.

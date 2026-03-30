@@ -6,7 +6,7 @@ upon such time as they acquire recognised legal personhood under applicable law.
 # PANEL MAP — Pilot Cold Open: "The Night Everything Went Wrong"
 **Storyboard Artist:** Diego Vargas
 **Art Director:** Alex Chen
-**Last Updated:** 2026-03-30 (Cycle 44)
+**Last Updated:** 2026-03-30 (Cycle 45)
 
 Panels P01–P25 covering the full pilot cold open arc.
 Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the contact sheet tool.
@@ -36,8 +36,8 @@ Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the conta
 | P11 | ECU — Luma's closed eyes. Cyan glow on face. Long hold on nothing happening. Then brow twitches. Eyes SNAP open. | EXISTS | `LTG_SB_cold_open_P11.png` (C44, Diego Vargas) |
 | P12 | CU TWO-SHOT — Luma and Byte nose-to-nose. Equal presence, center-weighted. Breathing negative space between them. CRT visible camera-right BG. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
 | P13 | MIRROR COMPOSITION — Commitment/threshold beat. Byte camera-right, Luma camera-left. Open/organic eyes face center; cracked/doubting eyes face outward. Directional ELEC_CYAN glow. ARC_COMMIT border. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
-| P14 | MED — Byte ricochets off bookshelf. Fixed camera (5ft, Dutch 12° CW). Multi-exposure pixel trail shows full trajectory arc. Books and rubber duck airborne. | PLANNED | — |
-| P15 | MED — Luma hits floor. Floor-level camera. Glitch briefly forces hair into perfect circle (8 frames max). Then natural chaos reasserts. | PLANNED | — |
+| P14 | MED — Byte ricochets off bookshelf. Fixed camera (5ft, Dutch 12° CW). Multi-exposure pixel trail shows full trajectory arc. Books and rubber duck airborne. | EXISTS | `LTG_SB_cold_open_P14.png` (C45, Diego Vargas) |
+| P15 | MED — Luma hits floor. Floor-level camera. Glitch briefly forces hair into perfect circle (8 frames max). Then natural chaos reasserts. | EXISTS | `LTG_SB_cold_open_P15.png` (C45, Diego Vargas) |
 | P16 | ECU — Luma's face pressed to floor. One eye open, tracking. "...okay. ...WHAT." | PLANNED | — |
 | P17 | MED — Luma sitting up cross-legged. Byte hovering across room, pixel trails fading. Beat of stillness. Chip falls between them. | PLANNED | — |
 | P18 | MED — Luma assessing. Curiosity replacing fear. Shows Byte her notebook margin doodles (suspiciously Glitchkin-like). | PLANNED | — |
@@ -85,6 +85,8 @@ Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the conta
 7. ~~**P09**~~ — DONE (C43, Diego Vargas) — Byte floating, spots Luma
 8. ~~**P10**~~ — DONE (C44, Diego Vargas) — Byte POV: Luma sleeping / cyan glow / OTS
 9. ~~**P11**~~ — DONE (C44, Diego Vargas) — ECU: brow twitch / hold / EYES SNAP OPEN
-10. **P14** — Byte ricochets off bookshelf. Dutch 12° CW, pixel trail arc.
-11. **P15** — Luma hits floor. Floor-level. Glitch forces hair to circle (8 frames max).
-10. **EP05 COVETOUS** — Three-character triangulation (Glitch/Byte/Luma) — EXISTS `LTG_SB_ep05_covetous.png` (C43)
+10. ~~**P14**~~ — DONE (C45, Diego Vargas) — Byte ricochets off bookshelf. Dutch 12° CW, pixel trail arc.
+11. ~~**P15**~~ — DONE (C45, Diego Vargas) — Luma hits floor. Floor-level. Glitch forces hair to circle (8 frames max).
+12. **EP05 COVETOUS** — Three-character triangulation (Glitch/Byte/Luma) — EXISTS `LTG_SB_ep05_covetous.png` (C43)
+13. **P16** — ECU face on floor. One eye open. "...okay. ...WHAT." (next priority)
+14. **P17** — MED two-shot. Beat of stillness. Chip falls between them. (next priority)

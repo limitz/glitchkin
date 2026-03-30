@@ -332,6 +332,52 @@ All three P1 priorities complete.
 - **Legacy file strategy**: never rename files referenced by generator output targets without CI coordination.
   Always flag to Morgan Walsh with specific line numbers.
 
+## Cycle 45 — Delivered
+
+### New Panels P14 and P15
+
+**P14** — `LTG_TOOL_sb_cold_open_P14.py` → `output/storyboards/panels/LTG_SB_cold_open_P14.png`
+- MED, fixed cam 5ft, Dutch 12° CW (draw area only, caption horizontal)
+- Byte ricochets off bookshelf: multi-exposure pixel trail arc lower-left → upper-right
+- 5 ghost Byte silhouettes at decreasing opacity along Bezier arc (motion grammar)
+- Books airborne: 3 tumbling volumes with tilt angles. Rubber duck airborne upper-center.
+- Shelf structure: 3 boards, gap at top shelf slots 3-4-5 (impact zone)
+- ELEC_CYAN confetti scatter (TENSE density: 28 particles)
+- Impact starburst annotation at impact point. Arc: TENSE (HOT_MAGENTA border).
+
+**P15** — `LTG_TOOL_sb_cold_open_P15.py` → `output/storyboards/panels/LTG_SB_cold_open_P15.png`
+- MED, floor-level cam 6" off ground, flat horizon (no Dutch tilt — stable floor)
+- Luma sprawled on floor: hoodie LUMA_HOODIE orange canonical, side-view, dazed face
+- Glitch forced-hair PERFECT CIRCLE: radius = head_r × 1.55, ELEC_CYAN outline, radial lines interior
+- Annotation: "GLITCH FORCED SYMMETRY — 8 FRAMES MAX" + "then natural chaos reasserts"
+- Daze stars around head (yellow + cyan alternating)
+- Confetti drifts DOWN from Byte off-panel right
+- Arc: TENSE / COMEDY (HOT_MAGENTA border)
+
+### PANEL_MAP updated: P14 + P15 PLANNED → EXISTS
+- Next priorities: P16 (ECU face on floor, one eye open) + P17 (beat of stillness, chip falls)
+
+### Ideabox submitted
+- `20260330_diego_vargas_hair_circle_geometry_spec.md`
+  — Spec doc for the Glitch forced-hair circle geometry (P15 beat + future reuse)
+
+### Lessons Learned — Cycle 45
+- **Multi-exposure trail (ricochet grammar)**: Quadratic Bezier arc with 5 ghost silhouettes
+  at t=0.0–1.0. Alpha 0.15→1.0, scale 0.7→1.0 along arc. Silhouettes drawn using RGBA overlay
+  (draw_byte_silhouette with img= param). Annotate arc guide with thin ELEC_CYAN line.
+- **Book shelf geometry bug**: pack_shelf_row needs `shelf_surface_y` (board top) + `row_height`
+  (space above board). Books sit with bottom AT shelf surface, top = surface - book_h.
+  Do NOT pass (shelf_y, shelf_y + shelf_w) — that gives 10px row height, breaks book_h math.
+- **Forced hair circle (Glitch order)**: Draw as: (1) RGBA layer with solid hair fill ellipse
+  + radial lines in lighter hair tone, (2) paste via alpha composite, (3) ELEC_CYAN ellipse
+  outline + pixel artifacts on rim. This layering keeps outline crisp over the fill.
+- **Floor-level camera**: Wall appears as a thin strip at top (18% of draw height).
+  Floor planks fill most of the frame. Characters appear flat/horizontal on floor.
+- **Dutch tilt (P14 fix)**: Apply with `draw_crop.rotate(-12, expand=False, fillcolor=DEEP_SPACE)`.
+  Must crop DRAW_H only, not full PH, before rotating.
+- **W004 draw context refresh**: Must refresh `draw = ImageDraw.Draw(img)` after every
+  `img.paste(...)` call on alpha composited layers.
+
 ## Startup Sequence
 1. Read ROLE.md if present
 2. Read this MEMORY.md

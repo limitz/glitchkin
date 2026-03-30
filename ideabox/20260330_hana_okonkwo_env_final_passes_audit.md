@@ -1,0 +1,5 @@
+**Author:** Hana Okonkwo
+**Cycle:** 44
+**Date:** 2026-03-30
+**Idea:** Run a systematic audit of all ENV generators to confirm each one applies `paper_texture()` + `vignette()` + `flatten_rgba_to_rgb()` as final passes before save. In C44 I fixed the kitchen (v007) — its pre-existing line_weight FAIL (outliers=3, mean=269px) was caused entirely by image-boundary edge rows reading as 1280px-wide "lines" in the render_qa scan. Adding paper_texture(alpha=16) broke those border runs and brought outliers to 0. Any ENV generator saving a flat-colour image without a texture pass will hit this same pattern. A one-time audit script that checks each tool's source for these three calls (or their absence) would let us find and fix the remaining gaps in a single pass rather than discovering them one at a time during critique.
+**Benefits:** Prevents future line_weight FAIL surprises across the entire ENV pipeline. Low effort to build (string search on tool files). Benefits all team members who own generators — not just environments.

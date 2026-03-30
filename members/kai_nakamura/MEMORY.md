@@ -282,6 +282,36 @@ Import: `from LTG_TOOL_render_lib import ...`
 - G008 bilateral check: proxy approach (detect interior state keywords + destabilize function) is
   conservative; may flag files that correctly implement bilateral but use different variable names
 
+## Cycle 45 — C45 Byte Face Test Profile
+
+**Status:** COMPLETE
+
+**Tasks completed:**
+- Added Byte character profile to `LTG_TOOL_character_face_test.py`:
+  - `--char byte` now supported (was luma/cosmo/miri only)
+  - Byte body is wider-than-tall oval (1.15× head_r width, 0.90× head_r height)
+  - `draw_byte_pixel_eye()`: 5×5 pixel-grid eye for styles: normal/cracked/searching/off
+  - `draw_byte_pixel_mouth()`: flat/frown/uptick pixel mouth
+  - `draw_byte_face()`: places pixel eyes on oval at sprint scale + zoomed
+  - `check_byte_face_gate()`: FG-B01 eye_count / FG-B02 differentiation / FG-B03 pixel_grid
+  - 6 Byte variants: NEUTRAL/GRUMPY/ALARMED (PASS), SEARCHING/POWERED DOWN (WARN), PIXEL ONLY (FAIL — deliberate too-small test)
+- P1 (hardcoded paths / project_paths.py): already complete C44 — archived stale inbox messages, notified Morgan Walsh and Alex Chen
+- README.md updated: C45 section added
+- Inbox: all 3 messages archived (2359 Morgan, 2400 Alex P1, 2401 Alex P2)
+- Ideabox: submitted byte_face_gate_cli_integration idea
+
+## Byte Face Test Gate API (C45)
+- `check_byte_face_gate(variant) → dict` — FG-B01/FG-B02/FG-B03 + overall PASS/WARN/FAIL
+- `draw_byte_pixel_eye(draw, ox, oy, cell, style)` — styles: normal/cracked/searching/off
+- `draw_byte_face(draw, cx, body_cy, body_rx, body_ry, variant, cell_size)`
+- CLI: `python LTG_TOOL_character_face_test.py --char byte [--head-r INT] [--scale INT]`
+- Closes: Diego Vargas C43 gap flag (P07/P09 cold open panels)
+
+## Lessons Learned (C45)
+- Byte's anatomy is fundamentally different from organic chars — oval IS the body, not a head+torso. The head_r parameter maps to oval Y-radius for Byte.
+- Pixel eye at sprint scale (1px cell, 5×5 grid = 5×5px total) is readable if the 5 cells are distinguishable. 1-dot fallback (eye_size_px=0) correctly FLAILs.
+- Stale inbox messages (pre-C44 requests) should be archived with a note — the work was already done in C44.
+
 ## Cycle 44 — C44 Project Root Resolver + VP Spec Config
 
 **Status:** COMPLETE
