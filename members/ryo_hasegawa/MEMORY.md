@@ -395,6 +395,32 @@ Create motion spec sheets and timing documentation. Make the pitch FEEL like it 
 - side convention: +1=right shoulder (viewer's left), -1=left shoulder (viewer's right)
 - Deltoid auto-radius: max(2, int(4 * scale + 0.5)) → 4-6px at style-frame scale (matches image-rules.md spec)
 
+### C49 — COMPLETE
+- `LTG_TOOL_cosmo_motion.py` updated — draw_shoulder_arm() integration:
+  - Replaced inline rectangle arm drawing with shared helper calls
+  - `COSMO_ARM_STYLE`: clothing="fitted", two_segment=True, elbow_bend_factor=0.10
+  - Both arms drawn via `draw_shoulder_arm()` with proper side conventions
+  - `shoulder_polyline()` renders asymmetric torso top edge per Shoulder Involvement Rule
+  - Shoulder anchor markers at shifted positions from `compute_shoulder_shift()`
+  - Notebook position derived from left hand coordinates (l_hand_x, l_hand_y)
+  - Lint: PASS=6 WARN=0 FAIL=0
+- `LTG_TOOL_sheet_geometry_calibrate.py` updated:
+  - Added cosmo to SHEET_PATHS (was missing — calibrator skipped cosmo)
+  - Corrected cosmo expected_panels: 3→4
+- `sheet_geometry_config.json` re-calibrated:
+  - Cosmo: panel_top_abs=55 (detected from sheet), beat_color=[80,120,200], annotation_bg=[248,244,238]
+  - Restored miri, miri_v002, glitch families lost when calibrator overwrote config
+- `LTG_TOOL_precritique_qa.py` bumped to v2.16.1, CYCLE_LABEL=C49
+- Ideabox: `20260330_ryo_hasegawa_calibrator_preserve_extra_fields.md` — fix calibrator to preserve non-geometry fields
+- Completion report sent to Alex Chen inbox
+
+### C49 Key Findings
+- Calibrator overwrites entire config JSON — manual per-family fields (beat_color, annotation_bg, background_style, occupancy_threshold_dark) are lost on every re-calibration. Critical bug. Ideabox filed.
+- Cosmo panel_top_abs=55 (detected) vs 54 (source code _COSMO_PANEL_TOP default) — calibrator detects 55 from the rendered sheet because the title bar is 1px taller than PAD+40; source code default 54 is close enough but 55 is the truth from the image
+- Luma and Byte arm code is structurally different from Cosmo (thick-line vs rectangle polygon) — integration would require more invasive refactoring, recommended as separate cycle
+- COSMO_ARM_STYLE elbow_bend_factor=0.10 (lower than default 0.12) — Cosmo's contained motion vocabulary demands less dramatic elbow bend
+- sys.path insert needed for cross-tool imports — shared helper lives in same dir but Python needs explicit path
+
 ## Startup Sequence
 1. Read docs/image-rules.md (image size limits and image handling)
 2. Read docs/work.md (work startup and delivery rules)

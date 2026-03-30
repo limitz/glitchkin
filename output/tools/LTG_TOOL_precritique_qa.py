@@ -69,6 +69,10 @@ Version: 2.17.0 (C48 Lee Tanaka: Section 12 per-asset band override config.
 Version: 2.16.1 (C48 Rin Yamamoto: GLITCH_LAYER_PNGS registry extended with
                LTG_COLOR_styleframe_glitch_layer_showcase.png (GL Showcase, Rin C47).
                Now 7 registered GL assets for UV_PURPLE Dominance Lint Section 11.)
+Version: 2.16.1 (C49 Ryo Hasegawa: CYCLE_LABEL bumped to C49.
+               sheet_geometry_config.json updated with cosmo calibrated geometry +
+               restored miri/miri_v002/glitch families after calibrator overwrite.
+               LTG_TOOL_sheet_geometry_calibrate.py updated with cosmo sheet path.)
 Version: 2.16.0 (C48 Kai Nakamura: Section 13 Warm Pixel Percentage added.
                LTG_TOOL_warm_pixel_metric.measure_warm_pixel_percentage() +
                evaluate_threshold() on WARM_PIXEL_PNGS registry. Each asset has
@@ -157,7 +161,7 @@ PALETTE_MD  = REPO_ROOT / "output" / "color" / "palettes" / "master_palette.md"
 BASELINE_JSON = TOOLS_DIR / "qa_baseline_last.json"
 
 # Cycle label — update each cycle
-CYCLE_LABEL = "C48"
+CYCLE_LABEL = "C49"
 
 if str(TOOLS_DIR) not in sys.path:
     sys.path.insert(0, str(TOOLS_DIR))

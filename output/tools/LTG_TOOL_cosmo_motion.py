@@ -5,7 +5,7 @@
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
 LTG_TOOL_cosmo_motion.py
-Ryo Hasegawa / Cycle 42
+Ryo Hasegawa / Cycle 42 (updated C49 — shoulder-arm integration)
 Motion Spec Sheet — COSMO
 4 panels: Idle/Observing | Startled | Analysis Lean | Reluctant Move
 
@@ -31,6 +31,19 @@ except ImportError:
 from PIL import Image, ImageDraw
 import os
 import math
+import sys
+
+# Ensure output/tools/ is on sys.path so we can import the shared helper
+_TOOLS_DIR = os.path.dirname(os.path.abspath(__file__))
+if _TOOLS_DIR not in sys.path:
+    sys.path.insert(0, _TOOLS_DIR)
+
+from LTG_TOOL_draw_shoulder_arm import (
+    draw_shoulder_arm,
+    compute_shoulder_shift,
+    shoulder_polyline,
+    ShoulderArmStyle,
+)
 
 # --- Load config (mirrors pattern from luma/byte motion tools) ---
 _CONFIG_PATH = os.path.join(os.path.dirname(__file__), "sheet_geometry_config.json")
@@ -74,6 +87,20 @@ LABEL_TEXT      = (248, 244, 236)
 MOTION_ARROW    = (220,  60,  20)   # orange — secondary motion (notebook, glasses)
 BEAT_COLOR      = ( 80, 120, 200)   # blue — timing beats
 ACCENT_DASH     = (200, 190, 175)   # construction/guide lines
+
+# --- COSMO SHOULDER-ARM STYLE (fitted shirt, per image-rules.md C47) ---
+COSMO_ARM_STYLE = ShoulderArmStyle(
+    arm_fill=STRIPE_A,           # Cerulean Blue sleeve (matches shirt stripe A)
+    outline=LINE_COLOR,          # Deep Cocoa outline
+    skin_fill=SKIN,              # Light Warm Olive
+    skin_highlight=SKIN_SH,     # Warm Sand for finger accent
+    line_width=3,
+    clothing="fitted",           # Cosmo = fitted shirt rounded corner (image-rules.md)
+    deltoid_radius=None,         # auto from scale
+    hand_radius=None,            # auto from arm_width
+    two_segment=True,            # upper arm + forearm with elbow
+    elbow_bend_factor=0.10,      # slightly less than default — Cosmo is contained
+)
 
 # --- CANVAS ---
 W, H  = 1280, 720
@@ -249,49 +276,74 @@ def draw_cosmo_figure(draw, ox, oy, head_r=24,
                     body_cx + body_w, belt_y + int(hr * 0.10)],
                    fill=GLASS_FRAME, outline=LINE_COLOR, width=2)
 
-    # --- SHOULDER MARKERS (geometry anchor) ---
+    # --- SHOULDER + ARMS (shared helper: draw_shoulder_arm, C49) ---
     shoulder_y = body_top_y + int(hr * 0.18)
-    shoulder_r = 4
-    for sx in [body_cx - body_w, body_cx + body_w]:
-        draw.ellipse([sx - shoulder_r, shoulder_y - shoulder_r,
-                      sx + shoulder_r, shoulder_y + shoulder_r],
-                     fill=ACCENT_DASH, outline=LINE_COLOR, width=1)
-
-    # --- ARMS ---
     arm_h  = int(hr * 1.80)
     arm_w  = int(hr * 0.28)
 
-    # Right arm (viewer's left)
-    ang_r = math.radians(arm_right_angle)
-    ar_ex = body_cx - body_w + int(arm_h * math.cos(ang_r))
-    ar_ey = shoulder_y + int(arm_h * math.sin(-ang_r))  # flip y
-    draw.rectangle([min(body_cx - body_w, ar_ex) - arm_w // 2,
-                    shoulder_y,
-                    max(body_cx - body_w, ar_ex) + arm_w // 2,
-                    ar_ey + arm_w // 2],
-                   fill=STRIPE_A, outline=LINE_COLOR, width=lw)
+    # Shoulder polyline: replaces straight torso top with shifted shoulder points
+    # This makes the torso top edge asymmetric when arms differ (Shoulder Involvement Rule)
+    s_poly = shoulder_polyline(
+        body_cx, body_top_y, body_w,
+        left_arm_angle_deg=arm_left_angle,
+        right_arm_angle_deg=arm_right_angle,
+        arm_length=arm_h,
+        scale=s,
+        neck_half_width=int(hr * 0.22),
+    )
+    # Draw shoulder polyline over torso top edge (redraw top edge with involvement)
+    draw.line(s_poly, fill=LINE_COLOR, width=lw)
 
-    # Left arm (viewer's right) — notebook arm
-    ang_l = math.radians(arm_left_angle)
-    al_ex = body_cx + body_w + int(arm_h * math.cos(ang_l))
-    al_ey = shoulder_y + int(arm_h * math.sin(-ang_l))
-    draw.rectangle([min(body_cx + body_w, al_ex) - arm_w // 2,
-                    shoulder_y,
-                    max(body_cx + body_w, al_ex) + arm_w // 2,
-                    al_ey + arm_w // 2],
-                   fill=STRIPE_A, outline=LINE_COLOR, width=lw)
+    # Shoulder anchor markers at shifted positions
+    shoulder_r = 4
+    r_sx, r_sy = compute_shoulder_shift(
+        body_cx - body_w, shoulder_y, arm_right_angle, arm_h, scale=s, side=1)
+    l_sx, l_sy = compute_shoulder_shift(
+        body_cx + body_w, shoulder_y, arm_left_angle, arm_h, scale=s, side=-1)
+    for sx_pt, sy_pt in [(r_sx, r_sy), (l_sx, l_sy)]:
+        draw.ellipse([int(sx_pt) - shoulder_r, int(sy_pt) - shoulder_r,
+                      int(sx_pt) + shoulder_r, int(sy_pt) + shoulder_r],
+                     fill=ACCENT_DASH, outline=LINE_COLOR, width=1)
+
+    # Right arm (viewer's left, side=+1) via shared helper
+    r_hand_x, r_hand_y = draw_shoulder_arm(
+        draw,
+        shoulder_x=body_cx - body_w,
+        shoulder_y=shoulder_y,
+        arm_angle_deg=arm_right_angle,
+        arm_length=arm_h,
+        scale=s,
+        side=1,
+        style=COSMO_ARM_STYLE,
+        arm_width=arm_w,
+    )
+
+    # Left arm (viewer's right, side=-1) — notebook arm
+    l_hand_x, l_hand_y = draw_shoulder_arm(
+        draw,
+        shoulder_x=body_cx + body_w,
+        shoulder_y=shoulder_y,
+        arm_angle_deg=arm_left_angle,
+        arm_length=arm_h,
+        scale=s,
+        side=-1,
+        style=COSMO_ARM_STYLE,
+        arm_width=arm_w,
+    )
 
     # --- NOTEBOOK ---
     nb_w  = int(hr * 0.36)   # notebook width
     nb_h  = int(hr * 0.56)   # notebook height (slim field notebook)
     if notebook_out:
         # Notebook extended forward (analysis mode — Cosmo consulting it)
-        nb_cx = body_cx + body_w + arm_w + nb_w // 2 + 6
-        nb_cy = body_bot_y - int(hr * 0.50)
+        # Position near left hand from shared helper
+        nb_cx = int(l_hand_x) + nb_w // 2 + 4
+        nb_cy = int(l_hand_y)
     else:
         # Notebook tucked under left arm (viewer's right)
-        nb_cx = body_cx + body_w + arm_w // 2 + nb_w // 2 + 4
-        nb_cy = shoulder_y + arm_h // 2 + nb_h // 2
+        # Position near left hand from shared helper
+        nb_cx = int(l_hand_x) + nb_w // 2 + 2
+        nb_cy = int(l_hand_y) - nb_h // 4
     nb_top  = nb_cy - nb_h // 2
     nb_bot  = nb_cy + nb_h // 2
     draw.rectangle([nb_cx - nb_w, nb_top, nb_cx, nb_bot],

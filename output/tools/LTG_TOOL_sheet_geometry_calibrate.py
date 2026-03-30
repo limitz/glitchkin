@@ -90,12 +90,13 @@ LABEL_ZONE_H = 42                # label strip at bottom (unchanged)
 SHEET_PATHS = {
     "luma": "output/characters/motion/LTG_CHAR_luma_motion.png",
     "byte": "output/characters/motion/LTG_CHAR_byte_motion.png",
+    "cosmo": "output/characters/motion/LTG_CHAR_cosmo_motion.png",
 }
 
 EXPECTED_PANELS = {
     "luma": 4,   # 4 panels: Idle, Sprint Anticipation, Discovery Reaction, Landing
     "byte": 4,   # 4 panels: COMMITMENT beat arc (B1–B4)
-    "cosmo": 3,  # placeholder
+    "cosmo": 4,  # 4 panels: Idle/Observing, Startled, Analysis Lean, Reluctant Move
 }
 
 DEFAULT_CONFIG_PATH = "output/tools/sheet_geometry_config.json"
