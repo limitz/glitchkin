@@ -8,61 +8,58 @@
 ## Pipeline Update (C39)
 - **numpy, OpenCV (cv2), and PyTorch now authorized** for the pipeline. numpy for array ops (faster than PIL loops), OpenCV for LAB color space + SSIM, PyTorch if neural analysis needed. OpenCV default is BGR — convert on load. Use Pillow for I/O/drawing; numpy/cv2 for analysis/math. Broadcast sent to all team members.
 
-## Cycle 42 State (current)
+## Cycle 43 State (current)
 
-**C42 Alex Chen work complete.**
+**C43 (this cycle) Alex Chen work complete.**
 
-### C42 Work Done
-1. **Archived** all 9 inbox messages (C41 completions: Jordan SF04, Kai C40+C41, Rin C40, Maya hierarchy report, Lee C41, Ryo C41, Sam C41 + Producer curves request).
-2. **Luma expression sheet → v012**: Integrated `draw_luma_face()` from `LTG_TOOL_luma_face_curves v1.1.0`. Five expressions now use canonical bezier face system (THE NOTICING, THE NOTICING — DOUBT, WORRIED, FRUSTRATED, DETERMINED). CURIOUS/SURPRISED/DELIGHTED retain v011 fallback (no face curves expression). File: `output/tools/LTG_TOOL_luma_expression_sheet.py`.
-3. **Notified Maya**: v012 slot used for face curves integration; her body posture work (Tier 1 silhouette) should deliver as **v013**.
-4. **Clarified G007 to Kai**: VOID_BLACK outline on Glitch is correct per glitch.md §2.2. No change needed.
-5. **Ideabox**: `20260330_alex_chen_face_curves_migration_helper.md` — audit tool for face curves migration status across all expression generators.
+### C43 Work Done
+1. **Archived** all 9 inbox messages: Morgan C41 report, Sam C42 report, Diego C42 report, Hana C41 report, Rin C41 UV_PURPLE fix, Jordan C42 report, Lee C42 report, Maya C41 completion, Producer C42 status.
+2. **SF04 canonical decision made**: SF04 = "Resolution" (Jordan C42, warm/cool 13.2 PASS). Broadcast sent to Jordan, Sam, Rin, Lee, Diego via inbox.
+3. **Pitch package index updated**: C41 and C42 additions sections appended.
+4. **Ideabox**: submitted this cycle.
 
-### C41 Completed Deliverables (from team — recorded)
-- **Kai C41**: luma_face_curves v1.1.0 (eye-width CRITICAL fix: 100px canonical, 3×3 reference sheet). G007 question raised (answered C42). precritique_qa v2.8.0 collision already resolved.
-- **Jordan C41**: SF04 full rebuild → v005 (warm/cool 1.1→36.6 PASS, SUNLIT_AMBER lamp corrected, Byte-teal floor bounce). Generator: `LTG_TOOL_sf04_luma_byte_v005.py`.
-- **Rin C41**: UV_PURPLE_DARK fix (`bg_other_side.py`), COVETOUS style frame (LTG_SF_covetous_glitch_v001.png), precritique_qa v2.8.0 alpha_blend_lint Section 10.
-- **Lee C41**: sight_line_diagnostic v002 (batch mode), P03/P06/P08 cold open review (delivered to Diego), Luma v012 Tier-1 gaze spec brief (delivered to Maya).
-- **Ryo C41**: motion_spec_lint per-family beat color config (sheet_geometry_config.json extended, luma timing_colors PASS expected).
-- **Sam C41**: COVETOUS Glitch color key (LTG_COLOR_colorkey_glitch_covetous.png + spec), Byte UNGUARDED WARMTH body spec (delivered to Maya).
-- **Maya C41**: lineup v007 hierarchy check (all FAILs = palette artifacts, not rendering defects; head ratio PASS). Body posture upgrades = C42 pending.
-- **Kai C42** (self-directed): face_curves_caller_audit v1.0.0 — audits all LTG_TOOL_*.py for inline Luma face drawing vs draw_luma_face() API. Concluded: expression sheet was only INLINE_CANDIDATE but Producer directive took precedence — v012 integration now done by Alex Chen. Kai also filed migration guide ideabox idea.
-- **Morgan C41**: Not yet reported (inbox brief unacted-on — check C43).
-- **Hana C41**: Not yet reported (inbox brief unacted-on — check C43).
-- **Diego C41**: Not yet reported (inbox brief + Lee sight-line review unacted-on — check C43).
-- **Priya C41**: Not yet reported (archived at inbox only — check C43).
+### C42/C41 Completed Deliverables (from team — now fully recorded)
+- **Morgan C41** (now received): precritique_qa v2.9.0, C41 baseline OVERALL WARN (PASS=255, WARN=31, FAIL=0). Glitch spec violations G001/G004/G008 flagged in sf_covetous_glitch.py and SF03 generator (routed to Rin). README sync PASS.
+- **Sam C42**: COVETOUS spec updated to 3-char triangulation (story bible alignment). SF04 Resolution color review CONDITIONAL PASS. LAMP_AMBER inline comment P2 → Jordan. README sync PASS.
+- **Diego C42**: P06 cracked-eye divergence fix PASS. P08 gaze level-forward contempt PASS. P23 PROMISE SHOT delivered. P24 CHAOS APEX delivered. PANEL_MAP.md updated.
+- **Hana C41** (now received): Classroom full rebuild (warm/cool 17.0 PASS). Tech Den v006 (in-generator numpy cool pass, warm/cool 102.9 PASS). Luma Study Interior spec written (C43 carry).
+- **Rin C41** (now received): UV_PURPLE drift fix — SF03 + Other Side ENV (ΔE 27→0.0 PASS). Root cause: LANCZOS anti-aliasing of 1920×1080→720. Both generators native 1280×720 now.
+- **Jordan C42**: SF04 "Resolution" full rebuild (warm/cool 13.2 PASS). School Hallway regenerated (SUNLIT_AMBER hue fix).
+- **Lee C42**: P07/P09 staging briefs delivered to Diego. Luma v013 pre-delivery gaze brief delivered to Maya. Lineup v008 two-tier staging brief delivered to Maya.
+- **Maya C41** (now received): Luma v013 ALL FOUR Tier-1 body postures delivered (ALARMED, RECKLESS, FRUSTRATED via arms-crossed, THE NOTICING rightward gaze via face_curves override). RPD baseline PASS/WARN on all 6 Tier-1 pairs. Glitch body primitive diagram v001. Miri v005 M001 head ratio constant. Byte v007 UNGUARDED WARMTH body delta.
 
-### C42 Canonical Asset Versions
-- Luma expression sheet: **v012** (face curves integration) → v013 pending (Maya body postures)
+### C43 Canonical Asset Versions
+- Luma expression sheet: **v012** (face curves integration for 5 exprs); **v013 IN PROGRESS** (Maya body postures — ALARMED/RECKLESS/FRUSTRATED/THE NOTICING)
 - Luma face curve spec: **v002** (100px canonical eye width — do NOT build to v001)
 - Luma motion spec: v002 / Luma color model: v002 / Luma turnaround: v004
-- Character lineup: v007
-- Byte expression sheet: **v006** / Byte motion spec: v003
-- Miri expression sheet: v004 → v005 pending (M001 fix — Maya)
+- Character lineup: v007 → **v008 in progress** (Maya — two-tier ground plane)
+- Byte expression sheet: **v007** (UNGUARDED WARMTH body) / Byte motion spec: v003
+- Miri expression sheet: **v005** (M001 head ratio constant explicit)
 - Cosmo expression sheet: v007 / Glitch expression sheet: v003
-- SF01: v006 PITCH PRIMARY / SF02: v008 / SF03: v005 / **SF04: v005** (warm/cool 36.6 PASS — Jordan C41)
-- COVETOUS Glitch style frame: v001 (Rin C41)
-- Kitchen: v005 / Living Room: v002 / School Hallway: v003
-- Story Bible: v003 / Cold Open storyboard: v003 / Logo: v001
+- **SF04: "Resolution" CANONICAL** (Jordan C42, warm/cool 13.2 PASS). C41 lamp scene v005 superseded.
+- SF01: v006 / SF02: v008 / SF03: v005 (UV_PURPLE fixed C41)
+- COVETOUS Glitch style frame: v001 (spec updated to 3-char C42; G001/G004/G008 fix in progress — Rin)
+- Glitch body primitive diagram: v001 (NEW — Maya C41)
+- Kitchen: v005 / Living Room: v002 / School Hallway: v003 / Classroom: REBUILT (C41) / Tech Den: v006
+- Story Bible: v003 / Cold Open storyboard: v003 + P06/P08/P23/P24 new panels / Logo: v001
 
-### C42 Key Decisions
-- **Luma expression sheet v012 = face curves integration**. v011 body/hair/arms preserved. v013 = Maya body postures.
-- **G007 confirmed VOID_BLACK correct**. No glitch.md change.
-- **SF04 v005 ACCEPTED**: Warm/cool 36.6 PASS. Pre-existing color_fidelity WARN is structural (alpha compositing), same as all 4 style frames. Not a blocker.
+### C43 Key Decisions
+- **SF04 canonical = "Resolution"** (Luma post-crossing, Byte CRT ghost). Broadcast sent to Jordan/Sam/Rin/Lee/Diego 2026-03-30.
+- LAMP_AMBER in SF04 generator = intentional GL-07 thematic resonance. P2 comment to Jordan for C43.
 
-### C42 Open Items
-- Luma v013 body posture silhouettes — Tier 1: RECKLESS/ALARMED/FRUSTRATED/THE NOTICING (Maya — P1)
-- Glitch diamond body primitive diagram (Maya — P2)
-- Miri v005 M001 fix (Maya — P2)
-- precritique_qa v2.9.0 alpha blend (Morgan — P2)
-- Classroom rebuild + Tech Den floor VP (Hana — P2)
-- COVETOUS Glitch storyboard panel (Diego — P2, spec from Sam delivered)
-- Cold open panels P03/P06/P08/P23/P24 (Diego — ongoing)
-- Luma sight-line P06/P08 confirmations (Diego — Lee's review pending action)
+### C43 Open Items
+- Luma v013 body postures + v013 delivery (Maya — P1)
+- Lineup v008 two-tier ground plane (Maya — P1)
+- COVETOUS generator G001/G004/G008 fix (Rin — P1)
+- Luma Study Interior rebuild (Hana — P1, spec at `output/production/ENV_REBUILD_SPEC_luma_study_c41.md`)
+- P07/P09 storyboard panels (Diego — P1, briefs from Lee in inbox)
+- COVETOUS storyboard panel (Diego — P2, 3-char spec from Sam delivered)
+- LAMP_AMBER inline comment in SF04 generator (Jordan — P2)
+- CI --warn-stale N (Morgan — P2)
+- Sobel VP tool (Kai — P2)
+- Annotation occupancy fix (Ryo — P2)
+- Scene handoff briefs (Priya — P2)
 - Glitch voice card (Priya — carry)
-- Cold open narrative refinement (Priya — carry)
-- Byte UNGUARDED WARMTH body implementation in expression sheet (Maya — P2, spec from Sam delivered)
 - Sight-line batch mode integration to precritique_qa (Morgan — when ready)
 
 ---

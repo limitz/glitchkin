@@ -9,6 +9,7 @@ LTG_TOOL_ci_suite.py
 CI Suite — "Luma & the Glitchkin"
 Author: Kai Nakamura / Cycle 37
 v1.1.0: Morgan Walsh / Cycle 40 — --known-issues flag
+v1.2.0: Morgan Walsh / Cycle 42 — --warn-stale N flag
 
 Runs all LTG tool-pipeline CI checks in sequence and produces a combined report.
 
@@ -36,16 +37,31 @@ Known-issues list
   JSON format (see ci_known_issues.json):
     {
       "known_issues": [
-        {"check": "draw_order_lint", "file": "foo.py", "code": "W004", "reason": "..."},
+        {"check": "draw_order_lint", "file": "foo.py", "code": "W004",
+         "reason": "...", "since_cycle": "C39"},
         ...
       ]
     }
   Fields:
-    check — one of: stub_linter, draw_order_lint, glitch_spec_lint,
-                    spec_sync_ci, char_spec_lint
-    file  — basename of the file producing the issue (e.g. "LTG_TOOL_foo.py")
-    code  — warning/error code (e.g. "W004", "G007"); null = match any code for this file
-    reason — human-readable explanation (shown in report)
+    check       — one of: stub_linter, draw_order_lint, glitch_spec_lint,
+                          spec_sync_ci, char_spec_lint
+    file        — basename of the file producing the issue (e.g. "LTG_TOOL_foo.py")
+    code        — warning/error code (e.g. "W004", "G007"); null = match any code for this file
+    reason      — human-readable explanation (shown in report)
+    since_cycle — cycle label when the entry was added (e.g. "C39").
+                  Used by --warn-stale N to identify aged suppressions.
+
+Stale suppression detection
+----------------------------
+--warn-stale N  → emit a STALE_KNOWN WARN for any known-issue entry whose
+  since_cycle is N or more cycles behind the current cycle label.
+  Current cycle is derived from --cycle LABEL or the CYCLE_LABEL env var.
+  Cycle labels must follow the pattern C<number> (e.g. C39, C42).
+  Example: --warn-stale 4 --cycle C43 flags entries added at C39 or earlier.
+
+  Stale entries are listed in the suite report header and contribute to the
+  overall WARN count (but not FAIL count). This nudges the team to review and
+  either close or confirm each long-lived suppression.
 
 Exit codes
 ----------
@@ -61,18 +77,26 @@ Usage
     python LTG_TOOL_ci_suite.py --tools-dir /path/to/output/tools
     python LTG_TOOL_ci_suite.py --save-report PATH
     python LTG_TOOL_ci_suite.py --known-issues ci_known_issues.json
+    python LTG_TOOL_ci_suite.py --warn-stale 4 --cycle C43
 
 API
 ---
-    from LTG_TOOL_ci_suite import run_suite, format_suite_report, load_known_issues
+    from LTG_TOOL_ci_suite import run_suite, format_suite_report
+    from LTG_TOOL_ci_suite import load_known_issues, load_known_issues_raw
+    from LTG_TOOL_ci_suite import check_stale_known_issues
 
-    known = load_known_issues("ci_known_issues.json")
+    known     = load_known_issues("ci_known_issues.json")
+    known_raw = load_known_issues_raw("ci_known_issues.json")
+    stale = check_stale_known_issues(known_raw, current_cycle="C43", max_age=4)
     result = run_suite(tools_dir="/path/to/output/tools", fail_on="FAIL",
-                       known_issues=known)
+                       known_issues=known, known_issues_raw=known_raw,
+                       warn_stale=4, current_cycle="C43")
     print(format_suite_report(result))
     # result["exit_code"] is 0 (pass) or 1 (fail)
     # result["checks"] is dict keyed by check name
     # Each check result["known_count"] shows how many issues were flagged KNOWN
+    # result["stale_known"] is a list of stale entry dicts (empty if warn_stale not set)
+    # result["stale_warn"] is True if any stale known issues were found
 
 Changelog
 ---------
@@ -83,9 +107,16 @@ v1.1.0 (C40): --known-issues PATH flag. Loads expected WARNs from JSON;
               format_suite_report() shows KNOWN annotation in summary.
               load_known_issues() exported for programmatic use.
               (Morgan Walsh)
+v1.2.0 (C42): --warn-stale N flag. Emits STALE_KNOWN WARN for known-issue
+              entries whose since_cycle is N or more cycles behind current cycle.
+              --cycle LABEL flag to specify current cycle (fallback: CYCLE_LABEL
+              env var). since_cycle field added to ci_known_issues.json schema.
+              check_stale_known_issues() exported for programmatic use.
+              stale_known list added to run_suite() result dict.
+              (Morgan Walsh)
 """
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 import os
 import sys
@@ -144,6 +175,90 @@ def load_known_issues(path):
     except Exception as exc:
         # Silently return empty on load failure — do not break CI run
         return {"_load_error": str(exc)}
+
+
+def load_known_issues_raw(path):
+    """
+    Load a known-issues JSON file and return the raw list of entry dicts.
+    Used by check_stale_known_issues() which needs the full entry including
+    the since_cycle field.
+
+    Parameters
+    ----------
+    path : str | None
+        Path to the known-issues JSON file, or None to return empty list.
+
+    Returns
+    -------
+    list  [ {check, file, code, reason, since_cycle, ...}, ... ]
+          Empty list on any error.
+    """
+    if not path:
+        return []
+    try:
+        with open(path, "r", encoding="utf-8") as fh:
+            data = json.load(fh)
+        return data.get("known_issues", [])
+    except Exception:
+        return []
+
+
+def _parse_cycle_number(cycle_label):
+    """
+    Parse a cycle label such as 'C42' into an integer (42).
+    Returns None if the label does not match the expected pattern.
+    """
+    import re as _re
+    m = _re.match(r'^[Cc](\d+)$', str(cycle_label).strip())
+    if m:
+        return int(m.group(1))
+    return None
+
+
+def check_stale_known_issues(known_issues_raw, current_cycle, max_age):
+    """
+    Return a list of known-issue entries that are considered stale.
+
+    An entry is stale when:
+        current_cycle_number - since_cycle_number >= max_age
+
+    Parameters
+    ----------
+    known_issues_raw : list
+        The raw list from the 'known_issues' key of the JSON file, i.e.
+        each element is a dict with at least 'check', 'file', 'code',
+        'reason', and optionally 'since_cycle'.
+    current_cycle : str
+        Cycle label for the current run, e.g. "C42".
+    max_age : int
+        Emit a stale warning when an entry's age (in cycles) is >= this value.
+
+    Returns
+    -------
+    list of dict
+        Each dict is a copy of the entry with an added 'age' key showing
+        how many cycles old it is.  Entries without a since_cycle field are
+        skipped (cannot determine age).
+    """
+    if max_age is None or max_age <= 0:
+        return []
+    current_num = _parse_cycle_number(current_cycle)
+    if current_num is None:
+        return []
+    stale = []
+    for entry in (known_issues_raw or []):
+        sc = entry.get("since_cycle")
+        if not sc:
+            continue
+        sc_num = _parse_cycle_number(sc)
+        if sc_num is None:
+            continue
+        age = current_num - sc_num
+        if age >= max_age:
+            stale_entry = dict(entry)
+            stale_entry["age"] = age
+            stale.append(stale_entry)
+    return stale
 
 
 def _is_known(check_name, filename, code_str, known_issues):
@@ -343,7 +458,9 @@ _CHECKS = [
 ]
 
 
-def run_suite(tools_dir=None, fail_on="FAIL", known_issues=None):
+def run_suite(tools_dir=None, fail_on="FAIL", known_issues=None,
+              warn_stale=None, current_cycle=None,
+              known_issues_raw=None):
     """
     Run all CI checks and return a combined result dict.
 
@@ -360,6 +477,16 @@ def run_suite(tools_dir=None, fail_on="FAIL", known_issues=None):
         matching issues are annotated as KNOWN in the detail report.
         KNOWN annotations are informational — they do not suppress the
         overall WARN/FAIL grade.
+    warn_stale : int | None
+        When set to N, emit a STALE_KNOWN WARN for any known-issue entry
+        whose since_cycle is N or more cycles behind current_cycle.
+        Contributes to overall WARN count (not FAIL). Default: None (disabled).
+    current_cycle : str | None
+        Cycle label for the current run (e.g. "C42"). Required when
+        warn_stale is set. Falls back to CYCLE_LABEL env var if None.
+    known_issues_raw : list | None
+        Raw known-issue list from load_known_issues_raw(). Required for
+        stale detection. If None and warn_stale is set, stale check is skipped.
 
     Returns
     -------
@@ -372,8 +499,9 @@ def run_suite(tools_dir=None, fail_on="FAIL", known_issues=None):
                                            "known_count": int} },
           "overall_status": "PASS" | "WARN" | "FAIL" | "ERROR",
           "exit_code":      int,   # 0 = pass, 1 = fail at threshold, 2 = import error
-          "known_issues_path": str | None,
           "total_known":    int,
+          "stale_known":    list,  # stale entry dicts (empty if warn_stale not set)
+          "stale_warn":     bool,  # True if any stale known issues found
         }
     """
     tools_dir = _tools_dir_or_default(tools_dir)
@@ -385,6 +513,15 @@ def run_suite(tools_dir=None, fail_on="FAIL", known_issues=None):
 
     if known_issues is None:
         known_issues = {}
+
+    # Resolve current_cycle from env var fallback
+    if current_cycle is None:
+        current_cycle = os.environ.get("CYCLE_LABEL", "")
+
+    # Stale known-issue detection
+    stale_known = []
+    if warn_stale and known_issues_raw is not None:
+        stale_known = check_stale_known_issues(known_issues_raw, current_cycle, warn_stale)
 
     results = {}
     any_error  = False
@@ -417,6 +554,11 @@ def run_suite(tools_dir=None, fail_on="FAIL", known_issues=None):
         elif status == "WARN":
             any_warn = True
 
+    # Stale WARNs contribute to overall WARN (not FAIL)
+    stale_warn = len(stale_known) > 0
+    if stale_warn:
+        any_warn = True
+
     # Determine overall status
     if any_error:
         overall_status = "ERROR"
@@ -441,6 +583,8 @@ def run_suite(tools_dir=None, fail_on="FAIL", known_issues=None):
         "overall_status":   overall_status,
         "exit_code":        exit_code,
         "total_known":      total_known,
+        "stale_known":      stale_known,
+        "stale_warn":       stale_warn,
     }
 
 
@@ -487,6 +631,32 @@ def format_suite_report(suite_result, include_details=True):
             "    They do not suppress the overall grade. Remove entries from ci_known_issues.json"
         )
         lines.append("    once the underlying issue is fixed.")
+
+    # Stale known-issue section
+    stale_known = suite_result.get("stale_known", [])
+    if stale_known:
+        lines.append("")
+        lines.append(f"  ⚠ STALE_KNOWN: {len(stale_known)} suppression(s) are aged and need review")
+        lines.append(
+            "    These entries have been in ci_known_issues.json for a long time."
+        )
+        lines.append(
+            "    Review each: confirm the underlying issue is still a genuine FP,"
+        )
+        lines.append(
+            "    then either extend the reason note or remove the entry if the issue is fixed."
+        )
+        for entry in stale_known:
+            age = entry.get("age", "?")
+            sc = entry.get("since_cycle", "?")
+            lines.append(
+                f"      [{entry.get('check','?')}] {entry.get('file','?')} "
+                f"code={entry.get('code','?')}  since={sc}  age={age} cycle(s)"
+            )
+            reason = entry.get("reason", "")
+            if reason:
+                lines.append(f"        reason: {reason[:80]}")
+
     lines.append("=" * 72)
 
     if include_details:
@@ -545,6 +715,26 @@ def main():
             "Default: ci_known_issues.json in tools-dir (if present)."
         ),
     )
+    parser.add_argument(
+        "--warn-stale",
+        default=None,
+        type=int,
+        metavar="N",
+        help=(
+            "Emit a STALE_KNOWN WARN for any known-issue entry whose since_cycle "
+            "is N or more cycles behind the current cycle (see --cycle). "
+            "Contributes to overall WARN count. Example: --warn-stale 4"
+        ),
+    )
+    parser.add_argument(
+        "--cycle",
+        default=None,
+        metavar="LABEL",
+        help=(
+            "Current cycle label (e.g. C42). Used with --warn-stale to compute "
+            "suppression age. Falls back to CYCLE_LABEL environment variable."
+        ),
+    )
     args = parser.parse_args()
 
     # Resolve known-issues path: explicit flag > auto-discover in tools-dir
@@ -560,8 +750,15 @@ def main():
         print(f"Warning: could not load known-issues file: {known_issues['_load_error']}", file=sys.stderr)
         known_issues = {}
 
+    known_issues_raw = load_known_issues_raw(known_issues_path) if known_issues_path else []
+
     suite_result = run_suite(
-        tools_dir=args.tools_dir, fail_on=args.fail_on, known_issues=known_issues
+        tools_dir=args.tools_dir,
+        fail_on=args.fail_on,
+        known_issues=known_issues,
+        warn_stale=args.warn_stale,
+        current_cycle=args.cycle,
+        known_issues_raw=known_issues_raw,
     )
 
     if args.json_output:

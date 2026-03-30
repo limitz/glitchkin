@@ -157,6 +157,31 @@ Create motion spec sheets and timing documentation. Make the pitch FEEL like it 
 - Lint baseline: PASS=5 WARN=1 (annotation_occupancy — light-bg structural false positive)
 - Ideabox: `20260330_ryo_hasegawa_annotation_occupancy_lightbg_threshold.md` — fix annotation_occupancy for light-bg sheets
 
+### C43 — COMPLETE
+- `LTG_TOOL_motion_spec_lint.py` C43 update — annotation_occupancy light-bg false WARN fix:
+  - Root cause: broad `ANNOT_BG_MIN=(200,200,200)` classified light character fill areas as background; luma face fill (250,240,220) and panel bg (248,244,236) both passed the broad range, so non-bg occupancy was artificially depressed (0.9–3.8%, under 4% threshold)
+  - Fix: new `_annot_bg_spec_from_config(fam_cfg)` helper reads `annotation_bg_color` + `annotation_bg_tolerance` from config; new `_is_precise_bg_pixel(pixel, bg_rgb, tolerance)` classifies pixels within ±tol of known panel bg as background only
+  - `_count_non_bg(img_crop, annot_bg_spec=None)` updated: uses precise matching when spec present, legacy broad range otherwise
+  - `check_annotation_occupancy()` signature extended: new `annot_bg_spec` param; detail string shows `[bg:precise]` or `[bg:legacy-broad]`
+  - `_get_zone_params()` now returns 6-tuple (added annot_bg_spec as 6th element)
+  - `lint_motion_spec()` updated to unpack 6-tuple and pass annot_bg_spec to check_annotation_occupancy
+- `sheet_geometry_config.json` updated: added `annotation_bg_color` + `annotation_bg_tolerance` + `_annotation_bg_note` to luma and cosmo families
+  - luma: bg=[248,244,236], tol=12 — excludes face fill (250,240,220) which differs by 16 in B channel
+  - cosmo: bg=[248,244,238], tol=12 — excludes light skin/fill areas diverging more than 12 per channel
+  - byte: no change — dark-panel; legacy-broad path correct for Byte
+- Verified lint results:
+  - Luma: annotation_occupancy PASS (7.9–9.4% was 2.6–3.8%) — bg:precise
+  - Cosmo: annotation_occupancy PASS, overall PASS (was WARN) — bg:precise; 8.5–9.5% was 3.1–4.0%
+  - Byte: unaffected; still bg:legacy-broad; pre-existing WARNs unchanged
+- Ideabox: `20260330_ryo_hasegawa_extend_annot_bg_to_byte.md` — auto-detect annotation_bg_color in sheet_geometry_calibrate tool
+
+### C43 Key Findings
+- `_get_zone_params()` now returns 6-tuple — any code calling it must be updated (only lint_motion_spec() calls it)
+- Precise bg matching works by max-channel-delta: pixel is bg only if ALL channels within ±tol of known bg color
+- tol=12 is correct discriminator: luma face fill (250,240,220) vs bg (248,244,236) differs 16 in B → NOT bg; works
+- Byte dark panels: `_is_dark_bg_pixel` is always applied regardless of mode — dark-panel sheets not affected by the light-bg fix
+- annotation_bg_color must be manually set per family (matches source code constants); consider auto-detecting in calibrate tool (ideabox submitted)
+
 ## Cosmo Motion Vocabulary (C42)
 - Glasses tilt: neutral=7°, Startled peak=14°, recovery to 9° by beat 3, normal return by beat 4
 - Notebook secondary motion: lags +1.5 beats behind body on ALL sudden shifts

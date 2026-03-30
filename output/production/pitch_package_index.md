@@ -1125,3 +1125,90 @@ All critical path assets verified on disk. No blocking issues found. The package
 | Open items C41 | **P1: LTG_TOOL_luma_face_curves.py** (Kai); **P1: spec validation + 3 new expression deltas** (Maya); **P2: RPD baseline run** (Maya — long-standing); Antagonist appearance guide (Priya); Tool consolidation warmth-shims + naming (Kai); Byte spec checks in CI suite (Kai); Cosmo warmth lint CHAR-C scope (Sam) |
 
 *Updated by Alex Chen, Art Director — Cycle 40 — 2026-03-30*
+
+---
+
+### Cycle 41 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| Luma face curves v1.1.0 | `/home/wipkat/team/output/tools/LTG_TOOL_luma_face_curves.py` | **CRITICAL eye-width fix.** Canonical eye width = 100px (was 56px in v1.0.0 — 44px undersize). 3×3 reference sheet with all 9 expressions. Output: `output/characters/luma_face_curves_reference.png`. API: `draw_luma_face()`. (Cycle 41 — Kai Nakamura) |
+| Luma face curve spec v002 | `/home/wipkat/team/output/production/luma_face_curve_spec.md` | Canonical eye width 100px locked. Use v002 as sole reference — do NOT build to v001. (Cycle 41 — Kai Nakamura) |
+| Sight-line diagnostic v002 | `/home/wipkat/team/output/tools/LTG_TOOL_sight_line_diagnostic.py` | Batch mode added: `--batch config.json`, `--batch-self-test`, `--batch-save-all`. WARN/FAIL PNG + summary report. All self-tests PASS. Config file: `output/production/sight_line_batch_cold_open_p06_p08.json`. (Cycle 41 — Lee Tanaka) |
+| Cold open P03 | `/home/wipkat/team/output/storyboards/panels/LTG_SB_cold_open_P03.png` | NEW panel. Generator: `output/tools/LTG_TOOL_sb_cold_open_P03.py`. (Cycle 41 — Diego Vargas) |
+| Cold open P06 | `/home/wipkat/team/output/storyboards/panels/LTG_SB_cold_open_P06.png` | Sight-line batch diagnostic PASS. Generator: `output/tools/LTG_TOOL_sb_cold_open_P06.py`. (Cycle 41 — Diego Vargas) |
+| Cold open P08 | `/home/wipkat/team/output/storyboards/panels/LTG_SB_cold_open_P08.png` | Sight-line batch diagnostic PASS. Generator: `output/tools/LTG_TOOL_sb_cold_open_P08.py`. (Cycle 41 — Diego Vargas) |
+| COVETOUS Glitch style frame v001 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_sf_covetous_glitch.png` | NEW style frame. Glitch at Other Side threshold, COVETOUS expression. Generator: `output/tools/LTG_TOOL_sf_covetous_glitch.py`. (Cycle 41 — Rin Yamamoto) |
+| SF04 Luma+Byte v005 | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_sf04.png` | **Full SF04 rebuild (lamp scene).** Warm/cool 1.1→36.6 PASS. SUNLIT_AMBER lamp corrected. Byte-teal floor bounce added. Value floor PASS. Generator: `output/tools/LTG_TOOL_sf04_luma_byte_v005.py`. (Cycle 41 — Jordan Reed) |
+| SF03 + Other Side UV_PURPLE drift fix | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_otherside.png` and `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_other_side_bg.png` | 8-cycle C16 backlog closed. Root cause: LANCZOS anti-aliasing of 1920×1080→720 pipeline. Fix: both generators converted to native 1280×720. Ring alpha 60→18. Slab outlines 1→2px. Gradient endpoint UV_PURPLE→UV_PURPLE_MID. ΔE: SF03 27.78→0.0 PASS, ENV 27.37→0.0 PASS. (Cycle 41 — Rin Yamamoto) |
+| precritique_qa v2.9.0 | `/home/wipkat/team/output/tools/LTG_TOOL_precritique_qa.py` | CYCLE_LABEL=C41. Section 10 alpha_blend_lint integrated (skips gracefully when nolight bases absent). C41 baseline: OVERALL WARN (PASS=255, WARN=31, FAIL=0). (Cycle 41 — Morgan Walsh) |
+| Precritique QA C41 baseline | `/home/wipkat/team/output/production/precritique_qa_c41.md` | Full report. 0 new FAILs vs C40. README sync PASS (0 UNLISTED after Morgan registered 4 tools). (Cycle 41 — Morgan Walsh) |
+| Classroom BG full rebuild | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_classroom_bg.png` | Rebuild from ENV_REBUILD_SPEC_classroom_c41.md. 1280×720, 3/4 camera VP_X=192. Dual-temp split (warm top alpha 70, cool bottom alpha 75). Foreground depth anchor, inhabitant evidence, paper_texture. QA: silhouette PASS, warm/cool 17.0 PASS, line_weight 2 outliers PASS. WARN (color fidelity pre-existing only). (Cycle 41 — Hana Okonkwo) |
+| Tech Den v006 | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_tech_den.png` | In-generator cool bottom numpy pass (alpha=130) replaces warmth_inject post-process. Warm/cool 5.6 FAIL→102.9 PASS. Key lesson: Pillow alpha_composite on RGBA buffers gives wrong hue — must use numpy on final RGB array. (Cycle 41 — Hana Okonkwo) |
+| COVETOUS spec | `/home/wipkat/team/output/production/glitch_covetous_styleframe_spec.md` | Glitch COVETOUS style frame spec (C41 version). Glitch-alone threshold staging. (C42 revision replaces this — see Cycle 42 additions.) (Cycle 41 — Sam Kowalski) |
+| Colorkey glitch COVETOUS | `/home/wipkat/team/output/color/LTG_COLOR_colorkey_glitch_covetous.png` | Color key for COVETOUS expression style frame. Generator: `output/tools/LTG_TOOL_colorkey_glitch_covetous_gen.py`. (Cycle 41 — Sam Kowalski) |
+| Byte UNGUARDED WARMTH body spec | Delivered to Maya Santos inbox | Body delta spec for Byte UNGUARDED WARMTH expression upgrade. (Cycle 41 — Sam Kowalski) |
+| Cosmo motion spec | `/home/wipkat/team/output/characters/motion/LTG_CHAR_cosmo_motion.png` | NEW motion spec sheet. Generator: `output/tools/LTG_TOOL_cosmo_motion.py`. (Cycle 41 — Ryo Hasegawa) |
+
+#### Cycle 41 Pitch Package Status
+
+| Requirement | C41 Status |
+|---|---|
+| All style frames | SF01 v006, SF02 v008, SF03 **v005 UV_PURPLE FIXED**, SF04 **v005 warm/cool 36.6 PASS** (lamp scene — superseded by C42 Resolution), COVETOUS Glitch **v001 NEW** |
+| Luma expression sheet | v011 PITCH PRIMARY (unchanged) |
+| Luma face system | **v1.1.0** (100px eye width canonical — CRITICAL fix) |
+| Byte expression sheet | v006 (unchanged; v007 pending UNGUARDED WARMTH body — C41 spec delivered) |
+| Cosmo expression sheet | v007 (unchanged) |
+| Miri expression sheet | v004 PITCH PRIMARY (unchanged) |
+| Glitch expression sheet | v003 GEOMETRY CORRECTED (unchanged) |
+| Environments | Classroom **REBUILT** (C41 Hana, warm/cool PASS), Tech Den **v006** (in-generator warm/cool, no post-process needed), all others unchanged |
+| Storyboards | Cold Open P03/P06/P08 NEW (Diego); sight-line batch PASS |
+| Motion specs | Luma v002, Byte v003, Cosmo **v001 NEW** |
+| QA tools | precritique_qa v2.9.0 (alpha_blend_lint S10), luma_face_curves v1.1.0 (100px eye), sight_line_diagnostic v002 (batch mode) |
+| Open items C42 | **P1: Luma expression sheet v012** (face curves integration — Alex C42); SF04 canonical decision (Resolution vs lamp scene — Alex C42 RESOLVED); COVETOUS G001/G004/G008 spec violations (Rin — C42); Luma Study Interior rebuild (Hana — C42) |
+
+---
+
+### Cycle 42 Additions
+
+| Asset | File Path | Notes |
+|---|---|---|
+| Luma expression sheet v012 | `/home/wipkat/team/output/characters/main/LTG_CHAR_luma_expressions.png` | **Face curves integration.** Five expressions use canonical `draw_luma_face()` bezier system: THE NOTICING, THE NOTICING — DOUBT, WORRIED, FRUSTRATED, DETERMINED. CURIOUS/SURPRISED/DELIGHTED retain fallback. v011 body/hair/arms preserved. v013 = Maya body postures (in progress). Generator: `output/tools/LTG_TOOL_luma_expression_sheet.py`. (Cycle 42 — Alex Chen) |
+| **SF04 "Resolution" (CANONICAL)** | `/home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_sf04.png` | **CANONICAL SF04. Art Director decision: C42.** Luma returns to Real World kitchen post-Glitch-Layer crossing. Byte as faded CRT signal ghost (barely legible teal form + ELEC_CYAN pixel eyes). Glitch-residue sleeve detail on Luma (single ELEC_CYAN pixel-grid streak, left sleeve). Film grain + scanline. Warm/cool 13.2 PASS. Value range PASS. Color fidelity WARN (pre-existing / structural — same as all 4 style frames). LAMP_AMBER = GL-07 Corrupt Amber (intentional — P2 comment to Jordan C43). Supersedes C41 lamp scene v005. Generator: `output/tools/LTG_TOOL_style_frame_04_resolution.py`. (Cycle 42 — Jordan Reed) |
+| School Hallway regenerated | `/home/wipkat/team/output/backgrounds/environments/LTG_ENV_school_hallway.png` | SUNLIT_AMBER hue fix applied (C14 source correction now reflected in PNG). palette_warmth_lint PASS. (Cycle 42 — Jordan Reed) |
+| Cold open P23 — PROMISE SHOT | `/home/wipkat/team/output/storyboards/panels/LTG_SB_cold_open_P23.png` | MED, backs-to-camera. Luma + Byte looking at blazing monitor wall. Luma: FACING THIS posture. Byte: 3/4 back angle, grumpy but PRESENT. Dialogue: "Grandma's gonna be so mad." / "...I will observe from your shoulder." Arc: TENSE. Generator: `output/tools/LTG_TOOL_sb_cold_open_P23.py`. (Cycle 42 — Diego Vargas) |
+| Cold open P24 — CHAOS APEX | `/home/wipkat/team/output/storyboards/panels/LTG_SB_cold_open_P24.png` | WIDE/MED, Dutch 12° left. Glitchkin swarm 28 chars. Pixel confetti 220 pieces. Luma FG hero low angle, chin up, adrenaline grin forming. Byte: resigned dignity, shoulder. Arm raised: "how do we put them back?" Arc: PITCH BEAT (bright cyan border). Generator: `output/tools/LTG_TOOL_sb_cold_open_P24.py`. (Cycle 42 — Diego Vargas) |
+| Cold open P06 (sight-line fix) | `/home/wipkat/team/output/storyboards/panels/LTG_SB_cold_open_P06.png` | Cracked-eye divergence fix: processing dot cluster offset −20% × ce_r outward from gaze axis. Visual grammar: cracked eye = different processing state. Sight-line batch PASS (miss 0.0px, gaze 180.0°). (Cycle 42 — Diego Vargas) |
+| Cold open P08 (gaze fix) | `/home/wipkat/team/output/storyboards/panels/LTG_SB_cold_open_P08.png` | Gaze level-forward contempt beat: iris pushed +10% e_r upward. NOT downward (shame). Cracked eye alive dot matched. Annotation updated. Sight-line batch PASS (miss 0.0px, gaze 0.0°). (Cycle 42 — Diego Vargas) |
+| COVETOUS spec v2 | `/home/wipkat/team/output/production/glitch_covetous_styleframe_spec.md` | **Story bible alignment.** Three-character triangulation: Glitch ← Byte → Luma. Luma's warm character palette IS the warm right zone — not abstract threshold glow. Glitch body colors, COVETOUS expression values, warm-zone-separation rule unchanged. (Cycle 42 — Sam Kowalski) |
+| SF04 color review | `/home/wipkat/team/output/color/style_frames/sf04_resolution_color_review.md` | CONDITIONAL PASS. LAMP_AMBER (255,140,0) = GL-07 Corrupt Amber as ceiling-lamp halo — intentional, thematically resonant. All other palette values PASS. P2: Jordan to add inline comment. (Cycle 42 — Sam Kowalski) |
+| Face curves caller audit v1.0.0 | `/home/wipkat/team/output/tools/LTG_TOOL_face_curves_caller_audit.py` | Static analysis: scans all LTG_TOOL_*.py for inline Luma face drawing vs draw_luma_face() API. Classifies READY_HIGH/MEDIUM/LOW. Supports face curves integration roadmap. (Cycle 42 — Kai Nakamura) |
+| Luma v013 pre-delivery gaze brief | `/home/wipkat/team/output/production/luma_v013_gaze_brief_c42.md` | Spec for four Tier-1 gaze requirements for Maya's v013 body posture delivery. THE NOTICING: iris shift RIGHT 4–6px mandatory. Delivered to Maya. (Cycle 42 — Lee Tanaka) |
+| Lineup v008 staging brief | `/home/wipkat/team/output/production/lineup_staging_brief_c42.md` | Two-tier ground plane spec. FG tier: Luma (center, 3% larger) + Byte at right shoulder. BG tier: Cosmo left, Miri right, Glitch rightmost/floating. Shadow line at each tier. Addresses Daisuke C16 "flat inventory" critique and C15 "Luma losing power to Byte." Delivered to Maya. (Cycle 42 — Lee Tanaka) |
+| P07/P09 staging briefs | `/home/wipkat/team/output/production/staging_brief_c42_p07_p09.md` | P07: Monitor bowing / Byte phase-through (MED WIDE, Dutch 8° CW, DETERMINED+ALARMED, arc TENSE→BREACH). P09: Byte floating / spots Luma (MED WIDE, no Dutch, gravity-ghost confetti, arc CURIOUS). Delivered to Diego. (Cycle 42 — Lee Tanaka) |
+
+#### Cycle 42 Pitch Package Status (CURRENT)
+
+| Requirement | C42 Status |
+|---|---|
+| **SF04** | **"Resolution" CANONICAL** — Luma post-crossing in kitchen, Byte CRT ghost, warm/cool 13.2 PASS. Art Director decision locked C42-03-30. |
+| SF01 / SF02 / SF03 | v006 / v008 / v005 — all PITCH PRIMARY (unchanged) |
+| COVETOUS Glitch style frame | v001 (COVETOUS spec updated C42 to 3-char triangulation — generator fix for G001/G004/G008 in progress) |
+| Luma expression sheet | **v012** (face curves integration for 5 expressions); **v013 in progress** (Maya — body postures RECKLESS/ALARMED/FRUSTRATED/THE NOTICING) |
+| Luma face system | v1.1.0 (100px canonical eye width — unchanged) |
+| Byte expression sheet | **v007** (UNGUARDED WARMTH body delta) |
+| Cosmo expression sheet | v007 (unchanged) |
+| Miri expression sheet | **v005** (M001 head ratio constant explicit) |
+| Glitch expression sheet | v003 GEOMETRY CORRECTED (unchanged) |
+| Glitch body primitive diagram | **NEW** — `LTG_CHAR_glitch_body_primitive_diagram.png`. Anatomy diagram + 4 expression silhouettes. Closes Daisuke C14 P8 / C16 P4. |
+| Luma turnaround | v004 PITCH PRIMARY (unchanged) |
+| Character lineup | v007 PITCH PRIMARY (v008 two-tier ground plane — Maya, in progress) |
+| Canonical logo | `LTG_BRAND_logo.png` (unchanged) |
+| Environments | Classroom REBUILT (C41 Hana), Tech Den v006 (C41 Hana), School Hallway v003 regenerated (C42 Jordan SUNLIT_AMBER fix), Luma Study Interior rebuild (Hana C43) |
+| Storyboards | Cold Open P06/P08 sight-line fixed; P23 PROMISE SHOT NEW; P24 CHAOS APEX NEW; P07/P09 briefs delivered (Diego C43) |
+| Motion specs | Luma v002, Byte v003, Cosmo v001 (unchanged) |
+| Story documents | Story Bible v003 PITCH PRIMARY (unchanged) |
+| QA tools | face_curves_caller_audit v1.0.0 (Kai C42), precritique_qa v2.9.0, sight_line_diagnostic v002 (unchanged) |
+| Open items C43 | **P1: Luma v013 body postures** (Maya — RECKLESS/ALARMED/FRUSTRATED/THE NOTICING); **P1: Lineup v008 two-tier** (Maya); **P1: COVETOUS generator G001/G004/G008 fix** (Rin); **P1: Luma Study Interior** (Hana); **P1: P07/P09 panels** (Diego); LAMP_AMBER comment in SF04 generator (Jordan — P2); Sight-line P06/P08 confirmations from Diego done — no carry |
+
+*Updated by Alex Chen, Art Director — Cycles 41–42 — 2026-03-30*

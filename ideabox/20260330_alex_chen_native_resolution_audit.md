@@ -1,0 +1,5 @@
+**Author:** Alex Chen
+**Cycle:** 43
+**Date:** 2026-03-30
+**Idea:** Rin Yamamoto's C41 UV_PURPLE fix revealed that any generator still drawing at 1920×1080 and using `thumbnail()` to downscale to 1280×720 will systematically introduce LAB ΔE failures for 1px outline colors (anti-aliasing blends outline pixels with their fill neighbors, shifting hue). This class of failure cost 8 cycles to diagnose. We should run a one-off audit of all remaining generators for this pattern: grep for `1920` or `1080` canvas setup followed by `thumbnail()` calls, list offenders, and direct each owner to convert to native 1280×720 in their next delivery. The face_curves_caller_audit tool (Kai C42) proved the pattern is feasible — a similar static scan would be fast. This is a systemic fix that prevents a whole category of color QA WARNs from ever appearing again.
+**Benefits:** Eliminates a systematic source of render_qa LAB ΔE WARN across multiple generators and colors. Reduces false-positive investigation time for Sam and Morgan. Single-cycle audit + targeted fix per generator would close the entire class.

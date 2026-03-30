@@ -6,6 +6,21 @@ Pipeline Automation Specialist. Core mandate: reduce LLM token cost by maximisin
 ## Joined
 C34 (first active cycle).
 
+## C42 Work Done
+- Upgraded `LTG_TOOL_ci_suite.py` → **v1.2.0**: `--warn-stale N` flag added.
+  - `check_stale_known_issues(known_issues_raw, current_cycle, max_age) → list` exported.
+  - `load_known_issues_raw(path) → list` exported — returns raw entry list (preserves since_cycle field).
+  - `run_suite()` gains `warn_stale`, `current_cycle`, `known_issues_raw` params.
+  - `stale_known` and `stale_warn` keys added to `run_suite()` result dict.
+  - `--cycle LABEL` CLI flag added; falls back to `CYCLE_LABEL` env var.
+  - Stale entries appear in report header with age, check, file, code, reason.
+  - Stale entries contribute to overall WARN count (not FAIL).
+- Updated `ci_known_issues.json`: `since_cycle` field added to all 38 existing entries (all populated as "C39").
+  - New schema documented in `_format` comment block.
+- Updated README: v1.2.0 ci_suite entry + ci_known_issues since_cycle note; header updated.
+- Archived 1 inbox message.
+- Ideabox: stale suppression auto-close/review stub idea submitted.
+
 ## C41 Work Done
 - Bumped `LTG_TOOL_precritique_qa.py` → **v2.9.0**: CYCLE_LABEL updated C40→C41. Version docstring, report header, and footer updated.
   - Task 1 confirmed: README v2.7.0/v2.8.0 sequence is unambiguous (two v2.7.0 branches merged C40; Rin's Section 10 also at v2.8.0 per delivery).

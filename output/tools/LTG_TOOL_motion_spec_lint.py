@@ -12,6 +12,7 @@ Motion Spec Sheet Linter for "Luma & the Glitchkin."
 Author: Ryo Hasegawa / Cycle 39
 Updated: Ryo Hasegawa / Cycle 40 — sheet geometry auto-detection via config
 Updated: Ryo Hasegawa / Cycle 41 — per-family beat color config (timing_colors fix)
+Updated: Ryo Hasegawa / Cycle 43 — per-family annotation_bg_color (annotation_occupancy fix)
 Ideabox origin: 20260329_ryo_hasegawa_cg_support_polygon_lint.md (actioned C39)
 
 Checks motion spec sheet PNGs for structural compliance without sending images
@@ -41,6 +42,18 @@ C41 Change: timing_colors check now uses per-family beat_color from
   persistent false WARN. Config schema extended with "beat_color" (RGB list) and
   "beat_color_tolerance" (channel delta, default 40) per family. Falls back to
   legacy cyan-family range when config or family entry is absent.
+
+C43 Change: annotation_occupancy check now uses per-family annotation_bg_color
+  from sheet_geometry_config.json. Previously used a broad light-range
+  (200,200,200)–(255,255,255) as background, which incorrectly classified
+  legitimately light character fill areas (Luma face fill (250,240,220), Cosmo
+  skin (217,192,154) highlights) as background, causing false WARN on
+  light-background sheets. Config schema extended with "annotation_bg_color"
+  (RGB list) and "annotation_bg_tolerance" (max per-channel delta, default 12)
+  per family. When present, only pixels within tolerance of the known panel
+  background color are treated as background — character fills that diverge more
+  than tolerance in any channel count as content. Falls back to legacy broad
+  light-range when config or family entry is absent.
 
 Usage:
   python3 LTG_TOOL_motion_spec_lint.py path/to/motion_sheet.png
@@ -171,15 +184,38 @@ def _beat_color_range_from_config(fam_cfg):
     return (lo, hi)
 
 
+def _annot_bg_spec_from_config(fam_cfg):
+    """
+    Build (bg_rgb, tolerance) from a family config dict.
+    Uses "annotation_bg_color" (RGB list) and "annotation_bg_tolerance"
+    (max per-channel delta, default 12).
+
+    When this spec is present the annotation_occupancy check uses a precise
+    per-family background color rather than the broad (200,200,200)–(255,255,255)
+    light-range. This prevents light character fill areas (e.g. Luma face fill,
+    Cosmo skin highlights) from being mis-classified as panel background.
+
+    Returns None if annotation_bg_color is absent → caller uses legacy broad range.
+    C43: introduced to fix false annotation_occupancy WARN on light-bg sheets.
+    """
+    bg = fam_cfg.get("annotation_bg_color")
+    if bg is None:
+        return None
+    tol = fam_cfg.get("annotation_bg_tolerance", 12)
+    return (tuple(bg), tol)
+
+
 def _get_zone_params(fname, geo_config):
     """
     Return (annot_y_start, annot_y_end, badge_panel_top, expected_panels,
-            beat_color_range)
+            beat_color_range, annot_bg_spec)
     for a given sheet filename, using geo_config when available.
     Falls back to legacy hard-coded values.
 
     beat_color_range: (min_rgb, max_rgb) tuple or None (→ use legacy cyan range).
+    annot_bg_spec: (bg_rgb, tolerance) tuple or None (→ use legacy broad light range).
     C41: extended to return per-family beat color range.
+    C43: extended to return per-family annotation background spec (6-tuple total).
     """
     family = _family_from_filename(fname)
     if geo_config and family:
@@ -191,10 +227,11 @@ def _get_zone_params(fname, geo_config):
                 fam.get("badge_panel_top_abs", fam.get("panel_top_abs", 56) + 4),
                 fam.get("expected_panels", None),
                 _beat_color_range_from_config(fam),
+                _annot_bg_spec_from_config(fam),
             )
 
     # Legacy fallback (hard-coded, pre-C40 behavior)
-    return (ANNOT_ZONE_ABS_Y_START, ANNOT_ZONE_ABS_Y_END, 56, None, None)
+    return (ANNOT_ZONE_ABS_Y_START, ANNOT_ZONE_ABS_Y_END, 56, None, None, None)
 
 
 # ---------------------------------------------------------------------------
@@ -232,15 +269,41 @@ def _is_any_bg(pixel):
     return _is_bg_pixel(pixel) or _is_dark_bg_pixel(pixel)
 
 
-def _count_non_bg(img_crop):
-    """Count non-background pixels in a cropped PIL image."""
+def _is_precise_bg_pixel(pixel, bg_rgb, tolerance):
+    """
+    True if pixel is within `tolerance` of `bg_rgb` in all three channels.
+
+    C43: Used when per-family annotation_bg_color is configured. More selective
+    than the broad (200-255) range — excludes light character fill areas that
+    have the same lightness as the panel background but a different hue/value.
+    """
+    return all(abs(pixel[i] - bg_rgb[i]) <= tolerance for i in range(3))
+
+
+def _count_non_bg(img_crop, annot_bg_spec=None):
+    """
+    Count non-background pixels in a cropped PIL image.
+
+    C43: When annot_bg_spec=(bg_rgb, tolerance) is supplied, uses precise
+    per-family background matching (_is_precise_bg_pixel) instead of the broad
+    light-range heuristic (_is_bg_pixel). The dark-BG check (_is_dark_bg_pixel)
+    is always applied regardless of mode, so void/commitment panels still work.
+    """
     w, h = img_crop.size
     count = 0
     px = img_crop.load()
-    for y in range(h):
-        for x in range(w):
-            if not _is_any_bg(px[x, y]):
-                count += 1
+    if annot_bg_spec is not None:
+        bg_rgb, tol = annot_bg_spec
+        for y in range(h):
+            for x in range(w):
+                p = px[x, y]
+                if not (_is_precise_bg_pixel(p, bg_rgb, tol) or _is_dark_bg_pixel(p)):
+                    count += 1
+    else:
+        for y in range(h):
+            for x in range(w):
+                if not _is_any_bg(px[x, y]):
+                    count += 1
     return count, w * h
 
 
@@ -361,17 +424,26 @@ def check_panel_count(img, expected_panels, panels):
 
 def check_annotation_occupancy(img, panels, threshold=OCCUPANCY_WARN_THRESHOLD,
                                 annot_y_start=ANNOT_ZONE_ABS_Y_START,
-                                annot_y_end=ANNOT_ZONE_ABS_Y_END):
+                                annot_y_end=ANNOT_ZONE_ABS_Y_END,
+                                annot_bg_spec=None):
     """
     Check 3: Each panel's annotation zone has sufficient non-BG pixel density.
 
     C40: annot_y_start / annot_y_end now supplied by caller from sheet geometry
     config, eliminating false WARNs caused by hard-coded zone coords that did
     not match sheets with different HEADER_H values.
+
+    C43: annot_bg_spec=(bg_rgb, tolerance) from per-family config. When present,
+    uses precise background color matching instead of the broad (200-255) light
+    range. This prevents light character fill areas (Luma face fill, Cosmo skin
+    highlights, cardigan RW-08) from being mis-classified as panel background,
+    which caused false annotation_occupancy WARNs on light-bg sheets.
+    The bg_mode label in the detail string shows which path was used.
     """
     w, h = img.size
     results = []
     any_warn = False
+    bg_mode = "precise" if annot_bg_spec is not None else "legacy-broad"
 
     for i, (x0, x1) in enumerate(panels):
         y0 = annot_y_start
@@ -379,17 +451,18 @@ def check_annotation_occupancy(img, panels, threshold=OCCUPANCY_WARN_THRESHOLD,
         if y1 <= y0:
             continue
         crop = img.crop((x0, y0, x1, y1))
-        non_bg, total = _count_non_bg(crop)
+        non_bg, total = _count_non_bg(crop, annot_bg_spec=annot_bg_spec)
         occ = non_bg / max(total, 1)
         ok = occ >= threshold
         if not ok:
             any_warn = True
         results.append(f"P{i+1}: {occ:.1%} occupancy" + ("" if ok else " — WARN low"))
 
+    detail = f"[bg:{bg_mode}]  " + ("  |  ".join(results) if results else "no panels found")
     return {
         "check": "annotation_occupancy",
         "grade": "WARN" if any_warn else "PASS",
-        "detail": "  |  ".join(results) if results else "no panels found",
+        "detail": detail,
     }
 
 
@@ -553,10 +626,10 @@ def lint_motion_spec(path: str, expected_panels: int = None,
     result["width"] = img.width
     result["height"] = img.height
 
-    # --- C40/C41: Load sheet geometry config ---
+    # --- C40/C41/C43: Load sheet geometry config ---
     geo_config = _load_geo_config(geo_config_path)
     fname = os.path.basename(path)
-    annot_y_start, annot_y_end, badge_panel_top, config_panels, beat_color_range = \
+    annot_y_start, annot_y_end, badge_panel_top, config_panels, beat_color_range, annot_bg_spec = \
         _get_zone_params(fname, geo_config)
     geo_source = "config" if geo_config and _family_from_filename(fname) else "legacy defaults"
 
@@ -589,11 +662,12 @@ def lint_motion_spec(path: str, expected_panels: int = None,
     # C2: panel count
     checks.append(check_panel_count(img, expected_panels, panels))
 
-    # C3: annotation occupancy (C40: uses calibrated zone coords)
+    # C3: annotation occupancy (C40: calibrated zone coords; C43: precise bg color)
     checks.append(check_annotation_occupancy(img, panels,
                                               threshold=occupancy_threshold,
                                               annot_y_start=annot_y_start,
-                                              annot_y_end=annot_y_end))
+                                              annot_y_end=annot_y_end,
+                                              annot_bg_spec=annot_bg_spec))
 
     # C4: beat badge zones (C40: uses calibrated badge_panel_top_abs)
     checks.append(check_beat_badge_zones(img, panels,

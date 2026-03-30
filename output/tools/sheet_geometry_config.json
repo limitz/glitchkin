@@ -14,7 +14,10 @@
       "_source": "LTG_CHAR_luma_motion.png",
       "beat_color": [80, 120, 200],
       "beat_color_tolerance": 40,
-      "_beat_color_note": "BEAT_COLOR=(80,120,200) from LTG_TOOL_luma_motion.py — blue family, not cyan"
+      "_beat_color_note": "BEAT_COLOR=(80,120,200) from LTG_TOOL_luma_motion.py — blue family, not cyan",
+      "annotation_bg_color": [248, 244, 236],
+      "annotation_bg_tolerance": 12,
+      "_annotation_bg_note": "ANNOTATION_BG=(248,244,236) warm cream from LTG_TOOL_luma_motion.py; tol=12 excludes face-fill (250,240,220) which differs by 16 in B channel"
     },
     "byte": {
       "header_h": 56,
@@ -42,7 +45,10 @@
       "_source": "LTG_CHAR_cosmo_motion.png",
       "beat_color": [80, 120, 200],
       "beat_color_tolerance": 40,
-      "_beat_color_note": "BEAT_COLOR=(80,120,200) from LTG_TOOL_cosmo_motion.py — blue family, matches Luma convention"
+      "_beat_color_note": "BEAT_COLOR=(80,120,200) from LTG_TOOL_cosmo_motion.py — blue family, matches Luma convention",
+      "annotation_bg_color": [248, 244, 238],
+      "annotation_bg_tolerance": 12,
+      "_annotation_bg_note": "ANNOTATION_BG=(248,244,238) warm cream from LTG_TOOL_cosmo_motion.py; tol=12 excludes light character fills (skin, cardigan highlights) that diverge more than 12 in any channel"
     }
   }
 }
