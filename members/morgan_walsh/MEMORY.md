@@ -6,6 +6,54 @@ Pipeline Automation Specialist. Core mandate: reduce LLM token cost by maximisin
 ## Joined
 C34 (first active cycle).
 
+## C50 Work Done
+
+### P1: LTG_TOOL_char_compare.py v1.0.0 (NEW)
+- Before/after character comparison tool.
+- Side-by-side PNG with labeled versions + JET diff heatmap.
+- Metrics: SSIM, pixel_delta_pct, mean_abs_diff, silhouette_iou, fg_pixel_delta, hue_shift_mean, value_shift_mean.
+- Grades: SIMILAR / MODIFIED / MAJOR_CHANGE.
+- API: `compare_characters(old_path, new_path, ...)` + `generate_comparison_png()` + `generate_report()`.
+- CLI: `python3 LTG_TOOL_char_compare.py old.png new.png [--output --crop --json --report]`.
+- Uses numpy + cv2 (optional, graceful fallback).
+
+### P2: LTG_TOOL_thumbnail_readability.py v1.0.0 (NEW)
+- Multi-scale character readability test at 128/64/32px.
+- 4 metrics per scale: silhouette preservation (IoU), edge retention, hue stability, expression density.
+- Per-scale PASS/WARN/FAIL with calibrated thresholds.
+- Contact sheet generation + batch mode for directories.
+- API: `test_readability(img_path, scales)` + `batch_test(directory)` + `generate_contact_sheet()`.
+- CLI: `python3 LTG_TOOL_thumbnail_readability.py <input> [--scales --output --json --report]`.
+
+### P3: QA Pipeline Character Audit
+- Full audit of all 30 checks across render_qa (6), precritique_qa (14), ci_suite (10).
+- Each check tagged: CHAR, BG, BOTH, or META.
+- **Finding:** Character-specific = 30% of checks, effective character coverage ~15%.
+- Last 6 cycles (C44-C49): 4 BG checks added, 1 character check added.
+- 6 existing character tools NOT integrated into QA pipeline.
+- Report: `output/production/qa_pipeline_character_audit_c50.md`.
+
+### P4: Recommendations (in audit doc)
+- 5 new character checks proposed (precritique_qa Sections 15-19, ci_suite Check 11).
+- 3 existing checks should be modified to weight character pixels more.
+- No deprecations needed — the gap is missing checks, not bad checks.
+
+### Verification
+- Syntax check: PASS for both new tools (ast.parse clean).
+- Audit doc complete with per-check tagging, gap analysis, integration roadmap.
+
+### Deliverables
+- LTG_TOOL_char_compare.py v1.0.0 (NEW)
+- LTG_TOOL_thumbnail_readability.py v1.0.0 (NEW)
+- output/production/qa_pipeline_character_audit_c50.md (NEW)
+- Report sent to Alex Chen inbox
+- Archived 1 inbox message (C50 assignment)
+- Ideabox: precritique_qa character sections idea submitted
+
+### Lessons Learned
+- The pipeline was biased toward background quality because BG checks are easier to automate (color temperature, pixel percentage, depth grammar are pixel-math). Character checks require structural understanding (face features, proportions, expression at scale). This means character quality needs intentional investment — it won't happen organically.
+- Several character tools existed but weren't in the QA pipeline (face_test, face_landmark, char_diff, face_curve_validator). Building tools without integrating them into the pipeline is waste — integration should be part of the same ticket.
+
 ## C49 Work Done
 
 ### P1: ci_suite v1.9.0 — CI Check Registry

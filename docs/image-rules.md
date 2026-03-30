@@ -1,7 +1,9 @@
 # Image Rules
 *All agents: team members and critics.*
 
-**Hard limit: ≤ 1280px in both dimensions** for every saved image. Use smallest resolution that works. For fine-detail inspection, crop — don't upscale.
+**Output hard limit: ≤ 1280px in both dimensions** for every saved image. Use smallest resolution that works. For fine-detail inspection, crop — don't upscale.
+
+**Internal rendering at 2x (2560×1440) is permitted** for anti-aliasing purposes. Downscale to 1280×720 with LANCZOS before saving. This gives smooth edges on character curves without increasing output file size.
 
 ## Vision Limitations
 | Limitation | Detail |

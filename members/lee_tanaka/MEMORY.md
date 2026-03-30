@@ -491,3 +491,22 @@ Read inbox for directive. Two tasks: (1) SF02 staging brief for Luma interiority
 - **Discovery finds the globally optimal pair, not the semantically "correct" pair.** SF04 discovery picks fg=0.35 (character torso, warmest spot) vs manual fg=0.55 (character feet, calibrated by visual inspection). Both produce PASS. The discovery algorithm optimizes for maximum separation, which may differ from the manually chosen "character ground plane" position. This is fine — the purpose is to produce a working override quickly, not to replicate human spatial reasoning.
 - **Grade match is the right validation criterion, not position match.** Two different FG/BG pairs can both produce PASS if the image has a monotonic warm-to-cool gradient. Requiring exact Y position match would produce false negatives in validation for images with broad warm zones.
 - **Warmth profile visualization (ASCII bar chart) makes the tool self-documenting.** A user running `--discover` can see the full warmth structure of the image and understand WHY the tool chose those bands. This is more trustworthy than a pair of numbers with no context.
+
+## Cycle 50 Milestone
+- **GESTURE & POSE ANALYSIS DELIVERED:** `output/production/gesture_pose_analysis_c50.md`
+  - Part 1: Gesture line analysis — 18/18 poses across Luma/Cosmo/Miri FAIL (straight vertical gesture lines). Root cause of stiffness.
+  - Part 2: Weight distribution audit — all characters floating (symmetric legs, level hips, centered heads).
+  - Part 3: Luma gesture specification — 6 expressions with gesture line shapes (C-curves, S-curves, diagonals), weight ratios, counterpose angles, arm asymmetry, foot positions, and RPD silhouette test targets (65-75%).
+  - Part 4: Counterpose study — per-character rules: Luma=round S-curves, Cosmo=angular breaks, Miri=permanent forward lean + left-hip habit, Byte=tilt-counterpose, Glitch=exempt.
+  - Implementation: offset chain (`hip_cx → torso_cx → head_cx`) replaces single `cx` axis.
+- **Reference study completed:** Hilda, Owl House, Kipo reference images analyzed. All professional shows use curved gesture lines even in neutral turnaround poses. Kipo model sheet has weight shift in the "neutral" standing view.
+- **Briefs sent:** Maya Santos (build spec + recommended order), Rin Yamamoto (architecture heads-up for SF propagation), Alex Chen (completion report).
+- **Ideabox:** `20260330_lee_tanaka_gesture_line_linter.md` — propose `LTG_TOOL_gesture_line_lint.py` automated straightness detector for expression sheets.
+- **Inbox archived:** C50 assignment.
+
+## Cycle 50 Lessons
+- **The gesture line is the foundation — shoulders, weight, and counterpose are consequences.** C47 shoulder mechanics was a correct but incomplete fix. When the gesture line is absent (straight vertical), no amount of shoulder adjustment creates life. When the gesture line is present (curved), shoulders, hips, and head MUST respond — counterpose emerges from the curve.
+- **All 18 current poses share one axis (cx) for all body parts.** This is an architectural constraint, not an artistic oversight. The fix is structural: an offset chain where each body level derives from the one below it. This is analogous to an FK (forward kinematics) chain in rigging — hips drive torso, torso drives shoulders, shoulders drive head.
+- **Professional "neutral" standing has counterpose.** The Kipo model sheet, Luz turnaround, and Hilda reference all show hip shift + shoulder compensation in the most basic standing pose. A truly symmetric T-pose exists only in rigging references, never in character sheets.
+- **Weight ratio expresses emotion.** 60/40 = curious lean. 70/30 = startle recoil. 80/20 = frustrated stomp. The weight split IS the emotional content of the lower body. Symmetric 50/50 = no emotional information below the waist.
+- **CARRIED:** Staging review pass on new assets (P22/P22a, hallway, SF06) if they land. Also: verify gesture line implementation once Maya rebuilds expression sheets.

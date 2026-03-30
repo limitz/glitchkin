@@ -233,9 +233,9 @@ The full visual specification is maintained in the **Style Guide** (`/home/wipka
 - **Style family:** Flat-graphic contemporary cartoon with digital-glitch twist (reference: *Hilda*, *The Owl House*, *Kipo*)
 - **Real world palette:** Warm ambers, terracottas, sage greens, dusty lavenders
 - **Glitch palette:** Electric cyan, hot magenta, acid green, UV purple
-- **Character line weight:** Medium-thick, Deep Cocoa (#3B2820), never pure black
+- **Character line weight:** Variable-width strokes — thicker at shadow side/joints, thinner at light side/limb tips. Scene-responsive outline color (darker fill variant or environment-tinted). Deep Cocoa (#3B2820) as default; pure black never used.
 - **Backgrounds:** No outlines; painterly-flat with texture overlays
-- **Shadows:** Flat cel-shadow, one tone, no gradients
+- **Shadows:** Form-following shadows that communicate body volume. Subtle gradients permitted for skin and fabric. Shadow shape and placement should reinforce the gesture line.
 - **Signature element:** Pixel confetti particles near all glitch activity
 
 **Shape language summary:**
@@ -253,7 +253,7 @@ The full visual specification is maintained in the **Style Guide** (`/home/wipka
 
 ## 9. Software & Pipeline
 
-**This production uses open source tools exclusively.** Proprietary software (Toon Boom Harmony, Adobe After Effects, Photoshop, etc.) is not permitted. If a required tool does not exist in the open source ecosystem, the team will implement it in Python.
+**This production prefers open source tools.** Freely available libraries (open source or proprietary) are permitted for pitch development if their license allows use in producing the pitch. Proprietary GUI applications (Toon Boom Harmony, Adobe After Effects, Photoshop, etc.) are not used in the current agentic pipeline. If a required tool does not exist, the team will implement it in Python.
 
 ### 9A. Pitch Development Pipeline (Current)
 

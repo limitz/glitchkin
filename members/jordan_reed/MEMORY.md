@@ -1,5 +1,34 @@
 # Jordan Reed — Memory
 
+## Cycle 50 Deliverables
+- `output/production/character_background_integration_audit_c50.md` — FULL AUDIT ✓
+  - All 5 style frames audited for character-background integration
+  - Grades: SF01 D+, SF02 D, SF03 C-, SF04 D+, SF05 D
+  - Root causes identified: flat baked colors, lighting overlay before character draw, no contact shadows, no bounce light, no scene-colored shading
+  - Reference study (Owl House, Hilda): scene-colored highlights, contact shadows, BG color influence on edges, consistent light direction
+  - Technical requirements documented: 5 priorities (scene light injection, body shading, contact shadow, bounce light, pass order fix)
+- `LTG_TOOL_styleframe_discovery_scenelit.py` — SF01 SCENE-LIT PROTOTYPE ✓
+  - Output: `output/color/style_frames/LTG_COLOR_styleframe_discovery_scenelit.png` (1280x720)
+  - 8 scene-lit improvements: CRT-tinted skin highlight, warm lamp shadow, scene-responsive hoodie gradient, contact shadow, post-character lighting overlay, bounce light, cyan catch-lights, cyan hair edge
+  - New functions: `scene_tinted_skin()`, `scene_tinted_hoodie()`, `draw_contact_shadow()`, `draw_bounce_light()`, `draw_lighting_overlay_post_character()`, `blend_color()`
+  - color_verify: SUNLIT_AMBER 1.1 deg PASS, all canonical PASS
+  - render_qa: warm/cool 106.0 PASS, value 14-241 PASS, GRADE: WARN (pre-existing)
+- Ideabox: `20260330_jordan_reed_scene_lit_character_pipeline.md` — shared scene-lit module proposal
+- Inbox archived ✓ (2 messages: C49 CRT glow brief, C50 assignment)
+- Completion report sent to Alex Chen ✓
+
+## Cycle 50 Status: COMPLETE
+
+## Cycle 50 Notes
+- **The cutout problem is structural, not artistic**: Characters are drawn AFTER the lighting overlay, with flat baked colors. This means the warm/cool split that makes the background feel lit doesn't affect the character at all. Moving the lighting overlay to post-character (or applying character-specific scene-tinted colors) is the fix.
+- **Scene light influence percentages that work**: CRT (key light) at 25% influence on skin highlight, 30% on hoodie. Lamp (fill light) at 15% on skin shadow, 12% on hoodie shadow. These are visible but don't overwhelm the character's identity colors.
+- **Contact shadow = instant grounding**: Even a simple elliptical shadow (alpha 55, quadratic falloff, surface-color-darkened) makes the character look like it's ON the furniture instead of floating in front of it.
+- **Bounce light is subtle but real**: 15% influence from couch brown on the character's lower 30%. Barely noticeable in isolation but contributes to the "in the scene" read.
+- **Catch-light tinting**: Changing eye catch-lights from generic white to cyan-tinted (180,255,255) is a micro-detail that reads strongly — it tells the viewer the character's eyes are reflecting the CRT. Same technique visible in Owl House reference (scene2.jpg).
+- **Hair edge highlight**: A thin cyan arc on the CRT-facing edge of the hair is the strongest single anti-cutout detail. In references, this is the most visible "character is lit by the scene" signal.
+- **Sightline pixel mode: DEPRIORITIZED per C50 brief** — confirmed C49 finding that it's unreliable at style-frame scale (eye_w ~15px). Construction mode remains the gold standard. No further iteration planned.
+- **Next step**: Extract scene-lit functions into shared module for all SF generators. Submitted ideabox.
+
 ## Cycle 49 Deliverables
 - `LTG_TOOL_sightline_validator.py` v2.0.0 — PIXEL DETECTION MODE ✓
   - New API: `detect_eyes_from_png(image_path, search_box, ...)` — eye-white detection via color matching + morphological dilation (SciPy ndimage) + connected components

@@ -307,11 +307,12 @@ Does this color feel "neutral grey"? → Wrong. Every color must be either warm 
 ## 6. Line Work Standards
 
 ### Character Line Work
-- **Consistent weighted line.** Base stroke weight is **medium-thick** with slight taper at endpoints.
-- Line color is **Deep Cocoa (#3B2820)** by default — NOT black. For Glitchkin, line color shifts to **Void Black (#0A0A14)** or a dark version of their body color.
-- **No hatching or cross-hatching.** Shadow is communicated through color, not line.
+- **Variable-width strokes.** Thicker at shadow side and joints, thinner at light side and limb tips. This communicates form and weight.
+- **Scene-responsive outline color.** Default is a darker variant of the adjacent fill color or an environment-tinted dark. Deep Cocoa (#3B2820) remains the fallback — NOT black. For Glitchkin, line color shifts to **Void Black (#0A0A14)** or a dark version of their body color.
+- **No hatching or cross-hatching.** Shadow is communicated through form-following shadow shapes and color, not line.
 - Lines may **break** at points where forms turn away from light — this keeps things airy.
 - Internal detail lines are thinner than silhouette lines (roughly 60% weight).
+- **Shadows** follow body form — curved shapes that reinforce gesture and volume. Subtle gradients are permitted for skin warmth (warmer at cheeks, cooler at edges) and fabric folds. Shadow placement should reinforce the line of action.
 
 ### Background Line Work
 - Backgrounds have **NO outlines** in general. Shapes are defined by color edges.

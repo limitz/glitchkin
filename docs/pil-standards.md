@@ -27,8 +27,9 @@ Failure to do this causes subsequent draws to silently go to a stale surface (co
 - `output/production/` files: descriptive names only (no LTG prefix required).
 
 ## Dependencies
-- PIL/Pillow for I/O and drawing
+- PIL/Pillow for I/O, compositing, and background drawing
 - NumPy and OpenCV (cv2) authorized for array ops and analysis (OpenCV default is BGR — convert on load)
 - PyTorch authorized if neural analysis needed
-- No cairocffi or other external deps
+- **pycairo / cairocffi authorized for character rendering** (bezier curves, anti-aliased strokes, gradient fills). Cairo surfaces convert to PIL Images for compositing.
+- All freely downloadable libraries are allowed (open source preferred; proprietary OK if license permits use in producing the pitch)
 - All procedural elements must use seeded RNG for reproducibility
