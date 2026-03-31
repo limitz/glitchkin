@@ -806,9 +806,10 @@ def _draw_luma_on_context(ctx, cx, ground_y, char_h, expression, spec, scale=1.0
     back_foot_lift = spec["back_foot_lift"] * s
     heel_lift = spec.get("heel_lift", 0) * s
 
-    # Side view: both legs centered at hip_cx; depth read via y-axis only
-    near_leg_x = hip_cx  # near leg centered
-    far_leg_x  = hip_cx  # far leg centered
+    # Side view: legs anchored to cx (canvas center), not hip_cx.
+    # Hip sway shifts the torso/waist but feet stay planted at center.
+    near_leg_x = cx  # near leg at canvas center
+    far_leg_x  = cx  # far leg at canvas center
 
     # Near foot is slightly lower Y (closer = lower in perspective), far at ground
     near_foot_lift = front_foot_lift
@@ -840,7 +841,7 @@ def _draw_luma_on_context(ctx, cx, ground_y, char_h, expression, spec, scale=1.0
     hip_bridge_y_top = torso_bot_y - torso_h * 0.04
     hip_bridge_y_bot = torso_bot_y + leg_w_top * 1.2
     hip_bw = leg_w_top * 1.4  # legs centered, so width from leg_w_top only
-    hip_bridge_cx = hip_cx
+    hip_bridge_cx = cx  # match leg anchor (cx, not hip_cx)
     ctx.new_path()
     ctx.move_to(hip_bridge_cx - hip_bw, hip_bridge_y_top)
     ctx.curve_to(hip_bridge_cx - hip_bw * 0.8, hip_bridge_y_bot + 4*s,
@@ -1717,12 +1718,16 @@ def _draw_luma_threequarter(ctx, cx, ground_y, char_h, expression, spec, scale=1
     heel_lift = spec.get("heel_lift", 0) * s
     stance_mult = spec.get("stance_wide", 1.0)
 
-    # Legs centered at hip_cx; depth read via y-axis only
-    near_leg_x = hip_cx  # near leg centered
-    far_leg_x  = hip_cx  # far leg centered
-    # Y offset: near foot sits lower (front of body plane), far foot slightly higher
-    near_extra_y = 0   # near leg at normal ground
-    far_extra_lift = head_r * 0.06  # far foot slightly raised = depth recession
+    # 3/4 view: legs have lateral spread (NOT both at hip_cx — that's side-view logic).
+    # Near leg (right = fr_x) slightly to the near/right side; far leg (left = fl_x) to the far side.
+    # Spread is ~62% of front view offset (front uses head_r * 0.40).
+    leg_offset_3q = head_r * 0.40 * 0.62 * stance_mult
+    fl_x = hip_cx - leg_offset_3q  # far leg (character's left, receding)
+    fr_x = hip_cx + leg_offset_3q  # near leg (character's right, forward)
+    far_leg_x  = fl_x
+    near_leg_x = fr_x
+    # Y offset: near foot at normal ground, far foot slightly raised (depth recession)
+    far_extra_lift = head_r * 0.06  # far foot slightly higher = receding
 
     # Far leg first (behind near); slight knee bow for visual interest
     bl_top = (far_leg_x, torso_bot_y - leg_overlap)
@@ -1744,8 +1749,8 @@ def _draw_luma_threequarter(ctx, cx, ground_y, char_h, expression, spec, scale=1
     _draw_variable_stroke_limb(ctx, front_leg_pts, leg_w_top, leg_w_bot,
                                PANTS, LINE_COL, lw_major)
 
-    # Hip bridge
-    hip_bw = leg_w_top * 1.4  # legs centered, so width from leg_w_top only
+    # Hip bridge: spans between spread legs
+    hip_bw = leg_offset_3q + leg_w_top * 1.3  # match front-view pattern
     hip_bridge_cx = hip_cx
     hip_bridge_y_top = torso_bot_y - torso_h * 0.04
     hip_bridge_y_bot = torso_bot_y + leg_w_top * 1.2
@@ -2447,9 +2452,10 @@ def _draw_luma_side_l(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
     back_foot_lift = spec_l["back_foot_lift"] * s
     heel_lift = spec.get("heel_lift", 0) * s
 
-    # Side-L faces left; both legs centered at hip_cx, depth read via y-axis only
-    near_leg_x = hip_cx  # near leg centered
-    far_leg_x  = hip_cx  # far leg centered
+    # Side-L: legs anchored to cx (canvas center), not hip_cx.
+    # Hip sway shifts the torso/waist but feet stay planted at center.
+    near_leg_x = cx  # near leg at canvas center
+    far_leg_x  = cx  # far leg at canvas center
     far_extra_lift = head_r * 0.04  # far foot slightly higher = receding
 
     # Far leg first; slight knee bow for visual interest
@@ -2476,7 +2482,7 @@ def _draw_luma_side_l(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
     hip_bridge_y_top = torso_bot_y - torso_h * 0.04
     hip_bridge_y_bot = torso_bot_y + leg_w_top * 1.2
     hip_bw = leg_w_top * 1.4  # legs centered, so width from leg_w_top only
-    hip_bridge_cx = hip_cx
+    hip_bridge_cx = cx  # match leg anchor (cx, not hip_cx)
     ctx.new_path()
     ctx.move_to(hip_bridge_cx - hip_bw, hip_bridge_y_top)
     ctx.curve_to(hip_bridge_cx - hip_bw * 0.8, hip_bridge_y_bot + 4*s,
