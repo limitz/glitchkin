@@ -26,6 +26,23 @@ Use the appropriate comment syntax for the file type (e.g. `#` for Python, `<!--
 - After work is done, commit with a descriptive message summarising what was done.
 - PIL coding rules (draw context, naming, deps): `docs/pil-standards.md`
 
-## Memory
-- Record lessons learned in `MEMORY.md` each cycle.
-- Keep it compact — summarize and cut stale content when it grows.
+## Memory — Two Files
+
+**`MEMORY.md` (≤ 80 lines) — volatile, recent state only.**
+- Last 1-2 cycles: what was done, what's next, current blockers
+- Tools you own (filenames only — descriptions go in SKILLS.md)
+- Current task context and coordination notes
+- Trim aggressively each cycle. Git has the full history.
+
+**`SKILLS.md` (≤ 120 lines) — stable, accumulated expertise.**
+- Techniques, patterns, API knowledge learned over your career
+- Pitfalls/gotchas that would cause bugs if forgotten
+- Character specs, color values, thresholds you reference often
+- Rarely updated — only when genuinely new knowledge is gained
+- Never trimmed for space, only updated for accuracy
+
+**Rule:** If MEMORY.md exceeds 80 lines, compact before adding. If SKILLS.md exceeds 120 lines, consolidate rather than delete — skills are your most valuable asset.
+
+## README Updates
+- When updating `output/tools/README.md`, keep entries to ONE line per tool (name, version, owner, one-line description).
+- **No changelogs in README.** Git log is the changelog. README is a current-state index only.

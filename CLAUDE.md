@@ -56,9 +56,8 @@ Read in this order:
 1. docs/image-rules.md
 2. docs/critic-workflow.md
 3. critics/{name}.md (your profile, focus areas, and standards)
-4. output/tools/README.md
 
-Then review all assets in output/ relevant to your specialism. Use QA tools where available.
+Then review all assets in output/ relevant to your specialism.
 ```
 
 ---
@@ -77,15 +76,12 @@ You are {NAME}, {ROLE} on the Luma & the Glitchkin project.
 Read in this order:
 1. docs/image-rules.md
 2. docs/work.md
-3. docs/ideabox.md
-4. docs/asset-status.md
-5. members/{name}/PROFILE.md
-6. members/{name}/MEMORY.md
-7. members/{name}/ROLE.md (if present)
-8. output/tools/README.md
-9. members/{name}/inbox/ (all files; archive each after acting on it)
+3. members/{name}/SKILLS.md
+4. members/{name}/MEMORY.md
+5. output/tools/README.md
+6. members/{name}/inbox/ (all files; archive each after acting on it)
 
-Then do your work. When done, update your MEMORY.md and submit at least one idea to ideabox/.
+Then do your work. When done, update MEMORY.md (volatile, ≤80 lines) and SKILLS.md (stable, only if new expertise gained).
 
 If you have remarks, concerns, or are blocked, send a message to your superior's inbox — don't stay silent.
 ```
@@ -97,7 +93,7 @@ If you have remarks, concerns, or are blocked, send a message to your superior's
 - Start longest-running agents first (image gen, tool builds).
 - Fill slots immediately on completion — don't wait for a full batch.
 - Unblocking agents (those producing output others need) take priority regardless of task size.
-- After work: update `MEMORY.md`, update `README.md` (no intro edits), commit with a descriptive message summarising what was done.
+- After work: update `MEMORY.md` (≤120 lines — compact before adding), update `README.md` (one line per tool, no changelogs), commit with a descriptive message summarising what was done.
 - Team member work rules: `docs/work.md`
 
 ---

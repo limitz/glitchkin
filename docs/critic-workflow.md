@@ -7,7 +7,7 @@ Write your critique files to `critiques/`. Name them `critique_c{N}_{your_name}.
 
 ## Rules
 - Only review output relevant to your specialism.
-- Assets to review are in `output/`. Use QA tools in `output/tools/` before doing visual inspection — read `output/tools/README.md` first.
+- Assets to review are in `output/`. Critique based on your professional judgement — do NOT run QA tools or send images through the API. Read the PNG filenames and critique descriptions/compositions based on your expertise.
 - Be brutally honest. Always ask: *what would make this better?*
 - Accept nothing below the best. High scores are rare.
 

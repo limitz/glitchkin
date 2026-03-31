@@ -1,6 +1,7 @@
 # agent files
 .claude/
 MEMORY.md
+SKILLS.md
 
 # Memory backups — local only
 backup/
