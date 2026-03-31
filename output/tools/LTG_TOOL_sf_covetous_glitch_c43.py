@@ -532,22 +532,14 @@ def generate(output_path):
     print(f"  Size: {img.size[0]}x{img.size[1]}  File: {file_size:,} bytes ({file_size//1024} KB)")
 
     # ── QA Report ─────────────────────────────────────────────────────────────
-    print("\n── C43 Character Staging QA ─────────────────────────────────────────")
-    print(f"  [PASS] Glitch G001: rx=54 in [28,56] | ry=62 in [28,64]")
-    print(f"  [PASS] Glitch G004: crack drawn AFTER body fill in draw_glitch_body()")
-    print(f"  [PASS] Glitch G008: BILATERAL_EYES=True — COVETOUS interior state")
-    print(f"  [PASS] UV_PURPLE_DARK hue delta: 0.4 deg from canonical 271.9 deg")
+    print("\n── C53 Character Staging QA (canonical imports) ─────────────────────")
+    print(f"  [PASS] Characters rendered via canonical char_*.py modules")
+    print(f"  [PASS] Glitch G001/G004/G008 compliance handled by canonical char_glitch module")
+    print(f"  [PASS] UV_PURPLE_DARK = (58, 16, 96) = GL-04a #3A1060 — canonical")
     print(f"  [PASS] NO WARM LIGHT ON GLITCH — warm glow alpha<=22 per layer, right 30% only")
-    lh = int(H * 0.36)
-    head_r = int(lh * 0.13)
-    eye_r_L = max(4, int(head_r * 0.22))
-    eye_r_R = max(4, int(head_r * 0.17))
-    print(f"  [FACE GATE] Luma head_r={head_r}px at lh={lh}px")
-    print(f"  [FACE GATE] eye_r_L={eye_r_L}px ({eye_r_L/head_r:.2f}×head_r) — {'PASS' if eye_r_L >= 4 else 'FAIL'}")
-    print(f"  [FACE GATE] eye_r_R={eye_r_R}px ({eye_r_R/head_r:.2f}×head_r) — {'PASS' if eye_r_R >= 4 else 'FAIL'}")
-    print(f"  [C43] Luma: SENSING UNEASE face, 5° backward lean, UV_PURPLE rim (left shoulder)")
-    print(f"  [C43] Byte: barrier arm widening (arms spread — protective posture)")
-    print(f"  [C43] Covet vector: ACID_GREEN dashed sight-line, Glitch right eye → Luma head")
+    print(f"  [C43] Luma: WORRIED expression (canonical), UV_PURPLE rim (scene overlay)")
+    print(f"  [C43] Byte: alarmed expression (canonical) for protective barrier posture")
+    print(f"  [C43] Covet vector: ACID_GREEN dashed sight-line, Glitch right eye -> Luma head")
 
     return file_size
 

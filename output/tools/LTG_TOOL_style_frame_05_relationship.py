@@ -441,310 +441,67 @@ def draw_crt_atmosphere(img):
     return img
 
 
+# ── Character rendering helpers (canonical imports) ──────────────────────────
+
+def _cairo_char_to_pil_sf05(surface, target_h):
+    """Convert cairo.ImageSurface to cropped, resized PIL RGBA at target height."""
+    pil_img = _to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    if pil_img.height > 0:
+        scale_factor = target_h / pil_img.height
+        new_w = max(1, int(pil_img.width * scale_factor))
+        new_h = max(1, int(pil_img.height * scale_factor))
+        pil_img = pil_img.resize((new_w, new_h), Image.LANCZOS)
+    return pil_img
+
+
+def _paste_char_sf05(img, char_pil, cx, cy, anchor="foot"):
+    """Paste character PIL RGBA onto img. anchor='foot': cy=bottom, cx=center."""
+    if anchor == "foot":
+        paste_x = cx - char_pil.width // 2
+        paste_y = cy - char_pil.height
+    else:
+        paste_x = cx - char_pil.width // 2
+        paste_y = cy - char_pil.height // 2
+    img_rgba = img.convert("RGBA")
+    img_rgba.paste(char_pil, (paste_x, paste_y), char_pil)
+    result = img_rgba.convert("RGB")
+    img.paste(result)
+    return img, ImageDraw.Draw(img)
+
+
 # ── Layer 3: Miri (seated, left-of-center) ────────────────────────────────────
 
 def draw_miri(img, draw):
     """
-    Grandma Miri — seated at kitchen table, 3/4 back-right angle.
-    Miri faces slightly LEFT (toward the CRT / doorway).
-    Head position: approximately (W*0.26, H*0.35)
-    Total height at pitch scale: ~3.2 heads. head_r = 38px.
-
-    Expression: WARM ATTENTION — eyes open 80%, gentle amused arch brow,
-    closed upward mouth curve. She is watching the CRT, as she always does.
+    Grandma Miri via canonical renderer — seated at kitchen table, 3/4 back-right.
+    WARM expression, facing left (toward CRT). Pitch scale: head_r=38px.
     """
-    HEAD_R   = 38
-    HEAD_CX  = int(W * 0.275)
-    HEAD_CY  = int(H * 0.345)
+    HEAD_R  = 38
+    HEAD_CX = int(W * 0.275)
+    HEAD_CY = int(H * 0.345)
 
-    # ── Torso / Cardigan ─────────────────────────────────────────────────────
-    # 3/4 seated: torso is wide, slightly foreshortened
-    # Shoulder width ~ 1.1 × head (84px). Torso height ~ 1.05 heads from neck.
+    # Miri seated height: ~3.2 heads, but seated means ~60% visible above table
+    TORSO_H = int(HEAD_R * 1.8)
     NECK_TOP = HEAD_CY + HEAD_R + 2
-    TORSO_W  = int(HEAD_R * 2.3)         # slightly wider — wide settled cardigan
-    TORSO_H  = int(HEAD_R * 1.8)         # foreshortened — she's seated
-    TORSO_CX = HEAD_CX - int(HEAD_R * 0.08)  # slight left offset (3/4 view)
+    visible_h = (HEAD_CY + HEAD_R + TORSO_H + 20) - (HEAD_CY - HEAD_R - int(HEAD_R * 0.5))
 
-    # Main cardigan body
-    draw.ellipse(
-        [TORSO_CX - TORSO_W // 2, NECK_TOP,
-         TORSO_CX + TORSO_W // 2, NECK_TOP + TORSO_H],
-        fill=MIRI_CARDIGAN
-    )
-    draw = ImageDraw.Draw(img)  # refresh after any paste
+    scene_lighting = {
+        "key_light_color": (212, 146, 58),  # SUNLIT_AMBER
+        "key_light_dir": "right",
+        "ambient": (200, 170, 130),
+    }
+    scale = max(0.3, visible_h / 380.0)
+    surface = _canonical_draw_miri(
+        expression="WARM", scale=scale, facing="left",
+        scene_lighting=scene_lighting)
+    char_pil = _cairo_char_to_pil_sf05(surface, visible_h)
 
-    # Cardigan shadow (lower torso and sides)
-    card_shad_pts = [
-        (TORSO_CX - TORSO_W // 2, NECK_TOP + TORSO_H // 2),
-        (TORSO_CX - TORSO_W // 2 + 8, NECK_TOP + TORSO_H),
-        (TORSO_CX + TORSO_W // 2 - 8, NECK_TOP + TORSO_H),
-        (TORSO_CX + TORSO_W // 2, NECK_TOP + TORSO_H // 2),
-    ]
-    img = alpha_over_poly(img, card_shad_pts, MIRI_CARD_SHAD, 120)
-    draw = ImageDraw.Draw(img)
-
-    # Cardigan highlight (shoulder ridge)
-    draw.arc(
-        [TORSO_CX - TORSO_W // 2 + 4, NECK_TOP,
-         TORSO_CX + TORSO_W // 2 - 4, NECK_TOP + TORSO_H // 2],
-        start=200, end=340, fill=MIRI_CARD_HIGH, width=3
-    )
-
-    # Cable-knit texture hint (vertical lines)
-    for ox in [-int(TORSO_W * 0.25), 0, int(TORSO_W * 0.25)]:
-        x = TORSO_CX + ox
-        draw.line(
-            [(x, NECK_TOP + 10), (x, NECK_TOP + TORSO_H - 10)],
-            fill=MIRI_CARD_SHAD, width=1
-        )
-
-    # Arms folded on table — forearms extend forward (toward camera)
-    # Left arm (far side — thinner, behind right)
-    ARM_Y   = NECK_TOP + TORSO_H - 10
-    draw.ellipse(
-        [TORSO_CX - TORSO_W // 2 - 12, ARM_Y - 8,
-         TORSO_CX - 8, ARM_Y + 20],
-        fill=MIRI_CARDIGAN
-    )
-    draw = ImageDraw.Draw(img)
-
-    # Right arm/hand on table
-    draw.ellipse(
-        [TORSO_CX - 20, ARM_Y - 6,
-         TORSO_CX + TORSO_W // 4, ARM_Y + 22],
-        fill=MIRI_CARDIGAN
-    )
-    draw = ImageDraw.Draw(img)
-
-    # Hands (folded, visible at table surface)
-    HAND_Y = int(H * 0.583)
-    draw.ellipse(
-        [TORSO_CX - 26, HAND_Y - 8,
-         TORSO_CX + 8, HAND_Y + 14],
-        fill=MIRI_SKIN_BASE
-    )
-    draw = ImageDraw.Draw(img)
-    draw.ellipse(
-        [TORSO_CX - 8, HAND_Y - 6,
-         TORSO_CX + 24, HAND_Y + 12],
-        fill=MIRI_SKIN_HIGH
-    )
-    draw = ImageDraw.Draw(img)
-    # Knuckle suggestion
-    for kx in [TORSO_CX - 14, TORSO_CX - 6, TORSO_CX + 2, TORSO_CX + 10]:
-        draw.arc([kx - 4, HAND_Y - 4, kx + 4, HAND_Y + 4],
-                 start=0, end=180, fill=LINE_DARK, width=1)
-
-    # ── Head ─────────────────────────────────────────────────────────────────
-    # Head is slightly compressed (88% circle — per grandma_miri.md spec)
-    head_rx = HEAD_R
-    head_ry = int(HEAD_R * 0.90)
-    draw.ellipse(
-        [HEAD_CX - head_rx, HEAD_CY - head_ry,
-         HEAD_CX + head_rx, HEAD_CY + head_ry],
-        fill=MIRI_SKIN_BASE
-    )
-    draw = ImageDraw.Draw(img)
-
-    # Neck
-    NECK_W = int(HEAD_R * 0.42)
-    draw.rectangle(
-        [HEAD_CX - NECK_W // 2, HEAD_CY + head_ry - 4,
-         HEAD_CX + NECK_W // 2, NECK_TOP + 8],
-        fill=MIRI_SKIN_BASE
-    )
-    draw = ImageDraw.Draw(img)
-
-    # ── Cheek blush (permanent) ───────────────────────────────────────────────
-    # Miri's permanent blush: MIRI_BLUSH at ~25% opacity
-    # In this frame: Luma is in quiet-curiosity state (not excited blush active)
-    # → No Pride Override needed. Full blush at 25%.
-    BLUSH_ALPHA = 32   # ≈ 25% of 128-feeling
-    img = alpha_over_ellipse(
-        img,
-        [HEAD_CX - head_rx + 4,  HEAD_CY - 2,
-         HEAD_CX - head_rx + 28, HEAD_CY + 18],
-        MIRI_BLUSH, BLUSH_ALPHA
-    )
-    img = alpha_over_ellipse(
-        img,
-        [HEAD_CX + head_rx - 28, HEAD_CY - 2,
-         HEAD_CX + head_rx - 4,  HEAD_CY + 18],
-        MIRI_BLUSH, BLUSH_ALPHA
-    )
-    draw = ImageDraw.Draw(img)
-
-    # Skin shadow (jaw and temple)
-    img = alpha_over_ellipse(
-        img,
-        [HEAD_CX - head_rx, HEAD_CY,
-         HEAD_CX - head_rx + 20, HEAD_CY + head_ry],
-        MIRI_SKIN_SHADOW, 80
-    )
-    draw = ImageDraw.Draw(img)
-
-    # ── Hair (silver bun) ─────────────────────────────────────────────────────
-    # Bun sits at upper-back of head, adds ~0.25 heads height
-    BUN_CX = HEAD_CX + int(HEAD_R * 0.12)
-    BUN_CY = HEAD_CY - head_ry + int(HEAD_R * 0.05)
-    BUN_RX = int(HEAD_R * 0.55)
-    BUN_RY = int(HEAD_R * 0.48)
-    draw.ellipse(
-        [BUN_CX - BUN_RX, BUN_CY - BUN_RY,
-         BUN_CX + BUN_RX, BUN_CY + BUN_RY],
-        fill=MIRI_HAIR_BASE
-    )
-    draw = ImageDraw.Draw(img)
-    # Bun shadow (inner depth)
-    img = alpha_over_ellipse(
-        img,
-        [BUN_CX - BUN_RX + 4, BUN_CY,
-         BUN_CX + BUN_RX - 4, BUN_CY + BUN_RY - 2],
-        MIRI_HAIR_SHAD, 140
-    )
-    draw = ImageDraw.Draw(img)
-    # Bun highlight
-    img = alpha_over_ellipse(
-        img,
-        [BUN_CX - BUN_RX + 6, BUN_CY - BUN_RY + 4,
-         BUN_CX, BUN_CY],
-        MIRI_HAIR_HIGH, 100
-    )
-    draw = ImageDraw.Draw(img)
-
-    # Side hair arc (the part that pulls back from forehead)
-    draw.arc(
-        [HEAD_CX - head_rx, HEAD_CY - head_ry,
-         HEAD_CX + head_rx, HEAD_CY + int(head_ry * 0.3)],
-        start=195, end=345, fill=MIRI_HAIR_BASE,
-        width=max(3, int(HEAD_R * 0.38))
-    )
-    draw = ImageDraw.Draw(img)
-
-    # Escaping wispy curls (2–3 strands at temple)
-    wisp_pts = [
-        (HEAD_CX - head_rx + 4, HEAD_CY - int(head_ry * 0.3)),
-        (HEAD_CX - head_rx - 5, HEAD_CY + 4),
-        (HEAD_CX - head_rx + 2, HEAD_CY + 14),
-    ]
-    draw.line(wisp_pts, fill=MIRI_HAIR_SHAD, width=1)
-
-    # ── Hairpins (MIRI-A design — FLAG 05 pending replacement confirmation) ──
-    # Two slender elements at angles from bun — same visual form as wooden hairpins
-    HP_ANGLE1 = math.radians(-30)
-    HP_ANGLE2 = math.radians(10)
-    HP_LEN    = int(HEAD_R * 0.65)
-    for angle in [HP_ANGLE1, HP_ANGLE2]:
-        hx = BUN_CX + int(HP_LEN * math.cos(angle))
-        hy = BUN_CY + int(HP_LEN * math.sin(angle))
-        draw.line([(BUN_CX, BUN_CY), (hx, hy)],
-                  fill=hairpin_col, width=2)
-
-    # ── Face — WARM ATTENTION expression ─────────────────────────────────────
-    # Eyes: 80% aperture (calm, steady, watching)
-    # Miri's eyes: eye_r = 0.16 × head_width. head_r=38 → eye_r ≈ 6px.
-    # At pitch scale this is above sprint threshold — full fidelity.
-
-    EYE_R    = max(5, int(HEAD_R * 0.165))
-    EYE_Y    = HEAD_CY - int(head_ry * 0.15)
-    EYE_X_L  = HEAD_CX - int(HEAD_R * 0.35)
-    EYE_X_R  = HEAD_CX + int(HEAD_R * 0.35)
-
-    for EX, LID_FRAC in [(EYE_X_L, 0.75), (EYE_X_R, 0.80)]:
-        # Sclera
-        draw.ellipse([EX - EYE_R, EYE_Y - EYE_R,
-                      EX + EYE_R, EYE_Y + EYE_R],
-                     fill=MIRI_EYE_WHITE)
-        draw = ImageDraw.Draw(img)
-        # Iris (slightly warm amber — deeper than Luma's)
-        iris_r = max(3, EYE_R - 1)
-        draw.ellipse([EX - iris_r, EYE_Y - iris_r,
-                      EX + iris_r, EYE_Y + iris_r],
-                     fill=MIRI_EYE_IRIS)
-        draw = ImageDraw.Draw(img)
-        # Pupil
-        pupil_r = max(2, iris_r - 2)
-        draw.ellipse([EX - pupil_r, EYE_Y - pupil_r,
-                      EX + pupil_r, EYE_Y + pupil_r],
-                     fill=MIRI_EYE_PUPIL)
-        draw = ImageDraw.Draw(img)
-        # Highlight — upper-left (shared DNA with Luma)
-        hl_off = max(1, pupil_r // 2)
-        draw.ellipse([EX - hl_off - 1, EYE_Y - hl_off - 1,
-                      EX - hl_off + 1, EYE_Y - hl_off + 1],
-                     fill=MIRI_EYE_HIGH)
-        draw = ImageDraw.Draw(img)
-        # Upper eyelid — slightly heavy (weighted, calm look)
-        lid_y = EYE_Y - int(EYE_R * LID_FRAC)
-        draw.arc([EX - EYE_R, EYE_Y - EYE_R, EX + EYE_R, EYE_Y + EYE_R],
-                 start=200, end=340, fill=MIRI_SKIN_BASE,
-                 width=max(2, EYE_R // 3))
-        draw = ImageDraw.Draw(img)
-        # Crow's feet (outer corner — 50% line weight)
-        cw_x = EX + EYE_R if EX == EYE_X_R else EX - EYE_R
-        cw_sign = 1 if EX == EYE_X_R else -1
-        draw.line(
-            [(cw_x, EYE_Y),
-             (cw_x + cw_sign * 6, EYE_Y - 3)],
-            fill=DEEP_COCOA, width=1
-        )
-        draw.line(
-            [(cw_x, EYE_Y),
-             (cw_x + cw_sign * 5, EYE_Y + 3)],
-            fill=DEEP_COCOA, width=1
-        )
-
-    # ── Eyebrows (gentle arch — Warm Gray, narrower than Luma's) ─────────────
-    BROW_Y = HEAD_CY - int(head_ry * 0.50)
-    BROW_W = int(HEAD_R * 0.30)
-    for bx in [EYE_X_L, EYE_X_R]:
-        # Gentle arch — outer end very slightly higher
-        draw.line(
-            [(bx - BROW_W, BROW_Y + 2),
-             (bx, BROW_Y),
-             (bx + BROW_W, BROW_Y + 2)],
-            fill=MIRI_BROW, width=1
-        )
-        draw = ImageDraw.Draw(img)
-
-    # ── Smile lines (always present) ─────────────────────────────────────────
-    for mx in [EYE_X_L, EYE_X_R]:
-        sm_sign = 1 if mx == EYE_X_R else -1
-        draw.arc(
-            [mx - int(HEAD_R * 0.18), HEAD_CY + 4,
-             mx + int(HEAD_R * 0.18), HEAD_CY + int(head_ry * 0.65)],
-            start=30 if sm_sign == 1 else 150,
-            end=100 if sm_sign == 1 else 220,
-            fill=MIRI_SKIN_SHADOW, width=1
-        )
-        draw = ImageDraw.Draw(img)
-
-    # ── Mouth — closed upward curve (natural resting warmth) ─────────────────
-    MOUTH_Y = HEAD_CY + int(head_ry * 0.42)
-    MOUTH_W = int(HEAD_R * 0.36)
-    draw.arc(
-        [HEAD_CX - MOUTH_W, MOUTH_Y - 5,
-         HEAD_CX + MOUTH_W, MOUTH_Y + 5],
-        start=10, end=170, fill=DEEP_COCOA, width=2
-    )
-    draw = ImageDraw.Draw(img)
-
-    # ── Nose — button with bridge line (3/4 view) ─────────────────────────────
-    NOSE_Y = HEAD_CY + int(head_ry * 0.08)
-    # Nostril pair (slight flare)
-    draw.arc(
-        [HEAD_CX - 10, NOSE_Y - 4, HEAD_CX + 10, NOSE_Y + 6],
-        start=180, end=360, fill=MIRI_SKIN_SHADOW, width=1
-    )
-    draw = ImageDraw.Draw(img)
-
-    # ── Outline (silhouette line) ─────────────────────────────────────────────
-    draw.ellipse(
-        [HEAD_CX - head_rx, HEAD_CY - head_ry,
-         HEAD_CX + head_rx, HEAD_CY + head_ry],
-        outline=DEEP_COCOA, width=2
-    )
-    draw = ImageDraw.Draw(img)
+    # Position: center at head position, anchor at center-of-visible-area
+    center_y = HEAD_CY + int(TORSO_H * 0.3)
+    img, draw = _paste_char_sf05(img, char_pil, HEAD_CX, center_y, anchor="center")
 
     return img, draw
 
@@ -753,220 +510,32 @@ def draw_miri(img, draw):
 
 def draw_luma(img, draw):
     """
-    Luma — standing behind/beside Miri's chair, right of frame.
-    She faces the same direction as Miri (left, toward the CRT).
-    3/4 angle showing left face (slight profile).
-
-    Head position: approximately (W*0.52, H*0.28)
-    She is slightly taller than Miri: head_r = 40px.
-    One hand rests lightly on the chair back.
-
-    Expression: wide-eyed quiet curiosity (not yet afraid).
-    Eyes: slightly wider than neutral, brows gently raised,
-    mouth slightly open — the "I'm watching something I don't understand yet" face.
+    Luma via canonical renderer — standing beside Miri's chair.
+    CURIOUS expression, facing left (toward CRT). Pitch scale: head_r=40px.
     """
-    HEAD_R   = 40
-    HEAD_CX  = int(W * 0.520)
-    HEAD_CY  = int(H * 0.280)
+    HEAD_R  = 40
+    HEAD_CX = int(W * 0.520)
+    HEAD_CY = int(H * 0.280)
 
-    # ── Body (hoodie) ─────────────────────────────────────────────────────────
-    NECK_TOP = HEAD_CY + HEAD_R + 2
-    TORSO_W  = int(HEAD_R * 2.05)
-    TORSO_H  = int(HEAD_R * 2.60)    # full standing torso
-    TORSO_CX = HEAD_CX + int(HEAD_R * 0.05)
+    # Full standing height: ~3.5 heads from head top to foot
+    TORSO_H = int(HEAD_R * 2.60)
+    LEG_H   = int(HEAD_R * 1.2)
+    total_h = (HEAD_R * 2) + TORSO_H + LEG_H
 
-    # Main hoodie body
-    draw.ellipse(
-        [TORSO_CX - TORSO_W // 2, NECK_TOP,
-         TORSO_CX + TORSO_W // 2, NECK_TOP + TORSO_H],
-        fill=LUMA_HOODIE
-    )
-    draw = ImageDraw.Draw(img)
+    scene_lighting = {
+        "key_light_color": (212, 146, 58),  # SUNLIT_AMBER
+        "key_light_dir": "right",
+        "ambient": (200, 170, 130),
+    }
+    scale = max(0.3, total_h / 400.0)
+    surface = _canonical_draw_luma(
+        expression="CURIOUS", scale=scale, facing="left",
+        scene_lighting=scene_lighting)
+    char_pil = _cairo_char_to_pil_sf05(surface, total_h)
 
-    # Hoodie shadow (lower torso, left side — 3/4 angle shading)
-    img = alpha_over_poly(img, [
-        (TORSO_CX - TORSO_W // 2, NECK_TOP + TORSO_H // 3),
-        (TORSO_CX - TORSO_W // 2 + 10, NECK_TOP + TORSO_H),
-        (TORSO_CX + TORSO_W // 4, NECK_TOP + TORSO_H),
-        (TORSO_CX + TORSO_W // 4, NECK_TOP + TORSO_H // 3),
-    ], LUMA_HOODIE_SH, 130)
-    draw = ImageDraw.Draw(img)
-
-    # Hoodie highlight (right shoulder)
-    img = alpha_over_ellipse(img, [
-        TORSO_CX,                    NECK_TOP,
-        TORSO_CX + TORSO_W // 2 - 4, NECK_TOP + TORSO_H // 3,
-    ], LUMA_HOODIE_H, 70)
-    draw = ImageDraw.Draw(img)
-
-    # Left arm (foreground — extends down toward chair back)
-    ARM_L = TORSO_CX - TORSO_W // 2 - 6
-    ARM_T = NECK_TOP + TORSO_H // 4
-    ARM_W = int(HEAD_R * 0.72)
-    ARM_H = int(HEAD_R * 1.55)
-    draw.ellipse(
-        [ARM_L, ARM_T, ARM_L + ARM_W, ARM_T + ARM_H],
-        fill=LUMA_HOODIE
-    )
-    draw = ImageDraw.Draw(img)
-
-    # Hand on chair back
-    HAND_CX = ARM_L + ARM_W // 2
-    HAND_CY = ARM_T + ARM_H
-    draw.ellipse(
-        [HAND_CX - 12, HAND_CY - 10,
-         HAND_CX + 14, HAND_CY + 14],
-        fill=LUMA_SKIN
-    )
-    draw = ImageDraw.Draw(img)
-
-    # Legs (below table — partially occluded by table FG)
-    LEG_TOP = NECK_TOP + TORSO_H - 4
-    LEG_W   = int(HEAD_R * 0.56)
-    for lx in [TORSO_CX - LEG_W, TORSO_CX + LEG_W // 4]:
-        draw.ellipse(
-            [lx - LEG_W // 2, LEG_TOP,
-             lx + LEG_W // 2, LEG_TOP + int(HEAD_R * 1.2)],
-            fill=LUMA_PANTS
-        )
-        draw = ImageDraw.Draw(img)
-
-    # ── Head ─────────────────────────────────────────────────────────────────
-    draw.ellipse(
-        [HEAD_CX - HEAD_R, HEAD_CY - HEAD_R,
-         HEAD_CX + HEAD_R, HEAD_CY + HEAD_R],
-        fill=LUMA_SKIN
-    )
-    draw = ImageDraw.Draw(img)
-
-    # Neck
-    NECK_W = int(HEAD_R * 0.40)
-    draw.rectangle(
-        [HEAD_CX - NECK_W // 2, HEAD_CY + HEAD_R - 4,
-         HEAD_CX + NECK_W // 2, NECK_TOP + 8],
-        fill=LUMA_SKIN
-    )
-    draw = ImageDraw.Draw(img)
-
-    # Skin shadow (left temple, jaw — 3/4 facing left)
-    img = alpha_over_ellipse(img, [
-        HEAD_CX - HEAD_R, HEAD_CY - int(HEAD_R * 0.4),
-        HEAD_CX - HEAD_R + 22, HEAD_CY + HEAD_R,
-    ], LUMA_SKIN_SHAD, 90)
-    draw = ImageDraw.Draw(img)
-
-    # ── Hair (explosive dark cloud) ───────────────────────────────────────────
-    # Dark hair arc over top-back of head, with escaping curls
-    rng = random.Random(4471)
-    # Main hair mass — arc + cloud blobs
-    draw.arc(
-        [HEAD_CX - HEAD_R - 12, HEAD_CY - HEAD_R - 8,
-         HEAD_CX + HEAD_R + 8,  HEAD_CY + int(HEAD_R * 0.5)],
-        start=170, end=350, fill=LUMA_HAIR,
-        width=max(4, int(HEAD_R * 0.55))
-    )
-    draw = ImageDraw.Draw(img)
-    # Hair cloud blobs (seeded for reproducibility)
-    hair_blobs = [
-        (HEAD_CX + int(HEAD_R * 0.60), HEAD_CY - HEAD_R + 4, int(HEAD_R * 0.36)),
-        (HEAD_CX - int(HEAD_R * 0.55), HEAD_CY - HEAD_R + 2, int(HEAD_R * 0.40)),
-        (HEAD_CX + int(HEAD_R * 0.10), HEAD_CY - HEAD_R - 10, int(HEAD_R * 0.30)),
-        (HEAD_CX - int(HEAD_R * 0.22), HEAD_CY - HEAD_R + 8, int(HEAD_R * 0.28)),
-    ]
-    for bx, by, br in hair_blobs:
-        draw.ellipse([bx - br, by - br, bx + br, by + br], fill=LUMA_HAIR)
-        draw = ImageDraw.Draw(img)
-    # Hair highlight
-    draw.arc(
-        [HEAD_CX - int(HEAD_R * 0.6), HEAD_CY - HEAD_R - 4,
-         HEAD_CX + int(HEAD_R * 0.6), HEAD_CY - int(HEAD_R * 0.4)],
-        start=215, end=320, fill=LUMA_HAIR_HIGH, width=2
-    )
-    draw = ImageDraw.Draw(img)
-
-    # ── Eyes — wide quiet curiosity ───────────────────────────────────────────
-    # Luma's eyes: eye_r = 0.22 × head_width → EYE_R = int(40*0.22) = 8px
-    EYE_R   = max(7, int(HEAD_R * 0.22))
-    EYE_Y   = HEAD_CY - int(HEAD_R * 0.14)
-    EYE_X_L = HEAD_CX - int(HEAD_R * 0.36)
-    EYE_X_R = HEAD_CX + int(HEAD_R * 0.36)
-
-    # Slightly wider than neutral (curiosity — both same size, symmetric open)
-    for EX in [EYE_X_L, EYE_X_R]:
-        draw.ellipse([EX - EYE_R, EYE_Y - EYE_R,
-                      EX + EYE_R, EYE_Y + EYE_R],
-                     fill=LUMA_EYE_WHITE)
-        draw = ImageDraw.Draw(img)
-        iris_r = max(5, EYE_R - 1)
-        draw.ellipse([EX - iris_r, EYE_Y - iris_r,
-                      EX + iris_r, EYE_Y + iris_r],
-                     fill=LUMA_EYE_IRIS)
-        draw = ImageDraw.Draw(img)
-        pupil_r = max(3, iris_r - 2)
-        # Gaze: slightly LEFT (toward the CRT)
-        GAZE_DX = -int(pupil_r * 0.30)
-        draw.ellipse(
-            [EX + GAZE_DX - pupil_r, EYE_Y - pupil_r,
-             EX + GAZE_DX + pupil_r, EYE_Y + pupil_r],
-            fill=LUMA_EYE_PUPIL
-        )
-        draw = ImageDraw.Draw(img)
-        # Highlight — upper-left (matching Miri's highlight position = visual DNA)
-        hl_r = max(1, pupil_r // 2 - 1)
-        draw.ellipse(
-            [EX - pupil_r, EYE_Y - pupil_r,
-             EX - pupil_r + hl_r * 2, EYE_Y - pupil_r + hl_r * 2],
-            fill=LUMA_EYE_HIGH
-        )
-        draw = ImageDraw.Draw(img)
-
-    # ── Eyebrows — gently raised (curiosity/wonder) ───────────────────────────
-    BROW_Y = HEAD_CY - int(HEAD_R * 0.48)
-    BROW_W = int(HEAD_R * 0.38)
-    # Thick graphic brows (Luma's signature — brow_w = 0.30 × head)
-    for bx in [EYE_X_L, EYE_X_R]:
-        # Raised outer end — gently curious arch
-        draw.line(
-            [(bx - BROW_W, BROW_Y + 3),
-             (bx, BROW_Y - 1),
-             (bx + BROW_W, BROW_Y + 3)],
-            fill=LUMA_BROW, width=2
-        )
-        draw = ImageDraw.Draw(img)
-
-    # ── Mouth — slightly open (curiosity — not yet speaking) ──────────────────
-    MOUTH_Y = HEAD_CY + int(HEAD_R * 0.40)
-    MOUTH_W = int(HEAD_R * 0.28)
-    MOUTH_H = int(HEAD_R * 0.12)
-    draw.arc(
-        [HEAD_CX - MOUTH_W, MOUTH_Y - MOUTH_H,
-         HEAD_CX + MOUTH_W, MOUTH_Y + MOUTH_H],
-        start=195, end=345, fill=DEEP_COCOA, width=2
-    )
-    draw = ImageDraw.Draw(img)
-    # Slight parting — upper lip arc
-    draw.arc(
-        [HEAD_CX - MOUTH_W + 6, MOUTH_Y - MOUTH_H - 3,
-         HEAD_CX + MOUTH_W - 6, MOUTH_Y - 2],
-        start=15, end=165, fill=DEEP_COCOA, width=1
-    )
-    draw = ImageDraw.Draw(img)
-
-    # ── Nose — apostrophe dot (Luma spec) ─────────────────────────────────────
-    NOSE_Y = HEAD_CY + int(HEAD_R * 0.08)
-    draw.ellipse(
-        [HEAD_CX - 3, NOSE_Y - 3, HEAD_CX + 3, NOSE_Y + 3],
-        fill=LUMA_SKIN_SHAD
-    )
-    draw = ImageDraw.Draw(img)
-
-    # ── Head outline ──────────────────────────────────────────────────────────
-    draw.ellipse(
-        [HEAD_CX - HEAD_R, HEAD_CY - HEAD_R,
-         HEAD_CX + HEAD_R, HEAD_CY + HEAD_R],
-        outline=DEEP_COCOA, width=2
-    )
-    draw = ImageDraw.Draw(img)
+    # Position: foot at bottom of torso+legs zone
+    foot_y = HEAD_CY - HEAD_R + total_h
+    img, draw = _paste_char_sf05(img, char_pil, HEAD_CX, foot_y, anchor="foot")
 
     return img, draw
 

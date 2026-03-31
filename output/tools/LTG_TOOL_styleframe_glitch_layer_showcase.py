@@ -50,9 +50,15 @@ import random
 import sys
 from PIL import Image, ImageDraw, ImageFilter
 
-__version__ = "1.0.0"
+# Canonical character renderer imports
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__))))
+from LTG_TOOL_char_byte import draw_byte
+from LTG_TOOL_char_glitch import draw_glitch
+from LTG_TOOL_cairo_primitives import to_pil_rgba
+
+__version__ = "2.0.0"  # C53: canonical char_*.py imports replace inline drawing
 __author__ = "Rin Yamamoto"
-__cycle__ = 47
+__cycle__ = 53
 
 # ── Canvas (native 1280×720) ────────────────────────────────────────────────
 W, H = 1280, 720
@@ -277,24 +283,38 @@ def draw_platform_system(draw, img):
     return draw
 
 
-# ── Byte Character (foreground, medium scale — at home in GL) ───────────────
+# ── Helper: cairo surface -> PIL composite ───────────────────────────────────
 
-def diamond_pts(cx, cy, rx, ry):
-    """Generate diamond body vertices for Glitchkin character."""
-    return [
-        (cx,              cy - ry),        # top
-        (cx + int(rx * 0.7), cy),          # right
-        (cx,              cy + int(ry * 0.85)),  # bottom
-        (cx - int(rx * 0.7), cy),          # left
-    ]
+def _cairo_to_pil_cropped(surface):
+    """Convert a cairo.ImageSurface to a cropped PIL RGBA image."""
+    pil_img = to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    return pil_img
 
+
+def _paste_character(img, char_pil, cx, cy, target_h=None):
+    """Paste a cropped character PIL image centered at (cx, cy) on the scene img.
+    If target_h is given, scale the character to that height preserving aspect ratio."""
+    if target_h and char_pil.height > 0:
+        scale_factor = target_h / char_pil.height
+        new_w = max(1, int(char_pil.width * scale_factor))
+        new_h = max(1, int(char_pil.height * scale_factor))
+        char_pil = char_pil.resize((new_w, new_h), Image.LANCZOS)
+    px = cx - char_pil.width // 2
+    py = cy - char_pil.height // 2
+    img_rgba = img.convert("RGBA")
+    img_rgba.paste(char_pil, (px, py), char_pil)
+    img.paste(img_rgba.convert("RGB"))
+
+
+# ── Byte Character (foreground, medium scale — canonical import) ──────────────
 
 def draw_byte_character(img):
     """Byte — medium scale, foreground, confident in native environment.
-    Byte is the GL's friendly face: teal body, expressive asymmetric eyes,
-    small crown spike. Placed center-left, facing right."""
-    draw = ImageDraw.Draw(img)
-
+    Uses canonical char_byte.draw_byte() renderer.
+    Placed center-left, facing right."""
     bx = int(W * 0.38)
     by = int(H * 0.52)
     br = 38  # medium scale — this is Byte's home
@@ -313,66 +333,28 @@ def draw_byte_character(img):
     img_rgba = img.convert("RGBA")
     img_rgba = Image.alpha_composite(img_rgba, glow_blurred)
     img.paste(img_rgba.convert("RGB"))
+
+    # Render via canonical module — neutral/confident expression
+    surface = draw_byte(expression="neutral", scale=0.9, facing="right",
+                        scene_lighting={"tint": UV_PURPLE[:3], "intensity": 0.10})
+    char_pil = _cairo_to_pil_cropped(surface)
+    # Target height ~100px to match medium foreground scale (br=38)
+    _paste_character(img, char_pil, bx, by, target_h=100)
     draw = ImageDraw.Draw(img)
-
-    # Body: diamond silhouette
-    pts = diamond_pts(bx, by, br, br)
-    sh_pts = [(x + 3, y + 4) for x, y in pts]
-    draw.polygon(sh_pts, fill=UV_PURPLE_DARK)  # shadow
-    draw.polygon(pts, fill=BYTE_TEAL)
-    draw.polygon(pts, outline=VOID_BLACK, width=3)
-
-    # Highlight facet (top-left: ambient UV light catch)
-    top, right, bot, left = pts
-    ctr = (bx, by - br // 4)
-    mid_tl = ((top[0] + left[0]) // 2, (top[1] + left[1]) // 2)
-    draw.polygon([top, ctr, mid_tl], fill=ELEC_CYAN)
-
-    # Eyes — asymmetric (Byte canonical: left=organic ELEC_CYAN, right=cracked HOT_MAG)
-    cell = 5
-    leye_x = bx - 12
-    leye_y = by - 8
-    reye_x = bx + 5
-    reye_y = by - 8
-
-    # Left eye: 3x3 pixel grid, organic pupil
-    draw.rectangle([leye_x, leye_y, leye_x + cell * 3, leye_y + cell * 3], fill=VOID_BLACK)
-    draw.rectangle([leye_x + cell, leye_y, leye_x + cell * 2, leye_y + cell * 2], fill=ELEC_CYAN)
-    draw.rectangle([leye_x, leye_y + cell, leye_x + cell, leye_y + cell * 2], fill=ELEC_CYAN)
-
-    # Right eye: 3x3 pixel grid, cracked pupil
-    draw.rectangle([reye_x, reye_y, reye_x + cell * 3, reye_y + cell * 3], fill=VOID_BLACK)
-    draw.rectangle([reye_x + cell, reye_y + cell, reye_x + cell * 2, reye_y + cell * 2], fill=HOT_MAG)
-
-    # Mouth — small, content/confident
-    draw.line([(bx - 6, by + 10), (bx + 6, by + 10)], fill=VOID_BLACK, width=2)
-    draw.line([(bx + 6, by + 10), (bx + 9, by + 7)], fill=ELEC_CYAN, width=1)
-
-    # Crown spike
-    draw.polygon([
-        (bx - 5, by - br),
-        (bx + 5, by - br),
-        (bx, by - br - 14),
-    ], fill=BYTE_TEAL, outline=VOID_BLACK, width=2)
-
-    # Small antenna tip glow
-    draw.ellipse([bx - 2, by - br - 18, bx + 2, by - br - 14], fill=ELEC_CYAN)
 
     return draw
 
 
-# ── Glitch Character (background, smaller — watchful looming presence) ──────
+# ── Glitch Character (background, smaller — canonical import) ────────────────
 
 def draw_glitch_background(img):
     """Glitch — background, smaller, lurking in the purple darkness.
+    Uses canonical char_glitch.draw_glitch() renderer.
     Positioned right of center, elevated on a far platform.
-    ACID_GREEN eyes visible — watchful, predatory. COVETOUS undertones."""
-    draw = ImageDraw.Draw(img)
-
+    COVETOUS expression — watchful, predatory."""
     gx = int(W * 0.72)
     gy = int(H * 0.38)
     rx = 28  # smaller — background scale
-    ry = 34
 
     # Faint UV_PURPLE shadow halo (Glitch merges with the void)
     glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
@@ -388,54 +370,19 @@ def draw_glitch_background(img):
     img_rgba = img.convert("RGBA")
     img_rgba = Image.alpha_composite(img_rgba, glow_blurred)
     img.paste(img_rgba.convert("RGB"))
-    draw = ImageDraw.Draw(img)
 
-    # Body: diamond silhouette
-    pts = diamond_pts(gx, gy, rx, ry)
-    sh_pts = [(x + 2, y + 3) for x, y in pts]
-    draw.polygon(sh_pts, fill=UV_PURPLE_DARK)
-    draw.polygon(pts, fill=CORRUPT_AMB)
-    draw.polygon(pts, outline=VOID_BLACK, width=2)
+    # Render via canonical module — covetous expression, small background scale
+    surface = draw_glitch(expression="covetous", scale=0.8, facing="left",
+                          scene_lighting={"tint": UV_PURPLE[:3], "intensity": 0.20})
+    char_pil = _cairo_to_pil_cropped(surface)
+    # Target height ~90px to match background scale (rx=28, ry=34)
+    _paste_character(img, char_pil, gx, gy, target_h=90)
 
-    # Highlight facet
-    top, right, bot, left = pts
-    ctr = (gx, gy - ry // 4)
-    mid_tl = ((top[0] + left[0]) // 2, (top[1] + left[1]) // 2)
-    draw.polygon([top, ctr, mid_tl], fill=CORRUPT_AMB_SH)
-
-    # HOT_MAG crack (G004-style: crack after fill)
-    cs = (gx - rx // 2, gy - ry // 3)
-    ce = (gx + rx // 3, gy + ry // 2)
-    draw.line([cs, ce], fill=HOT_MAG, width=2)
-
-    # ACID_GREEN bilateral slit eyes — glowing in the dark
-    cell = 4
-    leye_x = gx - rx // 2 - 2
-    leye_y = gy - 6
-    reye_x = gx + rx // 2 - cell * 3 + 2
-    reye_y = gy - 6
-
-    for ex, ey in [(leye_x, leye_y), (reye_x, reye_y)]:
-        glyph = [[5, 5, 5], [0, 5, 0], [0, 0, 0]]
-        for row in range(3):
-            for col in range(3):
-                if glyph[row][col] == 5:
-                    px = ex + col * cell
-                    py = ey + row * cell
-                    draw.rectangle([px, py, px + cell - 1, py + cell - 1], fill=ACID_GREEN)
-
-    # Top spike
-    draw.polygon([
-        (gx - 4, gy - ry),
-        (gx + 4, gy - ry),
-        (gx, gy - ry - 10),
-    ], fill=CORRUPT_AMB, outline=VOID_BLACK, width=2)
-
-    # ACID_GREEN eye glow spill
+    # ACID_GREEN eye glow spill (scene-specific overlay)
     eye_glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     egdraw = ImageDraw.Draw(eye_glow)
-    for ecx in [leye_x + cell, reye_x + cell]:
-        ecy = leye_y + cell
+    for ecx in [gx - 8, gx + 8]:
+        ecy = gy - 4
         for r in range(18, 3, -3):
             alpha = int(14 * (1 - r / 18))
             egdraw.ellipse([ecx - r, ecy - r, ecx + r, ecy + r],

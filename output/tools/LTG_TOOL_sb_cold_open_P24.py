@@ -278,6 +278,7 @@ def draw_luma(draw, img, luma_cx, luma_floor_y, body_h):
         new_w = int(new_h * aspect)
         char_pil = char_pil.resize((new_w, new_h), Image.LANCZOS)
     _composite_char(img, char_pil, luma_cx, luma_floor_y - char_pil.height // 2)
+    return ImageDraw.Draw(img)
 
 
 def draw_byte_on_shoulder(draw, img, byte_cx, byte_cy, body_h):
@@ -291,6 +292,7 @@ def draw_byte_on_shoulder(draw, img, byte_cx, byte_cy, body_h):
         new_w = int(new_h * aspect)
         char_pil = char_pil.resize((new_w, new_h), Image.LANCZOS)
     _composite_char(img, char_pil, byte_cx, byte_cy)
+    return ImageDraw.Draw(img)
 
 
 def draw_glitchkin_swarm(draw, img):
@@ -309,6 +311,7 @@ def draw_glitchkin_swarm(draw, img):
             new_w = int(target_h * aspect)
             char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
         _composite_char(img, char_pil, sx, sy)
+    return ImageDraw.Draw(img)
 
 
 def draw_scene(img):

@@ -192,7 +192,8 @@ def _composite_char(base_img, char_pil, cx, cy):
     base_img.paste(result.convert('RGB'))
 
 def draw_glitch(draw, cx, cy, rx=34, ry=38, tilt_deg=12,
-                expression="covetous", facing="front"):
+                expression="covetous", facing="front",
+                spike_h=12, arm_l_dy=0, arm_r_dy=0, scale=1.0, **kwargs):
     """Glitch — canonical renderer."""
     scale = ry / 38.0
     surface = _draw_glitch_canonical(expression=expression, scale=scale, facing=facing)

@@ -509,345 +509,99 @@ def draw_couch(draw, luma_cx, luma_base_y):
               fill=SOFT_GOLD, width=sp(4))
 
 
-def draw_luma_body_scenelit(draw, luma_cx, luma_base_y, facing_monitor_x, crt_cx):
-    """
-    SCENE-LIT VERSION: Body shading derived from CRT position.
+def render_luma_for_scenelit(img, luma_cx, luma_base_y):
+    """Render Luma via canonical char_luma module for scene-lit prototype.
 
-    Key difference from original: the torso gradient direction is computed from
-    the CRT position, not baked as left-to-right. The CRT-facing side receives
-    cyan tinting, the away side receives warm shadow.
+    Returns (updated img, geometry dict with head_cx/cy, hand_cx/cy, torso_top, head_r).
     """
-    luma_x = luma_cx
-    y_base = luma_base_y
+    target_h = sp(430)  # matches original body+head height
+
+    surface = _canonical_draw_luma(
+        expression="SURPRISED",
+        scale=2.0,
+        facing="right",
+        scene_lighting={"key_light_color": SCENE_COOL_TINT,
+                        "key_light_dir": "right",
+                        "ambient": SCENE_WARM_TINT},
+    )
+    char_img = _luma_to_pil(surface)
+
+    bbox = char_img.getbbox()
+    if bbox is None:
+        return img, {"head_cx": luma_cx, "head_cy": luma_base_y - target_h // 2,
+                     "hand_cx": luma_cx + sp(80), "hand_cy": luma_base_y - sp(200),
+                     "torso_top": luma_base_y - sp(260), "torso_half_w": sp(44),
+                     "head_r": sp(48)}
+    trimmed = char_img.crop(bbox)
+    orig_w, orig_h = trimmed.size
+
+    scale_factor = target_h / orig_h
+    new_w = max(1, int(orig_w * scale_factor))
+    new_h = target_h
+    resized = trimmed.resize((new_w, new_h), Image.LANCZOS)
+
+    # Paste onto scene — feet at luma_base_y, centered at luma_cx
+    canvas = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    paste_x = luma_cx - new_w // 2
+    paste_y = luma_base_y - new_h
+    canvas.paste(resized, (paste_x, paste_y), resized)
+
+    base_rgba = img.convert("RGBA")
+    base_rgba = Image.alpha_composite(base_rgba, canvas)
+    img = base_rgba.convert("RGB")
+
+    # Estimate geometry for lighting passes
+    head_r = int(new_h * 0.11)
     lean_offset = sp(44)
+    head_cx = luma_cx + int(new_w * 0.08)
+    head_cy = paste_y + int(new_h * 0.18)
+    hand_cx = luma_cx + int(new_w * 0.45)
+    hand_cy = paste_y + int(new_h * 0.42)
+    torso_top = paste_y + int(new_h * 0.28)
 
-    # Jeans — also scene-lit: CRT side slightly brighter
-    jeans_crt = blend_color(JEANS, SCENE_COOL_TINT, 0.08)
-    jeans_shadow = blend_color(JEANS_SH, SCENE_WARM_TINT, 0.05)
-
-    draw.polygon([
-        (luma_x - sp(48), y_base), (luma_x - sp(20), y_base),
-        (luma_x - sp(15), y_base - sp(90)), (luma_x - sp(50), y_base - sp(88)),
-    ], fill=jeans_shadow)  # Away-side leg in warm shadow
-    draw.polygon([
-        (luma_x + sp(14), y_base), (luma_x + sp(44), y_base - sp(4)),
-        (luma_x + sp(46), y_base - sp(84)), (luma_x + sp(12), y_base - sp(86)),
-    ], fill=jeans_crt)  # CRT-side leg brighter
-    draw.polygon([
-        (luma_x - sp(50), y_base - sp(88)), (luma_x - sp(48), y_base),
-        (luma_x - sp(34), y_base - sp(2)), (luma_x - sp(32), y_base - sp(86)),
-    ], fill=JEANS_SH)
-
-    # Shoes
-    draw.rectangle([luma_x - sp(60), y_base - sp(10), luma_x - sp(8), y_base + sp(22)], fill=WARM_CREAM)
-    draw.rectangle([luma_x - sp(62), y_base + sp(16), luma_x - sp(6), y_base + sp(26)], fill=DEEP_COCOA)
-    draw.rectangle([luma_x + sp(2), y_base - sp(10), luma_x + sp(58), y_base + sp(20)], fill=WARM_CREAM)
-    draw.rectangle([luma_x, y_base + sp(16), luma_x + sp(60), y_base + sp(26)], fill=DEEP_COCOA)
-
-    # SCENE-LIT TORSO: gradient direction derived from CRT position
-    torso_top = y_base - sp(260)
-    torso_bot = y_base - sp(90)
-    torso_half_w = sp(44)
-
-    # CRT is to the right of Luma — light_dir_x = +1.0
-    # (CRT-facing side gets cyan tint, away side gets warm shadow)
-    for row in range(torso_bot, torso_top, -1):
-        t_y = (torso_bot - row) / max(1, torso_bot - torso_top)
-        row_lean = int(lean_offset * t_y)
-        x_left  = luma_x - torso_half_w + row_lean
-        x_right = luma_x + torso_half_w + row_lean
-        width   = x_right - x_left
-        for col in range(x_left, x_right + 1):
-            t_x = (col - x_left) / max(1, width)  # 0=left edge, 1=right edge
-            # Map to -1..+1 for scene_tinted_hoodie
-            t_scene = t_x * 2.0 - 1.0  # -1=away from CRT, +1=facing CRT
-            hoodie_col = scene_tinted_hoodie(t_scene, light_dir_x=1.0)
-            draw.point((col, row), fill=hoodie_col)
-
-    draw.polygon([
-        (luma_x - torso_half_w, torso_bot - sp(8)), (luma_x - torso_half_w, torso_bot),
-        (luma_x + torso_half_w, torso_bot), (luma_x + torso_half_w, torso_bot - sp(8)),
-    ], fill=HOODIE_AMBIENT)
-
-    # Hoodie pixel pattern (C38)
-    rng_px = random.Random(55)
-    for i in range(12):
-        ppx = luma_x - torso_half_w + lean_offset + rng_px.randint(sp(2), torso_half_w * 2 - sp(6))
-        ppy = torso_top + rng_px.randint(sp(4), sp(50))
-        pps = rng_px.choice([sp(4), sp(6), sp(8)])
-        col_choices = [ELEC_CYAN, BYTE_TEAL, (0, 200, 220), (0, 240, 240)]
-        draw.rectangle([ppx, ppy, ppx + pps, ppy + pps], fill=rng_px.choice(col_choices))
-
-    head_cx = luma_x + lean_offset
-    head_cy = torso_top - sp(70)
-    draw.rectangle([head_cx - sp(6), torso_top, head_cx + sp(6), torso_top + sp(30)], fill=HOODIE_ORANGE)
-
-    for row in range(torso_top + sp(2), head_cy + sp(60)):
-        t_n = (row - (torso_top + sp(2))) / max(1, (head_cy + sp(60)) - (torso_top + sp(2)))
-        draw.line([(luma_x - sp(18) + int(t_n * sp(4)), row),
-                   (luma_x + sp(18) + int(t_n * sp(4)), row)], fill=HOODIE_ORANGE, width=1)
-
-    # Reaching arm (C38)
-    arm_shoulder_x = luma_x - sp(10) + lean_offset
-    arm_shoulder_y = torso_top + sp(25)
-    arm_target_x = facing_monitor_x - sp(10)
-    arm_target_y = torso_top + sp(45)
-    elbow_x = (arm_shoulder_x + arm_target_x) // 2 + sp(16)
-    elbow_y = arm_shoulder_y - sp(32)
-
-    # Scene-lit arm: CRT-facing segments get cyan tint
-    arm_color_crt = blend_color(CYAN_SKIN, SCENE_COOL_TINT, 0.20)
-    for seg in [(arm_shoulder_x, arm_shoulder_y, elbow_x, elbow_y),
-                (elbow_x, elbow_y, arm_target_x, arm_target_y)]:
-        draw.line([seg[:2], seg[2:]], fill=arm_color_crt, width=sp(18))
-
-    hand_cx = arm_target_x
-    hand_cy = arm_target_y
-    draw.ellipse([hand_cx - sp(14), hand_cy - sp(10), hand_cx + sp(14), hand_cy + sp(18)],
-                 fill=arm_color_crt)
-
-    finger_offsets = [(-sp(12), -sp(20)), (-sp(6), -sp(24)), (sp(2), -sp(24)), (sp(10), -sp(20))]
-    for fdx, fdy in finger_offsets:
-        draw.line([(hand_cx + fdx // 2, hand_cy - sp(4)),
-                   (hand_cx + fdx, hand_cy + fdy)],
-                  fill=arm_color_crt, width=sp(6))
-    draw.line([(hand_cx - sp(12), hand_cy + sp(6)),
-               (hand_cx - sp(22), hand_cy - sp(4))],
-              fill=arm_color_crt, width=sp(6))
-    draw.ellipse([hand_cx - sp(10), hand_cy - sp(10), hand_cx + sp(10), hand_cy + sp(10)],
-                 outline=(0, 180, 200), width=sp(2))
-
-    # CRT glow on palm — stronger in scene-lit version
-    rng_palm = random.Random(91)
-    for _ in range(8):
-        px_g = hand_cx + rng_palm.randint(-sp(14), sp(14))
-        py_g = hand_cy + rng_palm.randint(-sp(10), sp(6))
-        ps_g = rng_palm.choice([2, 3, 4])
-        draw.rectangle([px_g, py_g, px_g + ps_g, py_g + ps_g],
-                       fill=rng_palm.choice([ELEC_CYAN, (180, 240, 255), BYTE_TEAL]))
-
-    return {
+    return img, {
         "head_cx": head_cx, "head_cy": head_cy,
         "hand_cx": hand_cx, "hand_cy": hand_cy,
         "torso_top": torso_top,
-        "torso_half_w": torso_half_w,
+        "torso_half_w": sp(44),
+        "head_r": head_r,
     }
 
 
-def draw_luma_head_scenelit(img, draw, cx, cy, scale, byte_cx_target, byte_cy_target=None):
+def render_byte_for_scenelit(img, emerge_cx, emerge_cy, emerge_rx, emerge_ry,
+                             luma_hand_x, luma_hand_y):
+    """Render Byte via canonical char_byte module for scene-lit prototype.
+
+    Returns updated img with Byte composited.
     """
-    SCENE-LIT VERSION: Head with scene-colored skin shading.
+    target_h = int(emerge_ry * 2 + sp(20))
 
-    Key difference: skin gradient uses scene_tinted_skin() which blends
-    the character's base skin with CRT cyan on the CRT-facing side and
-    warm lamp color on the away side.
-    """
-    def p(n): return int(n * scale * min(SX, SY))
-    head_r = p(72)
+    surface = _canonical_draw_byte(
+        expression="searching",
+        scale=2.0,
+        facing="left",
+        scene_lighting={"tint": SCENE_COOL_TINT, "intensity": 0.25, "direction": "left"},
+    )
+    char_img = to_pil_rgba(surface)
 
-    # SCENE-LIT: Fill head with scene-responsive skin gradient
-    # CRT is to the RIGHT (+x direction), so light_dir_x=+1.0
-    for row in range(cy - head_r, cy + head_r):
-        t_y = (row - cy) / max(1, head_r)
-        rx_row = int(head_r * math.sqrt(max(0, 1 - t_y * t_y)))
-        if rx_row < 1:
-            continue
-        for col in range(cx - rx_row, cx + rx_row + 1):
-            t_x = (col - cx) / max(1, rx_row)  # -1 to +1
-            skin_col = scene_tinted_skin(t_x, light_dir_x=1.0)
-            draw.point((col, row), fill=skin_col)
+    bbox = char_img.getbbox()
+    if bbox is None:
+        return img
+    trimmed = char_img.crop(bbox)
+    orig_w, orig_h = trimmed.size
+    scale_factor = target_h / orig_h
+    new_w = max(1, int(orig_w * scale_factor))
+    new_h = target_h
+    resized = trimmed.resize((new_w, new_h), Image.LANCZOS)
 
-    # Wobble outline
-    num_pts = 20
-    head_pts = []
-    for i in range(num_pts):
-        angle = (2 * math.pi * i / num_pts) - math.pi / 2
-        hx = cx + head_r * math.cos(angle)
-        hy = cy + head_r * math.sin(angle)
-        head_pts.append((hx, hy))
-    wobble_polygon(draw, head_pts, color=LINE, width=sp(3),
-                   amplitude=sp(2), frequency=5, seed=101, fill=None)
+    canvas = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    paste_x = emerge_cx - new_w // 2
+    paste_y = emerge_cy - new_h // 2
+    canvas.paste(resized, (paste_x, paste_y), resized)
 
-    # Variable stroke arcs
-    for arc_i in range(8):
-        start_angle = (2 * math.pi * arc_i / 8) - math.pi / 2
-        end_angle   = (2 * math.pi * (arc_i + 1) / 8) - math.pi / 2
-        a_p1 = (cx + (head_r + sp(1)) * math.cos(start_angle),
-                cy + (head_r + sp(1)) * math.sin(start_angle))
-        a_p2 = (cx + (head_r + sp(1)) * math.cos(end_angle),
-                cy + (head_r + sp(1)) * math.sin(end_angle))
-        variable_stroke(img, a_p1, a_p2,
-                        max_width=sp(5), min_width=sp(1),
-                        color=LINE, seed=300 + arc_i)
-    draw = ImageDraw.Draw(img)
-
-    # Hair base
-    draw.chord([cx - head_r, cy - head_r + p(20), cx + head_r, cy + p(20)],
-               start=190, end=350, fill=HAIR_COLOR)
-    draw.arc([cx - head_r, cy - head_r + p(20), cx + head_r, cy + p(20)],
-             start=190, end=350, fill=LINE, width=p(4))
-
-    # Eyes (identical geometry to v006)
-    EYE_W_C = (242, 240, 248)
-    EYE_IRIS = (58, 32, 18)
-    EYE_PUP  = (20, 12, 8)
-
-    lex = cx + p(4)
-    ley = cy - p(10)
-    ew  = int(head_r * 0.22)
-    leh = p(34)
-    draw.ellipse([lex - ew, ley - leh, lex + ew, ley + leh], fill=EYE_W_C, outline=LINE, width=sp(2))
-    iris_r = p(15)
-    draw.chord([lex - iris_r, ley - iris_r + p(2), lex + iris_r, ley + iris_r + p(2)],
-               start=15, end=345, fill=EYE_IRIS)
-    draw.ellipse([lex - p(9), ley - p(7), lex + p(9), ley + p(9)], fill=EYE_PUP)
-    # SCENE-LIT: Catch-light colored with CRT cyan (not generic white)
-    draw.ellipse([lex + p(2), ley - p(10), lex + p(10), ley - p(2)],
-                 fill=(180, 255, 255))  # cyan-tinted catch light
-    draw.arc([lex - ew, ley - leh, lex + ew, ley + leh], start=200, end=340, fill=LINE, width=p(4))
-
-    rex = cx + p(38)
-    rey = cy - p(8)
-    reh = p(22)
-    draw.ellipse([rex - ew, rey - reh, rex + ew, rey + reh], fill=EYE_W_C, outline=LINE, width=sp(2))
-    draw.chord([rex - iris_r, rey - iris_r + p(2), rex + iris_r, rey + iris_r + p(2)],
-               start=15, end=345, fill=EYE_IRIS)
-
-    # Pupil shift (C47)
-    mid_eye_x = (lex + rex) // 2
-    mid_eye_y = (ley + rey) // 2
-    _byte_cy = byte_cy_target if byte_cy_target is not None else mid_eye_y
-    aim_dx = byte_cx_target - mid_eye_x
-    aim_dy = _byte_cy - mid_eye_y
-    aim_dist = max(1, (aim_dx**2 + aim_dy**2) ** 0.5)
-    pupil_mag = p(8)
-    pupil_shift_x = int(pupil_mag * aim_dx / aim_dist)
-    pupil_shift_y = int(pupil_mag * aim_dy / aim_dist)
-    draw.ellipse([rex - p(9) + pupil_shift_x, rey - p(7) + pupil_shift_y,
-                  rex + p(9) + pupil_shift_x, rey + p(9) + pupil_shift_y], fill=EYE_PUP)
-    draw.ellipse([rex + p(2) + pupil_shift_x, rey - p(10) + pupil_shift_y,
-                  rex + p(10) + pupil_shift_x, rey - p(2) + pupil_shift_y],
-                 fill=(180, 255, 255))  # cyan catch-light
-    draw.arc([rex - ew, rey - reh, rex + ew, rey + reh], start=200, end=340, fill=LINE, width=p(4))
-    draw.ellipse([lex - p(9) + pupil_shift_x, ley - p(7) + pupil_shift_y,
-                  lex + p(9) + pupil_shift_x, ley + p(9) + pupil_shift_y], fill=EYE_PUP)
-
-    # Brows (C38)
-    l_brow = [
-        (lex - p(30), ley - p(54)),
-        (lex - p(5),  ley - p(62)),
-        (lex + p(22), ley - p(46)),
-    ]
-    draw.line(l_brow, fill=HAIR_COLOR, width=p(6))
-
-    r_brow = [
-        (rex - p(22), rey - p(38)),
-        (rex - p(5),  rey - p(34)),
-        (rex + p(26), rey - p(26)),
-    ]
-    draw.line(r_brow, fill=HAIR_COLOR, width=p(5))
-
-    # Nose
-    draw.ellipse([cx - p(8) + p(4), cy + p(8), cx - p(2) + p(4), cy + p(14)], fill=SKIN_SH)
-    draw.ellipse([cx + p(2) + p(4), cy + p(8), cx + p(8) + p(4), cy + p(14)], fill=SKIN_SH)
-
-    # Mouth (C38)
-    m_off = p(2)
-    draw.arc([cx - p(34) + m_off, cy + p(18), cx + p(34) + m_off, cy + p(52)],
-             start=8, end=172, fill=LINE, width=p(3))
-    draw.chord([cx - p(30) + m_off, cy + p(22), cx + p(30) + m_off, cy + p(48)],
-               start=10, end=170, fill=(240, 212, 190))
-    draw.line([(cx - p(10) + m_off, cy + p(34)), (cx + p(10) + m_off, cy + p(34))],
-              fill=(160, 100, 60), width=p(1))
-
-    # Blush
-    blush_layer = Image.new("RGBA", img.size, (0, 0, 0, 0))
-    blush_draw  = ImageDraw.Draw(blush_layer)
-    blush_draw.ellipse([cx - head_r + p(6), cy + p(4), cx - head_r + p(62), cy + p(40)],
-                       fill=(*BLUSH_LEFT, 80))
-    blush_draw.ellipse([cx + head_r - p(62), cy + p(4), cx + head_r - p(6), cy + p(40)],
-                       fill=(*BLUSH_RIGHT, 80))
     base_rgba = img.convert("RGBA")
-    base_rgba = Image.alpha_composite(base_rgba, blush_layer)
-    img.paste(base_rgba.convert("RGB"))
-    draw = ImageDraw.Draw(img)
-
-    # Hair strands (C38)
-    draw.arc([cx - p(60), cy - p(195), cx - p(10), cy - p(140)],
-             start=30, end=200, fill=HAIR_COLOR, width=p(8))
-    draw.arc([cx, cy - p(185), cx + p(70), cy - p(115)],
-             start=330, end=185, fill=HAIR_COLOR, width=p(7))
-    draw.arc([cx - p(20), cy - p(205), cx + p(20), cy - p(155)],
-             start=225, end=355, fill=HAIR_COLOR, width=p(6))
-    draw.arc([cx + p(18), cy - p(170), cx + p(68), cy - p(125)],
-             start=290, end=135, fill=HAIR_COLOR, width=p(4))
-
-    # SCENE-LIT: Hair edge highlight from CRT — cyan fringe on CRT-facing hair edge
-    # This is the key "not a cutout" detail from the references
-    draw.arc([cx + p(10), cy - p(180), cx + p(74), cy - p(120)],
-             start=310, end=160, fill=(0, 180, 200), width=p(2))
-
-    # Collar
-    collar_offset = p(6)
-    draw.ellipse([cx - p(90) + collar_offset, cy + head_r + p(10),
-                  cx + p(90) + collar_offset, cy + head_r + p(80)], fill=HOODIE_ORANGE)
-    draw.arc([cx - p(90) + collar_offset, cy + head_r + p(10),
-              cx + p(90) + collar_offset, cy + head_r + p(80)],
-             start=180, end=360, fill=LINE, width=p(3))
-
-    return draw, head_r
-
-
-def draw_byte(draw, emerge_cx, emerge_cy, emerge_rx, emerge_ry, luma_hand_x, luma_hand_y):
-    """Byte drawing — identical to original SF01 for prototype."""
-    draw.ellipse([emerge_cx - emerge_rx, emerge_cy - emerge_ry,
-                  emerge_cx + emerge_rx, emerge_cy + emerge_ry],
-                 fill=BYTE_TEAL, outline=ELEC_CYAN, width=sp(3))
-
-    eye_cx = emerge_cx
-    eye_cy = emerge_cy - int(emerge_ry * 0.10)
-    eye_rx = int(emerge_rx * 0.45)
-    eye_ry = int(emerge_ry * 0.35)
-    draw.ellipse([eye_cx - eye_rx, eye_cy - eye_ry, eye_cx + eye_rx, eye_cy + eye_ry],
-                 fill=STATIC_WHITE, outline=LINE, width=sp(2))
-    pupil_r = int(min(eye_rx, eye_ry) * 0.55)
-    draw.ellipse([eye_cx - pupil_r, eye_cy - pupil_r,
-                  eye_cx + pupil_r, eye_cy + pupil_r], fill=VOID_BLACK)
-
-    # Pupil aimed at Luma's hand
-    aim_dx = luma_hand_x - eye_cx
-    aim_dy = luma_hand_y - eye_cy
-    aim_dist = max(1, (aim_dx**2 + aim_dy**2)**0.5)
-    p_shift = int(pupil_r * 0.4)
-    px_s = int(p_shift * aim_dx / aim_dist)
-    py_s = int(p_shift * aim_dy / aim_dist)
-    hl_r = max(2, int(pupil_r * 0.35))
-    draw.ellipse([eye_cx + px_s - hl_r, eye_cy + py_s - hl_r,
-                  eye_cx + px_s + hl_r, eye_cy + py_s + hl_r], fill=ELEC_CYAN)
-
-    # Scar
-    scar_y = emerge_cy + int(emerge_ry * 0.30)
-    draw.line([(emerge_cx - sp(15), scar_y - sp(3)),
-               (emerge_cx + sp(12), scar_y + sp(6))],
-              fill=SCAR_MAG, width=sp(3))
-
-    # Antenna
-    ant_x = emerge_cx + int(emerge_rx * 0.20)
-    ant_y = emerge_cy - emerge_ry
-    draw.line([(ant_x, ant_y), (ant_x + sp(10), ant_y - sp(30))],
-              fill=BYTE_TEAL, width=sp(3))
-    draw.ellipse([ant_x + sp(6), ant_y - sp(38), ant_x + sp(16), ant_y - sp(28)],
-                 fill=ELEC_CYAN)
-
-    # Data particles
-    rng_p = random.Random(77)
-    for _ in range(18):
-        pdx = rng_p.randint(-int(emerge_rx * 1.6), int(emerge_rx * 1.6))
-        pdy = rng_p.randint(-int(emerge_ry * 1.6), int(emerge_ry * 1.6))
-        ps  = rng_p.choice([sp(2), sp(3), sp(4)])
-        pc  = rng_p.choice([ELEC_CYAN, BYTE_TEAL, (0, 200, 220)])
-        draw.rectangle([emerge_cx + pdx, emerge_cy + pdy,
-                       emerge_cx + pdx + ps, emerge_cy + pdy + ps], fill=pc)
+    base_rgba = Image.alpha_composite(base_rgba, canvas)
+    return base_rgba.convert("RGB")
 
 
 def draw_lighting_overlay_post_character(img, lamp_x, lamp_y, monitor_cx, monitor_cy):
