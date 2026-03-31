@@ -71,7 +71,7 @@ If a required tool does not exist in the open source ecosystem, build it in Pyth
 | `LTG_TOOL_char_byte.py` | Canonical Byte modular renderer (10 expressions, cairo, transparent ARGB surface) |
 | `LTG_TOOL_char_cosmo.py` | Canonical Cosmo modular renderer (7 expressions incl. OBSERVING, cairo, angular gesture spec, transparent ARGB surface) |
 | `LTG_TOOL_char_glitch.py` | Canonical Glitch modular renderer (9 expressions, cairo, transparent ARGB surface) |
-| `LTG_TOOL_char_luma.py` | Canonical Luma modular renderer (7 expressions incl. DOUBT-IN-CERTAINTY, cairo, pose_mode: side/front/threequarter/back) |
+| `LTG_TOOL_char_luma.py` | Canonical Luma modular renderer (7 expressions incl. DOUBT-IN-CERTAINTY, cairo, pose_mode: side/front/threequarter/side_l/back, true profile views, arm-torso seam fix) |
 | `LTG_TOOL_char_miri.py` | Canonical Grandma Miri modular renderer (6 expressions, cairo, transparent ARGB surface) |
 | `LTG_TOOL_char_module_test.py` | Modular character renderer integration test |
 
@@ -79,7 +79,7 @@ If a required tool does not exist in the open source ecosystem, build it in Pyth
 
 | Filename | Description |
 |---|---|
-| `LTG_TOOL_luma_turnaround.py` | Luma character turnaround sheet (v006: 5 true views — front/3q/side/side-L/back) |
+| `LTG_TOOL_luma_turnaround.py` | Luma character turnaround sheet (v007: 5 distinct native views — front/3q/side/side-L/back, no mirrors) |
 | `LTG_TOOL_cosmo_turnaround.py` | Cosmo character turnaround sheet |
 | `LTG_TOOL_miri_turnaround.py` | Grandma Miri character turnaround sheet |
 | `LTG_TOOL_glitch_turnaround.py` | Glitchkin character turnaround sheet |

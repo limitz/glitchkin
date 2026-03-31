@@ -6,22 +6,21 @@
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
 LTG_TOOL_luma_turnaround.py
-Luma — 5-View Character Turnaround v006
-"Luma & the Glitchkin" — Cycle 54 / Maya Santos
+Luma — 5-View Character Turnaround v007
+"Luma & the Glitchkin" — Cycle 55 / Maya Santos
 
-v006 UPDATE (C54 — True multi-view turnaround):
-  Uses char_luma.py v1.1.0 pose_mode parameter for genuine multi-view rendering.
-  All 5 views are now visually distinct — no darkened copies or mirror flips.
-  - FRONT: Full frontal, both eyes visible, symmetric near-symmetric body
-  - 3/4:   3/4 angle, near eye dominant, far eye foreshortened
-  - SIDE:  Side-facing view (canonical right-facing)
-  - SIDE-L: Mirror of side (left-facing)
-  - BACK:  Rear view, hair from behind, no face, hoodie back, feet visible
+v007 UPDATE (C55 — Human review fixes):
+  Uses char_luma.py v1.2.0. Addresses four issues from human review:
+  1. 3/4 view: face and legs now properly angled (fore/aft leg stagger, asymmetric head)
+  2. Side view: true profile (one eye, profile nose, fore/aft legs, no left-right spread)
+  3. Side-L: native left-facing pose rendered by _draw_luma_side_l() — NOT a mirror
+  4. Arms: shoulder_open=True in _draw_unified_arm suppresses seam where arm meets torso
 
-  Body connectivity fixes applied in char_luma.py v1.1.0:
-  - Legs now overlap into torso bottom (no gap at junction)
-  - Hip bridge shape unifies torso/leg boundary
-  - Arms drawn as unified silhouettes (single outline per arm)
+  - FRONT:  Full frontal, both eyes visible, symmetric near-symmetric body
+  - 3/4:    3/4 angle, near eye dominant, far eye foreshortened, fore/aft leg stagger
+  - SIDE:   True right-facing profile (one eye, profile nose, fore/aft legs)
+  - SIDE-L: Native left-facing distinct pose (weight shift, different arm read)
+  - BACK:   Rear view, hair from behind, no face, hoodie back, feet visible
 
 5 views: FRONT, 3/4, SIDE, SIDE-L, BACK
 Canvas: 1280x560 (within 1280px limit)
@@ -57,11 +56,12 @@ LABEL_COL = (59, 40, 32)
 SHADOW_COL = (210, 200, 185)
 
 # View spec: (pose_mode, facing) — all visually distinct
+# SIDE-L uses native pose_mode="side_l" — not a mirror flip.
 VIEW_SPEC = {
     "FRONT":  ("front",         "right"),
     "3/4":    ("threequarter",  "right"),
     "SIDE":   ("side",          "right"),
-    "SIDE-L": ("side",          "left"),
+    "SIDE-L": ("side_l",        "right"),   # native left-facing pose, not a mirror
     "BACK":   ("back",          "right"),
 }
 
@@ -131,8 +131,8 @@ def build_turnaround():
         font_label = font_title
         font_sub = font_title
 
-    title = "LUMA — Character Turnaround v006  |  Luma & the Glitchkin  |  Cycle 54 / Maya Santos"
-    sub = "v006: True multi-view (front/3q/side/back) via pose_mode — body connectivity fixes — 3.2 heads"
+    title = "LUMA — Character Turnaround v007  |  Luma & the Glitchkin  |  Cycle 55 / Maya Santos"
+    sub = "v007: True profiles — side/side-L native — 3/4 fore-aft legs — arm-torso seam fix — 3.2 heads"
     draw.text((14, 5), title, fill=LABEL_COL, font=font_title)
     draw.text((14, 26), sub, fill=(120, 100, 80), font=font_sub)
 
@@ -163,7 +163,7 @@ def main():
     img.save(out_path)
     print(f"Saved: {out_path}")
     print(f"  Size: {img.size[0]}x{img.size[1]}px")
-    print("  v006: 5 views (FRONT, 3/4, SIDE, SIDE-L, BACK) — all visually distinct")
+    print("  v007: 5 views (FRONT, 3/4, SIDE, SIDE-L, BACK) — all visually distinct, native renders")
 
 
 if __name__ == "__main__":

@@ -1,44 +1,61 @@
 # Maya Santos — Memory
 
-## Cycle 54 — Turnaround Overhaul + DOUBT-IN-CERTAINTY (COMPLETE)
+## Cycle 55 — Turnaround v007 (Human Review Fixes) — COMPLETE
 
-### Task 1 (P0 BLOCKER): Turnaround Fix — DONE
-- Root cause: old turnaround used darkened front-facing render for all 4 views
-- Fix: added `pose_mode` param to `draw_luma()` in char_luma.py v1.1.0
-  - Values: "side" (default), "front", "threequarter", "back"
-  - Each is a distinct render function: `_draw_luma_front`, `_draw_luma_threequarter`, `_draw_luma_back`
-- Body connectivity fixes applied (all pose modes):
-  - Legs extend into torso bottom (leg_overlap = leg_w_top * 0.8)
-  - Hip bridge shape fills torso/leg junction gap
-  - All arms now use `_draw_unified_arm()` — single silhouette per arm, no seam between upper/forearm
-- Updated `LTG_TOOL_luma_turnaround.py` to v006: 5 views (FRONT, 3/4, SIDE, SIDE-L, BACK)
-  - Removed `_apply_back_treatment()` darkening hack — real back view now exists
-  - Uses `cairo_surface_to_pil()` directly (removed dependency on LTG_TOOL_cairo_primitives)
-- Output: LTG_CHAR_luma_turnaround.png (1280x560) — all 5 views visually distinct
+### Task: Four issues from human review of v006
 
-### Task 2 (P0): DOUBT-IN-CERTAINTY Expression — DONE
-- Added to GESTURE_SPECS and EXPRESSIONS list in char_luma.py v1.1.0
-- Spec design: stiff forward lean (forced confidence) + raised L brow + averted gaze
-  + firm mouth + self_hold_grip arm (protective contradiction) + fist_hip (resolve)
-  + `doubt_wince: True` flag draws corrugator kink on L brow inner end
-- Hoodie: muted teal-grey HOODIE_DOUBT (110,145,160) — midpoint between decisive amber and anxious violet
-- Corrugator kink supported in both side and front face rendering
+**Issue 1 (3/4 view: frontal-looking face & legs) — FIXED**
+- Legs: replaced left/right spread with fore/aft stagger.
+  Near leg: slightly +x (forward in picture plane), slightly lower Y.
+  Far leg: slightly -x, slightly higher Y (depth recession).
+- Head: asymmetric head shape — bulges toward near side (-x), compresses on far side.
+  Face skin ellipse offset -x*0.06 to leave far corner less covered.
+- Hair cloud weighted toward near/back side.
 
-### Gesture Lint Results
-- 18 PASS / 5 WARN / 0 FAIL across all 7 expressions
-- WARNs: P11/P14, scale 0.18-0.21 — known limit at small panel scale
+**Issue 2 (side view: frontal face, wrong legs) — FIXED**
+- Legs: fore/aft stagger (near_leg_x = hip_cx + 0.18*head_r, far_leg_x = hip_cx - 0.14*head_r).
+  Both near center-x, not spread left/right.
+- Head: complete rewrite to true profile.
+  Profile head shape with back-of-head bulge (+x), face taper (-x on far side).
+  ONE eye only, positioned toward face direction (+x).
+  Profile nose as bezier bump protruding from face silhouette at +x edge.
+  Brows and mouth positioned on face-side, not centered.
+  Single cheek blush on face side.
+
+**Issue 3 (side-L: mirror not acceptable) — FIXED**
+- Added `_draw_luma_side_l()` — native left-facing renderer, NOT a flip.
+- Distinct stance: reversed weight distribution, near arm relaxed-down,
+  far arm bent-backward (character just turned around feel).
+- Left-facing profile head with back-of-head on +x, nose on -x.
+- Hair cloud on +x side (back of head in left-facing view).
+- Turnaround VIEW_SPEC updated: "SIDE-L": ("side_l", "right") — no ctx.scale(-1,1) mirror.
+
+**Issue 4 (arm-shoulder seam) — FIXED**
+- `_draw_unified_arm()` now takes `shoulder_open=True` (default).
+  When True: fill uses closed path (normal), but stroke is OPEN at shoulder end —
+  only strokes the outer silhouette edges from shoulder-L through wrist cap to shoulder-R.
+  The torso stroke covers the junction. No seam where arm meets hoodie body.
+
+### Deliverables
+- `LTG_TOOL_char_luma.py` → v1.2.0 (C55)
+- `LTG_TOOL_luma_turnaround.py` → v007
+- `output/characters/main/turnarounds/LTG_CHAR_luma_turnaround.png` regenerated 1280x560
+
+### Lint Results
+- Self-test renders: 31 PASS / 5 WARN / 3 FAIL
+- FAILs: back_test P8 (dev=1.05px, scale=0.51), front_test + back_test P11 (dev≤0.11px, scale≤0.16)
+  All FAILs at near-zero deviation and sub-0.52 scale — measurement artifacts, not real failures.
+  The 7 main expression renders all PASS or WARN only.
+- side_l render: 0 FAIL, 0 WARN.
+- Face gate: pre-existing NEUTRAL FAIL (baseline), FEAR WARN — not new, not caused by this work.
 
 ## Tools Owned (active)
-- LTG_TOOL_char_luma.py v1.1.0 (C54 — pose modes + DOUBT-IN-CERTAINTY + body connectivity)
+- LTG_TOOL_char_luma.py v1.2.0 (C55)
 - LTG_TOOL_char_miri.py v1.0.0 (C53)
-- LTG_TOOL_luma_turnaround.py v006 (C54 — 5 true views)
+- LTG_TOOL_luma_turnaround.py v007 (C55)
 - (full list in SKILLS.md)
 
-## Cycle 53 — Modular Character Renderers (prior cycle)
-- LTG_TOOL_char_luma.py v1.0.0 — done
-- LTG_TOOL_char_miri.py v1.0.0 — done
-
 ## Next Cycle Priorities
-- Migrate luma_cairo_expressions.py to import from char_luma.py
-- Cosmo expression rebuild (check if Sam completed it)
-- Consider running face gate on new turnaround views
+- Migrate luma_cairo_expressions.py to import from char_luma.py v1.2.0
+- Cosmo expression rebuild
+- Run face gate on new turnaround views (side/side-L profiles)

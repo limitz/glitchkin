@@ -9,7 +9,7 @@
 ## Tools Owned
 | Tool | File | Version | Notes |
 |---|---|---|---|
-| **Luma canonical renderer** | `LTG_TOOL_char_luma.py` | v1.1.0 | Modular `draw_luma()`, 7 expressions, pose_mode (front/3q/side/back), unified arm silhouette, leg-torso connectivity fix |
+| **Luma canonical renderer** | `LTG_TOOL_char_luma.py` | v1.2.0 | Modular `draw_luma()`, 7 expressions, pose_mode (front/3q/side/side_l/back), true profile views, arm-torso seam fix |
 | **Miri canonical renderer** | `LTG_TOOL_char_miri.py` | v1.0.0 | Modular `draw_miri()`, pycairo rebuild, 6 expressions |
 | Luma cairo expressions | `LTG_TOOL_luma_cairo_expressions.py` | v2.0.0 | 6-expression sheet, pycairo engine (superseded by char_luma) |
 | Luma expression sheet (legacy PIL) | `LTG_TOOL_luma_expression_sheet.py` | v014 | Superseded by cairo for Luma |
@@ -21,7 +21,7 @@
 | Glitch expression sheet | `LTG_TOOL_glitch_expression_sheet.py` | v003 | 9 expressions incl. interior desire |
 | Glitch body diagram | `LTG_TOOL_glitch_body_primitive_diagram_gen.py` | v001 | |
 | Character lineup | `LTG_TOOL_character_lineup.py` | v011 | Two-tier staging, Cosmo visual hook |
-| Luma turnaround | `LTG_TOOL_luma_turnaround.py` | v006 | 5 true views (front/3q/side/side-L/back), C54 |
+| Luma turnaround | `LTG_TOOL_luma_turnaround.py` | v007 | 5 distinct views (front/3q/side/side-L/back), C55, all native renders |
 | SF06 Miri-Luma handoff | `LTG_TOOL_sf_miri_luma_handoff.py` | C49 | Elder posture + shoulder displacement |
 | Multi-char face gate | `LTG_TOOL_multi_char_face_gate.py` | v1.0.0 | Exports `run_multi_char_face_gate()` |
 | Visual hook audit | `LTG_TOOL_visual_hook_audit.py` | v1.0.0 | |
@@ -102,6 +102,22 @@
 - All return ARGB32 transparent bg. `cairo_surface_to_pil()` for PIL conversion.
 - GESTURE_SPECS dict per character: offset chain values from Lee's specs
 - Miri: MIRI_BASE_LEAN = -4 adds to per-expression torso_lean. Never vertical.
+
+## Pose Mode Architecture (C55)
+- `pose_mode` param on `draw_luma()`: "side" | "front" | "threequarter" | "back" | "side_l"
+- **side_l**: native left-facing profile via `_draw_luma_side_l()`. NOT a ctx.scale(-1,1) mirror.
+  Uses reversed weight distribution, distinct arm poses, left-facing profile head.
+  Back of head is on +x side; nose bump protrudes at -x; eye at -head_rx*0.28.
+- **Arm-shoulder seam fix**: `_draw_unified_arm(..., shoulder_open=True)` (default True).
+  Fill is always a closed path. Stroke is open at shoulder end — only strokes the outer
+  silhouette edges. The torso lw_silhouette stroke covers the junction. No double outline.
+- **True profile side/side-L head**: uses custom point loop. Back of head: `rx += head_r*0.14 * back_f`
+  (back_f = cos(angle)^4 for right-facing). Face side: `rx -= head_r*0.06 * face_f` (face_f = cos(angle-pi)^8).
+  ONE eye, positioned toward face direction at +/-head_rx*0.28. Profile nose: bezier bump at face edge.
+- **3/4 leg stagger**: near_leg_x = hip_cx + 0.20*head_r, far_leg_x = hip_cx - 0.25*head_r.
+  Far foot gets extra +0.06*head_r lift. Far leg drawn first (behind). Both legs near center-x.
+- **Side view leg stagger**: near_leg_x = hip_cx + 0.18*head_r, far_leg_x = hip_cx - 0.14*head_r.
+  Both near center-x — NOT spread left/right (that's front view). Far foot extra lift = head_r*0.04.
 
 ## Pose Mode Architecture (C54)
 - `pose_mode` param on `draw_luma()`: "side" | "front" | "threequarter" | "back"
