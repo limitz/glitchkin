@@ -9,8 +9,9 @@
 ## Tools Owned
 | Tool | File | Version | Notes |
 |---|---|---|---|
-| **Luma canonical renderer** | `LTG_TOOL_char_luma.py` | v1.2.0 | Modular `draw_luma()`, 7 expressions, pose_mode (front/3q/side/side_l/back), true profile views, arm-torso seam fix |
+| **Luma canonical renderer** | `LTG_TOOL_char_luma.py` | v1.4.0 | Modular `draw_luma()`, 7 expressions, pose_mode (front/3q/side/side_l/back), kid shoulders, brow-ridge forehead, nose free-edge stroke, hair ear taper, face-neck blend |
 | **Miri canonical renderer** | `LTG_TOOL_char_miri.py` | v1.0.0 | Modular `draw_miri()`, pycairo rebuild, 6 expressions |
+| Luma canonical test sheet | `LTG_TOOL_luma_canonical_test.py` | v1.0.0 | 7-expr front-view sheet, uses draw_luma() modular API |
 | Luma cairo expressions | `LTG_TOOL_luma_cairo_expressions.py` | v2.0.0 | 6-expression sheet, pycairo engine (superseded by char_luma) |
 | Luma expression sheet (legacy PIL) | `LTG_TOOL_luma_expression_sheet.py` | v014 | Superseded by cairo for Luma |
 | Cosmo expression sheet | `LTG_TOOL_cosmo_expression_sheet.py` | v008 | Cowlick + tape + shoulders |
@@ -74,6 +75,13 @@
   — The `[1:]` on fore avoids duplicate elbow point
   — Wrist cap: `ctx.arc(all_pts[-1], w_wrist, 0, pi)` rounds the end
 
+## Profile Head Shape Rules (C61)
+- **Brow ridge**: Add `brow_f = cos(angle - (-pi/6))^12 * 0.06 * head_r` to rx in side-R head loop. For side-L use `cos(angle - (pi + pi/6))^12`. For 3/4 use `cos(angle - (-pi/5))^10 * 0.04`.
+- **Nose free-edge stroke**: Fill nose shape first with SKIN, then stroke ONLY the outer arc (not endpoints touching face). Do NOT use `fill_preserve()` + `stroke()` on a closed/full path — creates "stuck on" look.
+- **Face-neck blend**: Face skin overdraw must use ry=0.88 (side views) or ry=0.85 (front/3q) to cover neck_top_y at +0.95*head_r below head center. Without this a seam shows at chin.
+- **Kid shoulder width**: sh_w=0.75 front, 0.58 3q, 0.40 side/side_l, 0.75 back. Old values (0.95/0.70/0.50) read as adult — do NOT revert.
+- **Hair ear taper (C61)**: Side/side_l hair blobs near ear area (y=0.0 to +0.25, x near face-edge) must use decreasing radii (0.22→0.16→0.12) to taper smoothly. Don't have large blobs (r>0.25) near the face skin edge in the ear zone.
+
 ## Key Pitfalls / Gotchas
 - **squint_top_r**: Use BG overdraw + lid line, NOT r_open scaling (scales symmetrically = wince not squint). Pass `panel_bg` through render chain.
 - **THE NOTICING gaze**: `gaze_dx=-0.5` in EXPR_SPECS is fallback only. Rightward gaze lives in `_FACE_CURVES_OVERRIDES` (LI/RI_CENTER_dx: +6). Do NOT remove either.
@@ -120,11 +128,12 @@
 - **Side view leg stagger**: near_leg_x = hip_cx + 0.18*head_r, far_leg_x = hip_cx - 0.14*head_r.
   Both near center-x — NOT spread left/right (that's front view). Far foot extra lift = head_r*0.04.
 
-## Torso Foreshortening Ratios (C57)
-- Front view: sh_w=0.95*head_r, w_bot=0.62*head_r (reference)
-- 3/4 view:   sh_w=0.70*head_r, w_bot=0.48*head_r (~74% of front)
-- Side view:  sh_w=0.50*head_r, w_bot=0.40*head_r (~53% of front)
-- Side-L:     sh_w=0.50*head_r, w_bot=0.40*head_r (matches side — same angle)
+## Torso Foreshortening Ratios (C61 — kid proportions)
+- Front view: sh_w=0.75*head_r, w_bot=0.50*head_r (narrower — 12yo kid, not adult)
+- 3/4 view:   sh_w=0.58*head_r, w_bot proportional (~77% of front)
+- Side view:  sh_w=0.40*head_r (~53% of front)
+- Side-L:     sh_w=0.40*head_r (matches side — same angle)
+- Back view:  sh_w=0.75*head_r (matches front)
 - **Arms in side/3/4 must be inline (NOT `_draw_arms()`)**: the `_draw_arms()` dispatch
   uses offsets tuned for front view — they push hands up near head in profile views.
   Side and 3/4 arm code is written inline, same pattern as side-L.

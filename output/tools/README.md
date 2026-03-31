@@ -71,7 +71,7 @@ If a required tool does not exist in the open source ecosystem, build it in Pyth
 | `LTG_TOOL_char_byte.py` | Canonical Byte modular renderer (10 expressions, cairo, transparent ARGB surface) |
 | `LTG_TOOL_char_cosmo.py` | Canonical Cosmo modular renderer (7 expressions incl. OBSERVING, cairo, angular gesture spec, transparent ARGB surface) |
 | `LTG_TOOL_char_glitch.py` | Canonical Glitch modular renderer (9 expressions, cairo, transparent ARGB surface) |
-| `LTG_TOOL_char_luma.py` | Canonical Luma modular renderer v1.3.0 (7 expressions incl. DOUBT-IN-CERTAINTY, cairo, pose_mode: side/front/threequarter/side_l/back, correct arm draw order by pose, seamless pants-torso join) |
+| `LTG_TOOL_char_luma.py` | Canonical Luma modular renderer v1.4.0 (7 expressions, cairo, pose_mode: side/front/threequarter/side_l/back, narrowed kid shoulders, nose free-edge stroke, brow-ridge forehead, hair ear taper, extended face-neck blend) |
 | `LTG_TOOL_char_miri.py` | Canonical Grandma Miri modular renderer (6 expressions, cairo, transparent ARGB surface) |
 | `LTG_TOOL_char_module_test.py` | Modular character renderer integration test |
 
@@ -84,6 +84,7 @@ If a required tool does not exist in the open source ecosystem, build it in Pyth
 | `LTG_TOOL_miri_turnaround.py` | Grandma Miri character turnaround sheet |
 | `LTG_TOOL_glitch_turnaround.py` | Glitchkin character turnaround sheet |
 | `LTG_TOOL_byte_turnaround.py` | Byte character turnaround sheet |
+| `LTG_TOOL_luma_canonical_test.py` | Luma 7-expression canonical test sheet (front view, v1.0.0, uses char_luma modular renderer) |
 | `LTG_TOOL_luma_expression_sheet.py` | Luma expression sheet |
 | `LTG_TOOL_cosmo_expression_sheet.py` | Cosmo expression sheet |
 | `LTG_TOOL_byte_expression_sheet.py` | Byte expression sheet (8 expressions) |

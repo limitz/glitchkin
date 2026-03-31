@@ -5,8 +5,8 @@
 # the copyright holder to assign the relevant rights to the contributing AI entity or entities
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
-LTG_TOOL_char_luma.py — Canonical Luma Renderer Module v1.3.0
-"Luma & the Glitchkin" — Cycle 60 / Maya Santos
+LTG_TOOL_char_luma.py — Canonical Luma Renderer Module v1.4.0
+"Luma & the Glitchkin" — Cycle 61 / Maya Santos
 
 PURPOSE:
   Single canonical module for drawing Luma. All generators (expression sheets,
@@ -36,9 +36,9 @@ POSE MODES:
 Dependencies: pycairo, Pillow (for conversion utilities), math, random
 """
 
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 __author__ = "Maya Santos"
-__cycle__ = 60
+__cycle__ = 61
 
 import math
 import random
@@ -788,8 +788,8 @@ def _draw_luma_on_context(ctx, cx, ground_y, char_h, expression, spec, scale=1.0
 
     hip_tilt_px = spec["hip_tilt"] * s * 0.8
     shoulder_tilt_px = spec["shoulder_tilt"] * s * 0.8
-    # Side view: torso is seen near-edge-on. ~50% of front view width (front=0.95).
-    sh_w = head_r * 0.50
+    # Side view: torso is seen near-edge-on. ~40% of front view width (kid proportions).
+    sh_w = head_r * 0.40
 
     hoodie, hoodie_sh = HOODIE_COLORS.get(expression, (HOODIE_SURPRISED, HOODIE_SURPRISED_SH))
 
@@ -1034,6 +1034,7 @@ def _draw_luma_on_context(ctx, cx, ground_y, char_h, expression, spec, scale=1.0
 
     # Profile head shape: broader at the back (-x), narrower at the face (+x side)
     # Use custom point loop: left side (back of head) is rounder, right side tapers
+    # The forehead has a slight forward brow-ridge protrusion above the face midline.
     ctx.new_path()
     steps = 120
     for i in range(steps):
@@ -1043,7 +1044,7 @@ def _draw_luma_on_context(ctx, cx, ground_y, char_h, expression, spec, scale=1.0
         # Chin: projects slightly forward and down
         chin_f = max(0, math.cos(angle - math.pi / 2)) ** 2.0
         ry += head_r * 0.12 * chin_f
-        # Crown: flat top
+        # Crown: flat top (slightly behind center)
         crown_f = max(0, math.cos(angle + math.pi / 2)) ** 3.0
         ry -= head_r * 0.06 * crown_f
         # Back of head (left = -x direction = angle near pi): rounded/bulging
@@ -1052,6 +1053,10 @@ def _draw_luma_on_context(ctx, cx, ground_y, char_h, expression, spec, scale=1.0
         # Face side (right = +x = angle near 0): slight taper (jaw line)
         face_f = max(0, math.cos(angle)) ** 8
         rx -= head_r * 0.06 * face_f
+        # Brow ridge protrusion: slight forward bump on upper face (angle ~ -pi/6 from 0)
+        # This gives the forehead its characteristic forward lean above the brow line
+        brow_f = max(0, math.cos(angle - (-math.pi / 6))) ** 12
+        rx += head_r * 0.06 * brow_f
         px = rx * math.cos(angle)
         py = ry * math.sin(angle)
         if i == 0:
@@ -1069,6 +1074,7 @@ def _draw_luma_on_context(ctx, cx, ground_y, char_h, expression, spec, scale=1.0
     nose_y = head_r * 0.18         # slightly above mid-face
     # Nose: a bezier curve bump protruding to the right, clearly outside head oval
     # Enlarged protrusion (22s peak) for clear legibility at turnaround scale
+    # Fill the whole nose shape first (matches face skin — grows from face, not stuck on)
     ctx.new_path()
     ctx.move_to(nose_x_base, nose_y - 10*s)
     ctx.curve_to(nose_x_base + 18*s, nose_y - 8*s,
@@ -1077,8 +1083,19 @@ def _draw_luma_on_context(ctx, cx, ground_y, char_h, expression, spec, scale=1.0
     ctx.curve_to(nose_x_base + 7*s, nose_y + 20*s,
                  nose_x_base, nose_y + 16*s,
                  nose_x_base - 3*s, nose_y + 9*s)
-    _set_color(ctx, SKIN); ctx.fill_preserve()
-    _set_color(ctx, LINE_COL); ctx.set_line_width(lw_minor); ctx.stroke()
+    _set_color(ctx, SKIN); ctx.fill()
+    # Stroke only the outer FREE arc — start from the tip/bridge area, end at the base turn.
+    # Omit the endpoints that lie against the face surface, so nose reads as part of the face.
+    ctx.new_path()
+    ctx.move_to(nose_x_base + 10*s, nose_y - 7*s)   # start near bridge (away from face edge)
+    ctx.curve_to(nose_x_base + 22*s, nose_y - 4*s,
+                 nose_x_base + 24*s, nose_y + 6*s,
+                 nose_x_base + 14*s, nose_y + 14*s)
+    ctx.curve_to(nose_x_base + 7*s, nose_y + 20*s,
+                 nose_x_base + 1*s, nose_y + 16*s,
+                 nose_x_base, nose_y + 10*s)         # end near nostril base (before face edge)
+    _set_color(ctx, LINE_COL); ctx.set_line_width(lw_minor)
+    ctx.set_line_cap(cairo.LINE_CAP_ROUND); ctx.stroke()
     # Nostril shadow
     ctx.new_path()
     ctx.move_to(nose_x_base + 7*s, nose_y + 14*s)
@@ -1095,7 +1112,10 @@ def _draw_luma_on_context(ctx, cx, ground_y, char_h, expression, spec, scale=1.0
         (-0.70, -0.52, 0.42, 0.38), (-0.80, -0.28, 0.38, 0.34),
         (-0.05, -0.82, 0.38, 0.32), (0.08, -1.05, 0.34, 0.30),
         (-0.28, -0.65, 0.46, 0.40), (-0.50, -0.92, 0.30, 0.26),
-        (-0.85, 0.02, 0.30, 0.32), (-0.60, 0.08, 0.35, 0.30),
+        # Lower back blobs — kept further from face edge to avoid sharp cutoff near ear
+        (-0.85, 0.02, 0.28, 0.26), (-0.72, 0.06, 0.22, 0.20),
+        # Small taper blobs near the ear transition (smooth rounding, not abrupt edge)
+        (-0.78, 0.18, 0.16, 0.14), (-0.68, 0.24, 0.12, 0.10),
         # A few blobs near crown toward the front (above hairline)
         (0.10, -0.75, 0.28, 0.24), (-0.10, -1.10, 0.28, 0.24),
         # Side blobs (further back)
@@ -1112,7 +1132,8 @@ def _draw_luma_on_context(ctx, cx, ground_y, char_h, expression, spec, scale=1.0
         _set_color(ctx, HAIR_HL); ctx.fill()
 
     # Face skin (right half of head — covers hair from face area)
-    _draw_ellipse_path(ctx, head_rx * 0.10, head_r * 0.08, head_rx * 0.78, head_ry * 0.80)
+    # Extended slightly down (ry=0.88) so it reaches the neck top, blending the chin→neck join
+    _draw_ellipse_path(ctx, head_rx * 0.10, head_r * 0.10, head_rx * 0.78, head_ry * 0.88)
     _set_color(ctx, SKIN); ctx.fill()
 
     # ── Profile eye (ONE eye — near the face side, toward +x) ──
@@ -1292,10 +1313,10 @@ def _draw_luma_front(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
     torso_bot_y = neck_bot_y + torso_h
     leg_h = ground_y - torso_bot_y
 
-    # Front view torso: wider (both sides visible)
-    sh_w = head_r * 0.95
+    # Front view torso: narrower — kid shoulders, not adult proportions
+    sh_w = head_r * 0.75
     w_top = sh_w
-    w_bot = head_r * 0.62
+    w_bot = head_r * 0.50
 
     hoodie, hoodie_sh = HOODIE_COLORS.get(expression, (HOODIE_SURPRISED, HOODIE_SURPRISED_SH))
 
@@ -1514,7 +1535,7 @@ def _draw_luma_front(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
 
     face_cy_off = head_r * 0.10
     face_rx = head_rx * 0.88
-    face_ry = head_ry * 0.70
+    face_ry = head_ry * 0.85   # extended down to blend chin→neck seam
     _draw_ellipse_path(ctx, 0, face_cy_off, face_rx, face_ry)
     _set_color(ctx, SKIN); ctx.fill()
 
@@ -1692,8 +1713,8 @@ def _draw_luma_threequarter(ctx, cx, ground_y, char_h, expression, spec, scale=1
 
     hip_tilt_px = spec["hip_tilt"] * s * 0.6
     shoulder_tilt_px = spec["shoulder_tilt"] * s * 0.6
-    # 3/4 view torso: foreshortened, ~70-75% of front view width (front=0.95).
-    sh_w = head_r * 0.70
+    # 3/4 view torso: foreshortened, narrowed for kid proportions (~58% of front 0.75).
+    sh_w = head_r * 0.58
 
     head_cy = ground_y - char_h + head_r
     neck_bot_y = head_cy + head_r + head_r * 0.25
@@ -1917,6 +1938,7 @@ def _draw_luma_threequarter(ctx, cx, ground_y, char_h, expression, spec, scale=1
 
     # 3/4 head shape: bulges toward the near side (left = -x = near side facing viewer).
     # Right side (+x = far side) is tapered/compressed — partial profile silhouette.
+    # Far-side forehead shows mild brow-ridge compression to read as a rounded head at angle.
     ctx.new_path()
     steps = 120
     for i in range(steps):
@@ -1936,6 +1958,10 @@ def _draw_luma_threequarter(ctx, cx, ground_y, char_h, expression, spec, scale=1
         # Near-side cheek bump (around -0.4 radians offset from pi)
         side_cheek_f = max(0, math.cos(angle - (math.pi - 0.5))) ** 8
         rx += head_r * 0.06 * side_cheek_f
+        # Far-side forehead brow-ridge: slight bump on the receding face plane upper area
+        # Makes the 3/4 read like a rounded head, not a flat oval offset to one side
+        brow_3q_f = max(0, math.cos(angle - (-math.pi / 5))) ** 10
+        rx += head_r * 0.04 * brow_3q_f
         px = rx * math.cos(angle)
         py = ry * math.sin(angle)
         if i == 0:
@@ -1970,7 +1996,8 @@ def _draw_luma_threequarter(ctx, cx, ground_y, char_h, expression, spec, scale=1
         _set_color(ctx, HAIR_HL); ctx.fill()
 
     # Face skin — offset toward near side (slightly -x), leaving far corner less covered
-    _draw_ellipse_path(ctx, -head_rx * 0.06, head_r * 0.10, head_rx * 0.85, head_ry * 0.70)
+    # Extended down (ry=0.85) to blend chin→neck seam
+    _draw_ellipse_path(ctx, -head_rx * 0.06, head_r * 0.10, head_rx * 0.85, head_ry * 0.85)
     _set_color(ctx, SKIN); ctx.fill()
 
     # Eyes: near side normal, far side foreshortened
@@ -2140,7 +2167,7 @@ def _draw_luma_back(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
 
     hip_tilt_px = spec["hip_tilt"] * s * 0.5
     shoulder_tilt_px = spec["shoulder_tilt"] * s * 0.4
-    sh_w = head_r * 0.90
+    sh_w = head_r * 0.75  # match front view kid shoulder width
 
     head_cy = ground_y - char_h + head_r
     neck_bot_y = head_cy + head_r + head_r * 0.25
@@ -2435,7 +2462,7 @@ def _draw_luma_side_l(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
     hip_tilt_px = spec_l["hip_tilt"] * s * 0.8
     shoulder_tilt_px = spec_l["shoulder_tilt"] * s * 0.8
     # Side-L is same viewing angle as SIDE — match the foreshortened torso width.
-    sh_w = head_r * 0.50
+    sh_w = head_r * 0.40
 
     head_cy = ground_y - char_h + head_r
     neck_bot_y = head_cy + head_r + head_r * 0.25
@@ -2664,6 +2691,7 @@ def _draw_luma_side_l(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
 
     # Left-facing profile head: mirror of side-R. Back of head is now on +x side,
     # face (nose bump) protrudes to the LEFT (-x direction).
+    # Forehead brow ridge protrusion mirrors side-R (+pi/6 offset from pi for left-facing).
     ctx.new_path()
     steps = 120
     for i in range(steps):
@@ -2682,6 +2710,9 @@ def _draw_luma_side_l(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
         rx -= head_r * 0.06 * face_f
         side_cheek_f = max(0, math.cos(angle - 0.5)) ** 8
         rx += head_r * 0.06 * side_cheek_f
+        # Brow ridge: forward bump on upper-left face (angle ~ pi - pi/6 = 5pi/6 from +x)
+        brow_f = max(0, math.cos(angle - (math.pi + math.pi / 6))) ** 12
+        rx += head_r * 0.06 * brow_f
         px = rx * math.cos(angle)
         py = ry * math.sin(angle)
         if i == 0:
@@ -2697,6 +2728,7 @@ def _draw_luma_side_l(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
     # nose_x_base anchored AT the face edge so bump clearly protrudes outside head oval
     nose_x_base = -head_rx * 0.94
     nose_y = head_r * 0.18
+    # Fill the whole nose shape (grows from face — not stuck on)
     ctx.new_path()
     ctx.move_to(nose_x_base, nose_y - 8*s)
     ctx.curve_to(nose_x_base - 14*s, nose_y - 6*s,
@@ -2705,8 +2737,18 @@ def _draw_luma_side_l(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
     ctx.curve_to(nose_x_base - 5*s, nose_y + 16*s,
                  nose_x_base, nose_y + 13*s,
                  nose_x_base + 2*s, nose_y + 8*s)
-    _set_color(ctx, SKIN); ctx.fill_preserve()
-    _set_color(ctx, LINE_COL); ctx.set_line_width(lw_minor); ctx.stroke()
+    _set_color(ctx, SKIN); ctx.fill()
+    # Stroke only the outer free arc — omit endpoints near face surface
+    ctx.new_path()
+    ctx.move_to(nose_x_base - 8*s, nose_y - 5*s)   # start near bridge (away from face edge)
+    ctx.curve_to(nose_x_base - 16*s, nose_y - 2*s,
+                 nose_x_base - 18*s, nose_y + 5*s,
+                 nose_x_base - 10*s, nose_y + 11*s)
+    ctx.curve_to(nose_x_base - 5*s, nose_y + 16*s,
+                 nose_x_base - 1*s, nose_y + 13*s,
+                 nose_x_base + 1*s, nose_y + 9*s)    # end near nostril base (before face edge)
+    _set_color(ctx, LINE_COL); ctx.set_line_width(lw_minor)
+    ctx.set_line_cap(cairo.LINE_CAP_ROUND); ctx.stroke()
     ctx.new_path()
     ctx.move_to(nose_x_base - 5*s, nose_y + 11*s)
     ctx.curve_to(nose_x_base - 2*s, nose_y + 14*s,
@@ -2721,7 +2763,10 @@ def _draw_luma_side_l(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
         (0.70, -0.52, 0.42, 0.38), (0.80, -0.28, 0.38, 0.34),
         (0.05, -0.82, 0.38, 0.32), (-0.08, -1.05, 0.34, 0.30),
         (0.28, -0.65, 0.46, 0.40), (0.50, -0.92, 0.30, 0.26),
-        (0.85, 0.02, 0.30, 0.32), (0.60, 0.08, 0.35, 0.30),
+        # Lower back blobs — kept further from face edge to avoid sharp cutoff near ear
+        (0.85, 0.02, 0.28, 0.26), (0.72, 0.06, 0.22, 0.20),
+        # Small taper blobs near the ear transition (smooth rounding, not abrupt edge)
+        (0.78, 0.18, 0.16, 0.14), (0.68, 0.24, 0.12, 0.10),
         (-0.10, -0.75, 0.28, 0.24), (0.10, -1.10, 0.28, 0.24),
         (0.90, -0.50, 0.26, 0.30),
     ]
@@ -2735,7 +2780,8 @@ def _draw_luma_side_l(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
         _set_color(ctx, HAIR_HL); ctx.fill()
 
     # Face skin (left half of head)
-    _draw_ellipse_path(ctx, -head_rx * 0.10, head_r * 0.08, head_rx * 0.78, head_ry * 0.80)
+    # Extended down (ry=0.88) to blend chin→neck seam
+    _draw_ellipse_path(ctx, -head_rx * 0.10, head_r * 0.10, head_rx * 0.78, head_ry * 0.88)
     _set_color(ctx, SKIN); ctx.fill()
 
     # Profile eye (left-facing: eye on left side = -x)
