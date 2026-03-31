@@ -1,6 +1,6 @@
 {
-  "cycle": "C48",
-  "run_ts": "2026-03-30 19:53",
+  "cycle": "C52",
+  "run_ts": "2026-03-31 01:00",
   "sections": {
     "render_qa": {
       "section": "Render QA",
@@ -23,25 +23,15 @@
     "color_verify": {
       "section": "Color Verify",
       "overall": "WARN",
-      "pass": 0,
-      "warn": 4,
+      "pass": 1,
+      "warn": 3,
       "fail": 0,
       "missing": [],
       "flagged": [
-        "  - LTG_COLOR_styleframe_discovery.png / BYTE_TEAL: LAB \u0394E=22.83 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_discovery.png / UV_PURPLE: LAB \u0394E=36.19 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_discovery.png / HOT_MAGENTA: LAB \u0394E=17.89 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_discovery.png / SUNLIT_AMBER: LAB \u0394E=16.76 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_glitch_storm.png / CORRUPT_AMBER: LAB \u0394E=8.77 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_glitch_storm.png / BYTE_TEAL: LAB \u0394E=22.83 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_glitch_storm.png / UV_PURPLE: LAB \u0394E=9.80 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_glitch_storm.png / HOT_MAGENTA: LAB \u0394E=6.08 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_glitch_storm.png / ELECTRIC_CYAN: LAB \u0394E=10.25 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_glitch_storm.png / SUNLIT_AMBER: LAB \u0394E=26.48 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_otherside.png / BYTE_TEAL: LAB \u0394E=22.83 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_otherside.png / SUNLIT_AMBER: LAB \u0394E=44.94 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_sf04.png / BYTE_TEAL: LAB \u0394E=30.53 (threshold=5.0)",
-        "  - LTG_COLOR_styleframe_sf04.png / SUNLIT_AMBER: LAB \u0394E=31.29 (threshold=5.0)"
+        "  - LTG_COLOR_styleframe_glitch_storm.png / BYTE_TEAL: \u0394E2000=5.48 (WARN)",
+        "  - LTG_COLOR_styleframe_otherside.png / BYTE_TEAL: \u0394E2000=5.77 (WARN)",
+        "  - LTG_COLOR_styleframe_otherside.png / SUNLIT_AMBER: \u0394E2000=13.02 (FAIL)",
+        "  - LTG_COLOR_styleframe_sf04.png / SUNLIT_AMBER: \u0394E2000=7.24 (WARN)"
       ]
     },
     "proportion": {
@@ -61,7 +51,7 @@
     "stub_linter": {
       "section": "Stub Linter",
       "overall": "PASS",
-      "pass": 169,
+      "pass": 204,
       "warn": 0,
       "fail": 0,
       "missing": [],
@@ -79,8 +69,8 @@
     "glitch_spec": {
       "section": "Glitch Spec Lint",
       "overall": "WARN",
-      "pass": 7,
-      "warn": 15,
+      "pass": 9,
+      "warn": 16,
       "fail": 0,
       "missing": [],
       "flagged": [
@@ -115,6 +105,7 @@
         "  - LTG_TOOL_glitch_motion.py: G003: Multi-Glitchkin frame has only 0 unique expression(s) \u2014 at least 2 required. Found: none",
         "  - LTG_TOOL_glitch_motion.py: G004: Draw order FAIL \u2014 HOT_MAG crack line appears BEFORE body fill polygon. Crack must be drawn after fill (spec \u00a72.3 stacking order).",
         "  - LTG_TOOL_glitch_turnaround.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
+        "  - LTG_TOOL_library_eval_c51.py: G003: Multi-Glitchkin frame has only 1 unique expression(s) \u2014 at least 2 required. Found: ['NEUTRAL']",
         "  - LTG_TOOL_style_frame_02_glitch_storm.py: G007: VOID_BLACK outline on body polygon not detected. Spec \u00a72.2 requires draw.polygon(pts, outline=VOID_BLACK, width=3).",
         "  - LTG_TOOL_style_frame_03_other_side.py: G004: Draw order FAIL \u2014 HOT_MAG crack line appears BEFORE body fill polygon. Crack must be drawn after fill (spec \u00a72.3 stacking order).",
         "  - LTG_TOOL_style_frame_03_other_side.py: G008: Interior states (YEARNING/COVETOUS/HOLLOW) detected but no bilateral eye rule found. Spec \u00a76.3: interior states require IDENTICAL left+right eye glyphs \u2014 asymmetric destabilization must be SKIPPED for these states.",
@@ -127,34 +118,51 @@
     "readme_sync": {
       "section": "README Sync",
       "overall": "WARN",
-      "pass": 152,
-      "warn": 12,
+      "pass": 169,
+      "warn": 30,
       "fail": 0,
       "missing": [],
       "flagged": [
         "  - UNLISTED: `LTG_TOOL_batch_path_migrate.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_byte_turnaround.py` (on disk, not in README Script Index)",
         "  - UNLISTED: `LTG_TOOL_composite_warmth_score.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_contact_shadow.py` (on disk, not in README Script Index)",
         "  - UNLISTED: `LTG_TOOL_draw_shoulder_arm.py` (on disk, not in README Script Index)",
         "  - UNLISTED: `LTG_TOOL_face_metric_calibrate.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_freetype_eval.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_gesture_line_lint.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_luma_cairo_expressions.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_luma_motion_prototype_c51.py` (on disk, not in README Script Index)",
         "  - UNLISTED: `LTG_TOOL_object_detect_qa.py` (on disk, not in README Script Index)",
         "  - UNLISTED: `LTG_TOOL_prop_continuity_tracker.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_sb_char_draw.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_sb_cold_open_P09_cairo.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_sb_cold_open_P10_cairo.py` (on disk, not in README Script Index)",
         "  - UNLISTED: `LTG_TOOL_sb_cold_open_P13.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_sb_cold_open_P13_cairo.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_sb_cold_open_P15_cairo.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_sb_cold_open_P17_cairo.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_sb_cold_open_P17_chartest.py` (on disk, not in README Script Index)",
         "  - UNLISTED: `LTG_TOOL_sb_cold_open_P18.py` (on disk, not in README Script Index)",
         "  - UNLISTED: `LTG_TOOL_sb_cold_open_P19.py` (on disk, not in README Script Index)",
         "  - UNLISTED: `LTG_TOOL_sb_cold_open_P20.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_sb_cold_open_P20_cairo.py` (on disk, not in README Script Index)",
         "  - UNLISTED: `LTG_TOOL_sb_cold_open_P21.py` (on disk, not in README Script Index)",
-        "  - UNLISTED: `LTG_TOOL_visual_hook_audit.py` (on disk, not in README Script Index)"
+        "  - UNLISTED: `LTG_TOOL_sb_cold_open_P25.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_scale_reference_sheet.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_styleframe_discovery_scenelit.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_visual_hook_audit.py` (on disk, not in README Script Index)",
+        "  - UNLISTED: `LTG_TOOL_wand_compositing_eval.py` (on disk, not in README Script Index)"
       ]
     },
     "motion_spec": {
       "section": "Motion Spec Lint",
       "overall": "WARN",
-      "pass": 31,
-      "warn": 5,
+      "pass": 32,
+      "warn": 4,
       "fail": 0,
       "missing": [],
       "flagged": [
-        "  - LTG_CHAR_luma_motion.png: WARN: beat_badges: beat badge occupancy  P1: 13.5% \u2014 WARN no badge  |  P2: 16.5%  |  P3: 3.1% \u2014 WARN no badge  |  P4: 19.0%",
         "  - LTG_CHAR_byte_motion.png: WARN: annotation_occupancy: [bg:dark-bright]  P1: 0.0% occupancy \u2014 WARN low  |  P2: 0.0% occupancy \u2014 WARN low  |  P3: 0.0% occupancy \u2014 WARN low  |  P4: 5.3% occupancy",
         "  - LTG_CHAR_byte_motion.png: WARN: beat_badges: beat badge occupancy  P1: 0.0% \u2014 WARN no badge  |  P2: 0.0% \u2014 WARN no badge  |  P3: 0.0% \u2014 WARN no badge  |  P4: 0.0% \u2014 WARN no badge",
         "  - LTG_CHAR_byte_motion.png: WARN: timing_colors: BEAT_COLOR [config] in 0/4 panels (0%)",
@@ -163,8 +171,8 @@
     }
   },
   "totals": {
-    "pass": 377,
-    "warn": 44,
+    "pass": 433,
+    "warn": 61,
     "fail": 1
   }
 }

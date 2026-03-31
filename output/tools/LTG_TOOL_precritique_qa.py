@@ -66,6 +66,13 @@ Version: 2.14.0 (C45 Rin Yamamoto: LTG_TOOL_uv_purple_linter v1.1.0 GLITCH_DARK_
                COVETOUS assets previously FAIL (0.6% / 0.2% ΔE-match) now PASS via hue-angle
                matching (96.7% / 98.9% UV_PURPLE hue family h° 255°–325°).
                No change to ENV asset handling — glitchlayer_frame WARNs remain.)
+Version: 3.0.0 (C52 Kai Nakamura: Sections 15/16/17 Character Quality Metrics added.
+               Section 15: Silhouette Distinctiveness (LTG_TOOL_silhouette_distinctiveness).
+               Section 16: Expression Range (LTG_TOOL_expression_range_metric).
+               Section 17: Construction Stiffness (LTG_TOOL_construction_stiffness).
+               All three run on character turnaround/expression sheets.
+               Color verify upgraded to use colour-science ΔE2000 when available.
+               CYCLE_LABEL bumped to C52. Step numbering updated 1-17/17.)
 Version: 2.18.0 (C49 Morgan Walsh: Section 14 Sightline Validation added.
                LTG_TOOL_sightline_validator.validate_sightline_from_png() on
                SIGHTLINE_PNGS registry. Pixel-based eye detection + angular error.
@@ -171,7 +178,7 @@ PALETTE_MD  = REPO_ROOT / "output" / "color" / "palettes" / "master_palette.md"
 BASELINE_JSON = TOOLS_DIR / "qa_baseline_last.json"
 
 # Cycle label — update each cycle
-CYCLE_LABEL = "C49"
+CYCLE_LABEL = "C52"
 
 if str(TOOLS_DIR) not in sys.path:
     sys.path.insert(0, str(TOOLS_DIR))
@@ -181,6 +188,12 @@ if str(TOOLS_DIR) not in sys.path:
 # ---------------------------------------------------------------------------
 from LTG_TOOL_render_qa import qa_report, qa_batch, _check_color_fidelity_lab as _lab_color_check
 from LTG_TOOL_color_verify import verify_canonical_colors, get_canonical_palette
+
+# v3.0.0 C52: Import ΔE2000 from color_verify if colour-science available
+try:
+    from LTG_TOOL_color_verify import verify_canonical_colors_deltaE, _COLOUR_SCIENCE_AVAILABLE
+except ImportError:
+    _COLOUR_SCIENCE_AVAILABLE = False
 from LTG_TOOL_stub_linter import lint_directory as stub_lint_directory, format_report as stub_format_report
 from LTG_TOOL_palette_warmth_lint import lint_palette_file, format_report as palette_format_report
 from LTG_TOOL_glitch_spec_lint import lint_directory as glitch_lint_directory, format_report as glitch_format_report
@@ -290,6 +303,66 @@ def _load_sightline_validator():
         mod = _importlib_util.module_from_spec(spec)
         spec.loader.exec_module(mod)
         _sightline_validator_mod = mod
+        return mod
+    except Exception:
+        return None
+
+
+# Character quality metric tools: loaded lazily (C52, Kai Nakamura)
+_silhouette_dist_mod = None
+_expression_range_mod = None
+_construction_stiffness_mod = None
+
+
+def _load_silhouette_distinctiveness():
+    """Lazily import LTG_TOOL_silhouette_distinctiveness. Returns module or None."""
+    global _silhouette_dist_mod
+    if _silhouette_dist_mod is not None:
+        return _silhouette_dist_mod
+    try:
+        spec = _importlib_util.spec_from_file_location(
+            "LTG_TOOL_silhouette_distinctiveness",
+            str(TOOLS_DIR / "LTG_TOOL_silhouette_distinctiveness.py"),
+        )
+        mod = _importlib_util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        _silhouette_dist_mod = mod
+        return mod
+    except Exception:
+        return None
+
+
+def _load_expression_range_metric():
+    """Lazily import LTG_TOOL_expression_range_metric. Returns module or None."""
+    global _expression_range_mod
+    if _expression_range_mod is not None:
+        return _expression_range_mod
+    try:
+        spec = _importlib_util.spec_from_file_location(
+            "LTG_TOOL_expression_range_metric",
+            str(TOOLS_DIR / "LTG_TOOL_expression_range_metric.py"),
+        )
+        mod = _importlib_util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        _expression_range_mod = mod
+        return mod
+    except Exception:
+        return None
+
+
+def _load_construction_stiffness():
+    """Lazily import LTG_TOOL_construction_stiffness. Returns module or None."""
+    global _construction_stiffness_mod
+    if _construction_stiffness_mod is not None:
+        return _construction_stiffness_mod
+    try:
+        spec = _importlib_util.spec_from_file_location(
+            "LTG_TOOL_construction_stiffness",
+            str(TOOLS_DIR / "LTG_TOOL_construction_stiffness.py"),
+        )
+        mod = _importlib_util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        _construction_stiffness_mod = mod
         return mod
     except Exception:
         return None
@@ -594,6 +667,42 @@ SIGHTLINE_PNGS = [
 
 
 # ---------------------------------------------------------------------------
+# Character Quality Metric assets for Sections 15/16/17 (Kai Nakamura C52)
+# ---------------------------------------------------------------------------
+# Section 15: Silhouette Distinctiveness — turnaround sheets for pairwise comparison
+# Section 16: Expression Range Metric — expression sheets for variation analysis
+# Section 17: Construction Stiffness — turnarounds for straightness/stiffness detection
+
+TURNAROUND_DIR = OUTPUT_DIR / "characters" / "main" / "turnarounds"
+
+SILHOUETTE_ASSETS = [
+    TURNAROUND_DIR / "LTG_CHAR_luma_turnaround.png",
+    TURNAROUND_DIR / "LTG_CHAR_cosmo_turnaround.png",
+    TURNAROUND_DIR / "LTG_CHAR_miri_turnaround.png",
+    TURNAROUND_DIR / "LTG_CHAR_byte_turnaround.png",
+    TURNAROUND_DIR / "LTG_CHAR_glitch_turnaround.png",
+]
+
+EXPRESSION_SHEETS = [
+    # (label, path)
+    ("Luma Expressions",   OUTPUT_DIR / "characters" / "main" / "LTG_CHAR_luma_expression_sheet.png"),
+    ("Byte Expressions",   OUTPUT_DIR / "characters" / "main" / "LTG_CHAR_byte_expression_sheet.png"),
+    ("Cosmo Expressions",  OUTPUT_DIR / "characters" / "main" / "LTG_CHAR_cosmo_expression_sheet.png"),
+    ("Glitch Expressions", OUTPUT_DIR / "characters" / "main" / "LTG_CHAR_glitch_expression_sheet.png"),
+    ("Miri Expressions",   OUTPUT_DIR / "characters" / "main" / "LTG_CHAR_grandma_miri_expression_sheet.png"),
+]
+
+STIFFNESS_ASSETS = [
+    # (label, path)
+    ("Luma Turnaround",   TURNAROUND_DIR / "LTG_CHAR_luma_turnaround.png"),
+    ("Cosmo Turnaround",  TURNAROUND_DIR / "LTG_CHAR_cosmo_turnaround.png"),
+    ("Miri Turnaround",   TURNAROUND_DIR / "LTG_CHAR_miri_turnaround.png"),
+    ("Byte Turnaround",   TURNAROUND_DIR / "LTG_CHAR_byte_turnaround.png"),
+    ("Glitch Turnaround", TURNAROUND_DIR / "LTG_CHAR_glitch_turnaround.png"),
+]
+
+
+# ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
@@ -854,10 +963,32 @@ def run_color_verify() -> dict:
             img = Image.open(str(p)).convert("RGB")
             # Downscale if needed
             img.thumbnail((1280, 1280), Image.LANCZOS)
-            # v2.7.0: LAB ΔE check (falls back to RGB if cv2 absent)
+            name = p.name
+
+            # v3.0.0 C52: Prefer colour-science ΔE2000 (catches L*/C* drift).
+            # Falls back to LAB ΔE (cv2) then RGB Euclidean.
+            if _COLOUR_SCIENCE_AVAILABLE:
+                de_result = verify_canonical_colors_deltaE(img, palette)
+                if de_result.get("delta_e_available"):
+                    if de_result.get("overall_pass"):
+                        pass_count += 1
+                    else:
+                        warn_count += 1
+                        for color_name, info in de_result.items():
+                            if not isinstance(info, dict) or "delta_e_2000" not in info:
+                                continue
+                            if not info.get("pass", True):
+                                de = info.get("delta_e_2000", "?")
+                                de_str = f"{de:.2f}" if isinstance(de, (float, int)) else str(de)
+                                flagged.append(
+                                    f"  - {name} / {color_name}: ΔE2000={de_str} "
+                                    f"({info.get('verdict', '?')})"
+                                )
+                    continue  # skip LAB fallback
+
+            # Fallback: LAB ΔE check (cv2) or RGB Euclidean
             result = _lab_color_check(img, palette)
             method = result.get("color_method", "RGB_euclidean")
-            name = p.name
             if result.get("overall_pass"):
                 pass_count += 1
             else:
@@ -1408,7 +1539,7 @@ def run_alpha_blend_lint() -> dict:
             per_asset.append(asset_entry)
             continue
 
-        for zone_r in results:
+        for zone_r in results.get("zones", results if isinstance(results, list) else []):
             verdict = zone_r.get("verdict", "PASS").upper()
             zone_entry = {
                 "zone":    zone_r.get("label", "?"),
@@ -1749,6 +1880,259 @@ def run_sightline_lint() -> dict:
     }
 
 
+def run_silhouette_distinctiveness() -> dict:
+    """
+    Section 15 — Silhouette Distinctiveness (Kai Nakamura, Cycle 52).
+
+    Runs LTG_TOOL_silhouette_distinctiveness.run_analysis() on all
+    character turnaround sheets. Pairwise comparison at multiple scales.
+
+    Returns:
+        {
+            "overall"  : "PASS" | "WARN" | "FAIL",
+            "pass"     : int,
+            "warn"     : int,
+            "fail"     : int,
+            "skip"     : int,
+            "pairs"    : list of pair result dicts,
+            "characters": list of character names
+        }
+    """
+    sd_mod = _load_silhouette_distinctiveness()
+
+    if sd_mod is None:
+        return {
+            "overall":  "WARN",
+            "pass":     0,
+            "warn":     1,
+            "fail":     0,
+            "skip":     0,
+            "pairs":    [],
+            "characters": [],
+            "error":    "LTG_TOOL_silhouette_distinctiveness could not be loaded",
+        }
+
+    existing = [str(p) for p in SILHOUETTE_ASSETS if p.exists()]
+    missing_count = len(SILHOUETTE_ASSETS) - len(existing)
+
+    if len(existing) < 2:
+        return {
+            "overall":  "SKIP" if len(existing) == 0 else "WARN",
+            "pass":     0,
+            "warn":     0 if len(existing) == 0 else 1,
+            "fail":     0,
+            "skip":     missing_count,
+            "pairs":    [],
+            "characters": [],
+            "error":    f"Need at least 2 turnarounds; found {len(existing)}",
+        }
+
+    try:
+        result = sd_mod.run_analysis(existing)
+    except Exception as exc:
+        return {
+            "overall":  "WARN",
+            "pass":     0,
+            "warn":     1,
+            "fail":     0,
+            "skip":     0,
+            "pairs":    [],
+            "characters": [],
+            "error":    f"run_analysis() exception: {exc}",
+        }
+
+    summary = result.get("summary", {})
+    return {
+        "overall":    summary.get("overall", "WARN"),
+        "pass":       summary.get("pass", 0),
+        "warn":       summary.get("warn", 0),
+        "fail":       summary.get("fail", 0),
+        "skip":       missing_count,
+        "pairs":      result.get("pairs", []),
+        "characters": result.get("characters", []),
+    }
+
+
+def run_expression_range() -> dict:
+    """
+    Section 16 — Expression Range Metric (Kai Nakamura, Cycle 52).
+
+    Runs LTG_TOOL_expression_range_metric.analyze_expression_sheet() on
+    each expression sheet registered in EXPRESSION_SHEETS.
+
+    Returns:
+        {
+            "overall"  : "PASS" | "WARN" | "FAIL",
+            "pass"     : int,
+            "warn"     : int,
+            "fail"     : int,
+            "skip"     : int,
+            "per_sheet": list of per-sheet result dicts
+        }
+    """
+    erm = _load_expression_range_metric()
+
+    if erm is None:
+        return {
+            "overall":   "WARN",
+            "pass":      0,
+            "warn":      1,
+            "fail":      0,
+            "skip":      0,
+            "per_sheet": [],
+            "error":     "LTG_TOOL_expression_range_metric could not be loaded",
+        }
+
+    pass_count = 0
+    warn_count = 0
+    fail_count = 0
+    skip_count = 0
+    per_sheet = []
+
+    for label, img_path in EXPRESSION_SHEETS:
+        entry = {"label": label, "path": str(img_path)}
+
+        if not img_path.exists():
+            entry["overall"] = "SKIP"
+            entry["message"] = "File not found"
+            skip_count += 1
+            per_sheet.append(entry)
+            continue
+
+        try:
+            result = erm.analyze_expression_sheet(str(img_path))
+            entry["grid"] = result.get("grid", "?")
+            entry["valid_panels"] = result.get("valid_panels", 0)
+            entry["ers"] = result.get("ers", 0.0)
+            entry["ers_verdict"] = result.get("ers_verdict", "FAIL")
+            entry["pairs_summary"] = result.get("summary", {})
+
+            if result.get("error"):
+                entry["overall"] = "WARN"
+                entry["error"] = result["error"]
+                warn_count += 1
+            elif entry["ers_verdict"] == "PASS":
+                entry["overall"] = "PASS"
+                pass_count += 1
+            elif entry["ers_verdict"] == "WARN":
+                entry["overall"] = "WARN"
+                warn_count += 1
+            else:
+                entry["overall"] = "FAIL"
+                fail_count += 1
+        except Exception as exc:
+            entry["overall"] = "WARN"
+            entry["error"] = str(exc)
+            warn_count += 1
+
+        per_sheet.append(entry)
+
+    if fail_count > 0:
+        overall = "FAIL"
+    elif warn_count > 0:
+        overall = "WARN"
+    else:
+        overall = "PASS"
+
+    return {
+        "overall":   overall,
+        "pass":      pass_count,
+        "warn":      warn_count,
+        "fail":      fail_count,
+        "skip":      skip_count,
+        "per_sheet": per_sheet,
+    }
+
+
+def run_construction_stiffness() -> dict:
+    """
+    Section 17 — Construction Stiffness (Kai Nakamura, Cycle 52).
+
+    Runs LTG_TOOL_construction_stiffness.analyze_image() on each character
+    turnaround sheet. Detects overly straight (rectangular) construction.
+
+    Returns:
+        {
+            "overall"  : "PASS" | "WARN" | "FAIL",
+            "pass"     : int,
+            "warn"     : int,
+            "fail"     : int,
+            "skip"     : int,
+            "per_file" : list of per-file result dicts
+        }
+    """
+    cs_mod = _load_construction_stiffness()
+
+    if cs_mod is None:
+        return {
+            "overall":  "WARN",
+            "pass":     0,
+            "warn":     1,
+            "fail":     0,
+            "skip":     0,
+            "per_file": [],
+            "error":    "LTG_TOOL_construction_stiffness could not be loaded",
+        }
+
+    pass_count = 0
+    warn_count = 0
+    fail_count = 0
+    skip_count = 0
+    per_file = []
+
+    for label, img_path in STIFFNESS_ASSETS:
+        entry = {"label": label, "path": str(img_path)}
+
+        if not img_path.exists():
+            entry["overall"] = "SKIP"
+            entry["message"] = "File not found"
+            skip_count += 1
+            per_file.append(entry)
+            continue
+
+        try:
+            result = cs_mod.analyze_image(str(img_path))
+            entry["stiffness_score"] = result.get("stiffness_score", 0.0)
+            entry["straight_pct"] = result.get("straight_pct", 0.0)
+            entry["longest_straight_run"] = result.get("longest_straight_run", 0)
+            entry["verdict"] = result.get("verdict", "FAIL")
+            entry["backend"] = result.get("backend", "unknown")
+            entry["total_outline_pixels"] = result.get("total_outline_pixels", 0)
+
+            v = result.get("verdict", "FAIL")
+            if v == "PASS":
+                entry["overall"] = "PASS"
+                pass_count += 1
+            elif v == "WARN":
+                entry["overall"] = "WARN"
+                warn_count += 1
+            else:
+                entry["overall"] = "FAIL"
+                fail_count += 1
+        except Exception as exc:
+            entry["overall"] = "WARN"
+            entry["error"] = str(exc)
+            warn_count += 1
+
+        per_file.append(entry)
+
+    if fail_count > 0:
+        overall = "FAIL"
+    elif warn_count > 0:
+        overall = "WARN"
+    else:
+        overall = "PASS"
+
+    return {
+        "overall":  overall,
+        "pass":     pass_count,
+        "warn":     warn_count,
+        "fail":     fail_count,
+        "skip":     skip_count,
+        "per_file": per_file,
+    }
+
+
 # ---------------------------------------------------------------------------
 # Report builder
 # ---------------------------------------------------------------------------
@@ -1768,6 +2152,9 @@ def build_report(
     depth_temp_res: dict,
     warm_pixel_res: dict,
     sightline_res: dict,
+    silhouette_res: dict,
+    expression_res: dict,
+    stiffness_res: dict,
     delta: dict,
     run_ts: str,
 ) -> str:
@@ -1803,11 +2190,15 @@ def build_report(
         readme_sync_res["overall"],
         motion_spec_res["overall"],
         warm_pixel_res["overall"],
+        silhouette_res["overall"],
+        expression_res["overall"],
+        stiffness_res["overall"],
     )
 
     _all_sections = [render_qa_res, color_verify_res, proportion_res,
                      stub_lint_res, palette_lint_res, glitch_lint_res,
-                     readme_sync_res, motion_spec_res, warm_pixel_res]
+                     readme_sync_res, motion_spec_res, warm_pixel_res,
+                     silhouette_res, expression_res, stiffness_res]
     total_pass  = sum(r["pass"] for r in _all_sections)
     total_warn  = sum(r["warn"] for r in _all_sections)
     total_fail  = sum(r["fail"] for r in _all_sections)
@@ -1854,6 +2245,9 @@ def build_report(
         f"| Alpha Blend Lint               | {alpha_blend_res['overall']} | {alpha_blend_res['pass']} | {alpha_blend_res['warn']} | {alpha_blend_res['fail']} |",
         f"| UV_PURPLE Dominance Lint       | {uv_purple_res['overall']}   | {uv_purple_res['pass']}   | {uv_purple_res['warn']}   | {uv_purple_res['fail']}   |",
         f"| Depth Temperature Lint         | {depth_temp_res['overall']}   | {depth_temp_res['pass']}   | {depth_temp_res['warn']}   | {depth_temp_res['fail']}   |",
+        f"| Silhouette Distinctiveness     | {silhouette_res['overall']}   | {silhouette_res['pass']}   | {silhouette_res['warn']}   | {silhouette_res['fail']}   |",
+        f"| Expression Range Metric        | {expression_res['overall']}   | {expression_res['pass']}   | {expression_res['warn']}   | {expression_res['fail']}   |",
+        f"| Construction Stiffness         | {stiffness_res['overall']}   | {stiffness_res['pass']}   | {stiffness_res['warn']}   | {stiffness_res['fail']}   |",
         "",
         "---",
         "",
@@ -2249,8 +2643,163 @@ def build_report(
 
     lines.append("---")
     lines.append("")
+
+    # Section 15: Silhouette Distinctiveness (C52)
+    sil_badge = _grade_line(silhouette_res["overall"])
+    lines.append(f"## 15. Silhouette Distinctiveness — Character Shape Uniqueness — {sil_badge}")
+    lines.append("")
     lines.append(
-        "*Generated by LTG_TOOL_precritique_qa.py v2.18.0 — "
+        "_Pairwise silhouette comparison of character turnarounds at multiple scales. "
+        "Measures Silhouette Overlap Ratio (SOR) and Width Profile Correlation (WPC). "
+        "DS = 1.0 - (0.5*SOR + 0.5*WPC). "
+        "PASS: DS >= 0.30. WARN: DS 0.15-0.30. FAIL: DS < 0.15._"
+    )
+    lines.append("")
+    lines.append(
+        f"PASS: {silhouette_res['pass']}  "
+        f"WARN: {silhouette_res['warn']}  "
+        f"FAIL: {silhouette_res['fail']}  "
+        f"Skip: {silhouette_res.get('skip', 0)}"
+    )
+    lines.append("")
+
+    if silhouette_res.get("error"):
+        lines.append(f"  - *ERROR — {silhouette_res['error']}*")
+        lines.append("")
+
+    if silhouette_res.get("characters"):
+        lines.append(f"Characters analyzed: {', '.join(silhouette_res['characters'])}")
+        lines.append("")
+
+    for pair in silhouette_res.get("pairs", []):
+        pair_label = pair.get("pair", "?")
+        ds = pair.get("worst_ds", 0.0)
+        v = pair.get("verdict", "?")
+        v_badge = _grade_line(v)
+        lines.append(f"### {pair_label} — {v_badge}")
+        lines.append(f"  - Worst DS: {ds:.4f} (at {pair.get('worst_scale', '?')})")
+        # Show per-scale breakdown
+        for scale_key, scale_data in pair.get("scales", {}).items():
+            sor = scale_data.get("overlap_ratio", 0)
+            wpc = scale_data.get("width_profile_corr", 0)
+            sds = scale_data.get("distinctiveness", 0)
+            hd = scale_data.get("hausdorff_norm")
+            hd_str = f"  Hausdorff: {hd:.4f}" if hd is not None else ""
+            lines.append(
+                f"  - {scale_key}: DS={sds:.4f}  SOR={sor:.4f}  WPC={wpc:.4f}{hd_str}"
+            )
+        lines.append("")
+
+    if not silhouette_res.get("pairs") and not silhouette_res.get("error"):
+        lines.append("_No silhouette pairs to report._")
+        lines.append("")
+
+    lines.append("---")
+    lines.append("")
+
+    # Section 16: Expression Range Metric (C52)
+    expr_badge = _grade_line(expression_res["overall"])
+    lines.append(f"## 16. Expression Range Metric — Facial Variation — {expr_badge}")
+    lines.append("")
+    lines.append(
+        "_Measures expression variation across expression sheet panels using "
+        "Face Region Pixel Delta (FRPD) and Structural Change Index (SCI). "
+        "Aggregate Expression Range Score (ERS) = mean FRPD across all pairs. "
+        "PASS: ERS >= 0.10. WARN: ERS 0.05-0.10. FAIL: ERS < 0.05._"
+    )
+    lines.append("")
+    lines.append(
+        f"PASS: {expression_res['pass']}  "
+        f"WARN: {expression_res['warn']}  "
+        f"FAIL: {expression_res['fail']}  "
+        f"Skip: {expression_res.get('skip', 0)}"
+    )
+    lines.append("")
+
+    if expression_res.get("error"):
+        lines.append(f"  - *ERROR — {expression_res['error']}*")
+        lines.append("")
+
+    for sheet in expression_res.get("per_sheet", []):
+        label = sheet.get("label", os.path.basename(sheet.get("path", "")))
+        f_badge = _grade_line(sheet["overall"])
+        lines.append(f"### {label} — {f_badge}")
+        if sheet["overall"] == "SKIP":
+            lines.append(f"  - *SKIP — {sheet.get('message', '')}*")
+        elif sheet.get("error"):
+            lines.append(f"  - *ERROR — {sheet['error']}*")
+        else:
+            lines.append(
+                f"  - Grid: {sheet.get('grid', '?')}  "
+                f"Valid panels: {sheet.get('valid_panels', '?')}  "
+                f"ERS: {sheet.get('ers', 0):.4f}  "
+                f"Verdict: {sheet.get('ers_verdict', '?')}"
+            )
+            ps = sheet.get("pairs_summary", {})
+            if ps:
+                lines.append(
+                    f"  - Pairs: {ps.get('total_pairs', 0)} total — "
+                    f"PASS: {ps.get('pass', 0)}  WARN: {ps.get('warn', 0)}  FAIL: {ps.get('fail', 0)}"
+                )
+        lines.append("")
+
+    if not expression_res.get("per_sheet"):
+        lines.append("_No expression sheets registered._")
+        lines.append("")
+
+    lines.append("---")
+    lines.append("")
+
+    # Section 17: Construction Stiffness (C52)
+    stiff_badge = _grade_line(stiffness_res["overall"])
+    lines.append(f"## 17. Construction Stiffness — Organic Shape Quality — {stiff_badge}")
+    lines.append("")
+    lines.append(
+        "_Detects overly straight/rectangular character construction via contour "
+        "straightness analysis. Uses skimage sub-pixel contours + Shapely when available. "
+        "Stiffness Score = 0.6*straight_pct + 0.4*(longest_run/total). "
+        "PASS: SS <= 0.25. WARN: SS 0.25-0.40. FAIL: SS > 0.40._"
+    )
+    lines.append("")
+    lines.append(
+        f"PASS: {stiffness_res['pass']}  "
+        f"WARN: {stiffness_res['warn']}  "
+        f"FAIL: {stiffness_res['fail']}  "
+        f"Skip: {stiffness_res.get('skip', 0)}"
+    )
+    lines.append("")
+
+    if stiffness_res.get("error"):
+        lines.append(f"  - *ERROR — {stiffness_res['error']}*")
+        lines.append("")
+
+    for file_res in stiffness_res.get("per_file", []):
+        label = file_res.get("label", os.path.basename(file_res.get("path", "")))
+        f_badge = _grade_line(file_res["overall"])
+        lines.append(f"### {label} — {f_badge}")
+        if file_res["overall"] == "SKIP":
+            lines.append(f"  - *SKIP — {file_res.get('message', '')}*")
+        elif file_res.get("error"):
+            lines.append(f"  - *ERROR — {file_res['error']}*")
+        else:
+            lines.append(
+                f"  - Stiffness: {file_res.get('stiffness_score', 0):.4f}  "
+                f"Straight%: {file_res.get('straight_pct', 0):.1%}  "
+                f"Longest run: {file_res.get('longest_straight_run', 0)}px  "
+                f"Total outline: {file_res.get('total_outline_pixels', 0)}px"
+            )
+            lines.append(f"  - Backend: {file_res.get('backend', '?')}")
+        lines.append("")
+
+    if not stiffness_res.get("per_file"):
+        lines.append("_No stiffness assets registered._")
+        lines.append("")
+
+    lines.append("---")
+    lines.append("")
+    lines.append(
+        "*Generated by LTG_TOOL_precritique_qa.py v3.0.0 — "
+        "Kai Nakamura (C52: Sections 15/16/17 Character Quality Metrics); "
         "Morgan Walsh (C49: Section 14 Sightline Validation added); "
         "Lee Tanaka (C48: Section 12 per-asset band overrides); "
         "Kai Nakamura (C48: Section 13 Warm Pixel Percentage added); "
@@ -2278,43 +2827,42 @@ def main():
     else:
         print("[precritique_qa] No baseline found — this run will establish the baseline.")
 
-    print("[1/14] Running Render QA on pitch PNGs...")
+    print("[1/17] Running Render QA on pitch PNGs...")
     render_qa_res = run_render_qa()
     print(f"      → {render_qa_res['overall']} (PASS={render_qa_res['pass']}, WARN={render_qa_res['warn']}, FAIL={render_qa_res['fail']}, MISSING={len(render_qa_res['missing'])})")
 
-    print("[2/14] Running Color Verify on style frames...")
+    print("[2/17] Running Color Verify on style frames...")
     color_verify_res = run_color_verify()
     print(f"      → {color_verify_res['overall']} (PASS={color_verify_res['pass']}, WARN={color_verify_res['warn']})")
 
-    print("[3/14] Running Proportion Verify on character turnarounds...")
+    print("[3/17] Running Proportion Verify on character turnarounds...")
     proportion_res = run_proportion_verify()
     print(f"      → {proportion_res['overall']} (PASS={proportion_res['pass']}, WARN={proportion_res['warn']}, FAIL={proportion_res['fail']})")
 
-    print("[4/14] Running Stub Linter on output/tools/...")
+    print("[4/17] Running Stub Linter on output/tools/...")
     stub_lint_res = run_stub_linter()
     print(f"      → {stub_lint_res['overall']} (PASS={stub_lint_res['pass']}, WARN={stub_lint_res['warn']}, ERROR={stub_lint_res['fail']})")
 
-    print("[5/14] Running Palette Warmth Lint on master_palette.md...")
+    print("[5/17] Running Palette Warmth Lint on master_palette.md...")
     palette_lint_res = run_palette_warmth_lint()
     print(f"      → {palette_lint_res['overall']} (checked={palette_lint_res['pass'] + palette_lint_res['warn']}, violations={palette_lint_res['warn']})")
 
-    print("[6/14] Running Glitch Spec Lint on generators...")
+    print("[6/17] Running Glitch Spec Lint on generators...")
     glitch_lint_res = run_glitch_spec_lint()
     print(f"      → {glitch_lint_res['overall']} (PASS={glitch_lint_res['pass']}, WARN={glitch_lint_res['warn']}, FAIL={glitch_lint_res['fail']}, SKIP={glitch_lint_res.get('skip',0)})")
 
-    print("[7/14] Running README Script Index Sync audit...")
+    print("[7/17] Running README Script Index Sync audit...")
     readme_sync_res = run_readme_sync()
-    # Prominently report README WARN to console
     if readme_sync_res["warn"] > 0:
         print(f"      → {readme_sync_res['overall']} *** README SYNC WARN: {readme_sync_res.get('unlisted_count',0)} UNLISTED, {readme_sync_res.get('ghost_count',0)} GHOST — update README before critique! ***")
     else:
         print(f"      → {readme_sync_res['overall']} (OK={readme_sync_res['pass']}, UNLISTED/GHOST={readme_sync_res['warn']}, disk={readme_sync_res.get('disk_total','?')}, listed={readme_sync_res.get('listed_total','?')})")
 
-    print("[8/14] Running Motion Spec Lint on motion sheets...")
+    print("[8/17] Running Motion Spec Lint on motion sheets...")
     motion_spec_res = run_motion_spec_lint()
     print(f"      → {motion_spec_res['overall']} (PASS={motion_spec_res['pass']}, WARN={motion_spec_res['warn']}, FAIL={motion_spec_res['fail']}, MISSING={len(motion_spec_res['missing'])})")
 
-    print("[9/14] Running Arc-Diff Gate on contact sheet pairs...")
+    print("[9/17] Running Arc-Diff Gate on contact sheet pairs...")
     arc_diff_results = run_arc_diff_gate()
     for ad in arc_diff_results:
         sev = ad["severity"]
@@ -2324,25 +2872,37 @@ def main():
             msgs = "; ".join(m[:80] for m in ad.get("messages", [])[:2])
             print(f"      → {ad['label']}: {sev} — {msgs}")
 
-    print("[10/14] Running Alpha Blend Lint on fill-light assets...")
+    print("[10/17] Running Alpha Blend Lint on fill-light assets...")
     alpha_blend_res = run_alpha_blend_lint()
     print(f"      → {alpha_blend_res['overall']} (PASS={alpha_blend_res['pass']}, WARN={alpha_blend_res['warn']}, FAIL={alpha_blend_res['fail']}, SKIP={alpha_blend_res['skipped']})")
 
-    print("[11/14] Running UV_PURPLE Dominance Lint on Glitch Layer assets...")
+    print("[11/17] Running UV_PURPLE Dominance Lint on Glitch Layer assets...")
     uv_purple_res = run_uv_purple_lint()
     print(f"      → {uv_purple_res['overall']} (PASS={uv_purple_res['pass']}, WARN={uv_purple_res['warn']}, FAIL={uv_purple_res['fail']}, SKIP={uv_purple_res.get('skip',0)})")
 
-    print("[12/14] Running Depth Temperature Lint on multi-character assets...")
+    print("[12/17] Running Depth Temperature Lint on multi-character assets...")
     depth_temp_res = run_depth_temp_lint()
     print(f"      → {depth_temp_res['overall']} (PASS={depth_temp_res['pass']}, WARN={depth_temp_res['warn']}, FAIL={depth_temp_res['fail']}, SKIP={depth_temp_res.get('skip',0)})")
 
-    print("[13/14] Running Warm Pixel Percentage on world-typed assets...")
+    print("[13/17] Running Warm Pixel Percentage on world-typed assets...")
     warm_pixel_res = run_warm_pixel_lint()
     print(f"      → {warm_pixel_res['overall']} (PASS={warm_pixel_res['pass']}, WARN={warm_pixel_res['warn']}, FAIL={warm_pixel_res['fail']}, SKIP={warm_pixel_res.get('skip',0)})")
 
-    print("[14/14] Running Sightline Validation on gaze-target assets...")
+    print("[14/17] Running Sightline Validation on gaze-target assets...")
     sightline_res = run_sightline_lint()
     print(f"      → {sightline_res['overall']} (PASS={sightline_res['pass']}, WARN={sightline_res['warn']}, FAIL={sightline_res['fail']}, SKIP={sightline_res.get('skip',0)})")
+
+    print("[15/17] Running Silhouette Distinctiveness on character turnarounds...")
+    silhouette_res = run_silhouette_distinctiveness()
+    print(f"      → {silhouette_res['overall']} (PASS={silhouette_res['pass']}, WARN={silhouette_res['warn']}, FAIL={silhouette_res['fail']}, SKIP={silhouette_res.get('skip',0)})")
+
+    print("[16/17] Running Expression Range Metric on expression sheets...")
+    expression_res = run_expression_range()
+    print(f"      → {expression_res['overall']} (PASS={expression_res['pass']}, WARN={expression_res['warn']}, FAIL={expression_res['fail']}, SKIP={expression_res.get('skip',0)})")
+
+    print("[17/17] Running Construction Stiffness on character turnarounds...")
+    stiffness_res = run_construction_stiffness()
+    print(f"      → {stiffness_res['overall']} (PASS={stiffness_res['pass']}, WARN={stiffness_res['warn']}, FAIL={stiffness_res['fail']}, SKIP={stiffness_res.get('skip',0)})")
 
     # Build snapshot and compute delta
     current_snapshot = _make_snapshot(
@@ -2373,6 +2933,9 @@ def main():
         depth_temp_res,
         warm_pixel_res,
         sightline_res,
+        silhouette_res,
+        expression_res,
+        stiffness_res,
         delta,
         run_ts,
     )
@@ -2397,6 +2960,9 @@ def main():
         depth_temp_res["overall"],
         warm_pixel_res["overall"],
         sightline_res["overall"],
+        silhouette_res["overall"],
+        expression_res["overall"],
+        stiffness_res["overall"],
     )
 
     print(f"[precritique_qa] OVERALL: {overall}")
