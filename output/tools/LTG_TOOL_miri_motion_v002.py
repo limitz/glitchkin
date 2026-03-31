@@ -35,8 +35,16 @@ Output: output/characters/motion/LTG_CHAR_miri_motion_v002.png
 
 from PIL import Image, ImageDraw
 import os
+import sys
 import math
 import json
+import numpy as np
+
+_TOOLS_DIR = os.path.dirname(os.path.abspath(__file__))
+if _TOOLS_DIR not in sys.path:
+    sys.path.insert(0, _TOOLS_DIR)
+
+from LTG_TOOL_char_miri import draw_miri, cairo_surface_to_pil as _miri_surface_to_pil
 
 # --- Load config ---
 _CONFIG_PATH = os.path.join(os.path.dirname(__file__), "sheet_geometry_config.json")
@@ -176,25 +184,52 @@ def draw_miri_figure(draw, ox, oy, head_r=32,
                      arm_right_angle=-10,
                      spine_curve=0,
                      eyes_crinkle=False,
-                     smile_amount=0.5):
+                     smile_amount=0.5,
+                     _img=None):
     """
-    Draw Miri as a geometric construction figure — v003: PERFORMING POSES.
+    Draw Miri using canonical char_miri renderer — v003: PERFORMING POSES.
+    Character rendering via draw_miri() from LTG_TOOL_char_miri.
 
     ox, oy = center-bottom of figure.
-    Miri proportions: 3.2 heads tall. head_r=32 (v003 — was 22 in v002).
-
-    Key v003 changes:
-      - hip_shift: px lateral shift of hip (positive = viewer right)
-      - shoulder_drop_side: -1=left shoulder drops, +1=right drops, 0=level
-      - left_foot_weight: 0.0-1.0 — weight on left foot (0.5=even, 0.7=left heavy)
-      - arm modes: "default", "armrest", "lap_curl", "open_wide", "crossed", "lifting"
-      - spine_curve: degrees of mid-spine convex forward curve (engagement signal)
-      - eyes_crinkle: True = full crinkle closed (B3 warmth peak)
-      - smile_amount: 0.0-1.0 mouth arc scale
+    Returns dict of approximate positions for annotation alignment.
     """
     hr  = head_r
+
+    # Map parameters to canonical expression
+    if eyes_crinkle:
+        expression = "WARM"
+    elif body_lean < -3:
+        expression = "SKEPTICAL"
+    elif smile_amount > 0.7:
+        expression = "KNOWING"
+    else:
+        expression = "WARM"
+
+    # Render via canonical char_miri module
+    char_surface = draw_miri(expression, scale=hr / 40.0, facing="right")
+    char_pil = _miri_surface_to_pil(char_surface)
+    bbox = char_pil.getbbox()
+    if bbox:
+        char_pil = char_pil.crop(bbox)
+
+    # Scale to match expected figure size
+    target_h = int(hr * 6.4)
+    if target_h > 0 and char_pil.height > 0:
+        sf = target_h / char_pil.height
+        new_w = max(1, int(char_pil.width * sf))
+        new_h = max(1, int(char_pil.height * sf))
+        char_pil = char_pil.resize((new_w, new_h), Image.LANCZOS)
+
+    # Paste onto the image
+    paste_x = ox - char_pil.width // 2
+    paste_y = oy - char_pil.height
+    if _img is not None:
+        _img.paste(char_pil, (paste_x, paste_y), char_pil)
+
+    # Compute approximate positions for annotation code
     hw  = int(hr * 0.96)
 
+    # Compute approximate positions for annotation code (geometry only, no drawing)
     body_h  = int(hr * 1.22)
     body_w  = int(hr * 1.05)
     neck_h  = int(hr * 0.09)
@@ -209,7 +244,48 @@ def draw_miri_figure(draw, ox, oy, head_r=32,
 
     lean_off = int(math.tan(math.radians(body_lean)) * body_h)
 
-    # --- FEET with weight distribution ---
+    # If canonical renderer was used (_img provided), skip inline drawing
+    # and jump to position computation for annotations
+    if _img is not None:
+        fc = int(leg_w * 0.85)
+        lf_cx = ox - fc + hip_shift
+        rf_cx = ox + fc + hip_shift
+        fy = oy
+        ll_cx = ox - fc // 2
+        rl_cx = ox + fc // 2
+        body_bot_y = oy - leg_h + int(hr * 0.52)
+        body_top_y = body_bot_y - body_h
+        body_cx = ox + lean_off + hip_shift
+        l_shoulder_x = body_cx - body_w
+        r_shoulder_x = body_cx + body_w
+        l_shoulder_y = body_top_y + int(hr * 0.14)
+        r_shoulder_y = l_shoulder_y
+        cardigan_bot = body_bot_y + cardigan_hem_extra
+        cardigan_w_bot = body_w + int(hr * 0.16)
+        neck_top = body_top_y - neck_h
+        head_lean_off = int(math.tan(math.radians(head_tilt)) * hr * 0.7)
+        head_cx = body_cx + head_lean_off - lean_off
+        head_bot = neck_top
+        head_top = head_bot - int(hr * 2.0)
+        head_cy = (head_top + head_bot) // 2
+        r_hand_x = body_cx - body_w
+        r_hand_y = l_shoulder_y + int(hr * 1.0)
+        l_hand_x = body_cx + body_w
+        l_hand_y = r_hand_y
+        return {
+            "head_cx": head_cx, "head_cy": head_cy, "head_top": head_top, "hr": hr,
+            "body_cx": body_cx, "body_bot_y": body_bot_y, "body_w": body_w,
+            "body_top_y": body_top_y,
+            "l_shoulder_x": l_shoulder_x, "l_shoulder_y": l_shoulder_y,
+            "r_shoulder_x": r_shoulder_x, "r_shoulder_y": r_shoulder_y,
+            "cardigan_bot": cardigan_bot, "cardigan_w_bot": cardigan_w_bot,
+            "ll_cx": ll_cx, "rl_cx": rl_cx,
+            "lf_cx": lf_cx, "rf_cx": rf_cx, "fy": fy,
+            "r_hand_x": r_hand_x, "r_hand_y": r_hand_y,
+            "l_hand_x": l_hand_x, "l_hand_y": l_hand_y,
+        }
+
+    # --- FEET with weight distribution --- (legacy fallback)
     fc = int(leg_w * 0.85)
     # Weight foot plants firmly; light foot slightly lifted or angled
     lf_cx = ox - fc + hip_shift
@@ -667,7 +743,7 @@ def draw_panel0_observing_still(img, draw):
         arm_left_mode="lap_curl",    # left arm (viewer right): loosely in lap
         arm_left_angle=-145,
         spine_curve=0,               # erect — stillness is effort
-        smile_amount=0.3)            # neutral-warm resting face
+        smile_amount=0.3, _img=img)  # neutral-warm resting face
     draw = ImageDraw.Draw(img)
 
     # Ground line
@@ -732,7 +808,7 @@ def draw_panel1_recognition(img, draw):
         arm_right_mode="lifting",    # right hand lifting OFF armrest
         arm_left_mode="lifting",     # left hand lifting FROM lap
         spine_curve=6,               # spine begins forward engagement curve
-        smile_amount=0.35)           # mouth hasn't changed yet — recognition is in body first
+        smile_amount=0.35, _img=img)  # mouth hasn't changed yet — recognition is in body first
     draw = ImageDraw.Draw(img)
 
     # Ground line
@@ -830,7 +906,7 @@ def draw_panel2_warmth_burst(img, draw):
         arm_left_mode="open_wide",
         spine_curve=14,              # STRONG forward spine curve — chest opens
         eyes_crinkle=True,           # eyes crinkle fully closed at peak
-        smile_amount=1.0)            # full smile
+        smile_amount=1.0, _img=img)  # full smile
     draw = ImageDraw.Draw(img)
 
     # Ground line
@@ -905,7 +981,7 @@ def draw_panel3_fond_settle(img, draw):
         arm_right_mode="crossed",    # arms loosely crossed — different from B1 armrest
         arm_left_mode="crossed",
         spine_curve=-2,              # slight back curve — settling
-        smile_amount=0.7)            # smile EARNED — bigger than B1's 0.3
+        smile_amount=0.7, _img=img)  # smile EARNED — bigger than B1's 0.3
     draw = ImageDraw.Draw(img)
 
     # Ground line

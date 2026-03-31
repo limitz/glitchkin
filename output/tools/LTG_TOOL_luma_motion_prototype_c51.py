@@ -45,6 +45,9 @@ from LTG_TOOL_curve_draw import (
     curved_torso, hand_shape, draw_hair_volume, smooth_path,
 )
 
+# Import canonical Luma renderer
+from LTG_TOOL_char_luma import draw_luma, cairo_surface_to_pil as _luma_surface_to_pil
+
 # --- RNG seed for reproducibility ---
 import random
 random.seed(51)
@@ -108,13 +111,41 @@ def rgb_to_cairo(rgb, alpha=1.0):
 # ============================================================================
 
 def draw_old_luma_surprised(size=PANEL_SIZE):
-    """Render Luma SURPRISED using the OLD rectangle-first approach (PIL only).
-    Extracted from LTG_TOOL_luma_motion.py draw_luma_figure() with SURPRISED params.
+    """Render Luma SURPRISED using canonical char_luma renderer (was: OLD rectangle-first PIL).
+    Migrated to use draw_luma() from LTG_TOOL_char_luma.
     """
     img = Image.new("RGBA", (size, size), ANNOTATION_BG + (255,))
-    draw = ImageDraw.Draw(img)
 
-    # Place figure at center-bottom with some margin
+    # Render via canonical Luma renderer
+    char_surface = draw_luma("SURPRISED", scale=1.0, facing="right")
+    char_pil = _luma_surface_to_pil(char_surface)
+    bbox = char_pil.getbbox()
+    if bbox:
+        char_pil = char_pil.crop(bbox)
+    # Scale to fill panel
+    target_h = int(size * 0.7)
+    if target_h > 0 and char_pil.height > 0:
+        sf = target_h / char_pil.height
+        char_pil = char_pil.resize((max(1, int(char_pil.width * sf)),
+                                     max(1, int(char_pil.height * sf))), Image.LANCZOS)
+    paste_x = (size - char_pil.width) // 2
+    paste_y = size - 60 - char_pil.height
+    img.paste(char_pil, (paste_x, paste_y), char_pil)
+
+    draw = ImageDraw.Draw(img)
+    try:
+        font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 18)
+    except Exception:
+        font = ImageFont.load_default()
+    draw.text((10, 10), "OLD (now: char_luma canonical)", fill=DEEP_COCOA, font=font)
+
+    return img
+
+
+def draw_old_luma_surprised_LEGACY(size=PANEL_SIZE):
+    """LEGACY: Rectangle-first Luma SURPRISED. Replaced by canonical renderer above."""
+    img = Image.new("RGBA", (size, size), ANNOTATION_BG + (255,))
+    draw = ImageDraw.Draw(img)
     ox = size // 2
     oy = size - 60
     s = size / 640.0  # scale factor
@@ -231,7 +262,39 @@ def draw_old_luma_surprised(size=PANEL_SIZE):
 # ============================================================================
 
 def draw_new_luma_surprised_cairo(size=PANEL_SIZE):
-    """Render Luma SURPRISED using pycairo with gesture-first construction.
+    """Render Luma SURPRISED using canonical char_luma renderer (was: pycairo gesture-first).
+    Migrated to use draw_luma() from LTG_TOOL_char_luma.
+    """
+    img = Image.new("RGBA", (size, size), ANNOTATION_BG + (255,))
+
+    char_surface = draw_luma("SURPRISED", scale=1.2, facing="right")
+    char_pil = _luma_surface_to_pil(char_surface)
+    bbox = char_pil.getbbox()
+    if bbox:
+        char_pil = char_pil.crop(bbox)
+    target_h = int(size * 0.7)
+    if target_h > 0 and char_pil.height > 0:
+        sf = target_h / char_pil.height
+        char_pil = char_pil.resize((max(1, int(char_pil.width * sf)),
+                                     max(1, int(char_pil.height * sf))), Image.LANCZOS)
+    paste_x = (size - char_pil.width) // 2
+    paste_y = size - 60 - char_pil.height
+    img.paste(char_pil, (paste_x, paste_y), char_pil)
+
+    draw = ImageDraw.Draw(img)
+    try:
+        font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 18)
+    except Exception:
+        font = ImageFont.load_default()
+    draw.text((10, 10), "NEW: char_luma canonical", fill=DEEP_COCOA, font=font)
+    draw.text((10, 32), "Gesture spine, asymmetric, pycairo", fill=(140, 130, 120), font=font)
+
+    return img
+
+
+def draw_new_luma_surprised_cairo_LEGACY(size=PANEL_SIZE):
+    """LEGACY: Gesture-first pycairo Luma SURPRISED. Replaced by canonical renderer above."""
+    _UNUSED = """Render Luma SURPRISED using pycairo with gesture-first construction.
 
     Uses:
     - gesture_spine() from curve_draw library to generate the line of action

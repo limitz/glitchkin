@@ -27,8 +27,16 @@ Output: output/characters/motion/LTG_CHAR_miri_motion.png
 
 from PIL import Image, ImageDraw
 import os
+import sys
 import math
 import json
+import numpy as np
+
+_TOOLS_DIR = os.path.dirname(os.path.abspath(__file__))
+if _TOOLS_DIR not in sys.path:
+    sys.path.insert(0, _TOOLS_DIR)
+
+from LTG_TOOL_char_miri import draw_miri, cairo_surface_to_pil as _miri_surface_to_pil
 
 # --- Load config (mirrors pattern from luma/byte/cosmo motion tools) ---
 _CONFIG_PATH = os.path.join(os.path.dirname(__file__), "sheet_geometry_config.json")
@@ -132,323 +140,78 @@ def draw_cardigan_knit(draw, cx, top_y, bot_y, half_w, head_r):
 def draw_miri_figure(draw, ox, oy, head_r=22,
                      body_lean=0,
                      head_tilt=0,
-                     arm_left_angle=-170,   # left arm (viewer's right)
-                     arm_right_angle=-10,   # right arm (viewer's left)
+                     arm_left_angle=-170,
+                     arm_right_angle=-10,
                      weight_back=False,
-                     hand_raised=False):
+                     hand_raised=False,
+                     _img=None):
     """
-    Draw Miri as a geometric construction figure.
+    Draw Miri using canonical char_miri renderer.
     ox, oy = center-bottom of figure.
-    Miri proportions: 3.2 heads tall (shorter than everyone else).
-    Head = compressed circle (88% circular).
-    Torso = wide weathered rectangle (1.2x head width).
-    Cardigan extends to mid-thigh.
+    Renders via draw_miri() from LTG_TOOL_char_miri and composites into the PIL image.
 
-    body_lean: degrees (negative = forward lean, positive = back)
-    head_tilt: degrees (negative = tilt left/viewer-right, positive = right)
-    weight_back: if True, body CG shifts back 3px (Proud Quiet Joy)
-    hand_raised: if True, draw right arm raised with two-finger gesture
+    Returns position tuple for annotation alignment:
+    (head_cx, head_cy, hr, body_cx, body_bot_y, body_w,
+     body_top_y, shoulder_y, cardigan_bot, cardigan_w_bot, ll_cx, rl_cx)
     """
-    hr  = head_r
-    # Head: slightly compressed circle — hw slightly narrower than hr
-    hw  = int(hr * 0.96)      # head half-width (88% circular → slightly wider than tall)
+    hr = head_r
 
-    # Miri is 3.2 heads total
-    body_h  = int(hr * 1.22)  # torso (slightly wider/shorter than Cosmo)
-    body_w  = int(hr * 1.05)  # wide — 1.1x head width shoulders → body_w ~ 1.05hr
-    neck_h  = int(hr * 0.09)  # short neck (shorter than Cosmo)
-    # Legs: upper 0.55hr + lower 0.52hr = 1.07hr (short and solid)
-    leg_h   = int(hr * 1.07)
-    leg_w   = int(hr * 0.42)
-    # Cardigan extends below torso to mid-thigh
-    cardigan_hem_extra = int(hr * 0.58)  # cardigan falls past body_bot to mid-thigh
+    # Map body_lean to expression
+    if hand_raised:
+        expression = "KNOWING"
+    elif body_lean < -2:
+        expression = "SKEPTICAL"
+    elif weight_back:
+        expression = "WARM"
+    else:
+        expression = "WARM"
 
-    foot_w  = int(hr * 0.72)
-    foot_h  = int(hr * 0.24)
+    # Render Miri via canonical renderer
+    char_surface = draw_miri(expression, scale=hr / 40.0, facing="right")
+    char_pil = _miri_surface_to_pil(char_surface)
+    bbox = char_pil.getbbox()
+    if bbox:
+        char_pil = char_pil.crop(bbox)
 
-    lw = 3
+    # Scale to match expected figure size (3.2 heads * 2*hr pixels)
+    target_h = int(hr * 6.4)
+    if target_h > 0 and char_pil.height > 0:
+        sf = target_h / char_pil.height
+        new_w = max(1, int(char_pil.width * sf))
+        new_h = max(1, int(char_pil.height * sf))
+        char_pil = char_pil.resize((new_w, new_h), Image.LANCZOS)
 
-    # CG offset for weight_back
+    # Paste onto the image
+    paste_x = ox - char_pil.width // 2
+    paste_y = oy - char_pil.height
+    if _img is not None:
+        _img.paste(char_pil, (paste_x, paste_y), char_pil)
+
+    # Compute approximate positions for annotation code
+    body_h = int(hr * 1.22)
+    body_w = int(hr * 1.05)
+    hw = int(hr * 0.96)
+
+    leg_h = int(hr * 1.07)
+    leg_w = int(hr * 0.42)
+    cardigan_hem_extra = int(hr * 0.58)
     cg_back_offset = 4 if weight_back else 0
-
     lean_off = int(math.tan(math.radians(body_lean)) * body_h)
-
-    # --- SLIPPERS ---
-    fc = int(leg_w * 0.85)  # foot center offset from body center
-    lf_cx = ox - fc + cg_back_offset
-    rf_cx = ox + fc + cg_back_offset
-    fy = oy
-    # Sole (bottom)
-    draw.ellipse([lf_cx - foot_w // 2, fy - foot_h,
-                  lf_cx + foot_w // 2, fy], fill=SLIPPER_BOT, outline=LINE_COLOR, width=lw)
-    draw.ellipse([rf_cx - foot_w // 2, fy - foot_h,
-                  rf_cx + foot_w // 2, fy], fill=SLIPPER_BOT, outline=LINE_COLOR, width=lw)
-    # Upper (sage green) over sole
-    draw.ellipse([lf_cx - foot_w // 2 + 2, fy - foot_h,
-                  lf_cx + foot_w // 2 - 2, fy - 4], fill=SLIPPER_UP, outline=LINE_COLOR, width=lw)
-    draw.ellipse([rf_cx - foot_w // 2 + 2, fy - foot_h,
-                  rf_cx + foot_w // 2 - 2, fy - 4], fill=SLIPPER_UP, outline=LINE_COLOR, width=lw)
-
-    # --- LEGS (short, slightly tapered) ---
-    leg_top_y = oy - leg_h
+    fc = int(leg_w * 0.85)
     ll_cx = ox - fc // 2 + cg_back_offset
     rl_cx = ox + fc // 2 + cg_back_offset
-    # Slight taper toward ankle: top width > bottom width
-    top_lw = int(leg_w * 1.05)
-    for side, cx_leg in [(-1, ll_cx), (1, rl_cx)]:
-        draw.polygon([
-            cx_leg - top_lw // 2 + lean_off, leg_top_y,
-            cx_leg + top_lw // 2 + lean_off, leg_top_y,
-            cx_leg + leg_w // 2 + lean_off // 2, oy - foot_h + 2,
-            cx_leg - leg_w // 2 + lean_off // 2, oy - foot_h + 2,
-        ], fill=PANTS, outline=LINE_COLOR)
-    # Pants shadow (fold line center)
-    for cx_leg in [ll_cx, rl_cx]:
-        draw.line([(cx_leg + lean_off // 2, leg_top_y + 4),
-                   (cx_leg + lean_off // 2, oy - foot_h - 4)],
-                  fill=PANTS_SH, width=1)
-
-    # --- TORSO (wide rectangle — Miri's planted foundation) ---
     body_bot_y = oy - leg_h + int(hr * 0.52)
     body_top_y = body_bot_y - body_h
-    body_cx    = ox + lean_off + cg_back_offset
-
-    # Cardigan hem (A-shape: falls to mid-thigh, slightly wider than torso)
-    cardigan_bot = body_bot_y + cardigan_hem_extra
-    cardigan_w_bot = body_w + int(hr * 0.16)  # slight A-shape flare at hem
-    draw.polygon([
-        body_cx - body_w,        body_top_y,
-        body_cx + body_w,        body_top_y,
-        body_cx + cardigan_w_bot, cardigan_bot,
-        body_cx - cardigan_w_bot, cardigan_bot,
-    ], fill=CARDIGAN_BASE, outline=LINE_COLOR)
-
-    # Cable-knit lines on cardigan
-    draw_cardigan_knit(draw, body_cx, body_top_y, cardigan_bot, body_w, head_r=hr)
-
-    # Cardigan button row (4 buttons down center)
-    btn_r = max(3, int(hr * 0.13))
-    btn_spacing = (cardigan_bot - body_top_y) // 5
-    for i in range(1, 5):
-        bx = body_cx
-        by = body_top_y + i * btn_spacing
-        draw.ellipse([bx - btn_r, by - btn_r, bx + btn_r, by + btn_r],
-                     fill=CARDIGAN_BTN, outline=LINE_COLOR, width=1)
-
-    # Cardigan V-neck opening (shows undershirt cream)
-    v_w = int(body_w * 0.35)
-    v_depth = int(body_h * 0.30)
-    draw.polygon([
-        body_cx, body_top_y + v_depth,
-        body_cx - v_w, body_top_y + 2,
-        body_cx + v_w, body_top_y + 2,
-    ], fill=EYE_WHITE)
-
-    # Shadow fold lines on cardigan sides
-    for side in [-1, 1]:
-        draw.line([(body_cx + side * (body_w - 4), body_top_y + 6),
-                   (body_cx + side * (cardigan_w_bot - 4), cardigan_bot - 6)],
-                  fill=CARDIGAN_SH, width=2)
-
-    # Pockets (two front pockets, lower half)
-    pkt_top = body_bot_y - int(hr * 0.30)
-    pkt_bot = cardigan_bot - 8
-    pkt_w   = int(body_w * 0.60)
-    for side in [-1, 1]:
-        pkt_cx = body_cx + side * int(body_w * 0.52)
-        draw.rectangle([pkt_cx - pkt_w // 2, pkt_top,
-                        pkt_cx + pkt_w // 2, pkt_bot],
-                       outline=CARDIGAN_SH, width=2)
-
-    # --- SHOULDER MARKERS ---
+    body_cx = ox + lean_off + cg_back_offset
     shoulder_y = body_top_y + int(hr * 0.14)
-    shoulder_r = 4
-    for sx in [body_cx - body_w, body_cx + body_w]:
-        draw.ellipse([sx - shoulder_r, shoulder_y - shoulder_r,
-                      sx + shoulder_r, shoulder_y + shoulder_r],
-                     fill=ACCENT_DASH, outline=LINE_COLOR, width=1)
-
-    # --- ARMS ---
-    arm_h  = int(hr * 1.45)
-    arm_w  = int(hr * 0.30)
-
-    if hand_raised:
-        # Right arm (viewer's left) raised — two-finger precision gesture
-        # Arm up at ~-70° (raised toward speaker level)
-        ang_r = math.radians(-68)
-        ar_ex = body_cx - body_w + int(arm_h * math.cos(ang_r))
-        ar_ey = shoulder_y + int(arm_h * math.sin(-ang_r))
-        draw.polygon([
-            body_cx - body_w - arm_w // 2, shoulder_y,
-            body_cx - body_w + arm_w // 2, shoulder_y,
-            ar_ex + arm_w // 2, ar_ey,
-            ar_ex - arm_w // 2, ar_ey,
-        ], fill=CARDIGAN_BASE, outline=LINE_COLOR)
-        # Hand: two fingers pointing up
-        finger_base = (ar_ex, ar_ey)
-        finger_len  = int(hr * 0.30)
-        finger_w    = int(hr * 0.10)
-        # Index finger
-        draw.rectangle([finger_base[0] - finger_w,    finger_base[1] - finger_len,
-                        finger_base[0],               finger_base[1]],
-                       fill=SKIN, outline=LINE_COLOR, width=2)
-        # Middle finger
-        draw.rectangle([finger_base[0] + 2,            finger_base[1] - finger_len,
-                        finger_base[0] + finger_w + 2, finger_base[1]],
-                       fill=SKIN, outline=LINE_COLOR, width=2)
-        # Remaining fingers (closed fist implied — smaller)
-        draw.rectangle([finger_base[0] - finger_w - 2, finger_base[1] - int(finger_len * 0.55),
-                        finger_base[0] + finger_w + 4, finger_base[1]],
-                       fill=SKIN, outline=LINE_COLOR, width=1)
-    else:
-        # Right arm (viewer's left) — natural comfortable bend
-        ang_r = math.radians(arm_right_angle)
-        ar_ex = body_cx - body_w + int(arm_h * math.cos(ang_r))
-        ar_ey = shoulder_y + int(arm_h * math.sin(-ang_r))
-        draw.polygon([
-            body_cx - body_w - arm_w // 2, shoulder_y,
-            body_cx - body_w + arm_w // 2, shoulder_y,
-            ar_ex + arm_w // 2, ar_ey,
-            ar_ex - arm_w // 2, ar_ey,
-        ], fill=CARDIGAN_BASE, outline=LINE_COLOR)
-        # Hand (simple oval — working hands)
-        draw.ellipse([ar_ex - int(arm_w * 0.75), ar_ey,
-                      ar_ex + int(arm_w * 0.75), ar_ey + int(hr * 0.32)],
-                     fill=SKIN, outline=LINE_COLOR, width=2)
-
-    # Left arm (viewer's right) — comfortable default
-    ang_l = math.radians(arm_left_angle)
-    al_ex = body_cx + body_w + int(arm_h * math.cos(ang_l))
-    al_ey = shoulder_y + int(arm_h * math.sin(-ang_l))
-    draw.polygon([
-        body_cx + body_w - arm_w // 2, shoulder_y,
-        body_cx + body_w + arm_w // 2, shoulder_y,
-        al_ex + arm_w // 2, al_ey,
-        al_ex - arm_w // 2, al_ey,
-    ], fill=CARDIGAN_BASE, outline=LINE_COLOR)
-    # Left hand
-    draw.ellipse([al_ex - int(arm_w * 0.75), al_ey,
-                  al_ex + int(arm_w * 0.75), al_ey + int(hr * 0.32)],
-                 fill=SKIN, outline=LINE_COLOR, width=2)
-
-    # --- NECK ---
-    neck_top  = body_top_y - neck_h
-    neck_bot  = body_top_y
-    neck_w    = int(hr * 0.20)
-    neck_cx   = body_cx
-    draw.rectangle([neck_cx - neck_w, neck_top,
-                    neck_cx + neck_w, neck_bot],
-                   fill=SKIN, outline=LINE_COLOR, width=lw)
-
-    # --- HEAD (compressed circle — "88% circular") ---
+    cardigan_bot = body_bot_y + cardigan_hem_extra
+    cardigan_w_bot = body_w + int(hr * 0.16)
     head_lean_off = int(math.tan(math.radians(head_tilt)) * hr * 0.7)
-    head_cx  = neck_cx + head_lean_off
+    neck_top = body_top_y - neck_h
+    head_cx = body_cx + head_lean_off - lean_off
     head_bot = neck_top
-    head_top = head_bot - int(hr * 2.0)    # diameter = 2*hr
-    head_cy  = (head_top + head_bot) // 2
-    # Compressed: rx slightly wider than ry for that "settled" circle feel
-    draw.ellipse([head_cx - hw, head_top, head_cx + hw, head_bot],
-                 fill=SKIN, outline=LINE_COLOR, width=lw)
-    # Highlight on forehead
-    hl_r = max(4, int(hr * 0.22))
-    draw.ellipse([head_cx - hl_r // 2, head_top + int(hr * 0.28),
-                  head_cx + hl_r // 2, head_top + int(hr * 0.28) + hl_r // 2],
-                 fill=SKIN_HL)
-
-    # --- HAIR (silver bun — adds 0.25hr height above skull) ---
-    bun_cy  = head_top - int(hr * 0.18)
-    bun_rx  = int(hr * 0.55)
-    bun_ry  = int(hr * 0.32)
-    draw.ellipse([head_cx - bun_rx, bun_cy - bun_ry,
-                  head_cx + bun_rx, bun_cy + bun_ry + 4],
-                 fill=HAIR_BASE, outline=LINE_COLOR, width=2)
-    # Bun highlight (crown)
-    draw.ellipse([head_cx - int(bun_rx * 0.45), bun_cy - int(bun_ry * 0.70),
-                  head_cx + int(bun_rx * 0.45), bun_cy],
-                 fill=HAIR_HL)
-    # Bun shadow (lower half)
-    draw.arc([head_cx - bun_rx + 4, bun_cy,
-              head_cx + bun_rx - 4, bun_cy + bun_ry + 2],
-             start=0, end=180, fill=HAIR_SH, width=2)
-    # Escaping wisps (2-3 at temples — Miri's hair always escapes a little)
-    for side, wx_off, wy_off in [
-        (-1, int(hw * 0.72), int(hr * 0.20)),
-        ( 1, int(hw * 0.68), int(hr * 0.14)),
-        (-1, int(hw * 0.80), int(hr * 0.42)),
-    ]:
-        wisp_x = head_cx + side * wx_off
-        wisp_y = head_top + wy_off
-        draw.arc([wisp_x - 5, wisp_y - 6, wisp_x + 5, wisp_y + 6],
-                 start=180 if side == -1 else 0, end=350 if side == -1 else 170,
-                 fill=HAIR_BASE, width=2)
-
-    # --- FACE FEATURES ---
-    face_cy = head_cy + int(hr * 0.06)
-
-    # Permanent cheek blush (always present)
-    for side in [-1, 1]:
-        blush_cx = head_cx + side * int(hw * 0.52)
-        draw.ellipse([blush_cx - int(hr * 0.22), face_cy + int(hr * 0.02),
-                      blush_cx + int(hr * 0.22), face_cy + int(hr * 0.26)],
-                     fill=CHEEK_BLUSH)
-
-    # Eyebrows (softer and narrower than Luma's — natural slight arch)
-    brow_y   = face_cy - int(hr * 0.44)
-    brow_sep = int(hw * 0.48)
-    for side in [-1, 1]:
-        bx = head_cx + side * brow_sep
-        # Natural arch — outer end slightly higher
-        draw.line([bx - int(hw * 0.20), brow_y + 2,
-                   bx + int(hw * 0.20) * (-side), brow_y - 2],
-                  fill=BROW_COLOR, width=2)
-
-    # Eyes (rounded almonds — horizontal, steady)
-    eye_sep = int(hw * 0.46)
-    eye_rx  = int(hr * 0.20)   # slightly wider than Luma (steady gaze)
-    eye_ry  = int(hr * 0.15)   # more horizontal
-    for side in [-1, 1]:
-        ex = head_cx + side * eye_sep
-        ey = face_cy - int(hr * 0.10)
-        # White
-        draw.ellipse([ex - eye_rx, ey - eye_ry, ex + eye_rx, ey + eye_ry],
-                     fill=EYE_WHITE, outline=LINE_COLOR, width=2)
-        # Iris (deep warm amber)
-        ir = int(eye_rx * 0.65)
-        draw.ellipse([ex - ir, ey - min(ir, eye_ry - 1),
-                      ex + ir, ey + min(ir, eye_ry - 1)], fill=EYE_IRIS)
-        # Pupil
-        pr = int(ir * 0.52)
-        draw.ellipse([ex - pr, ey - pr, ex + pr, ey + pr], fill=EYE_PUPIL)
-        # Highlight — upper-left (same as Luma: visual DNA marker)
-        draw.ellipse([ex - int(ir * 0.30) - 2, ey - int(ir * 0.38) - 2,
-                      ex - int(ir * 0.30) + 3, ey - int(ir * 0.38) + 3],
-                     fill=EYE_HL)
-        # Upper eyelid — slight heaviness (calm, not tired)
-        draw.arc([ex - eye_rx, ey - eye_ry, ex + eye_rx, ey + int(eye_ry * 0.4)],
-                 start=200, end=340, fill=LINE_COLOR, width=3)
-        # Crow's feet (always present — laugh lines)
-        cw_x = ex + side * (eye_rx + 2)
-        draw.arc([cw_x - 5, ey - 3, cw_x + 5, ey + 6],
-                 start=0 if side == 1 else 180, end=90 if side == 1 else 270,
-                 fill=LINE_COLOR, width=1)
-
-    # Nose (more defined than Luma — button with bridge suggestion)
-    draw.arc([head_cx - int(hr * 0.10), face_cy + int(hr * 0.14),
-              head_cx + int(hr * 0.10), face_cy + int(hr * 0.30)],
-             start=130, end=310, fill=LINE_COLOR, width=3)
-
-    # Mouth (default: gentle closed upward curve — always almost smiling)
-    draw.arc([head_cx - int(hw * 0.30), face_cy + int(hr * 0.28),
-              head_cx + int(hw * 0.30), face_cy + int(hr * 0.54)],
-             start=10, end=170, fill=LINE_COLOR, width=3)
-
-    # Smile lines (faint — always present, record of every smile)
-    for side in [-1, 1]:
-        smx = head_cx + side * int(hw * 0.26)
-        draw.arc([smx - 4, face_cy + int(hr * 0.25),
-                  smx + 4, face_cy + int(hr * 0.56)],
-                 start=200 if side == -1 else 340, end=320 if side == -1 else 100,
-                 fill=LINE_COLOR, width=1)
+    head_top = head_bot - int(hr * 2.0)
+    head_cy = (head_top + head_bot) // 2
 
     return (head_cx, head_cy, hr, body_cx, body_bot_y, body_w,
             body_top_y, shoulder_y, cardigan_bot, cardigan_w_bot,
@@ -486,7 +249,7 @@ def draw_panel0_warm_attention(img, draw):
         draw, fig_x, fig_y, head_r=22,
         body_lean=0, head_tilt=2,       # very slight forward incline of head
         arm_right_angle=-22, arm_left_angle=-158,
-        weight_back=False)
+        weight_back=False, _img=img)
     draw = ImageDraw.Draw(img)
 
     # Ground line
@@ -536,7 +299,7 @@ def draw_panel1_sharp_assessment(img, draw):
         draw, fig_x, fig_y, head_r=22,
         body_lean=-3, head_tilt=-5,    # slight chin-down forward evaluating lean
         arm_right_angle=-22, arm_left_angle=-158,
-        weight_back=False)
+        weight_back=False, _img=img)
     draw = ImageDraw.Draw(img)
 
     # Ground line
@@ -645,7 +408,7 @@ def draw_panel3_patient_correction(img, draw):
         body_lean=-2, head_tilt=3,     # slight forward (bringing herself to the conversation)
         arm_right_angle=-22, arm_left_angle=-158,
         weight_back=False,
-        hand_raised=True)
+        hand_raised=True, _img=img)
     draw = ImageDraw.Draw(img)
 
     # Ground line

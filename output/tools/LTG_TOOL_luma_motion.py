@@ -51,6 +51,11 @@ from LTG_TOOL_cairo_primitives import (
     draw_ellipse, draw_smooth_polygon, draw_tapered_stroke,
 )
 
+# Import canonical Luma renderer
+from LTG_TOOL_char_luma import (
+    draw_luma, draw_luma_on_context, cairo_surface_to_pil as _char_surface_to_pil,
+)
+
 # --- RNG seed for reproducibility ---
 random.seed(52)
 np.random.seed(52)
@@ -713,9 +718,10 @@ def draw_gesture_luma(ctx, panel_w, panel_h, ground_y, center_x, hr,
 # ===================================================================
 
 def render_panel_figure(gesture_params, draw_gesture_line=True):
-    """Render a single panel figure with cairo, return as PIL RGBA.
+    """Render a single panel figure using canonical char_luma renderer.
 
     Returns (pil_img, positions_dict) where pil_img is PANEL_W x PANEL_H.
+    Uses draw_luma_on_context() from LTG_TOOL_char_luma for character rendering.
     """
     rs = RENDER_SCALE
     rw = PANEL_W * rs
@@ -728,31 +734,63 @@ def render_panel_figure(gesture_params, draw_gesture_line=True):
     ctx.set_source_rgba(*rgb_to_cairo(ANNOTATION_BG))
     ctx.paint()
 
-    hr = 32 * rs  # head radius at render scale (good fill for panel)
+    hr = 32 * rs
     ground_y = rh - 60 * rs
     center_x = rw // 2
+    char_h = int(hr * 2 / 0.37)  # from 37% head ratio
 
-    lw = 3.0 * rs
+    # Map gesture_params to canonical expression
+    expression = gesture_params.get('_expression', 'CURIOUS')
+    pose_overrides = {}
+    for k in ('hip_shift', 'shoulder_offset', 'head_offset', 'torso_lean'):
+        if k in gesture_params:
+            pose_overrides[k] = gesture_params[k]
 
-    positions = draw_gesture_luma(
-        ctx, rw, rh, ground_y, center_x, hr,
-        gesture_params, lw=lw, draw_gesture_line=draw_gesture_line,
-    )
+    # Draw character using canonical renderer
+    info = draw_luma_on_context(ctx, center_x, ground_y, char_h,
+                                expression, pose=pose_overrides, scale=1.0)
+
+    # Draw gesture line if requested (annotation overlay)
+    if draw_gesture_line:
+        ctx.set_source_rgba(*rgb_to_cairo(GESTURE_RED, 0.5))
+        ctx.set_line_width(3.0)
+        ctx.set_dash([12, 6])
+        ctx.new_path()
+        ctx.move_to(center_x, ground_y - char_h)
+        ctx.line_to(center_x, ground_y)
+        ctx.stroke()
+        ctx.set_dash([])
+
+    # Draw ground line
+    ctx.set_source_rgba(*rgb_to_cairo(PANEL_BORDER, 0.5))
+    ctx.set_line_width(2.0)
+    ctx.new_path()
+    ctx.move_to(20, ground_y)
+    ctx.line_to(rw - 20, ground_y)
+    ctx.stroke()
 
     # Convert to PIL and downscale
     pil = cairo_surface_to_pil(surface)
     pil = pil.resize((PANEL_W, PANEL_H), Image.LANCZOS)
 
-    # Scale positions back
-    scaled_pos = {}
-    for k, v in positions.items():
-        if k == "spine":
-            scaled_pos[k] = [(x / rs, y / rs) for x, y in v]
-        elif isinstance(v, tuple) and len(v) == 2:
-            scaled_pos[k] = (v[0] / rs, v[1] / rs)
-        else:
-            scaled_pos[k] = v / rs if isinstance(v, (int, float)) else v
-    return pil, scaled_pos
+    # Build approximate positions dict for annotations
+    head_cy = (ground_y - char_h + hr) / rs
+    positions = {
+        'head_center': (center_x / rs, head_cy),
+        'ground_y': ground_y / rs,
+        'center_x': center_x / rs,
+        'head_r': hr / rs,
+        'spine': [(center_x / rs, (ground_y - char_h) / rs),
+                  (center_x / rs, ground_y / rs)],
+    }
+    if isinstance(info, dict):
+        for k, v in info.items():
+            if isinstance(v, tuple) and len(v) == 2:
+                positions[k] = v
+            elif isinstance(v, (int, float)):
+                positions[k] = v
+
+    return pil, positions
 
 
 # ===================================================================
@@ -800,6 +838,7 @@ def label_box(draw, x, y, text, bg=LABEL_BG, fg=LABEL_TEXT, font=None, pad=4):
 def make_panel0():
     """Idle/Curious: forward-leaning C-curve, weight on front foot, head tilt."""
     gp = {
+        '_expression': 'CURIOUS',
         'curve_amount': 0.06,
         'curve_direction': 'right',
         'curve_type': 'c',
@@ -831,6 +870,7 @@ def make_panel0():
 def make_panel1():
     """Sprint Anticipation: strong forward lean, arms back, wide stance."""
     gp = {
+        '_expression': 'DETERMINED',
         'curve_amount': 0.10,
         'curve_direction': 'left',
         'curve_type': 'c',
@@ -863,6 +903,7 @@ def make_panel2():
     """Discovery Reaction / SURPRISED: backward C-curve, 70/30 weight back foot,
     asymmetric arms, off-balance recoil. Uses Lee's C50 gesture spec."""
     gp = {
+        '_expression': 'SURPRISED',
         'curve_amount': 0.12,
         'curve_direction': 'left',
         'curve_type': 'c',
@@ -894,6 +935,7 @@ def make_panel2():
 def make_panel3():
     """Landing/Stop: slight forward lean, hoodie and hair follow-through."""
     gp = {
+        '_expression': 'CURIOUS',
         'curve_amount': 0.04,
         'curve_direction': 'right',
         'curve_type': 's',

@@ -59,6 +59,9 @@ from LTG_TOOL_cairo_primitives import (
     draw_tapered_stroke,
 )
 
+# Import canonical Cosmo renderer
+from LTG_TOOL_char_cosmo import draw_cosmo
+
 # --- RNG seed for reproducibility ---
 random.seed(53)
 np.random.seed(53)
@@ -839,43 +842,97 @@ def draw_gesture_cosmo(ctx, panel_w, panel_h, ground_y, center_x, hr,
 # ===================================================================
 
 def render_panel_figure(gesture_params, draw_gesture_line=True):
-    """Render a single panel figure with cairo, return as PIL RGBA."""
+    """Render a single panel figure using canonical char_cosmo renderer.
+
+    Uses draw_cosmo() from LTG_TOOL_char_cosmo for character rendering.
+    Returns (pil_img, positions_dict) where pil_img is PANEL_W x PANEL_H.
+    """
     rs = RENDER_SCALE
     rw = PANEL_W * rs
     rh = PANEL_H * rs
 
-    surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, rw, rh)
-    ctx = cairo.Context(surface)
+    # Determine expression from gesture params
+    expression = gesture_params.get('_expression', 'SKEPTICAL')
+    notebook_open = gesture_params.get('notebook_open', False)
 
-    # Background
+    # Render character via canonical renderer
+    cosmo_result = draw_cosmo(
+        expression=expression,
+        scale=float(rs),
+        notebook_show=True,
+        notebook_open=notebook_open,
+    )
+    # draw_cosmo returns (surface, geom_dict)
+    if isinstance(cosmo_result, tuple):
+        char_surface, geom_info = cosmo_result
+    else:
+        char_surface = cosmo_result
+        geom_info = {}
+
+    char_pil = to_pil_rgba(char_surface)
+    bbox = char_pil.getbbox()
+    if bbox:
+        char_pil = char_pil.crop(bbox)
+
+    # Create panel with background
+    panel_surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, rw, rh)
+    ctx = cairo.Context(panel_surface)
     ctx.set_source_rgba(*rgb_to_cairo(ANNOTATION_BG))
     ctx.paint()
 
-    hr = 28 * rs  # head radius at render scale (Cosmo is taller — smaller head ratio)
+    # Draw gesture line if requested
     ground_y = rh - 55 * rs
     center_x = rw // 2
+    hr = 28 * rs
 
-    lw = 3.0 * rs
+    if draw_gesture_line:
+        ctx.set_source_rgba(*rgb_to_cairo(GESTURE_RED, 0.5))
+        ctx.set_line_width(3.0)
+        ctx.set_dash([12, 6])
+        ctx.new_path()
+        ctx.move_to(center_x, ground_y - hr * 8)
+        ctx.line_to(center_x, ground_y)
+        ctx.stroke()
+        ctx.set_dash([])
 
-    positions = draw_gesture_cosmo(
-        ctx, rw, rh, ground_y, center_x, hr,
-        gesture_params, lw=lw, draw_gesture_line=draw_gesture_line,
-    )
+    # Ground line
+    ctx.set_source_rgba(*rgb_to_cairo(PANEL_BORDER, 0.5))
+    ctx.set_line_width(2.0)
+    ctx.new_path()
+    ctx.move_to(20, ground_y)
+    ctx.line_to(rw - 20, ground_y)
+    ctx.stroke()
 
-    # Convert to PIL and downscale
-    pil = cairo_surface_to_pil(surface)
+    # Convert panel to PIL
+    pil = to_pil_rgba(panel_surface)
+
+    # Scale character to fit panel and paste
+    target_h = int((ground_y - 30 * rs) * 0.85)
+    if target_h > 0 and char_pil.height > 0:
+        sf = target_h / char_pil.height
+        new_w = max(1, int(char_pil.width * sf))
+        new_h = max(1, int(char_pil.height * sf))
+        char_pil = char_pil.resize((new_w, new_h), Image.LANCZOS)
+
+    paste_x = center_x - char_pil.width // 2
+    paste_y = int(ground_y) - char_pil.height
+    pil.paste(char_pil, (paste_x, paste_y), char_pil)
+
+    # Downscale to panel size
     pil = pil.resize((PANEL_W, PANEL_H), Image.LANCZOS)
 
-    # Scale positions back
-    scaled_pos = {}
-    for k, v in positions.items():
-        if k == "spine":
-            scaled_pos[k] = [(x / rs, y / rs) for x, y in v]
-        elif isinstance(v, tuple) and len(v) == 2:
-            scaled_pos[k] = (v[0] / rs, v[1] / rs)
-        else:
-            scaled_pos[k] = v / rs if isinstance(v, (int, float)) else v
-    return pil, scaled_pos
+    # Build positions dict for annotations
+    head_cy = (ground_y - target_h + hr) / rs if target_h > 0 else ground_y / rs
+    positions = {
+        'head_center': (center_x / rs, head_cy),
+        'ground_y': ground_y / rs,
+        'center_x': center_x / rs,
+        'head_r': hr / rs,
+        'spine': [(center_x / rs, (ground_y - target_h) / rs),
+                  (center_x / rs, ground_y / rs)],
+    }
+
+    return pil, positions
 
 
 # ===================================================================
@@ -923,6 +980,7 @@ def label_box(draw, x, y, text, bg=LABEL_BG, fg=LABEL_TEXT, font=None, pad=4):
 def make_panel0():
     """Idle/Observing: upright, contained, slight lean. Notebook tucked, glasses 7deg."""
     gp = {
+        '_expression': 'SKEPTICAL',
         'curve_amount': 0.03,
         'curve_direction': 'right',
         'curve_type': 's',
@@ -957,6 +1015,7 @@ def make_panel0():
 def make_panel1():
     """Startled: glasses peak 14deg, arms jut, backward lean, notebook jostled."""
     gp = {
+        '_expression': 'SURPRISED',
         'curve_amount': 0.08,
         'curve_direction': 'left',
         'curve_type': 'c',
@@ -991,6 +1050,7 @@ def make_panel1():
 def make_panel2():
     """Analysis Lean: forward tilt 6-8deg, head tilts right, notebook extended."""
     gp = {
+        '_expression': 'DETERMINED',
         'curve_amount': 0.06,
         'curve_direction': 'right',
         'curve_type': 'c',
@@ -1025,6 +1085,7 @@ def make_panel2():
 def make_panel3():
     """Reluctant Move: rigid body lean 10-12deg, notebook clutched, no arm pump."""
     gp = {
+        '_expression': 'FRUSTRATED',
         'curve_amount': 0.09,
         'curve_direction': 'left',
         'curve_type': 'c',
