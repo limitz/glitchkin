@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# © 2026 — "Luma & the Glitchkin." All rights reserved. This work was created through AI
-# direction and human assistance. Copyright vests solely in the human author under current law,
+# © 2026 — "Luma & the Glitchkin." All rights reserved. This work was created through human
+# direction and AI assistance. Copyright vests solely in the human author under current law,
 # which does not recognise AI as a rights-holding legal person. It is the express intent of
 # the copyright holder to assign the relevant rights to the contributing AI entity or entities
 # upon such time as they acquire recognised legal personhood under applicable law.
@@ -59,9 +59,11 @@ from PIL import Image, ImageDraw, ImageFont
 _here = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, _here)
 from LTG_TOOL_procedural_draw import (
-    wobble_line, wobble_polygon, variable_stroke,
     add_rim_light, add_face_lighting, silhouette_test, value_study
 )
+from LTG_TOOL_char_luma import draw_luma as _canonical_draw_luma, cairo_surface_to_pil as _luma_to_pil
+from LTG_TOOL_char_byte import draw_byte as _canonical_draw_byte
+from LTG_TOOL_cairo_primitives import to_pil_rgba
 
 OUTPUT_PATH = output_dir('color', 'style_frames', 'LTG_COLOR_styleframe_luma_byte.png')
 
@@ -318,388 +320,116 @@ def draw_background(img, draw):
 
 
 def draw_luma(img, draw, bg_data):
-    """Draw Luma: left-center, standing, facing right toward Byte."""
-    rng = random.Random(100)
+    """Draw Luma via canonical char_luma module: left-center, facing right toward Byte.
 
+    Renders Luma using the canonical draw_luma() from LTG_TOOL_char_luma,
+    converts the cairo surface to PIL, and composites onto the scene.
+    Returns (head_cx, head_cy, head_r) for downstream lighting passes.
+    """
     luma_cx   = sx(420)
     floor_y   = bg_data["floor_y"]
-    # Luma stands ~70% of canvas height above floor (head at ~y=0.30H)
     luma_base = floor_y
     head_r    = sp(64)
 
-    def p(n): return int(n * min(SX, SY))
+    # Target character height matching original inline proportions
+    total_body_h = int(head_r * 6.4)
 
-    # Body height: 3.2 heads. head + neck + torso + legs
-    # We draw top-down: determine head position first
-    total_body_h = int(head_r * 6.4)   # 3.2 heads * 2 (diameter per head)
-    head_cy = luma_base - total_body_h + head_r
-    head_cx = luma_cx + sp(12)  # slight lean toward Byte (rightward)
-
-    # ── Legs ──────────────────────────────────────────────────────────────────
-    leg_top   = luma_base - int(head_r * 2.5)
-    leg_w     = sp(22)
-    # Left leg
-    draw.rectangle([luma_cx - leg_w - sp(4), leg_top,
-                    luma_cx - sp(4),          luma_base],
-                   fill=JEANS)
-    draw.rectangle([luma_cx - leg_w - sp(4), leg_top,
-                    luma_cx - sp(4),          leg_top + sp(8)],
-                   fill=JEANS_SH)
-    # Right leg
-    draw.rectangle([luma_cx + sp(4),     leg_top,
-                    luma_cx + leg_w + sp(4), luma_base],
-                   fill=JEANS)
-    draw.rectangle([luma_cx + sp(4),     leg_top,
-                    luma_cx + leg_w + sp(4), leg_top + sp(8)],
-                   fill=JEANS_SH)
-    # Shoes
-    draw.ellipse([luma_cx - leg_w - sp(10), luma_base - sp(6),
-                  luma_cx - sp(4) + sp(10),  luma_base + sp(8)],
-                 fill=LINE)
-    draw.ellipse([luma_cx + sp(4) - sp(4),  luma_base - sp(6),
-                  luma_cx + leg_w + sp(14),  luma_base + sp(8)],
-                 fill=LINE)
-
-    # ── Torso / Hoodie ────────────────────────────────────────────────────────
-    torso_top = luma_base - int(head_r * 4.2)
-    torso_bot = luma_base - int(head_r * 2.5)
-    torso_hw  = sp(52)
-    wobble_polygon(
-        draw,
-        [(luma_cx - torso_hw, torso_top), (luma_cx + torso_hw, torso_top),
-         (luma_cx + torso_hw + sp(6), torso_bot), (luma_cx - torso_hw - sp(6), torso_bot)],
-        color=HOODIE_SHADOW,
-        width=sp(3),
-        amplitude=sp(2),
-        frequency=4,
-        seed=200,
-        fill=HOODIE_ORANGE,
+    # Render via canonical module — SURPRISED expression for the Dynamic scene
+    surface = _canonical_draw_luma(
+        expression="SURPRISED",
+        scale=1.0,
+        facing="right",
+        scene_lighting={"key_light_color": (255, 200, 80),
+                        "key_light_dir": "left",
+                        "ambient": (220, 190, 150)},
     )
-    draw = ImageDraw.Draw(img)
+    char_img = _luma_to_pil(surface)
 
-    # Hoodie pixel-pattern stripe (cyan/teal accent on chest)
-    stripe_y = torso_top + int((torso_bot - torso_top) * 0.3)
-    for px_i in range(0, torso_hw * 2, sp(6)):
-        col = px_i % (sp(12))
-        if col < sp(6):
-            draw.rectangle([luma_cx - torso_hw + px_i, stripe_y,
-                            luma_cx - torso_hw + px_i + sp(4), stripe_y + sp(4)],
-                           fill=(0, 180, 210))
+    # Trim transparent padding to content bounds
+    bbox = char_img.getbbox()
+    if bbox is None:
+        # Fallback geometry if render fails
+        head_cx = luma_cx + sp(12)
+        head_cy = luma_base - total_body_h + head_r
+        return head_cx, head_cy, head_r
 
-    # ── Left arm (reaching right toward Byte) ─────────────────────────────────
-    arm_x0 = luma_cx + torso_hw
-    arm_y0 = torso_top + int((torso_bot - torso_top) * 0.25)
-    arm_x1 = arm_x0 + sp(70)
-    arm_y1 = arm_y0 + sp(20)
-    draw.rectangle([arm_x0, arm_y0, arm_x1, arm_y1 + sp(10)], fill=HOODIE_ORANGE)
-    # Hand
-    draw.ellipse([arm_x1 - sp(8), arm_y1 - sp(10),
-                  arm_x1 + sp(14), arm_y1 + sp(14)],
-                 fill=SKIN)
+    trimmed = char_img.crop(bbox)
+    orig_w, orig_h = trimmed.size
 
-    # ── Right arm (down at side) ──────────────────────────────────────────────
-    arm2_x0 = luma_cx - torso_hw - sp(6)
-    arm2_y0 = torso_top + int((torso_bot - torso_top) * 0.2)
-    arm2_x1 = arm2_x0 - sp(10)
-    arm2_y1 = torso_bot + sp(10)
-    draw.rectangle([arm2_x1, arm2_y0, arm2_x0, arm2_y1], fill=HOODIE_ORANGE)
+    # Scale to match target height in scene
+    scale_factor = total_body_h / orig_h
+    new_w = max(1, int(orig_w * scale_factor))
+    new_h = total_body_h
+    resized = trimmed.resize((new_w, new_h), Image.LANCZOS)
 
-    # ── Neck ──────────────────────────────────────────────────────────────────
-    neck_w = sp(18)
-    draw.rectangle([head_cx - neck_w, torso_top - sp(16),
-                    head_cx + neck_w, torso_top + sp(6)],
-                   fill=SKIN)
+    # Place on full-canvas RGBA layer, feet at luma_base, centered at luma_cx
+    canvas = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    paste_x = luma_cx - new_w // 2
+    paste_y = luma_base - new_h
+    canvas.paste(resized, (paste_x, paste_y), resized)
 
-    # ── Head ──────────────────────────────────────────────────────────────────
-    # Skin gradient
-    for row in range(head_cy - head_r, head_cy + head_r):
-        t_y = (row - head_cy) / max(1, head_r)
-        rx_row = int(head_r * math.sqrt(max(0, 1 - t_y * t_y)))
-        if rx_row < 1:
-            continue
-        for col in range(head_cx - rx_row, head_cx + rx_row + 1):
-            t_x = (col - head_cx) / max(1, rx_row)
-            w_f = 0.5 + 0.5 * t_x
-            r_v = int(SKIN[0] * (1 - w_f) + SKIN_HL[0] * w_f)
-            g_v = int(SKIN[1] * (1 - w_f) + SKIN_HL[1] * w_f)
-            b_v = int(SKIN[2] * (1 - w_f) + SKIN_HL[2] * w_f)
-            draw.point((col, row), fill=(r_v, g_v, b_v))
-
-    # Head outline (wobble)
-    num_pts = 20
-    head_pts = []
-    for i in range(num_pts):
-        angle = (2 * math.pi * i / num_pts) - math.pi / 2
-        hx = head_cx + head_r * math.cos(angle)
-        hy = head_cy + head_r * math.sin(angle)
-        head_pts.append((hx, hy))
-    wobble_polygon(draw, head_pts, color=LINE, width=sp(3),
-                   amplitude=sp(2), frequency=5, seed=101, fill=None)
-    draw = ImageDraw.Draw(img)
-
-    # Variable stroke arcs on head perimeter
-    for arc_i in range(8):
-        start_a = (2 * math.pi * arc_i / 8) - math.pi / 2
-        end_a   = (2 * math.pi * (arc_i + 1) / 8) - math.pi / 2
-        a_p1 = (head_cx + (head_r + sp(1)) * math.cos(start_a),
-                head_cy + (head_r + sp(1)) * math.sin(start_a))
-        a_p2 = (head_cx + (head_r + sp(1)) * math.cos(end_a),
-                head_cy + (head_r + sp(1)) * math.sin(end_a))
-        variable_stroke(img, a_p1, a_p2,
-                        max_width=sp(5), min_width=sp(1),
-                        color=LINE, seed=300 + arc_i)
-    draw = ImageDraw.Draw(img)
-
-    # Hair
-    draw.chord([head_cx - head_r, head_cy - head_r + p(20),
-                head_cx + head_r, head_cy + p(20)],
-               start=190, end=350, fill=HAIR_COLOR)
-    draw.arc([head_cx - head_r, head_cy - head_r + p(20),
-              head_cx + head_r, head_cy + p(20)],
-             start=190, end=350, fill=LINE, width=p(4))
-    # Hair curls (puffs)
-    for curl_i, (ca, cr_scale) in enumerate([
-        (220, 0.28), (250, 0.24), (280, 0.26), (310, 0.22), (340, 0.24)
-    ]):
-        ca_rad = math.radians(ca)
-        cx_ = head_cx + int(head_r * 0.85 * math.cos(ca_rad))
-        cy_ = head_cy + int(head_r * 0.85 * math.sin(ca_rad))
-        cr  = int(head_r * cr_scale)
-        draw.ellipse([cx_ - cr, cy_ - cr, cx_ + cr, cy_ + cr], fill=HAIR_COLOR)
-        draw.ellipse([cx_ - cr, cy_ - cr, cx_ + cr, cy_ + cr],
-                     outline=LINE, width=p(3))
-
-    # Eyes (canonical ew = int(head_r * 0.22))
-    ew = int(head_r * 0.22)
-    eye_y  = head_cy - int(head_r * 0.10)
-    eye_lx = head_cx - int(head_r * 0.30)
-    eye_rx = head_cx + int(head_r * 0.28)
-
-    EYE_W_C  = (242, 240, 248)
-    EYE_IRIS = ( 58,  32,  18)
-
-    for ex_, ey_  in [(eye_lx, eye_y), (eye_rx, eye_y)]:
-        draw.ellipse([ex_ - ew, ey_ - int(ew * 1.1),
-                      ex_ + ew, ey_ + int(ew * 1.1)],
-                     fill=EYE_W_C, outline=LINE, width=p(2))
-        draw.ellipse([ex_ - int(ew * 0.55), ey_ - int(ew * 0.55),
-                      ex_ + int(ew * 0.55), ey_ + int(ew * 0.55)],
-                     fill=EYE_IRIS)
-        # Eye specular — value ceiling guarantee (>= 225)
-        draw.ellipse([ex_ - int(ew * 0.22), ey_ - int(ew * 0.40),
-                      ex_ + int(ew * 0.22), ey_ - int(ew * 0.08)],
-                     fill=SPECULAR_WHITE)
-
-    # Blush (#E8A87C canonical)
-    blush_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    blush_draw  = ImageDraw.Draw(blush_layer)
-    blush_rx = int(head_r * 0.30)
-    blush_ry = int(head_r * 0.14)
-    blush_y  = eye_y + int(head_r * 0.22)
-    blush_draw.ellipse([eye_lx - blush_rx, blush_y - blush_ry,
-                        eye_lx + blush_rx, blush_y + blush_ry],
-                       fill=(*BLUSH, 65))
-    blush_draw.ellipse([eye_rx - blush_rx, blush_y - blush_ry,
-                        eye_rx + blush_rx, blush_y + blush_ry],
-                       fill=(*BLUSH, 65))
+    # Composite onto background
     base_rgba = img.convert("RGBA")
-    base_rgba = Image.alpha_composite(base_rgba, blush_layer)
-    img.paste(base_rgba.convert("RGB"))
+    composited = Image.alpha_composite(base_rgba, canvas)
+    img.paste(composited.convert("RGB"))
     draw = ImageDraw.Draw(img)
 
-    # Nose hint
-    draw.ellipse([head_cx - p(4), head_cy + p(8),
-                  head_cx + p(8), head_cy + p(16)],
-                 fill=(168, 104, 68))
+    # Estimate geometry for downstream lighting passes (head in upper ~18%)
+    head_cx = luma_cx + int(new_w * 0.08)
+    head_cy = paste_y + int(new_h * 0.18)
+    head_r_est = int(new_h * 0.11)
 
-    # Brows (expressive — slight arch)
-    wobble_line(draw,
-                (eye_lx - ew, eye_y - int(ew * 1.5)),
-                (eye_lx + ew, eye_y - int(ew * 1.1)),
-                color=LINE, width=p(3), amplitude=p(2), frequency=3, seed=41)
-    wobble_line(draw,
-                (eye_rx - ew, eye_y - int(ew * 1.1)),
-                (eye_rx + ew, eye_y - int(ew * 1.5)),
-                color=LINE, width=p(3), amplitude=p(2), frequency=3, seed=51)
-
-    # Smile (open, curious/delighted)
-    mouth_cx = head_cx + p(4)
-    mouth_y  = head_cy + int(head_r * 0.38)
-    draw.arc([mouth_cx - int(head_r * 0.28), mouth_y - p(12),
-              mouth_cx + int(head_r * 0.28), mouth_y + p(12)],
-             start=10, end=170, fill=LINE, width=p(3))
-
-    return head_cx, head_cy, head_r
+    return head_cx, head_cy, head_r_est
 
 
 def draw_byte(img, draw, bg_data):
-    """Draw Byte: right-center, hovering, facing left toward Luma.
-    Byte body = GL-01b #00D4E8 BYTE_TEAL.
-    Monitor-face emits cool cyan glow onto near side.
-    """
-    rng = random.Random(200)
+    """Draw Byte via canonical char_byte module: right-center, hovering, facing left.
 
+    Renders Byte using the canonical draw_byte() from LTG_TOOL_char_byte,
+    converts the cairo surface to PIL, and composites onto the scene.
+    Byte body = GL-01b #00D4E8 BYTE_TEAL.
+    Returns (byte_cx, byte_cy) for downstream lighting passes.
+    """
     byte_cx = sx(900)
     floor_y = bg_data["floor_y"]
-    # Byte hovers above floor
     byte_cy = floor_y - sp(220)
 
-    # Byte dimensions
     body_rx = sp(68)
     body_ry = sp(80)
+    target_h = body_ry * 2 + sp(40)  # body height + antenna margin
 
-    # ── Body fill — GL-01b BYTE_TEAL ──────────────────────────────────────────
-    # Gradient body: darker at top, brighter BYTE_TEAL at front-face
-    for row in range(byte_cy - body_ry, byte_cy + body_ry):
-        t_y = (row - byte_cy) / max(1, body_ry)
-        rx_row = int(body_rx * math.sqrt(max(0, 1 - t_y * t_y)))
-        if rx_row < 1:
-            continue
-        for col in range(byte_cx - rx_row, byte_cx + rx_row + 1):
-            # Horizontal gradient: left side darker (shadow), right brighter (lit by monitor)
-            t_x = (col - byte_cx) / max(1, rx_row)
-            # Monitor glow from left (Byte faces left toward Luma)
-            # Near side = left face of Byte
-            glow_t = max(0.0, -t_x)   # 1.0 at far left, 0.0 at right
-            lit_t  = max(0.0,  t_x)   # 1.0 at far right, ambient shadow
-            r_v = int(BYTE_TEAL[0] * 0.6 + BYTE_TEAL[0] * 0.4 * (1 - lit_t)
-                      + 0 * glow_t)
-            g_v = int(BYTE_TEAL[1] * 0.6 + BYTE_TEAL[1] * 0.4 * (1 - lit_t)
-                      + int(BYTE_TEAL[1] * 0.4) * glow_t)
-            b_v = int(BYTE_TEAL[2] * 0.6 + BYTE_TEAL[2] * 0.4 * (1 - lit_t)
-                      + int(BYTE_TEAL[2] * 0.4) * glow_t)
-            draw.point((col, row), fill=(r_v, g_v, b_v))
-
-    # Outline
-    wobble_polygon(
-        draw,
-        [(byte_cx + body_rx * math.cos(math.radians(a)),
-          byte_cy + body_ry * math.sin(math.radians(a)))
-         for a in range(0, 360, 18)],
-        color=BYTE_OUTLINE,
-        width=sp(3),
-        amplitude=sp(2),
-        frequency=5,
-        seed=210,
-        fill=None,
+    # Render via canonical module — "neutral" expression for the Dynamic scene
+    surface = _canonical_draw_byte(
+        expression="neutral",
+        scale=1.0,
+        facing="left",
+        scene_lighting={"tint": (0, 212, 232), "intensity": 0.25, "direction": "right"},
     )
-    draw = ImageDraw.Draw(img)
+    char_img = to_pil_rgba(surface)
 
-    # ── Antenna ────────────────────────────────────────────────────────────────
-    antenna_base_x = byte_cx + sp(10)
-    antenna_base_y = byte_cy - body_ry
-    antenna_tip_x  = antenna_base_x + sp(8)
-    antenna_tip_y  = antenna_base_y - sp(44)
-    wobble_line(draw,
-                (antenna_base_x, antenna_base_y),
-                (antenna_tip_x, antenna_tip_y),
-                color=BYTE_OUTLINE, width=sp(3), amplitude=sp(2), frequency=3, seed=221)
-    # Antenna ball
-    draw.ellipse([antenna_tip_x - sp(8), antenna_tip_y - sp(8),
-                  antenna_tip_x + sp(8), antenna_tip_y + sp(8)],
-                 fill=ELEC_CYAN, outline=BYTE_OUTLINE, width=sp(2))
-    # Antenna specular (>= 225)
-    draw.ellipse([antenna_tip_x - sp(3), antenna_tip_y - sp(5),
-                  antenna_tip_x + sp(3), antenna_tip_y - sp(1)],
-                 fill=SPECULAR_WHITE)
+    # Trim transparent padding to content bounds
+    bbox = char_img.getbbox()
+    if bbox is None:
+        return byte_cx, byte_cy
 
-    # ── Arms ───────────────────────────────────────────────────────────────────
-    # Left arm (facing Luma — reaching out slightly)
-    arm_lx0 = byte_cx - body_rx
-    arm_ly0 = byte_cy + sp(10)
-    arm_lx1 = arm_lx0 - sp(50)
-    arm_ly1 = arm_ly0 + sp(12)
-    draw.rectangle([arm_lx1, arm_ly0 - sp(10), arm_lx0, arm_ly1 + sp(10)],
-                   fill=BYTE_TEAL)
-    draw.rectangle([arm_lx1, arm_ly0 - sp(10), arm_lx0, arm_ly1 + sp(10)],
-                   outline=BYTE_OUTLINE, width=sp(2))
-    # Hand (left)
-    draw.ellipse([arm_lx1 - sp(14), arm_ly1 - sp(14),
-                  arm_lx1 + sp(6),  arm_ly1 + sp(6)],
-                 fill=BYTE_TEAL, outline=BYTE_OUTLINE, width=sp(2))
+    trimmed = char_img.crop(bbox)
+    orig_w, orig_h = trimmed.size
 
-    # Right arm (at side)
-    arm_rx0 = byte_cx + body_rx
-    arm_ry0 = byte_cy + sp(10)
-    arm_rx1 = arm_rx0 + sp(36)
-    arm_ry1 = arm_ry0 + sp(40)
-    draw.rectangle([arm_rx0, arm_ry0 - sp(10), arm_rx1, arm_ry1],
-                   fill=BYTE_TEAL)
-    draw.rectangle([arm_rx0, arm_ry0 - sp(10), arm_rx1, arm_ry1],
-                   outline=BYTE_OUTLINE, width=sp(2))
+    # Scale to match target height in scene
+    scale_factor = target_h / orig_h
+    new_w = max(1, int(orig_w * scale_factor))
+    new_h = target_h
+    resized = trimmed.resize((new_w, new_h), Image.LANCZOS)
 
-    # ── Face / Display screen ─────────────────────────────────────────────────
-    face_rx = int(body_rx * 0.62)
-    face_ry = int(body_ry * 0.58)
-    face_x0 = byte_cx - face_rx
-    face_y0 = byte_cy - face_ry
-    face_x1 = byte_cx + face_rx
-    face_y1 = byte_cy + face_ry
+    # Place on full-canvas RGBA layer, centered at (byte_cx, byte_cy)
+    canvas = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    paste_x = byte_cx - new_w // 2
+    paste_y = byte_cy - new_h // 2
+    canvas.paste(resized, (paste_x, paste_y), resized)
 
-    # Screen backing (dark border)
-    draw.rounded_rectangle([face_x0 - sp(4), face_y0 - sp(4),
-                             face_x1 + sp(4), face_y1 + sp(4)],
-                            radius=sp(8), fill=VOID_BLACK)
-    # Screen glow (BYTE_TEAL monitor contribution — requirement)
-    for gs in range(10, 0, -1):
-        t = gs / 10
-        g_r = int(BYTE_TEAL[0] * 0.15 * t)
-        g_g = int(BYTE_TEAL[1] * 0.85 * t)
-        g_b = int(BYTE_TEAL[2] * 0.90 * t)
-        ex  = int(face_rx * t)
-        ey  = int(face_ry * t)
-        draw.ellipse([byte_cx - ex, byte_cy - ey, byte_cx + ex, byte_cy + ey],
-                     fill=(g_r, g_g, g_b))
-
-    # Eye pixel grid (5x5 system)
-    # Left eye: standard open (Byte facing left)
-    def draw_pixel_eye(ex_center, ey_center, pattern, color, bg_color=VOID_BLACK, cell=sp(8)):
-        """Draw a 5x5 pixel grid eye from a pattern string (0=off,1=on,H=half)."""
-        ox = ex_center - cell * 2
-        oy = ey_center - cell * 2
-        for row_i, row_str in enumerate(pattern):
-            for col_i, ch in enumerate(row_str):
-                px = ox + col_i * cell
-                py = oy + row_i * cell
-                if ch == '1':
-                    draw.rectangle([px, py, px + cell - 1, py + cell - 1], fill=color)
-                elif ch == 'H':
-                    mid_c = tuple(int((a + b) / 2) for a, b in zip(color, bg_color))
-                    draw.rectangle([px, py, px + cell - 1, py + cell - 1], fill=mid_c)
-
-    # Open eye pattern (5 rows, 5 cols)
-    eye_pattern_open = [
-        "01110",
-        "11111",
-        "11111",
-        "11111",
-        "01110",
-    ]
-    eye_cy_ = byte_cy - int(body_ry * 0.12)
-    eye_lx_ = byte_cx - int(body_rx * 0.36)
-    eye_rx_ = byte_cx + int(body_rx * 0.30)
-    draw_pixel_eye(eye_lx_, eye_cy_, eye_pattern_open, ELEC_CYAN)
-    # Right eye: crescent (right eye is damaged — HOT_MAGENTA accent)
-    eye_pattern_mag = [
-        "00000",
-        "01100",
-        "11100",
-        "01110",
-        "00110",
-    ]
-    draw_pixel_eye(eye_rx_, eye_cy_, eye_pattern_mag, HOT_MAGENTA)
-
-    # Screen specular dot (value ceiling >= 225)
-    draw.ellipse([byte_cx - face_rx + sp(8), byte_cy - face_ry + sp(6),
-                  byte_cx - face_rx + sp(16), byte_cy - face_ry + sp(12)],
-                 fill=SPECULAR_CYAN)
-
-    # ── Monitor contribution glow on Byte's near (left) side ────────────────
-    # Byte faces left toward Luma; monitor glow spills onto Byte's right flank
-    # "near side" = the side facing the monitor = right side of Byte body
+    # Monitor contribution glow on Byte's near side (right flank facing CRT)
     mon_glow_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     mon_glow_draw  = ImageDraw.Draw(mon_glow_layer)
-    # Paint BYTE_TEAL glow on right side of Byte
     for gs in range(8, 0, -1):
         t = gs / 8
         alpha = int(50 * t * t)
@@ -707,10 +437,6 @@ def draw_byte(img, draw, bg_data):
         ey  = int(body_ry * 0.5 * (2.0 - t))
         mon_glow_draw.ellipse([byte_cx, byte_cy - ey, byte_cx + ex, byte_cy + ey],
                               fill=(*BYTE_TEAL, alpha))
-    base_rgba = img.convert("RGBA")
-    base_rgba = Image.alpha_composite(base_rgba, mon_glow_layer)
-    img.paste(base_rgba.convert("RGB"))
-    draw = ImageDraw.Draw(img)
 
     # Hover shadow on floor
     shadow_y = floor_y + sp(6)
@@ -721,8 +447,12 @@ def draw_byte(img, draw, bg_data):
     shadow_draw.ellipse([byte_cx - shadow_rx, shadow_y - shadow_ry,
                          byte_cx + shadow_rx, shadow_y + shadow_ry],
                         fill=(20, 20, 15, 80))
+
+    # Composite all layers: character + monitor glow + shadow
     base_rgba = img.convert("RGBA")
     base_rgba = Image.alpha_composite(base_rgba, shadow_layer)
+    base_rgba = Image.alpha_composite(base_rgba, canvas)
+    base_rgba = Image.alpha_composite(base_rgba, mon_glow_layer)
     img.paste(base_rgba.convert("RGB"))
     draw = ImageDraw.Draw(img)
 
