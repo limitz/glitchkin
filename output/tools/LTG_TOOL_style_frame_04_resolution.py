@@ -683,7 +683,11 @@ def draw_luma(img, draw, transparent_layer=False):
     paste_y = body_bot - char_pil.height
     img_rgba = img.convert("RGBA")
     img_rgba.paste(char_pil, (paste_x, paste_y), char_pil)
-    img.paste(img_rgba.convert("RGB"))
+    if img.mode == "RGBA":
+        # Preserve transparency — do NOT convert to RGB (would black-fill transparent areas)
+        img.paste(img_rgba)
+    else:
+        img.paste(img_rgba.convert("RGB"))
     draw = ImageDraw.Draw(img)
 
     # Rim light (skip on transparent layer — Wand handles lighting)
