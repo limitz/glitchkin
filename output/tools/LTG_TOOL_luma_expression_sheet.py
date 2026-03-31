@@ -158,6 +158,7 @@ from PIL import Image, ImageDraw, ImageFont
 import math
 import os
 import sys
+from LTG_TOOL_curve_utils import quadratic_bezier_pts as _cu_quadratic, polyline as _cu_polyline
 
 # ── Face Curves Integration ───────────────────────────────────────────────────
 # Import canonical bezier face system (v1.1.0 — 100px canonical eye width)
@@ -267,20 +268,16 @@ HEAD_HEIGHT_2X = 2 * HR   # 208px
 EW_CANON = int(HEAD_HEIGHT_2X * 0.22)  # 45px at 2x
 
 
-# ── Geometry helpers ──────────────────────────────────────────────────────────
+# ── Geometry helpers — migrated to LTG_TOOL_curve_utils (C52) ────────────────
+
 def bezier3(p0, p1, p2, steps=40):
-    pts = []
-    for i in range(steps + 1):
-        t  = i / steps
-        x  = (1-t)**2 * p0[0] + 2*(1-t)*t * p1[0] + t**2 * p2[0]
-        y  = (1-t)**2 * p0[1] + 2*(1-t)*t * p1[1] + t**2 * p2[1]
-        pts.append((x, y))
-    return pts
+    """Delegates to curve_utils.quadratic_bezier_pts."""
+    return _cu_quadratic(p0, p1, p2, steps=steps)
 
 
 def polyline(draw, pts, color, width=2):
-    for i in range(len(pts) - 1):
-        draw.line([pts[i], pts[i+1]], fill=color, width=width)
+    """Delegates to curve_utils.polyline."""
+    _cu_polyline(draw, pts, color, width=width)
 
 
 def arc_draw(draw, cx, cy, rx, ry, a0, a1, color, width=3, steps=50):

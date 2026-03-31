@@ -58,6 +58,7 @@ import math
 import os
 import sys
 from PIL import Image, ImageDraw, ImageFont
+from LTG_TOOL_curve_utils import quadratic_bezier_pts, cubic_bezier_pts, polyline
 
 # ── Hard limit ────────────────────────────────────────────────────────────────
 MAX_DIM = 1280
@@ -297,35 +298,8 @@ def resolve_points(deltas):
     return pts
 
 
-# ── Bezier helpers ────────────────────────────────────────────────────────────
-
-def quadratic_bezier_pts(p0, p1, p2, steps=40):
-    """Sample N points along a quadratic bezier curve."""
-    pts = []
-    for i in range(steps + 1):
-        t = i / steps
-        x = (1-t)**2 * p0[0] + 2*(1-t)*t * p1[0] + t**2 * p2[0]
-        y = (1-t)**2 * p0[1] + 2*(1-t)*t * p1[1] + t**2 * p2[1]
-        pts.append((x, y))
-    return pts
-
-
-def cubic_bezier_pts(p0, p1, p2, p3, steps=60):
-    """Sample N points along a cubic bezier curve."""
-    pts = []
-    for i in range(steps + 1):
-        t = i / steps
-        x = ((1-t)**3 * p0[0] + 3*(1-t)**2*t * p1[0]
-             + 3*(1-t)*t**2 * p2[0] + t**3 * p3[0])
-        y = ((1-t)**3 * p0[1] + 3*(1-t)**2*t * p1[1]
-             + 3*(1-t)*t**2 * p2[1] + t**3 * p3[1])
-        pts.append((x, y))
-    return pts
-
-
-def polyline(draw, pts, color, width=2):
-    for i in range(len(pts) - 1):
-        draw.line([pts[i], pts[i+1]], fill=color, width=width)
+# ── Bezier helpers — migrated to LTG_TOOL_curve_utils (C52) ──────────────────
+# quadratic_bezier_pts, cubic_bezier_pts, polyline imported from curve_utils
 
 
 # ── Geometry metric extractor ─────────────────────────────────────────────────

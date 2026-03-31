@@ -14,6 +14,7 @@ v1.6.0: Morgan Walsh / Cycle 46 — --auto-seed flag
 v1.7.0: Morgan Walsh / Cycle 47 — --dry-run flag, Check 10 ext_model_check
 v1.8.0: Morgan Walsh / Cycle 48 — Remove Check 10, add Check 10 doc_staleness
 v1.9.0: Morgan Walsh / Cycle 49 — Check registry + per-directory doc_staleness thresholds
+v2.0.0: Morgan Walsh / Cycle 52 — Checks 11-13: dep_availability, bezier_migration_lint, tool_naming_lint
 
 Runs all LTG tool-pipeline CI checks in sequence and produces a combined report.
 
@@ -71,6 +72,9 @@ Default checks (in order)
 8. thumbnail_lint          — unwhitelisted .thumbnail() calls
 9. motion_sheet_coverage   — motion sheet coverage for characters with expression sheets
 10. doc_staleness          — documentation freshness (per-directory thresholds)
+11. dep_availability       — required library availability (bezier, Shapely, pycairo)
+12. bezier_migration_lint  — hand-rolled bezier function migration status
+13. tool_naming_lint       — LTG_TOOL_ prefix enforcement on .py files
 
 Pass/fail threshold
 -------------------
@@ -170,6 +174,9 @@ API
     from LTG_TOOL_ci_suite import collect_new_fails, auto_seed_known_issues
     from LTG_TOOL_ci_suite import check_doc_staleness
     from LTG_TOOL_ci_suite import load_check_registry
+    from LTG_TOOL_ci_suite import check_dep_availability
+    from LTG_TOOL_ci_suite import check_bezier_migration
+    from LTG_TOOL_ci_suite import check_tool_naming
 
     known     = load_known_issues("ci_known_issues.json")
     known_raw = load_known_issues_raw("ci_known_issues.json")
@@ -266,9 +273,19 @@ v1.9.0 (C49): CI Check Registry — config-driven check slot management.
               path prefix (most specific wins). Falls back to global defaults
               if config absent.
               (Morgan Walsh)
+v2.0.0 (C52): Check 11 — dep_availability. Verifies required pipeline
+              libraries (bezier, Shapely, pycairo) are importable. WARN if
+              any missing. check_dep_availability() exported.
+              Check 12 — bezier_migration_lint. Wraps curve_utils --audit
+              to detect files still using hand-rolled bezier functions.
+              WARN for pending migrations. check_bezier_migration() exported.
+              Check 13 — tool_naming_lint. Enforces LTG_TOOL_ prefix on all
+              .py files in tools dir. Legacy/deprecated subdirs exempt.
+              WARN for non-compliant files. check_tool_naming() exported.
+              (Morgan Walsh)
 """
 
-__version__ = "1.9.0"
+__version__ = "2.0.0"
 
 import os
 import sys
@@ -346,6 +363,9 @@ def _resolve_checks_from_registry(registry):
         "thumbnail_lint":       _run_thumbnail_lint,
         "motion_sheet_coverage":_run_motion_coverage,
         "doc_staleness":        _run_doc_staleness,
+        "dep_availability":     _run_dep_availability,
+        "bezier_migration_lint":_run_bezier_migration_lint,
+        "tool_naming_lint":     _run_tool_naming_lint,
     }
 
     slots = registry.get("slots", [])
@@ -1405,6 +1425,186 @@ def _run_doc_staleness(tools_dir):
         return "PASS", summary, details
 
 
+# ── Check 11: dep_availability — library dependency check ────────────────────
+
+_REQUIRED_DEPS = [
+    ("bezier", "pip install bezier", "Bezier curve math (LTG_TOOL_curve_utils)"),
+    ("shapely", "pip install Shapely", "Silhouette polygon ops (LTG_TOOL_curve_utils)"),
+    ("cairo", "pip install pycairo", "Character rendering (bezier strokes, anti-alias)"),
+]
+
+
+def check_dep_availability(tools_dir=None):
+    """
+    Check that required pipeline libraries are importable.
+
+    Returns
+    -------
+    dict  {"status": str, "available": list, "missing": list}
+    """
+    available = []
+    missing = []
+    for mod_name, install_cmd, description in _REQUIRED_DEPS:
+        try:
+            __import__(mod_name)
+            available.append(mod_name)
+        except ImportError:
+            missing.append({"module": mod_name, "install": install_cmd,
+                            "description": description})
+    return {
+        "status": "FAIL" if missing else "PASS",
+        "available": available,
+        "missing": missing,
+    }
+
+
+def _run_dep_availability(tools_dir):
+    """Run dependency availability check. Returns (status, summary, details)."""
+    result = check_dep_availability(tools_dir)
+    n_ok = len(result["available"])
+    n_miss = len(result["missing"])
+    total = n_ok + n_miss
+    if n_miss:
+        details_lines = [f"MISSING — {n_miss} required library/libraries not importable:"]
+        for m in result["missing"]:
+            details_lines.append(
+                f"  FAIL  {m['module']:<12s}  ({m['description']})  — install: {m['install']}"
+            )
+        if n_ok:
+            details_lines.append(f"\nAvailable ({n_ok}): {', '.join(result['available'])}")
+        details = "\n".join(details_lines)
+        return "WARN", f"{n_miss} missing out of {total} required deps", details
+    else:
+        return "PASS", f"All {total} required deps available", ""
+
+
+# ── Check 12: bezier_migration_lint — hand-rolled bezier detection ───────────
+
+def check_bezier_migration(tools_dir=None):
+    """
+    Run the curve_utils audit to find files with hand-rolled bezier functions.
+
+    Returns
+    -------
+    dict  {"status": str, "migrated": int, "partial": int, "pending": int,
+           "total": int, "pending_files": list}
+    """
+    td = _tools_dir_or_default(tools_dir)
+    _add_to_path(td)
+    try:
+        import LTG_TOOL_curve_utils as cu
+        if hasattr(cu, "audit_hand_rolled_bezier"):
+            audit = cu.audit_hand_rolled_bezier(td)
+            migrated = sum(1 for r in audit if r.get("status") == "MIGRATED")
+            partial = sum(1 for r in audit if r.get("status") == "PARTIAL")
+            pending = sum(1 for r in audit if r.get("status") == "NOT_MIGRATED")
+            pending_files = [
+                r.get("file", "?") for r in audit
+                if r.get("status") == "NOT_MIGRATED"
+            ]
+            total = len(audit)
+            status = "PASS" if pending == 0 else "WARN"
+            return {
+                "status": status, "migrated": migrated, "partial": partial,
+                "pending": pending, "total": total, "pending_files": pending_files,
+            }
+        else:
+            return {"status": "ERROR", "migrated": 0, "partial": 0,
+                    "pending": 0, "total": 0, "pending_files": [],
+                    "_error": "audit_hand_rolled_bezier not found in curve_utils"}
+    except ImportError as exc:
+        return {"status": "ERROR", "migrated": 0, "partial": 0,
+                "pending": 0, "total": 0, "pending_files": [],
+                "_error": f"curve_utils import error: {exc}"}
+
+
+def _run_bezier_migration_lint(tools_dir):
+    """Run bezier migration lint. Returns (status, summary, details)."""
+    result = check_bezier_migration(tools_dir)
+    if result.get("_error"):
+        return "ERROR", f"bezier_migration_lint error: {result['_error']}", ""
+    m = result["migrated"]
+    pa = result["partial"]
+    pe = result["pending"]
+    total = result["total"]
+    if pe > 0:
+        details_lines = [f"PENDING — {pe} file(s) still using hand-rolled bezier:"]
+        for f in result["pending_files"]:
+            details_lines.append(f"  WARN  {f}")
+        if pa > 0:
+            details_lines.append(f"\nPartial migrations: {pa}")
+        details_lines.append(f"Fully migrated: {m}")
+        details = "\n".join(details_lines)
+        return "WARN", f"{pe} pending, {pa} partial, {m} migrated (of {total})", details
+    else:
+        summary = f"All {total} bezier files migrated ({m} full, {pa} partial)"
+        return "PASS", summary, ""
+
+
+# ── Check 13: tool_naming_lint — LTG_TOOL_ prefix enforcement ───────────────
+
+# Files exempt from the naming convention (known non-tool scripts)
+_NAMING_EXEMPT = {
+    "__init__.py", "__pycache__",
+}
+
+
+def check_tool_naming(tools_dir=None):
+    """
+    Check that all .py files in tools_dir follow the LTG_TOOL_ prefix convention.
+    Files in legacy/ and deprecated/ subdirectories are exempt from the prefix
+    requirement (but flagged as INFO). Files starting with __ are exempt.
+
+    Returns
+    -------
+    dict  {"status": str, "compliant": list, "non_compliant": list, "exempt": list}
+    """
+    import glob as _glob
+    td = _tools_dir_or_default(tools_dir)
+    compliant = []
+    non_compliant = []
+    exempt = []
+
+    # Only scan top-level .py files (not subdirectories like legacy/, deprecated/)
+    pattern = os.path.join(td, "*.py")
+    for fpath in sorted(_glob.glob(pattern)):
+        basename = os.path.basename(fpath)
+        if basename in _NAMING_EXEMPT or basename.startswith("__"):
+            exempt.append(basename)
+            continue
+        if basename.startswith("LTG_TOOL_"):
+            compliant.append(basename)
+        else:
+            non_compliant.append(basename)
+
+    status = "WARN" if non_compliant else "PASS"
+    return {
+        "status": status,
+        "compliant": compliant,
+        "non_compliant": non_compliant,
+        "exempt": exempt,
+    }
+
+
+def _run_tool_naming_lint(tools_dir):
+    """Run tool naming convention lint. Returns (status, summary, details)."""
+    result = check_tool_naming(tools_dir)
+    n_ok = len(result["compliant"])
+    n_bad = len(result["non_compliant"])
+    total = n_ok + n_bad
+    if n_bad:
+        details_lines = [
+            f"NON-COMPLIANT — {n_bad} file(s) missing LTG_TOOL_ prefix:"
+        ]
+        for f in result["non_compliant"]:
+            details_lines.append(f"  WARN  {f}")
+        details_lines.append(f"\nCompliant: {n_ok} file(s)")
+        details = "\n".join(details_lines)
+        return "WARN", f"{n_bad} non-compliant out of {total} .py files", details
+    else:
+        return "PASS", f"All {total} .py files follow LTG_TOOL_ naming convention", ""
+
+
 # ── Suite runner ──────────────────────────────────────────────────────────────
 
 _CHECKS = [
@@ -1418,6 +1618,9 @@ _CHECKS = [
     ("thumbnail_lint",       _run_thumbnail_lint,       "Thumbnail Lint"),
     ("motion_sheet_coverage",_run_motion_coverage,      "Motion Sheet Coverage"),
     ("doc_staleness",         _run_doc_staleness,         "Doc Staleness Check"),
+    ("dep_availability",      _run_dep_availability,      "Dependency Availability"),
+    ("bezier_migration_lint", _run_bezier_migration_lint, "Bezier Migration Lint"),
+    ("tool_naming_lint",      _run_tool_naming_lint,      "Tool Naming Convention"),
 ]
 
 

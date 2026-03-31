@@ -7,66 +7,39 @@
 """
 LTG_TOOL_character_lineup.py
 Character Lineup Generator — Luma & the Glitchkin
-Cycle 47 / v011: Cosmo visual hook pass (Maya Santos C47).
+Cycle 52 / v012: pycairo rebuild for Luma, Byte, Cosmo (Alex Chen C52).
 
-Cycle 47 changes (Maya Santos, C47):
-  - COSMO VISUAL HOOK: Amplified cowlick (0.15 heads tall, visible sproing tuft)
-    and glasses bridge tape added to draw_cosmo_lineup(). Both read at lineup scale.
+v012 changes (C52 — Alex Chen, Art Director):
+  Luma, Byte, Cosmo rebuilt with pycairo bezier curves and native AA.
+  Each character renders on a separate cairo surface at 2x, then composites
+  to the PIL canvas via RGBA alpha composite. Miri and Glitch remain PIL
+  (Miri pycairo rebuild pending; Glitch is non-humanoid/low-priority).
+  All layout geometry, two-tier staging, depth temperature, annotations
+  preserved from v011.
 
-Cycle 45 changes (Maya Santos, C45):
-  - TWO-TIER DEPTH BANDS (Option C per Lee Tanaka C45 recommendation):
-    Replaced flat 2px shadow lines with gradient drop-shadow bands per tier.
-    BG tier: 8px cool-slate gradient fading downward from BG_GROUND_Y.
-    FG tier: 10px warm-amber gradient fading downward from FG_GROUND_Y.
-    Warm/cool encoding teaches the eye: warm line = close, cool line = far.
-    Aligns with established show palette grammar (warm=FG/real, cool=BG/digital).
-    Both bands drawn BEFORE characters — no draw-order complications, no alpha passes.
-  - Tier labels updated: "FG tier (WARM)" / "BG tier (COOL)"
-  - Staging annotation updated with "WARM = FG / COOL = BG" grammar note.
-  - Closes Alex Chen C44 brief P2 (lineup tier depth indicator).
+  pycairo characters: smooth silhouettes, organic curves, variable-width
+  outlines, gradient fills. Quality matches C52 expression sheets.
 
-Cycle 44 / v009: Miri wooden hairpin rename (P0 cultural identity correction).
-
-Cycle 44 changes (Maya Santos, C44):
-  - draw_miri_lineup(): renamed chopstick_col → hairpin_col; accessory is now
-    "wooden hairpins" per design correction. No geometry or color change.
-
-Cycle 42 / v008: Two-tier ground plane staging (Lee Tanaka brief C42).
-
-Cycle 42 changes (Maya Santos, Character Designer):
-  - TWO-TIER GROUND PLANE: FG tier (Luma + Byte) at canvas_h×0.78;
-    BG tier (Cosmo + Miri + Glitch) at canvas_h×0.70.
-  - NEW CHARACTER ORDER (left → right): Cosmo | Miri | Luma | Byte | Glitch
-    (Luma center-protagonist; Byte at her right on same FG tier;
-    Cosmo bookends left; Miri flanks right of center; Glitch rightmost)
-  - FG_SCALE = 1.03: Luma and Byte drawn at +3% height post-calculation.
-    Proportion constants unchanged — uniform post-scale only.
-  - SHADOW LINES: subtle 2px line at each tier (warm gray FG, cool gray BG).
-  - CANVAS HEIGHT bumped to 560px body for BG/FG tier geometry.
-  - Annotation bar notes FG/BG tier staging.
-  - Addresses Daisuke C16 "inventory not cast" flag + C15 Luma power balance.
-  - Closes lineup_staging_brief_c42.md spec (Lee Tanaka).
-
-Cycle 33 changes (Alex Chen, Art Director):
-  - BYTE_SH: (0, 144, 176) → (0, 168, 180) — canonical Deep Cyan GL-01a #00A8B4
-  - MIRI_SLIPPER: (90, 122, 90) → (196, 144, 122) — warm apricot #C4907A
-
-Cycle 29 changes (Maya Santos, Character Designer):
-  - LUMA_HEADS: 3.5 → 3.2 (canonical proportion directive C28)
-  - Eye width: int(s*28) → int(r*0.22) per canonical spec
-
-Cycle 27 changes (Maya Santos, Character Designer):
-  - Luma rebuilt to v006 canonical style (curl cloud hair, cheek nubs, bezier mouth).
-
-Prior history:
-  Cycle 24 (Maya Santos): Added Glitch.
-  Cycle 14 (Alex Chen): Engineering dimension arrow for Byte float gap.
-  Cycle 12 (Alex Chen): Ground-floor annotation.
-  Cycle 10 (Alex Chen): Initial four-character lineup.
+Prior history (compressed):
+  v011 (C47): Cosmo visual hook (cowlick + bridge tape).
+  v010 (C45): Two-tier depth bands (Option C, Lee Tanaka).
+  v009 (C44): Miri wooden hairpin rename.
+  v008 (C42): Two-tier ground plane staging (FG/BG tiers).
+  v007 (C33): BYTE_SH / MIRI_SLIPPER color fixes.
+  v006 (C29): Luma 3.2 heads, canonical eye width.
+  v005 (C27): Luma v006 canonical style.
+  v004-v001: Glitch added, dimension arrows, ground annotations, initial.
 
 Output: /home/wipkat/team/output/characters/main/LTG_CHAR_character_lineup.png
 Usage: python3 LTG_TOOL_character_lineup.py
 """
+import sys
+import os
+
+_TOOLS_DIR = os.path.dirname(os.path.abspath(__file__))
+if _TOOLS_DIR not in sys.path:
+    sys.path.insert(0, _TOOLS_DIR)
+
 try:
     from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
 except ImportError:
@@ -75,6 +48,18 @@ except ImportError:
     def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFont
 import math
+
+# ── pycairo imports for character rendering ──────────────────────────────────
+import cairo
+import numpy as np
+from LTG_TOOL_cairo_primitives import (
+    create_surface, draw_bezier_path, draw_smooth_polygon,
+    draw_ellipse as cairo_ellipse, draw_tapered_stroke,
+    to_pil_rgba, set_color, _c, _ca,
+    stroke_path, fill_background,
+    LINE_WEIGHT_ANCHOR, LINE_WEIGHT_STRUCTURE, LINE_WEIGHT_DETAIL,
+)
+from LTG_TOOL_curve_utils import quadratic_bezier_pts as _cu_quadratic, polyline as _cu_polyline
 
 # ── Canvas ────────────────────────────────────────────────────────────────────
 BG           = (250, 248, 244)
@@ -220,8 +205,108 @@ GLITCH_ACID   = ( 57, 255,  20)   # ACID_GREEN — pixel alive state
 NEG_SPACE = BG
 
 
-# ── Geometry helpers (for Luma bezier curves) ─────────────────────────────────
+# ── Geometry helpers — migrated to LTG_TOOL_curve_utils (C52) ────────────────
+
 def _bezier3(p0, p1, p2, steps=20):
+    """Delegates to curve_utils.quadratic_bezier_pts."""
+    return _cu_quadratic(p0, p1, p2, steps=steps)
+
+
+def _polyline(draw, pts, color, width=1):
+    """Delegates to curve_utils.polyline."""
+    _cu_polyline(draw, pts, color, width=width)
+
+
+def _render_cairo_character(draw_fn, cx, base_y, h):
+    """Render a character using pycairo and return PIL RGBA image.
+
+    draw_fn(ctx, cx, base_y, h) draws the character on a cairo context.
+    Returns a PIL RGBA image the size of the full canvas (IMG_W x IMG_H).
+    """
+    surface, ctx, aw, ah = create_surface(IMG_W, IMG_H, scale=2)
+    draw_fn(ctx, cx, base_y, h)
+    # Convert to PIL at 2x then downscale with LANCZOS for AA
+    big = to_pil_rgba(surface)
+    return big.resize((IMG_W, IMG_H), Image.LANCZOS)
+
+
+# ── Cairo drawing helpers ────────────────────────────────────────────────────
+
+def _cairo_filled_ellipse(ctx, cx, cy, rx, ry, fill, outline=None, lw=2.0):
+    """Draw a filled ellipse with optional outline using cairo."""
+    cairo_ellipse(ctx, cx, cy, rx, ry)
+    set_color(ctx, fill)
+    if outline:
+        ctx.fill_preserve()
+        set_color(ctx, outline)
+        ctx.set_line_width(lw)
+        ctx.stroke()
+    else:
+        ctx.fill()
+
+
+def _cairo_filled_polygon(ctx, pts, fill, outline=None, lw=1.0):
+    """Draw a filled polygon with optional outline using cairo."""
+    if len(pts) < 2:
+        return
+    ctx.new_path()
+    ctx.move_to(pts[0][0], pts[0][1])
+    for p in pts[1:]:
+        ctx.line_to(p[0], p[1])
+    ctx.close_path()
+    set_color(ctx, fill)
+    if outline:
+        ctx.fill_preserve()
+        set_color(ctx, outline)
+        ctx.set_line_width(lw)
+        ctx.stroke()
+    else:
+        ctx.fill()
+
+
+def _cairo_filled_rect(ctx, x0, y0, x1, y1, fill, outline=None, lw=1.0):
+    """Draw a filled rectangle with optional outline using cairo."""
+    ctx.new_path()
+    ctx.rectangle(x0, y0, x1 - x0, y1 - y0)
+    set_color(ctx, fill)
+    if outline:
+        ctx.fill_preserve()
+        set_color(ctx, outline)
+        ctx.set_line_width(lw)
+        ctx.stroke()
+    else:
+        ctx.fill()
+
+
+def _cairo_arc(ctx, cx, cy, rx, ry, start_deg, end_deg, color, lw=2.0):
+    """Draw an arc stroke using cairo (angles in degrees, clockwise like PIL)."""
+    ctx.save()
+    ctx.translate(cx, cy)
+    if rx != 0 and ry != 0:
+        ctx.scale(rx, ry)
+    ctx.new_path()
+    ctx.arc(0, 0, 1.0, math.radians(start_deg), math.radians(end_deg))
+    ctx.restore()
+    set_color(ctx, color)
+    ctx.set_line_width(lw)
+    ctx.stroke()
+
+
+def _cairo_line(ctx, pts, color, lw=1.0):
+    """Draw a polyline using cairo."""
+    if len(pts) < 2:
+        return
+    ctx.new_path()
+    ctx.move_to(pts[0][0], pts[0][1])
+    for p in pts[1:]:
+        ctx.line_to(p[0], p[1])
+    set_color(ctx, color)
+    ctx.set_line_width(lw)
+    ctx.stroke()
+
+
+def _cairo_bezier3(p0, p1, p2, steps=20):
+    """Quadratic bezier sampling for cairo polylines."""
     pts = []
     for i in range(steps + 1):
         t  = i / steps
@@ -231,40 +316,21 @@ def _bezier3(p0, p1, p2, steps=20):
     return pts
 
 
-def _polyline(draw, pts, color, width=1):
-    for i in range(len(pts) - 1):
-        draw.line([pts[i], pts[i+1]], fill=color, width=width)
-
-
 # ══════════════════════════════════════════════════════════════════════════════
-# LUMA — v006 canonical construction
-# Scale: s = r / 100.0 where r = head radius at lineup scale (≈37px)
-# Line weights at this small scale: head=2, structure=2, detail=1
+# LUMA — v012 pycairo rebuild (canonical 3.2 heads, bezier curves, native AA)
 # ══════════════════════════════════════════════════════════════════════════════
 
-def draw_luma_lineup(draw, cx, base_y, h):
-    """Luma full body at lineup height h, v007 canonical construction (3.2 heads).
-    v006 changes from v005:
-      - hu = h / 3.2 (was h / 3.5) — 3.2 heads canonical
-      - eye width = int(r * 0.22) (was int(s*28) = r*0.28) — canonical h×0.22 spec
-    Head: circle + chin fill + cheek nubs.
-    Hair: 8 overlapping ellipses (curl cloud).
-    Eyes: near-circular with iris, pupil, highlight, eyelid arc.
-    Body: hoodie trapezoid, pants, sneakers (same as v004).
-    """
-    hu = h / 3.2            # v006 FIX: was h / 3.5 — 3.2 heads canonical
-    r  = int(hu * 0.46)     # head radius ≈ 40px (slightly larger with 3.2 heads)
-    s  = r / 100.0          # scale factor from classroom reference (head_r=100)
-    hy = base_y - h         # top of character (top of hair)
+def _draw_luma_cairo(ctx, cx, base_y, h):
+    """Luma full body at lineup height h, pycairo v012. 3.2 heads canonical.
+    Bezier curves for all organic forms. Native AA via cairo."""
+    hu = h / 3.2
+    r  = int(hu * 0.46)
+    s  = r / 100.0
+    hy = base_y - h
 
-    # Head center: head sits above neck, positioned slightly above hy
-    # In v004, head started at hy (top of hair mass). We position head_cy so
-    # that head top (cy - r) aligns around hy + hair-clearance.
     head_cy = hy + int(hu * 0.46) + int(r * 0.5)
 
-    # ── HAIR — 8 overlapping ellipses (curl cloud, classroom style) ───────────
-    # Ellipses offsets from classroom reference (head_r=100), scaled by s
-    # Drawn behind head (before head ellipse)
+    # ── HAIR — overlapping ellipses (curl cloud) ─────────────────────────────
     v_off = 0
     hair_ellipses = [
         (-int(s*155), -int(s*195)+v_off, int(s*145), int(s*40)),
@@ -277,159 +343,169 @@ def draw_luma_lineup(draw, cx, base_y, h):
         (-int(s*100), -int(s*200)+v_off, -int(s*30),  -int(s*130)),
     ]
     for (x1, y1, x2, y2) in hair_ellipses:
-        draw.ellipse([cx + x1, head_cy + y1, cx + x2, head_cy + y2], fill=LUMA_HAIR)
+        ecx = cx + (x1 + x2) / 2.0
+        ecy = head_cy + (y1 + y2) / 2.0
+        erx = abs(x2 - x1) / 2.0
+        ery = abs(y2 - y1) / 2.0
+        _cairo_filled_ellipse(ctx, ecx, ecy, erx, ery, LUMA_HAIR)
 
-    # Foreground strand arcs (detail weight=1 at this scale)
-    draw.arc([cx - int(s*60), head_cy - int(s*195) + v_off,
-              cx - int(s*10), head_cy - int(s*140)],
-             start=30, end=200, fill=LUMA_HAIR, width=1)
-    draw.arc([cx - int(s*20), head_cy - int(s*190) + v_off,
-              cx + int(s*40), head_cy - int(s*130)],
-             start=10, end=190, fill=LUMA_HAIR, width=1)
+    # Foreground strand arcs
+    _cairo_arc(ctx, cx - int(s*35), head_cy - int(s*167.5) + v_off,
+               int(s*25), int(s*27.5), 0.52, 3.49, LUMA_HAIR, 1.0)
+    _cairo_arc(ctx, cx + int(s*10), head_cy - int(s*160) + v_off,
+               int(s*30), int(s*30), 0.17, 3.32, LUMA_HAIR, 1.0)
 
-    # ── HEAD — circle + chin fill + cheek nubs (v006 classroom style) ─────────
-    # Main head circle — HEAD OUTLINE: width=2 (scaled from width=4 at HR=104)
-    draw.ellipse([cx - r, head_cy - r, cx + r, head_cy + r + int(r * 0.15)],
-                 fill=LUMA_SKIN, outline=LINE_COL, width=2)
+    # ── HEAD — ellipse + chin fill + cheek nubs ──────────────────────────────
+    _cairo_filled_ellipse(ctx, cx, head_cy + int(r * 0.075), r, r + int(r * 0.075),
+                          LUMA_SKIN, LINE_COL, 2.0)
 
-    # Lower chin fill (softens jaw)
+    # Chin fill (softens jaw)
     chin_rx = int(r * 0.95)
-    draw.ellipse([cx - chin_rx, head_cy - int(r * 0.20),
-                  cx + chin_rx, head_cy + r + int(r * 0.25)], fill=LUMA_SKIN)
-    # Chin arc outline — STRUCTURE: width=1 (scaled from 3)
-    draw.arc([cx - chin_rx, head_cy - int(r * 0.20),
-              cx + chin_rx, head_cy + r + int(r * 0.25)],
-             start=0, end=180, fill=LINE_COL, width=1)
+    _cairo_filled_ellipse(ctx, cx, head_cy + r * 0.025 + int(r * 0.025),
+                          chin_rx, int(r * 0.225) + r, LUMA_SKIN)
+    _cairo_arc(ctx, cx, head_cy + r * 0.025 + int(r * 0.025),
+               chin_rx, int(r * 0.225) + r, 0, math.pi, LINE_COL, 1.0)
 
-    # Cheek nubs — classroom pose characteristic — STRUCTURE: width=1
+    # Cheek nubs
     nub_w = int(r * 0.18)
     nub_h = int(r * 0.24)
     nub_y = head_cy - int(r * 0.12)
-    draw.ellipse([cx - r - nub_w + int(r * 0.06), nub_y - nub_h // 2,
-                  cx - r + nub_w + int(r * 0.06), nub_y + nub_h // 2],
-                 fill=LUMA_SKIN, outline=LINE_COL, width=1)
-    draw.ellipse([cx + r - nub_w - int(r * 0.06), nub_y - nub_h // 2,
-                  cx + r + nub_w - int(r * 0.06), nub_y + nub_h // 2],
-                 fill=LUMA_SKIN, outline=LINE_COL, width=1)
+    _cairo_filled_ellipse(ctx, cx - r + int(r * 0.06), nub_y, nub_w, nub_h // 2,
+                          LUMA_SKIN, LINE_COL, 1.0)
+    _cairo_filled_ellipse(ctx, cx + r - int(r * 0.06), nub_y, nub_w, nub_h // 2,
+                          LUMA_SKIN, LINE_COL, 1.0)
 
-    # ── EYES — near-circular, eyelid arc (v006 classroom style) ───────────────
+    # ── EYES ─────────────────────────────────────────────────────────────────
     eye_y = head_cy - int(s * 18)
     lex   = cx - int(s * 38)
     rex   = cx + int(s * 38)
-    ew    = int(r * 0.22)    # v006 FIX: was int(s*28)=r*0.28, canonical spec h×0.22
-    leh   = int(r * 0.27)   # eye height scaled to match narrower width
-    reh   = int(r * 0.22)   # right eye slightly less open
+    ew    = int(r * 0.22)
+    leh   = int(r * 0.27)
+    reh   = int(r * 0.22)
 
     for (ex, eh) in [(lex, leh), (rex, reh)]:
-        # Eye white oval — STRUCTURE: width=1
-        draw.ellipse([ex - ew, eye_y - eh, ex + ew, eye_y + eh],
-                     fill=LUMA_EYE_W, outline=LINE_COL, width=1)
+        _cairo_filled_ellipse(ctx, ex, eye_y, ew, eh, LUMA_EYE_W, LINE_COL, 1.0)
         # Iris
         iris_r = int(ew * 0.54)
         iry    = max(2, min(iris_r, eh - 1))
-        draw.chord([ex - iris_r, eye_y - iry, ex + iris_r, eye_y + iry],
-                   start=15, end=345, fill=LUMA_EYE_IRIS)
+        _cairo_filled_ellipse(ctx, ex, eye_y, iris_r, iry, LUMA_EYE_IRIS)
         # Pupil
         pr = int(iris_r * 0.50)
         if pr >= 1:
-            draw.ellipse([ex - pr, eye_y - pr, ex + pr, eye_y + pr],
-                         fill=LUMA_EYE_PUP)
+            _cairo_filled_ellipse(ctx, ex, eye_y, pr, pr, LUMA_EYE_PUP)
         # Highlight
         hl_s = max(1, int(pr * 0.38))
         hl_x = ex + int(iris_r * 0.42)
         hl_y = eye_y - int(iry * 0.48)
-        draw.ellipse([hl_x - hl_s, hl_y - hl_s, hl_x + hl_s, hl_y + hl_s],
-                     fill=LUMA_EYE_HL)
-        # Eyelid arc — STRUCTURE: width=1
-        draw.arc([ex - ew, eye_y - eh, ex + ew, eye_y + eh],
-                 start=200, end=340, fill=LINE_COL, width=1)
+        _cairo_filled_ellipse(ctx, hl_x, hl_y, hl_s, hl_s, LUMA_EYE_HL)
+        # Eyelid arc
+        _cairo_arc(ctx, ex, eye_y, ew, eh, 3.49, 5.93, LINE_COL, 1.0)
 
-    # Brows (simple line, structure weight=1)
+    # Brows
     brow_y = eye_y - int(leh * 1.35)
     for (bx, sign) in [(lex, -1), (rex, 1)]:
         bx0 = bx + sign * int(s * 22)
         bx1 = bx - sign * int(s * 26)
-        draw.line([(bx1, brow_y + int(s * 2)), (bx, brow_y - int(s * 6)),
-                   (bx0, brow_y + int(s * 2))],
-                  fill=LUMA_HAIR, width=1)
+        _cairo_line(ctx, [(bx1, brow_y + int(s * 2)), (bx, brow_y - int(s * 6)),
+                          (bx0, brow_y + int(s * 2))], LUMA_HAIR, 1.0)
 
-    # Nose — two small nostril dots + bridge arc (detail weight=1)
-    draw.ellipse([cx - int(s*8), head_cy + int(s*8), cx - int(s*2), head_cy + int(s*14)],
-                 fill=LUMA_SKIN_SH)
-    draw.ellipse([cx + int(s*2), head_cy + int(s*8), cx + int(s*8), head_cy + int(s*14)],
-                 fill=LUMA_SKIN_SH)
+    # Nose — nostril dots
+    _cairo_filled_ellipse(ctx, cx - int(s*5), head_cy + int(s*11), int(s*3), int(s*3),
+                          LUMA_SKIN_SH)
+    _cairo_filled_ellipse(ctx, cx + int(s*5), head_cy + int(s*11), int(s*3), int(s*3),
+                          LUMA_SKIN_SH)
 
-    # Mouth — neutral slight-smile bezier arc
+    # Mouth — bezier curve
     my = head_cy + int(s * 30)
     mw = int(s * 36)
-    pts = _bezier3((cx - mw, my + int(s*4)), (cx, my - int(s*8)), (cx + mw, my + int(s*4)))
-    _polyline(draw, pts, LINE_COL, width=1)
+    ctx.new_path()
+    ctx.move_to(cx - mw, my + int(s*4))
+    ctx.curve_to(cx - mw*0.3, my - int(s*8), cx + mw*0.3, my - int(s*8),
+                 cx + mw, my + int(s*4))
+    set_color(ctx, LINE_COL)
+    ctx.set_line_width(1.0)
+    ctx.stroke()
 
-    # ── BODY — hoodie trapezoid (same as v004) ─────────────────────────────────
-    # Neck connects head_cy bottom to body top
-    neck_top = head_cy + r + int(r * 0.25)   # chin bottom
-
+    # ── BODY — hoodie (smooth polygon for organic trapezoid) ─────────────────
+    neck_top = head_cy + r + int(r * 0.25)
     sw  = int(hu * 0.38)
     hw2 = int(hu * 0.70)
-    bt  = neck_top + int(hu * 0.08)   # body top (small neck gap)
+    bt  = neck_top + int(hu * 0.08)
     bh  = int(hu * 2.0)
     bb  = bt + bh
-    draw.polygon([(cx - sw, bt), (cx + sw, bt), (cx + hw2, bb), (cx - hw2, bb)],
-                 fill=LUMA_HOODIE, outline=LINE_COL, width=1)
+
+    # Organic hoodie shape using smooth polygon
+    body_pts = [(cx - sw, bt), (cx + sw, bt), (cx + hw2, bb), (cx - hw2, bb)]
+    draw_smooth_polygon(ctx, body_pts, bulge_frac=0.04)
+    set_color(ctx, LUMA_HOODIE)
+    ctx.fill_preserve()
+    set_color(ctx, LINE_COL)
+    ctx.set_line_width(1.0)
+    ctx.stroke()
 
     # Pocket / sleeve detail
     mid_frac = 0.55
     hem_mid  = cx + int(sw + (hw2 - sw) * mid_frac)
     py2 = bt + int(bh * 0.50)
-    draw.rectangle([hem_mid, py2, hem_mid + int(hu*0.30), py2 + int(hu*0.42)],
-                   fill=LUMA_HOODIE, outline=LINE_COL, width=1)
+    _cairo_filled_rect(ctx, hem_mid, py2, hem_mid + int(hu*0.30), py2 + int(hu*0.42),
+                       LUMA_HOODIE, LINE_COL, 1.0)
 
     # Pixel accent on hoodie chest
     pix_y = bt + int(bh * 0.20)
-    draw.rectangle([cx - int(hu*0.14), pix_y, cx - int(hu*0.06), pix_y + int(hu*0.06)],
-                   fill=PX_CYAN)
-    draw.rectangle([cx - int(hu*0.04), pix_y, cx + int(hu*0.04), pix_y + int(hu*0.06)],
-                   fill=PX_MAG)
-    draw.rectangle([cx + int(hu*0.06), pix_y, cx + int(hu*0.14), pix_y + int(hu*0.06)],
-                   fill=PX_CYAN)
+    _cairo_filled_rect(ctx, cx - int(hu*0.14), pix_y, cx - int(hu*0.06), pix_y + int(hu*0.06),
+                       PX_CYAN)
+    _cairo_filled_rect(ctx, cx - int(hu*0.04), pix_y, cx + int(hu*0.04), pix_y + int(hu*0.06),
+                       PX_MAG)
+    _cairo_filled_rect(ctx, cx + int(hu*0.06), pix_y, cx + int(hu*0.14), pix_y + int(hu*0.06),
+                       PX_CYAN)
 
-    # ── LEGS ──────────────────────────────────────────────────────────────────
+    # ── LEGS ─────────────────────────────────────────────────────────────────
     lw = int(hu * 0.20)
     leg_h = int(hu * 0.55)
-    draw.rectangle([cx - lw*2, bb, cx - 4, bb + leg_h],
-                   fill=LUMA_PANTS, outline=LINE_COL, width=1)
-    draw.rectangle([cx + 4, bb, cx + lw*2, bb + leg_h],
-                   fill=LUMA_PANTS, outline=LINE_COL, width=1)
+    _cairo_filled_rect(ctx, cx - lw*2, bb, cx - 4, bb + leg_h, LUMA_PANTS, LINE_COL, 1.0)
+    _cairo_filled_rect(ctx, cx + 4, bb, cx + lw*2, bb + leg_h, LUMA_PANTS, LINE_COL, 1.0)
 
-    # ── SHOES ─────────────────────────────────────────────────────────────────
+    # ── SHOES ────────────────────────────────────────────────────────────────
     fw = int(hu * 0.52)
     fh = int(hu * 0.28)
     sole_h = int(fh * 0.35)
-    draw.ellipse([cx - lw*2 - fw + int(fw*0.3), base_y - fh,
-                  cx - lw*2 + int(fw*0.5), base_y],
-                 fill=LUMA_SHOE_UP, outline=LINE_COL, width=1)
-    draw.ellipse([cx + lw*2 - int(fw*0.5), base_y - fh,
-                  cx + lw*2 + fw - int(fw*0.3), base_y],
-                 fill=LUMA_SHOE_UP, outline=LINE_COL, width=1)
-    draw.rectangle([cx - lw*2 - fw + int(fw*0.3), base_y - sole_h,
-                    cx - lw*2 + int(fw*0.5), base_y], fill=LUMA_SHOE_SOLE)
-    draw.rectangle([cx + lw*2 - int(fw*0.5), base_y - sole_h,
-                    cx + lw*2 + fw - int(fw*0.3), base_y], fill=LUMA_SHOE_SOLE)
+    # Left shoe
+    lsx = cx - lw*2 - fw + int(fw*0.3)
+    lse = cx - lw*2 + int(fw*0.5)
+    _cairo_filled_ellipse(ctx, (lsx + lse)/2, base_y - fh/2,
+                          (lse - lsx)/2, fh/2, LUMA_SHOE_UP, LINE_COL, 1.0)
+    # Right shoe
+    rsx = cx + lw*2 - int(fw*0.5)
+    rse = cx + lw*2 + fw - int(fw*0.3)
+    _cairo_filled_ellipse(ctx, (rsx + rse)/2, base_y - fh/2,
+                          (rse - rsx)/2, fh/2, LUMA_SHOE_UP, LINE_COL, 1.0)
+    # Soles
+    _cairo_filled_rect(ctx, lsx, base_y - sole_h, lse, base_y, LUMA_SHOE_SOLE)
+    _cairo_filled_rect(ctx, rsx, base_y - sole_h, rse, base_y, LUMA_SHOE_SOLE)
+
+
+def draw_luma_lineup(draw, cx, base_y, h):
+    """Luma v012 — dispatches to cairo, composites to PIL image."""
+    # This is a wrapper; actual drawing happens in generate_lineup via cairo
+    pass  # Cairo drawing handled in generate_lineup
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# BYTE
+# BYTE — v012 pycairo rebuild (smooth elliptical body, native AA)
 # ══════════════════════════════════════════════════════════════════════════════
 
-def draw_byte_lineup(draw, cx, base_y, h):
+def _draw_byte_cairo(ctx, cx, base_y, h):
+    """Byte full body at lineup height h, pycairo v012."""
     s         = h
     float_gap = int(s * 0.18)
     body_rx   = s // 2
     body_ry   = int(s * 0.55)
     bcy       = base_y - float_gap - body_ry
 
-    draw.ellipse([cx - body_rx, bcy - body_ry, cx + body_rx, bcy + body_ry],
-                 fill=BYTE_TEAL, outline=LINE_COL, width=3)
+    # Body ellipse
+    _cairo_filled_ellipse(ctx, cx, bcy, body_rx, body_ry, BYTE_TEAL, LINE_COL, 3.0)
+
+    # Shadow side (half body)
     shadow_pts = [
         (cx,               bcy - body_ry),
         (cx + body_rx,     bcy - body_ry + 4),
@@ -439,164 +515,207 @@ def draw_byte_lineup(draw, cx, base_y, h):
         (cx + body_rx,     bcy + body_ry//2),
         (cx + body_rx,     bcy),
     ]
-    draw.polygon(shadow_pts, fill=BYTE_SH)
-    draw.arc([cx - body_rx, bcy - body_ry, cx + body_rx, bcy + body_ry],
-             start=200, end=310, fill=BYTE_HL, width=3)
+    _cairo_filled_polygon(ctx, shadow_pts, BYTE_SH)
 
+    # Highlight arc
+    _cairo_arc(ctx, cx, bcy, body_rx, body_ry, 3.49, 5.41, BYTE_HL, 3.0)
+
+    # Crack / scar (Hot Magenta) — bezier crack line
     crack_x = cx - s//4
-    draw.line([(crack_x, bcy - body_ry//2), (crack_x + s//8, bcy - body_ry//6)],
-              fill=SCAR_MAG, width=2)
-    draw.line([(crack_x + s//8, bcy - body_ry//6), (crack_x - s//10, bcy + body_ry//6)],
-              fill=SCAR_MAG, width=2)
+    ctx.new_path()
+    ctx.move_to(crack_x, bcy - body_ry//2)
+    ctx.curve_to(crack_x + s//12, bcy - body_ry//4, crack_x + s//10, bcy - body_ry//8,
+                 crack_x + s//8, bcy - body_ry//6)
+    ctx.curve_to(crack_x + s//16, bcy, crack_x - s//14, bcy + body_ry//10,
+                 crack_x - s//10, bcy + body_ry//6)
+    set_color(ctx, SCAR_MAG)
+    ctx.set_line_width(2.0)
+    ctx.stroke()
 
+    # Pixel grid eye (left)
     eye_y  = bcy - body_ry // 5
     eye_sz = s // 4
     lx     = cx - s//5
-    cell   = eye_sz // 5
-    if cell < 1:
-        cell = 1
+    cell   = max(1, eye_sz // 5)
     ox = lx - (5*cell)//2
     oy = eye_y - (5*cell)//2
-    draw.rectangle([ox-2, oy-2, ox+5*cell+2, oy+5*cell+2],
-                   fill=(255,255,255), outline=LINE_COL, width=1)
+    _cairo_filled_rect(ctx, ox-2, oy-2, ox+5*cell+2, oy+5*cell+2,
+                       (255,255,255), LINE_COL, 1.0)
     for row in range(2):
         for col in range(2):
             px = lx + col * (cell*2 + 2) - cell*2
             py = eye_y + row * (cell*2 + 2)
-            draw.rectangle([px, py, px + cell*2, py + cell*2], fill=(0, 240, 255))
+            _cairo_filled_rect(ctx, px, py, px + cell*2, py + cell*2, (0, 240, 255))
+
+    # Organic eye (right)
     rx = cx + s//5
     er = s // 10
-    draw.ellipse([rx - er, eye_y - er, rx + er, eye_y + er],
-                 fill=BYTE_EYE_W, outline=LINE_COL, width=1)
-    draw.ellipse([rx - er//2, eye_y - er//2, rx + er//2, eye_y + er//2],
-                 fill=(60, 38, 20))
+    _cairo_filled_ellipse(ctx, rx, eye_y, er, er, BYTE_EYE_W, LINE_COL, 1.0)
+    _cairo_filled_ellipse(ctx, rx, eye_y, er//2, er//2, (60, 38, 20))
 
+    # Arms (rounded rectangles via smooth polygon)
     lw = s // 6
     lh = s // 5
     arm_y = bcy - body_ry // 5
-    draw.rectangle([cx - body_rx - lw, arm_y, cx - body_rx, arm_y + lh],
-                   fill=BYTE_TEAL, outline=LINE_COL, width=2)
-    draw.rectangle([cx + body_rx, arm_y, cx + body_rx + lw, arm_y + lh],
-                   fill=BYTE_TEAL, outline=LINE_COL, width=2)
+    _cairo_filled_rect(ctx, cx - body_rx - lw, arm_y, cx - body_rx, arm_y + lh,
+                       BYTE_TEAL, LINE_COL, 2.0)
+    _cairo_filled_rect(ctx, cx + body_rx, arm_y, cx + body_rx + lw, arm_y + lh,
+                       BYTE_TEAL, LINE_COL, 2.0)
 
+    # Legs
     leg_offset = s // 4
     leg_h = lh
     leg_w = int(lw * 0.9)
-    draw.rectangle([cx - leg_offset - leg_w//2, bcy + body_ry,
-                    cx - leg_offset + leg_w//2, bcy + body_ry + leg_h],
-                   fill=BYTE_TEAL, outline=LINE_COL, width=2)
-    draw.rectangle([cx + leg_offset - leg_w//2, bcy + body_ry,
-                    cx + leg_offset + leg_w//2, bcy + body_ry + leg_h],
-                   fill=BYTE_TEAL, outline=LINE_COL, width=2)
+    _cairo_filled_rect(ctx, cx - leg_offset - leg_w//2, bcy + body_ry,
+                       cx - leg_offset + leg_w//2, bcy + body_ry + leg_h,
+                       BYTE_TEAL, LINE_COL, 2.0)
+    _cairo_filled_rect(ctx, cx + leg_offset - leg_w//2, bcy + body_ry,
+                       cx + leg_offset + leg_w//2, bcy + body_ry + leg_h,
+                       BYTE_TEAL, LINE_COL, 2.0)
 
+    # Hover confetti (pixel particles)
     particle_y = bcy + body_ry + leg_h + 4
     for (px, pc) in [(cx - int(s*0.28), BYTE_HL), (cx - int(s*0.08), SCAR_MAG),
                      (cx + int(s*0.08), BYTE_HL), (cx + int(s*0.24), (0, 200, 180))]:
         py = particle_y + (abs(px - cx) % 8)
-        draw.rectangle([px, py, px + 10, py + 10], fill=pc)
+        _cairo_filled_rect(ctx, px, py, px + 10, py + 10, pc)
+
+
+def draw_byte_lineup(draw, cx, base_y, h):
+    """Byte v012 — dispatches to cairo, composites to PIL image."""
+    pass  # Cairo drawing handled in generate_lineup
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# COSMO
+# COSMO — v012 pycairo rebuild (4.0 heads, visual hooks, native AA)
 # ══════════════════════════════════════════════════════════════════════════════
 
-def draw_cosmo_lineup(draw, cx, base_y, h):
+def _draw_cosmo_cairo(ctx, cx, base_y, h):
+    """Cosmo full body at lineup height h, pycairo v012. 4.0 heads canonical."""
     hu = h / 4.0
     hy = base_y - h
 
     hw = int(hu * 0.40)
     hh = int(hu * 0.95)
-    draw.ellipse([cx - hw - 4, hy - int(hu*0.08), cx + hw + 4, hy + int(hu*0.12)],
-                 fill=COSMO_HAIR)
-    draw.ellipse([cx - hw - 2, hy - int(hu*0.22), cx - int(hw*0.2), hy + int(hu*0.05)],
-                 fill=COSMO_HAIR)
-    # v011 C47: Amplified cowlick — visible sproing tuft above head
+
+    # Hair mass
+    _cairo_filled_ellipse(ctx, cx, hy + int(hu*0.02), hw + 4, int(hu*0.10), COSMO_HAIR)
+    _cairo_filled_ellipse(ctx, cx - int(hw*0.6), hy - int(hu*0.085),
+                          int(hw*0.4), int(hu*0.135), COSMO_HAIR)
+
+    # Cowlick (C47 visual hook) — bezier sproing
     cowlick_cx = cx + int(hw * 0.10)
     cowlick_base = hy - int(hu * 0.08)
     cowlick_tip = cowlick_base - int(hu * 0.15)
     cw = int(hu * 0.06)
-    cowlick_pts = [
-        (cowlick_cx - cw, cowlick_base),
-        (cowlick_cx, cowlick_tip),
-        (cowlick_cx + cw, cowlick_base),
-    ]
-    draw.polygon(cowlick_pts, fill=COSMO_HAIR)
-    draw.line(cowlick_pts, fill=LINE_COL, width=max(1, int(hu * 0.02)))
-    draw.rounded_rectangle([cx - hw, hy, cx + hw, hy + hh],
-                            radius=6, fill=COSMO_SKIN, outline=LINE_COL, width=2)
-    ey = hy + int(hh * 0.50)
-    ew = int(hu * 0.12)
-    draw.ellipse([cx - int(hu*0.30) - ew, ey - ew, cx - int(hu*0.30) + ew, ey + ew],
-                 fill=COSMO_LENS_BG)
-    draw.ellipse([cx + int(hu*0.30) - ew, ey - ew, cx + int(hu*0.30) + ew, ey + ew],
-                 fill=COSMO_LENS_BG)
-    ep = int(ew * 0.5)
-    draw.ellipse([cx - int(hu*0.30) - ep, ey - ep, cx - int(hu*0.30) + ep, ey + ep],
-                 fill=(61, 107, 69))
-    draw.ellipse([cx + int(hu*0.30) - ep, ey - ep, cx + int(hu*0.30) + ep, ey + ep],
-                 fill=(61, 107, 69))
+    ctx.new_path()
+    ctx.move_to(cowlick_cx - cw, cowlick_base)
+    ctx.curve_to(cowlick_cx - cw*0.5, cowlick_tip + int(hu*0.02),
+                 cowlick_cx + cw*0.5, cowlick_tip - int(hu*0.01),
+                 cowlick_cx, cowlick_tip)
+    ctx.curve_to(cowlick_cx + cw*0.3, cowlick_tip + int(hu*0.03),
+                 cowlick_cx + cw*0.8, cowlick_base - int(hu*0.02),
+                 cowlick_cx + cw, cowlick_base)
+    ctx.close_path()
+    set_color(ctx, COSMO_HAIR)
+    ctx.fill_preserve()
+    set_color(ctx, LINE_COL)
+    ctx.set_line_width(max(1, int(hu * 0.02)))
+    ctx.stroke()
 
+    # Head (rounded rectangle via smooth polygon)
+    head_pts = [
+        (cx - hw, hy), (cx + hw, hy),
+        (cx + hw, hy + hh), (cx - hw, hy + hh),
+    ]
+    draw_smooth_polygon(ctx, head_pts, bulge_frac=0.08)
+    set_color(ctx, COSMO_SKIN)
+    ctx.fill_preserve()
+    set_color(ctx, LINE_COL)
+    ctx.set_line_width(2.0)
+    ctx.stroke()
+
+    # Glasses frames + lenses
     gr  = int(hu * 0.18)
     gy  = hy + int(hh * 0.48)
     rim = 3
     lcx = cx - int(hu * 0.30)
     rcx = cx + int(hu * 0.30)
-    draw.ellipse([lcx - gr - rim, gy - gr - rim, lcx + gr + rim, gy + gr + rim],
-                 fill=COSMO_FRAMES, outline=LINE_COL, width=1)
-    draw.ellipse([rcx - gr - rim, gy - gr - rim, rcx + gr + rim, gy + gr + rim],
-                 fill=COSMO_FRAMES, outline=LINE_COL, width=1)
-    draw.ellipse([lcx - gr, gy - gr, lcx + gr, gy + gr], fill=COSMO_LENS_BG)
-    draw.ellipse([rcx - gr, gy - gr, rcx + gr, gy + gr], fill=COSMO_LENS_BG)
-    draw.rectangle([lcx + gr, gy - 2, rcx - gr, gy + 2], fill=COSMO_FRAMES)
-    # v011 C47: Bridge tape
-    tape_cx = cx
+    # Frame rims
+    _cairo_filled_ellipse(ctx, lcx, gy, gr + rim, gr + rim, COSMO_FRAMES, LINE_COL, 1.0)
+    _cairo_filled_ellipse(ctx, rcx, gy, gr + rim, gr + rim, COSMO_FRAMES, LINE_COL, 1.0)
+    # Lenses
+    _cairo_filled_ellipse(ctx, lcx, gy, gr, gr, COSMO_LENS_BG)
+    _cairo_filled_ellipse(ctx, rcx, gy, gr, gr, COSMO_LENS_BG)
+    # Bridge
+    _cairo_filled_rect(ctx, lcx + gr, gy - 2, rcx - gr, gy + 2, COSMO_FRAMES)
+    # Bridge tape (C47 visual hook)
     tape_w = max(2, int(hu * 0.04))
     tape_h = max(2, int(hu * 0.03))
-    draw.rectangle([tape_cx - tape_w, gy - tape_h, tape_cx + tape_w, gy + tape_h],
-                   fill=(250, 240, 220), outline=LINE_COL, width=1)
-    draw.arc([lcx - gr + 2, gy - gr + 2, lcx + gr - 2, gy - 2],
-             start=200, end=340, fill=(240,240,240), width=2)
-    draw.arc([rcx - gr + 2, gy - gr + 2, rcx + gr - 2, gy - 2],
-             start=200, end=340, fill=(240,240,240), width=2)
+    _cairo_filled_rect(ctx, cx - tape_w, gy - tape_h, cx + tape_w, gy + tape_h,
+                       (250, 240, 220), LINE_COL, 1.0)
+    # Lens glints
+    _cairo_arc(ctx, lcx, gy - gr*0.3, gr - 2, gr*0.5, 3.49, 5.93, (240,240,240), 2.0)
+    _cairo_arc(ctx, rcx, gy - gr*0.3, gr - 2, gr*0.5, 3.49, 5.93, (240,240,240), 2.0)
 
+    # Pupils
+    ep = int(gr * 0.5)
+    _cairo_filled_ellipse(ctx, lcx, gy, ep, ep, (61, 107, 69))
+    _cairo_filled_ellipse(ctx, rcx, gy, ep, ep, (61, 107, 69))
+
+    # Body (shirt + stripes)
     bw     = int(hu * 0.38)
     body_h = int(hu * 2.4)
     bt     = hy + hh
     bb     = bt + body_h
-    draw.rectangle([cx - bw, bt, cx + bw, bb], fill=COSMO_SHIRT_B, outline=LINE_COL, width=2)
+    _cairo_filled_rect(ctx, cx - bw, bt, cx + bw, bb, COSMO_SHIRT_B, LINE_COL, 2.0)
+
     stripe_h = int(hu * 0.15)
     sy = bt + int(body_h * 0.25)
     while sy + stripe_h < bb - int(body_h * 0.15):
-        draw.rectangle([cx - bw + 2, sy, cx + bw - 2, sy + stripe_h], fill=COSMO_SHIRT_G)
+        _cairo_filled_rect(ctx, cx - bw + 2, sy, cx + bw - 2, sy + stripe_h, COSMO_SHIRT_G)
         sy += stripe_h * 2
-    jw = int(hu * 0.14)
-    draw.rectangle([cx - bw, bt, cx - bw + jw, bb], fill=COSMO_JACKET, outline=LINE_COL, width=1)
-    draw.rectangle([cx + bw - jw, bt, cx + bw, bb], fill=COSMO_JACKET, outline=LINE_COL, width=1)
 
+    # Jacket lapels
+    jw = int(hu * 0.14)
+    _cairo_filled_rect(ctx, cx - bw, bt, cx - bw + jw, bb, COSMO_JACKET, LINE_COL, 1.0)
+    _cairo_filled_rect(ctx, cx + bw - jw, bt, cx + bw, bb, COSMO_JACKET, LINE_COL, 1.0)
+
+    # Notebook
     nw   = int(hu * 0.48)
     nh   = int(hu * 0.58)
     nb_y = bt + int(body_h * 0.28)
-    draw.rectangle([cx - bw - nw + 10, nb_y, cx - bw + 10, nb_y + nh],
-                   fill=COSMO_NB, outline=LINE_COL, width=1)
+    _cairo_filled_rect(ctx, cx - bw - nw + 10, nb_y, cx - bw + 10, nb_y + nh,
+                       COSMO_NB, LINE_COL, 1.0)
 
+    # Legs
     lw    = int(hu * 0.18)
     leg_h = int(hu * 0.60)
-    draw.rectangle([cx - bw + 4, bb, cx - lw, bb + leg_h],
-                   fill=COSMO_PANTS, outline=LINE_COL, width=1)
-    draw.rectangle([cx + lw, bb, cx + bw - 4, bb + leg_h],
-                   fill=COSMO_PANTS, outline=LINE_COL, width=1)
-    draw.line([(cx, bb + int(leg_h*0.3)), (cx, bb + leg_h)], fill=LINE_COL, width=1)
+    _cairo_filled_rect(ctx, cx - bw + 4, bb, cx - lw, bb + leg_h, COSMO_PANTS, LINE_COL, 1.0)
+    _cairo_filled_rect(ctx, cx + lw, bb, cx + bw - 4, bb + leg_h, COSMO_PANTS, LINE_COL, 1.0)
+    _cairo_line(ctx, [(cx, bb + int(leg_h*0.3)), (cx, bb + leg_h)], LINE_COL, 1.0)
 
+    # Shoes
     fw = int(hu * 0.28)
     fh = int(hu * 0.18)
-    draw.ellipse([cx - bw + 4 - int(fw*0.4), base_y - fh, cx - lw + int(fw*0.6), base_y],
-                 fill=COSMO_SHOE, outline=LINE_COL, width=1)
-    draw.ellipse([cx + lw - int(fw*0.3), base_y - fh, cx + bw - 4 + int(fw*0.4), base_y],
-                 fill=COSMO_SHOE, outline=LINE_COL, width=1)
-    draw.ellipse([cx - bw + 4 - int(fw*0.4), base_y - int(fh*0.35),
-                  cx - lw + int(fw*0.6), base_y], fill=(184, 154, 120))
-    draw.ellipse([cx + lw - int(fw*0.3), base_y - int(fh*0.35),
-                  cx + bw - 4 + int(fw*0.4), base_y], fill=(184, 154, 120))
+    lsx = cx - bw + 4 - int(fw*0.4)
+    lse = cx - lw + int(fw*0.6)
+    rsx = cx + lw - int(fw*0.3)
+    rse = cx + bw - 4 + int(fw*0.4)
+    _cairo_filled_ellipse(ctx, (lsx+lse)/2, base_y - fh/2, (lse-lsx)/2, fh/2,
+                          COSMO_SHOE, LINE_COL, 1.0)
+    _cairo_filled_ellipse(ctx, (rsx+rse)/2, base_y - fh/2, (rse-rsx)/2, fh/2,
+                          COSMO_SHOE, LINE_COL, 1.0)
+    # Soles
+    _cairo_filled_ellipse(ctx, (lsx+lse)/2, base_y - int(fh*0.175),
+                          (lse-lsx)/2, int(fh*0.175), (184, 154, 120))
+    _cairo_filled_ellipse(ctx, (rsx+rse)/2, base_y - int(fh*0.175),
+                          (rse-rsx)/2, int(fh*0.175), (184, 154, 120))
+
+
+def draw_cosmo_lineup(draw, cx, base_y, h):
+    """Cosmo v012 — dispatches to cairo, composites to PIL image."""
+    pass  # Cairo drawing handled in generate_lineup
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -934,8 +1053,8 @@ def generate_lineup(output_path):
 
     draw.rectangle([0, 0, IMG_W, IMG_H], fill=BG)
 
-    title = ("LUMA & THE GLITCHKIN — Full Cast Lineup — C45 v010"
-             " (two-tier staging: Luma+Byte FG/WARM / Cosmo+Miri+Glitch BG/COOL)")
+    title = ("LUMA & THE GLITCHKIN — Full Cast Lineup — C52 v012"
+             " (pycairo rebuild: Luma+Byte+Cosmo | two-tier staging: FG/WARM + BG/COOL)")
     draw.text((20, 14), title, fill=LABEL_COL, font=font_title)
     draw.line([(0, TITLE_H - 4), (IMG_W, TITLE_H - 4)], fill=TICK_COL, width=1)
 
@@ -979,10 +1098,14 @@ def generate_lineup(output_path):
     draw_height_markers(draw, font_small)
     draw = ImageDraw.Draw(img)
 
-    char_drawers = {
-        "luma":   draw_luma_lineup,
-        "byte":   draw_byte_lineup,
-        "cosmo":  draw_cosmo_lineup,
+    # ── Cairo characters (Luma, Byte, Cosmo) — render on cairo, composite ──
+    _cairo_drawers = {
+        "luma":  _draw_luma_cairo,
+        "byte":  _draw_byte_cairo,
+        "cosmo": _draw_cosmo_cairo,
+    }
+    # PIL characters (Miri, Glitch) — draw directly
+    _pil_drawers = {
         "miri":   draw_miri_lineup,
         "glitch": draw_glitch_lineup,
     }
@@ -991,8 +1114,13 @@ def generate_lineup(output_path):
         cx       = CHAR_X[char]
         h        = CHAR_HEIGHTS[char]
         ground_y = CHAR_GROUND_Y[char]
-        char_drawers[char](draw, cx, ground_y, h)
-        draw = ImageDraw.Draw(img)  # refresh after each character
+        if char in _cairo_drawers:
+            char_layer = _render_cairo_character(_cairo_drawers[char], cx, ground_y, h)
+            img = Image.alpha_composite(img.convert("RGBA"), char_layer).convert("RGB")
+            draw = ImageDraw.Draw(img)
+        else:
+            _pil_drawers[char](draw, cx, ground_y, h)
+            draw = ImageDraw.Draw(img)  # refresh after each character
 
     # Character name labels below their respective ground lines
     for char in CHAR_ORDER:
@@ -1034,7 +1162,7 @@ def generate_lineup(output_path):
     footer = (
         f"Full cast: Cosmo | Miri | LUMA | Byte | Glitch.  "
         f"Reference: 1 head unit = {HEAD_UNIT:.0f}px.  "
-        "Colors per master_palette.md (canonical).  C45 v010."
+        "Colors per master_palette.md (canonical).  C52 v012 (pycairo: Luma+Byte+Cosmo)."
     )
     draw.text((20, IMG_H - 18), footer, fill=TICK_COL, font=font_small)
 
@@ -1052,8 +1180,8 @@ def main():
     out_dir = output_dir('characters', 'main')
     os.makedirs(out_dir, exist_ok=True)
     generate_lineup(os.path.join(out_dir, "LTG_CHAR_character_lineup.png"))
-    print("Character lineup v010 generation complete.")
-    print("  C45 changes: dual-warmth tier depth bands (Option C, Lee Tanaka C45 recommendation)")
+    print("Character lineup v012 generation complete.")
+    print("  C52 changes: pycairo rebuild for Luma, Byte, Cosmo (native bezier AA)")
     print(f"  FG_GROUND_Y={FG_GROUND_Y}, BG_GROUND_Y={BG_GROUND_Y}, FG_SCALE={FG_SCALE}")
     print(f"  Character order (L→R): cosmo | miri | luma | byte | glitch")
     print(f"  Luma: {LUMA_RENDER_H_FG}px drawn ({LUMA_RENDER_H}px base ×{FG_SCALE}), "

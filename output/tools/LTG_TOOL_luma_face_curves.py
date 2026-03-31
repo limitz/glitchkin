@@ -69,6 +69,10 @@ import os
 import math
 from copy import deepcopy
 from PIL import Image, ImageDraw
+from LTG_TOOL_curve_utils import (
+    quadratic_bezier_pts as _cu_quadratic,
+    cubic_bezier_pts as _cu_cubic,
+)
 
 # ── Palette (spec-compliant) ────────────────────────────────────────────────
 
@@ -81,65 +85,17 @@ WHITE           = (255, 255, 255)
 BLUSH_PINK      = (255, 175, 175)   # BLUSH fill color
 
 
-# ── Bezier Utilities ─────────────────────────────────────────────────────────
+# ── Bezier Utilities — migrated to LTG_TOOL_curve_utils (C52) ────────────────
+# Thin wrappers preserve the n= kwarg used by callers in this file.
 
 def _quadratic_bezier_points(p0, p1, p2, n=64):
-    """
-    Sample n points along a quadratic bezier curve defined by three control points.
-    Returns a list of (x, y) integer tuples.
-
-    Parameters
-    ----------
-    p0 : tuple (x, y) — start point
-    p1 : tuple (x, y) — control point (apex)
-    p2 : tuple (x, y) — end point
-    n  : int — number of sample points along curve (default 64)
-
-    Returns
-    -------
-    list of (int, int) tuples
-    """
-    pts = []
-    for i in range(n + 1):
-        t = i / n
-        u = 1 - t
-        x = u * u * p0[0] + 2 * u * t * p1[0] + t * t * p2[0]
-        y = u * u * p0[1] + 2 * u * t * p1[1] + t * t * p2[1]
-        pts.append((int(round(x)), int(round(y))))
-    return pts
+    """Delegates to curve_utils.quadratic_bezier_pts."""
+    return _cu_quadratic(p0, p1, p2, steps=n)
 
 
 def _cubic_bezier_points(p0, p1, p2, p3, n=64):
-    """
-    Sample n points along a cubic bezier curve defined by four control points.
-    Returns a list of (x, y) integer tuples.
-
-    Parameters
-    ----------
-    p0 : tuple (x, y) — start point
-    p1 : tuple (x, y) — first control point
-    p2 : tuple (x, y) — second control point
-    p3 : tuple (x, y) — end point
-    n  : int — number of sample points along curve (default 64)
-
-    Returns
-    -------
-    list of (int, int) tuples
-    """
-    pts = []
-    for i in range(n + 1):
-        t = i / n
-        u = 1 - t
-        x = (u**3 * p0[0]
-             + 3 * u**2 * t * p1[0]
-             + 3 * u * t**2 * p2[0]
-             + t**3 * p3[0])
-        y = (u**3 * p0[1]
-             + 3 * u**2 * t * p1[1]
-             + 3 * u * t**2 * p2[1]
-             + t**3 * p3[1])
-        pts.append((int(round(x)), int(round(y))))
-    return pts
+    """Delegates to curve_utils.cubic_bezier_pts."""
+    return _cu_cubic(p0, p1, p2, p3, steps=n)
 
 
 # ── Neutral Control Points (all offsets from FC) ────────────────────────────

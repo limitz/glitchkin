@@ -60,6 +60,24 @@
       "check": "doc_staleness",
       "label": "Doc Staleness Check",
       "enabled": true
+    },
+    {
+      "slot": 11,
+      "check": "dep_availability",
+      "label": "Dependency Availability",
+      "enabled": true
+    },
+    {
+      "slot": 12,
+      "check": "bezier_migration_lint",
+      "label": "Bezier Migration Lint",
+      "enabled": true
+    },
+    {
+      "slot": 13,
+      "check": "tool_naming_lint",
+      "label": "Tool Naming Convention",
+      "enabled": true
     }
   ],
   "swap_history": [
@@ -70,6 +88,30 @@
       "cycle": "C48",
       "date": "2026-03-28",
       "reason": "Pretrained models ARE allowed per policy correction — ext_model_check removed, replaced with doc_staleness."
+    },
+    {
+      "slot": 11,
+      "old_check": null,
+      "new_check": "dep_availability",
+      "cycle": "C52",
+      "date": "2026-03-31",
+      "reason": "New check: verify bezier, Shapely, pycairo libraries are importable."
+    },
+    {
+      "slot": 12,
+      "old_check": null,
+      "new_check": "bezier_migration_lint",
+      "cycle": "C52",
+      "date": "2026-03-31",
+      "reason": "New check: track hand-rolled bezier migration progress via curve_utils audit."
+    },
+    {
+      "slot": 13,
+      "old_check": null,
+      "new_check": "tool_naming_lint",
+      "cycle": "C52",
+      "date": "2026-03-31",
+      "reason": "New check: enforce LTG_TOOL_ prefix naming convention on active .py files."
     }
   ]
 }
