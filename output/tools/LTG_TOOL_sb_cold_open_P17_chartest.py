@@ -242,7 +242,10 @@ def draw_luma_sitting(draw, img, luma_cx, luma_floor_y):
 
 
 def draw_byte_hovering(draw, img, byte_cx, byte_cy, body_h, body_w):
-    """Byte hovering — canonical renderer (neutral expression)."""
+    """Byte hovering — canonical renderer (neutral expression).
+
+    Returns (face_cy, face_r, body_cx, body_w) for annotation placement.
+    """
     scale = body_h / 88.0
     surface = draw_byte(expression="neutral", scale=scale, facing="front")
     char_pil = _char_to_pil(surface)
@@ -252,6 +255,10 @@ def draw_byte_hovering(draw, img, byte_cx, byte_cy, body_h, body_w):
         new_w = int(new_h * aspect)
         char_pil = char_pil.resize((new_w, new_h), Image.LANCZOS)
     _composite_char(img, char_pil, byte_cx, byte_cy)
+    # Return approximate geometry for annotation placement
+    face_cy = byte_cy - body_h // 4
+    face_r = int(body_h * 0.25)
+    return (face_cy, face_r, byte_cx, body_w)
 
 
 def draw_panel():

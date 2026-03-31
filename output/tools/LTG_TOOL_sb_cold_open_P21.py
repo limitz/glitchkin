@@ -45,6 +45,8 @@ except ImportError:
 from PIL import Image, ImageDraw, ImageFont
 import math, random, os
 import sys
+from LTG_TOOL_char_luma import draw_luma as _draw_luma_canonical
+from LTG_TOOL_char_byte import draw_byte as _draw_byte_canonical
 from LTG_TOOL_char_glitch import draw_glitch
 from LTG_TOOL_cairo_primitives import to_pil_rgba
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -264,53 +266,19 @@ def draw_panel():
     # ── BYTE — Camera Right, facing monitors, RIGID ──────────────────────────
     byte_cx   = int(canvas_w * 0.68)
     byte_cy   = int(canvas_h * 0.52)  # higher up = further from camera at high angle
-    byte_hr   = 18  # smaller — high angle makes them look small
-    byte_bw   = 22
-    byte_bh   = 42
+    byte_bh   = 42  # smaller — high angle makes them look small
 
-    # Body — stiff, arms pulled IN (defensive)
-    bt_top = byte_cy + byte_hr - 3
-    draw.ellipse([byte_cx - byte_bw // 2, bt_top,
-                  byte_cx + byte_bw // 2, bt_top + byte_bh // 2],
-                 fill=BYTE_TEAL)
-    draw.polygon([
-        (byte_cx - byte_bw // 2, bt_top + byte_bh // 3),
-        (byte_cx + byte_bw // 2, bt_top + byte_bh // 3),
-        (byte_cx, bt_top + byte_bh)
-    ], fill=BYTE_TEAL)
-
-    # Arms pulled in tight — defensive, NOT open
-    draw.line([(byte_cx - byte_bw // 2, bt_top + 12),
-               (byte_cx - byte_bw // 2 + 2, bt_top + 24)],
-              fill=BYTE_TEAL, width=4)
-    draw.line([(byte_cx + byte_bw // 2, bt_top + 12),
-               (byte_cx + byte_bw // 2 - 2, bt_top + 24)],
-              fill=BYTE_TEAL, width=4)
-
-    # Head — facing AWAY from Luma, toward monitors (back of head visible to us)
-    draw.ellipse([byte_cx - byte_hr, byte_cy - byte_hr,
-                  byte_cx + byte_hr, byte_cy + byte_hr],
-                 fill=BYTE_TEAL)
-    # Back of head shading (facing monitors = we see back)
-    draw.ellipse([byte_cx - byte_hr + 4, byte_cy - byte_hr + 4,
-                  byte_cx + byte_hr - 4, byte_cy + byte_hr - 4],
-                 fill=BYTE_BODY_DK)
-    # Cracked eye visible in profile (right side)
-    draw.rectangle([byte_cx + byte_hr - 6, byte_cy - 3,
-                    byte_cx + byte_hr - 1, byte_cy + 3],
-                   fill=(0, 160, 180))
-    draw.line([(byte_cx + byte_hr - 5, byte_cy - 2),
-               (byte_cx + byte_hr - 1, byte_cy + 2)],
-              fill=HOT_MAGENTA, width=1)
-
-    # Cyan rim light from monitors
-    rim_ol = Image.new('RGBA', img.size, (0, 0, 0, 0))
-    rd = ImageDraw.Draw(rim_ol)
-    rd.arc([byte_cx - byte_hr - 2, byte_cy - byte_hr - 2,
-            byte_cx + byte_hr + 2, byte_cy + byte_hr + 2],
-           start=200, end=340, fill=(*ELEC_CYAN, 80), width=2)
-    base = img.convert('RGBA')
-    img.paste(Image.alpha_composite(base, rim_ol).convert('RGB'))
+    # Canonical renderer: alarmed expression (rigid, defensive posture at re-escalation)
+    byte_scale = byte_bh / 88.0
+    byte_surface = _draw_byte_canonical(expression="alarmed", scale=byte_scale, facing="left",
+                                        scene_lighting={"tint": ELEC_CYAN, "intensity": 0.2})
+    byte_pil = _char_to_pil(byte_surface)
+    if byte_pil.height > 0:
+        aspect = byte_pil.width / byte_pil.height
+        new_h = byte_bh
+        new_w = int(new_h * aspect)
+        byte_pil = byte_pil.resize((new_w, new_h), Image.LANCZOS)
+    _composite_char(img, byte_pil, byte_cx, byte_cy)
     draw = ImageDraw.Draw(img)
 
     # Desaturation ring
@@ -326,75 +294,19 @@ def draw_panel():
     # ── LUMA — Camera Left, still on floor, rising ───────────────────────────
     luma_cx  = int(canvas_w * 0.30)
     luma_cy  = int(canvas_h * 0.56)
-    l_hr     = 22  # smaller at high angle
+    luma_body_h = 80  # smaller at high angle
 
-    # Body — getting up from floor, one knee down, one hand pushing up
-    body_top = luma_cy + l_hr - 4
-    # Hoodie mass (hunched, rising)
-    body_pts = [
-        (luma_cx - 28, body_top + 40),
-        (luma_cx - 22, body_top),
-        (luma_cx + 22, body_top - 4),
-        (luma_cx + 30, body_top + 36),
-    ]
-    draw.polygon(body_pts, fill=LUMA_HOODIE)
-    # Shadow side
-    draw.polygon([
-        body_pts[0], body_pts[1],
-        (luma_cx - 14, body_top),
-        (luma_cx - 20, body_top + 40),
-    ], fill=lerp_color(LUMA_HOODIE, (120, 60, 30), 0.3))
-
-    # One arm pushing up from floor
-    draw.line([(luma_cx + 24, body_top + 30),
-               (luma_cx + 38, body_top + 44)],
-              fill=LUMA_HOODIE, width=6)
-    # Hand on floor
-    draw.ellipse([luma_cx + 36, body_top + 42, luma_cx + 46, body_top + 50],
-                 fill=LUMA_SKIN)
-
-    # Other arm bracing on knee
-    draw.line([(luma_cx - 20, body_top + 14),
-               (luma_cx - 28, body_top + 28)],
-              fill=LUMA_HOODIE, width=6)
-
-    # Head — looking UP at monitors
-    draw.ellipse([luma_cx - l_hr, luma_cy - l_hr,
-                  luma_cx + l_hr, luma_cy + l_hr],
-                 fill=LUMA_SKIN)
-
-    # Hair
-    hair_pts = []
-    for i in range(14):
-        angle = math.pi + (math.pi * i / 13)
-        hr = l_hr + RNG.randint(2, 8)
-        hair_pts.append((int(luma_cx + hr * math.cos(angle)),
-                         int(luma_cy + hr * math.sin(angle) - 4)))
-    hair_pts.insert(0, (luma_cx + l_hr + 4, luma_cy))
-    hair_pts.append((luma_cx - l_hr - 4, luma_cy))
-    draw.polygon(hair_pts, fill=LUMA_HAIR)
-
-    # Face — looking UP. Eyes wide (ALARMED but processing).
-    # Upward gaze: eyes in lower half of head, irises shifted up
-    eye_y_l = luma_cy + 1
-    # Left eye
-    draw.ellipse([luma_cx + 2, eye_y_l - 4, luma_cx + 12, eye_y_l + 4],
-                 fill=(240, 236, 228))
-    draw.ellipse([luma_cx + 5, eye_y_l - 4, luma_cx + 9, eye_y_l - 1],
-                 fill=(55, 42, 32))  # iris shifted UP
-    # Right eye
-    draw.ellipse([luma_cx - 10, eye_y_l - 3, luma_cx, eye_y_l + 3],
-                 fill=(240, 236, 228))
-    draw.ellipse([luma_cx - 7, eye_y_l - 3, luma_cx - 4, eye_y_l],
-                 fill=(55, 42, 32))  # iris shifted UP
-    # Brows — raised (alarm)
-    draw.arc([luma_cx + 1, eye_y_l - 14, luma_cx + 13, eye_y_l - 4],
-             start=200, end=340, fill=LUMA_HAIR, width=2)
-    draw.arc([luma_cx - 11, eye_y_l - 12, luma_cx + 1, eye_y_l - 4],
-             start=200, end=340, fill=LUMA_HAIR, width=2)
-    # Mouth — open, small (processing alarm)
-    draw.ellipse([luma_cx - 2, luma_cy + 8, luma_cx + 5, luma_cy + 13],
-                 fill=(160, 100, 80))
+    # Canonical renderer: SURPRISED expression (alarmed, rising from floor)
+    luma_scale = luma_body_h / 400.0
+    luma_surface = _draw_luma_canonical(expression="SURPRISED", scale=luma_scale, facing="right",
+                                        scene_lighting={"tint": (0, 212, 232), "intensity": 0.15})
+    luma_pil = _char_to_pil(luma_surface)
+    if luma_pil.height > 0:
+        aspect = luma_pil.width / luma_pil.height
+        new_h = luma_body_h
+        new_w = int(new_h * aspect)
+        luma_pil = luma_pil.resize((new_w, new_h), Image.LANCZOS)
+    _composite_char(img, luma_pil, luma_cx, luma_cy)
 
     # Cyan light wash on Luma from monitors
     add_glow(img, luma_cx, luma_cy, 40, ELEC_CYAN, steps=4, max_alpha=10)
