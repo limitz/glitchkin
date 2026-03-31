@@ -5,8 +5,8 @@
 # the copyright holder to assign the relevant rights to the contributing AI entity or entities
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
-LTG_TOOL_char_cosmo.py — Canonical Cosmo Modular Renderer v1.0.0
-"Luma & the Glitchkin" — Cycle 53 / Sam Kowalski
+LTG_TOOL_char_cosmo.py — Canonical Cosmo Modular Renderer v1.1.0
+"Luma & the Glitchkin" — Cycle 53-54 / Sam Kowalski
 
 PURPOSE:
   Standalone canonical renderer for Cosmo. Extracted from LTG_TOOL_cosmo_expression_sheet.py
@@ -14,9 +14,11 @@ PURPOSE:
 
   Exports: draw_cosmo(expression, pose, scale, facing, scene_lighting) -> cairo.ImageSurface
 
-  6 expressions: AWKWARD, WORRIED, SURPRISED, SKEPTICAL, DETERMINED, FRUSTRATED
+  7 expressions: AWKWARD, WORRIED, SURPRISED, SKEPTICAL, DETERMINED, FRUSTRATED, OBSERVING
   Gesture spec from Lee Tanaka's cosmo_gesture_spec_c52.md: offset chain architecture,
   angular body language (joint breaks, not smooth curves), glasses tilt = head_tilt * 0.4.
+  C54: Added OBSERVING — Cosmo's default state (60%+ screen time). Calm, attentive,
+  slightly guarded. Steady gaze tracking something off-camera. Body weight settled.
 
 INTERFACE CONTRACT:
   Same function signature pattern as the Luma canonical renderer.
@@ -35,9 +37,9 @@ CHARACTER NOTES — COSMO:
 Dependencies: pycairo, Pillow (for optional color enhancement), math
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __author__ = "Sam Kowalski"
-__cycle__ = 53
+__cycle__ = 54
 
 import math
 import os
@@ -234,6 +236,34 @@ GESTURE_SPECS = {
         "mouth": "compressed",
         "blush": False,
         "eye_openness": 0.85,
+    },
+    # C54 — P0 pilot blocker: Cosmo's DEFAULT state (~60% screen time)
+    # Calm, attentive, slightly guarded. Watches without reacting.
+    # Interested but not impressed. Body weight settled, NOT poised to move.
+    # Steady gaze tracks something slightly off-camera (head_offset pulls toward gaze).
+    "OBSERVING": {
+        "hip_shift": 8,              # slight settled weight shift — not stiff, not dramatic
+        "shoulder_offset": -6,       # gentle counter-tilt (relaxed)
+        "head_offset": -12,          # head turns toward object of attention (gaze tracking)
+        "torso_lean": -4,            # minimal forward engagement — present but not leaning in
+        "hip_tilt": 3.0,
+        "shoulder_tilt": -2.0,
+        "head_tilt": 2.0,            # very slight — guards against reading as blank
+        "weight_front": 0.45,
+        "weight_back": 0.55,
+        "front_foot_lift": 0,
+        "back_foot_lift": 0,
+        "front_foot_angle": -6,      # slight pigeon — settled, not going anywhere
+        "back_foot_angle": 12,
+        "shoulder_raise": 0,
+        "left_arm": "dead_hang",     # relaxed at side — settled
+        "right_arm": "low_carry",    # notebook held loose at hip — attentive prop
+        "glasses_tilt": None,        # auto = head_tilt * 0.4
+        # Brows: one side very slightly raised (tracking), other flat — not blank
+        "brow_data": {"l_raise": 4, "r_raise": 1, "l_furrow": 0, "r_furrow": 1},
+        "mouth": "neutral",          # closed, neither smile nor frown — watching
+        "blush": False,
+        "eye_openness": 1.0,         # full iris visible — open attentive gaze
     },
 }
 
@@ -847,6 +877,21 @@ def _draw_arms(ctx, spec, chain, hu):
         _arm_line(ctx, elbow_x, elbow_y, hand_x, hand_y, LINE, 2)
         _hand_ellipse(ctx, hand_x, hand_y, int(arm_w * 1.5), int(hu * 0.12), SKIN_HL)
 
+    elif right_arm == "low_carry":
+        # Notebook held loosely at hip — slight elbow bend, arm at ease.
+        # Reads as "I'm observing, notebook ready." Not active, not completely
+        # limp. Elbow just barely bent outward, hand rests at mid-thigh height.
+        elbow_x = rax + int(hu * 0.18)
+        elbow_y = arm_y + int(arm_h * 0.45)
+        hand_x = rax + int(hu * 0.10)
+        hand_y = arm_y + int(arm_h * 0.80)
+        _arm_line(ctx, rax, arm_y, elbow_x, elbow_y, STRIPE_A, arm_w * 3)
+        _arm_line(ctx, rax, arm_y, elbow_x, elbow_y, LINE, 2)
+        _arm_line(ctx, elbow_x, elbow_y, hand_x, hand_y, STRIPE_A, arm_w * 3)
+        _arm_line(ctx, elbow_x, elbow_y, hand_x, hand_y, LINE, 2)
+        # Hand slightly open — loosely gripping notebook spine
+        _hand_ellipse(ctx, hand_x, hand_y, int(arm_w * 1.1), int(hu * 0.10), SKIN)
+
 
 def _draw_torso(ctx, spec, chain, hu):
     """Draw Cosmo's rectangular torso with angular shoulder breaks.
@@ -1233,11 +1278,11 @@ def _self_test():
     """Render all 6 expressions to a test sheet PNG for validation."""
     from PIL import Image, ImageDraw, ImageFont
 
-    COLS = 3
+    COLS = 4
     ROWS = 2
-    PANEL_W = 370
-    PANEL_H = 440
-    PAD = 12
+    PANEL_W = 300
+    PANEL_H = 400
+    PAD = 10
     HEADER = 48
 
     total_w = COLS * (PANEL_W + PAD) + PAD
@@ -1255,7 +1300,7 @@ def _self_test():
         font = font_title = ImageFont.load_default()
 
     draw.text((PAD, 12),
-              "COSMO -- Canonical Renderer Test | char_cosmo v1.0.0 | C53",
+              "COSMO -- Canonical Renderer Test | char_cosmo v1.1.0 | C54",
               fill=(91, 141, 184), font=font_title)
 
     for i, expr_name in enumerate(VALID_EXPRESSIONS):

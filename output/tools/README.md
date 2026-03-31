@@ -69,7 +69,7 @@ If a required tool does not exist in the open source ecosystem, build it in Pyth
 | Filename | Description |
 |---|---|
 | `LTG_TOOL_char_byte.py` | Canonical Byte modular renderer (10 expressions, cairo, transparent ARGB surface) |
-| `LTG_TOOL_char_cosmo.py` | Canonical Cosmo modular renderer (6 expressions, cairo, angular gesture spec, transparent ARGB surface) |
+| `LTG_TOOL_char_cosmo.py` | Canonical Cosmo modular renderer (7 expressions incl. OBSERVING, cairo, angular gesture spec, transparent ARGB surface) |
 | `LTG_TOOL_char_glitch.py` | Canonical Glitch modular renderer (9 expressions, cairo, transparent ARGB surface) |
 | `LTG_TOOL_char_luma.py` | Canonical Luma modular renderer (6 expressions, cairo, transparent ARGB surface) |
 | `LTG_TOOL_char_miri.py` | Canonical Grandma Miri modular renderer (6 expressions, cairo, transparent ARGB surface) |
