@@ -269,7 +269,7 @@ def make_panel():
     draw = ImageDraw.Draw(img)
 
     # Draw Miri silhouette in doorway
-    draw = draw_miri_silhouette(draw, img)
+    draw_miri_silhouette(draw, img)
     draw = ImageDraw.Draw(img)
 
     # ── Annotations ──────────────────────────────────────────────────────────

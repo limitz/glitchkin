@@ -51,6 +51,8 @@ import os
 import shutil
 import sys
 from LTG_TOOL_char_cosmo import draw_cosmo
+from LTG_TOOL_char_luma import draw_luma as _draw_luma_canonical
+from LTG_TOOL_char_byte import draw_byte as _draw_byte_canonical
 from LTG_TOOL_cairo_primitives import to_pil_rgba
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -74,35 +76,9 @@ TEXT_CAPTION  = (235, 228, 210)
 TEXT_ANN      = (20, 15, 12)
 BORDER_COL    = (20, 15, 12)
 
-LUMA_SKIN     = (200, 136, 90)
-LUMA_HAIR     = (22, 14, 8)
-LUMA_PJ       = (160, 200, 180)
-LUMA_OUTLINE  = (42, 28, 14)
+# Character palette constants removed — canonical renderers handle their own palettes.
 
-COSMO_SKIN    = (168, 118, 72)
-COSMO_HAIR    = (14, 10, 6)
-COSMO_SHIRT   = (80, 100, 170)
-COSMO_PANTS   = (40, 55, 100)
-COSMO_OUTLINE = (30, 20, 10)
-COSMO_GLASS   = (92, 58, 32)   # Warm Espresso Brown #5C3A20
-COSMO_LENS    = (238, 244, 255)
-
-BYTE_BODY     = (0, 212, 232)
-BYTE_MID      = (0, 160, 175)
-BYTE_DARK     = (0, 105, 115)
-BYTE_OUTLINE  = (10, 10, 20)
-BYTE_SCAR     = (255, 45, 107)
-BYTE_EYE_W   = (232, 248, 255)
-BYTE_EYE_CYN  = (0, 240, 255)
-BYTE_EYE_PUP  = (10, 10, 20)
-BYTE_BEZEL    = (26, 58, 64)
-
-GLYPH_DEAD    = (10, 10, 24)
-GLYPH_DIM     = (0, 80, 100)
-GLYPH_MID     = (0, 168, 180)
-GLYPH_CRACK   = (255, 45, 107)
-GLYPH_BRIGHT  = (200, 255, 255)
-GLYPH_OVER    = (10, 10, 20)
+GLYPH_BRIGHT  = (200, 255, 255)  # used by clue object in A2-04 BR vignette
 
 GLITCH_CYAN   = (0, 240, 255)
 GLITCH_MAG    = (255, 0, 200)
@@ -170,7 +146,7 @@ def _composite_char(base_img, char_pil, cx, cy):
 def draw_cosmo_skeptical(draw, cx, cy, head_w, head_h, full_body=True):
     """Cosmo skeptical — canonical renderer."""
     scale = head_h / 84.0
-    surface = draw_cosmo(expression="SKEPTICAL", scale=scale, facing="front")
+    surface, _geom = draw_cosmo(expression="SKEPTICAL", scale=scale, facing="front")
     char_pil = _char_to_pil(surface)
     if char_pil.height > 0:
         if full_body:
@@ -317,25 +293,19 @@ def draw_a203(img, draw, font, font_bold, font_cap, font_ann):
     pixel_confetti(draw, mon_x + mon_w // 2, mon_y + mon_h // 2,
                    30, 30, rng, n=8)
 
-    # ── LUMA — background right (partial, blurred-impression) ───────────────
+    # ── LUMA — background right (partial, canonical renderer) ───────────────
     # Luma at ~25% frame weight, right side, showing her enthusiasm
     luma_cx = 400
     luma_cy = floor_y - 50
-    l_head_r = 18
-    # Hair
-    draw.ellipse([luma_cx - l_head_r - 8, luma_cy - l_head_r - 14,
-                  luma_cx + l_head_r + 8, luma_cy - l_head_r + 6],
-                 fill=(30, 20, 10))
-    # Head
-    draw.ellipse([luma_cx - l_head_r, luma_cy - l_head_r,
-                  luma_cx + l_head_r, luma_cy + l_head_r],
-                 fill=(190, 128, 82), outline=(40, 26, 12), width=1)
-    # Enthusiastic arm raised (Luma gesturing toward whiteboard)
-    draw.line([luma_cx - 12, luma_cy + 12, luma_cx - 35, luma_cy - 22],
-              fill=(170, 100, 60), width=6)
-    # Torso (partial)
-    draw.rectangle([luma_cx - 16, luma_cy + 12, luma_cx + 16, luma_cy + 55],
-                   fill=(155, 195, 175), outline=(38, 26, 12), width=1)
+    luma_scale = 0.22
+    luma_surface = _draw_luma_canonical(expression="DELIGHTED", scale=luma_scale, facing="left")
+    luma_pil = _char_to_pil(luma_surface)
+    if luma_pil.height > 0:
+        target_h = 90
+        aspect = luma_pil.width / luma_pil.height
+        new_w = int(target_h * aspect)
+        luma_pil = luma_pil.resize((new_w, target_h), Image.LANCZOS)
+    _composite_char(img, luma_pil, luma_cx, luma_cy)
 
     # ── COSMO — center, full body, large, SKEPTICAL ──────────────────────────
     cosmo_cx = 195
@@ -440,21 +410,14 @@ def draw_a204(img, draw, font, font_bold, font_cap, font_ann):
     draw.line([tv_x + 12, tv_y + 42, tv_x + 12, tv_y + 50], fill=(60, 55, 45), width=4)
     draw.line([tv_x + 40, tv_y + 42, tv_x + 40, tv_y + 50], fill=(60, 55, 45), width=4)
 
-    # Luma — peeking around left side of TV (head + hand visible)
+    # Luma — peeking around left side of TV (canonical renderer, small scale)
     l_cx = tv_x - 10
     l_cy = cy_tl + cell_h // 2
-    # Hair
-    draw.ellipse([l_cx - 14, l_cy - 18, l_cx + 6, l_cy - 2],
-                 fill=LUMA_HAIR)
-    # Head
-    draw.ellipse([l_cx - 10, l_cy - 14, l_cx + 8, l_cy + 4],
-                 fill=LUMA_SKIN, outline=LUMA_OUTLINE, width=1)
-    # Wide curious eyes (two dots)
-    draw.ellipse([l_cx - 5, l_cy - 8, l_cx - 1, l_cy - 4], fill=(30, 20, 10))
-    draw.ellipse([l_cx + 1, l_cy - 8, l_cx + 5, l_cy - 4], fill=(30, 20, 10))
-    # Hand gripping TV edge
-    draw.ellipse([tv_x - 6, l_cy - 4, tv_x + 2, l_cy + 4],
-                 fill=LUMA_SKIN, outline=LUMA_OUTLINE, width=1)
+    luma_tl_surf = _draw_luma_canonical(expression="CURIOUS", scale=0.12, facing="right")
+    luma_tl_pil = _char_to_pil(luma_tl_surf)
+    if luma_tl_pil.height > 0:
+        luma_tl_pil.thumbnail((36, 50), Image.LANCZOS)
+    _composite_char(img, luma_tl_pil, l_cx, l_cy)
     # Pixel confetti near TV screen
     pixel_confetti(draw, tv_x + 26, tv_y + 16, 18, 14, rng, n=6)
 
@@ -475,29 +438,14 @@ def draw_a204(img, draw, font, font_bold, font_cap, font_ann):
         draw.rectangle([leg_x, cy_tr + cell_h // 3, leg_x + 10, floor_tr + 2],
                        fill=(90, 70, 50), outline=(55, 42, 28), width=1)
 
-    # Luma on hands and knees under furniture (side view)
+    # Luma under furniture (canonical renderer, small scale)
     l_cx = cx_tr + cell_w // 2
     l_cy = floor_tr - 16
-    # Body horizontal
-    draw.ellipse([l_cx - 22, l_cy - 8, l_cx + 16, l_cy + 8],
-                 fill=LUMA_PJ, outline=LUMA_OUTLINE, width=1)
-    # Head (looking forward/down)
-    draw.ellipse([l_cx + 8, l_cy - 16, l_cx + 30, l_cy + 2],
-                 fill=LUMA_SKIN, outline=LUMA_OUTLINE, width=1)
-    # Hair
-    draw.ellipse([l_cx + 8, l_cy - 26, l_cx + 28, l_cy - 12],
-                 fill=LUMA_HAIR)
-    # Eye dot
-    draw.ellipse([l_cx + 20, l_cy - 11, l_cx + 24, l_cy - 7],
-                 fill=(30, 20, 10))
-    # Arms (reaching under)
-    draw.line([l_cx + 22, l_cy - 4, l_cx + 42, l_cy + 8],
-              fill=LUMA_SKIN, width=5)
-    # Legs sticking out behind
-    draw.line([l_cx - 18, l_cy + 4, l_cx - 36, l_cy + 18],
-              fill=LUMA_PJ, width=5)
-    draw.line([l_cx - 12, l_cy + 6, l_cx - 30, l_cy + 22],
-              fill=LUMA_PJ, width=5)
+    luma_tr_surf = _draw_luma_canonical(expression="CURIOUS", scale=0.12, facing="right")
+    luma_tr_pil = _char_to_pil(luma_tr_surf)
+    if luma_tr_pil.height > 0:
+        luma_tr_pil.thumbnail((50, 42), Image.LANCZOS)
+    _composite_char(img, luma_tr_pil, l_cx, l_cy)
 
     # Dust motes/darkness lines
     for _ in range(6):
@@ -527,35 +475,16 @@ def draw_a204(img, draw, font, font_bold, font_cap, font_ann):
     draw.line([cx_bl + 35, desk_top - 8, cx_bl + 42, desk_top + 3],
               fill=(150, 140, 130), width=3)  # screwdriver
 
-    # Luma leaning in (upper body visible, MCU-ish from waist up)
+    # Luma leaning in at desk (canonical renderer, small scale)
     l_cx = cx_bl + cell_w // 2 - 6
     l_cy = desk_top - 40
-    # Torso (leaning forward)
-    draw.rounded_rectangle([l_cx - 16, l_cy, l_cx + 16, l_cy + 30],
-                            radius=6, fill=LUMA_PJ, outline=LUMA_OUTLINE, width=1)
-    # Head (tilted forward / down)
-    draw.ellipse([l_cx - 13, l_cy - 26, l_cx + 13, l_cy + 2],
-                 fill=LUMA_SKIN, outline=LUMA_OUTLINE, width=1)
-    draw.ellipse([l_cx - 15, l_cy - 36, l_cx + 15, l_cy - 14],
-                 fill=LUMA_HAIR)
-    # Concentration expression — furrowed brow, narrowed eyes
-    draw.arc([l_cx - 8, l_cy - 20, l_cx - 2, l_cy - 14],
-             start=200, end=340, fill=LUMA_OUTLINE, width=2)   # left brow furrowed
-    draw.arc([l_cx + 2, l_cy - 20, l_cx + 8, l_cy - 14],
-             start=200, end=340, fill=LUMA_OUTLINE, width=2)   # right brow furrowed
-    draw.ellipse([l_cx - 7, l_cy - 12, l_cx - 3, l_cy - 8],
-                 fill=(30, 20, 10))   # left eye
-    draw.ellipse([l_cx + 3, l_cy - 12, l_cx + 7, l_cy - 8],
-                 fill=(30, 20, 10))   # right eye
+    luma_bl_surf = _draw_luma_canonical(expression="DETERMINED", scale=0.12, facing="right")
+    luma_bl_pil = _char_to_pil(luma_bl_surf)
+    if luma_bl_pil.height > 0:
+        luma_bl_pil.thumbnail((40, 60), Image.LANCZOS)
+    _composite_char(img, luma_bl_pil, l_cx, l_cy)
 
-    # Arm reaching toward desk
-    draw.line([l_cx + 12, l_cy + 16, l_cx + 28, desk_top - 2],
-              fill=LUMA_SKIN, width=6)
-    # Hand blob
-    draw.ellipse([l_cx + 24, desk_top - 8, l_cx + 34, desk_top + 2],
-                 fill=LUMA_SKIN, outline=LUMA_OUTLINE, width=1)
-
-    # Implied magnifying glass (circle near hand)
+    # Implied magnifying glass prop (circle near desk)
     mg_cx = l_cx + 36
     mg_cy = desk_top - 4
     draw.ellipse([mg_cx - 8, mg_cy - 8, mg_cx + 8, mg_cy + 8],
@@ -571,37 +500,15 @@ def draw_a204(img, draw, font, font_bold, font_cap, font_ann):
     # Background: slightly cooler/purple = glitch contact
     # (already set in cell_bgs['BR'])
 
-    # Luma center, upper body, arm raised, triumphant
+    # Luma — excited, found a clue (canonical renderer, small scale)
     l_cx = cx_br + cell_w // 2
     l_cy = cy_br + cell_h // 2 + 5
-    # Body (excited, slight lean back from discovery)
-    draw.rounded_rectangle([l_cx - 16, l_cy, l_cx + 16, l_cy + 28],
-                            radius=6, fill=LUMA_PJ, outline=LUMA_OUTLINE, width=1)
-    # Head
-    draw.ellipse([l_cx - 14, l_cy - 28, l_cx + 14, l_cy + 2],
-                 fill=LUMA_SKIN, outline=LUMA_OUTLINE, width=1)
-    # Big hair
-    draw.ellipse([l_cx - 18, l_cy - 42, l_cx + 18, l_cy - 18],
-                 fill=LUMA_HAIR)
-    # Big excited eyes
-    draw.ellipse([l_cx - 8, l_cy - 20, l_cx - 2, l_cy - 13],
-                 fill=(235, 215, 180))
-    draw.ellipse([l_cx + 2, l_cy - 20, l_cx + 8, l_cy - 13],
-                 fill=(235, 215, 180))
-    draw.ellipse([l_cx - 6, l_cy - 19, l_cx - 3, l_cy - 15],
-                 fill=(30, 20, 10))
-    draw.ellipse([l_cx + 3, l_cy - 19, l_cx + 6, l_cy - 15],
-                 fill=(30, 20, 10))
-    # Highlight dots
-    draw.rectangle([l_cx - 6, l_cy - 19, l_cx - 5, l_cy - 18], fill=STATIC_WHITE)
-    draw.rectangle([l_cx + 3, l_cy - 19, l_cx + 4, l_cy - 18], fill=STATIC_WHITE)
-    # Open mouth (surprised excitement)
-    draw.ellipse([l_cx - 5, l_cy - 10, l_cx + 5, l_cy - 4],
-                 fill=(20, 14, 10))
+    luma_br_surf = _draw_luma_canonical(expression="SURPRISED", scale=0.12, facing="right")
+    luma_br_pil = _char_to_pil(luma_br_surf)
+    if luma_br_pil.height > 0:
+        luma_br_pil.thumbnail((40, 60), Image.LANCZOS)
+    _composite_char(img, luma_br_pil, l_cx, l_cy)
 
-    # Raised arm holding glowing object
-    draw.line([l_cx + 12, l_cy + 4, l_cx + 28, l_cy - 28],
-              fill=LUMA_SKIN, width=7)
     # Glowing clue object (small chip/pixel cluster)
     clue_cx = l_cx + 30
     clue_cy = l_cy - 34
@@ -695,26 +602,22 @@ def draw_a207_blocked(img, draw, font, font_bold, font_cap, font_ann):
               "  cracked-eye glyph RESIGNED state needed",
               font=font_ann, fill=(200, 150, 60))
 
-    # Byte silhouette (ghosted — can't draw yet)
+    # Byte silhouette (ghosted — canonical renderer, dimmed for blocked state)
     ghost_cx = bx + bw // 2
     ghost_cy = by + bh + 22
-    # Ghost oval body
-    draw.ellipse([ghost_cx - 35, ghost_cy - 30, ghost_cx + 35, ghost_cy + 30],
-                 outline=(60, 55, 52), width=2)
-    # Ghost eye slots (blocked)
-    draw.rectangle([ghost_cx - 22, ghost_cy - 8, ghost_cx - 8, ghost_cy + 2],
-                   outline=(70, 60, 55), width=1)
-    draw.rectangle([ghost_cx + 8,  ghost_cy - 8, ghost_cx + 22, ghost_cy + 2],
-                   outline=(70, 60, 55), width=1)
-    # X over eyes
-    draw.line([ghost_cx - 22, ghost_cy - 8, ghost_cx - 8, ghost_cy + 2],
-              fill=(100, 50, 50), width=1)
-    draw.line([ghost_cx - 8,  ghost_cy - 8, ghost_cx - 22, ghost_cy + 2],
-              fill=(100, 50, 50), width=1)
-    draw.line([ghost_cx + 8,  ghost_cy - 8, ghost_cx + 22, ghost_cy + 2],
-              fill=(100, 50, 50), width=1)
-    draw.line([ghost_cx + 22, ghost_cy - 8, ghost_cx + 8,  ghost_cy + 2],
-              fill=(100, 50, 50), width=1)
+    byte_ghost_surf = _draw_byte_canonical(expression="neutral", scale=0.6, facing="front")
+    byte_ghost_pil = _char_to_pil(byte_ghost_surf)
+    if byte_ghost_pil.height > 0:
+        byte_ghost_pil.thumbnail((70, 60), Image.LANCZOS)
+    # Dim to ghost (blocked state visualization)
+    r, g, b, a = byte_ghost_pil.split()
+    byte_ghost_pil = Image.merge('RGBA', (
+        r.point(lambda x: int(x * 0.25)),
+        g.point(lambda x: int(x * 0.25)),
+        b.point(lambda x: int(x * 0.25)),
+        a.point(lambda x: int(x * 0.5)),
+    ))
+    _composite_char(img, byte_ghost_pil, ghost_cx, ghost_cy)
     # "?" label
     draw.text((ghost_cx - 6, ghost_cy - 14), "?", font=font_bold, fill=(80, 70, 60))
 
@@ -737,13 +640,13 @@ def build_act2_contact_sheet_v002():
     """
     # Panels in sequence
     panel_files = [
-        (PANELS_DIR + "/LTG_SB_act2_panel_a104.png",  "A1-04\nnear-miss"),
-        (PANELS_DIR + "/LTG_SB_act2_panel_a202.png",  "A2-02\nByte MCU"),
-        (PANELS_DIR + "/LTG_SB_act2_panel_a203.png",  "A2-03\nCosmo skeptic"),
-        (PANELS_DIR + "/LTG_SB_act2_panel_a204.png",  "A2-04\nmontage"),
-        (PANELS_DIR + "/LTG_SB_act2_panel_a205b.png", "A2-05b\nCosmo app"),
-        (PANELS_DIR + "/LTG_SB_act2_panel_a206.png",  "A2-06\napp fail"),
-        (PANELS_DIR + "/LTG_SB_act2_panel_a207.png",  "A2-07\nBLOCKED"),
+        (os.path.join(PANELS_DIR, "LTG_SB_act2_panel_a104.png"),  "A1-04\nnear-miss"),
+        (os.path.join(PANELS_DIR, "LTG_SB_act2_panel_a202.png"),  "A2-02\nByte MCU"),
+        (os.path.join(PANELS_DIR, "LTG_SB_act2_panel_a203.png"),  "A2-03\nCosmo skeptic"),
+        (os.path.join(PANELS_DIR, "LTG_SB_act2_panel_a204.png"),  "A2-04\nmontage"),
+        (os.path.join(PANELS_DIR, "LTG_SB_act2_panel_a205b.png"), "A2-05b\nCosmo app"),
+        (os.path.join(PANELS_DIR, "LTG_SB_act2_panel_a206.png"),  "A2-06\napp fail"),
+        (os.path.join(PANELS_DIR, "LTG_SB_act2_panel_a207.png"),  "A2-07\nBLOCKED"),
     ]
 
     # Contact sheet: 2 rows, row1=4 panels, row2=3 panels
@@ -827,7 +730,7 @@ def build_act2_contact_sheet_v002():
         sd.polygon([(ax + 3, ay - 3), (ax + 3, ay + 3), (ax + 7, ay)],
                    fill=(80, 100, 80))
 
-    out_path = ACT2_SHEETS + "/LTG_SB_act2_contact_sheet.png"
+    out_path = os.path.join(ACT2_SHEETS, "LTG_SB_act2_contact_sheet.png")
     sheet.save(out_path)
     print(f"  Saved: LTG_SB_act2_contact_sheet.png")
     return sheet
@@ -843,7 +746,7 @@ if __name__ == "__main__":
 
     # ── A2-03: Cosmo SKEPTICAL ───────────────────────────────────────────────
     print("Generating A2-03: Cosmo Skeptical...")
-    path_a203 = PANELS_DIR + "/LTG_SB_act2_panel_a203.png"
+    path_a203 = os.path.join(PANELS_DIR, "LTG_SB_act2_panel_a203.png")
     make_panel(
         path_a203,
         "A2-03 | MED-WIDE | COSMO SKEPTICAL",
@@ -854,7 +757,7 @@ if __name__ == "__main__":
 
     # ── A2-04: Investigation montage ────────────────────────────────────────
     print("Generating A2-04: Investigation Montage...")
-    path_a204 = PANELS_DIR + "/LTG_SB_act2_panel_a204.png"
+    path_a204 = os.path.join(PANELS_DIR, "LTG_SB_act2_panel_a204.png")
     make_panel(
         path_a204,
         "A2-04 | MONTAGE 2×2 | LUMA INVESTIGATES",
@@ -865,7 +768,7 @@ if __name__ == "__main__":
 
     # ── A2-07: BLOCKED placeholder ──────────────────────────────────────────
     print("Generating A2-07: BLOCKED placeholder...")
-    path_a207 = PANELS_DIR + "/LTG_SB_act2_panel_a207.png"
+    path_a207 = os.path.join(PANELS_DIR, "LTG_SB_act2_panel_a207.png")
     make_panel(
         path_a207,
         "A2-07 | ECU | BLOCKED — awaiting byte_expression_sheet_v002",
@@ -880,15 +783,15 @@ if __name__ == "__main__":
 
     # Also copy existing panels A2-02, A2-05b, A2-06 for the contact sheet
     copies = [
-        (PANELS_DIR + "/LTG_SB_act2_panel_a202.png",
-         ACT2_PANELS + "/LTG_SB_a2_02.png"),
-        (path_a203, ACT2_PANELS + "/LTG_SB_a2_03.png"),
-        (path_a204, ACT2_PANELS + "/LTG_SB_a2_04.png"),
-        (PANELS_DIR + "/LTG_SB_act2_panel_a205b.png",
-         ACT2_PANELS + "/LTG_SB_a2_05b.png"),
-        (PANELS_DIR + "/LTG_SB_act2_panel_a206.png",
-         ACT2_PANELS + "/LTG_SB_a2_06.png"),
-        (path_a207, ACT2_PANELS + "/LTG_SB_a2_07.png"),
+        (os.path.join(PANELS_DIR, "LTG_SB_act2_panel_a202.png"),
+         os.path.join(ACT2_PANELS, "LTG_SB_a2_02.png")),
+        (path_a203, os.path.join(ACT2_PANELS, "LTG_SB_a2_03.png")),
+        (path_a204, os.path.join(ACT2_PANELS, "LTG_SB_a2_04.png")),
+        (os.path.join(PANELS_DIR, "LTG_SB_act2_panel_a205b.png"),
+         os.path.join(ACT2_PANELS, "LTG_SB_a2_05b.png")),
+        (os.path.join(PANELS_DIR, "LTG_SB_act2_panel_a206.png"),
+         os.path.join(ACT2_PANELS, "LTG_SB_a2_06.png")),
+        (path_a207, os.path.join(ACT2_PANELS, "LTG_SB_a2_07.png")),
     ]
 
     for src, dst in copies:

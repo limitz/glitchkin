@@ -72,19 +72,7 @@ TREE_TRUNK   = (80, 60, 40)
 TREE_LEAVES  = (90, 140, 80)
 TREE_LIGHT   = (130, 175, 110)
 
-# Luma (FG — full warm colors, mid-stride)
-LUMA_SKIN    = (210, 142, 96)
-LUMA_HAIR    = (22, 14, 8)
-LUMA_JACKET  = (190, 80, 50)     # warm red
-LUMA_PANTS   = (60, 80, 120)
-LUMA_OUTLINE = (42, 28, 14)
-
-# Cosmo (slightly BG — slightly muted)
-COSMO_SKIN   = (165, 115, 70)
-COSMO_HAIR   = (14, 10, 6)
-COSMO_SHIRT  = (70, 90, 160)
-COSMO_PANTS  = (38, 52, 95)
-COSMO_OUTLINE= (28, 18, 8)
+# Character palette constants removed — canonical renderers handle their own palettes.
 
 STATIC_WHITE = (240, 240, 240)
 ANN_COL      = (220, 200, 130)
@@ -314,9 +302,9 @@ def _composite_char(base_img, char_pil, cx, cy):
     base_img.paste(result.convert('RGB'))
 
 def draw_cosmo_med(draw, img):
-    """Cosmo medium shot — canonical renderer."""
+    """Cosmo medium shot — canonical renderer. Returns (cx, head_cy)."""
     scale = 0.7
-    surface = draw_cosmo(expression="WORRIED", scale=scale, facing="front")
+    surface, _geom = draw_cosmo(expression="WORRIED", scale=scale, facing="front")
     char_pil = _char_to_pil(surface)
     if char_pil.height > 0:
         target_h = 200
@@ -326,10 +314,12 @@ def draw_cosmo_med(draw, img):
     cosmo_cx = int(PW * 0.55)
     cosmo_cy = int(DRAW_H * 0.55)
     _composite_char(img, char_pil, cosmo_cx, cosmo_cy)
+    cosmo_head_cy = cosmo_cy - char_pil.height // 3
+    return cosmo_cx, cosmo_head_cy
 
 
 def draw_luma_fg(draw, img):
-    """Luma foreground — canonical renderer."""
+    """Luma foreground — canonical renderer. Returns (cx, head_cy, lean)."""
     scale = 0.5
     surface = _draw_luma_canonical(expression="DETERMINED", scale=scale, facing="left")
     char_pil = _char_to_pil(surface)
@@ -341,6 +331,9 @@ def draw_luma_fg(draw, img):
     luma_cx = int(PW * 0.25)
     luma_cy = int(DRAW_H * 0.60)
     _composite_char(img, char_pil, luma_cx, luma_cy)
+    luma_head_cy = luma_cy - char_pil.height // 3
+    luma_lean = 0
+    return luma_cx, luma_head_cy, luma_lean
 
 
 def make_panel():

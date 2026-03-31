@@ -86,8 +86,7 @@ BYTE_EYE_W      = (228, 240, 248)
 CRACK_LINE      = (200, 30, 100)
 # Luma character (right warm zone)
 LUMA_HOODIE     = (232, 112, 58)     # CANONICAL ORANGE per master_palette.md
-LUMA_SKIN       = (218, 172, 128)    # under UV ambient — cooler than SF01, retains R>G>B warmth
-LUMA_HAIR       = (38, 22, 14)
+# Character palette constants removed — canonical renderers handle their own palettes.
 SOFT_GOLD       = (232, 201, 90)     # RW-02 warm ambient radiate from Luma (alpha max 50)
 # Caption / annotation
 BG_CAPTION      = (10, 6, 18)
@@ -134,16 +133,6 @@ def draw_irregular_poly(draw, cx, cy, r, sides, color, seed=0, outline=None, out
         pts.append((int(cx + dist * math.cos(angle)), int(cy + dist * math.sin(angle))))
     draw.polygon(pts, fill=color, outline=outline)
 
-
-def diamond_pts(cx, cy, rx, ry, tilt_deg=0):
-    """Glitch diamond body vertices (per glitch.md §2.1)."""
-    a = math.radians(tilt_deg)
-    # Follows glitch.md spec exactly
-    top   = (cx + int(rx * 0.15 * math.sin(a)),  cy - ry + int(rx * 0.15 * math.cos(a)))
-    right = (cx + int(rx * math.cos(-a)),          cy + int(rx * 0.2 * math.sin(-a)))
-    bot   = (cx - int(rx * 0.15 * math.sin(a)),   cy + int(ry * 1.15))
-    left  = (cx - int(rx * math.cos(-a)),          cy - int(rx * 0.2 * math.sin(-a)))
-    return top, right, bot, left
 
 
 

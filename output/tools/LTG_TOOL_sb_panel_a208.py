@@ -64,13 +64,7 @@ BG_CAPTION   = (22, 18, 14)
 TEXT_CAPTION = (235, 228, 210)
 BORDER_COL   = (18, 12, 8)
 
-# Grandma Miri
-MIRI_SKIN       = (215, 165, 120)
-MIRI_SKIN_LIGHT = (232, 185, 140)
-MIRI_HAIR       = (195, 185, 175)
-MIRI_HAIR_DARK  = (150, 142, 135)
-MIRI_SWEATER    = (160, 100, 60)
-MIRI_OUTLINE    = (80, 48, 24)
+# Character palette constants removed — canonical renderer handles its own palette.
 
 # CRT glow (amber-green)
 CRT_AMBER    = (230, 180, 80)
@@ -251,7 +245,7 @@ def make_panel():
     draw_background(draw, img)
     draw = ImageDraw.Draw(img)
 
-    draw = draw_miri_face(draw, img)
+    draw_miri_face(draw, img)
     draw = ImageDraw.Draw(img)
 
     draw_annotations(draw, font_ann)

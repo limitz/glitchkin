@@ -71,22 +71,7 @@ ANN_DIM       = (140, 130, 90)
 CALLOUT_CYN   = (0, 200, 218)
 CALLOUT_DIM   = (0, 150, 165)
 
-# Byte canonical colors
-# GL-01b = #00D4E8  (Byte Teal — CANONICAL BODY FILL, per production spec)
-BYTE_BODY    = (0, 212, 232)   # GL-01b #00D4E8
-BYTE_MID     = (0, 168, 184)   # mid shadow
-BYTE_DARK    = (0, 105, 118)   # deep shadow / face plate
-BYTE_OUTLINE = (10, 10, 20)
-BYTE_EYE_W   = (232, 248, 255) # eye sclera
-BYTE_EYE_CYN = (0, 200, 218)   # dim cyan iris (reduced — RESIGNED energy level)
-BYTE_EYE_PUP = (10, 10, 20)
-BYTE_BEZEL   = (22, 48, 58)    # eye bezel / frame
-
-# Pixel eye (left side of face — RESIGNED downward arrow)
-GLYPH_DEAD  = (10, 10, 24)
-GLYPH_DIM   = (0, 80, 100)
-GLYPH_MID   = (0, 168, 180)
-GLYPH_CRACK = (255, 45, 107)
+# Character palette constants removed — canonical renderer handles its own palette.
 
 # Background
 BG_BASE      = (28, 30, 40)    # mid-value dark — not void-black, readable MCU
@@ -181,30 +166,6 @@ def draw_background(img, draw):
     return draw
 
 
-def draw_downward_arrow_glyph(draw, origin_x, origin_y, pixel_size):
-    """
-    Render a 5×5 downward-arrow pixel glyph — RESIGNED defeat indicator.
-    Used in left-eye pixel display of Byte's face.
-    """
-    ARROW_BRIGHT = {
-        (0, 2), (1, 2),
-        (2, 0), (2, 1), (2, 2), (2, 3), (2, 4),
-        (3, 1), (3, 2), (3, 3),
-        (4, 2),
-    }
-    for row_idx in range(5):
-        for col_idx in range(5):
-            if (row_idx, col_idx) in ARROW_BRIGHT:
-                color = GLYPH_MID
-            else:
-                color = GLYPH_DEAD
-            px = origin_x + col_idx * pixel_size
-            py = origin_y + row_idx * pixel_size
-            draw.rectangle([px, py, px + pixel_size - 1, py + pixel_size - 1],
-                           fill=color)
-
-
-
 
 
 def _char_to_pil(surface):
@@ -255,7 +216,8 @@ def make_panel():
     draw = draw_background(img, draw)
 
     # Draw Byte MCU
-    draw = draw_byte_mcu(img, draw, font_ann)
+    draw_byte_mcu(img, draw, font_ann)
+    draw = ImageDraw.Draw(img)
 
     # ── Caption bar ───────────────────────────────────────────────────────────
     draw.rectangle([0, DRAW_H, PW, PH], fill=BG_CAPTION)
