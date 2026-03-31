@@ -157,7 +157,7 @@ If a required tool does not exist in the open source ecosystem, build it in Pyth
 | `LTG_TOOL_sb_pilot_cold_open.py` | Pilot cold open storyboard panels |
 | `LTG_TOOL_sb_char_draw.py` | Storyboard character drawing helper |
 | `LTG_TOOL_sb_caption_retrofit.py` | Retrofit captions onto existing panels |
-| `LTG_TOOL_sb_cold_open_P{03,06-25}.py` | Cold open panels P03-P25 (18 PIL generators). Cairo variants: P09, P10, P13, P15, P17, P20, P21, P23. Also P17_chartest, P22a. |
+| `LTG_TOOL_sb_cold_open_P{02-25}.py` | Cold open panels P02-P25 (22 generators). Cairo/pycairo: P02, P04, P09, P10, P12, P13, P15, P17, P20, P21, P23. PIL: P03, P05, P06-P08, P11, P14, P16, P18, P19, P22, P22a, P24, P25. Also P17_chartest. |
 | `LTG_TOOL_sb_panel_a10{1-4}*.py` | Act 1 panels A1-01 through A1-04 (4 generators; a104 = kitchen) |
 | `LTG_TOOL_sb_panel_a20{1-8}*.py` | Act 2 panels A2-01 through A2-08 (9 generators; includes a206_insert, a207b) |
 | `LTG_TOOL_sb_act1_contact_sheet.py` | Act 1 contact sheet |
@@ -242,6 +242,7 @@ If a required tool does not exist in the open source ecosystem, build it in Pyth
 | `LTG_TOOL_naming_cleanup.py` | Remove pre-LTG originals after copy |
 | `LTG_TOOL_batch_path_migrate.py` | Batch file path migration |
 | `LTG_TOOL_doc_governance_audit.py` | Documentation governance audit |
+| `LTG_TOOL_char_interface.py` | Character renderer interface contract and modular compliance scanner |
 
 ### Utility Tools
 

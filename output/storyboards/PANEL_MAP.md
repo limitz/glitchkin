@@ -6,7 +6,7 @@ upon such time as they acquire recognised legal personhood under applicable law.
 # PANEL MAP — Pilot Cold Open: "The Night Everything Went Wrong"
 **Storyboard Artist:** Diego Vargas
 **Art Director:** Alex Chen
-**Last Updated:** 2026-03-31 (Cycle 52 — 7 panels migrated to pycairo characters)
+**Last Updated:** 2026-03-31 (Cycle 53 — P02, P04, P05, P12 standalone panels added)
 
 Panels P01–P25 covering the full pilot cold open arc.
 Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the contact sheet tool.
@@ -24,17 +24,17 @@ Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the conta
 | Panel | Beat Description | Status | Contact Sheet Version |
 |-------|-----------------|--------|-----------------------|
 | P01 | EXTERIOR NIGHT — Residential neighborhood, Luma's house with single warm upstairs window. Grounds audience before we enter. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
-| P02 | WIDE ESTABLISHING — Luma enters Grandma's tech den. Character intro via sleeping position, snacks, notebook. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
+| P02 | WIDE ESTABLISHING — Luma enters Grandma's tech den. Character intro via sleeping position, snacks, notebook. | EXISTS | `LTG_SB_cold_open_P02.png` (C53 pycairo, Diego Vargas) |
 | P03 | CU MONITOR — Hero CRT prop, static. One cyan pixel appears in lower-right corner. First Glitch Palette in episode. | EXISTS | `LTG_SB_cold_open_P03.png` (C41, Diego Vargas) |
-| P04 | WIDE INTERIOR — Full tech den revealed. Glitch bleeds into warm room. MCU push-in, cyan intrusion has directional source point. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
-| P05 | MCU MONITOR — Camera inside shelf looking out. Pixel cluster growing (8–12 cyan pixels). Luma's blurred warm form in BG. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
+| P04 | WIDE INTERIOR — Full tech den revealed. Glitch bleeds into warm room. MCU push-in, cyan intrusion has directional source point. | EXISTS | `LTG_SB_cold_open_P04.png` (C53 pycairo, Diego Vargas) |
+| P05 | MCU MONITOR — Camera inside shelf looking out. Pixel cluster growing (8–12 cyan pixels). Luma's blurred warm form in BG. | EXISTS | `LTG_SB_cold_open_P05.png` (C53 PIL env, Diego Vargas) |
 | P06 | CU MONITOR SCREEN — Byte's face pressed against glass from inside. Disgust/curious expression. First appearance of Byte. | EXISTS | `LTG_SB_cold_open_P06.png` (C41, Diego Vargas) |
 | P07 | MED WIDE — Monitor bulging, Dutch tilt 8° CW. Low angle. Byte phases through screen. Warm room invaded by cyan. | EXISTS | `LTG_SB_cold_open_P07.png` (C43, Diego Vargas) |
 | P08 | MED — Byte full character reveal, standing in real world. Pixel confetti drifting. "The flesh dimension." | EXISTS | `LTG_SB_cold_open_P08.png` (C41, Diego Vargas) |
 | P09 | MED WIDE — Byte floating (18" off floor), spots Luma on couch. Cracked eye scans her. Cautious approach begins. | EXISTS | `LTG_SB_cold_open_P09.png` (C52 pycairo, Diego Vargas) |
 | P10 | OTS — Byte's POV looking at Luma's sleeping face. Byte in FG silhouette (cool), Luma in BG (warm). Cyan glow on her cheek. | EXISTS | `LTG_SB_cold_open_P10.png` (C52 pycairo, Diego Vargas) |
 | P11 | ECU — Luma's closed eyes. Cyan glow on face. Long hold on nothing happening. Then brow twitches. Eyes SNAP open. | EXISTS | `LTG_SB_cold_open_P11.png` (C44, Diego Vargas) |
-| P12 | CU TWO-SHOT — Luma and Byte nose-to-nose. Equal presence, center-weighted. Breathing negative space between them. CRT visible camera-right BG. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
+| P12 | CU TWO-SHOT — Luma and Byte nose-to-nose. Equal presence, center-weighted. Breathing negative space between them. CRT visible camera-right BG. | EXISTS | `LTG_SB_cold_open_P12.png` (C53 pycairo, Diego Vargas) |
 | P13 | MIRROR COMPOSITION — Commitment/threshold beat. Byte camera-right, Luma camera-left. Open/organic eyes face center; cracked/doubting eyes face outward. Directional ELEC_CYAN glow. ARC_COMMIT border. | EXISTS | `LTG_SB_cold_open_P13.png` (C52 pycairo, Diego Vargas) |
 | P14 | MED — Byte ricochets off bookshelf. Fixed camera (5ft, Dutch 12° CW). Multi-exposure pixel trail shows full trajectory arc. Books and rubber duck airborne. | EXISTS | `LTG_SB_cold_open_P14.png` (C45, Diego Vargas) |
 | P15 | MED — Luma hits floor. Floor-level camera. Glitch briefly forces hair into perfect circle (8 frames max). Then natural chaos reasserts. | EXISTS | `LTG_SB_cold_open_P15.png` (C52 pycairo, Diego Vargas) |
@@ -98,6 +98,7 @@ Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the conta
 20. ~~**P22**~~ — DONE (C48, Diego Vargas) — ECU MONITOR: 4 distinct Glitchkin pressing through glass.
 21. ~~**P22a**~~ — DONE (C48, Diego Vargas) — MCU INSERT: Byte lands on Luma's shoulder (accidental).
 22. ~~**P25**~~ — DONE (C49, Diego Vargas) — TITLE CARD: pixel-by-pixel assembly.
-23. **P02** — WIDE ESTABLISHING: standalone render needed (currently contact sheet only).
-24. **P04** — WIDE INTERIOR: standalone render needed (currently contact sheet only).
-25. **P05** — MCU MONITOR: standalone render needed (currently contact sheet only).
+23. ~~**P02**~~ — DONE (C53, Diego Vargas) — WIDE ESTABLISHING: Luma enters Grandma's tech den (pycairo).
+24. ~~**P04**~~ — DONE (C53, Diego Vargas) — MCU PUSH-IN: Glitch bleeds into warm room (pycairo).
+25. ~~**P05**~~ — DONE (C53, Diego Vargas) — MCU MONITOR: Camera inside shelf, pixel cluster (PIL env).
+26. ~~**P12**~~ — DONE (C53, Diego Vargas) — CU TWO-SHOT: Luma and Byte nose-to-nose (pycairo).
