@@ -82,6 +82,7 @@
 - **Arms-mode silhouette FAIL**: Known measurement limit for human chars — shared torso column dominates. Full-mode is the primary production metric.
 - **6-expression sheets**: 15 pairs to check (vs 1 for 2-panel). Structurally harder to pass silhouette.
 - **Shoulder involvement**: `_shoulder_dy()` = % of arm raise, capped. Torso gains 8 vertices (outer, deltoid_peak, inner x 2 sides + bottom corners).
+- **Hairline rule (C58):** Hair blob centers must stay above ~by=-0.55 in front/3q views. Face skin ellipse top is at ~-0.60 to -0.72 depending on view — blobs extending lower than that get cut by face overdraw creating a flat hairline edge. Side blobs (at x<-0.68) can go lower (ear-area).
 - **Copyright headers**: ONLY on files inside `output/`. Nowhere else.
 - **Image size rule**: All output PNGs <=1280px on longest side. Use PIL thumbnail with LANCZOS.
 - **OpenCV**: Uses BGR by default — always `cv2.cvtColor(img, cv2.COLOR_BGR2RGB)` on load.
@@ -129,11 +130,14 @@
   Side and 3/4 arm code is written inline, same pattern as side-L.
   Relaxed arm descent: shoulder+~5s drop → elbow+~28s → hand+~28s = hand at hip (≈61s below ls_pt[1])
 
-## Profile Face Features (C57)
-- Side view nose: `nose_x_base = head_rx * 0.94` — start AT face edge so bump protrudes outside
-- Side view mouth: `mouth_x_base = head_rx * 0.62` — near face edge, NOT 0.30 (that's too inward)
-- Side-L nose/mouth: mirror of above at -x (left-facing). Leave as-is unless re-reviewed.
-- 3/4 nose/mouth: `nose_x=head_rx*0.08`, `mouth_ox=-head_rx*0.06` — acceptable for 3/4 angle
+## Profile Face Features (C57/C58)
+- Side view nose: `nose_x_base = head_rx * 0.94` — start AT face edge so bump protrudes outside; peak control point at +24s (was +18s before C58)
+- Side view mouth: `mouth_x_base = head_rx * 0.62`, `mouth_y = head_r * 0.54`
+- Side-L nose: `nose_x_base = -head_rx * 0.94` (C58: was 0.82, now matches side-R), mirrored control points at -14s/-18s
+- Side-L mouth: `mouth_x_base = -head_rx * 0.62` (C58: was -0.30, now at face edge to match side-R logic)
+- 3/4 nose: visible arc 9s wide + near-side nostril dot; `mouth_y = head_r * 0.56`
+- Front nose: upturned arc (-7s to +7s wide) with two nostril dots at ±5s, y=head_r*0.28
+- **Mouth y-offsets (C58):** front=0.56, side=0.54, 3/4=0.56, side-L=0.54 (all down from 0.42-0.44)
 
 ## Pose Mode Architecture (C54)
 - `pose_mode` param on `draw_luma()`: "side" | "front" | "threequarter" | "back"

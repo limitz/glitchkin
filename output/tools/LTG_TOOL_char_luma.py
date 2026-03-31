@@ -1065,34 +1065,36 @@ def _draw_luma_on_context(ctx, cx, ground_y, char_h, expression, spec, scale=1.0
     nose_x_base = head_rx * 0.94   # start at face edge (not inside)
     nose_y = head_r * 0.18         # slightly above mid-face
     # Nose: a bezier curve bump protruding to the right, clearly outside head oval
+    # Enlarged protrusion (22s peak) for clear legibility at turnaround scale
     ctx.new_path()
-    ctx.move_to(nose_x_base, nose_y - 8*s)
-    ctx.curve_to(nose_x_base + 14*s, nose_y - 6*s,
-                 nose_x_base + 18*s, nose_y + 4*s,
-                 nose_x_base + 10*s, nose_y + 11*s)
-    ctx.curve_to(nose_x_base + 5*s, nose_y + 16*s,
-                 nose_x_base, nose_y + 13*s,
-                 nose_x_base - 2*s, nose_y + 8*s)
+    ctx.move_to(nose_x_base, nose_y - 10*s)
+    ctx.curve_to(nose_x_base + 18*s, nose_y - 8*s,
+                 nose_x_base + 24*s, nose_y + 4*s,
+                 nose_x_base + 14*s, nose_y + 14*s)
+    ctx.curve_to(nose_x_base + 7*s, nose_y + 20*s,
+                 nose_x_base, nose_y + 16*s,
+                 nose_x_base - 3*s, nose_y + 9*s)
     _set_color(ctx, SKIN); ctx.fill_preserve()
     _set_color(ctx, LINE_COL); ctx.set_line_width(lw_minor); ctx.stroke()
     # Nostril shadow
     ctx.new_path()
-    ctx.move_to(nose_x_base + 5*s, nose_y + 11*s)
-    ctx.curve_to(nose_x_base + 2*s, nose_y + 14*s,
-                 nose_x_base - 1*s, nose_y + 13*s,
-                 nose_x_base - 2*s, nose_y + 8*s)
+    ctx.move_to(nose_x_base + 7*s, nose_y + 14*s)
+    ctx.curve_to(nose_x_base + 3*s, nose_y + 18*s,
+                 nose_x_base - 1*s, nose_y + 16*s,
+                 nose_x_base - 3*s, nose_y + 9*s)
     _set_color(ctx, SKIN_SH); ctx.set_line_width(lw_accent); ctx.stroke()
 
     # ── Hair cloud (back of head only in profile — left half = negative x) ──
+    # Blobs kept to back/top half; face skin at x=(0.10±0.78) creates natural hairline
     hair_blobs_side = [
         # Back crown blobs (upper left quadrant)
-        (-0.55, -0.75, 0.55, 0.48), (-0.30, -1.00, 0.42, 0.36),
-        (-0.70, -0.50, 0.42, 0.38), (-0.80, -0.25, 0.38, 0.35),
-        (0.00, -0.80, 0.40, 0.34), (0.10, -1.05, 0.34, 0.30),
-        (-0.15, -0.60, 0.50, 0.44), (-0.50, -0.92, 0.30, 0.26),
+        (-0.55, -0.78, 0.52, 0.46), (-0.30, -1.00, 0.42, 0.36),
+        (-0.70, -0.52, 0.42, 0.38), (-0.80, -0.28, 0.38, 0.34),
+        (-0.05, -0.82, 0.38, 0.32), (0.08, -1.05, 0.34, 0.30),
+        (-0.28, -0.65, 0.46, 0.40), (-0.50, -0.92, 0.30, 0.26),
         (-0.85, 0.02, 0.30, 0.32), (-0.60, 0.08, 0.35, 0.30),
-        # A few blobs spilling over the top toward the front
-        (0.20, -0.70, 0.30, 0.26), (-0.10, -1.10, 0.28, 0.24),
+        # A few blobs near crown toward the front (above hairline)
+        (0.10, -0.75, 0.28, 0.24), (-0.10, -1.10, 0.28, 0.24),
         # Side blobs (further back)
         (-0.90, -0.50, 0.26, 0.30),
     ]
@@ -1171,7 +1173,7 @@ def _draw_luma_on_context(ctx, cx, ground_y, char_h, expression, spec, scale=1.0
         ctx.set_line_width(lw_minor); ctx.stroke()
 
     # ── Profile mouth ──
-    mouth_y = head_r * 0.42
+    mouth_y = head_r * 0.54
     mouth_w = head_rx * 0.26
     # mouth_x_base: anchor on the face surface near the silhouette edge.
     # In profile the mouth sits close to the face edge, not at 30% of head_rx.
@@ -1485,14 +1487,15 @@ def _draw_luma_front(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
     ctx.set_line_width(lw_silhouette)
     _set_color(ctx, LINE_COL); ctx.stroke()
 
-    # Hair cloud
+    # Hair cloud — blob centers kept above hairline (face skin covers from -0.60 downward)
+    # Lowest blobs sit at by=-0.55 or higher to ensure clean hairline boundary
     hair_blobs = [
-        (0, -0.65, 0.70, 0.55), (-0.50, -0.50, 0.55, 0.50),
-        (0.50, -0.50, 0.55, 0.50), (-0.30, -0.95, 0.40, 0.35),
+        (0, -0.70, 0.70, 0.52), (-0.50, -0.58, 0.55, 0.48),
+        (0.50, -0.58, 0.55, 0.48), (-0.30, -0.95, 0.40, 0.35),
         (0.30, -0.95, 0.40, 0.35), (0, -1.10, 0.35, 0.30),
-        (-0.85, -0.30, 0.35, 0.38), (0.85, -0.30, 0.35, 0.38),
-        (-0.70, -0.60, 0.35, 0.32), (0.70, -0.60, 0.35, 0.32),
-        (-0.15, -0.45, 0.60, 0.42), (0.15, -0.45, 0.60, 0.42),
+        (-0.85, -0.42, 0.35, 0.36), (0.85, -0.42, 0.35, 0.36),
+        (-0.70, -0.62, 0.35, 0.32), (0.70, -0.62, 0.35, 0.32),
+        (-0.15, -0.58, 0.58, 0.38), (0.15, -0.58, 0.58, 0.38),
         (-0.50, -0.80, 0.32, 0.28), (0.50, -0.80, 0.32, 0.28),
         (-0.45, -1.05, 0.25, 0.22), (0.45, -1.05, 0.25, 0.22),
         (0.15, -1.15, 0.22, 0.20),
@@ -1578,14 +1581,25 @@ def _draw_luma_front(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
             _set_color(ctx, HAIR)
             ctx.set_line_width(lw_minor); ctx.stroke()
 
-    # ── Nose (front — simple centered dot-comma) ──
+    # ── Nose (front — upturned nose with two nostril marks) ──
     nose_y = head_r * 0.28
+    # Nose tip: small upturned arc (curve from left nostril across tip to right)
     ctx.new_path()
-    ctx.arc(0, nose_y, 2.5*s, 0, 2*math.pi)
-    _set_color(ctx, SKIN_SH, 0.8); ctx.fill()
+    ctx.move_to(-7*s, nose_y + 2*s)
+    ctx.curve_to(-8*s, nose_y - 3*s, 0, nose_y - 6*s, 8*s, nose_y - 3*s)
+    ctx.curve_to(8*s, nose_y - 1*s, 7*s, nose_y + 2*s, 7*s, nose_y + 2*s)
+    _set_color(ctx, SKIN_SH, 0.85); ctx.set_line_width(lw_minor); ctx.set_line_cap(cairo.LINE_CAP_ROUND); ctx.stroke()
+    # Left nostril dot
+    ctx.new_path()
+    ctx.arc(-5*s, nose_y + 4*s, 2.2*s, 0, 2*math.pi)
+    _set_color(ctx, SKIN_SH, 0.75); ctx.fill()
+    # Right nostril dot
+    ctx.new_path()
+    ctx.arc(5*s, nose_y + 4*s, 2.2*s, 0, 2*math.pi)
+    _set_color(ctx, SKIN_SH, 0.75); ctx.fill()
 
     # ── Mouth ──
-    mouth_y = head_r * 0.44
+    mouth_y = head_r * 0.56
     mouth_w = head_rx * 0.30
     mouth_type = spec["mouth"]
     if mouth_type == "gentle_smile":
@@ -1925,16 +1939,17 @@ def _draw_luma_threequarter(ctx, cx, ground_y, char_h, expression, spec, scale=1
     _set_color(ctx, LINE_COL); ctx.stroke()
 
     # Hair cloud (3/4 — weighted toward near side/back)
+    # Low center blobs raised to avoid unnatural hairline cut
     hair_blobs = [
-        (0, -0.65, 0.70, 0.55), (-0.50, -0.50, 0.60, 0.52),
-        (0.40, -0.50, 0.45, 0.42), (-0.30, -0.95, 0.42, 0.36),
+        (0, -0.70, 0.70, 0.52), (-0.50, -0.58, 0.60, 0.48),
+        (0.40, -0.58, 0.45, 0.40), (-0.30, -0.95, 0.42, 0.36),
         (0.25, -0.95, 0.35, 0.30), (0, -1.10, 0.36, 0.30),
-        (-0.85, -0.30, 0.38, 0.40), (0.75, -0.28, 0.30, 0.34),
+        (-0.85, -0.42, 0.38, 0.38), (0.75, -0.40, 0.30, 0.32),
         (-0.75, -0.62, 0.36, 0.34), (0.65, -0.58, 0.28, 0.28),
-        (-0.15, -0.45, 0.62, 0.44), (0.12, -0.45, 0.55, 0.40),
+        (-0.15, -0.58, 0.60, 0.38), (0.12, -0.58, 0.52, 0.36),
         (-0.52, -0.80, 0.34, 0.28), (0.45, -0.78, 0.26, 0.24),
         (-0.45, -1.05, 0.26, 0.22), (0.40, -1.02, 0.22, 0.18),
-        (0.10, -1.15, 0.22, 0.20), (-0.92, -0.48, 0.24, 0.28),
+        (0.10, -1.15, 0.22, 0.20), (-0.92, -0.52, 0.24, 0.26),
     ]
     for (bx, by, brx, bry) in hair_blobs:
         _draw_ellipse_path(ctx, bx * head_rx, by * head_ry, brx * head_rx, bry * head_ry)
@@ -2018,17 +2033,24 @@ def _draw_luma_threequarter(ctx, cx, ground_y, char_h, expression, spec, scale=1
             _set_color(ctx, HAIR)
             ctx.set_line_width(lw_accent); ctx.stroke()
 
-    # Nose (3/4 — asymmetric, shows bridge angle)
-    nose_x = head_rx * 0.08
+    # Nose (3/4 — asymmetric, shows bridge angle with visible nostril on near side)
+    nose_x = head_rx * 0.06
     nose_y = head_r * 0.28
+    # Bridge/tip curve — larger and readable
     ctx.new_path()
-    ctx.move_to(nose_x - 3*s, nose_y)
-    ctx.curve_to(nose_x, nose_y + 3*s, nose_x + 3*s, nose_y + 1*s, nose_x + 5*s, nose_y - 1*s)
+    ctx.move_to(nose_x - 6*s, nose_y)
+    ctx.curve_to(nose_x - 3*s, nose_y + 4*s,
+                 nose_x + 4*s, nose_y + 4*s,
+                 nose_x + 9*s, nose_y + 1*s)
     _set_color(ctx, SKIN_SH)
     ctx.set_line_width(lw_minor); ctx.set_line_cap(cairo.LINE_CAP_ROUND); ctx.stroke()
+    # Near-side nostril dot (visible in 3/4)
+    ctx.new_path()
+    ctx.arc(nose_x - 4*s, nose_y + 6*s, 2.0*s, 0, 2*math.pi)
+    _set_color(ctx, SKIN_SH, 0.70); ctx.fill()
 
     # Mouth (3/4 — offset toward near side)
-    mouth_y = head_r * 0.44
+    mouth_y = head_r * 0.56
     mouth_w = head_rx * 0.28
     mouth_ox = -head_rx * 0.06  # slight offset toward near side
     mouth_type = spec["mouth"]
@@ -2660,33 +2682,35 @@ def _draw_luma_side_l(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
     _set_color(ctx, LINE_COL); ctx.stroke()
 
     # Profile nose bump on -x (LEFT side, face direction)
-    nose_x_base = -head_rx * 0.82
+    # nose_x_base anchored AT the face edge so bump clearly protrudes outside head oval
+    nose_x_base = -head_rx * 0.94
     nose_y = head_r * 0.18
     ctx.new_path()
     ctx.move_to(nose_x_base, nose_y - 8*s)
-    ctx.curve_to(nose_x_base - 12*s, nose_y - 6*s,
-                 nose_x_base - 14*s, nose_y + 4*s,
-                 nose_x_base - 8*s, nose_y + 10*s)
-    ctx.curve_to(nose_x_base - 4*s, nose_y + 14*s,
-                 nose_x_base, nose_y + 12*s,
+    ctx.curve_to(nose_x_base - 14*s, nose_y - 6*s,
+                 nose_x_base - 18*s, nose_y + 4*s,
+                 nose_x_base - 10*s, nose_y + 11*s)
+    ctx.curve_to(nose_x_base - 5*s, nose_y + 16*s,
+                 nose_x_base, nose_y + 13*s,
                  nose_x_base + 2*s, nose_y + 8*s)
     _set_color(ctx, SKIN); ctx.fill_preserve()
     _set_color(ctx, LINE_COL); ctx.set_line_width(lw_minor); ctx.stroke()
     ctx.new_path()
-    ctx.move_to(nose_x_base - 4*s, nose_y + 10*s)
-    ctx.curve_to(nose_x_base - 2*s, nose_y + 13*s,
-                 nose_x_base + 1*s, nose_y + 12*s,
+    ctx.move_to(nose_x_base - 5*s, nose_y + 11*s)
+    ctx.curve_to(nose_x_base - 2*s, nose_y + 14*s,
+                 nose_x_base + 1*s, nose_y + 13*s,
                  nose_x_base + 2*s, nose_y + 8*s)
     _set_color(ctx, SKIN_SH); ctx.set_line_width(lw_accent); ctx.stroke()
 
     # Hair cloud (left-facing: back of head is on +x side)
+    # Mirrored from side-R — blobs kept to back/top half for clean hairline
     hair_blobs_sl = [
-        (0.55, -0.75, 0.55, 0.48), (0.30, -1.00, 0.42, 0.36),
-        (0.70, -0.50, 0.42, 0.38), (0.80, -0.25, 0.38, 0.35),
-        (0.00, -0.80, 0.40, 0.34), (-0.10, -1.05, 0.34, 0.30),
-        (0.15, -0.60, 0.50, 0.44), (0.50, -0.92, 0.30, 0.26),
+        (0.55, -0.78, 0.52, 0.46), (0.30, -1.00, 0.42, 0.36),
+        (0.70, -0.52, 0.42, 0.38), (0.80, -0.28, 0.38, 0.34),
+        (0.05, -0.82, 0.38, 0.32), (-0.08, -1.05, 0.34, 0.30),
+        (0.28, -0.65, 0.46, 0.40), (0.50, -0.92, 0.30, 0.26),
         (0.85, 0.02, 0.30, 0.32), (0.60, 0.08, 0.35, 0.30),
-        (-0.20, -0.70, 0.30, 0.26), (0.10, -1.10, 0.28, 0.24),
+        (-0.10, -0.75, 0.28, 0.24), (0.10, -1.10, 0.28, 0.24),
         (0.90, -0.50, 0.26, 0.30),
     ]
     for (bx, by, brx, bry) in hair_blobs_sl:
@@ -2759,9 +2783,9 @@ def _draw_luma_side_l(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
         ctx.set_line_width(lw_minor); ctx.stroke()
 
     # Profile mouth (left-facing: mouth toward -x)
-    mouth_y = head_r * 0.42
+    mouth_y = head_r * 0.54
     mouth_w = head_rx * 0.28
-    mouth_x_base = -head_rx * 0.30
+    mouth_x_base = -head_rx * 0.62
     mouth_type = spec["mouth"]
     if mouth_type == "gentle_smile":
         ctx.new_path()

@@ -1,49 +1,49 @@
 # Maya Santos — Memory
 
-## Cycle 57 — Turnaround arm/torso/face fixes — COMPLETE
+## Cycle 58 — Nose/Mouth/Hairline fixes — COMPLETE
 
-### Task: Fix arms, torso width, nose/mouth in side and 3/4 views (human feedback)
+### Tasks (from inbox, human feedback)
 
-**Fixes applied to `LTG_TOOL_char_luma.py` v1.2.0:**
+**1. Nose not visible (all views)**
+- Front: replaced 2.5s dot with upturned nose arc + two nostril dots
+- Side-R: enlarged nose bump protrusion (peak 24s, was 18s); adjusted bezier control points
+- Side-L: nose_x_base moved from -head_rx*0.82 → -head_rx*0.94 (anchored at face edge, matching side-R); larger control points to match
+- 3/4: replaced tiny 5s curve with larger arc (9s wide) + near-side nostril dot
 
-**Torso width (foreshortening):**
-- Side view: `sh_w` → `head_r * 0.50` (was 0.80), `w_bot` → `head_r * 0.40` (was 0.55)
-- 3/4 view: `sh_w` → `head_r * 0.70` (was 0.88), `w_bot` → `head_r * 0.48` (was 0.58)
-- Side-L: `sh_w` → `head_r * 0.50` (was 0.80), `w_bot` → `head_r * 0.40` (was 0.55)
-- Front view unchanged (sh_w=0.95, w_bot=0.62)
+**2. Mouth too high (all views)**
+- Front: mouth_y 0.44 → 0.56 head_r
+- Side-R: mouth_y 0.42 → 0.54 head_r
+- Side-L: mouth_y 0.42 → 0.54, mouth_x_base -0.30 → -0.62 (was not at face edge, now matches side-R logic)
+- 3/4: mouth_y 0.44 → 0.56 head_r
 
-**Arms (side and 3/4 views):**
-- Replaced `_draw_arms()` dispatch in both `_draw_luma_on_context` (side) and
-  `_draw_luma_threequarter` with inline arm drawing (same pattern as side-L)
-- Side view: near arm (+rs_pt, forward) and far arm (+ls_pt, back) hang
-  naturally at hip/waist height — shoulder+30s+28s descent = hand near hip
-- 3/4 view: near arm (rs_pt) prominent, far arm (ls_pt) slightly smaller/behind
-- Side-L arm code unchanged (was already correct)
+**3. Hairline looks off (all views)**
+- Front: raised large low-center hair blobs from by=-0.45 → by=-0.58, reduced bry from 0.42 → 0.38; side blobs raised from by=-0.30 → by=-0.42
+- 3/4: same treatment (by=-0.45 → by=-0.58 for center blobs)
+- Side-R: cleaned up blob at (-0.15, -0.60) — pulled back to (-0.28, -0.65); removed the face-side blob (0.20, -0.70) → pushed to (0.10, -0.75) with smaller radius
+- Side-L: mirrored side-R hairline fixes
 
-**Face features (side view):**
-- Nose: `nose_x_base` → `head_rx * 0.94` (was 0.82) — anchored AT face edge
-  so bump protrudes clearly outside head oval
-- Mouth: `mouth_x_base` → `head_rx * 0.62` (was 0.30) — moved near face edge
+**Test:** char_module_test PASS (7/7 Luma expressions). Turnaround regenerated.
 
 **Deliverables:**
-- `LTG_TOOL_char_luma.py` — updated in-place (v1.2.0)
-- `output/characters/main/turnarounds/LTG_CHAR_luma_turnaround.png` regenerated
-
-**Test:** char_module_test PASS (7/7 expressions), all three views render cleanly.
+- `LTG_TOOL_char_luma.py` — updated in-place
+- `output/characters/main/turnarounds/LTG_CHAR_luma_turnaround.png` — regenerated (1280x560)
 
 **Completion message sent to Producer inbox.**
 
+## Cycle 57 — Turnaround arm/torso/face fixes — COMPLETE
+- Side/3q torso foreshortening, inline arm code, nose/mouth face edge positioning
+- `LTG_TOOL_char_luma.py` v1.2.0
+
 ## Cycle 56 — Leg centering fix — COMPLETE
-- `_draw_luma_on_context`, `_draw_luma_threequarter`, `_draw_luma_side_l`: all legs at hip_cx
-- Hip bridge `hip_bw = leg_w_top * 1.4`
+- All views: legs at hip_cx, hip bridge bw=leg_w_top*1.4
 
 ## Tools Owned (active)
-- LTG_TOOL_char_luma.py v1.2.0 (C57)
+- LTG_TOOL_char_luma.py (C58 nose/mouth/hairline)
 - LTG_TOOL_char_miri.py v1.0.0 (C53)
 - LTG_TOOL_luma_turnaround.py v007 (C55)
 - (full list in SKILLS.md)
 
 ## Next Cycle Priorities
-- Migrate luma_cairo_expressions.py to import from char_luma.py v1.2.0
+- Cosmo module test is FAIL (pre-existing, not caused by C58 changes) — send note to Alex Chen
+- Migrate luma_cairo_expressions.py to import from char_luma.py
 - Cosmo expression rebuild
-- Run face gate on side/side-L profile views
