@@ -9,6 +9,13 @@ LTG_TOOL_sf_miri_luma_handoff.py
 Style Frame — "The Hand-Off" (SF_MIRI_LUMA_HANDOFF / SF06 candidate)
 "Luma & the Glitchkin" — Cycle 49 / Maya Santos
 
+Cycle 53 changes (C53 — CANONICAL CHARACTER RENDERER MIGRATION):
+  - Replaced inline draw_miri_character() and draw_luma_character() (530+ lines
+    of PIL drawing) with canonical char_miri.draw_miri() and char_luma.draw_luma()
+    imports. Characters rendered via pycairo, converted to PIL RGBA for compositing.
+  - Scene composition (placement, foot shadows, Wand pipeline) preserved.
+  - Per modular rendering architecture: one canonical renderer per entity.
+
 Cycle 52 changes (Hana Okonkwo, C52 — CHARACTER-ENVIRONMENT INTEGRATION):
   - WAND COMPOSITING PIPELINE: Characters now drawn on separate transparent
     layers and composited using LTG_TOOL_wand_composite.py.
@@ -82,6 +89,13 @@ import os
 import sys
 import random
 from PIL import Image, ImageDraw, ImageFilter
+
+# Canonical character renderer imports
+_here = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, _here)
+from LTG_TOOL_char_miri import draw_miri as _canonical_draw_miri
+from LTG_TOOL_char_luma import draw_luma as _canonical_draw_luma
+from LTG_TOOL_cairo_primitives import to_pil_rgba as _to_pil_rgba
 
 random.seed(44)
 
@@ -386,322 +400,70 @@ def draw_crt_glow(img, scr_x1, scr_y1, scr_x2, scr_y2):
 # Per-character clothing reads: Miri = cardigan shoulder crease; Luma = hoodie
 # fabric bunch. Implemented as torso polyline with deltoid bump vertices.
 
-def _sf_shoulder_dy(arm_dy, arm_dx, mode="standard"):
-    """Calculate shoulder displacement for style-frame characters.
-
-    arm_dy: vertical displacement of arm endpoint from shoulder (negative = raised)
-    arm_dx: horizontal displacement from shoulder (positive = extended outward)
-    mode: "extended" for forward/outward reach, "neutral" for relaxed
-    Returns (dy, dx_shift): dy is vertical shift (negative = up), dx is outward shift.
-    """
-    dy = 0
-    dx = 0
-    if mode == "extended":
-        # Shoulder point shifts outward 4-6px and drops 1-2px for forward extension
-        dy = -2
-        dx = 5
-    elif arm_dy < -10:
-        # Raised arm: shoulder rises proportional to raise
-        dy = max(-6, int(arm_dy * 0.20))
-    return dy, dx
-
-
 # ── Character Drawing ──────────────────────────────────────────────────────────
-# Characters at style-frame scale.
-# Head radius: HR = 42px (Miri), 46px (Luma) — readable faces at 1280×720.
+# Characters via canonical char_*.py renderers (C53 modular architecture).
 # Ground line: GROUND_Y = int(H * 0.90)
-# C48: Shoulder involvement applied per image-rules.md (Shoulder Involvement Rule).
+# Canonical renderers handle: shoulder involvement, elder posture, expressions,
+# clothing physics, face features — all per-character specs.
 
 GROUND_Y = int(H * 0.90)
 
+# Character scale reference (head radii at style-frame scale)
+MIRI_HR = 42   # head radius — 3.2 heads tall
+MIRI_HU = int(MIRI_HR * 2)
+LUMA_HR = 46   # head radius — 3.5 heads tall
+LUMA_HU = int(LUMA_HR * 2)
 
-# ─ Miri ───────────────────────────────────────────────────────────────────────
 
-MIRI_HR = 42   # head radius
-MIRI_HU = int(MIRI_HR * 2 * (1 / 1.0))  # HU = 2×HR (1 head = 2*radius)
+def _cairo_char_to_pil(surface, target_h):
+    """Convert a cairo.ImageSurface character to a cropped, resized PIL RGBA image.
+
+    Crops to bounding box, scales to fit target_h while preserving aspect ratio.
+    """
+    pil_img = _to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    if pil_img.height > 0:
+        scale_factor = target_h / pil_img.height
+        new_w = max(1, int(pil_img.width * scale_factor))
+        new_h = max(1, int(pil_img.height * scale_factor))
+        pil_img = pil_img.resize((new_w, new_h), Image.LANCZOS)
+    return pil_img
 
 def draw_miri_character(img, draw, cx, ground_y, transparent_layer=False):
     """
-    Grandma Miri — MIRI-A canonical. Standing, facing 3/4 right.
-    Right hand extended forward/toward CRT (the "hand-off" gesture).
-    Expression: WARM ATTENTION — soft smile, slightly forward lean.
-    Height: 3.2 heads (MIRI_HU × 3.2).
-    C49: Elder posture — forward lean + rounded shoulders.
+    Grandma Miri via canonical char_miri renderer.
+    WARM expression, facing right (toward CRT/Luma).
+    Height: 3.2 heads (MIRI_HU x 3.2).
+    C53: Replaced inline drawing with canonical char_miri.draw_miri() import.
     C52: transparent_layer=True skips foot shadow (handled by Wand compositing).
     """
-    HR = MIRI_HR
-    HU = int(HR * 2)  # one head unit = 2 × head radius
-
+    HU = MIRI_HU
     total_h = int(HU * 3.2)
-    head_cy = ground_y - total_h + HR
-    head_cx = cx
 
-    # C49: ELDER POSTURE — forward lean (3-5 degrees from vertical).
-    # Head shifts rightward (toward CRT/Luma) relative to feet.
-    # Torso shifts proportionally less. Feet stay at cx.
-    elder_lean_dx = int(HU * 0.04)   # ~3px at SF scale
-    elder_sh_drop = 3                 # 3px shoulder drop (rounded shoulders)
-    elder_sh_inward = 2               # 2px inward shift
-    head_cx = cx + elder_lean_dx
-    torso_cx = cx + int(elder_lean_dx * 0.6)
+    # Render via canonical module — WARM expression, facing right (toward CRT/Luma)
+    # Warm lamp scene lighting from left (Miri's zone)
+    scene_lighting = {
+        "key_light_color": (245, 208, 140),   # warm lamp
+        "key_light_dir": "left",
+        "ambient": (200, 170, 130),
+    }
+    scale = max(0.3, total_h / 380.0)  # char_miri: 1.0 = 380px at 2x
+    surface = _canonical_draw_miri(
+        expression="WARM", scale=scale, facing="right",
+        scene_lighting=scene_lighting)
+    char_pil = _cairo_char_to_pil(surface, total_h)
 
-    # ── Body (weathered torso with shoulder involvement) ────────────────────
-    torso_top_y  = head_cy + HR + int(HU * 0.08)   # neck gap
-    torso_bot_y  = head_cy + HR + int(HU * 1.13)   # torso bottom
-    torso_w_half = int(HU * 0.52)
+    # Paste — anchor at foot position (cx, ground_y)
+    paste_x = cx - char_pil.width // 2
+    paste_y = ground_y - char_pil.height
+    img_rgba = img.convert("RGBA")
+    img_rgba.paste(char_pil, (paste_x, paste_y), char_pil)
+    img.paste(img_rgba.convert("RGB"))
+    draw = ImageDraw.Draw(img)
 
-    # C48: Shoulder displacement — Miri's right arm is extended toward CRT.
-    # Left arm neutral: no displacement. Right arm forward: shoulder shifts out.
-    l_sh_dy, l_sh_dx = _sf_shoulder_dy(0, 0, mode="neutral")
-    r_sh_dy, r_sh_dx = _sf_shoulder_dy(0, int(HU * 0.62), mode="extended")
-    sh_bump_w = int(HU * 0.07)  # deltoid bump width
-
-    # C49: Apply elder shoulder drop + inward shift
-    l_sh_dy += elder_sh_drop
-    r_sh_dy += elder_sh_drop
-
-    # Cardigan body fill — polyline torso with shoulder bumps
-    torso_pts = [
-        (torso_cx - torso_w_half - sh_bump_w + elder_sh_inward, torso_top_y),   # outer left shoulder (inward)
-        (torso_cx - torso_w_half + l_sh_dx + elder_sh_inward, torso_top_y + l_sh_dy),  # left deltoid (dropped + inward)
-        (torso_cx - int(torso_w_half * 0.3), torso_top_y),                       # inner left shoulder
-        (torso_cx + int(torso_w_half * 0.3), torso_top_y),                       # inner right shoulder
-        (torso_cx + torso_w_half + r_sh_dx - elder_sh_inward, torso_top_y + r_sh_dy),  # right deltoid (dropped + inward)
-        (torso_cx + torso_w_half + sh_bump_w + r_sh_dx - elder_sh_inward, torso_top_y),  # outer right (inward)
-        (cx + torso_w_half, torso_bot_y),                                         # bottom right (feet at cx)
-        (cx - torso_w_half, torso_bot_y),                                         # bottom left (feet at cx)
-    ]
-    draw.polygon(torso_pts, fill=MIRI_CARDIGAN, outline=LINE_DARK, width=2)
-
-    # Cardigan shadow (right side — warm light from left)
-    shadow_x = torso_cx + int(torso_w_half * 0.35)
-    draw.rectangle([shadow_x, torso_top_y + 4,
-                    torso_cx + torso_w_half - 2, torso_bot_y],
-                   fill=MIRI_CARD_SH)
-
-    # Cardigan V-neck
-    draw.line([(torso_cx - int(torso_w_half * 0.2), torso_top_y),
-               (torso_cx, torso_top_y + int(HU * 0.18))],
-              fill=LINE_DARK, width=2)
-    draw.line([(torso_cx + int(torso_w_half * 0.2), torso_top_y),
-               (torso_cx, torso_top_y + int(HU * 0.18))],
-              fill=LINE_DARK, width=2)
-
-    # Cable-knit texture suggestion
-    for ky in range(torso_top_y + 12, torso_bot_y - 4, 10):
-        draw.line([(torso_cx - torso_w_half + 6, ky), (torso_cx - torso_w_half + 6, ky + 5)],
-                  fill=lerp_color(MIRI_CARDIGAN, MIRI_CARD_SH, 0.3), width=1)
-        draw.line([(torso_cx - torso_w_half + 14, ky), (torso_cx - torso_w_half + 14, ky + 5)],
-                  fill=lerp_color(MIRI_CARDIGAN, MIRI_CARD_SH, 0.3), width=1)
-
-    # ── Left arm (neutral — slightly bent, toward body) ───────────────────────
-    la_shoulder = (torso_cx - torso_w_half, torso_top_y + int(HU * 0.10))
-    la_elbow    = (torso_cx - torso_w_half - int(HU * 0.18), torso_top_y + int(HU * 0.45))
-    la_hand     = (torso_cx - torso_w_half - int(HU * 0.08), torso_top_y + int(HU * 0.80))
-    polyline(draw, [la_shoulder, la_elbow, la_hand], MIRI_CARDIGAN, width=10)
-    polyline(draw, [la_shoulder, la_elbow, la_hand], LINE_DARK, width=2)
-
-    # ── Right arm extended TOWARD CRT (the hand-off gesture) ─────────────────
-    # Arm reaches rightward and slightly forward
-    ra_shoulder = (torso_cx + torso_w_half, torso_top_y + int(HU * 0.10))
-    ra_elbow    = (torso_cx + torso_w_half + int(HU * 0.35), torso_top_y + int(HU * 0.28))
-    ra_hand     = (torso_cx + torso_w_half + int(HU * 0.62), torso_top_y + int(HU * 0.44))
-    polyline(draw, [ra_shoulder, ra_elbow, ra_hand], MIRI_CARDIGAN, width=10)
-    polyline(draw, [ra_shoulder, ra_elbow, ra_hand], LINE_DARK, width=2)
-
-    # Hand (mitten-style oval)
-    draw.ellipse([ra_hand[0] - 9, ra_hand[1] - 8,
-                  ra_hand[0] + 12, ra_hand[1] + 7],
-                 fill=MIRI_SKIN, outline=LINE_DARK, width=2)
-    # Knuckle line (Miri's working hands)
-    draw.line([(ra_hand[0] - 3, ra_hand[1] + 1),
-               (ra_hand[0] + 9, ra_hand[1] + 1)],
-              fill=MIRI_SKIN_SH, width=1)
-
-    # ── Legs ──────────────────────────────────────────────────────────────────
-    leg_top_y = torso_bot_y
-    leg_bot_y = ground_y
-    leg_half_w = int(HU * 0.16)
-
-    # Left leg
-    draw.rectangle([cx - leg_half_w * 2 - 4, leg_top_y,
-                    cx - 3, leg_bot_y],
-                   fill=MIRI_PANTS, outline=LINE_DARK, width=1)
-    # Right leg
-    draw.rectangle([cx + 3, leg_top_y,
-                    cx + leg_half_w * 2 + 4, leg_bot_y],
-                   fill=MIRI_PANTS, outline=LINE_DARK, width=1)
-
-    # Slippers
-    slipper_w = int(HU * 0.28)
-    slipper_h = int(HU * 0.10)
-    for sx in [cx - leg_half_w * 2 + int(HU * 0.04),
-               cx + 3]:
-        draw.ellipse([sx - 2, ground_y - slipper_h,
-                      sx + slipper_w, ground_y + 3],
-                     fill=MIRI_SLIPPER, outline=LINE_DARK, width=1)
-
-    # ── Head ──────────────────────────────────────────────────────────────────
-    # Slightly offset right for 3/4 pose
-    face_cx = head_cx + int(HR * 0.06)
-    face_cy = head_cy
-
-    # Neck — connects head (at head_cx) to torso (at torso_cx)
-    neck_cx = (head_cx + torso_cx) // 2
-    draw.rectangle([neck_cx - int(HR * 0.18), head_cy + int(HR * 0.80),
-                    neck_cx + int(HR * 0.18), head_cy + HR + int(HU * 0.10)],
-                   fill=MIRI_SKIN)
-
-    # Head circle
-    draw.ellipse([face_cx - HR, face_cy - int(HR * 0.94),
-                  face_cx + HR, face_cy + int(HR * 0.94)],
-                 fill=MIRI_SKIN, outline=LINE_DARK, width=2)
-
-    # Chin shadow
-    draw.ellipse([face_cx - int(HR * 0.9), face_cy + int(HR * 0.4),
-                  face_cx + int(HR * 0.7), face_cy + int(HR * 0.94)],
-                 fill=MIRI_SKIN_SH)
-
-    # ── Ears ──────────────────────────────────────────────────────────────────
-    ear_y = face_cy + int(HR * 0.06)
-    er = int(HR * 0.12)
-    draw.ellipse([face_cx - HR - er, ear_y - er, face_cx - HR + 2, ear_y + er],
-                 fill=MIRI_SKIN, outline=LINE_DARK, width=1)
-    draw.ellipse([face_cx + HR - 2, ear_y - er, face_cx + HR + er, ear_y + er],
-                 fill=MIRI_SKIN, outline=LINE_DARK, width=1)
-
-    # ── Hair bun ──────────────────────────────────────────────────────────────
-    bun_cx = face_cx + int(HR * 0.08)
-    bun_cy = face_cy - int(HR * 0.88)
-    bun_rx = int(HR * 0.52)
-    bun_ry = int(HR * 0.50)
-
-    # Base hair (covers top of head)
-    draw.ellipse([face_cx - HR, face_cy - int(HR * 0.94),
-                  face_cx + HR, face_cy - int(HR * 0.30)],
-                 fill=MIRI_HAIR)
-    draw.line([(face_cx - HR, face_cy - int(HR * 0.62)),
-               (face_cx + HR, face_cy - int(HR * 0.62))],
-              fill=MIRI_HAIR, width=2)
-
-    # Bun
-    draw.ellipse([bun_cx - bun_rx, bun_cy - bun_ry,
-                  bun_cx + bun_rx, bun_cy + bun_ry],
-                 fill=MIRI_HAIR, outline=LINE_DARK, width=1)
-
-    # Bun highlight
-    draw.arc([bun_cx - bun_rx + 3, bun_cy - bun_ry + 3,
-              bun_cx + int(bun_rx * 0.5), bun_cy + int(bun_ry * 0.35)],
-             start=200, end=330,
-             fill=lerp_color(MIRI_HAIR, WARM_CREAM, 0.5), width=1)
-
-    # Bun shadow underside
-    draw.arc([bun_cx - bun_rx + 2, bun_cy + 2,
-              bun_cx + bun_rx - 2, bun_cy + bun_ry],
-             start=0, end=180, fill=MIRI_HAIR_SH, width=2)
-
-    # ── Wooden hairpins ───────────────────────────────────────────────────────
-    hairpin_x1 = bun_cx - int(bun_rx * 0.32)
-    hairpin_x2 = bun_cx + int(bun_rx * 0.24)
-    draw.line([(hairpin_x1, bun_cy - bun_ry - int(HR * 0.18)),
-               (hairpin_x1 + 5, bun_cy + bun_ry + int(HR * 0.08))],
-              fill=MIRI_HAIRPIN, width=3)
-    draw.line([(hairpin_x2, bun_cy - bun_ry - int(HR * 0.14)),
-               (hairpin_x2 + 5, bun_cy + bun_ry + int(HR * 0.06))],
-              fill=MIRI_HAIRPIN, width=3)
-
-    # Escaping strands
-    for dx, dy_end in [(-int(HR * 0.82), int(HR * 0.18)), (-int(HR * 0.68), int(HR * 0.32))]:
-        draw.line([(face_cx + dx, face_cy - int(HR * 0.60)),
-                   (face_cx + dx - 6, face_cy + dy_end)],
-                  fill=MIRI_HAIR, width=1)
-
-    # ── Face features ─────────────────────────────────────────────────────────
-    # Eyebrows (warm gray, gentle arch)
-    brow_y = face_cy - int(HR * 0.40)
-    ew     = int(HR * 0.28)
-    brow_col = (138, 122, 112)
-    # Left brow
-    polyline(draw, [
-        (face_cx - ew - 2, brow_y + 2),
-        (face_cx - ew // 2, brow_y - 2),
-        (face_cx + 2, brow_y)
-    ], brow_col, width=2)
-    # Right brow
-    polyline(draw, [
-        (face_cx + 4, brow_y),
-        (face_cx + ew // 2, brow_y - 3),
-        (face_cx + ew + 2, brow_y + 2)
-    ], brow_col, width=2)
-
-    # Eyes (rounded almond, WARM ATTENTION — 80% aperture)
-    eye_y  = face_cy + int(HR * 0.10)
-    eye_rx = int(HR * 0.19)
-    eye_ry = int(HR * 0.12)
-    # Left eye
-    lex = face_cx - int(HR * 0.32)
-    draw.ellipse([lex - eye_rx, eye_y - eye_ry, lex + eye_rx, eye_y + eye_ry],
-                 fill=(248, 240, 220), outline=LINE_DARK, width=1)
-    draw.ellipse([lex - int(eye_rx * 0.55), eye_y - int(eye_ry * 0.55),
-                  lex + int(eye_rx * 0.55), eye_y + int(eye_ry * 0.55)],
-                 fill=MIRI_EYE_IRIS)
-    draw.ellipse([lex - int(eye_rx * 0.28), eye_y - int(eye_ry * 0.28),
-                  lex + int(eye_rx * 0.28), eye_y + int(eye_ry * 0.28)],
-                 fill=LINE_DARK)
-    draw.ellipse([lex - int(eye_rx * 0.45), eye_y - int(eye_ry * 0.38),
-                  lex - int(eye_rx * 0.25), eye_y - int(eye_ry * 0.12)],
-                 fill=SPEC_WHITE)
-
-    # Right eye (slightly narrower in 3/4 — attentive)
-    rex = face_cx + int(HR * 0.24)
-    r_rx = int(eye_rx * 0.88)
-    draw.ellipse([rex - r_rx, eye_y - eye_ry, rex + r_rx, eye_y + eye_ry],
-                 fill=(248, 240, 220), outline=LINE_DARK, width=1)
-    draw.ellipse([rex - int(r_rx * 0.55), eye_y - int(eye_ry * 0.55),
-                  rex + int(r_rx * 0.55), eye_y + int(eye_ry * 0.55)],
-                 fill=MIRI_EYE_IRIS)
-    draw.ellipse([rex - int(r_rx * 0.28), eye_y - int(eye_ry * 0.28),
-                  rex + int(r_rx * 0.28), eye_y + int(eye_ry * 0.28)],
-                 fill=LINE_DARK)
-    draw.ellipse([rex - int(r_rx * 0.44), eye_y - int(eye_ry * 0.36),
-                  rex - int(r_rx * 0.22), eye_y - int(eye_ry * 0.10)],
-                 fill=SPEC_WHITE)
-
-    # Crow's feet (right eye outer corner)
-    cfe_x = rex + r_rx
-    cfe_y = eye_y
-    crow_col = lerp_color(MIRI_SKIN, LINE_DARK, 0.35)
-    draw.line([(cfe_x, cfe_y - 1), (cfe_x + 4, cfe_y - 4)], fill=crow_col, width=1)
-    draw.line([(cfe_x, cfe_y + 1), (cfe_x + 4, cfe_y + 3)], fill=crow_col, width=1)
-    # Left eye outer corner
-    cfl_x = lex - eye_rx
-    draw.line([(cfl_x, cfe_y - 1), (cfl_x - 4, cfe_y - 4)], fill=crow_col, width=1)
-    draw.line([(cfl_x, cfe_y + 1), (cfl_x - 4, cfe_y + 3)], fill=crow_col, width=1)
-
-    # Nose
-    ny = face_cy + int(HR * 0.30)
-    draw.arc([face_cx - int(HR * 0.12), ny, face_cx + int(HR * 0.14), ny + int(HR * 0.10)],
-             start=190, end=350, fill=MIRI_SKIN_SH, width=1)
-
-    # Mouth (WARM ATTENTION — gentle closed smile)
-    my = face_cy + int(HR * 0.54)
-    mw = int(HR * 0.32)
-    polyline(draw, [
-        (face_cx - mw, my + 2),
-        (face_cx - mw // 2, my),
-        (face_cx + mw // 2, my),
-        (face_cx + mw, my + 2),
-    ], LINE_DARK, width=2)
-
-    # Permanent blush (direct fill — simplified, no alpha composite needed at this scale)
-    for (bx, by) in [(face_cx - int(HR * 0.42), eye_y + int(HR * 0.14)),
-                     (face_cx + int(HR * 0.30), eye_y + int(HR * 0.14))]:
-        br = int(HR * 0.24)
-        blush_col = lerp_color(MIRI_SKIN, MIRI_BLUSH, 0.55)
-        draw.ellipse([bx - br, by - int(br * 0.6), bx + br, by + int(br * 0.6)],
-                     fill=blush_col)
-
-    # ── Shadow at feet (only when compositing directly onto BG) ────────────────
+    # Shadow at feet (only when compositing directly onto BG)
     if not transparent_layer:
         draw.ellipse([cx - int(HU * 0.55), ground_y - 4,
                       cx + int(HU * 0.55), ground_y + 10],
@@ -711,235 +473,40 @@ def draw_miri_character(img, draw, cx, ground_y, transparent_layer=False):
     return img, draw
 
 
-# ─ Luma ───────────────────────────────────────────────────────────────────────
-
-LUMA_HR = 46   # head radius
-LUMA_HU = int(LUMA_HR * 2)
-
 
 def draw_luma_character(img, draw, cx, ground_y, transparent_layer=False):
     """
-    Luma — ATTENTIVE CURIOSITY. Standing, 3/4 left (facing Miri and CRT).
-    Slight forward lean: she is being shown something and she is very interested.
-    Expression: FOCUSED DETERMINATION / attentive (eyes wide, eyebrows neutral-raised).
-    Height: 3.5 heads.
+    Luma via canonical char_luma renderer.
+    CURIOUS expression, facing left (toward Miri and CRT).
+    Height: 3.5 heads (LUMA_HU x 3.5).
+    C53: Replaced inline drawing with canonical char_luma.draw_luma() import.
     C52: transparent_layer=True skips foot shadow (handled by Wand compositing).
     """
-    HR = LUMA_HR
     HU = LUMA_HU
-
     total_h = int(HU * 3.5)
-    head_cy = ground_y - total_h + HR
-    head_cx = cx
 
-    # Forward lean: shift upper body left (toward Miri+CRT)
-    lean_dx = -int(HU * 0.06)
+    # Render via canonical module — CURIOUS expression, facing left (toward Miri/CRT)
+    # Mixed scene lighting: warm lamp from left, CRT cool spill from center-right
+    scene_lighting = {
+        "key_light_color": (130, 175, 160),   # CRT cool spill (Luma is on CRT side)
+        "key_light_dir": "left",
+        "ambient": (200, 180, 150),
+    }
+    scale = max(0.3, total_h / 400.0)  # char_luma: 1.0 = 400px at 2x
+    surface = _canonical_draw_luma(
+        expression="CURIOUS", scale=scale, facing="left",
+        scene_lighting=scene_lighting)
+    char_pil = _cairo_char_to_pil(surface, total_h)
 
-    # ── Body (hoodie with shoulder involvement) ─────────────────────────────────
-    torso_cx     = cx + lean_dx
-    torso_top_y  = head_cy + HR + int(HU * 0.08)
-    torso_bot_y  = head_cy + HR + int(HU * 1.10)
-    torso_w_half = int(HU * 0.44)
+    # Paste — anchor at foot position (cx, ground_y)
+    paste_x = cx - char_pil.width // 2
+    paste_y = ground_y - char_pil.height
+    img_rgba = img.convert("RGBA")
+    img_rgba.paste(char_pil, (paste_x, paste_y), char_pil)
+    img.paste(img_rgba.convert("RGB"))
+    draw = ImageDraw.Draw(img)
 
-    # C48: Shoulder displacement — Luma's left arm slightly raised (curious lean),
-    # right arm forward/outward toward CRT direction.
-    # Left arm dy: elbow at 0.40 HU below shoulder -> moderate raise
-    l_arm_dy = int(HU * 0.40) - int(HU * 0.08)  # elbow y relative to shoulder
-    l_sh_dy, l_sh_dx = _sf_shoulder_dy(-abs(int(HU * 0.12)), 0, mode="standard")
-    # Right arm: forward/outward
-    r_sh_dy, r_sh_dx = _sf_shoulder_dy(0, int(HU * 0.10), mode="extended")
-    sh_bump_w = int(HU * 0.06)  # hoodie fabric bunch width
-
-    # Hoodie torso — polyline with shoulder bumps
-    torso_pts = [
-        (torso_cx - torso_w_half - sh_bump_w, torso_top_y),              # outer left shoulder
-        (torso_cx - torso_w_half + l_sh_dx, torso_top_y + l_sh_dy),     # left deltoid peak (slight raise)
-        (torso_cx - int(torso_w_half * 0.3), torso_top_y),               # inner left shoulder
-        (torso_cx + int(torso_w_half * 0.3), torso_top_y),               # inner right shoulder
-        (torso_cx + torso_w_half + r_sh_dx, torso_top_y + r_sh_dy),     # right deltoid peak
-        (torso_cx + torso_w_half + sh_bump_w + r_sh_dx, torso_top_y),   # outer right shoulder
-        (torso_cx + torso_w_half, torso_bot_y),                           # bottom right
-        (torso_cx - torso_w_half, torso_bot_y),                           # bottom left
-    ]
-    draw.polygon(torso_pts, fill=LUMA_HOODIE, outline=LINE_DARK, width=2)
-
-    # Shadow (right side — CRT cool light from right, warm from left)
-    shadow_x = torso_cx - int(torso_w_half * 0.30)
-    draw.rectangle([torso_cx - torso_w_half + 2, torso_top_y + 4,
-                    shadow_x, torso_bot_y],
-                   fill=LUMA_HOODIE_SH)
-
-    # Hoodie kangaroo pocket
-    pock_y1 = torso_bot_y - int(HU * 0.30)
-    pock_y2 = torso_bot_y - int(HU * 0.04)
-    pock_x1 = torso_cx - int(torso_w_half * 0.55)
-    pock_x2 = torso_cx + int(torso_w_half * 0.55)
-    draw.rectangle([pock_x1, pock_y1, pock_x2, pock_y2],
-                   fill=LUMA_HOODIE_SH, outline=LINE_DARK, width=1)
-    draw.line([(torso_cx, pock_y1), (torso_cx, pock_y2)],
-              fill=LINE_DARK, width=1)
-
-    # ── Left arm (raised slightly — curious lean forward, one arm up) ─────────
-    la_shoulder = (torso_cx - torso_w_half, torso_top_y + int(HU * 0.08))
-    la_elbow    = (torso_cx - torso_w_half - int(HU * 0.28), torso_top_y + int(HU * 0.40))
-    la_hand     = (torso_cx - torso_w_half - int(HU * 0.14), torso_top_y + int(HU * 0.72))
-    polyline(draw, [la_shoulder, la_elbow, la_hand], LUMA_HOODIE, width=11)
-    polyline(draw, [la_shoulder, la_elbow, la_hand], LINE_DARK, width=2)
-    # Hand
-    draw.ellipse([la_hand[0] - 10, la_hand[1] - 9,
-                  la_hand[0] + 8, la_hand[1] + 8],
-                 fill=LUMA_SKIN, outline=LINE_DARK, width=2)
-
-    # ── Right arm (forward/outward — open, curious, toward CRT direction) ─────
-    ra_shoulder = (torso_cx + torso_w_half, torso_top_y + int(HU * 0.08))
-    ra_elbow    = (torso_cx + torso_w_half + int(HU * 0.10), torso_top_y + int(HU * 0.38))
-    ra_hand     = (torso_cx + torso_w_half - int(HU * 0.04), torso_top_y + int(HU * 0.72))
-    polyline(draw, [ra_shoulder, ra_elbow, ra_hand], LUMA_HOODIE, width=11)
-    polyline(draw, [ra_shoulder, ra_elbow, ra_hand], LINE_DARK, width=2)
-    draw.ellipse([ra_hand[0] - 9, ra_hand[1] - 9,
-                  ra_hand[0] + 9, ra_hand[1] + 8],
-                 fill=LUMA_SKIN, outline=LINE_DARK, width=2)
-
-    # ── Legs (column-wide, jeans) ─────────────────────────────────────────────
-    leg_top_y = torso_bot_y
-    leg_bot_y = ground_y
-    leg_hw    = int(HU * 0.15)
-
-    # Slight lean: shift legs right of torso center
-    leg_cx = cx + int(lean_dx * 0.3)
-    draw.rectangle([leg_cx - leg_hw * 2 - 3, leg_top_y,
-                    leg_cx - 2, leg_bot_y],
-                   fill=LUMA_JEANS, outline=LINE_DARK, width=1)
-    draw.rectangle([leg_cx + 2, leg_top_y,
-                    leg_cx + leg_hw * 2 + 3, leg_bot_y],
-                   fill=LUMA_JEANS, outline=LINE_DARK, width=1)
-    # Jeans shadow
-    draw.rectangle([leg_cx - leg_hw * 2 - 3, leg_top_y,
-                    leg_cx - leg_hw, leg_bot_y],
-                   fill=LUMA_JEANS_SH)
-
-    # Shoes
-    shoe_w = int(HU * 0.26)
-    shoe_h = int(HU * 0.11)
-    for sx in [leg_cx - leg_hw * 2 + int(HU * 0.02),
-               leg_cx + 2]:
-        draw.ellipse([sx - 2, ground_y - shoe_h,
-                      sx + shoe_w, ground_y + 4],
-                     fill=LUMA_SHOES, outline=LINE_DARK, width=1)
-
-    # ── Head ──────────────────────────────────────────────────────────────────
-    face_cx = head_cx + lean_dx - int(HR * 0.04)
-    face_cy = head_cy
-
-    # Neck
-    draw.rectangle([face_cx - int(HR * 0.18), face_cy + int(HR * 0.80),
-                    face_cx + int(HR * 0.18), face_cy + HR + int(HU * 0.10)],
-                   fill=LUMA_SKIN)
-
-    # Head circle (95% circular)
-    draw.ellipse([face_cx - HR, face_cy - HR,
-                  face_cx + HR, face_cy + HR],
-                 fill=LUMA_SKIN, outline=LINE_DARK, width=2)
-
-    # Chin shadow (slight)
-    draw.ellipse([face_cx - int(HR * 0.88), face_cy + int(HR * 0.5),
-                  face_cx + int(HR * 0.80), face_cy + HR],
-                 fill=LUMA_SKIN_SH)
-
-    # ── Hair (dark brown cloud, 5 curls) ──────────────────────────────────────
-    hair_top_y = face_cy - int(HR * 1.18)
-    # Main hair mass
-    draw.ellipse([face_cx - int(HR * 1.02), hair_top_y,
-                  face_cx + int(HR * 1.02), face_cy - int(HR * 0.32)],
-                 fill=LUMA_HAIR)
-
-    # Curl bumps (5 curls radiating top and sides)
-    curl_specs = [
-        (face_cx - int(HR * 0.72), face_cy - int(HR * 1.14), int(HR * 0.24)),
-        (face_cx - int(HR * 0.22), face_cy - int(HR * 1.22), int(HR * 0.26)),
-        (face_cx + int(HR * 0.30), face_cy - int(HR * 1.18), int(HR * 0.22)),
-        (face_cx + int(HR * 0.78), face_cy - int(HR * 0.96), int(HR * 0.20)),
-        (face_cx - int(HR * 0.95), face_cy - int(HR * 0.72), int(HR * 0.18)),
-    ]
-    for (ccx, ccy, cr) in curl_specs:
-        draw.ellipse([ccx - cr, ccy - cr, ccx + cr, ccy + cr], fill=LUMA_HAIR)
-
-    # Hair outline
-    draw.arc([face_cx - int(HR * 1.02), hair_top_y,
-              face_cx + int(HR * 1.02), face_cy - int(HR * 0.32)],
-             start=180, end=360, fill=LINE_DARK, width=1)
-
-    # ── Face features ─────────────────────────────────────────────────────────
-    # Eyebrows (thick graphic brows — raised/neutral, curious)
-    brow_y = face_cy - int(HR * 0.44)
-    bw     = int(HR * 0.30)
-    # Left brow (further from 3/4 center — slightly narrower)
-    draw.rectangle([face_cx - bw - 2, brow_y - 3,
-                    face_cx - 4, brow_y],
-                   fill=LUMA_HAIR)
-    # Right brow
-    draw.rectangle([face_cx + 6, brow_y - 3,
-                    face_cx + bw + 2, brow_y],
-                   fill=LUMA_HAIR)
-
-    # Eyes (ATTENTIVE — both open, slight left-facing gaze)
-    eye_y  = face_cy - int(HR * 0.10)
-    eye_rx = int(HR * 0.20)
-    eye_ry = int(HR * 0.16)
-
-    # Left eye
-    lex = face_cx - int(HR * 0.34)
-    draw.ellipse([lex - eye_rx, eye_y - eye_ry, lex + eye_rx, eye_y + eye_ry],
-                 fill=(250, 242, 222), outline=LINE_DARK, width=2)
-    draw.ellipse([lex - int(eye_rx * 0.58), eye_y - int(eye_ry * 0.58),
-                  lex + int(eye_rx * 0.58), eye_y + int(eye_ry * 0.58)],
-                 fill=LUMA_EYE_IRIS)
-    draw.ellipse([lex - int(eye_rx * 0.30), eye_y - int(eye_ry * 0.30),
-                  lex + int(eye_rx * 0.30), eye_y + int(eye_ry * 0.30)],
-                 fill=LINE_DARK)
-    draw.ellipse([lex - int(eye_rx * 0.48), eye_y - int(eye_ry * 0.42),
-                  lex - int(eye_rx * 0.24), eye_y - int(eye_ry * 0.12)],
-                 fill=SPEC_WHITE)
-
-    # Right eye (slightly smaller — 3/4 perspective)
-    rex = face_cx + int(HR * 0.26)
-    r_rx = int(eye_rx * 0.86)
-    draw.ellipse([rex - r_rx, eye_y - eye_ry, rex + r_rx, eye_y + eye_ry],
-                 fill=(250, 242, 222), outline=LINE_DARK, width=2)
-    draw.ellipse([rex - int(r_rx * 0.55), eye_y - int(eye_ry * 0.55),
-                  rex + int(r_rx * 0.55), eye_y + int(eye_ry * 0.55)],
-                 fill=LUMA_EYE_IRIS)
-    draw.ellipse([rex - int(r_rx * 0.28), eye_y - int(eye_ry * 0.28),
-                  rex + int(r_rx * 0.28), eye_y + int(eye_ry * 0.28)],
-                 fill=LINE_DARK)
-    draw.ellipse([rex - int(r_rx * 0.44), eye_y - int(eye_ry * 0.40),
-                  rex - int(r_rx * 0.20), eye_y - int(eye_ry * 0.12)],
-                 fill=SPEC_WHITE)
-
-    # Right eye — canonical upper lid drop (+6px per spec)
-    draw.line([(rex - r_rx, eye_y - eye_ry + 6), (rex + r_rx, eye_y - eye_ry + 6)],
-              fill=LINE_DARK, width=1)
-
-    # Nose (apostrophe)
-    ny = face_cy + int(HR * 0.22)
-    draw.arc([face_cx, ny - 2, face_cx + int(HR * 0.12), ny + int(HR * 0.08)],
-             start=180, end=360, fill=LUMA_SKIN_SH, width=1)
-
-    # Mouth (slight open smile — attentive curiosity, 'oh?' expression)
-    my = face_cy + int(HR * 0.44)
-    mw = int(HR * 0.30)
-    polyline(draw, [
-        (face_cx - mw, my + 4),
-        (face_cx - mw // 2, my),
-        (face_cx + mw // 2, my),
-        (face_cx + mw, my + 4),
-    ], LINE_DARK, width=2)
-    # Slight open — lower lip hint
-    draw.arc([face_cx - int(mw * 0.6), my,
-              face_cx + int(mw * 0.6), my + int(HR * 0.14)],
-             start=0, end=180, fill=LUMA_SKIN_SH, width=1)
-
-    # ── Shadow at feet (only when compositing directly onto BG) ────────────────
+    # Shadow at feet (only when compositing directly onto BG)
     if not transparent_layer:
         draw.ellipse([cx - int(HU * 0.52), ground_y - 4,
                       cx + int(HU * 0.52), ground_y + 10],
