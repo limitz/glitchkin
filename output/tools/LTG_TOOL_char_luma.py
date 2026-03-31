@@ -788,7 +788,8 @@ def _draw_luma_on_context(ctx, cx, ground_y, char_h, expression, spec, scale=1.0
 
     hip_tilt_px = spec["hip_tilt"] * s * 0.8
     shoulder_tilt_px = spec["shoulder_tilt"] * s * 0.8
-    sh_w = head_r * 0.80
+    # Side view: torso is seen near-edge-on. ~50% of front view width (front=0.95).
+    sh_w = head_r * 0.50
 
     hoodie, hoodie_sh = HOODIE_COLORS.get(expression, (HOODIE_SURPRISED, HOODIE_SURPRISED_SH))
 
@@ -903,7 +904,8 @@ def _draw_luma_on_context(ctx, cx, ground_y, char_h, expression, spec, scale=1.0
 
     # ══ TORSO ══
     w_top = sh_w
-    w_bot = head_r * 0.55
+    # Side profile: hips also foreshortened. w_bot proportional to narrower sh_w.
+    w_bot = head_r * 0.40
     attach = _draw_bean_torso(ctx, torso_cx, torso_cy, w_top, w_bot, torso_h,
                               torso_lean, hip_tilt_px, shoulder_tilt_px)
     ls_pt, rs_pt, lh_pt, rh_pt = attach
@@ -957,13 +959,44 @@ def _draw_luma_on_context(ctx, cx, ground_y, char_h, expression, spec, scale=1.0
         ctx.rectangle(px_x, px_y, psz, psz)
         _set_color(ctx, pc); ctx.fill()
 
-    # ══ ARMS ══
+    # ══ ARMS (side view — foreshortened, hand stays at hip/waist height) ══
+    # Arms in side view are drawn inline (not via _draw_arms dispatch which is
+    # tuned for front view). In profile, arms hang roughly parallel to the body.
+    # Near arm (forward-of-body): hangs with slight forward bend; hand at ~hip height.
+    # Far arm (behind body): slightly bent back; hand at ~waist height.
     arm_w_top = head_r * 0.14
     arm_w_bot = head_r * 0.10
     hand_r_s = head_r * 0.12
-    _draw_arms(ctx, expression, spec, ls_pt, rs_pt, head_cx, head_cy, head_r,
-               torso_cx, torso_cy, s, hoodie, lw_major, lw_minor, lw_accent,
-               arm_w_top, arm_w_bot, hand_r_s)
+
+    # Near arm attaches at rs_pt (right/forward side from viewer in right-facing profile)
+    na_shoulder = (rs_pt[0] + 6*s, rs_pt[1] + 5*s)
+    na_elbow    = (na_shoulder[0] + 16*s, na_shoulder[1] + 28*s)
+    na_hand     = (na_elbow[0] + 8*s,    na_elbow[1]    + 28*s)
+    near_arm_pts = (_bezier_points(na_shoulder,
+                                   (na_shoulder[0] + 4*s, na_shoulder[1] + 10*s),
+                                   (na_elbow[0] - 4*s, na_elbow[1] - 8*s), na_elbow, steps=25) +
+                    _bezier_points(na_elbow,
+                                   (na_elbow[0] + 4*s, na_elbow[1] + 8*s),
+                                   (na_hand[0] - 3*s, na_hand[1] - 4*s), na_hand, steps=25)[1:])
+    _draw_unified_arm(ctx, near_arm_pts, arm_w_top, arm_w_bot, hoodie, LINE_COL, lw_major)
+    _draw_ellipse_path(ctx, na_hand[0], na_hand[1], hand_r_s, hand_r_s * 0.80)
+    _set_color(ctx, SKIN); ctx.fill_preserve()
+    _set_color(ctx, LINE_COL); ctx.set_line_width(lw_minor); ctx.stroke()
+
+    # Far arm attaches at ls_pt (left/back side of torso)
+    fa_shoulder = (ls_pt[0] - 6*s, ls_pt[1] + 5*s)
+    fa_elbow    = (fa_shoulder[0] - 18*s, fa_shoulder[1] + 24*s)
+    fa_hand     = (fa_elbow[0] + 6*s,    fa_elbow[1]    + 26*s)
+    far_arm_pts = (_bezier_points(fa_shoulder,
+                                  (fa_shoulder[0] - 6*s, fa_shoulder[1] + 8*s),
+                                  (fa_elbow[0] + 4*s, fa_elbow[1] - 6*s), fa_elbow, steps=25) +
+                   _bezier_points(fa_elbow,
+                                  (fa_elbow[0] - 4*s, fa_elbow[1] + 8*s),
+                                  (fa_hand[0] + 3*s, fa_hand[1] - 4*s), fa_hand, steps=25)[1:])
+    _draw_unified_arm(ctx, far_arm_pts, arm_w_top, arm_w_bot, hoodie, LINE_COL, lw_major)
+    _draw_ellipse_path(ctx, fa_hand[0], fa_hand[1], hand_r_s * 0.85, hand_r_s * 0.70)
+    _set_color(ctx, SKIN); ctx.fill_preserve()
+    _set_color(ctx, LINE_COL); ctx.set_line_width(lw_minor); ctx.stroke()
 
     # ══ NECK ══
     neck_top_y = head_cy + head_r * 0.95
@@ -1028,24 +1061,25 @@ def _draw_luma_on_context(ctx, cx, ground_y, char_h, expression, spec, scale=1.0
     _set_color(ctx, LINE_COL); ctx.stroke()
 
     # ── Profile nose bump (protrudes from face silhouette on +x side) ──
-    nose_x_base = head_rx * 0.82   # near the face edge
+    # nose_x_base is anchored AT the face edge so the bump protrudes clearly outside.
+    nose_x_base = head_rx * 0.94   # start at face edge (not inside)
     nose_y = head_r * 0.18         # slightly above mid-face
-    # Nose: a bezier curve bump protruding to the right
+    # Nose: a bezier curve bump protruding to the right, clearly outside head oval
     ctx.new_path()
     ctx.move_to(nose_x_base, nose_y - 8*s)
-    ctx.curve_to(nose_x_base + 12*s, nose_y - 6*s,
-                 nose_x_base + 14*s, nose_y + 4*s,
-                 nose_x_base + 8*s, nose_y + 10*s)
-    ctx.curve_to(nose_x_base + 4*s, nose_y + 14*s,
-                 nose_x_base, nose_y + 12*s,
+    ctx.curve_to(nose_x_base + 14*s, nose_y - 6*s,
+                 nose_x_base + 18*s, nose_y + 4*s,
+                 nose_x_base + 10*s, nose_y + 11*s)
+    ctx.curve_to(nose_x_base + 5*s, nose_y + 16*s,
+                 nose_x_base, nose_y + 13*s,
                  nose_x_base - 2*s, nose_y + 8*s)
     _set_color(ctx, SKIN); ctx.fill_preserve()
     _set_color(ctx, LINE_COL); ctx.set_line_width(lw_minor); ctx.stroke()
     # Nostril shadow
     ctx.new_path()
-    ctx.move_to(nose_x_base + 4*s, nose_y + 10*s)
-    ctx.curve_to(nose_x_base + 2*s, nose_y + 13*s,
-                 nose_x_base - 1*s, nose_y + 12*s,
+    ctx.move_to(nose_x_base + 5*s, nose_y + 11*s)
+    ctx.curve_to(nose_x_base + 2*s, nose_y + 14*s,
+                 nose_x_base - 1*s, nose_y + 13*s,
                  nose_x_base - 2*s, nose_y + 8*s)
     _set_color(ctx, SKIN_SH); ctx.set_line_width(lw_accent); ctx.stroke()
 
@@ -1138,22 +1172,24 @@ def _draw_luma_on_context(ctx, cx, ground_y, char_h, expression, spec, scale=1.0
 
     # ── Profile mouth ──
     mouth_y = head_r * 0.42
-    mouth_w = head_rx * 0.28
-    mouth_x_base = head_rx * 0.30   # mouth positioned toward face side
+    mouth_w = head_rx * 0.26
+    # mouth_x_base: anchor on the face surface near the silhouette edge.
+    # In profile the mouth sits close to the face edge, not at 30% of head_rx.
+    mouth_x_base = head_rx * 0.62   # mouth near the face side (+x profile edge)
     mouth_type = spec["mouth"]
     if mouth_type == "gentle_smile":
         ctx.new_path()
-        ctx.move_to(mouth_x_base - mouth_w * 0.6, mouth_y + 1*s)
+        ctx.move_to(mouth_x_base - mouth_w * 0.5, mouth_y + 1*s)
         ctx.curve_to(mouth_x_base - mouth_w * 0.1, mouth_y - 5*s,
-                     mouth_x_base + mouth_w * 0.2, mouth_y - 4*s,
-                     mouth_x_base + mouth_w * 0.5, mouth_y + 1*s)
+                     mouth_x_base + mouth_w * 0.1, mouth_y - 4*s,
+                     mouth_x_base + mouth_w * 0.4, mouth_y + 1*s)
         _set_color(ctx, LINE_COL); ctx.set_line_width(lw_minor); ctx.set_line_cap(cairo.LINE_CAP_ROUND); ctx.stroke()
     elif mouth_type == "firm_line":
         ctx.new_path()
-        ctx.move_to(mouth_x_base - mouth_w * 0.5, mouth_y)
+        ctx.move_to(mouth_x_base - mouth_w * 0.4, mouth_y)
         ctx.curve_to(mouth_x_base, mouth_y - 2*s,
-                     mouth_x_base + mouth_w * 0.3, mouth_y - 1*s,
-                     mouth_x_base + mouth_w * 0.5, mouth_y + 1*s)
+                     mouth_x_base + mouth_w * 0.2, mouth_y - 1*s,
+                     mouth_x_base + mouth_w * 0.4, mouth_y + 1*s)
         _set_color(ctx, LINE_COL); ctx.set_line_width(lw_major); ctx.set_line_cap(cairo.LINE_CAP_ROUND); ctx.stroke()
     elif mouth_type == "open_o":
         _draw_ellipse_path(ctx, mouth_x_base, mouth_y + 2*s, mouth_w * 0.35, head_r * 0.10)
@@ -1639,7 +1675,8 @@ def _draw_luma_threequarter(ctx, cx, ground_y, char_h, expression, spec, scale=1
 
     hip_tilt_px = spec["hip_tilt"] * s * 0.6
     shoulder_tilt_px = spec["shoulder_tilt"] * s * 0.6
-    sh_w = head_r * 0.88  # slightly wider than side, less than front
+    # 3/4 view torso: foreshortened, ~70-75% of front view width (front=0.95).
+    sh_w = head_r * 0.70
 
     head_cy = ground_y - char_h + head_r
     neck_bot_y = head_cy + head_r + head_r * 0.25
@@ -1743,7 +1780,8 @@ def _draw_luma_threequarter(ctx, cx, ground_y, char_h, expression, spec, scale=1
 
     # ══ TORSO ══
     w_top = sh_w
-    w_bot = head_r * 0.58
+    # 3/4 view: hips also foreshortened. w_bot proportional to narrower sh_w.
+    w_bot = head_r * 0.48
     attach = _draw_bean_torso(ctx, torso_cx, torso_cy, w_top, w_bot, torso_h,
                               torso_lean, hip_tilt_px, shoulder_tilt_px)
     ls_pt, rs_pt, lh_pt, rh_pt = attach
@@ -1789,13 +1827,44 @@ def _draw_luma_threequarter(ctx, cx, ground_y, char_h, expression, spec, scale=1
         ctx.rectangle(px_x, px_y, psz, psz)
         _set_color(ctx, pc); ctx.fill()
 
-    # ══ ARMS (3/4 — near arm more prominent, far arm partially hidden) ══
+    # ══ ARMS (3/4 — inline for correct height; near arm prominent, far arm partially hidden) ══
+    # Arms drawn inline (not via _draw_arms dispatch which is tuned for front view).
+    # In 3/4 view, arms hang down naturally with hands at hip/waist height.
+    # Near arm (rs_pt = right/near shoulder): hangs relaxed with slight forward bend.
+    # Far arm (ls_pt = left/far shoulder): partially behind body, bent back.
     arm_w_top = head_r * 0.14
     arm_w_bot = head_r * 0.10
     hand_r_s = head_r * 0.12
-    _draw_arms(ctx, expression, spec, ls_pt, rs_pt, head_cx, head_cy, head_r,
-               torso_cx, torso_cy, s, hoodie, lw_major, lw_minor, lw_accent,
-               arm_w_top, arm_w_bot, hand_r_s)
+
+    # Near arm (rs_pt side, prominent)
+    na_shoulder = (rs_pt[0] + 6*s, rs_pt[1] + 5*s)
+    na_elbow    = (na_shoulder[0] + 18*s, na_shoulder[1] + 26*s)
+    na_hand     = (na_elbow[0] + 10*s,   na_elbow[1]    + 26*s)
+    near_arm_pts = (_bezier_points(na_shoulder,
+                                   (na_shoulder[0] + 5*s, na_shoulder[1] + 10*s),
+                                   (na_elbow[0] - 4*s, na_elbow[1] - 8*s), na_elbow, steps=25) +
+                    _bezier_points(na_elbow,
+                                   (na_elbow[0] + 4*s, na_elbow[1] + 8*s),
+                                   (na_hand[0] - 3*s, na_hand[1] - 4*s), na_hand, steps=25)[1:])
+    _draw_unified_arm(ctx, near_arm_pts, arm_w_top, arm_w_bot, hoodie, LINE_COL, lw_major)
+    _draw_ellipse_path(ctx, na_hand[0], na_hand[1], hand_r_s, hand_r_s * 0.80)
+    _set_color(ctx, SKIN); ctx.fill_preserve()
+    _set_color(ctx, LINE_COL); ctx.set_line_width(lw_minor); ctx.stroke()
+
+    # Far arm (ls_pt side, partially behind body, drawn at reduced opacity/width)
+    fa_shoulder = (ls_pt[0] - 5*s, ls_pt[1] + 5*s)
+    fa_elbow    = (fa_shoulder[0] - 16*s, fa_shoulder[1] + 22*s)
+    fa_hand     = (fa_elbow[0] + 4*s,    fa_elbow[1]    + 24*s)
+    far_arm_pts = (_bezier_points(fa_shoulder,
+                                  (fa_shoulder[0] - 5*s, fa_shoulder[1] + 8*s),
+                                  (fa_elbow[0] + 4*s, fa_elbow[1] - 6*s), fa_elbow, steps=25) +
+                   _bezier_points(fa_elbow,
+                                  (fa_elbow[0] - 3*s, fa_elbow[1] + 7*s),
+                                  (fa_hand[0] + 3*s, fa_hand[1] - 4*s), fa_hand, steps=25)[1:])
+    _draw_unified_arm(ctx, far_arm_pts, arm_w_top * 0.85, arm_w_bot * 0.85, hoodie, LINE_COL, lw_major)
+    _draw_ellipse_path(ctx, fa_hand[0], fa_hand[1], hand_r_s * 0.80, hand_r_s * 0.65)
+    _set_color(ctx, SKIN); ctx.fill_preserve()
+    _set_color(ctx, LINE_COL); ctx.set_line_width(lw_minor); ctx.stroke()
 
     # ══ NECK ══
     neck_top_y = head_cy + head_r * 0.95
@@ -2334,7 +2403,8 @@ def _draw_luma_side_l(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
 
     hip_tilt_px = spec_l["hip_tilt"] * s * 0.8
     shoulder_tilt_px = spec_l["shoulder_tilt"] * s * 0.8
-    sh_w = head_r * 0.80
+    # Side-L is same viewing angle as SIDE — match the foreshortened torso width.
+    sh_w = head_r * 0.50
 
     head_cy = ground_y - char_h + head_r
     neck_bot_y = head_cy + head_r + head_r * 0.25
@@ -2448,7 +2518,8 @@ def _draw_luma_side_l(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
 
     # ══ TORSO ══
     w_top = sh_w
-    w_bot = head_r * 0.55
+    # Side-L is same viewing angle as SIDE — match foreshortened w_bot.
+    w_bot = head_r * 0.40
     attach = _draw_bean_torso(ctx, torso_cx, torso_cy, w_top, w_bot, torso_h,
                               torso_lean, hip_tilt_px, shoulder_tilt_px)
     ls_pt, rs_pt, lh_pt, rh_pt = attach

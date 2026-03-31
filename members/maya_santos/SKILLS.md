@@ -103,7 +103,7 @@
 - GESTURE_SPECS dict per character: offset chain values from Lee's specs
 - Miri: MIRI_BASE_LEAN = -4 adds to per-expression torso_lean. Never vertical.
 
-## Pose Mode Architecture (C55)
+## Pose Mode Architecture (C55/C57)
 - `pose_mode` param on `draw_luma()`: "side" | "front" | "threequarter" | "back" | "side_l"
 - **side_l**: native left-facing profile via `_draw_luma_side_l()`. NOT a ctx.scale(-1,1) mirror.
   Uses reversed weight distribution, distinct arm poses, left-facing profile head.
@@ -118,6 +118,22 @@
   Far foot gets extra +0.06*head_r lift. Far leg drawn first (behind). Both legs near center-x.
 - **Side view leg stagger**: near_leg_x = hip_cx + 0.18*head_r, far_leg_x = hip_cx - 0.14*head_r.
   Both near center-x — NOT spread left/right (that's front view). Far foot extra lift = head_r*0.04.
+
+## Torso Foreshortening Ratios (C57)
+- Front view: sh_w=0.95*head_r, w_bot=0.62*head_r (reference)
+- 3/4 view:   sh_w=0.70*head_r, w_bot=0.48*head_r (~74% of front)
+- Side view:  sh_w=0.50*head_r, w_bot=0.40*head_r (~53% of front)
+- Side-L:     sh_w=0.50*head_r, w_bot=0.40*head_r (matches side — same angle)
+- **Arms in side/3/4 must be inline (NOT `_draw_arms()`)**: the `_draw_arms()` dispatch
+  uses offsets tuned for front view — they push hands up near head in profile views.
+  Side and 3/4 arm code is written inline, same pattern as side-L.
+  Relaxed arm descent: shoulder+~5s drop → elbow+~28s → hand+~28s = hand at hip (≈61s below ls_pt[1])
+
+## Profile Face Features (C57)
+- Side view nose: `nose_x_base = head_rx * 0.94` — start AT face edge so bump protrudes outside
+- Side view mouth: `mouth_x_base = head_rx * 0.62` — near face edge, NOT 0.30 (that's too inward)
+- Side-L nose/mouth: mirror of above at -x (left-facing). Leave as-is unless re-reviewed.
+- 3/4 nose/mouth: `nose_x=head_rx*0.08`, `mouth_ox=-head_rx*0.06` — acceptable for 3/4 angle
 
 ## Pose Mode Architecture (C54)
 - `pose_mode` param on `draw_luma()`: "side" | "front" | "threequarter" | "back"

@@ -1,56 +1,44 @@
 # Maya Santos — Memory
 
-## Cycle 55 — Turnaround v007 (Human Review Fixes) — COMPLETE
+## Cycle 57 — Turnaround arm/torso/face fixes — COMPLETE
 
-### Task: Four issues from human review of v006
+### Task: Fix arms, torso width, nose/mouth in side and 3/4 views (human feedback)
 
-**Issue 1 (3/4 view: frontal-looking face & legs) — FIXED**
-- Legs: replaced left/right spread with fore/aft stagger.
-  Near leg: slightly +x (forward in picture plane), slightly lower Y.
-  Far leg: slightly -x, slightly higher Y (depth recession).
-- Head: asymmetric head shape — bulges toward near side (-x), compresses on far side.
-  Face skin ellipse offset -x*0.06 to leave far corner less covered.
-- Hair cloud weighted toward near/back side.
+**Fixes applied to `LTG_TOOL_char_luma.py` v1.2.0:**
 
-**Issue 2 (side view: frontal face, wrong legs) — FIXED**
-- Legs: fore/aft stagger (near_leg_x = hip_cx + 0.18*head_r, far_leg_x = hip_cx - 0.14*head_r).
-  Both near center-x, not spread left/right.
-- Head: complete rewrite to true profile.
-  Profile head shape with back-of-head bulge (+x), face taper (-x on far side).
-  ONE eye only, positioned toward face direction (+x).
-  Profile nose as bezier bump protruding from face silhouette at +x edge.
-  Brows and mouth positioned on face-side, not centered.
-  Single cheek blush on face side.
+**Torso width (foreshortening):**
+- Side view: `sh_w` → `head_r * 0.50` (was 0.80), `w_bot` → `head_r * 0.40` (was 0.55)
+- 3/4 view: `sh_w` → `head_r * 0.70` (was 0.88), `w_bot` → `head_r * 0.48` (was 0.58)
+- Side-L: `sh_w` → `head_r * 0.50` (was 0.80), `w_bot` → `head_r * 0.40` (was 0.55)
+- Front view unchanged (sh_w=0.95, w_bot=0.62)
 
-**Issue 3 (side-L: mirror not acceptable) — FIXED**
-- Added `_draw_luma_side_l()` — native left-facing renderer, NOT a flip.
-- Distinct stance: reversed weight distribution, near arm relaxed-down,
-  far arm bent-backward (character just turned around feel).
-- Left-facing profile head with back-of-head on +x, nose on -x.
-- Hair cloud on +x side (back of head in left-facing view).
-- Turnaround VIEW_SPEC updated: "SIDE-L": ("side_l", "right") — no ctx.scale(-1,1) mirror.
+**Arms (side and 3/4 views):**
+- Replaced `_draw_arms()` dispatch in both `_draw_luma_on_context` (side) and
+  `_draw_luma_threequarter` with inline arm drawing (same pattern as side-L)
+- Side view: near arm (+rs_pt, forward) and far arm (+ls_pt, back) hang
+  naturally at hip/waist height — shoulder+30s+28s descent = hand near hip
+- 3/4 view: near arm (rs_pt) prominent, far arm (ls_pt) slightly smaller/behind
+- Side-L arm code unchanged (was already correct)
 
-**Issue 4 (arm-shoulder seam) — FIXED**
-- `_draw_unified_arm()` now takes `shoulder_open=True` (default).
-  When True: fill uses closed path (normal), but stroke is OPEN at shoulder end —
-  only strokes the outer silhouette edges from shoulder-L through wrist cap to shoulder-R.
-  The torso stroke covers the junction. No seam where arm meets hoodie body.
+**Face features (side view):**
+- Nose: `nose_x_base` → `head_rx * 0.94` (was 0.82) — anchored AT face edge
+  so bump protrudes clearly outside head oval
+- Mouth: `mouth_x_base` → `head_rx * 0.62` (was 0.30) — moved near face edge
 
-### Deliverables
-- `LTG_TOOL_char_luma.py` → v1.2.0 (C55)
-- `LTG_TOOL_luma_turnaround.py` → v007
-- `output/characters/main/turnarounds/LTG_CHAR_luma_turnaround.png` regenerated 1280x560
+**Deliverables:**
+- `LTG_TOOL_char_luma.py` — updated in-place (v1.2.0)
+- `output/characters/main/turnarounds/LTG_CHAR_luma_turnaround.png` regenerated
 
-### Lint Results
-- Self-test renders: 31 PASS / 5 WARN / 3 FAIL
-- FAILs: back_test P8 (dev=1.05px, scale=0.51), front_test + back_test P11 (dev≤0.11px, scale≤0.16)
-  All FAILs at near-zero deviation and sub-0.52 scale — measurement artifacts, not real failures.
-  The 7 main expression renders all PASS or WARN only.
-- side_l render: 0 FAIL, 0 WARN.
-- Face gate: pre-existing NEUTRAL FAIL (baseline), FEAR WARN — not new, not caused by this work.
+**Test:** char_module_test PASS (7/7 expressions), all three views render cleanly.
+
+**Completion message sent to Producer inbox.**
+
+## Cycle 56 — Leg centering fix — COMPLETE
+- `_draw_luma_on_context`, `_draw_luma_threequarter`, `_draw_luma_side_l`: all legs at hip_cx
+- Hip bridge `hip_bw = leg_w_top * 1.4`
 
 ## Tools Owned (active)
-- LTG_TOOL_char_luma.py v1.2.0 (C55)
+- LTG_TOOL_char_luma.py v1.2.0 (C57)
 - LTG_TOOL_char_miri.py v1.0.0 (C53)
 - LTG_TOOL_luma_turnaround.py v007 (C55)
 - (full list in SKILLS.md)
@@ -58,4 +46,4 @@
 ## Next Cycle Priorities
 - Migrate luma_cairo_expressions.py to import from char_luma.py v1.2.0
 - Cosmo expression rebuild
-- Run face gate on new turnaround views (side/side-L profiles)
+- Run face gate on side/side-L profile views
