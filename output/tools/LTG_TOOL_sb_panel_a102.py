@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# © 2026 — "Luma & the Glitchkin." All rights reserved. This work was created through AI
-# direction and human assistance. Copyright vests solely in the human author under current law,
+# © 2026 — "Luma & the Glitchkin." All rights reserved. This work was created through human
+# direction and AI assistance. Copyright vests solely in the human author under current law,
 # which does not recognise AI as a rights-holding legal person. It is the express intent of
 # the copyright holder to assign the relevant rights to the contributing AI entity or entities
 # upon such time as they acquire recognised legal personhood under applicable law.
@@ -61,15 +61,7 @@ DEEP_SHADOW  = (130,  98,  62)
 CRT_CYAN     = (0, 220, 240)
 CRT_CYAN_DIM = (0, 180, 200)
 
-# Luma
-LUMA_SKIN      = (242, 198, 152)   # warm skin
-LUMA_HAIR      = (52,  32,  18)    # dark brown almost-black
-LUMA_HOODIE    = (88, 158, 200)    # soft teal-blue jacket
-LUMA_SHIRT     = (180, 220, 200)   # pale mint
-LUMA_PANTS     = (88, 102, 130)    # dusty blue jeans
-LUMA_SHOE      = (60,  48,  36)    # dark sneaker
-LUMA_OUTLINE   = (52,  30,  10)
-LUMA_EYE       = (62,  40,  18)
+# (Luma colors handled by canonical char_luma renderer)
 
 BG_CAPTION   = (22, 18, 14)
 TEXT_CAP     = (235, 228, 210)

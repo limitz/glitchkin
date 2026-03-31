@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# © 2026 — "Luma & the Glitchkin." All rights reserved. This work was created through AI
-# direction and human assistance. Copyright vests solely in the human author under current law,
+# © 2026 — "Luma & the Glitchkin." All rights reserved. This work was created through human
+# direction and AI assistance. Copyright vests solely in the human author under current law,
 # which does not recognise AI as a rights-holding legal person. It is the express intent of
 # the copyright holder to assign the relevant rights to the contributing AI entity or entities
 # upon such time as they acquire recognised legal personhood under applicable law.
@@ -73,19 +73,8 @@ MONITOR_SCR  = (20, 100, 140)    # teal screen glow
 MONITOR_GLOW = (0, 160, 200)
 EQUIP_COL    = (50, 50, 60)
 
-# Cosmo colors (background — slightly muted)
-COSMO_SKIN   = (160, 112, 68)
-COSMO_HAIR   = (14, 10, 6)
-COSMO_SHIRT  = (70, 90, 160)
-COSMO_PANTS  = (38, 52, 95)
-COSMO_OUTLINE= (28, 18, 8)
-
-# Luma colors (FG — brighter, warmer)
-LUMA_SKIN    = (210, 142, 96)
-LUMA_HAIR    = (22, 14, 8)
-LUMA_JACKET  = (190, 80, 50)     # warm red jacket — stands out in doorway
-LUMA_PANTS   = (60, 80, 120)
-LUMA_OUTLINE = (42, 28, 14)
+# (Cosmo colors handled by canonical char_cosmo renderer)
+# (Luma colors handled by canonical char_luma renderer)
 
 # Doorway
 DOOR_FRAME   = (60, 48, 32)
@@ -327,18 +316,21 @@ def _composite_char(base_img, char_pil, cx, cy):
 def draw_cosmo_bg(draw, img, mon_cx, desk_y_top):
     """Cosmo at desk — canonical renderer."""
     scale = 0.8
-    surface = draw_cosmo(expression="SKEPTICAL", scale=scale, facing="front")
+    surface, _geom = draw_cosmo(expression="SKEPTICAL", scale=scale, facing="front")
     char_pil = _char_to_pil(surface)
+    cosmo_cy = desk_y_top - 10
     if char_pil.height > 0:
         target_h = int(desk_y_top * 0.6)
         aspect = char_pil.width / char_pil.height
         new_w = int(target_h * aspect)
         char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
-    _composite_char(img, char_pil, mon_cx, desk_y_top - char_pil.height // 2 - 10)
+        cosmo_cy = desk_y_top - char_pil.height // 2 - 10
+    _composite_char(img, char_pil, mon_cx, cosmo_cy)
+    return mon_cx, cosmo_cy - char_pil.height // 2
 
 
 def draw_doorway_and_luma(draw, img):
-    """Luma in doorway — canonical renderer."""
+    """Luma in doorway — canonical renderer. Returns (draw, luma_cx, luma_lean, luma_head_cy)."""
     # Draw doorway frame
     door_cx = int(PW * 0.18)
     door_top = int(DRAW_H * 0.15)
@@ -351,12 +343,19 @@ def draw_doorway_and_luma(draw, img):
     scale = 0.35
     surface = _draw_luma_canonical(expression="CURIOUS", scale=scale, facing="right")
     char_pil = _char_to_pil(surface)
+    luma_cy = door_bottom - 5
     if char_pil.height > 0:
         target_h = int((door_bottom - door_top) * 0.7)
         aspect = char_pil.width / char_pil.height
         new_w = int(target_h * aspect)
         char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
-    _composite_char(img, char_pil, door_cx, door_bottom - char_pil.height // 2 - 5)
+        luma_cy = door_bottom - char_pil.height // 2 - 5
+    _composite_char(img, char_pil, door_cx, luma_cy)
+    # Return values for annotation positioning
+    luma_cx = door_cx
+    luma_lean = 10  # slight lean into room
+    luma_head_cy = luma_cy - char_pil.height // 2 + 10
+    return draw, luma_cx, luma_lean, luma_head_cy
 
 
 def make_panel():

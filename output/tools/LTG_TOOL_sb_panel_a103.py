@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# © 2026 — "Luma & the Glitchkin." All rights reserved. This work was created through AI
-# direction and human assistance. Copyright vests solely in the human author under current law,
+# © 2026 — "Luma & the Glitchkin." All rights reserved. This work was created through human
+# direction and AI assistance. Copyright vests solely in the human author under current law,
 # which does not recognise AI as a rights-holding legal person. It is the express intent of
 # the copyright holder to assign the relevant rights to the contributing AI entity or entities
 # upon such time as they acquire recognised legal personhood under applicable law.
@@ -55,15 +55,7 @@ BG_DARK      = (24, 18, 12)     # very dark room — night / pre-dawn
 BG_WALL      = (34, 26, 18)
 FLOOR_DARK   = (28, 22, 14)
 
-# Luma
-LUMA_SKIN        = (242, 198, 152)
-LUMA_SKIN_DARK   = (200, 155, 110)  # shadow side of face
-LUMA_HAIR        = (52, 32, 18)
-LUMA_HOODIE      = (72, 140, 185)
-LUMA_OUTLINE     = (42, 22, 8)
-LUMA_EYE_WHITE   = (245, 242, 235)
-LUMA_EYE_IRIS    = (62, 40, 18)
-LUMA_EYE_PUPIL   = (14, 8, 4)
+# (Luma colors handled by canonical char_luma renderer)
 
 # CRT glow (amber-green — the CRT screen off-frame lower-left)
 CRT_AMBER_GREEN  = (160, 220, 90)   # amber-green screen glow

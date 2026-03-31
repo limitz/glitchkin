@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# © 2026 — "Luma & the Glitchkin." All rights reserved. This work was created through AI
-# direction and human assistance. Copyright vests solely in the human author under current law,
+# © 2026 — "Luma & the Glitchkin." All rights reserved. This work was created through human
+# direction and AI assistance. Copyright vests solely in the human author under current law,
 # which does not recognise AI as a rights-holding legal person. It is the express intent of
 # the copyright holder to assign the relevant rights to the contributing AI entity or entities
 # upon such time as they acquire recognised legal personhood under applicable law.
@@ -21,12 +21,6 @@ Camera: Eye-level (child height). Very similar to A1-03 setup but now Byte is
 clearly visible on screen — full character reveal on screen.
 
 Luma expression: SURPRISED (wide eyes, jaw slightly dropped, leaning back slightly
-try:
-    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
-except ImportError:
-    import pathlib
-    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
-    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from pure reflex — she was leaning in a moment ago, now she recoils an inch).
 
 Byte (on screen): default glow (cyan/teal), slightly indignant expression —
@@ -36,6 +30,12 @@ small body on the screen (he's at 2/3 body reveal in the lower screen area).
 Arc: SURPRISED — first contact. "Wait — that looked back at me."
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFont
 import math, random, os
 import sys
@@ -57,13 +57,7 @@ BG_DARK      = (28, 22, 16)
 FLOOR_DARK   = (36, 28, 20)
 LINE_DARK    = (100, 72, 40)
 
-# Luma
-LUMA_SKIN      = (242, 198, 152)
-LUMA_HAIR      = (52,  32,  18)
-LUMA_HOODIE    = (88, 158, 200)
-LUMA_PANTS     = (88, 102, 130)
-LUMA_OUTLINE   = (52,  30,  10)
-LUMA_EYE       = (62,  40,  18)
+# (Luma colors handled by canonical char_luma renderer)
 
 # TV
 TV_BODY      = (55, 48, 38)
@@ -73,13 +67,7 @@ CRT_STATIC1  = (130, 140, 128)
 CRT_CYAN     = (0, 240, 255)
 CRT_GLOW     = (0, 210, 230)
 
-# Byte — digital character on screen
-BYTE_BODY    = (0, 185, 210)    # teal/cyan body
-BYTE_OUTLINE = (0, 120, 150)
-BYTE_EYE_W   = (200, 240, 245) # sclera — digital white
-BYTE_PUPIL   = (0, 50, 80)
-BYTE_GLOW    = (0, 240, 255)   # electric cyan glow
-BYTE_PIXEL   = (0, 255, 255)   # bright pixel accents
+# (Byte colors handled by canonical char_byte renderer)
 
 BG_CAPTION = (22, 18, 14)
 TEXT_CAP   = (235, 228, 210)
