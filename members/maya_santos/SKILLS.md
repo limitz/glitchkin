@@ -9,7 +9,7 @@
 ## Tools Owned
 | Tool | File | Version | Notes |
 |---|---|---|---|
-| **Luma canonical renderer** | `LTG_TOOL_char_luma.py` | v1.0.0 | Modular `draw_luma()`, all 6 expressions |
+| **Luma canonical renderer** | `LTG_TOOL_char_luma.py` | v1.1.0 | Modular `draw_luma()`, 7 expressions, pose_mode (front/3q/side/back), unified arm silhouette, leg-torso connectivity fix |
 | **Miri canonical renderer** | `LTG_TOOL_char_miri.py` | v1.0.0 | Modular `draw_miri()`, pycairo rebuild, 6 expressions |
 | Luma cairo expressions | `LTG_TOOL_luma_cairo_expressions.py` | v2.0.0 | 6-expression sheet, pycairo engine (superseded by char_luma) |
 | Luma expression sheet (legacy PIL) | `LTG_TOOL_luma_expression_sheet.py` | v014 | Superseded by cairo for Luma |
@@ -21,6 +21,7 @@
 | Glitch expression sheet | `LTG_TOOL_glitch_expression_sheet.py` | v003 | 9 expressions incl. interior desire |
 | Glitch body diagram | `LTG_TOOL_glitch_body_primitive_diagram_gen.py` | v001 | |
 | Character lineup | `LTG_TOOL_character_lineup.py` | v011 | Two-tier staging, Cosmo visual hook |
+| Luma turnaround | `LTG_TOOL_luma_turnaround.py` | v006 | 5 true views (front/3q/side/side-L/back), C54 |
 | SF06 Miri-Luma handoff | `LTG_TOOL_sf_miri_luma_handoff.py` | C49 | Elder posture + shoulder displacement |
 | Multi-char face gate | `LTG_TOOL_multi_char_face_gate.py` | v1.0.0 | Exports `run_multi_char_face_gate()` |
 | Visual hook audit | `LTG_TOOL_visual_hook_audit.py` | v1.0.0 | |
@@ -65,6 +66,14 @@
 - Right eye = destabilized bleed of left = corruption read
 - Shadow facets: use CORRUPT_AMB_SH (not UV_PURPLE) on dark backgrounds
 
+## Body Connectivity Pattern (C54)
+- Legs must overlap torso bottom: `fl_top = (x, torso_bot_y - leg_w_top * 0.8)`
+- Hip bridge fills junction: filled ellipse-ish shape spanning both leg tops, fill=PANTS
+- Unified arm silhouette: combine upper+forearm bezier pts into one list, call `_draw_unified_arm()`
+  — `_draw_unified_arm(ctx, upper + fore[1:], w_shoulder, w_wrist, fill, line_col, lw)`
+  — The `[1:]` on fore avoids duplicate elbow point
+  — Wrist cap: `ctx.arc(all_pts[-1], w_wrist, 0, pi)` rounds the end
+
 ## Key Pitfalls / Gotchas
 - **squint_top_r**: Use BG overdraw + lid line, NOT r_open scaling (scales symmetrically = wince not squint). Pass `panel_bg` through render chain.
 - **THE NOTICING gaze**: `gaze_dx=-0.5` in EXPR_SPECS is fallback only. Rightward gaze lives in `_FACE_CURVES_OVERRIDES` (LI/RI_CENTER_dx: +6). Do NOT remove either.
@@ -86,13 +95,22 @@
 - Detail (nose, laces, crinkles): width=2 (~1px)
 - Hair strand arcs: width=3 (NOT 6). width=6 = manga/overworked.
 
-## Modular Renderer Pattern (C53)
+## Modular Renderer Pattern (C53/C54)
 - Canonical renderer per character: `LTG_TOOL_char_X.py`
-- Public: `draw_X(expression, pose, scale, facing, scene_lighting) -> cairo.ImageSurface`
+- Public: `draw_X(expression, pose, scale, facing, scene_lighting, pose_mode) -> cairo.ImageSurface`
 - Context: `draw_X_on_context(ctx, cx, ground_y, char_h, expression, pose)` for sheets/scenes
 - All return ARGB32 transparent bg. `cairo_surface_to_pil()` for PIL conversion.
 - GESTURE_SPECS dict per character: offset chain values from Lee's specs
 - Miri: MIRI_BASE_LEAN = -4 adds to per-expression torso_lean. Never vertical.
+
+## Pose Mode Architecture (C54)
+- `pose_mode` param on `draw_luma()`: "side" | "front" | "threequarter" | "back"
+- Each mode has its own render function: `_draw_luma_front`, `_draw_luma_threequarter`, `_draw_luma_back`
+- "side" = existing `_draw_luma_on_context` (unchanged)
+- Front: symmetric torso (sh_w=0.95 head_r), both eyes equal, no offset chain, nose = dot
+- 3/4: near eye full, far eye foreshortened (rx=0.14 head_r), offset chain 50% of side
+- Back: hair covers face area (extra blobs at y=0, y=0.2), no face, nape crease, back seam
+- `facing="left"` flip only applies to "side" and "threequarter" modes
 
 ## Key Production Rules
 - Full body in every expression panel (head to feet) — bust format insufficient for silhouette differentiation
