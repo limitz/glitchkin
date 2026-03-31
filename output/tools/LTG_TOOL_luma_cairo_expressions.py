@@ -5,11 +5,11 @@
 # the copyright holder to assign the relevant rights to the contributing AI entity or entities
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
-LTG_TOOL_luma_cairo_expressions.py — Luma Expression Sheet (Cairo Engine) v1.0.0
-"Luma & the Glitchkin" — Cycle 51 / Maya Santos
+LTG_TOOL_luma_cairo_expressions.py — Luma Full Expression Sheet (Cairo Engine) v2.0.0
+"Luma & the Glitchkin" — Cycle 52 / Maya Santos
 
 PURPOSE:
-  Full rebuild of Luma's character rendering using pycairo as the drawing engine.
+  Full Luma expression sheet with all 6 expressions using pycairo engine.
   Replaces PIL polygon-based construction with native bezier curves, variable-width
   strokes, anti-aliased rendering, and form shadows.
 
@@ -19,9 +19,13 @@ PURPOSE:
   Integrates Sam Kowalski's color enhancements (C50): scene tint, form shadow,
   skin warmth via PIL compositing after cairo render.
 
-EXPRESSIONS:
-  CURIOUS   — Forward C-curve, leaning in, 60/40 front weight
-  SURPRISED — Backward C-curve, startle recoil, 70/30 back weight
+EXPRESSIONS (all 6):
+  CURIOUS    — Forward C-curve, leaning in, 60/40 front weight
+  DETERMINED — Backward S-curve, power pose, wide planted stance
+  SURPRISED  — Backward C-curve, startle recoil, 70/30 back weight
+  WORRIED    — Compressed S-curve, inward curl, self-hold arms
+  DELIGHTED  — Upward erupting S-curve, tiptoe, asymmetric celebration
+  FRUSTRATED — Aggressive diagonal, dramatic weight shift, stomp
 
 CONSTRUCTION:
   - 37% head ratio (head height = 37% of total body height)
@@ -30,6 +34,7 @@ CONSTRUCTION:
   - Variable-width stroke via manual tapering on limbs
   - Form shadows as overlaid alpha shapes
   - Gesture line visualization overlay
+  - C47 shoulder involvement on all poses
 
 RENDER PIPELINE:
   1. Cairo renders at 2x (2560x1440) to ImageSurface
@@ -39,14 +44,15 @@ RENDER PIPELINE:
   5. Save PNG
 
 OUTPUT:
-  output/production/LTG_PROD_luma_cairo_expressions.png (1280x720)
+  output/characters/main/LTG_CHAR_luma_expression_sheet.png (1280x720)
+  output/production/LTG_PROD_luma_cairo_expressions.png (1280x720) [copy]
 
 Dependencies: pycairo, Pillow, math, random
 """
 
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 __author__ = "Maya Santos"
-__cycle__ = 51
+__cycle__ = 52
 
 import math
 import os
@@ -90,11 +96,21 @@ EYE_PUP    = (59/255, 40/255, 32/255)
 EYE_HL     = (1.0, 1.0, 1.0)
 BLUSH_C    = (232/255, 148/255, 100/255, 0.33)
 LINE_COL   = (59/255, 40/255, 32/255)
+
 # Expression-specific hoodie colors
-HOODIE_CURIOUS   = (150/255, 175/255, 200/255)
-HOODIE_CURIOUS_SH = (120/255, 145/255, 170/255)
-HOODIE_SURPRISED  = (232/255, 112/255, 58/255)
-HOODIE_SURPRISED_SH = (184/255, 74/255, 32/255)
+HOODIE_CURIOUS     = (150/255, 175/255, 200/255)
+HOODIE_CURIOUS_SH  = (120/255, 145/255, 170/255)
+HOODIE_SURPRISED   = (232/255, 112/255, 58/255)
+HOODIE_SURPRISED_SH= (184/255, 74/255, 32/255)
+HOODIE_DETERMINED  = (220/255, 130/255, 55/255)
+HOODIE_DETERMINED_SH= (180/255, 95/255, 35/255)
+HOODIE_WORRIED     = (165/255, 155/255, 185/255)
+HOODIE_WORRIED_SH  = (135/255, 125/255, 155/255)
+HOODIE_DELIGHTED   = (245/255, 155/255, 65/255)
+HOODIE_DELIGHTED_SH= (200/255, 115/255, 40/255)
+HOODIE_FRUSTRATED  = (210/255, 95/255, 55/255)
+HOODIE_FRUSTRATED_SH= (170/255, 65/255, 35/255)
+
 PANTS      = (42/255, 40/255, 80/255)
 PANTS_SH   = (26/255, 24/255, 48/255)
 SHOE       = (245/255, 232/255, 208/255)
@@ -112,12 +128,22 @@ BLUSH_PIL      = (232, 168, 124)
 HOODIE_PIL     = (232, 112, 58)
 HOODIE_SH_PIL  = (184, 74, 32)
 
+# Hoodie color lookup
+HOODIE_COLORS = {
+    "CURIOUS":    (HOODIE_CURIOUS, HOODIE_CURIOUS_SH),
+    "DETERMINED": (HOODIE_DETERMINED, HOODIE_DETERMINED_SH),
+    "SURPRISED":  (HOODIE_SURPRISED, HOODIE_SURPRISED_SH),
+    "WORRIED":    (HOODIE_WORRIED, HOODIE_WORRIED_SH),
+    "DELIGHTED":  (HOODIE_DELIGHTED, HOODIE_DELIGHTED_SH),
+    "FRUSTRATED": (HOODIE_FRUSTRATED, HOODIE_FRUSTRATED_SH),
+}
+
 # ── Constants ────────────────────────────────────────────────────────────────
 RENDER_W = 2560
 RENDER_H = 1440
 OUTPUT_W = 1280
 OUTPUT_H = 720
-SEED = 51
+SEED = 52
 
 # ── Gesture Specs (from Lee's C50 analysis) ─────────────────────────────────
 # Offset chain: hip_shift, shoulder_offset, head_offset (pixels at 2x)
@@ -127,54 +153,152 @@ SEED = 51
 
 GESTURE_SPECS = {
     "CURIOUS": {
-        "hip_shift": 12,          # hips shift right (back)
-        "shoulder_offset": -10,   # shoulders compensate left
-        "head_offset": -18,       # head leads forward (dramatic lean)
-        "torso_lean": -16,        # lean forward (negative = left/forward)
-        "hip_tilt": 4.0,          # degrees, higher on back-leg side
-        "shoulder_tilt": -4.0,    # opposite to hips
-        "head_tilt": -8.0,        # toward subject
+        "hip_shift": 18,           # amplified from 12
+        "shoulder_offset": -16,    # amplified from -10
+        "head_offset": -28,        # amplified from -18
+        "torso_lean": -24,         # amplified from -16
+        "hip_tilt": 5.0,
+        "shoulder_tilt": -5.0,
+        "head_tilt": -12.0,        # amplified from -8
         "weight_front": 0.60,
         "weight_back": 0.40,
         "front_foot_lift": 0,
         "back_foot_lift": 0,
-        "front_foot_angle": -12,  # pigeon-toed (exaggerated)
-        "back_foot_angle": 15,    # angled out for stability
-        # Arms
-        "left_arm": "forward_reaching",  # slightly extended, palm-down
-        "right_arm": "chin_touch",       # touching chin (callback to THE NOTICING)
-        # Face
+        "front_foot_angle": -15,
+        "back_foot_angle": 18,
+        "left_arm": "forward_reaching",
+        "right_arm": "chin_touch",
         "brow_lift_l": 14,
         "brow_lift_r": 22,
         "mouth": "gentle_smile",
-        "eye_openness": 1.1,      # slightly wider than normal
-        "gaze_dx": 4,             # looking right
-        "gaze_dy": -2,            # slightly up
+        "eye_openness": 1.1,
+        "gaze_dx": 4,
+        "gaze_dy": -2,
     },
-    "SURPRISED": {
-        "hip_shift": -26,         # hips shift left (dramatic backward, amplified)
-        "shoulder_offset": 18,    # shoulders compensate right (more extreme)
-        "head_offset": 16,        # head snaps back (more extreme)
-        "torso_lean": 28,         # lean backward (dramatic startle recoil, amplified)
-        "hip_tilt": -7.0,         # sharp tilt toward back foot
-        "shoulder_tilt": 8.0,     # shoulders rise unevenly (protective hunch)
-        "head_tilt": 12.0,        # tilts away from surprise source (exaggerated)
-        "weight_front": 0.25,
-        "weight_back": 0.75,
-        "front_foot_lift": 14,    # front foot lifts high (startle — amplified for silhouette)
+    "DETERMINED": {
+        "hip_shift": 6,            # subtle — power stance is centered
+        "shoulder_offset": -4,
+        "head_offset": 6,
+        "torso_lean": 8,
+        "hip_tilt": 2.0,
+        "shoulder_tilt": -3.0,
+        "head_tilt": 6.0,
+        "weight_front": 0.55,
+        "weight_back": 0.45,
+        "front_foot_lift": 0,
         "back_foot_lift": 0,
         "front_foot_angle": 15,
-        "back_foot_angle": -10,
-        # Arms
-        "left_arm": "defensive_high",    # near face level, palm outward
-        "right_arm": "flung_back",       # counterbalance, flung to side and down
-        # Face
+        "back_foot_angle": -15,
+        "left_arm": "fist_forward",
+        "right_arm": "fist_hip",
+        "brow_lift_l": 6,
+        "brow_lift_r": 4,
+        "mouth": "firm_line",
+        "eye_openness": 0.95,
+        "gaze_dx": 2,
+        "gaze_dy": -1,
+        "stance_wide": 1.45,       # amplified from 1.25 — WIDEST stance
+    },
+    "SURPRISED": {
+        "hip_shift": -36,          # amplified from -26
+        "shoulder_offset": 26,     # amplified from 18
+        "head_offset": 24,         # amplified from 16
+        "torso_lean": 38,          # amplified from 28
+        "hip_tilt": -9.0,
+        "shoulder_tilt": 10.0,
+        "head_tilt": 16.0,         # amplified from 12
+        "weight_front": 0.20,
+        "weight_back": 0.80,
+        "front_foot_lift": 20,     # amplified from 14
+        "back_foot_lift": 0,
+        "front_foot_angle": 18,
+        "back_foot_angle": -12,
+        "left_arm": "defensive_high",
+        "right_arm": "flung_back",
         "brow_lift_l": 26,
         "brow_lift_r": 20,
         "mouth": "open_o",
-        "eye_openness": 1.45,     # wide open (more extreme)
+        "eye_openness": 1.45,
         "gaze_dx": -3,
-        "gaze_dy": -4,            # looking at surprise
+        "gaze_dy": -4,
+    },
+    "WORRIED": {
+        # MOST COMPRESSED pose — pulls tight, arms close, shoulders up
+        # Opposite direction lean from CURIOUS (CURIOUS leans left, WORRIED leans right)
+        "hip_shift": 12,           # positive = shift right
+        "shoulder_offset": -8,
+        "head_offset": 6,          # head shifts right (opposite to CURIOUS)
+        "torso_lean": 10,          # lean RIGHT (positive, opposite to CURIOUS negative)
+        "hip_tilt": -5.0,
+        "shoulder_tilt": 8.0,      # shoulders hunched UP
+        "head_tilt": 14.0,         # head tilts RIGHT (opposite to CURIOUS left tilt)
+        "weight_front": 0.40,
+        "weight_back": 0.60,
+        "front_foot_lift": 4,
+        "back_foot_lift": 0,
+        "front_foot_angle": -18,
+        "back_foot_angle": 10,
+        "left_arm": "self_hold_grip",
+        "right_arm": "self_hold_cross",
+        "brow_lift_l": 18,
+        "brow_lift_r": 12,
+        "mouth": "tight_frown",
+        "eye_openness": 1.05,
+        "gaze_dx": 0,
+        "gaze_dy": 3,
+    },
+    "DELIGHTED": {
+        # TALLEST pose — erupting upward, tiptoe, head thrown back
+        # Lean direction: slight RIGHT lean (opposite to CURIOUS's left lean)
+        "hip_shift": -16,          # hip shifts LEFT (opposite to CURIOUS right)
+        "shoulder_offset": 14,     # shoulders RIGHT
+        "head_offset": 10,         # head RIGHT and UP
+        "torso_lean": 8,           # lean RIGHT slightly (opposite to CURIOUS)
+        "hip_tilt": -7.0,          # opposite to CURIOUS
+        "shoulder_tilt": 6.0,
+        "head_tilt": 18.0,         # head thrown back RIGHT (opposite to CURIOUS left)
+        "weight_front": 0.50,
+        "weight_back": 0.50,
+        "front_foot_lift": 12,     # both feet lifting — tiptoe
+        "back_foot_lift": 8,
+        "front_foot_angle": 10,
+        "back_foot_angle": -8,
+        "left_arm": "celebration_high",
+        "right_arm": "celebration_pump",
+        "brow_lift_l": 20,
+        "brow_lift_r": 16,
+        "mouth": "wide_grin",
+        "eye_openness": 1.25,
+        "gaze_dx": 2,
+        "gaze_dy": -3,
+        "heel_lift": 10,           # big tiptoe
+    },
+    "FRUSTRATED": {
+        # COMPACT CROUCH — opposite to SURPRISED's open, tall recoil.
+        # SURPRISED is tall+wide+backward. FRUSTRATED is short+tight+forward.
+        # Arms both LOW and CLOSE to body. Widest leg stance but shortest torso.
+        "hip_shift": 20,           # OPPOSITE direction to SURPRISED (-36)
+        "shoulder_offset": -14,
+        "head_offset": -10,
+        "torso_lean": -14,         # lean FORWARD (opposite to SURPRISED's backward lean)
+        "hip_tilt": 8.0,           # OPPOSITE to SURPRISED (-9)
+        "shoulder_tilt": -7.0,
+        "head_tilt": -18.0,        # head tilted FAR LEFT and DOWN — opposite to SURPRISED (+16)
+        "weight_front": 0.80,      # weight FORWARD (stomp)
+        "weight_back": 0.20,
+        "front_foot_lift": 0,
+        "back_foot_lift": 6,
+        "front_foot_angle": -22,
+        "back_foot_angle": 25,
+        "left_arm": "flung_down_wide",
+        "right_arm": "hair_pull",
+        "brow_lift_l": 4,
+        "brow_lift_r": 8,
+        "mouth": "gritted_teeth",
+        "eye_openness": 0.85,
+        "gaze_dx": -2,
+        "gaze_dy": 1,
+        "stance_wide": 1.5,        # WIDEST stance — stomp
     },
 }
 
@@ -320,7 +444,420 @@ def qbezier_points(p0, p1, p2, steps=30):
     return pts
 
 
-# ── Luma Drawing Functions ───────────────────────────────────────────────────
+# ── Arm Drawing Functions (per-expression) ──────────────────────────────────
+
+def draw_arm_forward_reaching(ctx, ls_pt, head_cx, head_r, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s):
+    """CURIOUS: left arm extended forward, palm-down (far reach)."""
+    la_shoulder = (ls_pt[0] + 10*s, ls_pt[1] + 8*s)
+    la_elbow = (la_shoulder[0] - 70*s, la_shoulder[1] + 14*s)
+    la_hand = (la_elbow[0] - 40*s, la_elbow[1] - 42*s)
+    upper = bezier_points(la_shoulder,
+                          (la_shoulder[0] - 15*s, la_shoulder[1] + 5*s),
+                          (la_elbow[0] + 5*s, la_elbow[1] - 8*s),
+                          la_elbow, steps=25)
+    fore = bezier_points(la_elbow,
+                         (la_elbow[0] - 8*s, la_elbow[1] - 12*s),
+                         (la_hand[0] + 8*s, la_hand[1] + 10*s),
+                         la_hand, steps=25)
+    draw_variable_stroke_limb(ctx, upper, arm_w_top, arm_w_bot * 1.1, hoodie, LINE_COL, lw_major)
+    draw_variable_stroke_limb(ctx, fore, arm_w_bot * 1.1, arm_w_bot, hoodie, LINE_COL, lw_major)
+    # Hand (mitten)
+    draw_ellipse_path(ctx, la_hand[0], la_hand[1], hand_r_s, hand_r_s * 0.75)
+    set_color(ctx, SKIN)
+    ctx.fill_preserve()
+    set_color(ctx, LINE_COL)
+    ctx.set_line_width(lw_minor)
+    ctx.stroke()
+    # Thumb
+    draw_ellipse_path(ctx, la_hand[0] + 5*s, la_hand[1] + 5*s, 4*s, 3*s)
+    set_color(ctx, SKIN)
+    ctx.fill_preserve()
+    set_color(ctx, LINE_COL)
+    ctx.set_line_width(lw_accent)
+    ctx.stroke()
+
+
+def draw_arm_chin_touch(ctx, rs_pt, head_cx, head_cy, head_r, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s):
+    """CURIOUS: right hand near chin."""
+    ra_shoulder = (rs_pt[0] - 10*s, rs_pt[1] + 8*s)
+    chin_x = head_cx + 5*s
+    chin_y = head_cy + head_r * 0.55
+    ra_elbow = (ra_shoulder[0] + 5*s, ra_shoulder[1] + 30*s)
+    ra_hand = (chin_x + 8*s, chin_y + 5*s)
+    upper = bezier_points(ra_shoulder,
+                          (ra_shoulder[0] + 8*s, ra_shoulder[1] + 12*s),
+                          (ra_elbow[0] - 3*s, ra_elbow[1] - 10*s),
+                          ra_elbow, steps=25)
+    fore = bezier_points(ra_elbow,
+                         (ra_elbow[0] - 2*s, ra_elbow[1] + 8*s),
+                         (ra_hand[0] + 10*s, ra_hand[1] + 15*s),
+                         ra_hand, steps=25)
+    draw_variable_stroke_limb(ctx, upper, arm_w_top, arm_w_bot * 1.1, hoodie, LINE_COL, lw_major)
+    draw_variable_stroke_limb(ctx, fore, arm_w_bot * 1.1, arm_w_bot, hoodie, LINE_COL, lw_major)
+    draw_ellipse_path(ctx, ra_hand[0], ra_hand[1], hand_r_s, hand_r_s * 0.75)
+    set_color(ctx, SKIN)
+    ctx.fill_preserve()
+    set_color(ctx, LINE_COL)
+    ctx.set_line_width(lw_minor)
+    ctx.stroke()
+    # Index finger extended toward chin
+    ctx.new_path()
+    ctx.move_to(ra_hand[0] - 3*s, ra_hand[1] - hand_r_s * 0.5)
+    ctx.line_to(chin_x, chin_y)
+    set_color(ctx, SKIN)
+    ctx.set_line_width(3*s)
+    ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+    ctx.stroke()
+    ctx.new_path()
+    ctx.move_to(ra_hand[0] - 3*s, ra_hand[1] - hand_r_s * 0.5)
+    ctx.line_to(chin_x, chin_y)
+    set_color(ctx, LINE_COL)
+    ctx.set_line_width(lw_accent)
+    ctx.stroke()
+
+
+def draw_arm_defensive_high(ctx, ls_pt, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s):
+    """SURPRISED: left arm raised high near face, palm outward (amplified)."""
+    la_shoulder = (ls_pt[0] + 10*s, ls_pt[1] + 5*s)
+    la_elbow = (la_shoulder[0] - 38*s, la_shoulder[1] - 48*s)
+    la_hand = (la_elbow[0] - 20*s, la_elbow[1] - 50*s)
+    upper = bezier_points(la_shoulder,
+                          (la_shoulder[0] - 12*s, la_shoulder[1] - 8*s),
+                          (la_elbow[0] + 5*s, la_elbow[1] + 10*s),
+                          la_elbow, steps=25)
+    fore = bezier_points(la_elbow,
+                         (la_elbow[0] - 5*s, la_elbow[1] - 10*s),
+                         (la_hand[0] + 5*s, la_hand[1] + 12*s),
+                         la_hand, steps=25)
+    draw_variable_stroke_limb(ctx, upper, arm_w_top, arm_w_bot * 1.1, hoodie, LINE_COL, lw_major)
+    draw_variable_stroke_limb(ctx, fore, arm_w_bot * 1.1, arm_w_bot, hoodie, LINE_COL, lw_major)
+    draw_ellipse_path(ctx, la_hand[0], la_hand[1], hand_r_s * 1.1, hand_r_s * 0.9)
+    set_color(ctx, SKIN)
+    ctx.fill_preserve()
+    set_color(ctx, LINE_COL)
+    ctx.set_line_width(lw_minor)
+    ctx.stroke()
+    for angle_deg in [-30, -10, 10, 30]:
+        rad = math.radians(angle_deg - 90)
+        fx = la_hand[0] + math.cos(rad) * hand_r_s * 1.2
+        fy = la_hand[1] + math.sin(rad) * hand_r_s * 1.0
+        ctx.new_path()
+        ctx.move_to(la_hand[0] + math.cos(rad) * hand_r_s * 0.6,
+                    la_hand[1] + math.sin(rad) * hand_r_s * 0.5)
+        ctx.line_to(fx, fy)
+        set_color(ctx, LINE_COL)
+        ctx.set_line_width(lw_accent)
+        ctx.stroke()
+
+
+def draw_arm_flung_back(ctx, rs_pt, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s):
+    """SURPRISED: right arm flung wide to side and behind (amplified)."""
+    ra_shoulder = (rs_pt[0] - 8*s, rs_pt[1] + 5*s)
+    ra_elbow = (ra_shoulder[0] + 65*s, ra_shoulder[1] + 8*s)
+    ra_hand = (ra_elbow[0] + 45*s, ra_elbow[1] + 30*s)
+    upper = bezier_points(ra_shoulder,
+                          (ra_shoulder[0] + 15*s, ra_shoulder[1] + 3*s),
+                          (ra_elbow[0] - 8*s, ra_elbow[1] - 5*s),
+                          ra_elbow, steps=25)
+    fore = bezier_points(ra_elbow,
+                         (ra_elbow[0] + 10*s, ra_elbow[1] + 3*s),
+                         (ra_hand[0] - 8*s, ra_hand[1] - 5*s),
+                         ra_hand, steps=25)
+    draw_variable_stroke_limb(ctx, upper, arm_w_top, arm_w_bot * 1.1, hoodie, LINE_COL, lw_major)
+    draw_variable_stroke_limb(ctx, fore, arm_w_bot * 1.1, arm_w_bot, hoodie, LINE_COL, lw_major)
+    draw_ellipse_path(ctx, ra_hand[0], ra_hand[1], hand_r_s * 1.0, hand_r_s * 0.8)
+    set_color(ctx, SKIN)
+    ctx.fill_preserve()
+    set_color(ctx, LINE_COL)
+    ctx.set_line_width(lw_minor)
+    ctx.stroke()
+    for angle_deg in [20, 45, 70, 95]:
+        rad = math.radians(angle_deg)
+        fx = ra_hand[0] + math.cos(rad) * hand_r_s * 1.2
+        fy = ra_hand[1] - math.sin(rad) * hand_r_s * 1.0
+        ctx.new_path()
+        ctx.move_to(ra_hand[0] + math.cos(rad) * hand_r_s * 0.6,
+                    ra_hand[1] - math.sin(rad) * hand_r_s * 0.5)
+        ctx.line_to(fx, fy)
+        set_color(ctx, LINE_COL)
+        ctx.set_line_width(lw_accent)
+        ctx.stroke()
+
+
+def draw_arm_fist_forward(ctx, ls_pt, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s):
+    """DETERMINED: left arm crosses body slightly, hand forward with fist."""
+    la_shoulder = (ls_pt[0] + 8*s, ls_pt[1] + 6*s)
+    la_elbow = (la_shoulder[0] + 12*s, la_shoulder[1] + 30*s)
+    la_hand = (la_elbow[0] + 18*s, la_elbow[1] + 8*s)
+    upper = bezier_points(la_shoulder,
+                          (la_shoulder[0] + 4*s, la_shoulder[1] + 10*s),
+                          (la_elbow[0] - 2*s, la_elbow[1] - 8*s),
+                          la_elbow, steps=25)
+    fore = bezier_points(la_elbow,
+                         (la_elbow[0] + 6*s, la_elbow[1] + 4*s),
+                         (la_hand[0] - 4*s, la_hand[1] - 2*s),
+                         la_hand, steps=25)
+    draw_variable_stroke_limb(ctx, upper, arm_w_top, arm_w_bot * 1.1, hoodie, LINE_COL, lw_major)
+    draw_variable_stroke_limb(ctx, fore, arm_w_bot * 1.1, arm_w_bot, hoodie, LINE_COL, lw_major)
+    # Fist
+    draw_ellipse_path(ctx, la_hand[0], la_hand[1], hand_r_s * 0.85, hand_r_s * 0.85)
+    set_color(ctx, SKIN)
+    ctx.fill_preserve()
+    set_color(ctx, LINE_COL)
+    ctx.set_line_width(lw_minor)
+    ctx.stroke()
+    # Knuckle line
+    ctx.new_path()
+    ctx.move_to(la_hand[0] - hand_r_s * 0.4, la_hand[1] - hand_r_s * 0.3)
+    ctx.curve_to(la_hand[0], la_hand[1] - hand_r_s * 0.5,
+                 la_hand[0] + hand_r_s * 0.3, la_hand[1] - hand_r_s * 0.3,
+                 la_hand[0] + hand_r_s * 0.5, la_hand[1] - hand_r_s * 0.1)
+    set_color(ctx, SKIN_SH)
+    ctx.set_line_width(lw_accent)
+    ctx.stroke()
+
+
+def draw_arm_fist_hip(ctx, rs_pt, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s):
+    """DETERMINED: right arm in fist at hip level, elbow bent back."""
+    ra_shoulder = (rs_pt[0] - 8*s, rs_pt[1] + 6*s)
+    ra_elbow = (ra_shoulder[0] + 25*s, ra_shoulder[1] + 22*s)
+    ra_hand = (ra_elbow[0] + 5*s, ra_elbow[1] + 20*s)
+    upper = bezier_points(ra_shoulder,
+                          (ra_shoulder[0] + 10*s, ra_shoulder[1] + 8*s),
+                          (ra_elbow[0] - 5*s, ra_elbow[1] - 6*s),
+                          ra_elbow, steps=25)
+    fore = bezier_points(ra_elbow,
+                         (ra_elbow[0] + 3*s, ra_elbow[1] + 6*s),
+                         (ra_hand[0] - 2*s, ra_hand[1] - 5*s),
+                         ra_hand, steps=25)
+    draw_variable_stroke_limb(ctx, upper, arm_w_top, arm_w_bot * 1.1, hoodie, LINE_COL, lw_major)
+    draw_variable_stroke_limb(ctx, fore, arm_w_bot * 1.1, arm_w_bot, hoodie, LINE_COL, lw_major)
+    # Tight fist
+    draw_ellipse_path(ctx, ra_hand[0], ra_hand[1], hand_r_s * 0.8, hand_r_s * 0.8)
+    set_color(ctx, SKIN)
+    ctx.fill_preserve()
+    set_color(ctx, LINE_COL)
+    ctx.set_line_width(lw_minor)
+    ctx.stroke()
+
+
+def draw_arm_self_hold_grip(ctx, ls_pt, torso_cx, torso_cy, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s):
+    """WORRIED: left arm crosses body, hand gripping opposite elbow."""
+    la_shoulder = (ls_pt[0] + 8*s, ls_pt[1] + 5*s)
+    la_elbow = (la_shoulder[0] + 22*s, la_shoulder[1] + 28*s)
+    la_hand = (torso_cx + 18*s, torso_cy + 5*s)  # gripping right elbow area
+    upper = bezier_points(la_shoulder,
+                          (la_shoulder[0] + 6*s, la_shoulder[1] + 10*s),
+                          (la_elbow[0] - 4*s, la_elbow[1] - 6*s),
+                          la_elbow, steps=25)
+    fore = bezier_points(la_elbow,
+                         (la_elbow[0] + 8*s, la_elbow[1] + 6*s),
+                         (la_hand[0] - 4*s, la_hand[1] - 4*s),
+                         la_hand, steps=25)
+    draw_variable_stroke_limb(ctx, upper, arm_w_top, arm_w_bot * 1.1, hoodie, LINE_COL, lw_major)
+    draw_variable_stroke_limb(ctx, fore, arm_w_bot * 1.1, arm_w_bot, hoodie, LINE_COL, lw_major)
+    draw_ellipse_path(ctx, la_hand[0], la_hand[1], hand_r_s * 0.85, hand_r_s * 0.7)
+    set_color(ctx, SKIN)
+    ctx.fill_preserve()
+    set_color(ctx, LINE_COL)
+    ctx.set_line_width(lw_minor)
+    ctx.stroke()
+
+
+def draw_arm_self_hold_cross(ctx, rs_pt, torso_cx, torso_cy, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s):
+    """WORRIED: right arm crosses body, hand near left wrist."""
+    ra_shoulder = (rs_pt[0] - 8*s, rs_pt[1] + 5*s)
+    ra_elbow = (ra_shoulder[0] - 5*s, ra_shoulder[1] + 26*s)
+    ra_hand = (torso_cx + 10*s, torso_cy + 12*s)
+    upper = bezier_points(ra_shoulder,
+                          (ra_shoulder[0] - 3*s, ra_shoulder[1] + 10*s),
+                          (ra_elbow[0] + 2*s, ra_elbow[1] - 6*s),
+                          ra_elbow, steps=25)
+    fore = bezier_points(ra_elbow,
+                         (ra_elbow[0] + 2*s, ra_elbow[1] + 8*s),
+                         (ra_hand[0] - 3*s, ra_hand[1] - 4*s),
+                         ra_hand, steps=25)
+    draw_variable_stroke_limb(ctx, upper, arm_w_top, arm_w_bot * 1.1, hoodie, LINE_COL, lw_major)
+    draw_variable_stroke_limb(ctx, fore, arm_w_bot * 1.1, arm_w_bot, hoodie, LINE_COL, lw_major)
+    draw_ellipse_path(ctx, ra_hand[0], ra_hand[1], hand_r_s * 0.8, hand_r_s * 0.65)
+    set_color(ctx, SKIN)
+    ctx.fill_preserve()
+    set_color(ctx, LINE_COL)
+    ctx.set_line_width(lw_minor)
+    ctx.stroke()
+
+
+def draw_arm_celebration_high(ctx, ls_pt, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s):
+    """DELIGHTED: left arm fully extended upward, fingers spread (amplified)."""
+    la_shoulder = (ls_pt[0] + 8*s, ls_pt[1] + 4*s)
+    la_elbow = (la_shoulder[0] - 28*s, la_shoulder[1] - 55*s)
+    la_hand = (la_elbow[0] - 15*s, la_elbow[1] - 48*s)
+    upper = bezier_points(la_shoulder,
+                          (la_shoulder[0] - 8*s, la_shoulder[1] - 12*s),
+                          (la_elbow[0] + 4*s, la_elbow[1] + 10*s),
+                          la_elbow, steps=25)
+    fore = bezier_points(la_elbow,
+                         (la_elbow[0] - 4*s, la_elbow[1] - 10*s),
+                         (la_hand[0] + 3*s, la_hand[1] + 8*s),
+                         la_hand, steps=25)
+    draw_variable_stroke_limb(ctx, upper, arm_w_top, arm_w_bot * 1.1, hoodie, LINE_COL, lw_major)
+    draw_variable_stroke_limb(ctx, fore, arm_w_bot * 1.1, arm_w_bot, hoodie, LINE_COL, lw_major)
+    draw_ellipse_path(ctx, la_hand[0], la_hand[1], hand_r_s * 1.0, hand_r_s * 0.85)
+    set_color(ctx, SKIN)
+    ctx.fill_preserve()
+    set_color(ctx, LINE_COL)
+    ctx.set_line_width(lw_minor)
+    ctx.stroke()
+    # Spread fingers (joy!)
+    for angle_deg in [-50, -25, 0, 25, 50]:
+        rad = math.radians(angle_deg - 90)
+        fx = la_hand[0] + math.cos(rad) * hand_r_s * 1.4
+        fy = la_hand[1] + math.sin(rad) * hand_r_s * 1.2
+        ctx.new_path()
+        ctx.move_to(la_hand[0] + math.cos(rad) * hand_r_s * 0.5,
+                    la_hand[1] + math.sin(rad) * hand_r_s * 0.4)
+        ctx.line_to(fx, fy)
+        set_color(ctx, SKIN)
+        ctx.set_line_width(2.5*s)
+        ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+        ctx.stroke()
+        ctx.new_path()
+        ctx.move_to(la_hand[0] + math.cos(rad) * hand_r_s * 0.5,
+                    la_hand[1] + math.sin(rad) * hand_r_s * 0.4)
+        ctx.line_to(fx, fy)
+        set_color(ctx, LINE_COL)
+        ctx.set_line_width(lw_accent)
+        ctx.stroke()
+
+
+def draw_arm_celebration_pump(ctx, rs_pt, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s):
+    """DELIGHTED: right arm bent, fist pump celebration (amplified)."""
+    ra_shoulder = (rs_pt[0] - 6*s, rs_pt[1] + 4*s)
+    ra_elbow = (ra_shoulder[0] + 30*s, ra_shoulder[1] - 38*s)
+    ra_hand = (ra_elbow[0] + 10*s, ra_elbow[1] - 30*s)
+    upper = bezier_points(ra_shoulder,
+                          (ra_shoulder[0] + 8*s, ra_shoulder[1] - 8*s),
+                          (ra_elbow[0] - 4*s, ra_elbow[1] + 8*s),
+                          ra_elbow, steps=25)
+    fore = bezier_points(ra_elbow,
+                         (ra_elbow[0] + 3*s, ra_elbow[1] - 6*s),
+                         (ra_hand[0] - 2*s, ra_hand[1] + 5*s),
+                         ra_hand, steps=25)
+    draw_variable_stroke_limb(ctx, upper, arm_w_top, arm_w_bot * 1.1, hoodie, LINE_COL, lw_major)
+    draw_variable_stroke_limb(ctx, fore, arm_w_bot * 1.1, arm_w_bot, hoodie, LINE_COL, lw_major)
+    # Tight celebration fist
+    draw_ellipse_path(ctx, ra_hand[0], ra_hand[1], hand_r_s * 0.85, hand_r_s * 0.85)
+    set_color(ctx, SKIN)
+    ctx.fill_preserve()
+    set_color(ctx, LINE_COL)
+    ctx.set_line_width(lw_minor)
+    ctx.stroke()
+
+
+def draw_arm_flung_down_wide(ctx, ls_pt, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s):
+    """FRUSTRATED: left arm slams DOWN close to body (not wide — differentiates from SURPRISED)."""
+    la_shoulder = (ls_pt[0] + 8*s, ls_pt[1] + 5*s)
+    la_elbow = (la_shoulder[0] - 15*s, la_shoulder[1] + 38*s)
+    la_hand = (la_elbow[0] - 8*s, la_elbow[1] + 48*s)
+    upper = bezier_points(la_shoulder,
+                          (la_shoulder[0] - 14*s, la_shoulder[1] + 6*s),
+                          (la_elbow[0] + 8*s, la_elbow[1] - 4*s),
+                          la_elbow, steps=25)
+    fore = bezier_points(la_elbow,
+                         (la_elbow[0] - 10*s, la_elbow[1] + 8*s),
+                         (la_hand[0] + 6*s, la_hand[1] - 6*s),
+                         la_hand, steps=25)
+    draw_variable_stroke_limb(ctx, upper, arm_w_top, arm_w_bot * 1.1, hoodie, LINE_COL, lw_major)
+    draw_variable_stroke_limb(ctx, fore, arm_w_bot * 1.1, arm_w_bot, hoodie, LINE_COL, lw_major)
+    # Open hand, fingers spread in exasperation
+    draw_ellipse_path(ctx, la_hand[0], la_hand[1], hand_r_s * 1.0, hand_r_s * 0.85)
+    set_color(ctx, SKIN)
+    ctx.fill_preserve()
+    set_color(ctx, LINE_COL)
+    ctx.set_line_width(lw_minor)
+    ctx.stroke()
+    for angle_deg in [110, 135, 160, 185]:
+        rad = math.radians(angle_deg)
+        fx = la_hand[0] + math.cos(rad) * hand_r_s * 1.3
+        fy = la_hand[1] - math.sin(rad) * hand_r_s * 1.1
+        ctx.new_path()
+        ctx.move_to(la_hand[0] + math.cos(rad) * hand_r_s * 0.5,
+                    la_hand[1] - math.sin(rad) * hand_r_s * 0.4)
+        ctx.line_to(fx, fy)
+        set_color(ctx, LINE_COL)
+        ctx.set_line_width(lw_accent)
+        ctx.stroke()
+
+
+def draw_arm_hair_pull(ctx, rs_pt, head_cx, head_cy, head_r, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s):
+    """FRUSTRATED: right arm crosses body tightly, fist clenched at chest (compact, not raised)."""
+    ra_shoulder = (rs_pt[0] - 6*s, rs_pt[1] + 5*s)
+    # Arm crosses to LEFT side of chest — tight, frustrated self-grip
+    ra_elbow = (ra_shoulder[0] - 10*s, ra_shoulder[1] + 25*s)
+    ra_hand = (ra_elbow[0] - 12*s, ra_elbow[1] + 15*s)  # low, tight to body
+    upper = bezier_points(ra_shoulder,
+                          (ra_shoulder[0] + 5*s, ra_shoulder[1] - 6*s),
+                          (ra_elbow[0] - 3*s, ra_elbow[1] + 6*s),
+                          ra_elbow, steps=25)
+    fore = bezier_points(ra_elbow,
+                         (ra_elbow[0] + 4*s, ra_elbow[1] - 6*s),
+                         (ra_hand[0] - 4*s, ra_hand[1] + 6*s),
+                         ra_hand, steps=25)
+    draw_variable_stroke_limb(ctx, upper, arm_w_top, arm_w_bot * 1.1, hoodie, LINE_COL, lw_major)
+    draw_variable_stroke_limb(ctx, fore, arm_w_bot * 1.1, arm_w_bot, hoodie, LINE_COL, lw_major)
+    # Gripping hand on head
+    draw_ellipse_path(ctx, ra_hand[0], ra_hand[1], hand_r_s * 0.9, hand_r_s * 0.75)
+    set_color(ctx, SKIN)
+    ctx.fill_preserve()
+    set_color(ctx, LINE_COL)
+    ctx.set_line_width(lw_minor)
+    ctx.stroke()
+    # Grabbing lines
+    for dx, dy in [(-4*s, -5*s), (2*s, -6*s), (6*s, -3*s)]:
+        ctx.new_path()
+        ctx.move_to(ra_hand[0] + dx * 0.3, ra_hand[1] + dy * 0.3)
+        ctx.line_to(ra_hand[0] + dx, ra_hand[1] + dy)
+        set_color(ctx, SKIN_SH)
+        ctx.set_line_width(lw_accent)
+        ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+        ctx.stroke()
+
+
+# ── Main Drawing Function ───────────────────────────────────────────────────
+
+def draw_arms(ctx, expression, spec, ls_pt, rs_pt, head_cx, head_cy, head_r, torso_cx, torso_cy, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s):
+    """Dispatch arm drawing by expression spec."""
+    la = spec["left_arm"]
+    ra = spec["right_arm"]
+
+    # Left arm
+    if la == "forward_reaching":
+        draw_arm_forward_reaching(ctx, ls_pt, head_cx, head_r, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s)
+    elif la == "defensive_high":
+        draw_arm_defensive_high(ctx, ls_pt, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s)
+    elif la == "fist_forward":
+        draw_arm_fist_forward(ctx, ls_pt, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s)
+    elif la == "self_hold_grip":
+        draw_arm_self_hold_grip(ctx, ls_pt, torso_cx, torso_cy, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s)
+    elif la == "celebration_high":
+        draw_arm_celebration_high(ctx, ls_pt, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s)
+    elif la == "flung_down_wide":
+        draw_arm_flung_down_wide(ctx, ls_pt, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s)
+
+    # Right arm
+    if ra == "chin_touch":
+        draw_arm_chin_touch(ctx, rs_pt, head_cx, head_cy, head_r, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s)
+    elif ra == "flung_back":
+        draw_arm_flung_back(ctx, rs_pt, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s)
+    elif ra == "fist_hip":
+        draw_arm_fist_hip(ctx, rs_pt, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s)
+    elif ra == "self_hold_cross":
+        draw_arm_self_hold_cross(ctx, rs_pt, torso_cx, torso_cy, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s)
+    elif ra == "celebration_pump":
+        draw_arm_celebration_pump(ctx, rs_pt, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s)
+    elif ra == "hair_pull":
+        draw_arm_hair_pull(ctx, rs_pt, head_cx, head_cy, head_r, s, hoodie, lw_major, lw_minor, lw_accent, arm_w_top, arm_w_bot, hand_r_s)
+
 
 def draw_luma_expression(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
     """Draw Luma in the given expression using cairo.
@@ -343,10 +880,10 @@ def draw_luma_expression(ctx, cx, ground_y, char_h, expression, spec, scale=1.0)
     s = head_r / 100.0  # scale factor for details
 
     # Line weights (variable-width stroke hierarchy)
-    lw_silhouette = max(4.0, 5.0 * s)   # outer silhouette
-    lw_major = max(3.0, 3.5 * s)        # body part separations
-    lw_minor = max(2.0, 2.5 * s)        # interior details
-    lw_accent = max(1.5, 2.0 * s)       # fine details
+    lw_silhouette = max(4.0, 5.0 * s)
+    lw_major = max(3.0, 3.5 * s)
+    lw_minor = max(2.0, 2.5 * s)
+    lw_accent = max(1.5, 2.0 * s)
 
     # ── Offset Chain (Lee's gesture spec) ──
     hip_shift = spec["hip_shift"] * s
@@ -359,7 +896,6 @@ def draw_luma_expression(ctx, cx, ground_y, char_h, expression, spec, scale=1.0)
     head_cx = torso_cx + head_offset
 
     # ── Vertical layout ──
-    # Head top is at ground_y - char_h
     head_cy = ground_y - char_h + head_r
     neck_bot_y = head_cy + head_r + head_r * 0.25
     torso_h = body_h * 0.38
@@ -375,45 +911,41 @@ def draw_luma_expression(ctx, cx, ground_y, char_h, expression, spec, scale=1.0)
     sh_w = head_r * 0.80
 
     # Hoodie color by expression
-    if expression == "CURIOUS":
-        hoodie = HOODIE_CURIOUS
-        hoodie_sh = HOODIE_CURIOUS_SH
-    else:
-        hoodie = HOODIE_SURPRISED
-        hoodie_sh = HOODIE_SURPRISED_SH
+    hoodie, hoodie_sh = HOODIE_COLORS.get(expression, (HOODIE_SURPRISED, HOODIE_SURPRISED_SH))
 
     # ══════════════════════════════════════════════════════════════════════
     # LEGS — Draw first (behind torso)
     # ══════════════════════════════════════════════════════════════════════
     leg_offset = head_r * 0.45
+    # Wide stance for DETERMINED
+    stance_mult = spec.get("stance_wide", 1.0)
+    leg_offset *= stance_mult
+
     leg_w_top = head_r * 0.22
     leg_w_bot = head_r * 0.18
 
     weight_front = spec["weight_front"]
     front_foot_lift = spec["front_foot_lift"] * s
     back_foot_lift = spec["back_foot_lift"] * s
+    heel_lift = spec.get("heel_lift", 0) * s  # DELIGHTED tiptoe
 
-    # Left leg = front, Right leg = back (for rightward-facing poses)
-    # Weight shifts: front leg under torso, back leg straighter
     front_leg_x = hip_cx - leg_offset * (1.0 if weight_front > 0.5 else 0.7)
     back_leg_x = hip_cx + leg_offset * (1.0 if weight_front <= 0.5 else 0.7)
 
-    # Front leg (slightly bent for CURIOUS, lifted for SURPRISED)
+    # Front leg
     fl_top = (front_leg_x, torso_bot_y)
     fl_knee = (front_leg_x - 3 * s, torso_bot_y + leg_h * 0.48)
-    fl_ankle = (front_leg_x + 2 * s, ground_y - front_foot_lift - head_r * 0.25)
-    fl_foot = (front_leg_x + 2 * s, ground_y - front_foot_lift)
+    fl_ankle = (front_leg_x + 2 * s, ground_y - front_foot_lift - heel_lift - head_r * 0.25)
     front_leg_pts = bezier_points(fl_top, fl_knee,
                                    (fl_knee[0] + 2*s, fl_knee[1] + leg_h * 0.2),
                                    fl_ankle, steps=30)
     draw_variable_stroke_limb(ctx, front_leg_pts, leg_w_top, leg_w_bot,
                                PANTS, LINE_COL, lw_major)
 
-    # Back leg (straighter, planted)
+    # Back leg
     bl_top = (back_leg_x, torso_bot_y)
     bl_knee = (back_leg_x + 2 * s, torso_bot_y + leg_h * 0.50)
-    bl_ankle = (back_leg_x + 1 * s, ground_y - back_foot_lift - head_r * 0.25)
-    bl_foot = (back_leg_x + 1 * s, ground_y - back_foot_lift)
+    bl_ankle = (back_leg_x + 1 * s, ground_y - back_foot_lift - heel_lift - head_r * 0.25)
     back_leg_pts = bezier_points(bl_top, bl_knee,
                                   (bl_knee[0] - 1*s, bl_knee[1] + leg_h * 0.2),
                                   bl_ankle, steps=30)
@@ -442,8 +974,8 @@ def draw_luma_expression(ctx, cx, ground_y, char_h, expression, spec, scale=1.0)
     shoe_w = head_r * 0.32
     shoe_h = head_r * 0.18
     for foot_x, foot_y, foot_angle in [
-        (front_leg_pts[-1][0], ground_y - front_foot_lift, spec["front_foot_angle"]),
-        (back_leg_pts[-1][0], ground_y - back_foot_lift, spec["back_foot_angle"])
+        (front_leg_pts[-1][0], ground_y - front_foot_lift - heel_lift, spec["front_foot_angle"]),
+        (back_leg_pts[-1][0], ground_y - back_foot_lift - heel_lift, spec["back_foot_angle"])
     ]:
         ctx.save()
         ctx.translate(foot_x, foot_y - shoe_h * 0.3)
@@ -517,7 +1049,7 @@ def draw_luma_expression(ctx, cx, ground_y, char_h, expression, spec, scale=1.0)
     ctx.set_line_width(lw_minor)
     ctx.stroke()
 
-    # Hoodie hem (curved line at bottom)
+    # Hoodie hem
     hem_y = torso_bot_y - torso_h * 0.10
     ctx.new_path()
     ctx.move_to(lh_pt[0] + 3*s, hem_y)
@@ -539,158 +1071,15 @@ def draw_luma_expression(ctx, cx, ground_y, char_h, expression, spec, scale=1.0)
         ctx.fill()
 
     # ══════════════════════════════════════════════════════════════════════
-    # ARMS — Expression-specific poses with variable-width strokes
+    # ARMS — Expression-specific poses
     # ══════════════════════════════════════════════════════════════════════
     arm_w_top = head_r * 0.14
     arm_w_bot = head_r * 0.10
     hand_r_s = head_r * 0.12
 
-    if spec["left_arm"] == "forward_reaching":
-        # CURIOUS: left arm extended forward, palm-down (amplified for silhouette contrast)
-        la_shoulder = (ls_pt[0] + 10*s, ls_pt[1] + 8*s)
-        la_elbow = (la_shoulder[0] - 55*s, la_shoulder[1] + 18*s)
-        la_hand = (la_elbow[0] - 30*s, la_elbow[1] - 35*s)
-        upper_la = bezier_points(la_shoulder,
-                                  (la_shoulder[0] - 15*s, la_shoulder[1] + 5*s),
-                                  (la_elbow[0] + 5*s, la_elbow[1] - 8*s),
-                                  la_elbow, steps=25)
-        fore_la = bezier_points(la_elbow,
-                                 (la_elbow[0] - 8*s, la_elbow[1] - 12*s),
-                                 (la_hand[0] + 8*s, la_hand[1] + 10*s),
-                                 la_hand, steps=25)
-        draw_variable_stroke_limb(ctx, upper_la, arm_w_top, arm_w_bot * 1.1,
-                                   hoodie, LINE_COL, lw_major)
-        draw_variable_stroke_limb(ctx, fore_la, arm_w_bot * 1.1, arm_w_bot,
-                                   hoodie, LINE_COL, lw_major)
-        # Hand (mitten)
-        draw_ellipse_path(ctx, la_hand[0], la_hand[1], hand_r_s, hand_r_s * 0.75)
-        set_color(ctx, SKIN)
-        ctx.fill_preserve()
-        set_color(ctx, LINE_COL)
-        ctx.set_line_width(lw_minor)
-        ctx.stroke()
-        # Thumb
-        draw_ellipse_path(ctx, la_hand[0] + 5*s, la_hand[1] + 5*s, 4*s, 3*s)
-        set_color(ctx, SKIN)
-        ctx.fill_preserve()
-        set_color(ctx, LINE_COL)
-        ctx.set_line_width(lw_accent)
-        ctx.stroke()
-
-    elif spec["left_arm"] == "defensive_high":
-        # SURPRISED: left arm raised high near face, palm outward (amplified for silhouette)
-        la_shoulder = (ls_pt[0] + 10*s, ls_pt[1] + 5*s)
-        la_elbow = (la_shoulder[0] - 30*s, la_shoulder[1] - 35*s)
-        la_hand = (la_elbow[0] - 15*s, la_elbow[1] - 40*s)
-        upper_la = bezier_points(la_shoulder,
-                                  (la_shoulder[0] - 12*s, la_shoulder[1] - 8*s),
-                                  (la_elbow[0] + 5*s, la_elbow[1] + 10*s),
-                                  la_elbow, steps=25)
-        fore_la = bezier_points(la_elbow,
-                                 (la_elbow[0] - 5*s, la_elbow[1] - 10*s),
-                                 (la_hand[0] + 5*s, la_hand[1] + 12*s),
-                                 la_hand, steps=25)
-        draw_variable_stroke_limb(ctx, upper_la, arm_w_top, arm_w_bot * 1.1,
-                                   hoodie, LINE_COL, lw_major)
-        draw_variable_stroke_limb(ctx, fore_la, arm_w_bot * 1.1, arm_w_bot,
-                                   hoodie, LINE_COL, lw_major)
-        # Open hand (palm outward, fingers spread)
-        draw_ellipse_path(ctx, la_hand[0], la_hand[1], hand_r_s * 1.1, hand_r_s * 0.9)
-        set_color(ctx, SKIN)
-        ctx.fill_preserve()
-        set_color(ctx, LINE_COL)
-        ctx.set_line_width(lw_minor)
-        ctx.stroke()
-        # Finger lines
-        for angle_deg in [-30, -10, 10, 30]:
-            rad = math.radians(angle_deg - 90)
-            fx = la_hand[0] + math.cos(rad) * hand_r_s * 1.2
-            fy = la_hand[1] + math.sin(rad) * hand_r_s * 1.0
-            ctx.new_path()
-            ctx.move_to(la_hand[0] + math.cos(rad) * hand_r_s * 0.6,
-                        la_hand[1] + math.sin(rad) * hand_r_s * 0.5)
-            ctx.line_to(fx, fy)
-            set_color(ctx, LINE_COL)
-            ctx.set_line_width(lw_accent)
-            ctx.stroke()
-
-    if spec["right_arm"] == "chin_touch":
-        # CURIOUS: right hand near chin
-        ra_shoulder = (rs_pt[0] - 10*s, rs_pt[1] + 8*s)
-        chin_x = head_cx + 5*s
-        chin_y = head_cy + head_r * 0.55
-        ra_elbow = (ra_shoulder[0] + 5*s, ra_shoulder[1] + 30*s)
-        ra_hand = (chin_x + 8*s, chin_y + 5*s)
-        upper_ra = bezier_points(ra_shoulder,
-                                  (ra_shoulder[0] + 8*s, ra_shoulder[1] + 12*s),
-                                  (ra_elbow[0] - 3*s, ra_elbow[1] - 10*s),
-                                  ra_elbow, steps=25)
-        fore_ra = bezier_points(ra_elbow,
-                                 (ra_elbow[0] - 2*s, ra_elbow[1] + 8*s),
-                                 (ra_hand[0] + 10*s, ra_hand[1] + 15*s),
-                                 ra_hand, steps=25)
-        draw_variable_stroke_limb(ctx, upper_ra, arm_w_top, arm_w_bot * 1.1,
-                                   hoodie, LINE_COL, lw_major)
-        draw_variable_stroke_limb(ctx, fore_ra, arm_w_bot * 1.1, arm_w_bot,
-                                   hoodie, LINE_COL, lw_major)
-        # Hand near chin
-        draw_ellipse_path(ctx, ra_hand[0], ra_hand[1], hand_r_s, hand_r_s * 0.75)
-        set_color(ctx, SKIN)
-        ctx.fill_preserve()
-        set_color(ctx, LINE_COL)
-        ctx.set_line_width(lw_minor)
-        ctx.stroke()
-        # Index finger extended toward chin
-        ctx.new_path()
-        ctx.move_to(ra_hand[0] - 3*s, ra_hand[1] - hand_r_s * 0.5)
-        ctx.line_to(chin_x, chin_y)
-        set_color(ctx, SKIN)
-        ctx.set_line_width(3*s)
-        ctx.set_line_cap(cairo.LINE_CAP_ROUND)
-        ctx.stroke()
-        ctx.new_path()
-        ctx.move_to(ra_hand[0] - 3*s, ra_hand[1] - hand_r_s * 0.5)
-        ctx.line_to(chin_x, chin_y)
-        set_color(ctx, LINE_COL)
-        ctx.set_line_width(lw_accent)
-        ctx.stroke()
-
-    elif spec["right_arm"] == "flung_back":
-        # SURPRISED: right arm flung wide to side and behind (amplified for silhouette)
-        ra_shoulder = (rs_pt[0] - 8*s, rs_pt[1] + 5*s)
-        ra_elbow = (ra_shoulder[0] + 50*s, ra_shoulder[1] + 12*s)
-        ra_hand = (ra_elbow[0] + 35*s, ra_elbow[1] + 25*s)
-        upper_ra = bezier_points(ra_shoulder,
-                                  (ra_shoulder[0] + 15*s, ra_shoulder[1] + 3*s),
-                                  (ra_elbow[0] - 8*s, ra_elbow[1] - 5*s),
-                                  ra_elbow, steps=25)
-        fore_ra = bezier_points(ra_elbow,
-                                 (ra_elbow[0] + 10*s, ra_elbow[1] + 3*s),
-                                 (ra_hand[0] - 8*s, ra_hand[1] - 5*s),
-                                 ra_hand, steps=25)
-        draw_variable_stroke_limb(ctx, upper_ra, arm_w_top, arm_w_bot * 1.1,
-                                   hoodie, LINE_COL, lw_major)
-        draw_variable_stroke_limb(ctx, fore_ra, arm_w_bot * 1.1, arm_w_bot,
-                                   hoodie, LINE_COL, lw_major)
-        # Hand (open, fingers spread)
-        draw_ellipse_path(ctx, ra_hand[0], ra_hand[1], hand_r_s * 1.0, hand_r_s * 0.8)
-        set_color(ctx, SKIN)
-        ctx.fill_preserve()
-        set_color(ctx, LINE_COL)
-        ctx.set_line_width(lw_minor)
-        ctx.stroke()
-        # Finger lines
-        for angle_deg in [20, 45, 70, 95]:
-            rad = math.radians(angle_deg)
-            fx = ra_hand[0] + math.cos(rad) * hand_r_s * 1.2
-            fy = ra_hand[1] - math.sin(rad) * hand_r_s * 1.0
-            ctx.new_path()
-            ctx.move_to(ra_hand[0] + math.cos(rad) * hand_r_s * 0.6,
-                        ra_hand[1] - math.sin(rad) * hand_r_s * 0.5)
-            ctx.line_to(fx, fy)
-            set_color(ctx, LINE_COL)
-            ctx.set_line_width(lw_accent)
-            ctx.stroke()
+    draw_arms(ctx, expression, spec, ls_pt, rs_pt, head_cx, head_cy, head_r,
+              torso_cx, torso_cy, s, hoodie, lw_major, lw_minor, lw_accent,
+              arm_w_top, arm_w_bot, hand_r_s)
 
     # ══════════════════════════════════════════════════════════════════════
     # NECK — Organic taper
@@ -722,7 +1111,6 @@ def draw_luma_expression(ctx, cx, ground_y, char_h, expression, spec, scale=1.0)
     head_rx = head_r * 1.06
     head_ry = head_r
 
-    # Head tilt
     tilt_rad = math.radians(spec["head_tilt"])
 
     ctx.save()
@@ -736,11 +1124,9 @@ def draw_luma_expression(ctx, cx, ground_y, char_h, expression, spec, scale=1.0)
         angle = i * 2 * math.pi / steps
         rx = head_rx
         ry = head_ry
-        # Chin: pull bottom-center down, narrow slightly
         chin_f = max(0, math.cos(angle - math.pi / 2)) ** 2.5
         ry += head_r * 0.10 * chin_f
         rx -= head_r * 0.04 * chin_f
-        # Cheek bumps
         for sign in [1, -1]:
             cheek_f = max(0, math.cos(angle - sign * 0.4)) ** 6
             rx += head_r * 0.04 * cheek_f
@@ -753,7 +1139,6 @@ def draw_luma_expression(ctx, cx, ground_y, char_h, expression, spec, scale=1.0)
     ctx.close_path()
     set_color(ctx, SKIN)
     ctx.fill_preserve()
-    # Save path for later outline
     ctx.set_line_width(lw_silhouette)
     set_color(ctx, LINE_COL)
     ctx.stroke()
@@ -807,7 +1192,7 @@ def draw_luma_expression(ctx, cx, ground_y, char_h, expression, spec, scale=1.0)
     set_color(ctx, SKIN)
     ctx.fill()
 
-    # ── EYES — Large, expressive (30% of head width each) ──
+    # ── EYES ──
     eye_spacing = head_rx * 0.40
     eye_y = head_r * 0.05
     eye_rx = head_rx * 0.28
@@ -817,7 +1202,6 @@ def draw_luma_expression(ctx, cx, ground_y, char_h, expression, spec, scale=1.0)
         ex = side * eye_spacing
         ey = eye_y
 
-        # Eye white
         draw_ellipse_path(ctx, ex, ey, eye_rx, eye_ry)
         set_color(ctx, EYE_W)
         ctx.fill_preserve()
@@ -825,10 +1209,10 @@ def draw_luma_expression(ctx, cx, ground_y, char_h, expression, spec, scale=1.0)
         ctx.set_line_width(lw_minor)
         ctx.stroke()
 
-        # Upper lid emphasis (thicker line on top half)
+        # Upper lid emphasis
         ctx.new_path()
         for i in range(30):
-            a = math.radians(195 + (150) * i / 29)
+            a = math.radians(195 + 150 * i / 29)
             px = ex + eye_rx * 1.01 * math.cos(a)
             py = ey + eye_ry * 0.97 * math.sin(a)
             if i == 0:
@@ -840,7 +1224,7 @@ def draw_luma_expression(ctx, cx, ground_y, char_h, expression, spec, scale=1.0)
         ctx.set_line_cap(cairo.LINE_CAP_ROUND)
         ctx.stroke()
 
-        # Lower lash (thinner)
+        # Lower lash
         ctx.new_path()
         for i in range(20):
             a = math.radians(15 + 150 * i / 19)
@@ -881,7 +1265,6 @@ def draw_luma_expression(ctx, cx, ground_y, char_h, expression, spec, scale=1.0)
         ctx.arc(hl_x, hl_y, hl_r, 0, 2 * math.pi)
         set_color(ctx, EYE_HL)
         ctx.fill()
-        # Secondary smaller highlight
         hl2_r = max(hl_r * 0.45, 2)
         ctx.new_path()
         ctx.arc(iris_cx - iris_r * 0.22, iris_cy + iris_ry * 0.18,
@@ -918,7 +1301,9 @@ def draw_luma_expression(ctx, cx, ground_y, char_h, expression, spec, scale=1.0)
     # ── Mouth ──
     mouth_y = head_r * 0.44
     mouth_w = head_rx * 0.30
-    if spec["mouth"] == "gentle_smile":
+    mouth_type = spec["mouth"]
+
+    if mouth_type == "gentle_smile":
         ctx.new_path()
         ctx.move_to(-mouth_w, mouth_y + 1*s)
         ctx.curve_to(-mouth_w * 0.3, mouth_y - 6*s,
@@ -928,7 +1313,6 @@ def draw_luma_expression(ctx, cx, ground_y, char_h, expression, spec, scale=1.0)
         ctx.set_line_width(lw_minor)
         ctx.set_line_cap(cairo.LINE_CAP_ROUND)
         ctx.stroke()
-        # Upturn corners
         ctx.new_path()
         ctx.move_to(-mouth_w, mouth_y + 1*s)
         ctx.line_to(-mouth_w - 2*s, mouth_y - 2*s)
@@ -937,18 +1321,102 @@ def draw_luma_expression(ctx, cx, ground_y, char_h, expression, spec, scale=1.0)
         ctx.move_to(mouth_w, mouth_y - 1*s)
         ctx.line_to(mouth_w + 2*s, mouth_y - 3*s)
         ctx.stroke()
-    elif spec["mouth"] == "open_o":
-        # Surprised open mouth
+
+    elif mouth_type == "open_o":
         mouth_rx = mouth_w * 0.6
         mouth_ry = head_r * 0.12
         draw_ellipse_path(ctx, 0, mouth_y + 2*s, mouth_rx, mouth_ry)
-        set_color(ctx, (0.15, 0.08, 0.06))  # dark mouth interior
+        set_color(ctx, (0.15, 0.08, 0.06))
         ctx.fill_preserve()
         set_color(ctx, LINE_COL)
         ctx.set_line_width(lw_minor)
         ctx.stroke()
 
-    # ── Blush (subtle alpha ellipses) ──
+    elif mouth_type == "firm_line":
+        # Determined: firm, slightly pursed line
+        ctx.new_path()
+        ctx.move_to(-mouth_w * 0.8, mouth_y)
+        ctx.curve_to(-mouth_w * 0.2, mouth_y - 2*s,
+                     mouth_w * 0.2, mouth_y - 2*s,
+                     mouth_w * 0.8, mouth_y)
+        set_color(ctx, LINE_COL)
+        ctx.set_line_width(lw_major)
+        ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+        ctx.stroke()
+
+    elif mouth_type == "tight_frown":
+        # Worried: downturned, tight
+        ctx.new_path()
+        ctx.move_to(-mouth_w * 0.7, mouth_y - 2*s)
+        ctx.curve_to(-mouth_w * 0.2, mouth_y + 4*s,
+                     mouth_w * 0.2, mouth_y + 4*s,
+                     mouth_w * 0.7, mouth_y - 2*s)
+        set_color(ctx, LINE_COL)
+        ctx.set_line_width(lw_minor)
+        ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+        ctx.stroke()
+        # Downturn corners
+        for sx in [-1, 1]:
+            ctx.new_path()
+            ctx.move_to(sx * mouth_w * 0.7, mouth_y - 2*s)
+            ctx.line_to(sx * (mouth_w * 0.7 + 2*s), mouth_y + 1*s)
+            ctx.stroke()
+
+    elif mouth_type == "wide_grin":
+        # Delighted: wide open grin
+        mouth_rx = mouth_w * 0.85
+        mouth_ry = head_r * 0.10
+        # Dark interior
+        draw_ellipse_path(ctx, 0, mouth_y + 1*s, mouth_rx, mouth_ry)
+        set_color(ctx, (0.15, 0.08, 0.06))
+        ctx.fill_preserve()
+        set_color(ctx, LINE_COL)
+        ctx.set_line_width(lw_minor)
+        ctx.stroke()
+        # Teeth line
+        ctx.new_path()
+        ctx.move_to(-mouth_rx * 0.7, mouth_y + 1*s)
+        ctx.line_to(mouth_rx * 0.7, mouth_y + 1*s)
+        set_color(ctx, EYE_W)
+        ctx.set_line_width(3*s)
+        ctx.stroke()
+        # Upturn corners
+        for sx in [-1, 1]:
+            ctx.new_path()
+            ctx.move_to(sx * mouth_rx, mouth_y + 1*s)
+            ctx.line_to(sx * (mouth_rx + 3*s), mouth_y - 3*s)
+            set_color(ctx, LINE_COL)
+            ctx.set_line_width(lw_accent)
+            ctx.stroke()
+
+    elif mouth_type == "gritted_teeth":
+        # Frustrated: bared gritted teeth
+        mouth_rx = mouth_w * 0.65
+        mouth_ry = head_r * 0.07
+        draw_ellipse_path(ctx, 0, mouth_y + 2*s, mouth_rx, mouth_ry)
+        set_color(ctx, (0.15, 0.08, 0.06))
+        ctx.fill_preserve()
+        set_color(ctx, LINE_COL)
+        ctx.set_line_width(lw_minor)
+        ctx.stroke()
+        # Teeth grid
+        for tx in range(-3, 4):
+            ctx.new_path()
+            ctx.move_to(tx * mouth_rx * 0.25, mouth_y + 2*s - mouth_ry * 0.8)
+            ctx.line_to(tx * mouth_rx * 0.25, mouth_y + 2*s + mouth_ry * 0.8)
+            set_color(ctx, EYE_W)
+            ctx.set_line_width(1.5*s)
+            ctx.stroke()
+        # Downturn corners
+        for sx in [-1, 1]:
+            ctx.new_path()
+            ctx.move_to(sx * mouth_rx, mouth_y + 2*s)
+            ctx.line_to(sx * (mouth_rx + 2*s), mouth_y + 4*s)
+            set_color(ctx, LINE_COL)
+            ctx.set_line_width(lw_accent)
+            ctx.stroke()
+
+    # ── Blush ──
     for side in [-1, 1]:
         cheek_cx = side * eye_spacing * 0.85
         cheek_cy = head_r * 0.24
@@ -959,14 +1427,13 @@ def draw_luma_expression(ctx, cx, ground_y, char_h, expression, spec, scale=1.0)
     ctx.restore()  # End head tilt transform
 
     # ══════════════════════════════════════════════════════════════════════
-    # GESTURE LINE OVERLAY (visualization — thin guide curve)
+    # GESTURE LINE OVERLAY
     # ══════════════════════════════════════════════════════════════════════
     ctx.save()
     ctx.set_dash([8*s, 4*s])
     ctx.set_line_width(2.0)
     set_color(ctx, (0.2, 0.6, 0.9, 0.35))
     ctx.new_path()
-    # Gesture line from head through torso through hip through weight foot
     g_head = (head_cx, head_cy - head_r * 0.5)
     g_neck = (head_cx + (torso_cx - head_cx) * 0.5, neck_bot_y * 0.7 + head_cy * 0.3)
     g_torso = (torso_cx + torso_lean * 0.5, torso_cy)
@@ -996,12 +1463,10 @@ def draw_luma_expression(ctx, cx, ground_y, char_h, expression, spec, scale=1.0)
 # ── Main Render ──────────────────────────────────────────────────────────────
 
 def render_expression_sheet():
-    """Render CURIOUS and SURPRISED expressions side by side."""
+    """Render all 6 Luma expressions in a 3x2 grid."""
 
     surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, RENDER_W, RENDER_H)
     ctx = cairo.Context(surface)
-
-    # Anti-aliasing
     ctx.set_antialias(cairo.ANTIALIAS_BEST)
 
     # Background
@@ -1009,49 +1474,58 @@ def render_expression_sheet():
     ctx.rectangle(0, 0, RENDER_W, RENDER_H)
     ctx.fill()
 
-    # Panel layout: two panels side by side
-    margin = 40
-    panel_w = (RENDER_W - 3 * margin) // 2
-    panel_h = RENDER_H - 2 * margin
+    # 3x2 grid layout
+    cols = 3
+    rows = 2
+    margin = 30
+    top_margin = 50  # room for title
+    panel_w = (RENDER_W - (cols + 1) * margin) // cols
+    panel_h = (RENDER_H - top_margin - (rows + 1) * margin) // rows
 
-    expressions = ["CURIOUS", "SURPRISED"]
+    expressions = ["CURIOUS", "DETERMINED", "SURPRISED", "WORRIED", "DELIGHTED", "FRUSTRATED"]
     panel_colors = [
-        (230/255, 240/255, 235/255),   # warm mint for CURIOUS
-        (240/255, 225/255, 230/255),    # warm rose for SURPRISED
+        (230/255, 240/255, 235/255),   # warm mint
+        (240/255, 232/255, 218/255),   # warm cream
+        (240/255, 225/255, 230/255),   # warm rose
+        (225/255, 230/255, 240/255),   # cool lavender
+        (245/255, 238/255, 220/255),   # warm gold
+        (238/255, 225/255, 225/255),   # muted coral
     ]
 
     char_data = []
 
-    for i, expr in enumerate(expressions):
-        px = margin + i * (panel_w + margin)
-        py = margin
+    for idx, expr in enumerate(expressions):
+        col = idx % cols
+        row = idx // cols
+        px = margin + col * (panel_w + margin)
+        py = top_margin + margin + row * (panel_h + margin)
 
         # Panel background
         ctx.rectangle(px, py, panel_w, panel_h)
-        set_color(ctx, panel_colors[i])
+        set_color(ctx, panel_colors[idx])
         ctx.fill_preserve()
         set_color(ctx, LINE_COL, 0.15)
         ctx.set_line_width(2)
         ctx.stroke()
 
         # Ground plane
-        ground_y = py + panel_h - 60
+        ground_y = py + panel_h - 45
 
         # Ground line
         ctx.new_path()
-        ctx.move_to(px + 20, ground_y)
-        ctx.line_to(px + panel_w - 20, ground_y)
+        ctx.move_to(px + 15, ground_y)
+        ctx.line_to(px + panel_w - 15, ground_y)
         set_color(ctx, LINE_COL, 0.2)
         ctx.set_line_width(2)
         ctx.stroke()
 
         # Drop shadow band (warm)
-        ctx.rectangle(px + 20, ground_y, panel_w - 40, 15)
+        ctx.rectangle(px + 15, ground_y, panel_w - 30, 10)
         set_color(ctx, (0.85, 0.78, 0.65, 0.3))
         ctx.fill()
 
         # Character
-        char_h = panel_h - 140  # leave room for label and ground
+        char_h = panel_h - 100  # leave room for label and ground
         char_cx = px + panel_w / 2
         spec = GESTURE_SPECS[expr]
 
@@ -1060,28 +1534,28 @@ def render_expression_sheet():
 
         # Label
         ctx.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
-        ctx.set_font_size(28)
+        ctx.set_font_size(22)
         set_color(ctx, LINE_COL)
         text_ext = ctx.text_extents(expr)
         ctx.move_to(px + panel_w / 2 - text_ext.width / 2,
-                    py + panel_h - 20)
+                    py + panel_h - 12)
         ctx.show_text(expr)
 
-        # Sub-label with construction info
-        ctx.set_font_size(14)
+        # Sub-label
+        ctx.set_font_size(11)
         set_color(ctx, LINE_COL, 0.5)
-        sub = f"37% head | 30% eyes | gesture line | cairo bezier | v{__version__}"
+        sub = f"37% head | gesture line | cairo v{__version__}"
         sub_ext = ctx.text_extents(sub)
-        ctx.move_to(px + panel_w / 2 - sub_ext.width / 2, py + 25)
+        ctx.move_to(px + panel_w / 2 - sub_ext.width / 2, py + 18)
         ctx.show_text(sub)
 
     # Title bar
     ctx.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
     ctx.set_font_size(18)
-    set_color(ctx, LINE_COL, 0.4)
-    title = "LUMA — Cairo Expression Rebuild C51 / Maya Santos"
+    set_color(ctx, LINE_COL, 0.6)
+    title = "LUMA — Full Expression Sheet C52 / Maya Santos / pycairo"
     title_ext = ctx.text_extents(title)
-    ctx.move_to(RENDER_W / 2 - title_ext.width / 2, 25)
+    ctx.move_to(RENDER_W / 2 - title_ext.width / 2, 32)
     ctx.show_text(title)
 
     # Convert to PIL for color enhancement and final output
@@ -1089,27 +1563,22 @@ def render_expression_sheet():
 
     # Apply Sam's color enhancements if available
     if HAS_COLOR_ENHANCE:
-        # Convert to RGB for color enhance (it expects RGB)
         pil_rgb = pil_img.convert("RGB")
 
         for expr, info in char_data:
-            # Character bounding box (approximate)
             char_left = int(info["head_cx"] - info["head_rx"] * 2)
             char_top = int(info["head_cy"] - info["head_r"] * 1.5)
             char_right = int(info["head_cx"] + info["head_rx"] * 2)
             char_bottom = int(info["ground_y"])
             char_bbox = (char_left, char_top, char_right, char_bottom)
 
-            # Scene tint (warm domestic)
             pil_rgb = apply_scene_tint(pil_rgb, char_bbox,
                                         key_light_color=(212, 146, 58), alpha=18)
 
-            # Skin warmth on face
             face_center = (int(info["head_cx"]), int(info["head_cy"]))
             face_radius = (int(info["head_rx"]), int(info["head_ry"]))
             pil_rgb = apply_skin_warmth(pil_rgb, face_center, face_radius)
 
-            # Form shadow on torso
             torso_left = int(info["torso_cx"] - info["head_r"] * 0.8)
             torso_top = int(info["torso_cy"] - info["char_h"] * 0.19)
             torso_right = int(info["torso_cx"] + info["head_r"] * 0.8)
@@ -1124,17 +1593,23 @@ def render_expression_sheet():
     # Downscale to output resolution with LANCZOS
     pil_out = pil_img.convert("RGB").resize((OUTPUT_W, OUTPUT_H), Image.LANCZOS)
 
-    # Save
-    out_path = str(output_dir("production", "LTG_PROD_luma_cairo_expressions.png"))
+    # Save to BOTH locations (production + main character sheet)
+    prod_path = str(output_dir("production", "LTG_PROD_luma_cairo_expressions.png"))
     ensure_dir(output_dir("production"))
-    pil_out.save(out_path)
-    print(f"Saved: {out_path}")
+    pil_out.save(prod_path)
+
+    main_path = str(output_dir("characters", "main", "LTG_CHAR_luma_expression_sheet.png"))
+    ensure_dir(output_dir("characters", "main"))
+    pil_out.save(main_path)
+
+    print(f"Saved: {prod_path}")
+    print(f"Saved: {main_path}")
     print(f"  Size: {pil_out.size[0]}x{pil_out.size[1]}")
     print(f"  Expressions: {', '.join(expressions)}")
     print(f"  Engine: pycairo {cairo.version}")
     print(f"  Color enhance: {'applied' if HAS_COLOR_ENHANCE else 'skipped (import failed)'}")
 
-    return out_path, char_data
+    return main_path, char_data
 
 
 if __name__ == "__main__":
