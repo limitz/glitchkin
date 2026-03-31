@@ -65,5 +65,14 @@ Build tools, not prompts. Use existing LTG_TOOL_* where possible. Extend before 
 - Exempt: char_*, luma_*, cosmo_*, byte_*, glitch_*, miri_*, character_*, bodypart_*, draw_shoulder_arm
 - Tracking metric (not gate): WARN count should decrease as char_* modules are built
 
+## Inline Char Drawing Scanner (v1.1.0 lessons)
+- Word-boundary false positives: `draw_eye` matches `draw_eye_glow` unless you use `\bdef\s+draw_eye\b`
+- Delegate detection requires TWO things: (a) collect file-level `from LTG_TOOL_char_*` imports, (b) check function body for raw primitives
+- Raw drawing = `ctx.(move_to|curve_to|arc|fill|stroke)` or `draw.(polygon|ellipse|line|rectangle)` in body
+- Delegate = calls canonical module name (imported alias or _draw_*_canonical), zero raw primitives
+- Negative lookahead for prefix collision: `glitch(?!kin)` prevents `draw_glitchkin` from matching
+- Extract function body by tracking indentation from def line — stop at same/lower indent
+- All C53 "75 inline draws" were false positives: correct delegates misidentified by pattern matching
+
 ## README Sync Status (C45)
-- 139 tools on disk, all listed — PASS
+- 139 tools on disk, all listed — PASS (C54: overdue, now 216+ tools)

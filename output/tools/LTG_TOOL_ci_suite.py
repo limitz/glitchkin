@@ -16,6 +16,7 @@ v1.8.0: Morgan Walsh / Cycle 48 — Remove Check 10, add Check 10 doc_staleness
 v1.9.0: Morgan Walsh / Cycle 49 — Check registry + per-directory doc_staleness thresholds
 v2.0.0: Morgan Walsh / Cycle 52 — Checks 11-13: dep_availability, bezier_migration_lint, tool_naming_lint
 v2.1.0: Morgan Walsh / Cycle 53 — Check 14: char_modular_lint (inline char drawing detection)
+v2.2.0: Morgan Walsh / Cycle 54 — char_modular_lint false positive fix (word-boundary + delegate detection)
 
 Runs all LTG tool-pipeline CI checks in sequence and produces a combined report.
 

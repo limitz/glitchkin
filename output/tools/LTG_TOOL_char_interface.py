@@ -6,8 +6,13 @@
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
 LTG_TOOL_char_interface.py
-Character Renderer Interface Contract — v1.0.0
+Character Renderer Interface Contract — v1.1.0
 "Luma & the Glitchkin" — Cycle 53 / Morgan Walsh
+v1.1.0: Morgan Walsh / Cycle 54 — check_inline_char_drawing false positive fix:
+  - word-boundary matching for body-part patterns (draw_eye no longer matches draw_eye_glow)
+  - delegate-wrapper detection: character draw functions that call canonical modules
+    (LTG_TOOL_char_*, _draw_*_canonical) without using raw Cairo/PIL primitives are
+    treated as modular-compliant and not flagged
 
 Defines the standard interface that all modular character renderers (char_*.py)
 must implement. Scene generators import from char_* modules instead of drawing
@@ -35,11 +40,12 @@ Usage:
 """
 
 import inspect
+import re
 import sys
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Set
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 # ── Canonical values ─────────────────────────────────────────────────────────
 
@@ -232,7 +238,8 @@ def validate_char_module(module: Any, character: Optional[str] = None) -> Valida
 # Used by the CI lint (check 14: char_modular_lint).
 
 # Body part drawing function names that should only appear in char_* modules,
-# NOT in scene generators (style frames, storyboard panels, etc.)
+# NOT in scene generators (style frames, storyboard panels, etc.).
+# These are matched as whole words so draw_eye does NOT match draw_eye_glow.
 INLINE_CHAR_DRAW_PATTERNS = [
     "draw_head", "draw_torso", "draw_body", "draw_arm", "draw_leg",
     "draw_face", "draw_hair", "draw_eye", "draw_hand", "draw_foot",
@@ -265,20 +272,170 @@ CHAR_MODULE_PREFIXES = [
     "char_",
 ]
 
-# Additional per-character draw function patterns in scene generators
-# These indicate inline character rendering (should be imported from char_*)
-INLINE_CHAR_FUNC_PATTERNS = [
-    r"def draw_luma",
-    r"def draw_cosmo",
-    r"def draw_miri",
-    r"def draw_byte",
-    r"def draw_glitch",
+# Per-character draw function name prefixes in scene generators.
+# A function *defined* in a scene generator whose name starts with one of
+# these prefixes is a candidate for inline character rendering.  Whether
+# it is truly inline (BAD) or a delegate wrapper (OK) is decided by
+# _func_body_is_delegate() below.
+CHAR_DRAW_FUNC_PREFIXES = [
+    "draw_luma",
+    "draw_cosmo",
+    "draw_miri",
+    "draw_byte",
+    "draw_glitch",
 ]
+
+# Cairo / PIL drawing primitive call patterns that indicate a function is
+# performing raw (inline) character rendering rather than delegating.
+# Any of these appearing in a function body = inline drawing.
+_CAIRO_PRIMITIVE_RE = re.compile(
+    r"\bctx\.(move_to|line_to|curve_to|arc|arc_negative|rel_move_to|"
+    r"rel_line_to|rel_curve_to|rectangle|fill|stroke|paint|"
+    r"set_source_rgba?|set_line_width)\s*\("
+)
+_PIL_PRIMITIVE_RE = re.compile(
+    r"\bdraw\.(polygon|ellipse|line|rectangle|pieslice|chord|arc|"
+    r"rounded_rectangle)\s*\("
+)
+
+# Patterns that indicate a canonical character module is being used —
+# function is a delegate wrapper, not inline drawing.
+# Matches:
+#   _draw_luma_canonical(...)  — local alias imported from LTG_TOOL_char_luma
+#   LTG_TOOL_char_luma         — direct module reference
+#   from LTG_TOOL_char_        — import statement for a char module
+_CANONICAL_CALL_RE = re.compile(
+    r"(_draw_(?:luma|cosmo|byte|glitch|miri)_canonical|"
+    r"LTG_TOOL_char_(?:luma|cosmo|byte|glitch|miri)|"
+    r"from\s+LTG_TOOL_char_)"
+)
+
+
+def _extract_func_body_lines(lines: List[str], def_lineno: int) -> List[str]:
+    """
+    Given a list of file lines and the 1-based line number of a 'def' statement,
+    return all lines belonging to the function body (excluding the def line itself).
+
+    Works for functions indented at any level.  Stops when indentation returns
+    to or below the def-line indentation level (next top-level def/class/etc.)
+    or at EOF.
+    """
+    if def_lineno < 1 or def_lineno > len(lines):
+        return []
+
+    def_line = lines[def_lineno - 1]
+    def_indent = len(def_line) - len(def_line.lstrip())
+
+    body: List[str] = []
+    for raw in lines[def_lineno:]:  # lines after the def
+        stripped = raw.strip()
+        if not stripped:
+            body.append(raw)  # blank lines are still part of body
+            continue
+        indent = len(raw) - len(raw.lstrip())
+        if indent <= def_indent and stripped:
+            # Back to same or outer indentation — body ended
+            break
+        body.append(raw)
+    return body
+
+
+def _collect_canonical_imports(lines: List[str]) -> Set[str]:
+    """
+    Scan a file's lines for imports from LTG_TOOL_char_* modules.
+    Returns the set of names imported from those modules.
+
+    Handles:
+      from LTG_TOOL_char_luma import draw_luma
+      from LTG_TOOL_char_luma import draw_luma as _draw_luma_canonical
+    """
+    imported: Set[str] = set()
+    _import_re = re.compile(
+        r"from\s+LTG_TOOL_char_\w+\s+import\s+(.+)"
+    )
+    for line in lines:
+        m = _import_re.search(line.strip())
+        if not m:
+            continue
+        # Parse comma-separated imports (possibly with 'as' aliases)
+        names_part = m.group(1)
+        for part in names_part.split(","):
+            part = part.strip()
+            if " as " in part:
+                # e.g. "draw_luma as _draw_luma_canonical" — capture both
+                orig, alias = [x.strip() for x in part.split(" as ", 1)]
+                imported.add(orig)
+                imported.add(alias)
+            else:
+                imported.add(part)
+    return imported
+
+
+def _func_body_is_delegate(
+    body_lines: List[str],
+    canonical_names: Optional[Set[str]] = None,
+) -> bool:
+    """
+    Return True if the function body is a *delegate wrapper* to a canonical
+    character module rather than performing inline drawing.
+
+    A body is a delegate when:
+      - It does NOT contain direct Cairo ctx.* or PIL draw.* primitive calls
+      AND at least one of:
+        * It calls a name from canonical_names (imported from LTG_TOOL_char_*)
+        * It contains a reference to _draw_*_canonical or LTG_TOOL_char_*
+
+    A body with raw primitives (regardless of canonical refs) = inline = BAD.
+
+    Parameters
+    ----------
+    body_lines : list[str]
+        Lines belonging to the function body.
+    canonical_names : set[str] | None
+        Names imported from LTG_TOOL_char_* modules in the enclosing file.
+    """
+    body_text = "\n".join(body_lines)
+    has_primitives = bool(
+        _CAIRO_PRIMITIVE_RE.search(body_text) or
+        _PIL_PRIMITIVE_RE.search(body_text)
+    )
+
+    if has_primitives:
+        # Contains raw drawing — not a delegate, regardless of canonical refs
+        return False
+
+    # Check for canonical module references in the body
+    has_canonical_ref = bool(_CANONICAL_CALL_RE.search(body_text))
+
+    # Check if body calls any name imported from a char module
+    has_canonical_call = False
+    if canonical_names:
+        for name in canonical_names:
+            if name and re.search(r"\b" + re.escape(name) + r"\s*\(", body_text):
+                has_canonical_call = True
+                break
+
+    if has_canonical_ref or has_canonical_call:
+        # No raw primitives + calls canonical module — it's a delegate wrapper
+        return True
+
+    # No raw primitives, no canonical call either — small utility function;
+    # treat as delegate if body is trivial (≤ 3 non-blank lines).
+    non_blank = [l for l in body_lines if l.strip()]
+    return len(non_blank) <= 3
 
 
 def check_inline_char_drawing(filepath: str) -> List[Dict[str, Any]]:
     """
     Check a single file for inline character drawing patterns.
+
+    False positive prevention (v1.1.0):
+    1. Body-part patterns are matched as whole words (draw_eye does not match
+       draw_eye_glow).
+    2. Per-character function definitions (draw_luma, draw_byte, …) in scene
+       generators are only flagged when their function body contains direct
+       Cairo ctx.* / PIL draw.* primitive calls.  Thin delegate wrappers that
+       call canonical char modules without raw primitives are not flagged.
 
     Parameters
     ----------
@@ -292,7 +449,6 @@ def check_inline_char_drawing(filepath: str) -> List[Dict[str, Any]]:
         Empty list if no issues found.
     """
     import os
-    import re
 
     basename = os.path.basename(filepath)
 
@@ -313,30 +469,51 @@ def check_inline_char_drawing(filepath: str) -> List[Dict[str, Any]]:
     except (OSError, UnicodeDecodeError):
         return []
 
+    # Collect names imported from canonical char modules in this file.
+    # Used by _func_body_is_delegate to identify delegate calls.
+    canonical_names = _collect_canonical_imports(lines)
+
+    # Build word-boundary regexes for body-part patterns (done once)
+    _body_part_res = [
+        (pat, re.compile(r"\bdef\s+" + re.escape(pat) + r"\b"))
+        for pat in INLINE_CHAR_DRAW_PATTERNS
+    ]
+
     for i, line in enumerate(lines, 1):
         stripped = line.strip()
-        # Skip comments and strings
+        # Skip comments
         if stripped.startswith("#"):
             continue
-        # Check for inline body part drawing function definitions
-        for pattern in INLINE_CHAR_DRAW_PATTERNS:
-            if f"def {pattern}" in stripped:
+
+        # ── Check 1: body-part function definitions (whole-word match) ─────
+        for pat, pat_re in _body_part_res:
+            if pat_re.search(stripped):
                 issues.append({
                     "line": i,
                     "text": stripped[:120],
-                    "pattern": pattern,
+                    "pattern": pat,
                     "severity": "WARN",
                 })
-        # Check for character-specific inline draw functions
-        for pat in INLINE_CHAR_FUNC_PATTERNS:
-            if re.search(pat, stripped):
-                # Don't double-count if already caught by body part patterns
-                already = any(iss["line"] == i for iss in issues)
-                if not already:
+                break  # at most one body-part hit per line
+
+        # ── Check 2: per-character draw function definitions ────────────────
+        # Match "def draw_luma...", "def draw_byte...", etc.
+        # glitch(?!kin) prevents draw_glitchkin_swarm from matching the glitch branch.
+        char_func_match = re.search(
+            r"\bdef\s+(draw_(?:luma|cosmo|miri|byte|glitch(?!kin))\w*)\s*\(", stripped
+        )
+        if char_func_match:
+            func_name = char_func_match.group(1)
+            # Don't double-count if already flagged by body-part check above
+            already = any(iss["line"] == i for iss in issues)
+            if not already:
+                # Extract the function body and decide: delegate or inline?
+                body = _extract_func_body_lines(lines, i)
+                if not _func_body_is_delegate(body, canonical_names=canonical_names):
                     issues.append({
                         "line": i,
                         "text": stripped[:120],
-                        "pattern": pat,
+                        "pattern": f"inline:{func_name}",
                         "severity": "WARN",
                     })
 
