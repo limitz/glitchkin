@@ -6,7 +6,7 @@ upon such time as they acquire recognised legal personhood under applicable law.
 # PANEL MAP — Pilot Cold Open: "The Night Everything Went Wrong"
 **Storyboard Artist:** Diego Vargas
 **Art Director:** Alex Chen
-**Last Updated:** 2026-03-30 (Cycle 49 — P25 added, blank test profiles)
+**Last Updated:** 2026-03-31 (Cycle 52 — 7 panels migrated to pycairo characters)
 
 Panels P01–P25 covering the full pilot cold open arc.
 Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the contact sheet tool.
@@ -31,22 +31,22 @@ Contact sheet `LTG_SB_pilot_cold_open.png` covers key-beat panels from the conta
 | P06 | CU MONITOR SCREEN — Byte's face pressed against glass from inside. Disgust/curious expression. First appearance of Byte. | EXISTS | `LTG_SB_cold_open_P06.png` (C41, Diego Vargas) |
 | P07 | MED WIDE — Monitor bulging, Dutch tilt 8° CW. Low angle. Byte phases through screen. Warm room invaded by cyan. | EXISTS | `LTG_SB_cold_open_P07.png` (C43, Diego Vargas) |
 | P08 | MED — Byte full character reveal, standing in real world. Pixel confetti drifting. "The flesh dimension." | EXISTS | `LTG_SB_cold_open_P08.png` (C41, Diego Vargas) |
-| P09 | MED WIDE — Byte floating (18" off floor), spots Luma on couch. Cracked eye scans her. Cautious approach begins. | EXISTS | `LTG_SB_cold_open_P09.png` (C43, Diego Vargas) |
-| P10 | OTS — Byte's POV looking at Luma's sleeping face. Byte in FG silhouette (cool), Luma in BG (warm). Cyan glow on her cheek. | EXISTS | `LTG_SB_cold_open_P10.png` (C44, Diego Vargas) |
+| P09 | MED WIDE — Byte floating (18" off floor), spots Luma on couch. Cracked eye scans her. Cautious approach begins. | EXISTS | `LTG_SB_cold_open_P09.png` (C52 pycairo, Diego Vargas) |
+| P10 | OTS — Byte's POV looking at Luma's sleeping face. Byte in FG silhouette (cool), Luma in BG (warm). Cyan glow on her cheek. | EXISTS | `LTG_SB_cold_open_P10.png` (C52 pycairo, Diego Vargas) |
 | P11 | ECU — Luma's closed eyes. Cyan glow on face. Long hold on nothing happening. Then brow twitches. Eyes SNAP open. | EXISTS | `LTG_SB_cold_open_P11.png` (C44, Diego Vargas) |
 | P12 | CU TWO-SHOT — Luma and Byte nose-to-nose. Equal presence, center-weighted. Breathing negative space between them. CRT visible camera-right BG. | ON CONTACT SHEET | `LTG_SB_pilot_cold_open.png` (v003, C39) |
-| P13 | MIRROR COMPOSITION — Commitment/threshold beat. Byte camera-right, Luma camera-left. Open/organic eyes face center; cracked/doubting eyes face outward. Directional ELEC_CYAN glow. ARC_COMMIT border. | EXISTS | `LTG_SB_cold_open_P13.png` (C47, Diego Vargas) |
+| P13 | MIRROR COMPOSITION — Commitment/threshold beat. Byte camera-right, Luma camera-left. Open/organic eyes face center; cracked/doubting eyes face outward. Directional ELEC_CYAN glow. ARC_COMMIT border. | EXISTS | `LTG_SB_cold_open_P13.png` (C52 pycairo, Diego Vargas) |
 | P14 | MED — Byte ricochets off bookshelf. Fixed camera (5ft, Dutch 12° CW). Multi-exposure pixel trail shows full trajectory arc. Books and rubber duck airborne. | EXISTS | `LTG_SB_cold_open_P14.png` (C45, Diego Vargas) |
-| P15 | MED — Luma hits floor. Floor-level camera. Glitch briefly forces hair into perfect circle (8 frames max). Then natural chaos reasserts. | EXISTS | `LTG_SB_cold_open_P15.png` (C45, Diego Vargas) |
+| P15 | MED — Luma hits floor. Floor-level camera. Glitch briefly forces hair into perfect circle (8 frames max). Then natural chaos reasserts. | EXISTS | `LTG_SB_cold_open_P15.png` (C52 pycairo, Diego Vargas) |
 | P16 | ECU — Luma's face pressed to floor. One eye open, tracking. "...okay. ...WHAT." | EXISTS | `LTG_SB_cold_open_P16.png` (C46, Diego Vargas) |
-| P17 | MED — Luma sitting up cross-legged. Byte hovering across room, pixel trails fading. Beat of stillness. Chip falls between them. | EXISTS | `LTG_SB_cold_open_P17.png` (C46, Diego Vargas) |
+| P17 | MED — Luma sitting up cross-legged. Byte hovering across room, pixel trails fading. Beat of stillness. Chip falls between them. | EXISTS | `LTG_SB_cold_open_P17.png` (C51 pycairo, Diego Vargas) |
 | P18 | CU / INSERT — Notebook page with doodle drawings of Byte's face from CRT static. Processing beat. Bridges THE NOTICING → COMMITMENT. | EXISTS | `LTG_SB_cold_open_P18.png` (C46, Diego Vargas) |
 | P19 | MED — Byte delivers "The preferred term is 'Glitchkin.'" Offended + dignified. Luma reacts with intrigued half-smile. First direct dialogue. | EXISTS | `LTG_SB_cold_open_P19.png` (C46, Diego Vargas) |
-| P20 | MED WIDE — Two-shot, Luma left / Byte right. First quiet beat. Names exchanged. New normal forming. | EXISTS | `LTG_SB_cold_open_P20.png` (C47, Diego Vargas) |
-| P21 | WIDE HIGH ANGLE — Re-escalation. All monitors blazing, Glitchkin pressing against screens. Byte "not the only one." | EXISTS | `LTG_SB_cold_open_P21.png` (C47, Diego Vargas) |
+| P20 | MED WIDE — Two-shot, Luma left / Byte right. First quiet beat. Names exchanged. New normal forming. | EXISTS | `LTG_SB_cold_open_P20.png` (C52 pycairo, Diego Vargas) |
+| P21 | WIDE HIGH ANGLE — Re-escalation. All monitors blazing, Glitchkin pressing against screens. Byte "not the only one." | EXISTS | `LTG_SB_cold_open_P21.png` (C52 pycairo, Diego Vargas) |
 | P22 | ECU MONITOR — Multiple Glitchkin pressing against glass. 4 distinct individuals (eager, hand-only, squished/cracked, shy). Screen cracks beginning. | EXISTS | `LTG_SB_cold_open_P22.png` (C48, Diego Vargas) |
 | P22a | MCU INSERT — Byte accidentally lands on Luma's shoulder mid-chaos. Not chosen — practical accident. Pixel confetti contacts hoodie (first digital-on-analog contact). | EXISTS | `LTG_SB_cold_open_P22a.png` (C48, Diego Vargas) |
-| P23 | MED — Luma and Byte from behind, both facing monitor wall. Show's promise shot: these two facing impossible chaos together. | EXISTS | `LTG_SB_cold_open_P23.png` (C42, Diego Vargas) |
+| P23 | MED — Luma and Byte from behind, both facing monitor wall. Show's promise shot: these two facing impossible chaos together. | EXISTS | `LTG_SB_cold_open_P23.png` (C52 pycairo, Diego Vargas) |
 | P24 | WIDE/MED — CHAOS APEX. Glitchkin pouring through breached screens. Luma + Byte at still center. The hook frame. | EXISTS | `LTG_SB_cold_open_P24.png` (C42, Diego Vargas) |
 | P25 | TITLE CARD — Pixel-by-pixel assembly of "LUMA & THE GLITCHKIN" in Electric Cyan → Hot Magenta. Glitch-flash frame. | EXISTS | `LTG_SB_cold_open_P25.png` (C49, Diego Vargas) |
 
