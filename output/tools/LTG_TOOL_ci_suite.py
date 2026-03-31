@@ -15,6 +15,7 @@ v1.7.0: Morgan Walsh / Cycle 47 — --dry-run flag, Check 10 ext_model_check
 v1.8.0: Morgan Walsh / Cycle 48 — Remove Check 10, add Check 10 doc_staleness
 v1.9.0: Morgan Walsh / Cycle 49 — Check registry + per-directory doc_staleness thresholds
 v2.0.0: Morgan Walsh / Cycle 52 — Checks 11-13: dep_availability, bezier_migration_lint, tool_naming_lint
+v2.1.0: Morgan Walsh / Cycle 53 — Check 14: char_modular_lint (inline char drawing detection)
 
 Runs all LTG tool-pipeline CI checks in sequence and produces a combined report.
 
@@ -75,6 +76,7 @@ Default checks (in order)
 11. dep_availability       — required library availability (bezier, Shapely, pycairo)
 12. bezier_migration_lint  — hand-rolled bezier function migration status
 13. tool_naming_lint       — LTG_TOOL_ prefix enforcement on .py files
+14. char_modular_lint      — inline character drawing in scene generators
 
 Pass/fail threshold
 -------------------
@@ -177,6 +179,7 @@ API
     from LTG_TOOL_ci_suite import check_dep_availability
     from LTG_TOOL_ci_suite import check_bezier_migration
     from LTG_TOOL_ci_suite import check_tool_naming
+    from LTG_TOOL_ci_suite import check_char_modular
 
     known     = load_known_issues("ci_known_issues.json")
     known_raw = load_known_issues_raw("ci_known_issues.json")
@@ -285,7 +288,7 @@ v2.0.0 (C52): Check 11 — dep_availability. Verifies required pipeline
               (Morgan Walsh)
 """
 
-__version__ = "2.0.0"
+__version__ = "2.1.0"
 
 import os
 import sys
@@ -366,6 +369,7 @@ def _resolve_checks_from_registry(registry):
         "dep_availability":     _run_dep_availability,
         "bezier_migration_lint":_run_bezier_migration_lint,
         "tool_naming_lint":     _run_tool_naming_lint,
+        "char_modular_lint":    _run_char_modular_lint,
     }
 
     slots = registry.get("slots", [])
@@ -1605,6 +1609,80 @@ def _run_tool_naming_lint(tools_dir):
         return "PASS", f"All {total} .py files follow LTG_TOOL_ naming convention", ""
 
 
+# ── Check 14: char_modular_lint — inline character drawing in scene generators ─
+
+def check_char_modular(tools_dir=None):
+    """
+    Detect inline character drawing in scene generators.
+    Scene generators should import from char_*.py modules, not draw
+    characters inline.
+
+    Returns
+    -------
+    dict  {"status": str, "files_scanned": int, "files_with_issues": int,
+           "total_issues": int, "issues": list[dict]}
+    """
+    import glob as _glob
+    td = _tools_dir_or_default(tools_dir)
+    try:
+        from LTG_TOOL_char_interface import check_inline_char_drawing
+    except ImportError:
+        return {
+            "status": "ERROR",
+            "files_scanned": 0,
+            "files_with_issues": 0,
+            "total_issues": 0,
+            "issues": [],
+            "error": "LTG_TOOL_char_interface.py not found",
+        }
+
+    pattern = os.path.join(td, "*.py")
+    files_scanned = 0
+    all_issues = []
+
+    for fpath in sorted(_glob.glob(pattern)):
+        files_scanned += 1
+        issues = check_inline_char_drawing(fpath)
+        if issues:
+            all_issues.append({
+                "file": os.path.basename(fpath),
+                "issues": issues,
+            })
+
+    total_issues = sum(len(f["issues"]) for f in all_issues)
+    # WARN (not FAIL) because this is a tracking metric — migration is incremental
+    status = "WARN" if all_issues else "PASS"
+    return {
+        "status": status,
+        "files_scanned": files_scanned,
+        "files_with_issues": len(all_issues),
+        "total_issues": total_issues,
+        "issues": all_issues,
+    }
+
+
+def _run_char_modular_lint(tools_dir):
+    """Run character modular compliance lint. Returns (status, summary, details)."""
+    result = check_char_modular(tools_dir)
+    if result.get("error"):
+        return "ERROR", result["error"], ""
+    n_files = result["files_with_issues"]
+    n_issues = result["total_issues"]
+    scanned = result["files_scanned"]
+    if n_issues:
+        details_lines = [
+            f"INLINE CHARACTER DRAWING — {n_issues} function(s) in {n_files} scene generator(s):"
+        ]
+        for entry in result["issues"]:
+            details_lines.append(f"\n  {entry['file']}:")
+            for iss in entry["issues"]:
+                details_lines.append(f"    L{iss['line']:4d}  [{iss['severity']}]  {iss['text'][:100]}")
+        details = "\n".join(details_lines)
+        return "WARN", f"{n_issues} inline char draws in {n_files}/{scanned} scene generators", details
+    else:
+        return "PASS", f"No inline character drawing in {scanned} scene generators", ""
+
+
 # ── Suite runner ──────────────────────────────────────────────────────────────
 
 _CHECKS = [
@@ -1621,6 +1699,7 @@ _CHECKS = [
     ("dep_availability",      _run_dep_availability,      "Dependency Availability"),
     ("bezier_migration_lint", _run_bezier_migration_lint, "Bezier Migration Lint"),
     ("tool_naming_lint",      _run_tool_naming_lint,      "Tool Naming Convention"),
+    ("char_modular_lint",     _run_char_modular_lint,     "Char Modular Compliance"),
 ]
 
 

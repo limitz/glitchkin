@@ -22,6 +22,7 @@ import sys
 import math
 
 from PIL import Image, ImageDraw, ImageFont
+from LTG_TOOL_curve_utils import cubic_bezier_single as _cu_single, draw_bezier_polyline as _cu_draw_bezier
 
 # --- path setup ---
 _TOOL_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -58,20 +59,14 @@ PANEL_H = H - PAD * 2 - TITLE_H
 
 
 def bezier_point(p0, p1, p2, p3, t):
-    """Cubic bezier at parameter t."""
-    u = 1 - t
-    return (
-        int(u**3 * p0[0] + 3*u**2*t * p1[0] + 3*u*t**2 * p2[0] + t**3 * p3[0]),
-        int(u**3 * p0[1] + 3*u**2*t * p1[1] + 3*u*t**2 * p2[1] + t**3 * p3[1]),
-    )
+    """Delegates to curve_utils.cubic_bezier_single (int-cast for compat)."""
+    pt = _cu_single(p0, p1, p2, p3, t)
+    return (int(pt[0]), int(pt[1]))
 
 
 def draw_bezier_curve(draw, p0, p1, p2, p3, color, width=2, steps=30):
-    """Draw cubic bezier as polyline."""
-    pts = [bezier_point(p0, p1, p2, p3, t / steps) for t in range(steps + 1)]
-    for i in range(len(pts) - 1):
-        draw.line([pts[i], pts[i+1]], fill=color, width=width)
-    return pts
+    """Delegates to curve_utils.draw_bezier_polyline."""
+    return _cu_draw_bezier(draw, p0, p1, p2, p3, color, width=width, steps=steps)
 
 
 def draw_anchor(draw, x, y, r=4, color=ANCHOR_GREEN):

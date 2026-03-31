@@ -93,6 +93,7 @@ Output: output/characters/main/LTG_CHAR_grandma_miri_expression_sheet.png
 """
 
 from PIL import Image, ImageDraw, ImageFont
+from LTG_TOOL_curve_utils import quadratic_bezier_pts as _cu_quadratic
 import math
 import os
 
@@ -171,13 +172,8 @@ EXPR_LABELS = {
 # ── Geometry helpers ───────────────────────────────────────────────────────────
 
 def bezier3(p0, p1, p2, steps=40):
-    pts = []
-    for i in range(steps + 1):
-        t = i / steps
-        x = (1-t)**2 * p0[0] + 2*(1-t)*t * p1[0] + t**2 * p2[0]
-        y = (1-t)**2 * p0[1] + 2*(1-t)*t * p1[1] + t**2 * p2[1]
-        pts.append((x, y))
-    return pts
+    """Delegates to curve_utils.quadratic_bezier_pts."""
+    return _cu_quadratic(p0, p1, p2, steps=steps)
 
 
 def polyline(draw, pts, color, width=2):

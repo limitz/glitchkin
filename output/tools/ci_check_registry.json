@@ -78,6 +78,12 @@
       "check": "tool_naming_lint",
       "label": "Tool Naming Convention",
       "enabled": true
+    },
+    {
+      "slot": 14,
+      "check": "char_modular_lint",
+      "label": "Char Modular Compliance",
+      "enabled": true
     }
   ],
   "swap_history": [
@@ -112,6 +118,14 @@
       "cycle": "C52",
       "date": "2026-03-31",
       "reason": "New check: enforce LTG_TOOL_ prefix naming convention on active .py files."
+    },
+    {
+      "slot": 14,
+      "old_check": null,
+      "new_check": "char_modular_lint",
+      "cycle": "C53",
+      "date": "2026-03-31",
+      "reason": "New check: detect inline character drawing in scene generators — tracks modular architecture migration."
     }
   ]
 }

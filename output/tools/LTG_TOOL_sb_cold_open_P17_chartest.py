@@ -36,6 +36,7 @@ except ImportError:
     def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
     def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFont
+from LTG_TOOL_curve_utils import quadratic_bezier_pts as _cu_quadratic, cubic_bezier_pts as _cu_cubic
 import math, random, os
 
 PANELS_DIR = output_dir('storyboards', 'panels')
@@ -89,27 +90,13 @@ RNG = random.Random(1717)
 # ── Geometry Helpers (from Maya Santos construction prototype) ────────────────
 
 def bezier3(p0, p1, p2, steps=48):
-    """Quadratic bezier, returns list of (x,y) tuples."""
-    pts = []
-    for i in range(steps + 1):
-        t = i / steps
-        x = (1-t)**2 * p0[0] + 2*(1-t)*t * p1[0] + t**2 * p2[0]
-        y = (1-t)**2 * p0[1] + 2*(1-t)*t * p1[1] + t**2 * p2[1]
-        pts.append((x, y))
-    return pts
+    """Delegates to curve_utils.quadratic_bezier_pts."""
+    return _cu_quadratic(p0, p1, p2, steps=steps)
 
 
 def bezier4(p0, p1, p2, p3, steps=60):
-    """Cubic bezier for smoother S-curves."""
-    pts = []
-    for i in range(steps + 1):
-        t = i / steps
-        x = ((1-t)**3 * p0[0] + 3*(1-t)**2*t * p1[0] +
-             3*(1-t)*t**2 * p2[0] + t**3 * p3[0])
-        y = ((1-t)**3 * p0[1] + 3*(1-t)**2*t * p1[1] +
-             3*(1-t)*t**2 * p2[1] + t**3 * p3[1])
-        pts.append((x, y))
-    return pts
+    """Delegates to curve_utils.cubic_bezier_pts."""
+    return _cu_cubic(p0, p1, p2, p3, steps=steps)
 
 
 def ellipse_points(cx, cy, rx, ry, steps=64, a0=0, a1=360):
