@@ -72,6 +72,12 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 try:
+    import cairo as _cairo_mod
+    _CAIRO_AVAILABLE = True
+except ImportError:
+    _CAIRO_AVAILABLE = False
+
+try:
     from scipy.ndimage import binary_fill_holes
     from skimage.morphology import remove_small_objects
     from skimage.measure import find_contours, label, regionprops
@@ -94,6 +100,31 @@ FAIL_THRESHOLD = 0.15
 WARN_THRESHOLD = 0.30
 DEFAULT_SCALES = [1.0, 0.5, 0.25]
 CANONICAL_HEIGHT = 400  # Normalize all silhouettes to this height for comparison
+
+
+# ─── CAIRO SURFACE SUPPORT ─────────────────────────────────────────────────
+
+def _ensure_pil_image(obj, mode="RGB"):
+    """Accept PIL Image, cairo ImageSurface, or file path. Returns PIL Image.
+
+    Cairo ARGB32 surfaces are converted via BGRA→RGBA byte swap + PIL.Image.fromarray.
+    File paths are opened with Image.open().
+    """
+    if isinstance(obj, Image.Image):
+        return obj.convert(mode)
+    if isinstance(obj, (str, os.PathLike)):
+        return Image.open(obj).convert(mode)
+    if _CAIRO_AVAILABLE and isinstance(obj, _cairo_mod.ImageSurface):
+        w = obj.get_width()
+        h = obj.get_height()
+        buf = obj.get_data()
+        arr = np.frombuffer(buf, dtype=np.uint8).reshape(h, w, 4).copy()
+        # Cairo ARGB32 = BGRA in memory (little-endian) → RGBA
+        rgba = np.stack([arr[:, :, 2], arr[:, :, 1], arr[:, :, 0], arr[:, :, 3]], axis=2)
+        img = Image.fromarray(rgba, "RGBA")
+        return img.convert(mode)
+    raise TypeError(f"Unsupported input type: {type(obj)}. Expected PIL Image, cairo ImageSurface, or file path.")
+
 
 # ─── SILHOUETTE EXTRACTION ──────────────────────────────────────────────────
 
@@ -350,17 +381,25 @@ def verdict(ds):
 # ─── BATCH ANALYSIS ─────────────────────────────────────────────────────────
 
 
-def load_character(filepath, bg_tolerance=BG_TOLERANCE):
-    """Load image, extract and normalize silhouette. Returns (name, normalized_mask)."""
-    img = Image.open(filepath).convert("RGB")
+def load_character(filepath_or_surface, bg_tolerance=BG_TOLERANCE, name_override=None):
+    """Load image, extract and normalize silhouette. Returns (name, normalized_mask).
+
+    Accepts file path (str/Path), PIL Image, or cairo.ImageSurface.
+    When passing a non-path object, provide name_override for the display name.
+    """
+    img = _ensure_pil_image(filepath_or_surface, mode="RGB")
     bg = detect_background_color(img)
     mask = extract_silhouette(img, bg, bg_tolerance)
     norm = normalize_silhouette(mask)
-    name = os.path.splitext(os.path.basename(filepath))[0]
-    # Clean up common prefixes for display
-    for prefix in ["LTG_CHAR_", "LTG_"]:
-        if name.startswith(prefix):
-            name = name[len(prefix):]
+    if name_override:
+        name = name_override
+    elif isinstance(filepath_or_surface, (str, os.PathLike)):
+        name = os.path.splitext(os.path.basename(str(filepath_or_surface)))[0]
+        for prefix in ["LTG_CHAR_", "LTG_"]:
+            if name.startswith(prefix):
+                name = name[len(prefix):]
+    else:
+        name = "surface"
     return name, norm
 
 

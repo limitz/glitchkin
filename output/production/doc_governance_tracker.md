@@ -8,7 +8,7 @@ upon such time as they acquire recognised legal personhood under applicable law.
 
 **Author:** Priya Shah, Story & Script Developer
 **Created:** Cycle 47 (2026-03-30)
-**Last Updated:** Cycle 49
+**Last Updated:** Cycle 53
 **Trigger:** Reinhardt critique #6 — flagged 23 undocumented decisions and stale docs
 **Primary readers:** Alex Chen, all team members
 
@@ -52,12 +52,15 @@ Updated each cycle.
 | `LTG_glitch_voice_direction.md` | C40 | CURRENT | Priya Shah | Quick-reference card. Still canonical. |
 | `LTG_relationship_frame_brief.md` | C44 | CURRENT | Priya Shah | SF05 brief for Jordan Reed. |
 | `LTG_miri_cultural_identity_brief.md` | C43 | CURRENT | Priya Shah | Miri heritage production decision. |
+| `story_visual_alignment_c53.md` | C53 | CURRENT | Priya Shah | Expression coverage gaps: pilot scenes vs built modular renderers. 16 gaps identified (2 P0 critical). |
+| `character_expression_body_language_targets.md` | C51 | CURRENT | Priya Shah | Per-character expression-to-body-language targets. Still canonical. |
+| `expression_target_qa_report_c52.md` | C52 | CURRENT | Priya Shah | Automated QA of expression targets vs rendered sheets. |
 
 ### Core Production Documents
 
 | Document | Last Updated | Status | Owner | Notes |
 |----------|-------------|--------|-------|-------|
-| `production_bible.md` | **C49** | **CURRENT** | Alex Chen / Priya Shah | Full reconciliation C49 (Priya Shah). v5.0. All C01-C48 decisions incorporated: Glitch (C39), Miri heritage (C43), hairpin (C44), depth temp (C45), Cosmo hook (C47), shoulder rule (C47), Other Side, supporting cast, asset summary, canonical refs. **ADDRESSED C49.** |
+| `production_bible.md` | **C53** | **CURRENT** | Alex Chen / Priya Shah | v5.1. C53: modular renderer architecture (4-layer pipeline) added to Section 9A. C49: full reconciliation. **ADDRESSED C53.** |
 | `ltg_pitch_brief.md` | Unknown (pre-C10) | **STALE** | Alex Chen | No cycle marker found. Likely very early. Core emotional pitch is still valid but asset references may be outdated. |
 | `pitch_delivery_manifest.md` | C47 | CURRENT | Alex Chen / Priya Shah | Full asset reconciliation C47 by Priya Shah. File count ~50, resolution corrected to 1280x720, SF01-SF06 + GL Showcase listed, P03-P19 panels, motion specs. **ADDRESSED.** |
 | `pitch_package_index.md` | C47 | CURRENT | Jordan Reed / Alex Chen | Extensively updated C47. All C47 deliverables tracked (GL Showcase, Cosmo visual hook, lineup v011, SF01 v007, Millbrook ENV, Miri motion v003, shoulder involvement, perspective rules). P1/P2 open items listed. **ADDRESSED.** |
@@ -72,7 +75,7 @@ Updated each cycle.
 | `luma_face_curve_spec_supplement_c40.md` | C40 | CURRENT | Maya Santos | Supplement expressions. |
 | `face_test_gate_policy.md` | Unknown | REFERENCE | Alex Chen | Gate policy doc. |
 | `staging_decision_register.md` | C47 | CURRENT / ACTIVE | Priya Shah | Created C47. Byte position decision (C48) should be added next update. |
-| `doc_governance_tracker.md` | C47 | CURRENT / ACTIVE | Priya Shah | **This document.** |
+| `doc_governance_tracker.md` | C53 | CURRENT / ACTIVE | Priya Shah | **This document.** Updated C53. |
 
 ### QA and CI Reports
 

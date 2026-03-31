@@ -68,6 +68,12 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 try:
+    import cairo as _cairo_mod
+    _CAIRO_AVAILABLE = True
+except ImportError:
+    _CAIRO_AVAILABLE = False
+
+try:
     from skimage.feature import canny as skimage_canny
     from skimage.measure import find_contours as skimage_find_contours
     from skimage.filters import gaussian as skimage_gaussian
@@ -96,6 +102,30 @@ DEFAULT_STRAIGHTNESS = 0.02  # max deviation/run_length ratio
 
 FAIL_THRESHOLD = 0.40
 WARN_THRESHOLD = 0.25
+
+
+# ─── CAIRO SURFACE SUPPORT ─────────────────────────────────────────────────
+
+def _ensure_pil_image(obj, mode="RGB"):
+    """Accept PIL Image, cairo ImageSurface, or file path. Returns PIL Image.
+
+    Cairo ARGB32 surfaces are converted via BGRA→RGBA byte swap + PIL.Image.fromarray.
+    File paths are opened with Image.open().
+    """
+    if isinstance(obj, Image.Image):
+        return obj.convert(mode)
+    if isinstance(obj, (str, os.PathLike)):
+        return Image.open(obj).convert(mode)
+    if _CAIRO_AVAILABLE and isinstance(obj, _cairo_mod.ImageSurface):
+        w = obj.get_width()
+        h = obj.get_height()
+        buf = obj.get_data()
+        arr = np.frombuffer(buf, dtype=np.uint8).reshape(h, w, 4).copy()
+        rgba = np.stack([arr[:, :, 2], arr[:, :, 1], arr[:, :, 0], arr[:, :, 3]], axis=2)
+        img = Image.fromarray(rgba, "RGBA")
+        return img.convert(mode)
+    raise TypeError(f"Unsupported input type: {type(obj)}. Expected PIL Image, cairo ImageSurface, or file path.")
+
 
 # ─── OUTLINE EXTRACTION ────────────────────────────────────────────────────
 
@@ -424,14 +454,15 @@ def verdict(score):
 # ─── IMAGE ANALYSIS ─────────────────────────────────────────────────────────
 
 
-def analyze_image(filepath, min_run=DEFAULT_MIN_RUN,
+def analyze_image(filepath_or_surface, min_run=DEFAULT_MIN_RUN,
                   straightness=DEFAULT_STRAIGHTNESS):
     """Analyze a single character image for construction stiffness.
 
+    Accepts file path (str/Path), PIL Image, or cairo.ImageSurface.
     Backend priority: skimage > cv2 > PIL fallback.
     Straightness analysis: Shapely (if available) > sliding-window.
     """
-    img = Image.open(filepath).convert("RGB")
+    img = _ensure_pil_image(filepath_or_surface, mode="RGB")
     mask = extract_silhouette_mask(img)
 
     total_straight = 0
@@ -499,8 +530,8 @@ def analyze_image(filepath, min_run=DEFAULT_MIN_RUN,
     v = verdict(ss)
 
     return {
-        "file": os.path.basename(filepath),
-        "filepath": filepath,
+        "file": os.path.basename(str(filepath_or_surface)) if isinstance(filepath_or_surface, (str, os.PathLike)) else "<surface>",
+        "filepath": str(filepath_or_surface) if isinstance(filepath_or_surface, (str, os.PathLike)) else "<surface>",
         "total_outline_pixels": total_pixels,
         "straight_pixels": total_straight,
         "curved_pixels": total_curved,

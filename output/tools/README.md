@@ -71,6 +71,9 @@ If a required tool does not exist in the open source ecosystem, build it in Pyth
 | `LTG_TOOL_char_byte.py` | Canonical Byte modular renderer (10 expressions, cairo, transparent ARGB surface) |
 | `LTG_TOOL_char_cosmo.py` | Canonical Cosmo modular renderer (6 expressions, cairo, angular gesture spec, transparent ARGB surface) |
 | `LTG_TOOL_char_glitch.py` | Canonical Glitch modular renderer (9 expressions, cairo, transparent ARGB surface) |
+| `LTG_TOOL_char_luma.py` | Canonical Luma modular renderer (6 expressions, cairo, transparent ARGB surface) |
+| `LTG_TOOL_char_miri.py` | Canonical Grandma Miri modular renderer (6 expressions, cairo, transparent ARGB surface) |
+| `LTG_TOOL_char_module_test.py` | Modular character renderer integration test |
 
 ### Character Generators
 
@@ -177,59 +180,42 @@ If a required tool does not exist in the open source ecosystem, build it in Pyth
 | `LTG_TOOL_byte_motion.py` | Byte motion/animation poses |
 | `LTG_TOOL_miri_motion.py` | Miri motion/animation poses |
 | `LTG_TOOL_miri_motion_v002.py` | Miri motion v002 |
+| `LTG_TOOL_cosmo_motion.py` | Cosmo motion spec sheet (gesture-first pycairo, C53) |
 | `LTG_TOOL_glitch_motion.py` | Glitchkin motion/animation poses |
-| `LTG_TOOL_cosmo_motion.py` | Cosmo motion/animation poses |
 
 ### QA / Lint Tools
 
 | Filename | Description |
 |---|---|
-| `LTG_TOOL_proportion_audit.py` | Character proportion audit |
-| `LTG_TOOL_proportion_audit_c37_runner.py` | Proportion audit batch runner (C37) |
 | `LTG_TOOL_proportion_verify.py` | Proportion verification pass |
-| `LTG_TOOL_color_qa_c37_runner.py` | Color QA batch runner (C37) |
 | `LTG_TOOL_color_verify.py` | Color palette verification |
-| `LTG_TOOL_fidelity_check_c24.py` | Asset fidelity check (C24 baseline) |
 | `LTG_TOOL_char_spec_lint.py` | Character spec compliance linter |
 | `LTG_TOOL_glitch_spec_lint.py` | Glitchkin spec compliance linter |
 | `LTG_TOOL_motion_spec_lint.py` | Motion spec compliance linter |
 | `LTG_TOOL_alpha_blend_lint.py` | Alpha-blend correctness linter |
 | `LTG_TOOL_draw_order_lint.py` | Draw-order layer validation |
-| `LTG_TOOL_vanishing_point_lint.py` | Vanishing point consistency linter |
-| `LTG_TOOL_sobel_vp_detect.py` | Sobel-based vanishing point detector |
 | `LTG_TOOL_palette_warmth_lint.py` | Palette warmth balance linter |
 | `LTG_TOOL_uv_purple_linter.py` | UV Purple usage compliance linter |
 | `LTG_TOOL_uv_hue_survey_c46.py` | UV hue survey (C46) |
 | `LTG_TOOL_stub_linter.py` | Stub/placeholder detection linter |
 | `LTG_TOOL_warm_pixel_metric.py` | Warm pixel percentage metric |
 | `LTG_TOOL_composite_warmth_score.py` | Composite warmth scoring |
-| `LTG_TOOL_lineup_palette_audit.py` | Lineup palette consistency audit |
-| `LTG_TOOL_face_curves_caller_audit.py` | Face curves caller compliance audit |
 | `LTG_TOOL_precritique_qa.py` | Pre-critique QA pipeline runner |
-| `LTG_TOOL_costume_bg_clash.py` | Costume-background color clash detector |
 | `LTG_TOOL_depth_temp_lint.py` | Depth-temperature correlation linter |
 | `LTG_TOOL_gesture_line_lint.py` | Gesture line quality linter |
 | `LTG_TOOL_face_curve_validator.py` | Face curve geometry validator |
 | `LTG_TOOL_expression_target_qa.py` | Expression target QA checker |
 | `LTG_TOOL_expression_range_metric.py` | Expression range diversity metric |
-| `LTG_TOOL_visual_hook_audit.py` | Visual hook presence audit |
-| `LTG_TOOL_visual_blank_test.py` | Visual blank/empty frame detector |
-| `LTG_TOOL_thumbnail_readability.py` | Thumbnail readability checker |
-| `LTG_TOOL_sight_line_diagnostic.py` | Sight-line composition diagnostic |
 | `LTG_TOOL_sightline_validator.py` | Sight-line validation pass |
 | `LTG_TOOL_silhouette_distinctiveness.py` | Silhouette distinctiveness metric |
-| `LTG_TOOL_object_detect_qa.py` | Object detection QA (torchvision) |
 | `LTG_TOOL_multi_char_face_gate.py` | Multi-character face test gate |
 | `LTG_TOOL_face_landmark_detector.py` | Face landmark detection |
 | `LTG_TOOL_face_metric_calibrate.py` | Face metric calibration |
 | `LTG_TOOL_render_qa.py` | Render output QA validator |
 | `LTG_TOOL_rendering_comparison.py` | Before/after rendering comparison |
-| `LTG_TOOL_glow_profile_extract.py` | Glow profile extraction tool |
 | `LTG_TOOL_warmcool_scene_calibrate.py` | Warm/cool scene calibration |
-| `LTG_TOOL_scanline_pitch_extract.py` | Scanline pitch extraction |
-| `LTG_TOOL_prop_continuity_tracker.py` | Prop continuity tracking |
-| `run_c31_qa.py` | Legacy QA batch runner (C31) |
-| `test_face_lighting.py` | Face lighting test script |
+| `LTG_TOOL_construction_stiffness.py` | Construction-line stiffness metric |
+| `LTG_TOOL_character_face_test.py` | Character face test gate (automated) |
 
 ### Pipeline / CI Tools
 
@@ -262,12 +248,4 @@ If a required tool does not exist in the open source ecosystem, build it in Pyth
 
 ---
 
-## Retired / Deprecated Tools
-
-In `deprecated/`. Do not run or import.
-
-| Filename | Reason | Replacement |
-|---|---|---|
-| `LTG_TOOL_style_frame_01_discovery.py` | Dual-generator conflict, legacy 1920x1080 | `LTG_TOOL_styleframe_discovery.py` |
-| `LTG_TOOL_cycle13_panel_fixes.py` | Legacy batch fix, old naming convention | Per-panel `LTG_TOOL_sb_cold_open_P*.py` generators |
-| `LTG_TOOL_pretrained_model_detect.py` | Superseded | `LTG_TOOL_object_detect_qa.py` |
+> Deprecated tools live in `deprecated/`. Do not run or import. See `git log` for history.

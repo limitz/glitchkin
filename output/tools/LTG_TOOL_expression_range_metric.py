@@ -74,6 +74,12 @@ import numpy as np
 from itertools import combinations
 from PIL import Image, ImageDraw
 
+try:
+    import cairo as _cairo_mod
+    _CAIRO_AVAILABLE = True
+except ImportError:
+    _CAIRO_AVAILABLE = False
+
 # ─── CONFIG ──────────────────────────────────────────────────────────────────
 
 BG_SAMPLE_SIZE = 8
@@ -95,6 +101,30 @@ SCI_WARN = 0.15
 # Per-sheet ERS thresholds
 ERS_FAIL = 0.05
 ERS_WARN = 0.10
+
+
+# ─── CAIRO SURFACE SUPPORT ─────────────────────────────────────────────────
+
+def _ensure_pil_image(obj, mode="RGB"):
+    """Accept PIL Image, cairo ImageSurface, or file path. Returns PIL Image.
+
+    Cairo ARGB32 surfaces are converted via BGRA→RGBA byte swap + PIL.Image.fromarray.
+    File paths are opened with Image.open().
+    """
+    if isinstance(obj, Image.Image):
+        return obj.convert(mode)
+    if isinstance(obj, (str, os.PathLike)):
+        return Image.open(obj).convert(mode)
+    if _CAIRO_AVAILABLE and isinstance(obj, _cairo_mod.ImageSurface):
+        w = obj.get_width()
+        h = obj.get_height()
+        buf = obj.get_data()
+        arr = np.frombuffer(buf, dtype=np.uint8).reshape(h, w, 4).copy()
+        rgba = np.stack([arr[:, :, 2], arr[:, :, 1], arr[:, :, 0], arr[:, :, 3]], axis=2)
+        img = Image.fromarray(rgba, "RGBA")
+        return img.convert(mode)
+    raise TypeError(f"Unsupported input type: {type(obj)}. Expected PIL Image, cairo ImageSurface, or file path.")
+
 
 # Known grid sizes keyed by (width, height) → (rows, cols)
 KNOWN_GRIDS = {
@@ -280,10 +310,13 @@ def ers_verdict(ers):
 # ─── ANALYSIS ───────────────────────────────────────────────────────────────
 
 
-def analyze_expression_sheet(filepath, rows=None, cols=None, head_zone=DEFAULT_HEAD_ZONE,
+def analyze_expression_sheet(filepath_or_surface, rows=None, cols=None, head_zone=DEFAULT_HEAD_ZONE,
                               noise_threshold=DEFAULT_NOISE_THRESHOLD):
-    """Analyze a single expression sheet. Returns results dict."""
-    img = Image.open(filepath).convert("RGB")
+    """Analyze a single expression sheet. Returns results dict.
+
+    Accepts file path (str/Path), PIL Image, or cairo.ImageSurface.
+    """
+    img = _ensure_pil_image(filepath_or_surface, mode="RGB")
     r, c = detect_grid(img, rows, cols)
     panels = extract_panels(img, r, c)
 
@@ -297,7 +330,7 @@ def analyze_expression_sheet(filepath, rows=None, cols=None, head_zone=DEFAULT_H
 
     if len(valid_panels) < 2:
         return {
-            "file": os.path.basename(filepath),
+            "file": os.path.basename(str(filepath_or_surface)) if isinstance(filepath_or_surface, (str, os.PathLike)) else "<surface>",
             "grid": f"{r}x{c}",
             "valid_panels": len(valid_panels),
             "error": "Need at least 2 non-empty panels with detectable faces",
@@ -333,7 +366,7 @@ def analyze_expression_sheet(filepath, rows=None, cols=None, head_zone=DEFAULT_H
     pass_count = sum(1 for p in pairs if p["verdict"] == "PASS")
 
     return {
-        "file": os.path.basename(filepath),
+        "file": os.path.basename(str(filepath_or_surface)) if isinstance(filepath_or_surface, (str, os.PathLike)) else "<surface>",
         "grid": f"{r}x{c}",
         "valid_panels": len(valid_panels),
         "pairs": pairs,

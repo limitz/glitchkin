@@ -178,7 +178,7 @@ PALETTE_MD  = REPO_ROOT / "output" / "color" / "palettes" / "master_palette.md"
 BASELINE_JSON = TOOLS_DIR / "qa_baseline_last.json"
 
 # Cycle label — update each cycle
-CYCLE_LABEL = "C52"
+CYCLE_LABEL = "C53"
 
 if str(TOOLS_DIR) not in sys.path:
     sys.path.insert(0, str(TOOLS_DIR))
@@ -2134,6 +2134,121 @@ def run_construction_stiffness() -> dict:
 
 
 # ---------------------------------------------------------------------------
+# Section 18 — Character Quality Regression Gate (C53, Kai Nakamura)
+# ---------------------------------------------------------------------------
+
+# C52 baseline values for regression detection
+C52_QUALITY_BASELINE = {
+    "stiffness": 0.092,         # best stiffness score across turnarounds
+    "expression_range": 0.325,  # best ERS across expression sheets
+    "silhouette_fail_pairs": 0, # number of silhouette FAIL pairs
+}
+
+
+def run_character_quality_regression(stiffness_res, expression_res, silhouette_res):
+    """
+    Section 18 — Character Quality Regression Gate (Kai Nakamura, Cycle 53).
+
+    Compares current character quality metrics against C52 baseline.
+    Any regression flags WARN (not FAIL — rebuilding, some temporary regression expected).
+
+    Returns:
+        {
+            "overall"    : "PASS" | "WARN",
+            "pass"       : int,
+            "warn"       : int,
+            "fail"       : 0,  (never FAIL — informational only)
+            "skip"       : int,
+            "regressions": list of dicts describing each regression
+        }
+    """
+    regressions = []
+    pass_count = 0
+    warn_count = 0
+    skip_count = 0
+
+    # Check stiffness regression
+    best_stiffness = None
+    for entry in stiffness_res.get("per_file", []):
+        score = entry.get("stiffness_score")
+        if score is not None:
+            if best_stiffness is None or score < best_stiffness:
+                best_stiffness = score
+
+    if best_stiffness is not None:
+        baseline_s = C52_QUALITY_BASELINE["stiffness"]
+        if best_stiffness > baseline_s + 0.05:  # 0.05 tolerance band
+            regressions.append({
+                "metric": "stiffness",
+                "current": round(best_stiffness, 4),
+                "baseline": baseline_s,
+                "delta": round(best_stiffness - baseline_s, 4),
+                "message": f"Stiffness regressed: {best_stiffness:.4f} > baseline {baseline_s} + 0.05 tolerance",
+            })
+            warn_count += 1
+        else:
+            pass_count += 1
+    else:
+        skip_count += 1
+
+    # Check expression range regression
+    best_ers = None
+    for entry in expression_res.get("per_sheet", []):
+        ers = entry.get("ers")
+        if ers is not None:
+            if best_ers is None or ers > best_ers:
+                best_ers = ers
+
+    if best_ers is not None:
+        baseline_e = C52_QUALITY_BASELINE["expression_range"]
+        if best_ers < baseline_e - 0.05:  # 0.05 tolerance band
+            regressions.append({
+                "metric": "expression_range",
+                "current": round(best_ers, 4),
+                "baseline": baseline_e,
+                "delta": round(best_ers - baseline_e, 4),
+                "message": f"Expression range regressed: {best_ers:.4f} < baseline {baseline_e} - 0.05 tolerance",
+            })
+            warn_count += 1
+        else:
+            pass_count += 1
+    else:
+        skip_count += 1
+
+    # Check silhouette FAIL pair regression
+    fail_pairs = silhouette_res.get("fail", 0)
+    baseline_fp = C52_QUALITY_BASELINE["silhouette_fail_pairs"]
+    if fail_pairs > baseline_fp:
+        regressions.append({
+            "metric": "silhouette_fail_pairs",
+            "current": fail_pairs,
+            "baseline": baseline_fp,
+            "delta": fail_pairs - baseline_fp,
+            "message": f"Silhouette FAIL pairs increased: {fail_pairs} > baseline {baseline_fp}",
+        })
+        warn_count += 1
+    else:
+        pass_count += 1
+
+    overall = "WARN" if warn_count > 0 else "PASS"
+
+    return {
+        "overall": overall,
+        "pass": pass_count,
+        "warn": warn_count,
+        "fail": 0,
+        "skip": skip_count,
+        "regressions": regressions,
+        "baseline": C52_QUALITY_BASELINE,
+        "current": {
+            "stiffness": round(best_stiffness, 4) if best_stiffness is not None else None,
+            "expression_range": round(best_ers, 4) if best_ers is not None else None,
+            "silhouette_fail_pairs": fail_pairs,
+        },
+    }
+
+
+# ---------------------------------------------------------------------------
 # Report builder
 # ---------------------------------------------------------------------------
 
@@ -2155,6 +2270,7 @@ def build_report(
     silhouette_res: dict,
     expression_res: dict,
     stiffness_res: dict,
+    regression_res: dict,
     delta: dict,
     run_ts: str,
 ) -> str:
@@ -2193,12 +2309,14 @@ def build_report(
         silhouette_res["overall"],
         expression_res["overall"],
         stiffness_res["overall"],
+        regression_res["overall"],
     )
 
     _all_sections = [render_qa_res, color_verify_res, proportion_res,
                      stub_lint_res, palette_lint_res, glitch_lint_res,
                      readme_sync_res, motion_spec_res, warm_pixel_res,
-                     silhouette_res, expression_res, stiffness_res]
+                     silhouette_res, expression_res, stiffness_res,
+                     regression_res]
     total_pass  = sum(r["pass"] for r in _all_sections)
     total_warn  = sum(r["warn"] for r in _all_sections)
     total_fail  = sum(r["fail"] for r in _all_sections)
@@ -2248,6 +2366,7 @@ def build_report(
         f"| Silhouette Distinctiveness     | {silhouette_res['overall']}   | {silhouette_res['pass']}   | {silhouette_res['warn']}   | {silhouette_res['fail']}   |",
         f"| Expression Range Metric        | {expression_res['overall']}   | {expression_res['pass']}   | {expression_res['warn']}   | {expression_res['fail']}   |",
         f"| Construction Stiffness         | {stiffness_res['overall']}   | {stiffness_res['pass']}   | {stiffness_res['warn']}   | {stiffness_res['fail']}   |",
+        f"| Char Quality Regression Gate   | {regression_res['overall']}   | {regression_res['pass']}   | {regression_res['warn']}   | {regression_res['fail']}   |",
         "",
         "---",
         "",
@@ -2797,8 +2916,56 @@ def build_report(
 
     lines.append("---")
     lines.append("")
+
+    # Section 18: Character Quality Regression Gate (C53)
+    reg_badge = _grade_line(regression_res["overall"])
+    lines.append(f"## 18. Character Quality Regression Gate — C52 Baseline Check — {reg_badge}")
+    lines.append("")
     lines.append(
-        "*Generated by LTG_TOOL_precritique_qa.py v3.0.0 — "
+        "_Compares current character quality metrics (stiffness, expression range, "
+        "silhouette distinctiveness) against C52 baseline. Regression flags WARN "
+        "(not FAIL — temporary regression expected during modular renderer rebuild)._"
+    )
+    lines.append("")
+    lines.append(
+        f"PASS: {regression_res['pass']}  "
+        f"WARN: {regression_res['warn']}  "
+        f"FAIL: {regression_res['fail']}  "
+        f"Skip: {regression_res.get('skip', 0)}"
+    )
+    lines.append("")
+
+    baseline = regression_res.get("baseline", {})
+    current = regression_res.get("current", {})
+    lines.append("| Metric | C52 Baseline | Current | Status |")
+    lines.append("|---|---|---|---|")
+    for metric_key, metric_label in [
+        ("stiffness", "Stiffness (lower=better)"),
+        ("expression_range", "Expression Range (higher=better)"),
+        ("silhouette_fail_pairs", "Silhouette FAIL pairs (lower=better)"),
+    ]:
+        b_val = baseline.get(metric_key, "?")
+        c_val = current.get(metric_key, "?")
+        # Check if this metric regressed
+        regressed = any(r["metric"] == metric_key for r in regression_res.get("regressions", []))
+        status = "WARN regression" if regressed else ("SKIP" if c_val is None else "PASS")
+        lines.append(f"| {metric_label} | {b_val} | {c_val} | {status} |")
+    lines.append("")
+
+    if regression_res.get("regressions"):
+        lines.append("**Regressions detected:**")
+        for reg in regression_res["regressions"]:
+            lines.append(f"  - {reg['message']}")
+        lines.append("")
+    else:
+        lines.append("_No regressions detected — character quality maintained or improved._")
+        lines.append("")
+
+    lines.append("---")
+    lines.append("")
+    lines.append(
+        "*Generated by LTG_TOOL_precritique_qa.py v3.1.0 — "
+        "Kai Nakamura (C53: Section 18 Regression Gate, cairo surface support); "
         "Kai Nakamura (C52: Sections 15/16/17 Character Quality Metrics); "
         "Morgan Walsh (C49: Section 14 Sightline Validation added); "
         "Lee Tanaka (C48: Section 12 per-asset band overrides); "
@@ -2827,42 +2994,42 @@ def main():
     else:
         print("[precritique_qa] No baseline found — this run will establish the baseline.")
 
-    print("[1/17] Running Render QA on pitch PNGs...")
+    print("[1/18] Running Render QA on pitch PNGs...")
     render_qa_res = run_render_qa()
     print(f"      → {render_qa_res['overall']} (PASS={render_qa_res['pass']}, WARN={render_qa_res['warn']}, FAIL={render_qa_res['fail']}, MISSING={len(render_qa_res['missing'])})")
 
-    print("[2/17] Running Color Verify on style frames...")
+    print("[2/18] Running Color Verify on style frames...")
     color_verify_res = run_color_verify()
     print(f"      → {color_verify_res['overall']} (PASS={color_verify_res['pass']}, WARN={color_verify_res['warn']})")
 
-    print("[3/17] Running Proportion Verify on character turnarounds...")
+    print("[3/18] Running Proportion Verify on character turnarounds...")
     proportion_res = run_proportion_verify()
     print(f"      → {proportion_res['overall']} (PASS={proportion_res['pass']}, WARN={proportion_res['warn']}, FAIL={proportion_res['fail']})")
 
-    print("[4/17] Running Stub Linter on output/tools/...")
+    print("[4/18] Running Stub Linter on output/tools/...")
     stub_lint_res = run_stub_linter()
     print(f"      → {stub_lint_res['overall']} (PASS={stub_lint_res['pass']}, WARN={stub_lint_res['warn']}, ERROR={stub_lint_res['fail']})")
 
-    print("[5/17] Running Palette Warmth Lint on master_palette.md...")
+    print("[5/18] Running Palette Warmth Lint on master_palette.md...")
     palette_lint_res = run_palette_warmth_lint()
     print(f"      → {palette_lint_res['overall']} (checked={palette_lint_res['pass'] + palette_lint_res['warn']}, violations={palette_lint_res['warn']})")
 
-    print("[6/17] Running Glitch Spec Lint on generators...")
+    print("[6/18] Running Glitch Spec Lint on generators...")
     glitch_lint_res = run_glitch_spec_lint()
     print(f"      → {glitch_lint_res['overall']} (PASS={glitch_lint_res['pass']}, WARN={glitch_lint_res['warn']}, FAIL={glitch_lint_res['fail']}, SKIP={glitch_lint_res.get('skip',0)})")
 
-    print("[7/17] Running README Script Index Sync audit...")
+    print("[7/18] Running README Script Index Sync audit...")
     readme_sync_res = run_readme_sync()
     if readme_sync_res["warn"] > 0:
         print(f"      → {readme_sync_res['overall']} *** README SYNC WARN: {readme_sync_res.get('unlisted_count',0)} UNLISTED, {readme_sync_res.get('ghost_count',0)} GHOST — update README before critique! ***")
     else:
         print(f"      → {readme_sync_res['overall']} (OK={readme_sync_res['pass']}, UNLISTED/GHOST={readme_sync_res['warn']}, disk={readme_sync_res.get('disk_total','?')}, listed={readme_sync_res.get('listed_total','?')})")
 
-    print("[8/17] Running Motion Spec Lint on motion sheets...")
+    print("[8/18] Running Motion Spec Lint on motion sheets...")
     motion_spec_res = run_motion_spec_lint()
     print(f"      → {motion_spec_res['overall']} (PASS={motion_spec_res['pass']}, WARN={motion_spec_res['warn']}, FAIL={motion_spec_res['fail']}, MISSING={len(motion_spec_res['missing'])})")
 
-    print("[9/17] Running Arc-Diff Gate on contact sheet pairs...")
+    print("[9/18] Running Arc-Diff Gate on contact sheet pairs...")
     arc_diff_results = run_arc_diff_gate()
     for ad in arc_diff_results:
         sev = ad["severity"]
@@ -2872,37 +3039,41 @@ def main():
             msgs = "; ".join(m[:80] for m in ad.get("messages", [])[:2])
             print(f"      → {ad['label']}: {sev} — {msgs}")
 
-    print("[10/17] Running Alpha Blend Lint on fill-light assets...")
+    print("[10/18] Running Alpha Blend Lint on fill-light assets...")
     alpha_blend_res = run_alpha_blend_lint()
     print(f"      → {alpha_blend_res['overall']} (PASS={alpha_blend_res['pass']}, WARN={alpha_blend_res['warn']}, FAIL={alpha_blend_res['fail']}, SKIP={alpha_blend_res['skipped']})")
 
-    print("[11/17] Running UV_PURPLE Dominance Lint on Glitch Layer assets...")
+    print("[11/18] Running UV_PURPLE Dominance Lint on Glitch Layer assets...")
     uv_purple_res = run_uv_purple_lint()
     print(f"      → {uv_purple_res['overall']} (PASS={uv_purple_res['pass']}, WARN={uv_purple_res['warn']}, FAIL={uv_purple_res['fail']}, SKIP={uv_purple_res.get('skip',0)})")
 
-    print("[12/17] Running Depth Temperature Lint on multi-character assets...")
+    print("[12/18] Running Depth Temperature Lint on multi-character assets...")
     depth_temp_res = run_depth_temp_lint()
     print(f"      → {depth_temp_res['overall']} (PASS={depth_temp_res['pass']}, WARN={depth_temp_res['warn']}, FAIL={depth_temp_res['fail']}, SKIP={depth_temp_res.get('skip',0)})")
 
-    print("[13/17] Running Warm Pixel Percentage on world-typed assets...")
+    print("[13/18] Running Warm Pixel Percentage on world-typed assets...")
     warm_pixel_res = run_warm_pixel_lint()
     print(f"      → {warm_pixel_res['overall']} (PASS={warm_pixel_res['pass']}, WARN={warm_pixel_res['warn']}, FAIL={warm_pixel_res['fail']}, SKIP={warm_pixel_res.get('skip',0)})")
 
-    print("[14/17] Running Sightline Validation on gaze-target assets...")
+    print("[14/18] Running Sightline Validation on gaze-target assets...")
     sightline_res = run_sightline_lint()
     print(f"      → {sightline_res['overall']} (PASS={sightline_res['pass']}, WARN={sightline_res['warn']}, FAIL={sightline_res['fail']}, SKIP={sightline_res.get('skip',0)})")
 
-    print("[15/17] Running Silhouette Distinctiveness on character turnarounds...")
+    print("[15/18] Running Silhouette Distinctiveness on character turnarounds...")
     silhouette_res = run_silhouette_distinctiveness()
     print(f"      → {silhouette_res['overall']} (PASS={silhouette_res['pass']}, WARN={silhouette_res['warn']}, FAIL={silhouette_res['fail']}, SKIP={silhouette_res.get('skip',0)})")
 
-    print("[16/17] Running Expression Range Metric on expression sheets...")
+    print("[16/18] Running Expression Range Metric on expression sheets...")
     expression_res = run_expression_range()
     print(f"      → {expression_res['overall']} (PASS={expression_res['pass']}, WARN={expression_res['warn']}, FAIL={expression_res['fail']}, SKIP={expression_res.get('skip',0)})")
 
-    print("[17/17] Running Construction Stiffness on character turnarounds...")
+    print("[17/18] Running Construction Stiffness on character turnarounds...")
     stiffness_res = run_construction_stiffness()
     print(f"      → {stiffness_res['overall']} (PASS={stiffness_res['pass']}, WARN={stiffness_res['warn']}, FAIL={stiffness_res['fail']}, SKIP={stiffness_res.get('skip',0)})")
+
+    print("[18/18] Running Character Quality Regression Gate (C52 baseline)...")
+    regression_res = run_character_quality_regression(stiffness_res, expression_res, silhouette_res)
+    print(f"      → {regression_res['overall']} (PASS={regression_res['pass']}, WARN={regression_res['warn']}, regressions={len(regression_res.get('regressions', []))})")
 
     # Build snapshot and compute delta
     current_snapshot = _make_snapshot(
@@ -2936,6 +3107,7 @@ def main():
         silhouette_res,
         expression_res,
         stiffness_res,
+        regression_res,
         delta,
         run_ts,
     )
@@ -2963,6 +3135,7 @@ def main():
         silhouette_res["overall"],
         expression_res["overall"],
         stiffness_res["overall"],
+        regression_res["overall"],
     )
 
     print(f"[precritique_qa] OVERALL: {overall}")

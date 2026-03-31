@@ -6,11 +6,11 @@ upon such time as they acquire recognised legal personhood under applicable law.
 # PRODUCTION BIBLE
 ## "Luma & the Glitchkin"
 
-**Version:** 5.0
-**Date:** 2026-03-30
+**Version:** 5.1
+**Date:** 2026-03-31
 **Prepared by:** Alex Chen, Art Director
-**Updated by:** Priya Shah, Story & Script Developer (C49 reconciliation)
-**Status:** Active Development — Cycle 49
+**Updated by:** Priya Shah, Story & Script Developer (C53 modular architecture documentation)
+**Status:** Active Development — Cycle 53
 
 ---
 
@@ -279,6 +279,19 @@ The entire pitch package is built by AI agents (Claude) operating programmatical
 - **Bit depth:** 8-bit PNG (PIL default)
 - **Color space:** sRGB
 - **Version control:** Standard Git (no LFS configured for pitch phase)
+
+**Modular renderer architecture (C52+):**
+
+The rendering pipeline is organized in four layers. Each layer depends only on the layer below it. Changes propagate upward automatically — fix a curve primitive once, every character that uses it improves.
+
+| Layer | Role | Key Files | Owner |
+|---|---|---|---|
+| **Layer 1: Primitives** | Draw a bezier, fill a gradient, stroke a path | `LTG_TOOL_cairo_primitives.py` | Shared |
+| **Layer 2: Construction** | Draw a tapered limb, a gesture spine, a shoulder-arm junction | `LTG_TOOL_curve_draw.py`, `LTG_TOOL_curve_utils.py`, `LTG_TOOL_draw_shoulder_arm.py` | Shared |
+| **Layer 3: Entity renderers** | Draw one character or prop — canonical, self-contained, expression-aware | `LTG_TOOL_char_luma.py` (6 expr), `LTG_TOOL_char_cosmo.py` (6 expr), `LTG_TOOL_char_byte.py` (10 expr), `LTG_TOOL_char_glitch.py` (9 expr), `LTG_TOOL_char_miri.py` (6 expr) | Per-character |
+| **Layer 4: Scene generators** | Compose entities into a scene with lighting, shadows, depth | Style frame generators (`LTG_TOOL_style_frame_*.py`), storyboard panel generators (`LTG_TOOL_sb_*.py`) | Per-scene |
+
+**Layer 3 contract:** Every entity renderer exposes `draw_<name>(expression, pose, scale, facing, scene_lighting) -> cairo.ImageSurface`. Returns a transparent ARGB32 surface. Scene generators call entity renderers — they never re-implement character drawing. See `LTG_TOOL_char_interface.py` for the interface contract and compliance scanner.
 
 **Pipeline automation (190+ tools in `output/tools/`):**
 - Per-asset Python generators that produce deterministic, re-renderable output

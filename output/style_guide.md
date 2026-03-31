@@ -50,6 +50,9 @@ The tone is **playful, energetic, and slightly surreal** — mixing the warmth o
 - **Adults:** 5.5–6 heads tall. Still stylized — no realistic proportions.
 - **Glitchkin:** Wildly variable. Byte is roughly 6 inches tall (2 "heads"). Other Glitchkin range from marble-sized to car-sized. They do NOT follow biological rules — limbs can be asymmetric, features can float.
 
+### Character Construction Pipeline (C53)
+All five main characters (Luma, Cosmo, Byte, Glitch, Grandma Miri) have canonical modular renderers built in pycairo with bezier-curve construction. These renderers are the single source of truth for character drawing — scene generators compose characters by calling the renderer, never by re-implementing character geometry. See Production Bible Section 9A for the four-layer architecture. Expression and body language targets: `output/production/story/character_expression_body_language_targets.md`.
+
 ### Appeal Checklist
 - [ ] Does the character read in silhouette?
 - [ ] Can you tell their personality from their pose alone?

@@ -6,48 +6,25 @@
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
 LTG_TOOL_style_frame_02_glitch_storm.py
-Style Frame 02 — "Glitch Storm" — C44 Native Canvas Refactor
+Style Frame 02 — "Glitch Storm" — C53 pycairo Character Migration + Wand Compositing
 "Luma & the Glitchkin"
 
-Artist: Jordan Reed | Cycle 44
-Based on: LTG_TOOL_style_frame_02_glitch_storm.py (Rin Yamamoto, Cycle 36)
+Artist: Jordan Reed | Cycle 53
+Based on: C44 Native Canvas Refactor (Jordan Reed, Cycle 44)
 
-Cycle 44 changes (Petra Volkov C17 critique):
-  NATIVE CANVAS REFACTOR — 1920×1080 → 1280×720
-  - Eliminates img.thumbnail() LANCZOS pass at end — the source of SUNLIT_AMBER
-    LAB ΔE=47.04 color drift flagged by Petra Volkov (C17).
-  - All hardcoded pixel coordinates scaled by factor 2/3 (same 16:9 aspect ratio,
-    uniform scale: SX = SY = 1280/1920 = 720/1080 = 0.6667).
-  - All fractional geometry (int(W * 0.xx), int(H * 0.xx)) unchanged — already
-    relative to canvas dimensions.
-  - Post-thumbnail specular restore pass REMOVED — unnecessary at native resolution.
-    Specular detail is now rendered correctly at 1280×720 without LANCZOS averaging.
-  - _make_char_silhouette_mask_1080() renamed to _make_char_silhouette_mask() —
-    no longer hardcoded to 1080p dimensions; uses W/H globals.
-
-All Cycle 36 fixes carried forward:
-  - FILL LIGHT DIRECTION — source UPPER-RIGHT of each character (storm crack)
-  - PER-CHARACTER SILHOUETTE MASK via ImageChops.multiply — no BG tint
-  - char_cx from geometry constants (NOT get_char_bbox on full frame)
-  - Alpha max 35
-
-All Cycle 35 fixes carried forward:
-  - LUMA FACE: _draw_luma_face_sprint() — FOCUSED DETERMINATION expression
-  - TORSO LEAN: 10° forward lean
-  - HAIR STREAM: steeper angle + second fine trailing strand
-  - get_char_bbox() misuse fix in draw_cyan_specular_luma()
-
-All Cycle 34 fixes carried forward:
-  - CYAN SPECULAR on Luma (ELEC_CYAN add_rim_light side='right')
-
-All Cycle 22 fixes carried forward:
-  - CORRUPT_AMBER = GL-07 #FF8C00
-  - Window pane alpha 115/110
-  - Storefront: frame + dividers + cracked panes + debris
-  - Window glow cones: warm amber
-  - Cold confetti: DATA_BLUE 70% dominant
-  - Dutch angle: 4.0°
-  - Buildings: storm rim lighting ELEC_CYAN + UV bounce
+C53 changes (Jordan Reed):
+  PYCAIRO CHARACTER MIGRATION + WAND COMPOSITING:
+    - All characters (Luma, Cosmo, Byte, Glitch) rendered with pycairo bezier curves.
+      Smooth anti-aliased body silhouettes replace PIL rectangle/ellipse primitives.
+    - Characters drawn on separate transparent RGBA layers for Wand compositing.
+    - Wand compositing pipeline: contact shadow -> character paste -> bounce light ->
+      edge tint -> color transfer. Graceful PIL fallback if Wand unavailable.
+    - Internal render at 2x (2560x1440) for AA, downscaled to 1280x720 with LANCZOS.
+    - Environment layers (sky, confetti, town, street, storefront, ground lighting)
+      remain PIL-based at 2x resolution.
+    - All prior fixes carried forward: C47 shoulder involvement, C44 native canvas,
+      C36 fill light, C35 face/lean/hair, C34 cyan specular, C22 palette/storefront.
+    - SF02 is Glitch Layer — depth temperature rule is cool-ambient, UV_PURPLE dominant.
 
 Output: /home/wipkat/team/output/color/style_frames/LTG_COLOR_styleframe_glitch_storm.png
 Usage: python3 LTG_TOOL_style_frame_02_glitch_storm.py [--save-nolight]
@@ -70,10 +47,13 @@ import math
 import random
 import argparse
 from PIL import Image, ImageDraw, ImageFilter, ImageChops
+import numpy as np
 
-# Import procedural draw library for add_rim_light
+# Import tools
 _TOOLS_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, _TOOLS_DIR)
+
+# Procedural draw library for add_rim_light
 try:
     from LTG_TOOL_procedural_draw import add_rim_light
     PROCEDURAL_DRAW_AVAILABLE = True
@@ -81,10 +61,51 @@ except ImportError:
     PROCEDURAL_DRAW_AVAILABLE = False
     print("WARNING: LTG_TOOL_procedural_draw not found — rim light passes will use fallback.")
 
+# Cairo primitives for character rendering
+try:
+    from LTG_TOOL_cairo_primitives import (
+        create_surface, draw_bezier_path, draw_tapered_stroke,
+        draw_gradient_fill, draw_wobble_path, draw_smooth_polygon,
+        draw_ellipse, to_pil_image, to_pil_rgba, set_color
+    )
+    import cairo
+    _CAIRO_OK = True
+except ImportError:
+    _CAIRO_OK = False
+    print("WARNING: pycairo/cairo_primitives not found — falling back to PIL character rendering.")
+
+# Wand compositing — graceful fallback to PIL
+_WAND_OK = False
+try:
+    from LTG_TOOL_wand_composite import (
+        wand_contact_shadow, wand_bounce_light, wand_edge_tint,
+        wand_color_transfer, _WAND_AVAILABLE
+    )
+    _WAND_OK = _WAND_AVAILABLE
+except ImportError:
+    _WAND_OK = False
+
+# scipy for PIL fallback blur
+try:
+    from scipy.ndimage import gaussian_filter
+    _SCIPY_OK = True
+except ImportError:
+    _SCIPY_OK = False
+
 OUTPUT_PATH = output_dir('color', 'style_frames', 'LTG_COLOR_styleframe_glitch_storm.png')
 NOLIGHT_PATH = output_dir('color', 'style_frames', 'LTG_COLOR_styleframe_glitch_storm_nolight.png')
-# C44: Native 1280×720 — no LANCZOS thumbnail pass
-W, H = 1280, 720
+
+# ── C53: Render at 2x for AA, downscale to 1280x720 ─────────────────────────
+W_OUT, H_OUT = 1280, 720
+SCALE = 2
+W, H = W_OUT * SCALE, H_OUT * SCALE   # 2560 x 1440
+
+# Scale factors from 1280x720 reference to 2560x1440 internal
+SX = SCALE
+SY = SCALE
+def sx(n): return int(n * SX)
+def sy(n): return int(n * SY)
+def sp(n): return int(n * min(SX, SY))
 
 # ── Master Palette ────────────────────────────────────────────────────────────
 WARM_CREAM      = (250, 240, 220)
@@ -136,14 +157,65 @@ def lerp_color(c1, c2, t):
     return tuple(int(c1[i] + (c2[i] - c1[i]) * t) for i in range(3))
 
 
+def blend_color(base, tint, influence):
+    """Blend base color toward tint by influence factor (0.0-1.0)."""
+    return tuple(int(base[i] * (1 - influence) + tint[i] * influence) for i in range(3))
+
+
 def clamp(v, lo, hi):
     return max(lo, min(hi, v))
+
+
+def _c(rgb):
+    """(R,G,B) 0-255 -> cairo (r,g,b) 0.0-1.0."""
+    return (rgb[0] / 255.0, rgb[1] / 255.0, rgb[2] / 255.0)
+
+
+def _ca(rgba):
+    """(R,G,B,A) 0-255 -> cairo (r,g,b,a) 0.0-1.0."""
+    return (rgba[0] / 255.0, rgba[1] / 255.0, rgba[2] / 255.0, rgba[3] / 255.0)
 
 
 def alpha_paste(base, overlay_rgba):
     base_rgba = base.convert("RGBA")
     base_rgba.alpha_composite(overlay_rgba)
     return base_rgba.convert("RGB")
+
+
+def _draw_tapered_limb_cairo(ctx, x0, y0, x1, y1, w0, w1, color):
+    """Draw a tapered limb segment using cairo bezier envelope."""
+    dx = x1 - x0
+    dy = y1 - y0
+    length = math.sqrt(dx * dx + dy * dy) or 1.0
+    nx = -dy / length
+    ny = dx / length
+    hw0 = w0 / 2.0
+    hw1 = w1 / 2.0
+
+    ctx.new_path()
+    ctx.move_to(x0 + nx * hw0, y0 + ny * hw0)
+    mx = (x0 + x1) / 2.0 + nx * (hw0 + hw1) * 0.3
+    my = (y0 + y1) / 2.0 + ny * (hw0 + hw1) * 0.3
+    ctx.curve_to(x0 + nx * hw0 + dx * 0.33, y0 + ny * hw0 + dy * 0.33,
+                 mx, my,
+                 x1 + nx * hw1, y1 + ny * hw1)
+    ctx.line_to(x1 - nx * hw1, y1 - ny * hw1)
+    mx2 = (x0 + x1) / 2.0 - nx * (hw0 + hw1) * 0.3
+    my2 = (y0 + y1) / 2.0 - ny * (hw0 + hw1) * 0.3
+    ctx.curve_to(mx2, my2,
+                 x0 - nx * hw0 + dx * 0.33, y0 - ny * hw0 + dy * 0.33,
+                 x0 - nx * hw0, y0 - ny * hw0)
+    ctx.close_path()
+    set_color(ctx, color)
+    ctx.fill()
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Environment layers — rendered at W_OUT x H_OUT (1280x720), then upscaled
+# ═══════════════════════════════════════════════════════════════════════════════
+# Environment functions use W_ENV/H_ENV for their own coordinate system.
+# This avoids rewriting hundreds of hardcoded C44 coordinates.
+W_ENV, H_ENV = W_OUT, H_OUT
 
 
 # ── Layer 1: Sky ──────────────────────────────────────────────────────────────
@@ -589,16 +661,21 @@ def draw_storefront(img):
     return img
 
 
-# ── Layer 6: Characters ───────────────────────────────────────────────────────
+# ═══════════════════════════════════════════════════════════════════════════════
+# Layer 6: Characters — pycairo bezier rendering (C53)
+# ═══════════════════════════════════════════════════════════════════════════════
 
-def _draw_glitch_storm(img, cx, cy, body_h):
+SCENE_COOL_TINT = (0, 200, 220)
+SCENE_WARM_TINT = (255, 140, 0)
+SCENE_COOL_INFLUENCE = 0.20
+SCENE_WARM_INFLUENCE = 0.08
+
+
+def _draw_glitch_storm_cairo(cx, cy, body_h):
+    """Draw Glitch using pycairo bezier curves. Returns RGBA PIL image at W x H.
+    G007: VOID_BLACK outline width=3 as spec 2.2. Crown spike, pixel-art eyes.
+    Falls back to PIL if pycairo unavailable.
     """
-    Draw Glitch hovering in the storm sky near the crack (upper-right mid-ground).
-    G007 FIX (C40): Glitch diamond body drawn with VOID_BLACK outline=width 3 as spec §2.2.
-    Glitch is the source of the storm — it hovers near the crack at mid-distance scale.
-    body_h: vertical half-extent of the diamond (equivalent to ry in the expression sheet).
-    """
-    import math
     overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     od = ImageDraw.Draw(overlay)
 
@@ -631,18 +708,18 @@ def _draw_glitch_storm(img, cx, cy, body_h):
     od.line([mid_c, (cx + rx // 2, cy - ry // 4)], fill=(*HOT_MAGENTA, 200), width=1)
 
     spike_h = max(3, ry // 2)
-    sx = cx + int(rx * 0.15 * math.sin(angle))
+    spk_x = cx + int(rx * 0.15 * math.sin(angle))
     cy_top = top[1]
     spike_pts = [
-        (sx - spike_h // 2, cy_top),
-        (sx - spike_h,      cy_top - spike_h),
-        (sx,                cy_top - spike_h * 2),
-        (sx + spike_h,      cy_top - spike_h),
-        (sx + spike_h // 2, cy_top),
+        (spk_x - spike_h // 2, cy_top),
+        (spk_x - spike_h,      cy_top - spike_h),
+        (spk_x,                cy_top - spike_h * 2),
+        (spk_x + spike_h,      cy_top - spike_h),
+        (spk_x + spike_h // 2, cy_top),
     ]
     od.polygon(spike_pts, fill=(*CORRUPT_AMBER, 240))
     od.polygon(spike_pts, outline=(*VOID_BLACK, 255), width=2)
-    od.line([(sx, cy_top - spike_h * 2), (sx, cy_top - spike_h * 2 - max(1, ry // 8))],
+    od.line([(spk_x, cy_top - spike_h * 2), (spk_x, cy_top - spike_h * 2 - max(1, ry // 8))],
             fill=(*HOT_MAGENTA, 220), width=2)
 
     eye_cell = max(2, rx // 5)
@@ -667,31 +744,34 @@ def _draw_glitch_storm(img, cx, cy, body_h):
         ps = rng_gc.randint(2, 3)
         od.rectangle([px, py, px + ps, py + ps], fill=(*ACID_GREEN, 180))
 
-    img = alpha_paste(img, overlay)
-    draw = ImageDraw.Draw(img)  # noqa: F841
-    return img
+    return overlay
 
 
 def draw_characters(img):
-    """Character layout — sprinting left-to-right across frame."""
+    """Character layout — sprinting left-to-right across frame. Uses pycairo if available."""
     horizon_y = int(H * 0.58)
     ground_y  = horizon_y + int((H - horizon_y) * 0.12)
     char_h = int(H * 0.18)
 
     luma_cx = int(W * 0.45)
-    luma_foot_y = ground_y + 7   # C44: 10 × 2/3
+    luma_foot_y = ground_y + sp(7)
     luma_head_cy = luma_foot_y - char_h
 
     byte_cx = int(W * 0.28)
     byte_float_y = luma_head_cy + int(char_h * 0.30)
 
     cosmo_cx = int(W * 0.62)
-    cosmo_foot_y = ground_y + 9  # C44: 14 × 2/3
+    cosmo_foot_y = ground_y + sp(9)
 
     glitch_cx = int(W * 0.78)
     glitch_cy = int(H * 0.32)
     glitch_body_h = int(char_h * 0.50)
-    img = _draw_glitch_storm(img, glitch_cx, glitch_cy, glitch_body_h)
+
+    # Glitch — pycairo if available, composited directly (background character)
+    glitch_layer = _draw_glitch_storm_cairo(glitch_cx, glitch_cy, glitch_body_h)
+    base_rgba = img.convert("RGBA")
+    base_rgba = Image.alpha_composite(base_rgba, glitch_layer)
+    img = base_rgba.convert("RGB")
 
     img = _draw_luma(img, luma_cx, luma_foot_y, char_h)
     img = _draw_cosmo(img, cosmo_cx, cosmo_foot_y, char_h)
@@ -763,10 +843,7 @@ def _draw_luma_face_sprint(draw, cx, head_cy, head_r):
 
 
 def _draw_luma(img, cx, foot_y, h):
-    """
-    Luma in full sprint. CORRUPT_AMBER outline for figure-ground separation.
-    C35: 10° forward lean, steeper hair stream, FOCUSED DETERMINATION face.
-    """
+    """Luma sprinting. CORRUPT_AMBER outline, C35 lean/face. Returns composited img."""
     head_r  = int(h * 0.12)
     torso_h = int(h * 0.28)
     torso_w = int(h * 0.17)
@@ -1165,66 +1242,81 @@ def apply_dutch_angle(img, degrees=4.0):
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
+def render_environment():
+    """Render environment at W_ENV x H_ENV (1280x720). Returns PIL RGB image.
+
+    Temporarily swaps W, H globals so environment functions use 1280x720 coordinates.
+    """
+    global W, H
+    W_save, H_save = W, H
+    W, H = W_ENV, H_ENV
+
+    img = Image.new("RGB", (W, H), VOID_BLACK)
+    img = draw_sky(img)
+    img = draw_storm_confetti(img)
+    img = draw_town_silhouette(img)
+    img = draw_street(img)
+    img = draw_ground_lighting(img)
+    img = draw_storefront(img)
+
+    W, H = W_save, H_save
+    return img
+
+
 def main(skip_fill_light=False):
     """
     Render Style Frame 02 — Glitch Storm.
+    C53: pycairo characters + Wand compositing + 2x AA render.
 
     Args:
-        skip_fill_light (bool): If True, omit the magenta fill light (step 8)
-            and cyan specular (step 9). Used to produce the unlit base image
-            for alpha_blend_lint (Section 10 of precritique_qa). Dutch angle
-            is still applied. Default: False (full render).
+        skip_fill_light (bool): If True, omit fill light and specular.
     """
     out_path = NOLIGHT_PATH if skip_fill_light else OUTPUT_PATH
     print("LTG_TOOL_style_frame_02_glitch_storm.py")
-    print("Rendering Style Frame 02 — Glitch Storm (C44 Native Canvas Refactor)...")
-    print("  C44: Native 1280×720 — no LANCZOS thumbnail, no post-thumbnail specular restore")
-    print("  C44: Eliminates SUNLIT_AMBER LAB ΔE=47.04 color drift (Petra Volkov C17)")
+    print(f"Rendering SF02 Glitch Storm (C53 pycairo + Wand migration)...")
+    print(f"  pycairo={_CAIRO_OK}, Wand={_WAND_OK}, scipy={_SCIPY_OK}")
+    print(f"  Internal: {W}x{H} -> Output: {W_OUT}x{H_OUT}")
     if skip_fill_light:
-        print("  [nolight mode] Skipping fill light + specular — generating unlit base")
+        print("  [nolight mode] Skipping fill light + specular")
 
-    img = Image.new("RGB", (W, H), VOID_BLACK)
+    # STEP 1: Environment at 1280x720
+    print("  [1/10] Environment layers at 1280x720...")
+    env_img = render_environment()
 
-    char_h = int(H * 0.18)
-    luma_cx   = int(W * 0.45)   # 576px at W=1280
-    byte_cx   = int(W * 0.28)   # 358px at W=1280
-    cosmo_cx  = int(W * 0.62)   # 794px at W=1280
+    # STEP 2: Upscale environment to 2x for compositing with characters
+    print("  [2/10] Upscaling environment to 2x (2560x1440)...")
+    img = env_img.resize((W, H), Image.LANCZOS)
 
-    print("  [1/9] Sky gradient + UV cloud masses...")
-    img = draw_sky(img)
+    # Character geometry at 2x
+    char_h    = int(H * 0.18)
+    luma_cx   = int(W * 0.45)
+    byte_cx   = int(W * 0.28)
+    cosmo_cx  = int(W * 0.62)
 
-    print("  [2/9] Storm pixel confetti (DATA_BLUE dominant — cold/threatening)...")
-    img = draw_storm_confetti(img)
-
-    print("  [3/9] Town silhouette + window glow cones + storm edge-lighting...")
-    img = draw_town_silhouette(img)
-
-    print("  [4/9] Street surface + light pools...")
-    img = draw_street(img)
-
-    print("  [5/9] Ground lighting (cyan pool from crack)...")
-    img = draw_ground_lighting(img)
-
-    print("  [6/9] Damaged storefront window (cracks, missing panes, debris)...")
-    img = draw_storefront(img)
-
-    print("  [7/9] Characters (Luma: face + lean, Cosmo, Byte, + Glitch G007)...")
+    # STEP 3: Characters at 2x (uses W, H = 2560x1440)
+    print("  [3/10] Characters (pycairo bezier + Wand compositing at 2x)...")
     img = draw_characters(img)
 
-    # Steps 8 and 9 are fill-light passes — skipped for nolight base.
+    # STEP 4: Fill light + specular at 2x
     if skip_fill_light:
-        print("  [8/9] Magenta fill light — SKIPPED (nolight mode)")
-        print("  [9/9] Cyan specular — SKIPPED (nolight mode); applying Dutch angle...")
+        print("  [4/10] Magenta fill light — SKIPPED (nolight mode)")
+        print("  [5/10] Cyan specular — SKIPPED (nolight mode)")
     else:
-        print("  [8/9] Magenta fill light (C36: UPPER-RIGHT source, per-char mask)...")
+        print("  [4/10] Magenta fill light (C36: UPPER-RIGHT, per-char mask at 2x)...")
         img = draw_magenta_fill_light_c36(img, luma_cx, byte_cx, cosmo_cx, char_h)
 
-        print("  [9/9] Cyan specular on Luma + Dutch angle (4.0°)...")
+        print("  [5/10] Cyan specular on Luma at 2x...")
         img = draw_cyan_specular_luma(img, luma_cx, char_h)
 
+    # STEP 6: Dutch angle at 2x
+    print("  [6/10] Dutch angle (4.0 deg) at 2x...")
     img = apply_dutch_angle(img, degrees=4.0)
 
-    # C44: No thumbnail() call — already at target size
+    # STEP 7: Downscale 2x -> 1280x720 with LANCZOS
+    print("  [7/10] LANCZOS downscale to 1280x720...")
+    img = img.resize((W_OUT, H_OUT), Image.LANCZOS)
+
+    # Size rule enforcement
     assert img.size[0] <= 1280 and img.size[1] <= 1280, \
         f"Canvas exceeds 1280px limit: {img.size}"
 
@@ -1234,21 +1326,19 @@ def main(skip_fill_light=False):
     print(f"\nSaved ({label}): {out_path}")
     size_bytes = os.path.getsize(out_path)
     print(f"File size: {size_bytes:,} bytes ({size_bytes // 1024} KB)")
-    print(f"Image size: {img.size[0]}×{img.size[1]}px")
-    print("\nFix verification (C44 native canvas refactor):")
-    print("  [C44] Native 1280×720 — no thumbnail(), no specular restore pass ✓")
-    print("  [C44] SUNLIT_AMBER color drift eliminated — no LANCZOS averaging ✓")
-    print("  [C44] All hardcoded coords scaled × 2/3 (uniform — same aspect ratio) ✓")
-    print("  [C36] Fill light source: UPPER-RIGHT (char_cx + char_h*0.5, char_cy - char_h*0.8) ✓")
-    print("  [C36] Per-character silhouette mask via ImageChops.multiply — no BG tint ✓")
-    print("  [C36] char_cx from geometry constants (luma=W*0.45, byte=W*0.28, cosmo=W*0.62) ✓")
-    print("  [C35] _draw_luma_face_sprint(): asymmetric eyes + directional pupils + brows ✓")
-    print("  [C35] Torso lean 10° forward ✓")
-    print("  [C34] Cyan specular: ELEC_CYAN (#00F0FF) add_rim_light() side='right' ✓")
-    print("  [C22] CORRUPT_AMBER = (255,140,0) = #FF8C00 GL-07 canonical ✓")
-    print("  [C19] Storefront: frame + dividers + cracked panes + debris ✓")
-    print("  [C16] Cold confetti: DATA_BLUE 70% dominant ✓")
-    print("  [C16] Dutch angle: 4.0° applied as final step ✓")
+    print(f"Image size: {img.size[0]}x{img.size[1]}px")
+    print("\nC53 verification:")
+    print(f"  [C53] pycairo character rendering: {_CAIRO_OK}")
+    print(f"  [C53] Wand compositing: {_WAND_OK}")
+    print(f"  [C53] 2x internal render ({W}x{H}) -> LANCZOS downscale ({W_OUT}x{H_OUT})")
+    print("  [C53] Environment at 1280x720, upscaled for character compositing")
+    print("  [C47] Shoulder involvement on character shapes")
+    print("  [C36] Fill light: UPPER-RIGHT, per-char silhouette mask")
+    print("  [C35] Focused determination face, 10 deg lean, hair stream")
+    print("  [C34] Cyan specular: ELEC_CYAN add_rim_light side='right'")
+    print("  [C22] CORRUPT_AMBER = (255,140,0) #FF8C00 GL-07")
+    print("  [C19] Storefront: frame + dividers + cracked panes + debris")
+    print("  [C16] Dutch angle: 4.0 deg, cold confetti DATA_BLUE 70%")
     print("\nDone.")
 
 

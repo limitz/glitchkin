@@ -10,7 +10,7 @@ Style Frame 04 — "Resolution" (Luma returns to the Real World)
 "Luma & the Glitchkin"
 
 Author: Jordan Reed — Style Frame Art Specialist
-Cycle: 42 (updated C45)
+Cycle: 42 (updated C45, C53 Wand compositing migration — Hana Okonkwo)
 
 CONCEPT:
   SF04 completes the emotional arc of the pitch package:
@@ -32,6 +32,18 @@ WARM/COOL STRATEGY:
   - Bottom half: cool floor bounce from doorway CRT glow (ELEC_CYAN bleed)
     → asymmetric alpha (warm top alpha 90, cool bottom alpha 75)
   - Target separation ≥ 12.0
+
+WAND COMPOSITING (C53 — Hana Okonkwo):
+  Migrated from direct-draw to Wand compositing pipeline (same as SF06).
+  Characters drawn on separate transparent RGBA layers, composited using
+  LTG_TOOL_wand_composite.py.
+  Compositing pass order (per C50 spec):
+    BG > CRT glow > warm light > cool bounce > contact shadows (Wand Gaussian)
+    > characters > scene lighting (Wand Screen blend) > bounce light (Wand Screen)
+    > edge tint (Wand morphology) > color transfer (Wand Soft Light)
+    > film grain > scanline > vignette > title strip
+  Kitchen lighting spec from character_environment_lighting_c50.md.
+  Graceful PIL fallback if Wand/libmagickwand not installed.
 
 FACE TEST GATE:
   Luma at pitch scale: head_r = 42px → above sprint-scale threshold (20–25px).
@@ -626,12 +638,14 @@ def draw_cool_floor_bounce(img, draw):
     return draw
 
 
-def draw_luma(img, draw):
+def draw_luma(img, draw, transparent_layer=False):
     """
     Draw Luma in the kitchen doorway area — returning home.
     Standing pose, facing slightly right (toward camera/viewer).
     Pitch scale: head_r = 42px. Face test gate NOT triggered (pitch scale).
     Glitch-residue detail: one cyan pixel-grid streak in left hoodie sleeve.
+
+    C53: transparent_layer=True skips rim light (handled by Wand compositing).
     """
     rng = random.Random(55)
 
@@ -830,12 +844,14 @@ def draw_luma(img, draw):
     draw = ImageDraw.Draw(img)
 
     # ── Rim light on Luma (warm — from window, right side) ────────────────────
-    luma_cx_val = luma_cx  # per-character cx, NOT canvas midpoint
-    img_out = add_rim_light(img, side="right", char_cx=luma_cx_val,
-                            light_color=SUNLIT_AMBER, threshold=160, width=sp(2))
-    if img_out is not None:
-        img = img_out
-    draw = ImageDraw.Draw(img)
+    # C53: skip rim light when drawing on transparent layer (Wand handles lighting)
+    if not transparent_layer:
+        luma_cx_val = luma_cx  # per-character cx, NOT canvas midpoint
+        img_out = add_rim_light(img, side="right", char_cx=luma_cx_val,
+                                light_color=SUNLIT_AMBER, threshold=160, width=sp(2))
+        if img_out is not None:
+            img = img_out
+        draw = ImageDraw.Draw(img)
 
     return img, draw
 
@@ -941,9 +957,29 @@ def draw_title_strip(img, draw):
     return draw
 
 
+def _make_char_mask(char_layer):
+    """Extract a binary mask (mode 'L') from the alpha channel of an RGBA layer."""
+    if char_layer.mode != "RGBA":
+        char_layer = char_layer.convert("RGBA")
+    return char_layer.split()[3]
+
+
+def _char_bbox(mask):
+    """Return (x1, y1, x2, y2) bounding box of non-zero pixels in mask."""
+    bbox = mask.getbbox()
+    if bbox is None:
+        return (0, 0, 1, 1)
+    return bbox
+
+
 def main(skip_fill_light=False):
     """
     Render Style Frame 04 — Resolution.
+
+    C53 Wand compositing migration (Hana Okonkwo):
+      Characters drawn on separate transparent RGBA layers and composited
+      using LTG_TOOL_wand_composite.py (same pipeline as SF06).
+      Graceful fallback to legacy PIL compositing if Wand not available.
 
     Args:
         skip_fill_light (bool): If True, omit warm light (Pass 4) and cool floor
@@ -986,9 +1022,117 @@ def main(skip_fill_light=False):
         print("[SF04] Pass 5: Cool floor bounce...")
         draw = draw_cool_floor_bounce(img, draw)
 
-    # Pass 6: Luma character
-    print("[SF04] Pass 6: Luma character...")
-    img, draw = draw_luma(img, draw)
+    # Save background-only layer for Wand color transfer reference
+    bg_only = img.copy()
+
+    # ── Wand compositing pipeline (C53) ──────────────────────────────────────
+    # Per C52 SF06 architecture: transparent character layers > Wand contact
+    # shadow > alpha composite > scene lighting > bounce > edge tint > color
+    # transfer. Kitchen lighting spec from character_environment_lighting_c50.md.
+
+    _use_wand = True
+    try:
+        from LTG_TOOL_wand_composite import (
+            wand_contact_shadow, wand_bounce_light, wand_edge_tint,
+            wand_scene_lighting_overlay, wand_color_transfer,
+            pil_to_wand, wand_to_pil
+        )
+    except ImportError:
+        _use_wand = False
+        print("[C53] Wand not available — falling back to legacy compositing.")
+
+    # Luma character position (same as draw_luma internal coords)
+    luma_cx = sx(640)
+    luma_ground_y = sy(640)  # body_bot from draw_luma
+
+    if _use_wand:
+        print("[SF04] Pass 6: Luma character (Wand compositing pipeline)...")
+
+        # Kitchen lighting spec (C50 document)
+        SURFACE_COLOR = (200, 184, 150)   # FLOOR_TILE_WARM from C50 kitchen spec
+        SHADOW_ALPHA = 50
+        BOUNCE_ALPHA = 20
+        EDGE_TINT_ALPHA = 18
+        COLOR_TRANSFER_STRENGTH = 0.12
+        BOUNCE_GROUND_COLOR = (200, 184, 150)  # warm tile floor
+
+        # --- Draw Luma on transparent layer ---
+        luma_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        luma_draw = ImageDraw.Draw(luma_layer)
+        luma_layer, luma_draw = draw_luma(
+            luma_layer, luma_draw, transparent_layer=True)
+        luma_mask = _make_char_mask(luma_layer)
+        luma_bbox = _char_bbox(luma_mask)
+        luma_width = luma_bbox[2] - luma_bbox[0]
+        luma_height = luma_bbox[3] - luma_bbox[1]
+
+        # --- Compositing pass order (C50 spec): ---
+        # BG > warm/cool light > contact shadow > character > scene lighting
+        # > bounce > edge tint > color transfer
+
+        # Convert BG to RGBA for Wand operations
+        composite = img.convert("RGBA")
+
+        # Step 1: Contact shadow (Wand Gaussian blur — proper soft falloff)
+        composite = wand_contact_shadow(
+            composite, luma_cx, luma_ground_y, luma_width,
+            surface_color=SURFACE_COLOR, shadow_alpha=SHADOW_ALPHA,
+            blur_sigma=5.0, height_px=12)
+
+        # Step 2: Paste character onto composite
+        composite = Image.alpha_composite(composite, luma_layer)
+        draw = ImageDraw.Draw(composite)  # refresh draw context
+
+        # Step 3: Scene lighting via Wand Screen blend
+        # Warm amber from window (upper-left) — key light on Luma's left side
+        composite = wand_scene_lighting_overlay(
+            composite, light_color=(245, 208, 140),
+            light_x=sx(185), light_y=sy(240),
+            radius=380, intensity=0.16, blend_mode="screen")
+        # CRT cool accent from doorway (right) — rim/accent on Luma's right
+        composite = wand_scene_lighting_overlay(
+            composite, light_color=(100, 220, 220),
+            light_x=min(sx(1660), W - 1), light_y=sy(350),
+            radius=240, intensity=0.10, blend_mode="screen")
+
+        # Step 4: Bounce light on character (warm floor color from below)
+        luma_bounced = wand_bounce_light(
+            luma_layer, luma_mask, luma_ground_y, luma_height,
+            ground_color=BOUNCE_GROUND_COLOR, bounce_alpha=BOUNCE_ALPHA,
+            coverage=0.25)
+        composite = Image.alpha_composite(composite, luma_bounced)
+        draw = ImageDraw.Draw(composite)
+
+        # Step 5: Edge tint (environment color bleed on character edges)
+        # Luma is in mixed zone: warm left from window, cool right from doorway CRT
+        # Use dominant warm tint (window is key light)
+        luma_tinted = wand_edge_tint(
+            luma_layer, luma_mask, bg_color=(245, 208, 140),
+            tint_alpha=EDGE_TINT_ALPHA, edge_width=3)
+        composite = Image.alpha_composite(composite, luma_tinted)
+        draw = ImageDraw.Draw(composite)
+
+        # Step 6: Color transfer (environment-to-character tinting via Soft Light)
+        luma_transferred = wand_color_transfer(
+            luma_layer, luma_mask, bg_only,
+            luma_cx, luma_ground_y, sample_radius=80,
+            tint_strength=COLOR_TRANSFER_STRENGTH)
+        composite = Image.alpha_composite(composite, luma_transferred)
+        draw = ImageDraw.Draw(composite)
+
+        img = composite.convert("RGB")
+        print("[SF04]   Pipeline: PIL generates > Wand composites (contact shadow,")
+        print("[SF04]             bounce, edge tint, color transfer, scene lighting)")
+        print("[SF04]   Lighting: Kitchen spec (C50) — window warm L, CRT cool R")
+
+    else:
+        # Legacy path: draw character directly onto BG (pre-C53 behavior)
+        print("[SF04] Pass 6: Luma character (legacy PIL compositing)...")
+        img, draw = draw_luma(img, draw)
+
+    draw = ImageDraw.Draw(img)
+
+    # ── Post-compositing passes ──────────────────────────────────────────────
 
     # Pass 7: Film grain
     print("[SF04] Pass 7: Film grain...")
@@ -1012,7 +1156,8 @@ def main(skip_fill_light=False):
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     img.save(out_path)
     label = "nolight base" if skip_fill_light else "composited"
-    print(f"[SF04] Saved ({label}): {out_path}  ({img.width}×{img.height})")
+    pipeline = "Wand" if _use_wand else "PIL legacy"
+    print(f"[SF04] Saved ({label}, {pipeline}): {out_path}  ({img.width}×{img.height})")
 
 
 if __name__ == "__main__":

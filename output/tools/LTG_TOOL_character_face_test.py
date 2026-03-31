@@ -53,7 +53,14 @@ import os
 import sys
 import argparse
 import math
+import numpy as np
 from PIL import Image, ImageDraw, ImageFont
+
+try:
+    import cairo as _cairo_mod
+    _CAIRO_AVAILABLE = True
+except ImportError:
+    _CAIRO_AVAILABLE = False
 
 # ── Output rule: hard limit ≤ 1280px in both dimensions ──────────────────────
 MAX_DIM = 1280
@@ -742,6 +749,84 @@ def check_byte_face_gate(variant):
     if "FAIL" in checks:
         results["overall"] = "FAIL"
     elif v["readability"] == "WARN":
+        results["overall"] = "WARN"
+    else:
+        results["overall"] = "PASS"
+
+    return results
+
+
+def _ensure_pil_image(obj, mode="RGB"):
+    """Accept PIL Image, cairo ImageSurface, or file path. Returns PIL Image.
+
+    Cairo ARGB32 surfaces are converted via BGRA→RGBA byte swap + PIL.Image.fromarray.
+    File paths are opened with Image.open().
+    """
+    if isinstance(obj, Image.Image):
+        return obj.convert(mode)
+    if isinstance(obj, (str, os.PathLike)):
+        return Image.open(obj).convert(mode)
+    if _CAIRO_AVAILABLE and isinstance(obj, _cairo_mod.ImageSurface):
+        w = obj.get_width()
+        h = obj.get_height()
+        buf = obj.get_data()
+        arr = np.frombuffer(buf, dtype=np.uint8).reshape(h, w, 4).copy()
+        rgba = np.stack([arr[:, :, 2], arr[:, :, 1], arr[:, :, 0], arr[:, :, 3]], axis=2)
+        img = Image.fromarray(rgba, "RGBA")
+        return img.convert(mode)
+    raise TypeError(f"Unsupported input type: {type(obj)}. Expected PIL Image, cairo ImageSurface, or file path.")
+
+
+def test_external_face(image_or_surface, char_name="luma", head_r=23, scale=3):
+    """Run face gate test on an externally-rendered character image.
+
+    Accepts PIL Image, cairo.ImageSurface, or file path.
+    Returns dict with face gate results (same format as check_byte_face_gate
+    for Byte; general readability check for other characters).
+
+    This is the API entry point for modular char_*.py renderers to validate
+    their output against the face test gate.
+    """
+    img = _ensure_pil_image(image_or_surface, mode="RGB")
+    w, h = img.size
+
+    # Basic pixel statistics in the upper region (face zone)
+    face_zone_h = int(h * 0.45)
+    face_region = np.array(img.crop((0, 0, w, face_zone_h)))
+
+    # Check: face region has enough variance (not blank)
+    face_std = float(face_region.std())
+    has_face_detail = face_std > 10.0
+
+    # Check: alpha channel clean (if RGBA source)
+    alpha_clean = True
+    try:
+        rgba_img = _ensure_pil_image(image_or_surface, mode="RGBA")
+        alpha = np.array(rgba_img)[:, :, 3]
+        # Check for fringing: pixels where alpha is between 10 and 245
+        fringe_pixels = np.sum((alpha > 10) & (alpha < 245))
+        total_pixels = alpha.size
+        fringe_ratio = fringe_pixels / total_pixels if total_pixels > 0 else 0.0
+        alpha_clean = fringe_ratio < 0.05  # less than 5% fringing
+    except Exception:
+        pass
+
+    # Check: dimensions reasonable
+    dims_ok = (w >= 20 and h >= 20 and w <= 2560 and h <= 2560)
+
+    results = {
+        "char_name": char_name,
+        "input_size": f"{w}x{h}",
+        "face_detail": "PASS" if has_face_detail else "FAIL",
+        "face_detail_std": round(face_std, 2),
+        "alpha_clean": "PASS" if alpha_clean else "WARN",
+        "dimensions": "PASS" if dims_ok else "FAIL",
+    }
+
+    checks = [results["face_detail"], results["alpha_clean"], results["dimensions"]]
+    if "FAIL" in checks:
+        results["overall"] = "FAIL"
+    elif "WARN" in checks:
         results["overall"] = "WARN"
     else:
         results["overall"] = "PASS"
