@@ -6,11 +6,19 @@
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
 LTG_TOOL_style_frame_02_glitch_storm.py
-Style Frame 02 — "Glitch Storm" — C53 pycairo Character Migration + Wand Compositing
+Style Frame 02 — "Glitch Storm" — C54 Canonical Character Migration
 "Luma & the Glitchkin"
 
-Artist: Jordan Reed | Cycle 53
-Based on: C44 Native Canvas Refactor (Jordan Reed, Cycle 44)
+Artist: Jordan Reed | Cycle 54
+Based on: C53 pycairo + Wand migration (Jordan Reed, Cycle 53)
+
+C54 changes (Jordan Reed):
+  CANONICAL CHARACTER MIGRATION:
+    - Luma, Cosmo, Byte now use canonical char_*.py modular renderers.
+      draw_luma("DETERMINED"), draw_cosmo("WORRIED"), draw_byte("alarmed").
+    - Glitch retains local pycairo renderer (background character, unchanged).
+    - Canonical chars: cairo surface -> PIL RGBA -> resize to scene scale -> alpha composite.
+    - PIL fallback retained if canonical renderers unavailable.
 
 C53 changes (Jordan Reed):
   PYCAIRO CHARACTER MIGRATION + WAND COMPOSITING:
@@ -73,6 +81,16 @@ try:
 except ImportError:
     _CAIRO_OK = False
     print("WARNING: pycairo/cairo_primitives not found — falling back to PIL character rendering.")
+
+# Canonical character renderers (C54 migration)
+try:
+    from LTG_TOOL_char_luma import draw_luma as _draw_luma_canonical
+    from LTG_TOOL_char_cosmo import draw_cosmo as _draw_cosmo_canonical
+    from LTG_TOOL_char_byte import draw_byte as _draw_byte_canonical
+    _CHAR_CANONICAL = True
+except ImportError:
+    _CHAR_CANONICAL = False
+    print("WARNING: canonical char renderers not found — falling back to local PIL character rendering.")
 
 # Wand compositing — graceful fallback to PIL
 _WAND_OK = False
@@ -151,6 +169,43 @@ STORM_RIM_CYAN  = (  0, 180, 220)
 STORM_RIM_UV    = ( 80,  30, 120)
 
 RNG = random.Random(42)
+
+
+def _cairo_char_to_pil(surface):
+    """Convert a canonical char cairo.ImageSurface to cropped PIL RGBA."""
+    pil_img = to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    return pil_img
+
+
+def _composite_canonical_char(img, char_pil, cx, foot_y):
+    """Composite a canonical char PIL RGBA onto img.
+    cx: horizontal center; foot_y: Y of the character's feet (bottom of image).
+    """
+    x = cx - char_pil.width // 2
+    y = foot_y - char_pil.height
+    overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    overlay.paste(char_pil, (x, y), char_pil)
+    base_rgba = img.convert("RGBA")
+    result = Image.alpha_composite(base_rgba, overlay)
+    img = result.convert("RGB")
+
+    # GL storm scene tint: cool UV-ambient overlay on character area (shifts warm hoodie
+    # toward GL cold palette). Alpha 40 = ~16% tint — enough to shift hue, not flatten.
+    char_x0 = max(0, x)
+    char_y0 = max(0, y)
+    char_x1 = min(W, x + char_pil.width)
+    char_y1 = min(H, foot_y)
+
+    tint_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    td = ImageDraw.Draw(tint_layer)
+    td.rectangle([char_x0, char_y0, char_x1, char_y1],
+                 fill=(*NIGHT_SKY_DEEP, 40))
+    base_rgba2 = img.convert("RGBA")
+    result2 = Image.alpha_composite(base_rgba2, tint_layer)
+    return result2.convert("RGB")
 
 
 def lerp_color(c1, c2, t):
@@ -748,7 +803,10 @@ def _draw_glitch_storm_cairo(cx, cy, body_h):
 
 
 def draw_characters(img):
-    """Character layout — sprinting left-to-right across frame. Uses pycairo if available."""
+    """Character layout — sprinting left-to-right across frame.
+    C54: Luma, Cosmo, Byte use canonical char_*.py renderers.
+    Glitch uses local pycairo renderer (unchanged).
+    """
     horizon_y = int(H * 0.58)
     ground_y  = horizon_y + int((H - horizon_y) * 0.12)
     char_h = int(H * 0.18)
@@ -767,15 +825,57 @@ def draw_characters(img):
     glitch_cy = int(H * 0.32)
     glitch_body_h = int(char_h * 0.50)
 
-    # Glitch — pycairo if available, composited directly (background character)
+    # Glitch — pycairo local renderer (background character, unchanged)
     glitch_layer = _draw_glitch_storm_cairo(glitch_cx, glitch_cy, glitch_body_h)
     base_rgba = img.convert("RGBA")
     base_rgba = Image.alpha_composite(base_rgba, glitch_layer)
     img = base_rgba.convert("RGB")
 
-    img = _draw_luma(img, luma_cx, luma_foot_y, char_h)
-    img = _draw_cosmo(img, cosmo_cx, cosmo_foot_y, char_h)
-    img = _draw_byte_hovering(img, byte_cx, byte_float_y, char_h)
+    # ── C54: Canonical character renderers ───────────────────────────────────
+    if _CHAR_CANONICAL and _CAIRO_OK:
+        # Luma — DETERMINED sprint: scale = char_h / 400 (base_char_h in char_luma)
+        luma_scale = char_h / 400.0
+        luma_surf = _draw_luma_canonical(
+            "DETERMINED", scale=luma_scale, facing="right",
+            scene_lighting={"key_light_dir": "left", "ambient": (26, 20, 40)})
+        luma_pil = _cairo_char_to_pil(luma_surf)
+        if luma_pil.height > 0:
+            aspect = luma_pil.width / luma_pil.height
+            luma_pil = luma_pil.resize((int(char_h * aspect), char_h), Image.LANCZOS)
+        img = _composite_canonical_char(img, luma_pil, luma_cx, luma_foot_y)
+
+        # Cosmo — WORRIED panic run: base_hu=84, char_h ≈ 3.5*hu → scale = char_h / (3.5*84)
+        cosmo_scale = char_h / (3.5 * 84.0)
+        cosmo_surf, _cosmo_geom = _draw_cosmo_canonical(
+            "WORRIED", scale=cosmo_scale, facing="right", notebook_show=False,
+            scene_lighting={"preset": "neutral_daylight"})
+        cosmo_pil = _cairo_char_to_pil(cosmo_surf)
+        if cosmo_pil.height > 0:
+            aspect = cosmo_pil.width / cosmo_pil.height
+            cosmo_pil = cosmo_pil.resize((int(char_h * aspect), char_h), Image.LANCZOS)
+        img = _composite_canonical_char(img, cosmo_pil, cosmo_cx, cosmo_foot_y)
+
+        # Byte — alarmed hovering: target height = char_h * 0.40 (preserves original scale)
+        byte_target_h = int(char_h * 0.40)
+        byte_scale = byte_target_h / 88.0
+        byte_surf = _draw_byte_canonical(
+            "alarmed", scale=byte_scale, facing="front",
+            scene_lighting={"tint": ELEC_CYAN, "intensity": 0.25})
+        byte_pil = _cairo_char_to_pil(byte_surf)
+        if byte_pil.height > 0:
+            aspect = byte_pil.width / byte_pil.height
+            byte_pil = byte_pil.resize((int(byte_target_h * aspect), byte_target_h), Image.LANCZOS)
+        # Byte hovers: center at byte_float_y (feet at float_y + half height)
+        byte_foot_y = byte_float_y + byte_pil.height // 2
+        img = _composite_canonical_char(img, byte_pil, byte_cx, byte_foot_y)
+
+    else:
+        # Fallback: original PIL character rendering
+        print("  [C54 FALLBACK] Using original PIL characters (canonical renderers unavailable).")
+        img = _draw_luma(img, luma_cx, luma_foot_y, char_h)
+        img = _draw_cosmo(img, cosmo_cx, cosmo_foot_y, char_h)
+        img = _draw_byte_hovering(img, byte_cx, byte_float_y, char_h)
+
     img = _draw_townspeople(img, horizon_y)
 
     return img
@@ -1273,8 +1373,8 @@ def main(skip_fill_light=False):
     """
     out_path = NOLIGHT_PATH if skip_fill_light else OUTPUT_PATH
     print("LTG_TOOL_style_frame_02_glitch_storm.py")
-    print(f"Rendering SF02 Glitch Storm (C53 pycairo + Wand migration)...")
-    print(f"  pycairo={_CAIRO_OK}, Wand={_WAND_OK}, scipy={_SCIPY_OK}")
+    print(f"Rendering SF02 Glitch Storm (C54 canonical characters)...")
+    print(f"  pycairo={_CAIRO_OK}, canonical_chars={_CHAR_CANONICAL}, Wand={_WAND_OK}, scipy={_SCIPY_OK}")
     print(f"  Internal: {W}x{H} -> Output: {W_OUT}x{H_OUT}")
     if skip_fill_light:
         print("  [nolight mode] Skipping fill light + specular")
@@ -1327,7 +1427,9 @@ def main(skip_fill_light=False):
     size_bytes = os.path.getsize(out_path)
     print(f"File size: {size_bytes:,} bytes ({size_bytes // 1024} KB)")
     print(f"Image size: {img.size[0]}x{img.size[1]}px")
-    print("\nC53 verification:")
+    print("\nC54 verification:")
+    print(f"  [C54] Canonical character renderers: {_CHAR_CANONICAL}")
+    print(f"  [C54] draw_luma(DETERMINED) + draw_cosmo(WORRIED) + draw_byte(alarmed)")
     print(f"  [C53] pycairo character rendering: {_CAIRO_OK}")
     print(f"  [C53] Wand compositing: {_WAND_OK}")
     print(f"  [C53] 2x internal render ({W}x{H}) -> LANCZOS downscale ({W_OUT}x{H_OUT})")
