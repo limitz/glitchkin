@@ -127,7 +127,7 @@ Think "Hilda" meets "The IT Crowd" meets a Saturday-morning cartoon that still r
 - **Visual hook:** Approximately 6 inches tall. One eye clean electric teal; the other cracked (dead pixel glyph — glitches specifically when emotional, which he will deny). Hot magenta scar diagonal across body. Oval body — wider than tall, buoyant, floating. Pixel confetti trails from his underside. Rides Luma's left shoulder.
 - **Shape language:** Oval — buoyant and rounded, deceptively approachable. The contrast between his soft silhouette and abrasive personality is intentional. [Canonical since C8; chamfered-box/triangles retired.]
 - **Relationships:** Technically works with Luma because it is preferable to the alternative. Has a complicated history with the Glitch Layer he has not fully disclosed. Knows Glitch — they have shared history. Byte resisted the Corruption and was exiled; Glitch surrendered and was elevated.
-- **Arc (season 1):** Accepting that belonging somewhere is not the same as surrendering who you are. Finale commitment is non-verbal: he just stays.
+- **Arc (season 1):** Accepting that belonging somewhere is not the same as surrendering who you are. Finale commitment is non-verbal: he just stays. The COMMITMENT GLOW visual state (eye glow intensifies, confetti shifts warm) is the only indicator — no dialogue, no gesture, just light. [C52]
 - **Canonical body fill:** GL-01b Byte Teal `(0, 212, 232)` / `#00D4E8` — always, in all scenes. Exception: SF02 storm-scene ONLY (Void Black body with CORRUPT_AMBER `#FF8C00` 3px outline). See `output/characters/main/byte.md` for full spec.
 
 ### Glitch (Recurring Antagonist) [ADDED C39]
