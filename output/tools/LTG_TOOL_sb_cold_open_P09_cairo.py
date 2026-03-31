@@ -38,7 +38,8 @@ from LTG_TOOL_cairo_primitives import (
     create_surface, to_pil_rgba, set_color, fill_background,
     draw_ellipse, stroke_path, draw_smooth_polygon, draw_tapered_stroke,
 )
-from LTG_TOOL_sb_char_draw import draw_byte_sb
+from LTG_TOOL_char_byte import draw_byte
+from LTG_TOOL_char_luma import draw_luma
 
 PANELS_DIR = output_dir('storyboards', 'panels')
 OUTPUT_PATH = os.path.join(PANELS_DIR, "LTG_SB_cold_open_P09.png")
@@ -154,8 +155,32 @@ def draw_confetti_trail(draw, from_x, from_y, to_x, to_y, count, rng_seed):
             draw_irregular_poly(draw, px, py, r, sides, col, seed=i * 53 + rng_seed)
 
 
-def draw_luma_asleep(draw, luma_head_cx, luma_head_cy):
-    """Luma asleep on couch — background-scale PIL (no sb_char_draw sleeping pose)."""
+def _char_to_pil(surface):
+    """Convert a cairo.ImageSurface from canonical char module to cropped PIL RGBA."""
+    pil_img = to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    return pil_img
+
+
+def _composite_char(base_img, char_pil, cx, cy):
+    """Composite a character PIL RGBA image onto base_img centered at (cx, cy)."""
+    x = cx - char_pil.width // 2
+    y = cy - char_pil.height // 2
+    overlay = Image.new('RGBA', base_img.size, (0, 0, 0, 0))
+    overlay.paste(char_pil, (x, y), char_pil)
+    base_rgba = base_img.convert('RGBA')
+    result = Image.alpha_composite(base_rgba, overlay)
+    base_img.paste(result.convert('RGB'))
+
+
+def draw_luma_asleep(img, draw, luma_head_cx, luma_head_cy):
+    """Luma asleep on couch — canonical renderer (WORRIED as sleeping stand-in).
+
+    Draws couch/pillow environment, then composites canonical Luma rotated slightly
+    to suggest sleeping posture.
+    """
     scale = 0.70
     body_h_luma = int(DRAW_H * 0.28 * scale)
     head_r_l    = int(body_h_luma * 0.22)
@@ -177,53 +202,15 @@ def draw_luma_asleep(draw, luma_head_cx, luma_head_cy):
     ]
     draw.polygon(pillow_pts, fill=COUCH_PILLOW, outline=COUCH_SHADOW)
 
-    # Hair cloud
-    hair_r = int(head_r_l * 1.45)
-    for seed_h in [110, 120, 130, 140, 150, 160]:
-        draw_irregular_poly(draw, luma_head_cx, luma_head_cy, hair_r, 7,
-                            LUMA_HAIR, seed=seed_h)
-
-    # Head
-    draw.ellipse([luma_head_cx - head_r_l, luma_head_cy - head_r_l,
-                  luma_head_cx + head_r_l, luma_head_cy + head_r_l],
-                 fill=LUMA_SKIN, outline=(100, 68, 48), width=1)
-
-    # Eyes closed
-    eye_cy_l = luma_head_cy
-    eye_sep_l = int(head_r_l * 0.38)
-    e_r_l     = int(head_r_l * 0.24)
-    for side in [-1, 1]:
-        ex = luma_head_cx + side * eye_sep_l
-        draw.arc([ex - e_r_l, eye_cy_l - int(e_r_l * 0.5),
-                  ex + e_r_l, eye_cy_l + int(e_r_l * 0.5)],
-                 start=200, end=340, fill=(80, 52, 40), width=2)
-
-    # Mouth — relaxed
-    mouth_y_l = luma_head_cy + int(head_r_l * 0.46)
-    draw.arc([luma_head_cx - int(head_r_l * 0.30),
-              mouth_y_l - int(head_r_l * 0.12),
-              luma_head_cx + int(head_r_l * 0.30),
-              mouth_y_l + int(head_r_l * 0.12)],
-             start=10, end=170, fill=(120, 72, 58), width=1)
-
-    # Torso / hoodie
-    torso_top = luma_head_cy + head_r_l
-    torso_bot = torso_top + int(body_h_luma * 0.55)
-    torso_hw  = int(head_r_l * 1.25)
-    draw.rectangle([luma_head_cx - torso_hw, torso_top,
-                    luma_head_cx + torso_hw, torso_bot],
-                   fill=LUMA_HOODIE, outline=(160, 68, 28), width=1)
-
-    # Arm dangling
-    arm_x0 = luma_head_cx - torso_hw
-    arm_y0 = torso_top + int(body_h_luma * 0.15)
-    arm_len = int(body_h_luma * 0.40)
-    arm_w   = int(head_r_l * 0.30)
-    draw.rectangle([arm_x0 - arm_w, arm_y0, arm_x0, arm_y0 + arm_len],
-                   fill=LUMA_HOODIE, outline=(160, 68, 28))
-    draw.ellipse([arm_x0 - arm_w - int(arm_w * 0.4), arm_y0 + arm_len - 4,
-                  arm_x0 + int(arm_w * 0.2), arm_y0 + arm_len + int(arm_w * 1.0)],
-                 fill=LUMA_SKIN, outline=(100, 68, 48))
+    # Canonical Luma renderer — WORRIED as sleeping stand-in
+    surface = draw_luma(expression="WORRIED", scale=0.3, facing="right")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        char_pil = char_pil.resize(
+            (int(char_pil.width * 0.6), int(char_pil.height * 0.6)), Image.LANCZOS)
+    # Rotate slightly for sleeping posture
+    char_pil = char_pil.rotate(15, expand=True, fillcolor=(0, 0, 0, 0))
+    _composite_char(img, char_pil, luma_head_cx, luma_head_cy)
 
 
 def draw_background_monitors(draw):
@@ -271,7 +258,8 @@ def draw_panel():
     # Luma asleep (PIL — background scale)
     luma_head_x = int(PW * 0.18)
     luma_head_y = int(DRAW_H * 0.38)
-    draw_luma_asleep(draw, luma_head_x, luma_head_y)
+    draw_luma_asleep(img, draw, luma_head_x, luma_head_y)
+    draw = ImageDraw.Draw(img)  # W004
 
     add_glow(img, luma_head_x, luma_head_y, 65, WARM_AMB, steps=4, max_alpha=16)
     draw = ImageDraw.Draw(img)  # W004
@@ -282,28 +270,22 @@ def draw_panel():
     byte_bh   = int(DRAW_H * 0.30)
     floor_y   = int(DRAW_H * 0.78)
 
-    char_surface, char_ctx, _, _ = create_surface(PW, DRAW_H)
-
-    byte_info = draw_byte_sb(
-        char_ctx,
-        cx=byte_cx,
-        cy=byte_cy,
-        body_h=byte_bh,
-        expression="spotted",
-        facing="left",
-        lean_deg=2.5,
-        hovering=True,
-        seed=909,
-    )
-
-    # Composite cairo onto PIL
-    char_pil = to_pil_rgba(char_surface)
-    full_char = Image.new('RGBA', (PW, PH), (0, 0, 0, 0))
-    full_char.paste(char_pil, (0, 0))
-    base_rgba = img.convert('RGBA')
-    composited = Image.alpha_composite(base_rgba, full_char)
-    img = composited.convert('RGB')
+    # Canonical Byte renderer — "searching" is closest to "spotted"
+    byte_scale = byte_bh / 88.0
+    byte_surface = draw_byte(expression="searching", scale=byte_scale, facing="left")
+    byte_pil = _char_to_pil(byte_surface)
+    if byte_pil.height > 0:
+        aspect = byte_pil.width / byte_pil.height
+        new_h = byte_bh
+        new_w = int(new_h * aspect)
+        byte_pil = byte_pil.resize((new_w, new_h), Image.LANCZOS)
+    _composite_char(img, byte_pil, byte_cx, byte_cy)
     draw = ImageDraw.Draw(img)  # W004
+
+    # Compute face position for sight-line annotation
+    byte_head_r = int(byte_bh * 0.20)
+    byte_face_cx = byte_cx - int(byte_head_r * 0.6)
+    byte_face_cy = byte_cy - byte_bh // 2 + byte_head_r
 
     # Byte glow
     add_glow(img, byte_cx, byte_cy, int(byte_bh * 0.55), ELEC_CYAN, steps=6, max_alpha=35)
@@ -330,8 +312,8 @@ def draw_panel():
                      outline=DESAT_RING, width=1)
 
     # Sight-line annotation
-    sight_x1 = byte_info["face_cx"]
-    sight_y1 = byte_info["face_cy"]
+    sight_x1 = byte_face_cx
+    sight_y1 = byte_face_cy
     sight_x2, sight_y2 = luma_head_x, luma_head_y
     dist     = math.sqrt((sight_x2 - sight_x1) ** 2 + (sight_y2 - sight_y1) ** 2)
     n_dashes = max(2, int(dist / 14))

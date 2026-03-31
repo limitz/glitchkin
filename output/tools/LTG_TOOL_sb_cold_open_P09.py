@@ -223,10 +223,13 @@ def _composite_char(base_img, char_pil, cx, cy):
     result = Image.alpha_composite(base_rgba, overlay)
     base_img.paste(result.convert('RGB'))
 
-def draw_byte_floating(img, draw, byte_cx, byte_cy, body_h,
+def draw_byte_floating(img, draw, byte_cx, byte_cy, body_h, floor_y,
                        expression="searching", facing="left", lean_deg=0,
                        hovering=True, confetti=True, glow=True):
-    """Byte floating — canonical renderer + composite."""
+    """Byte floating — canonical renderer + composite.
+
+    Returns (sight_eye, feet_y, head_cy, head_r) for annotation use.
+    """
     scale = body_h / 88.0
     surface = draw_byte(expression=expression, scale=scale, facing=facing)
     char_pil = _char_to_pil(surface)
@@ -237,11 +240,17 @@ def draw_byte_floating(img, draw, byte_cx, byte_cy, body_h,
         char_pil = char_pil.resize((new_w, new_h), Image.LANCZOS)
     _composite_char(img, char_pil, byte_cx, byte_cy)
 
+    # Compute geometry for annotations
+    head_r = int(body_h * 0.20)
+    head_cy = byte_cy - body_h // 2 + head_r
+    feet_y = byte_cy + body_h // 2
+    # Sight eye: offset left from face center (iris shifted LEFT toward Luma)
+    sight_eye = (byte_cx - int(head_r * 0.6), head_cy)
+    return sight_eye, feet_y, head_cy, head_r
 
-def draw_luma_asleep(draw, luma_head_cx, luma_head_cy):
+
+def draw_luma_asleep(img, draw, luma_head_cx, luma_head_cy):
     """Luma asleep — canonical renderer (WORRIED as closest to sleeping pose)."""
-    # Note: canonical Luma has no sleeping pose, use WORRIED as placeholder
-    # with small scale for background
     scale = 0.3
     surface = draw_luma(expression="WORRIED", scale=scale, facing="right")
     char_pil = _char_to_pil(surface)
@@ -249,9 +258,7 @@ def draw_luma_asleep(draw, luma_head_cx, luma_head_cy):
         char_pil = char_pil.resize((int(char_pil.width * 0.6), int(char_pil.height * 0.6)), Image.LANCZOS)
     # For asleep pose, rotate slightly
     char_pil = char_pil.rotate(15, expand=True, fillcolor=(0, 0, 0, 0))
-    # Composite onto a temp image passed via draw
-    # Since draw doesn't carry img ref, we skip composite here
-    # The caller should use the returned PIL image
+    _composite_char(img, char_pil, luma_head_cx, luma_head_cy)
 
 
 def draw_scene(img):
@@ -294,7 +301,8 @@ def draw_scene(img):
     # ── Luma asleep on couch (frame-left background) ──────────────────────────
     luma_head_x = int(PW * 0.18)
     luma_head_y = int(DRAW_H * 0.38)
-    draw_luma_asleep(draw, luma_head_x, luma_head_y)
+    draw_luma_asleep(img, draw, luma_head_x, luma_head_y)
+    draw = ImageDraw.Draw(img)
 
     # Warm character glow (Luma = warm anchor)
     add_glow(img, luma_head_x, luma_head_y, 65, WARM_AMB, steps=4, max_alpha=16)
@@ -312,7 +320,8 @@ def draw_scene(img):
     # We want the floor at floor_y and feet clearly above it
 
     sight_eye, feet_y, head_cy, head_r = draw_byte_floating(
-        img, draw, byte_cx, byte_cy, byte_bh, floor_y)
+        img, draw, byte_cx, byte_cy, byte_bh, floor_y,
+        expression="searching", facing="left")
     draw = ImageDraw.Draw(img)
 
     # Byte's ELEC_CYAN ambient glow (non-directional — hasn't committed yet)

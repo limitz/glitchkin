@@ -213,8 +213,16 @@ def _composite_char(base_img, char_pil, cx, cy):
     base_img.paste(result.convert('RGB'))
 
 def draw_byte_silhouette(draw, cx, cy, scale=1.0, alpha_factor=1.0, img=None,
-                         expression="alarmed", ghost=False):
-    """Byte silhouette/ghost for ricochet trail — canonical renderer."""
+                         expression="alarmed", ghost=False,
+                         alarmed=None, trail_arm_angle=None):
+    """Byte silhouette/ghost for ricochet trail — canonical renderer.
+
+    Args:
+        alarmed: if True, overrides expression to "alarmed" (legacy compat).
+        trail_arm_angle: reserved for future arm-angle override (currently unused).
+    """
+    if alarmed is not None:
+        expression = "alarmed" if alarmed else expression
     byte_scale = scale * 0.8
     surface = draw_byte(expression=expression, scale=byte_scale, facing="front")
     char_pil = _char_to_pil(surface)

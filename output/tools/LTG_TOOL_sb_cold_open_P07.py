@@ -10,12 +10,6 @@ Cold Open Panel P07 — MED WIDE — Monitor Bulging / Dutch 8° CW / Byte Phase
 Diego Vargas, Storyboard Artist — Cycle 43
 
 Beat: The moment before Byte fully crosses. The CRT is under physical pressure
-try:
-    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
-except ImportError:
-    import pathlib
-    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
-    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
       from inside. Dutch tilt signals the room's geometry can no longer be trusted.
       Byte is mid-phase: lower half still inside (desaturated, behind glass),
       upper half emerging into the real world (full teal + confetti burst at threshold).
@@ -45,6 +39,12 @@ Image size rule: ≤ 1280px in both dimensions.
 Output: output/storyboards/panels/LTG_SB_cold_open_P07.png
 """
 
+try:
+    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+except ImportError:
+    import pathlib
+    def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
+    def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFont
 import math, random, os
 import sys
@@ -323,6 +323,11 @@ def draw_byte_mid_phase(img, draw, byte_cx, byte_cy, body_h, screen_y2):
     base_rgba = img.convert('RGBA')
     result = Image.alpha_composite(base_rgba, overlay)
     img.paste(result.convert('RGB'))
+
+    # Return geometry for annotations
+    head_r = int(body_h * 0.20)
+    head_cy = byte_cy - body_h // 2 + head_r
+    return head_cy, head_r, body_h
 
 
 def draw_scene(img):
