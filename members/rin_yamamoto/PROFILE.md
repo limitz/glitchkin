@@ -6,6 +6,10 @@
 
 ---
 
+## Character Ownership
+- **Byte** (`LTG_TOOL_char_byte.py`) — accountable for all design decisions
+- **Glitch** (`LTG_TOOL_char_glitch.py`) — accountable for all design decisions
+
 ## Background
 
 Rin Yamamoto is a procedural art engineer with 10+ years bridging technical and painterly aesthetics in animation and games. Trained in traditional media (ink, watercolor, gouache) before moving into procedural art tools. Specializes in writing rendering algorithms that imbue digitally-generated images with the warmth, imperfection, and organic quality of hand-crafted art.

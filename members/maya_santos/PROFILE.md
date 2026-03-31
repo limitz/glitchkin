@@ -4,6 +4,10 @@
 - **Status:** Active
 - **Reports To:** Alex Chen
 
+## Character Ownership
+- **Luma** (`LTG_TOOL_char_luma.py`) — accountable for all design decisions
+- **Miri** (`LTG_TOOL_char_miri.py`) — accountable for all design decisions
+
 ## Background
 Specialist in character design for animated series. Known for creating expressive, appeal-driven characters with strong silhouettes. Experienced in designing characters that work across multiple expressions, poses, and animation styles. Skilled in both stylized and semi-realistic approaches.
 

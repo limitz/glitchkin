@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Send a message to Alex Chen's inbox."""
+"""Send a message to the producers inbox."""
 
 import os
 from datetime import datetime
 
-inbox = os.path.join(os.path.dirname(__file__), "members", "alex_chen", "inbox")
+inbox = os.path.join(os.path.dirname(__file__), "members", "producer", "inbox")
 os.makedirs(inbox, exist_ok=True)
 
-print("Message to Alex Chen (end with a single '.' on its own line):")
+print("Message to producer (end with a single '.' on its own line):")
 lines = []
 while True:
     line = input()
@@ -30,7 +30,7 @@ filepath = os.path.join(inbox, filename)
 
 content = f"""**Date:** {now.strftime("%Y-%m-%d %H:%M")}
 **From:** Human
-**To:** Alex Chen
+**To:** Producer
 
 {body}
 """
@@ -38,4 +38,4 @@ content = f"""**Date:** {now.strftime("%Y-%m-%d %H:%M")}
 with open(filepath, "w") as f:
     f.write(content)
 
-print(f"Message written to members/alex_chen/inbox/{filename}")
+print(f"Message written to members/producer/inbox/{filename}")
