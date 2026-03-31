@@ -48,7 +48,6 @@ try:
     from wand.image import Image as WandImage
     from wand.drawing import Drawing as WandDrawing
     from wand.color import Color as WandColor
-    from wand.compat import nested
     _WAND_AVAILABLE = True
 except ImportError as e:
     _WAND_IMPORT_ERROR = str(e)

@@ -9,6 +9,21 @@ LTG_TOOL_sf_miri_luma_handoff.py
 Style Frame — "The Hand-Off" (SF_MIRI_LUMA_HANDOFF / SF06 candidate)
 "Luma & the Glitchkin" — Cycle 49 / Maya Santos
 
+Cycle 52 changes (Hana Okonkwo, C52 — CHARACTER-ENVIRONMENT INTEGRATION):
+  - WAND COMPOSITING PIPELINE: Characters now drawn on separate transparent
+    layers and composited using LTG_TOOL_wand_composite.py.
+  - Compositing pass order (per C50 spec):
+    BG > CRT glow > lamp glow > contact shadows (Wand Gaussian) > characters
+    > scene lighting (Wand Screen blend) > bounce light (Wand Screen)
+    > edge tint (Wand morphology) > color transfer (Wand Soft Light)
+    > dual temp overlay > deep shadows > caption
+  - PER-ENVIRONMENT LIGHTING: Living Room settings from
+    character_environment_lighting_c50.md applied.
+    Warm lamp left (Miri zone), CRT cool spill center-right (Luma zone).
+    Surface color (185,165,125), shadow alpha 50, bounce alpha 20.
+  - GRACEFUL FALLBACK: If Wand/libmagickwand missing, falls back to legacy
+    PIL compositing (pre-C52 direct-draw path).
+
 Cycle 49 changes (Maya Santos, C49):
   - MIRI ELDER POSTURE: Forward lean (3-5 degrees) via head/torso offset.
     Head shifts +3px rightward (toward CRT), torso 60% of that, feet stay.
@@ -64,6 +79,7 @@ except ImportError:
     def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 import math
 import os
+import sys
 import random
 from PIL import Image, ImageDraw, ImageFilter
 
@@ -404,13 +420,14 @@ GROUND_Y = int(H * 0.90)
 MIRI_HR = 42   # head radius
 MIRI_HU = int(MIRI_HR * 2 * (1 / 1.0))  # HU = 2×HR (1 head = 2*radius)
 
-def draw_miri_character(img, draw, cx, ground_y):
+def draw_miri_character(img, draw, cx, ground_y, transparent_layer=False):
     """
     Grandma Miri — MIRI-A canonical. Standing, facing 3/4 right.
     Right hand extended forward/toward CRT (the "hand-off" gesture).
     Expression: WARM ATTENTION — soft smile, slightly forward lean.
     Height: 3.2 heads (MIRI_HU × 3.2).
     C49: Elder posture — forward lean + rounded shoulders.
+    C52: transparent_layer=True skips foot shadow (handled by Wand compositing).
     """
     HR = MIRI_HR
     HU = int(HR * 2)  # one head unit = 2 × head radius
@@ -684,10 +701,11 @@ def draw_miri_character(img, draw, cx, ground_y):
         draw.ellipse([bx - br, by - int(br * 0.6), bx + br, by + int(br * 0.6)],
                      fill=blush_col)
 
-    # ── Shadow at feet ────────────────────────────────────────────────────────
-    draw.ellipse([cx - int(HU * 0.55), ground_y - 4,
-                  cx + int(HU * 0.55), ground_y + 10],
-                 fill=lerp_color(FLOOR_OAK_DARK, NEAR_BLACK_WARM, 0.55))
+    # ── Shadow at feet (only when compositing directly onto BG) ────────────────
+    if not transparent_layer:
+        draw.ellipse([cx - int(HU * 0.55), ground_y - 4,
+                      cx + int(HU * 0.55), ground_y + 10],
+                     fill=lerp_color(FLOOR_OAK_DARK, NEAR_BLACK_WARM, 0.55))
     draw = ImageDraw.Draw(img)
 
     return img, draw
@@ -699,12 +717,13 @@ LUMA_HR = 46   # head radius
 LUMA_HU = int(LUMA_HR * 2)
 
 
-def draw_luma_character(img, draw, cx, ground_y):
+def draw_luma_character(img, draw, cx, ground_y, transparent_layer=False):
     """
     Luma — ATTENTIVE CURIOSITY. Standing, 3/4 left (facing Miri and CRT).
     Slight forward lean: she is being shown something and she is very interested.
     Expression: FOCUSED DETERMINATION / attentive (eyes wide, eyebrows neutral-raised).
     Height: 3.5 heads.
+    C52: transparent_layer=True skips foot shadow (handled by Wand compositing).
     """
     HR = LUMA_HR
     HU = LUMA_HU
@@ -920,10 +939,11 @@ def draw_luma_character(img, draw, cx, ground_y):
               face_cx + int(mw * 0.6), my + int(HR * 0.14)],
              start=0, end=180, fill=LUMA_SKIN_SH, width=1)
 
-    # ── Shadow at feet ────────────────────────────────────────────────────────
-    draw.ellipse([cx - int(HU * 0.52), ground_y - 4,
-                  cx + int(HU * 0.52), ground_y + 10],
-                 fill=lerp_color(FLOOR_OAK_DARK, NEAR_BLACK_WARM, 0.55))
+    # ── Shadow at feet (only when compositing directly onto BG) ────────────────
+    if not transparent_layer:
+        draw.ellipse([cx - int(HU * 0.52), ground_y - 4,
+                      cx + int(HU * 0.52), ground_y + 10],
+                     fill=lerp_color(FLOOR_OAK_DARK, NEAR_BLACK_WARM, 0.55))
     draw = ImageDraw.Draw(img)
 
     return img, draw
@@ -981,20 +1001,39 @@ def draw_caption(img):
     except Exception:
         font = None
 
-    label = "SF06 — THE HAND-OFF  |  Miri + Luma + CRT  |  REAL WORLD  |  C48 Maya Santos"
+    label = "SF06 — THE HAND-OFF  |  Miri + Luma + CRT  |  REAL WORLD  |  C52 Hana Okonkwo (Wand composite)"
     draw.rectangle([0, H - 22, W, H], fill=NEAR_BLACK_WARM)
     draw.text((8, H - 18), label, fill=AGED_CREAM, font=font)
 
 
 # ── Main ───────────────────────────────────────────────────────────────────────
 
+def _make_char_mask(char_layer):
+    """Extract a binary mask (mode 'L') from the alpha channel of an RGBA layer."""
+    if char_layer.mode != "RGBA":
+        char_layer = char_layer.convert("RGBA")
+    return char_layer.split()[3]
+
+
+def _char_bbox(mask):
+    """Return (x1, y1, x2, y2) bounding box of non-zero pixels in mask."""
+    bbox = mask.getbbox()
+    if bbox is None:
+        return (0, 0, 1, 1)
+    return bbox
+
+
 def main():
     random.seed(44)
+
+    _here = os.path.dirname(os.path.abspath(__file__))
+    sys.path.insert(0, _here)
 
     out_dir = output_dir('color', 'style_frames')
     out_path = os.path.join(out_dir, "LTG_COLOR_sf_miri_luma_handoff.png")
     os.makedirs(out_dir, exist_ok=True)
 
+    # ── Background (Layers 1-4) ───────────────────────────────────────────────
     img = Image.new("RGB", (W, H), WALL_BASE)
 
     # Layer 1: Background room
@@ -1013,39 +1052,169 @@ def main():
     img = draw_warm_lamp_glow(img)
     draw = ImageDraw.Draw(img)
 
-    # Layer 5: Miri — LEFT of CRT, facing right, hand extended toward TV
-    # CRT center is at ~(int(W*0.50), ). Miri stands at x≈350.
+    # Save background-only layer for compositing reference
+    bg_only = img.copy()
+
+    # ── Character positions ───────────────────────────────────────────────────
     miri_cx = int(W * 0.285)
-    img, draw = draw_miri_character(img, draw, miri_cx, GROUND_Y)
-    draw = ImageDraw.Draw(img)
-
-    # Layer 6: Luma — RIGHT of CRT, facing left/3/4, attentive lean
-    # Luma is taller — stands at x≈800.
     luma_cx = int(W * 0.72)
-    img, draw = draw_luma_character(img, draw, luma_cx, GROUND_Y)
-    draw = ImageDraw.Draw(img)
 
-    # Layer 7: Dual temperature overlay (warm left / cool right)
+    # ── Wand compositing pipeline ─────────────────────────────────────────────
+    # Per C52 assignment: characters on separate transparent layers, composited
+    # with Wand contact shadows, bounce light, scene tint, blend modes.
+    # Per C50 lighting spec: Living Room settings.
+    #   - Reading lamp LEFT: SUNLIT_AMBER (245, 208, 140) = key (Miri zone)
+    #   - CRT center-left: CRT_COOL_SPILL (130, 175, 160) = cool accent
+    #   - Contact shadow surface: (185, 165, 125), alpha 50
+    #   - Bounce light: warm floor/carpet bounce, alpha 20
+
+    _use_wand = True
+    try:
+        from LTG_TOOL_wand_composite import (
+            wand_contact_shadow, wand_bounce_light, wand_edge_tint,
+            wand_scene_lighting_overlay, wand_color_transfer,
+            pil_to_wand, wand_to_pil
+        )
+        from LTG_TOOL_contact_shadow import sample_surface_color
+    except ImportError:
+        _use_wand = False
+        print("[C52] Wand not available — falling back to legacy compositing.")
+
+    if _use_wand:
+        # Living Room lighting spec (C50 document)
+        SURFACE_COLOR = (185, 165, 125)   # carpet/floor
+        SHADOW_ALPHA = 50
+        BOUNCE_ALPHA = 20
+        EDGE_TINT_ALPHA = 18
+        COLOR_TRANSFER_STRENGTH = 0.12
+        BOUNCE_GROUND_COLOR = (185, 165, 125)  # warm carpet
+
+        # --- Draw Miri on transparent layer ---
+        miri_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        miri_draw = ImageDraw.Draw(miri_layer)
+        miri_layer, miri_draw = draw_miri_character(
+            miri_layer, miri_draw, miri_cx, GROUND_Y, transparent_layer=True)
+        miri_mask = _make_char_mask(miri_layer)
+        miri_bbox = _char_bbox(miri_mask)
+        miri_width = miri_bbox[2] - miri_bbox[0]
+        miri_height = miri_bbox[3] - miri_bbox[1]
+
+        # --- Draw Luma on transparent layer ---
+        luma_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        luma_draw = ImageDraw.Draw(luma_layer)
+        luma_layer, luma_draw = draw_luma_character(
+            luma_layer, luma_draw, luma_cx, GROUND_Y, transparent_layer=True)
+        luma_mask = _make_char_mask(luma_layer)
+        luma_bbox = _char_bbox(luma_mask)
+        luma_width = luma_bbox[2] - luma_bbox[0]
+        luma_height = luma_bbox[3] - luma_bbox[1]
+
+        # --- Compositing pass order (C50 spec): ---
+        # BG > overlay > shadow > character > scene shading > bounce > edge tint > color transfer
+
+        # Convert BG to RGBA for Wand operations
+        composite = img.convert("RGBA")
+
+        # Step 1: Contact shadows (Wand Gaussian blur — proper soft falloff)
+        composite = wand_contact_shadow(
+            composite, miri_cx, GROUND_Y, miri_width,
+            surface_color=SURFACE_COLOR, shadow_alpha=SHADOW_ALPHA,
+            blur_sigma=5.0, height_px=12)
+        composite = wand_contact_shadow(
+            composite, luma_cx, GROUND_Y, luma_width,
+            surface_color=SURFACE_COLOR, shadow_alpha=SHADOW_ALPHA,
+            blur_sigma=5.0, height_px=12)
+
+        # Step 2: Paste characters onto composite
+        composite = Image.alpha_composite(composite, miri_layer)
+        draw = ImageDraw.Draw(composite)  # refresh draw context
+        composite = Image.alpha_composite(composite, luma_layer)
+        draw = ImageDraw.Draw(composite)  # refresh draw context
+
+        # Step 3: Scene lighting via Wand Screen blend
+        # Warm lamp glow on Miri's side (left)
+        composite = wand_scene_lighting_overlay(
+            composite, light_color=(245, 208, 140),
+            light_x=int(W * 0.12), light_y=int(H * 0.40),
+            radius=320, intensity=0.18, blend_mode="screen")
+        # CRT cool spill on Luma's side (right of center)
+        composite = wand_scene_lighting_overlay(
+            composite, light_color=(130, 175, 160),
+            light_x=(scr_x1 + scr_x2) // 2, light_y=(scr_y1 + scr_y2) // 2,
+            radius=260, intensity=0.14, blend_mode="screen")
+
+        # Step 4: Bounce light on characters (warm carpet color from below)
+        miri_bounced = wand_bounce_light(
+            miri_layer, miri_mask, GROUND_Y, miri_height,
+            ground_color=BOUNCE_GROUND_COLOR, bounce_alpha=BOUNCE_ALPHA, coverage=0.25)
+        luma_bounced = wand_bounce_light(
+            luma_layer, luma_mask, GROUND_Y, luma_height,
+            ground_color=BOUNCE_GROUND_COLOR, bounce_alpha=BOUNCE_ALPHA, coverage=0.25)
+        composite = Image.alpha_composite(composite, miri_bounced)
+        draw = ImageDraw.Draw(composite)
+        composite = Image.alpha_composite(composite, luma_bounced)
+        draw = ImageDraw.Draw(composite)
+
+        # Step 5: Edge tint (environment color bleed on character edges)
+        # Miri: warm side — tint from lamp amber
+        miri_tinted = wand_edge_tint(
+            miri_layer, miri_mask, bg_color=(245, 208, 140),
+            tint_alpha=EDGE_TINT_ALPHA, edge_width=3)
+        composite = Image.alpha_composite(composite, miri_tinted)
+        draw = ImageDraw.Draw(composite)
+        # Luma: cool side — tint from CRT spill
+        luma_tinted = wand_edge_tint(
+            luma_layer, luma_mask, bg_color=(130, 175, 160),
+            tint_alpha=EDGE_TINT_ALPHA, edge_width=3)
+        composite = Image.alpha_composite(composite, luma_tinted)
+        draw = ImageDraw.Draw(composite)
+
+        # Step 6: Color transfer (environment-to-character tinting via Soft Light)
+        miri_transferred = wand_color_transfer(
+            miri_layer, miri_mask, bg_only,
+            miri_cx, GROUND_Y, sample_radius=80,
+            tint_strength=COLOR_TRANSFER_STRENGTH)
+        composite = Image.alpha_composite(composite, miri_transferred)
+        draw = ImageDraw.Draw(composite)
+        luma_transferred = wand_color_transfer(
+            luma_layer, luma_mask, bg_only,
+            luma_cx, GROUND_Y, sample_radius=80,
+            tint_strength=COLOR_TRANSFER_STRENGTH)
+        composite = Image.alpha_composite(composite, luma_transferred)
+        draw = ImageDraw.Draw(composite)
+
+        img = composite.convert("RGB")
+
+    else:
+        # Legacy path: draw characters directly onto BG (pre-C52 behavior)
+        img, draw = draw_miri_character(img, draw, miri_cx, GROUND_Y)
+        draw = ImageDraw.Draw(img)
+        img, draw = draw_luma_character(img, draw, luma_cx, GROUND_Y)
+        draw = ImageDraw.Draw(img)
+
+    # ── Post-compositing passes (same as before) ─────────────────────────────
+
+    # Dual temperature overlay (warm left / cool right)
     img = alpha_overlay_rect(img, 0, 0, W // 2, H, SUNLIT_AMBER, 28)
     img = alpha_overlay_rect(img, W // 2, 0, W, H, CRT_COOL_SPILL, 32)
     draw = ImageDraw.Draw(img)
 
-    # Layer 8: Deep shadow pass (value floor ≤30)
+    # Deep shadow pass (value floor <=30)
     img = draw_deep_shadow_pass(img)
     draw = ImageDraw.Draw(img)
 
-    # Layer 9: Caption
+    # Caption
     draw_caption(img)
 
     # Size rule compliance
     img.thumbnail((1280, 1280), Image.LANCZOS)
     img.save(out_path)
-    print(f"[Maya C48] Saved: {out_path}  ({img.width}×{img.height}px)")
+    print(f"[Hana C52] Saved: {out_path}  ({img.width}x{img.height}px)")
     print("  Composition: Miri (L) + CRT (C) + Luma (R) — The Hand-Off")
+    print("  Pipeline: PIL generates > Wand composites (contact shadow, bounce,")
+    print("            edge tint, color transfer, scene lighting) > PIL QA")
+    print("  Lighting: Living Room spec (C50) — warm lamp L, CRT cool spill C-R")
     print("  Palette: Real World only. No GL colors.")
-    print("  C48: Shoulder involvement applied — Miri R shoulder forward pull, Luma L rise + R outward.")
-    print("  Face test note: Luma face at sprint scale — visual inspection.")
-    print("    Miri face at sprint scale — visual inspection (no automated gate for Miri).")
 
 
 if __name__ == "__main__":

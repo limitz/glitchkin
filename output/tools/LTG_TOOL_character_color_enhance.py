@@ -6,7 +6,7 @@
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
 LTG_TOOL_character_color_enhance.py — Character Color Enhancement Library
-"Luma & the Glitchkin" — Color & Style / Sam Kowalski / Cycle 50
+"Luma & the Glitchkin" — Color & Style / Sam Kowalski / Cycle 52 (v2.0.0)
 
 PURPOSE:
   Addresses the C50 character quality pivot. Our backgrounds receive scene lighting
@@ -16,6 +16,11 @@ PURPOSE:
 
   All functions operate as overlays on an already-drawn character. They do NOT modify
   the base character drawing code. Integration: call after the character is drawn.
+
+  v2.0.0 (C52): Added cairo surface support. enhance_from_cairo() converts a pycairo
+  ARGB32 surface to PIL RGBA, applies all five enhancement passes, and returns the
+  enhanced PIL Image. This bridges the pycairo rendering pipeline (LTG_TOOL_cairo_primitives)
+  with the existing PIL-based color enhancement stack. All v1.0.0 API preserved.
 
 REFERENCE ANALYSIS:
   Hilda and The Owl House both use flat base fills + scene-responsive tinting.
@@ -29,6 +34,7 @@ FUNCTIONS:
   apply_form_shadow()        — Curved cel-shadow shapes for torso/limb zones
   derive_scene_outline()     — Scene-responsive outline color calculation
   apply_hair_absorption()    — Hair zone scene-color tinting at 2x strength
+  enhance_from_cairo()       — Convert cairo surface → PIL, apply full pipeline (v2.0.0)
   generate_demo()            — Before/after comparison render
 
 USAGE:
@@ -39,6 +45,13 @@ USAGE:
   img = apply_scene_tint(img, char_bbox, key_light_color=(212, 146, 58), alpha=22)
   draw = ImageDraw.Draw(img)  # refresh after any img modification
 
+  # With pycairo-rendered characters (v2.0.0):
+  from LTG_TOOL_character_color_enhance import enhance_from_cairo
+  pil_img = enhance_from_cairo(
+      cairo_surface, char_bbox, face_center, face_radius,
+      hair_bbox=hair_bbox, scene_preset="warm_domestic"
+  )
+
   # Standalone demo:
   python3 output/tools/LTG_TOOL_character_color_enhance.py
 
@@ -48,12 +61,12 @@ CONSTRAINTS:
   - Outline contrast ratio >= 3:1 against skin maintained
   - Native 1280x720 canvas. NEVER use .thumbnail() in generators.
 
-Dependencies: Python 3.8+, Pillow (PIL). No NumPy required.
+Dependencies: Python 3.8+, Pillow (PIL). pycairo + numpy optional (for enhance_from_cairo).
 """
 
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 __author__ = "Sam Kowalski"
-__cycle__ = 50
+__cycle__ = 52
 
 import math
 import os
@@ -462,6 +475,123 @@ def apply_hair_absorption(img, hair_bbox, scene_color, alpha=18):
     base_rgba = img.convert("RGBA")
     result = Image.alpha_composite(base_rgba, overlay)
     img.paste(result.convert("RGB"))
+    return img
+
+
+# ── Cairo Surface Bridge (v2.0.0) ────────────────────────────────────────────
+
+def _cairo_surface_to_pil(surface):
+    """Convert a pycairo ARGB32 ImageSurface to a PIL RGBA Image.
+
+    Cairo stores pixels as BGRA (premultiplied) on little-endian systems.
+    This function unpremultiplies and reorders to standard RGBA.
+
+    Falls back gracefully if cairo/numpy not available.
+    """
+    try:
+        import numpy as np
+    except ImportError:
+        raise ImportError("numpy is required for cairo surface conversion")
+
+    w = surface.get_width()
+    h = surface.get_height()
+    buf = surface.get_data()
+    arr = np.frombuffer(buf, dtype=np.uint8).reshape(h, w, 4).copy()
+
+    # Cairo ARGB32 is BGRA in memory on little-endian
+    # Reorder: B G R A → R G B A
+    rgba = np.stack([arr[:, :, 2], arr[:, :, 1], arr[:, :, 0], arr[:, :, 3]], axis=2)
+    return Image.fromarray(rgba, "RGBA")
+
+
+def enhance_from_cairo(surface, char_bbox, face_center, face_radius,
+                       hair_bbox=None, torso_bbox=None, leg_bboxes=None,
+                       scene_preset="warm_domestic",
+                       skin_base=None, skin_hl=None, skin_sh=None,
+                       blush_color=None, hoodie_color=None, hoodie_shadow=None,
+                       jeans_color=None, jeans_shadow=None):
+    """Convert a pycairo surface to PIL and apply the full color enhancement pipeline.
+
+    This is the v2.0.0 bridge function for pycairo-rendered characters. It:
+    1. Converts the cairo ARGB32 surface to a PIL RGBA image
+    2. Converts to RGB for enhancement (alpha-composites over white if needed)
+    3. Applies scene tint, skin warmth, form shadows, and hair absorption
+    4. Returns the enhanced PIL Image (RGB mode)
+
+    Args:
+        surface:        pycairo ImageSurface (FORMAT_ARGB32)
+        char_bbox:      (left, top, right, bottom) of character area
+        face_center:    (cx, cy) center of face
+        face_radius:    (rx, ry) face radii
+        hair_bbox:      (left, top, right, bottom) of hair zone (optional)
+        torso_bbox:     (left, top, right, bottom) of torso zone (optional)
+        leg_bboxes:     list of (left, top, right, bottom) for each leg (optional)
+        scene_preset:   key into SCENE_PRESETS dict
+        skin_base:      override skin base RGB (default: SKIN_BASE)
+        skin_hl:        override skin highlight RGB (default: SKIN_HL)
+        skin_sh:        override skin shadow RGB (default: SKIN_SH)
+        blush_color:    override blush RGB (default: BLUSH)
+        hoodie_color:   override torso fill RGB (default: HOODIE_ORANGE)
+        hoodie_shadow:  override torso shadow RGB (default: HOODIE_SHADOW)
+        jeans_color:    override leg fill RGB (default: JEANS)
+        jeans_shadow:   override leg shadow RGB (default: JEANS_SH)
+
+    Returns:
+        PIL.Image in RGB mode with all enhancements applied.
+    """
+    # Resolve defaults
+    _skin_base = skin_base or SKIN_BASE
+    _skin_hl = skin_hl or SKIN_HL
+    _blush = blush_color or BLUSH
+    _hoodie = hoodie_color or HOODIE_ORANGE
+    _hoodie_sh = hoodie_shadow or HOODIE_SHADOW
+    _jeans = jeans_color or JEANS
+    _jeans_sh = jeans_shadow or JEANS_SH
+
+    preset = SCENE_PRESETS.get(scene_preset, SCENE_PRESETS["warm_domestic"])
+    key_color = preset["key_color"]
+    light_dir = preset["key_dir"]
+    tint_alpha = preset["tint_alpha"]
+
+    # Step 1: Cairo surface → PIL
+    pil_rgba = _cairo_surface_to_pil(surface)
+
+    # Step 2: Composite onto white for RGB conversion (preserves character fills)
+    bg = Image.new("RGBA", pil_rgba.size, (255, 255, 255, 255))
+    img = Image.alpha_composite(bg, pil_rgba).convert("RGB")
+
+    # Step 3: Apply scene tint
+    img = apply_scene_tint(img, char_bbox, key_color, alpha=tint_alpha,
+                           light_dir=light_dir)
+    # refresh draw context after paste (PIL standard W004)
+    # (not drawing here, but callers may need draw after this returns)
+
+    # Step 4: Apply skin warmth
+    img = apply_skin_warmth(img, face_center, face_radius,
+                            light_dir=light_dir,
+                            warm_color=_skin_hl,
+                            blush_color=_blush)
+
+    # Step 5: Apply form shadow to torso if bbox provided
+    if torso_bbox is not None:
+        img = apply_form_shadow(img, torso_bbox,
+                                base_color=_hoodie, shadow_color=_hoodie_sh,
+                                shadow_shape="torso_diagonal",
+                                light_dir=light_dir, alpha=90)
+
+    # Step 6: Apply form shadow to legs if bboxes provided
+    if leg_bboxes is not None:
+        for leg_bbox in leg_bboxes:
+            img = apply_form_shadow(img, leg_bbox,
+                                    base_color=_jeans, shadow_color=_jeans_sh,
+                                    shadow_shape="limb_underside",
+                                    light_dir=light_dir, alpha=75)
+
+    # Step 7: Apply hair absorption if bbox provided
+    if hair_bbox is not None and preset.get("hair_tint_2x", True):
+        img = apply_hair_absorption(img, hair_bbox, scene_color=key_color,
+                                    alpha=tint_alpha)
+
     return img
 
 

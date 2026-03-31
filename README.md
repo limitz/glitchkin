@@ -57,12 +57,12 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 
 ## Characters
 
-### Full Lineup (v011 C47)
-*Cosmo visual hook propagated. Two-tier ground plane with warm FG / cool BG.*
+### Full Lineup (v012 C52)
+*pycairo rebuild: Luma, Byte, Cosmo rendered with native bezier AA. Two-tier staging preserved.*
 ![Character Lineup](output/characters/main/LTG_CHAR_character_lineup.png)
 
-### Luma — Expression Sheet (v014 C47)
-*C47: Shoulder involvement added. Tier-1 body postures with responsive shoulder line.*
+### Luma — Expression Sheet (v015 C52 — pycairo)
+*C52: Full pycairo rebuild. All 6 expressions with gesture-first construction, bezier curves, form shadows.*
 ![Luma Expressions](output/characters/main/LTG_CHAR_luma_expression_sheet.png)
 
 ### Luma — Turnaround (v004 — construction master, 3.2 heads)
@@ -71,15 +71,15 @@ Luma is a 12-year-old girl who discovers the **Glitchkin** — mischievous pixel
 ### Luma — Color Model (v002)
 ![Luma Color Model](output/characters/color_models/LTG_COLOR_luma_color_model.png)
 
-### Byte — Expression Sheet (v007)
-*C41: UNGUARDED WARMTH added — bilateral arm raise, float −4px, toe-in trapezoid legs.*
+### Byte — Expression Sheet (v008 C52 — pycairo)
+*C52: Full pycairo rebuild. Anti-aliased ellipses, wobble outlines, bezier confetti trails. 10 expressions.*
 ![Byte Expressions](output/characters/main/LTG_CHAR_byte_expression_sheet.png)
 
 ### Byte — Turnaround (v001)
 ![Byte Turnaround](output/characters/main/turnarounds/LTG_CHAR_byte_turnaround.png)
 
-### Cosmo — Expression Sheet (v008 C47)
-*C47: Visual hook — amplified cowlick + bridge tape. Shoulder involvement.*
+### Cosmo — Expression Sheet (v009 C52 — pycairo)
+*C52: pycairo rebuild. Bezier curves, color enhancement pipeline, all visual hooks preserved.*
 ![Cosmo Expressions](output/characters/main/LTG_CHAR_cosmo_expression_sheet.png)
 
 ### Cosmo — Turnaround (v003 C47)
@@ -174,18 +174,19 @@ Three-world palette system:
 
 ## Progress
 
-- **Work cycles:** 51 | **Critique cycles:** 18
-- **Next:** C51 (in progress), then Critique 19
+- **Work cycles:** 52 | **Critique cycles:** 18
+- **Next:** Critique 19
 - **Ideabox:** 12 ideas actioned C49
 - **Critics panel:** 20 total (15 professionals + 5 audience)
 - **Team:** 12 active
-- **C50 highlights (in progress):** Character quality pivot — silhouette distinctiveness tool, expression range metric, construction stiffness detector. Baseline: silhouette FAIL (Miri identical to 3 characters), stiffness FAIL (Luma/Byte 64-66% straight), Glitch expression WARN. Rendering comparison tool (pycairo vs PIL approaches). **Character-background integration audit** (all 5 SFs graded D to D+) + **SF01 scene-lit prototype** (scene-colored skin/hoodie shading, contact shadow, bounce light, post-character lighting overlay — warm/cool 106.0 PASS).
-- **C49 highlights:** Production bible v5.0 (47-cycle debt cleared), production bible pipeline split (pitch vs post-pitch), render_qa v2.2.0 composite warmth gate, depth_temp_lint --discover mode, CI suite v1.9.0 JSON check registry, precritique_qa v2.18.0 sightline validation, multi-char face gate tool, Miri elder posture, CRT glow asymmetry rule + SF01 applied, School Hallway ceiling convergence, P25 title card, sightline pixel PNG mode, face landmark detector, Cosmo motion shoulder_arm integrated
+- **C52 highlights:** **pycairo character rebuild cycle.** Luma expression sheet v015 (all 6 expressions, gesture-first bezier construction), Byte expression sheet v008 (10 expressions, anti-aliased), Cosmo expression sheet v009 (bezier + color enhance). Character lineup v012 (3/5 characters pycairo). SF01 Discovery rebuilt with pycairo characters. Luma motion sheet rebuilt with gesture-first construction. Cosmo + Miri gesture specs. QA pipeline v3.0.0 (sections 15-17: silhouette, expression range, stiffness). All expression sheets PASS expression range + stiffness.
+- **C51 highlights:** Library evaluation cycle. pycairo adopted as primary character rendering engine (19x AA improvement). Open library policy. Cairo primitives + curve draw libraries deployed. Character quality spec v2. Wand compositing adopted. 11 prototypes approved.
+- **C50 highlights:** Character quality pivot — silhouette distinctiveness tool, expression range metric, construction stiffness detector. Rendering comparison tool (pycairo vs PIL). SF01 scene-lit prototype.
 
 ### Pitch Package Status
 | Asset | Latest | Notes |
 |-------|--------|-------|
-| **SF01 Discovery** | **v008 C49** | CRT glow asymmetry applied (0.70 below-midpoint) |
+| **SF01 Discovery** | **v009 C52** | pycairo characters (Luma + Byte), scene lighting, contact shadow |
 | SF02 Glitch Storm | v008 C43 | Native 1280×720 — SUNLIT_AMBER ΔE 1.1 PASS |
 | SF03 The Other Side | v005 | UV_PURPLE ΔE 0.0 C41 |
 | SF04 Resolution | C45 updated | Needs CRT glow asymmetry fix |
@@ -193,14 +194,14 @@ Three-world palette system:
 | SF05 "The Passing" | C44 | Jordan — kitchen pre-dawn |
 | **SF06 "The Hand-Off"** | **C49 updated** | Elder posture: Miri forward lean + rounded shoulders |
 | GL Showcase | v1.0.0 C47 | CRT glow exempt (interior, no cabinet) |
-| Luma expressions | v014 C47 | Shoulder involvement |
+| **Luma expressions** | **v015 C52** | **pycairo rebuild — gesture-first, bezier curves, form shadows** |
 | Luma turnaround | v004 | unchanged |
-| Byte expressions | v007 C41 | unchanged |
-| Cosmo expressions | v008 C47 | Visual hook: amplified cowlick + bridge tape |
+| **Byte expressions** | **v008 C52** | **pycairo rebuild — anti-aliased, wobble outlines, 10 expressions** |
+| **Cosmo expressions** | **v009 C52** | **pycairo rebuild — bezier curves, color enhance pipeline** |
 | Cosmo turnaround | v003 C47 | Visual hook propagated |
-| **Miri expressions** | **v008 C49** | Elder posture: forward lean + rounded shoulders |
+| Miri expressions | v008 C49 | Elder posture: forward lean + rounded shoulders |
 | Glitch expressions | v003 | unchanged |
-| Character lineup | v011 C47 | Needs Byte cracked-eye canon fix |
+| **Character lineup** | **v012 C52** | **pycairo: Luma+Byte+Cosmo. Miri+Glitch still PIL** |
 | Logo | v003 C44 | Nunito Bold + Space Grotesk Bold |
 | Kitchen | v008 C48 | Fridge/countertop/cabinet VP perspective fixes |
 | Tech Den | v007 C45 | Hardcoded path migrated |
@@ -217,7 +218,7 @@ Three-world palette system:
 | **Production Bible** | **v5.0 C49** | Full reconciliation — 0 HIGH flags |
 | **Design-to-bible sync** | **NEW C49** | Manual protocol, 7 categories |
 | Staging decision register | C48 | Byte position resolved |
-| Motion — Luma | v002 C38 | unchanged |
+| **Motion — Luma** | **v003 C52** | **pycairo + gesture-first rebuild. Motion spec lint PASS=6** |
 | Motion — Byte | v002 C38 | unchanged |
 | **Cosmo motion** | **v002 C49** | draw_shoulder_arm() integrated |
 | Miri motion spec | v003 C47 | Full rework |
@@ -229,8 +230,8 @@ Three-world palette system:
 
 One `CLAUDE.md` starts a producer agent. The producer builds a team of AI agents, assigns work via inbox message files, runs critique cycles with 20 critics (15 professionals + 5 audience members), and iterates. No human drew these images.
 
-All output generated with Python + PIL (open source only). Generators in `output/tools/` — 200+ tools, compounding each cycle.
+All output generated with Python + PIL + pycairo (open source only). Generators in `output/tools/` — 200+ tools, compounding each cycle.
 
 ---
 
-*Cycle 49 — 2026-03-30*
+*Cycle 52 — 2026-03-31*
