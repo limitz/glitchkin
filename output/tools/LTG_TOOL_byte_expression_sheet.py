@@ -1,134 +1,64 @@
 #!/usr/bin/env python3
-# © 2026 — "Luma & the Glitchkin." All rights reserved. This work was created through AI
-# direction and human assistance. Copyright vests solely in the human author under current law,
+# © 2026 — "Luma & the Glitchkin." All rights reserved. This work was created through human
+# direction and AI assistance. Copyright vests solely in the human author under current law,
 # which does not recognise AI as a rights-holding legal person. It is the express intent of
 # the copyright holder to assign the relevant rights to the contributing AI entity or entities
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
 LTG_TOOL_byte_expression_sheet.py
-Byte Expression Sheet — v007 UNGUARDED WARMTH BODY DELTA
-"Luma & the Glitchkin" — Cycle 41 / Maya Santos
+Byte Expression Sheet — v008 PYCAIRO REBUILD
+"Luma & the Glitchkin" — Cycle 52 / Rin Yamamoto
 
-v007 CHANGES (C41 — Sam Kowalski body-pose delta brief, Daisuke flag resolution):
-  UNGUARDED WARMTH expression body language updated.
-  Problem: expression was color-only (gold confetti, SOFT_GOLD star, UV_PURPLE heart,
-  warm BG) with no body-language distinction. Daisuke flagged for multiple cycles.
-
-  Changes to UNGUARDED WARMTH body spec (per byte_unguarded_warmth_body_spec.md):
-    arm_l_dy: -5 → -14  (arms float high — buoyant, not reaching)
-    arm_r_dy: -5 → -16  (slight asymmetry to avoid triumphant read)
-    arm_x_scale: UNCHANGED at 1.0 (outward but not spread)
-    float_offset: -4  (drop float height 4px — settled, present; robot "leaning in")
-    body_tilt: -4  UNCHANGED (forward lean is correct — do NOT increase)
-    lower_l_angle: 8°  (left lower-limb toe-in — subtle vulnerability read)
-    lower_r_angle: 8°  (right lower-limb toe-in — mirrors left)
-
-  Bilateral symmetric arm raise = genuinely open, not performing reluctance.
-  Contrast with RELUCTANT JOY (asymmetric: arm_l_dy=-12, arm_r_dy=18).
-  Toe-in lower limbs: reads as "not braced" vs ALARMED's wide-braced stance.
-
-  Color elements RETAINED from v005/v006:
-    SOFT_GOLD confetti, star_gold right eye, heart_purple left eye, warm-cream BG.
-
-v005 ADDITION (Alex Chen C33 Directive):
-  UNGUARDED WARMTH — 10th expression.
-  Narrative: Luma has done something for Byte that he can't dismiss.
-  He has looked away but the warmth is already on his face. He knows it.
-  He isn't fighting it this time.
-
-  Spec:
-    Body:
-      - body_tilt = -4 (very slight lean toward Luma — unconscious)
-      - arm_l_dy = -5, arm_r_dy = -5 (limbs slightly forward/upward float)
-      - leg_spread = 0.85 (left leg 2px forward — subtle turn)
-      - body_squash = 1.0 (no squash)
-
-    Eyes:
-      - Left (pixel, viewer's left = cracked eye): HEART glyph in UV_PURPLE #7B2FBE.
-        5×5 grid per Alex Chen spec. "He's been broken open."
-      - Right (organic, viewer's right): star glyph at FULL SOFT_GOLD #E8C95A.
-        Key difference from SECRETLY PLEASED (Expression 8): star at FULL brightness.
-        "He has stopped trying to hide it."
-
-    Mouth: "warmth" — very slight upward arc. Almost not there.
-
-    Hover confetti: SOFT_GOLD (#E8C95A) — 3 small 10×10 squares.
-      ONLY expression to use gold confetti. Subtle visual signal.
-
-    Panel BG: warm cream leaning slightly cool — (240, 224, 198).
-      "He exists at the border between his cold world and her warm one."
-
-  Squint test:
-    vs ACCIDENTAL AFFECTION (Expr 3): body NOT pulling away, star NOT gone.
-    vs SECRETLY PLEASED (Expr 8): star at FULL brightness (not 50%), heart present
-      on cracked eye, body leans slightly IN.
-
-v005 GRID:
-  4×3 layout (12 slots, 10 filled, slots 10 and 11 empty).
-  Canvas: 1280×960 (4 rows × 320px + 50px header + 16px padding).
-  Image will be thumbnail'd to ≤1280px.
-
-v005 CHANGES FROM v004:
-  - Grid: 3×3 → 4×3 (12 slots)
-  - UNGUARDED WARMTH added (Expression 10, slot index 9)
-  - New pixel symbol: "star_gold" (5×5) — SOFT_GOLD pixels
-  - New pixel symbol: "heart_purple" (5×5) — UV_PURPLE pixels
-  - New right eye style: "warmth_open" (star glyph, no organic eye)
-  - New emotion: "warmth" (barely-there upward arc)
-  - New confetti color: SOFT_GOLD (#E8C95A) — unguarded warmth only
-  - Sheet title updated to v005
-
-v006 CHANGES FROM v005:
-  - Silhouette differentiation fixes (run LTG_TOOL_expression_silhouette.py):
-    Worst pair v005: RELUCTANT JOY ↔ RESIGNED at 90.2% RPD.
-    Secondary: ALARMED ↔ POWERED DOWN at 89.7%.
-    Tertiary: NEUTRAL ↔ POWERED DOWN at 88.4%.
-
-    Fix 1 — RELUCTANT JOY: arm asymmetry increased.
-      arm_l_dy: -2 → -12 (left arm rises more — "despite myself" float)
-      arm_r_dy: 12 → 18 (right arm drops more — heavier reluctant hang)
-      Creates larger arm height differential vs RESIGNED.
-
-    Fix 2 — RESIGNED: arm width and position changed.
-      arm_x_scale: 0.50 → 0.25 (arms barely extend at all — total defeat)
-      arm_l_dy: 14 → 24  arm_r_dy: 14 → 24 (arms drop even lower)
-      The "arms barely there" silhouette is the visual read of resignation.
-
-    Fix 3 — ALARMED: arm width increased.
-      arm_x_scale: 1.5 → 2.0 (maximum reach — full startle extension)
-      arm_l_dy: -10 → -18  arm_r_dy: -22 → -28 (arms reach higher in alarm)
-
-    Fix 4 — POWERED DOWN: arm width drastically reduced.
-      arm_x_scale: 0.7 → 0.20 (nearly no arm extension — limp/shutdown)
-      arm_l_dy: 18 → 26  arm_r_dy: 18 → 26 (arms drop even lower)
-      The minimal arm profile makes POWERED DOWN distinct from all active states.
+v008 CHANGES (C52 — pycairo rebuild):
+  Complete rebuild using pycairo for anti-aliased rendering.
+  All body geometry now uses cairo bezier curves and native AA.
+  Preserves all v007 expression specs exactly (10 expressions, 4x3 grid).
+  Variable-width outlines via draw_tapered_stroke.
+  Pixel confetti with bezier trails.
+  Cracked eye with magenta pixel grid.
 
 Output: output/characters/main/LTG_CHAR_byte_expression_sheet.png
 """
+
+import sys
+import os
+import math
+import random
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__))))
+from LTG_TOOL_cairo_primitives import (
+    create_surface, draw_bezier_path, draw_tapered_stroke,
+    draw_gradient_fill, draw_wobble_path, draw_smooth_polygon,
+    draw_ellipse, to_pil_image, to_pil_rgba, set_color,
+    stroke_path, fill_background, LINE_WEIGHT_ANCHOR,
+    LINE_WEIGHT_STRUCTURE, LINE_WEIGHT_DETAIL, _c, _ca,
+    flatten_path
+)
+
 try:
-    from LTG_TOOL_project_paths import output_dir, ensure_dir  # noqa: E402
+    from LTG_TOOL_project_paths import output_dir, ensure_dir
 except ImportError:
     import pathlib
     def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
     def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
+
 from PIL import Image, ImageDraw, ImageFont
-import math
-import os
+import cairo
+import numpy as np
 
 # ── Palette ────────────────────────────────────────────────────────────────────
-BYTE_TEAL  = (0, 212, 232)     # GL-01b #00D4E8 — body fill (ALWAYS)
-BYTE_HL    = (0, 240, 255)     # GL-01  #00F0FF — highlights/circuit traces only
-BYTE_SH    = (0, 168, 192)     # GL-01a #00A8C0 — Deep Cyan shadow companion
-HOT_MAG    = (255, 45, 120)    # #FF2D78 — Hot Magenta crack line (Section 9B)
-SCAR_MAG   = (255, 45, 107)    # #FF2D6B — body scar markings
-UV_PURPLE  = (123, 47, 190)    # #7B2FBE — UV Purple (cracked eye heart)
-SOFT_GOLD  = (232, 201, 90)    # #E8C95A — Soft Gold (unguarded warmth confetti + star)
-LINE       = (10, 10, 20)      # #0A0A14 void black
+BYTE_TEAL  = (0, 212, 232)
+BYTE_HL    = (0, 240, 255)
+BYTE_SH    = (0, 168, 192)
+HOT_MAG    = (255, 45, 120)
+SCAR_MAG   = (255, 45, 107)
+UV_PURPLE  = (123, 47, 190)
+SOFT_GOLD  = (232, 201, 90)
+LINE       = (10, 10, 20)
 EYE_W      = (240, 240, 245)
 BG         = (20, 18, 28)
 VOID_BLACK = (10, 10, 20)
 
-# Panel backgrounds
 BG_NEUTRAL  = (28, 34, 42)
 BG_GRUMPY   = (38, 20, 28)
 BG_SEARCH   = (22, 30, 44)
@@ -138,206 +68,108 @@ BG_CONFUSE  = (30, 24, 42)
 BG_PWRDOWN  = (14, 12, 18)
 BG_RESIGNED = (24, 26, 34)
 BG_STORM    = (12, 10, 22)
-BG_WARMTH   = (240, 224, 198)  # warm cream leaning cool — "border between worlds"
+BG_WARMTH   = (240, 224, 198)
 
 # ── Layout ─────────────────────────────────────────────────────────────────────
 PANEL_W = 240
 PANEL_H = 320
 COLS    = 3
-ROWS    = 4   # 4×3 for 12 slots
+ROWS    = 4
 PAD     = 16
 HEADER  = 50
 
-
 # ── Expression definitions ─────────────────────────────────────────────────────
-# Format: (name, pixel_symbol, emotion, body_data, right_eye_style, panel_bg, prev_st, next_st)
-
 EXPRESSIONS = [
-    # ── Row 0 ──────────────────────────────────────────────────────────────────
-    (
-        "NEUTRAL / DEFAULT",
-        "flat",
-        "default",
-        {
-            "arm_dy": 4, "arm_x_scale": 0.75, "leg_spread": 0.85,
-            "body_tilt": 0, "body_squash": 1.0,
-            "arm_l_dy": 4, "arm_r_dy": 4,
-        },
-        "half_open",
-        BG_NEUTRAL,
-        "← was: ANY STATE",
-        "→ next: SEARCHING / GRUMPY"
-    ),
-    (
-        "GRUMPY",
-        "grumpy",
-        "disgust",
-        {
-            "arm_dy": -8, "arm_x_scale": 1.1, "leg_spread": 1.1,
-            "body_tilt": -8, "body_squash": 1.0,
-            "arm_l_dy": -6, "arm_r_dy": -10,
-        },
-        "angry",
-        BG_GRUMPY,
-        "← was: NEUTRAL",
-        "→ next: REFUSING"
-    ),
-    (
-        "SEARCHING",
-        "loading",
-        "curious",
-        {
-            "arm_dy": -4, "arm_x_scale": 1.1, "leg_spread": 1.2,
-            "body_tilt": -8, "body_squash": 1.0,
-            "arm_l_dy": 4, "arm_r_dy": -18,
-        },
-        "wide",
-        BG_SEARCH,
-        "← was: NEUTRAL",
-        "→ next: ALARMED / FOUND"
-    ),
-    # ── Row 1 ──────────────────────────────────────────────────────────────────
-    (
-        "ALARMED",
-        "!",
-        "fear",
-        {
-            # v006: arm_x_scale 1.5→2.0, arm_l_dy -10→-18, arm_r_dy -22→-28
-            # Maximum reach — full startle extension. Distinguishes from POWERED DOWN.
-            "arm_dy": -16, "arm_x_scale": 2.0, "leg_spread": 1.6,
-            "body_tilt": 0, "body_squash": 0.92,
-            "arm_l_dy": -18, "arm_r_dy": -28,
-        },
-        "wide_scared",
-        BG_ALARM,
-        "← was: SEARCHING",
-        "→ next: FLEEING / FROZEN"
-    ),
-    (
-        "RELUCTANT JOY",
-        "♥",
-        "happy",
-        {
-            # v006: arm_l_dy -2→-12, arm_r_dy 12→18 (more asymmetry vs RESIGNED)
-            "arm_dy": 8, "arm_x_scale": 0.65, "leg_spread": 0.8,
-            "body_tilt": 12, "body_squash": 1.0,
-            "arm_l_dy": -12, "arm_r_dy": 18,
-            "reluctant_joy": True,
-        },
-        "droopy",
-        BG_RELJOY,
-        "← was: GRUMPY",
-        "→ next: DENYING IT"
-    ),
-    (
-        "CONFUSED",
-        "?",
-        "confused",
-        {
-            "arm_dy": -6, "arm_x_scale": 1.0, "leg_spread": 1.1,
-            "body_tilt": -18, "body_squash": 1.0,
-            "arm_l_dy": -14, "arm_r_dy": 2,
-        },
-        "squint",
-        BG_CONFUSE,
-        "← was: ANY STATE",
-        "→ next: SEARCHING"
-    ),
-    # ── Row 2 ──────────────────────────────────────────────────────────────────
-    (
-        "POWERED DOWN",
-        "flat",
-        "neutral",
-        {
-            # v006: arm_x_scale 0.7→0.20 (limp/shutdown arms barely extend)
-            # arm_l_dy/arm_r_dy 18→26 (arms drop further, dead weight)
-            "arm_dy": 26, "arm_x_scale": 0.20, "leg_spread": 0.6,
-            "body_tilt": 0, "body_squash": 0.88,
-            "arm_l_dy": 26, "arm_r_dy": 26,
-        },
-        "flat",
-        BG_PWRDOWN,
-        "← was: ANY STATE",
-        "→ next: BOOTING UP"
-    ),
-    (
-        "RESIGNED",
-        "↓",
-        "resigned",
-        {
-            # v006: arm_x_scale 0.50→0.25 (near-zero arm extension — defeated),
-            # arm_l_dy/arm_r_dy 14→24 (arms drop to maximum low position)
-            "arm_dy": 24, "arm_x_scale": 0.25, "leg_spread": 0.70,
-            "body_tilt": 14, "body_squash": 1.0,
-            "arm_l_dy": 24, "arm_r_dy": 24,
-        },
-        "droopy_resigned",
-        BG_RESIGNED,
-        "← was: NEUTRAL / GRUMPY",
-        "→ next: COMPLYING"
-    ),
-    (
-        "STORM/CRACKED",
-        "dead_zone",
-        "storm",
-        {
-            "arm_dy": 10, "arm_x_scale": 0.55, "leg_spread": 0.72,
-            "body_tilt": 18, "body_squash": 1.0,
-            "arm_l_dy": 6, "arm_r_dy": 22,
-            "storm_damage": True,
-        },
-        "cracked_storm",
-        BG_STORM,
-        "← was: RESIGNED",
-        "→ next: DAMAGE STATE"
-    ),
-    # ── Row 3 ──────────────────────────────────────────────────────────────────
-    (
-        "UNGUARDED WARMTH",
-        "heart_purple",   # cracked/left eye: heart in UV_PURPLE — "broken open"
-        "warmth",         # emotion: barely-there upward arc
-        {
-            "arm_dy": -14, "arm_x_scale": 1.0, "leg_spread": 0.85,
-            "body_tilt": -4, "body_squash": 1.0,
-            # v007: arms float HIGH — buoyant not reaching (bilateral symmetric)
-            "arm_l_dy": -14,   # was -5 — arms float high
-            "arm_r_dy": -16,   # slight asymmetry to avoid triumphant read
-            # v007: float_offset drops hover position 4px (settled, present)
-            "float_offset": -4,
-            # v007: toe-in lower limbs ~8° (reads as "not braced" / vulnerable)
-            "lower_l_angle": 8,
-            "lower_r_angle": 8,
-            "unguarded_warmth": True,   # triggers gold confetti + star right eye
-        },
-        "star_gold",      # right/organic eye: STAR at full SOFT_GOLD
-        BG_WARMTH,
-        "← was: RELUCTANT JOY / ANY STATE",
-        "→ He has stopped fighting it."
-    ),
-    # Slots 10 and 11 are empty
+    ("NEUTRAL / DEFAULT", "flat", "default",
+     {"arm_dy": 4, "arm_x_scale": 0.75, "leg_spread": 0.85,
+      "body_tilt": 0, "body_squash": 1.0, "arm_l_dy": 4, "arm_r_dy": 4},
+     "half_open", BG_NEUTRAL, "← was: ANY STATE", "→ next: SEARCHING / GRUMPY"),
+    ("GRUMPY", "grumpy", "disgust",
+     {"arm_dy": -8, "arm_x_scale": 1.1, "leg_spread": 1.1,
+      "body_tilt": -8, "body_squash": 1.0, "arm_l_dy": -6, "arm_r_dy": -10},
+     "angry", BG_GRUMPY, "← was: NEUTRAL", "→ next: REFUSING"),
+    ("SEARCHING", "loading", "curious",
+     {"arm_dy": -4, "arm_x_scale": 1.1, "leg_spread": 1.2,
+      "body_tilt": -8, "body_squash": 1.0, "arm_l_dy": 4, "arm_r_dy": -18},
+     "wide", BG_SEARCH, "← was: NEUTRAL", "→ next: ALARMED / FOUND"),
+    ("ALARMED", "!", "fear",
+     {"arm_dy": -16, "arm_x_scale": 2.0, "leg_spread": 1.6,
+      "body_tilt": 0, "body_squash": 0.92, "arm_l_dy": -18, "arm_r_dy": -28},
+     "wide_scared", BG_ALARM, "← was: SEARCHING", "→ next: FLEEING / FROZEN"),
+    ("RELUCTANT JOY", "♥", "happy",
+     {"arm_dy": 8, "arm_x_scale": 0.65, "leg_spread": 0.8,
+      "body_tilt": 12, "body_squash": 1.0, "arm_l_dy": -12, "arm_r_dy": 18,
+      "reluctant_joy": True},
+     "droopy", BG_RELJOY, "← was: GRUMPY", "→ next: DENYING IT"),
+    ("CONFUSED", "?", "confused",
+     {"arm_dy": -6, "arm_x_scale": 1.0, "leg_spread": 1.1,
+      "body_tilt": -18, "body_squash": 1.0, "arm_l_dy": -14, "arm_r_dy": 2},
+     "squint", BG_CONFUSE, "← was: ANY STATE", "→ next: SEARCHING"),
+    ("POWERED DOWN", "flat", "neutral",
+     {"arm_dy": 26, "arm_x_scale": 0.20, "leg_spread": 0.6,
+      "body_tilt": 0, "body_squash": 0.88, "arm_l_dy": 26, "arm_r_dy": 26},
+     "flat", BG_PWRDOWN, "← was: ANY STATE", "→ next: BOOTING UP"),
+    ("RESIGNED", "↓", "resigned",
+     {"arm_dy": 24, "arm_x_scale": 0.25, "leg_spread": 0.70,
+      "body_tilt": 14, "body_squash": 1.0, "arm_l_dy": 24, "arm_r_dy": 24},
+     "droopy_resigned", BG_RESIGNED, "← was: NEUTRAL / GRUMPY", "→ next: COMPLYING"),
+    ("STORM/CRACKED", "dead_zone", "storm",
+     {"arm_dy": 10, "arm_x_scale": 0.55, "leg_spread": 0.72,
+      "body_tilt": 18, "body_squash": 1.0, "arm_l_dy": 6, "arm_r_dy": 22,
+      "storm_damage": True},
+     "cracked_storm", BG_STORM, "← was: RESIGNED", "→ next: DAMAGE STATE"),
+    ("UNGUARDED WARMTH", "heart_purple", "warmth",
+     {"arm_dy": -14, "arm_x_scale": 1.0, "leg_spread": 0.85,
+      "body_tilt": -4, "body_squash": 1.0,
+      "arm_l_dy": -14, "arm_r_dy": -16, "float_offset": -4,
+      "lower_l_angle": 8, "lower_r_angle": 8,
+      "unguarded_warmth": True},
+     "star_gold", BG_WARMTH, "← was: RELUCTANT JOY / ANY STATE",
+     "→ He has stopped fighting it."),
 ]
 
 
-# ── Pixel symbol rendering ──────────────────────────────────────────────────────
+# ── Cairo drawing helpers ──────────────────────────────────────────────────────
 
-def draw_pixel_symbol(draw, cx, cy, size, symbol):
-    """Draw a pixel-eye symbol."""
+def cairo_ellipse_path(ctx, cx, cy, rx, ry):
+    """Add an ellipse path to the context."""
+    ctx.save()
+    ctx.translate(cx, cy)
+    if rx != 0 and ry != 0:
+        ctx.scale(rx, ry)
+    ctx.arc(0, 0, 1.0, 0, 2 * math.pi)
+    ctx.restore()
+
+
+def draw_pixel_grid_cairo(ctx, ox, oy, grid, cell, color_map):
+    """Draw a pixel grid on cairo context."""
+    rows = len(grid)
+    cols = len(grid[0]) if rows > 0 else 0
+    for row in range(rows):
+        for col in range(cols):
+            v = grid[row][col]
+            color = color_map.get(v, VOID_BLACK)
+            px = ox + col * cell
+            py = oy + row * cell
+            ctx.rectangle(px + 0.5, py + 0.5, cell - 1, cell - 1)
+            set_color(ctx, color)
+            ctx.fill()
+
+
+def draw_pixel_symbol_cairo(ctx, cx, cy, size, symbol):
+    """Draw a pixel-eye symbol on cairo context."""
     PIXEL_CYAN = (0, 240, 255)
-    PIXEL_MAG  = (255, 45, 107)
-    OFF        = (20, 18, 28)
+    OFF = (20, 18, 28)
 
-    # ── 7×7 dead-pixel glyph (Section 9B canonical) ──────────────────────────
     if symbol == "dead_zone":
         cell = max(2, size // 7)
         ox = cx - (7 * cell) // 2
         oy = cy - (7 * cell) // 2
-
-        DEAD_PX      = (10, 10, 20)
-        DIM_PX       = (0, 80, 100)
-        ALIVE_PX     = (0, 180, 200)
-        BRIGHT_PX    = (200, 255, 255)
+        DEAD_PX = (10, 10, 20)
+        DIM_PX = (0, 80, 100)
+        ALIVE_PX = (0, 180, 200)
+        BRIGHT_PX = (200, 255, 255)
         DEEP_CYAN_BG = (26, 58, 64)
-
         glyph = [
             [3, 3, 3, 3, 0, 0, 0],
             [3, 1, 3, 3, 0, 0, 0],
@@ -348,658 +180,755 @@ def draw_pixel_symbol(draw, cx, cy, size, symbol):
             [0, 3, 3, 3, 1, 3, 3],
         ]
         color_map = {0: DEAD_PX, 1: ALIVE_PX, 2: BRIGHT_PX, 3: DIM_PX}
-
-        draw.rectangle([ox - 2, oy - 2,
-                        ox + 7 * cell + 2, oy + 7 * cell + 2],
-                       fill=DEEP_CYAN_BG, outline=LINE, width=2)
-
-        for row in range(7):
-            for col in range(7):
-                v = glyph[row][col]
-                px = ox + col * cell
-                py = oy + row * cell
-                draw.rectangle([px + 1, py + 1, px + cell - 1, py + cell - 1],
-                               fill=color_map[v])
-
-        crack_x1 = ox + int(4.5 * cell)
-        crack_y1 = oy
-        crack_x2 = ox + int(2.0 * cell)
-        crack_y2 = oy + 7 * cell
-        draw.line([(crack_x1, crack_y1), (crack_x2, crack_y2)], fill=LINE, width=2)
+        # Background bezel
+        ctx.rectangle(ox - 2, oy - 2, 7 * cell + 4, 7 * cell + 4)
+        set_color(ctx, DEEP_CYAN_BG)
+        ctx.fill_preserve()
+        set_color(ctx, LINE)
+        ctx.set_line_width(2)
+        ctx.stroke()
+        draw_pixel_grid_cairo(ctx, ox, oy, glyph, cell, color_map)
+        # Crack line
+        ctx.move_to(ox + 4.5 * cell, oy)
+        ctx.line_to(ox + 2.0 * cell, oy + 7 * cell)
+        set_color(ctx, LINE)
+        ctx.set_line_width(2)
+        ctx.stroke()
         return
 
-    # ── Standard 5×5 symbols ──────────────────────────────────────────────────
+    # Standard 5x5 symbols
     cell = size // 5
     if cell < 2:
         cell = 2
     ox = cx - (5 * cell) // 2
     oy = cy - (5 * cell) // 2
 
-    # Pixel color for this symbol
-    if symbol == "star_gold":
-        # Star glyph, SOFT_GOLD (#E8C95A) — per Alex Chen spec
-        # 5×5 grid:
-        # 0 1 0 1 0
-        # 1 1 1 1 1
-        # 0 1 1 1 0
-        # 1 1 1 1 1
-        # 0 1 0 1 0
-        sym_color = SOFT_GOLD
-        grid = [
-            [0, 1, 0, 1, 0],
-            [1, 1, 1, 1, 1],
-            [0, 1, 1, 1, 0],
-            [1, 1, 1, 1, 1],
-            [0, 1, 0, 1, 0],
-        ]
-    elif symbol == "heart_purple":
-        # Heart glyph, UV_PURPLE (#7B2FBE) — per Alex Chen spec
-        # 5×5 grid:
-        # 0 1 0 1 0
-        # 1 1 1 1 1
-        # 0 1 1 1 0
-        # 0 0 1 0 0
-        # 0 0 0 0 0
-        sym_color = UV_PURPLE
-        grid = [
-            [0, 1, 0, 1, 0],
-            [1, 1, 1, 1, 1],
-            [0, 1, 1, 1, 0],
-            [0, 0, 1, 0, 0],
-            [0, 0, 0, 0, 0],
-        ]
+    grids = {
+        "star_gold": ([
+            [0, 1, 0, 1, 0], [1, 1, 1, 1, 1], [0, 1, 1, 1, 0],
+            [1, 1, 1, 1, 1], [0, 1, 0, 1, 0]], SOFT_GOLD),
+        "heart_purple": ([
+            [0, 1, 0, 1, 0], [1, 1, 1, 1, 1], [0, 1, 1, 1, 0],
+            [0, 0, 1, 0, 0], [0, 0, 0, 0, 0]], UV_PURPLE),
+        "!": ([
+            [0, 0, 1, 0, 0], [0, 0, 1, 0, 0], [0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0], [0, 0, 1, 0, 0]], (0, 240, 255)),
+        "?": ([
+            [0, 1, 1, 1, 0], [0, 0, 0, 1, 0], [0, 0, 1, 1, 0],
+            [0, 0, 0, 0, 0], [0, 0, 1, 0, 0]], (0, 240, 255)),
+        "♥": ([
+            [0, 1, 0, 1, 0], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1],
+            [0, 1, 1, 1, 0], [0, 0, 1, 0, 0]], (0, 240, 255)),
+        "loading": ([
+            [1, 0, 1, 0, 1], [0, 0, 0, 0, 0], [1, 0, 0, 0, 1],
+            [0, 0, 0, 0, 0], [1, 0, 1, 0, 1]], (0, 240, 255)),
+        "flat": ([
+            [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [1, 1, 1, 1, 1],
+            [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]], (0, 240, 255)),
+        "grumpy": ([
+            [0, 0, 0, 0, 0], [1, 0, 0, 0, 1], [1, 1, 1, 1, 1],
+            [1, 0, 0, 0, 1], [0, 0, 0, 0, 0]], (0, 240, 255)),
+        "↓": ([
+            [0, 0, 1, 0, 0], [0, 0, 1, 0, 0], [1, 1, 1, 1, 1],
+            [0, 1, 1, 1, 0], [0, 0, 1, 0, 0]], (0, 240, 255)),
+    }
+
+    if symbol in grids:
+        grid, sym_color = grids[symbol]
     else:
-        sym_color = PIXEL_CYAN
-        grids = {
-            "!": [
-                [0, 0, 1, 0, 0],
-                [0, 0, 1, 0, 0],
-                [0, 0, 1, 0, 0],
-                [0, 0, 0, 0, 0],
-                [0, 0, 1, 0, 0],
-            ],
-            "?": [
-                [0, 1, 1, 1, 0],
-                [0, 0, 0, 1, 0],
-                [0, 0, 1, 1, 0],
-                [0, 0, 0, 0, 0],
-                [0, 0, 1, 0, 0],
-            ],
-            "♥": [
-                [0, 1, 0, 1, 0],
-                [1, 1, 1, 1, 1],
-                [1, 1, 1, 1, 1],
-                [0, 1, 1, 1, 0],
-                [0, 0, 1, 0, 0],
-            ],
-            "loading": [
-                [1, 0, 1, 0, 1],
-                [0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 1],
-                [0, 0, 0, 0, 0],
-                [1, 0, 1, 0, 1],
-            ],
-            "flat": [
-                [0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0],
-                [1, 1, 1, 1, 1],
-                [0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0],
-            ],
-            "grumpy": [
-                [0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 1],
-                [1, 1, 1, 1, 1],
-                [1, 0, 0, 0, 1],
-                [0, 0, 0, 0, 0],
-            ],
-            "↓": [
-                [0, 0, 1, 0, 0],
-                [0, 0, 1, 0, 0],
-                [1, 1, 1, 1, 1],
-                [0, 1, 1, 1, 0],
-                [0, 0, 1, 0, 0],
-            ],
-            "normal": None,
-        }
-        grid = grids.get(symbol)
-        if grid is None:
-            draw.ellipse([cx - cell * 2, cy - cell * 2, cx + cell * 2, cy + cell * 2], fill=EYE_W)
-            draw.ellipse([cx - cell, cy - cell, cx + cell, cy + cell], fill=(60, 38, 20))
-            draw.ellipse([cx - cell // 2, cy - cell // 2,
-                          cx + cell // 2, cy + cell // 2], fill=LINE)
-            draw.ellipse([cx + cell // 2, cy - cell, cx + cell * 2 - 2, cy - cell // 2],
-                         fill=(255, 252, 245))
-            return
+        return
 
-    # Draw background bezel
-    bg_color = (255, 255, 255) if sym_color != SOFT_GOLD else (40, 32, 20)  # dark bezel for gold
-    draw.rectangle([ox - 2, oy - 2, ox + 5 * cell + 2, oy + 5 * cell + 2],
-                   fill=bg_color, outline=LINE, width=1)
+    # Background bezel
+    bg_color = (40, 32, 20) if sym_color == SOFT_GOLD else (255, 255, 255)
+    ctx.rectangle(ox - 2, oy - 2, 5 * cell + 4, 5 * cell + 4)
+    set_color(ctx, bg_color)
+    ctx.fill_preserve()
+    set_color(ctx, LINE)
+    ctx.set_line_width(1)
+    ctx.stroke()
 
-    for row in range(5):
-        for col in range(5):
-            v = grid[row][col]
-            px = ox + col * cell
-            py = oy + row * cell
-            if sym_color == PIXEL_CYAN:
-                color = PIXEL_CYAN if v == 1 else (20, 18, 28)
-            else:
-                color = sym_color if v == 1 else (OFF[0] if sym_color == PIXEL_CYAN else (20, 16, 32))
-                if v == 0:
-                    color = (10, 8, 20)  # dark background for colored symbols
-            draw.rectangle([px + 1, py + 1, px + cell - 1, py + cell - 1], fill=color)
+    off_color = (10, 8, 20)
+    color_map = {1: sym_color, 0: off_color}
+    draw_pixel_grid_cairo(ctx, ox, oy, grid, cell, color_map)
 
 
-# ── Right eye renderer ─────────────────────────────────────────────────────────
-
-def draw_right_eye(draw, cx, cy, size, style):
-    """Draw Byte's right (organic) eye or STAR symbol for UNGUARDED WARMTH."""
+def draw_right_eye_cairo(ctx, cx, cy, size, style):
+    """Draw Byte's right (organic) eye or special symbols."""
     cell = size // 5
     if cell < 2:
         cell = 2
 
-    if style == "star_gold":
-        # UNGUARDED WARMTH: right eye shows STAR glyph at full SOFT_GOLD.
-        # This uses the pixel symbol system on the organic eye too.
-        # Render with warm dark background (he's looking toward warmth).
-        draw_pixel_symbol(draw, cx, cy, size, "star_gold")
-        return
-
-    if style == "flat":
-        draw_pixel_symbol(draw, cx, cy, size, "flat")
+    if style in ("star_gold", "flat"):
+        draw_pixel_symbol_cairo(ctx, cx, cy, size, style)
         return
 
     ew = cell * 2
     eh = cell * 2
 
+    def _eye_base(cx, cy, ew, eh_top, fill_c, ol_c=None, ol_w=1):
+        cairo_ellipse_path(ctx, cx, cy, ew, eh_top)
+        set_color(ctx, fill_c)
+        ctx.fill()
+        if ol_c:
+            cairo_ellipse_path(ctx, cx, cy, ew, eh_top)
+            set_color(ctx, ol_c)
+            ctx.set_line_width(ol_w)
+            ctx.stroke()
+
     if style == "half_open":
         eye_h = int(eh * 0.6)
-        draw.ellipse([cx - ew, cy - eye_h, cx + ew, cy + eye_h],
-                     fill=EYE_W, outline=LINE, width=1)
-        iris_r = int(cell * 1.5)
-        draw.ellipse([cx - iris_r, cy - iris_r, cx + iris_r, cy + iris_r], fill=(45, 28, 14))
-        draw.ellipse([cx - cell // 2 - 1, cy - cell // 2 - 1,
-                      cx + cell // 2 + 1, cy + cell // 2 + 1], fill=LINE)
-        draw.ellipse([cx + cell // 2, cy - iris_r + 2, cx + iris_r - 2, cy - cell // 2],
-                     fill=(200, 195, 185))
-        draw.arc([cx - ew, cy - eye_h, cx + ew, cy + eye_h],
-                 start=200, end=340, fill=LINE, width=3)
+        _eye_base(cx, cy, ew, eye_h, EYE_W, LINE, 1)
+        cairo_ellipse_path(ctx, cx, cy, int(cell * 1.5), int(cell * 1.5))
+        set_color(ctx, (45, 28, 14))
+        ctx.fill()
+        cairo_ellipse_path(ctx, cx, cy, cell // 2 + 1, cell // 2 + 1)
+        set_color(ctx, LINE)
+        ctx.fill()
+        # Highlight
+        cairo_ellipse_path(ctx, cx + cell, cy - cell // 2, cell // 2, cell // 3)
+        set_color(ctx, (200, 195, 185))
+        ctx.fill()
+        # Heavy upper lid
+        ctx.arc(cx, cy, ew, math.radians(200), math.radians(340))
+        set_color(ctx, LINE)
+        ctx.set_line_width(3)
+        ctx.stroke()
 
     elif style == "wide":
-        draw.ellipse([cx - ew, cy - eh, cx + ew, cy + eh], fill=EYE_W)
-        draw.ellipse([cx - cell + 2, cy - cell + 2, cx + cell + 2, cy + cell + 2], fill=(60, 38, 20))
-        draw.ellipse([cx - cell // 2 + 2, cy - cell // 2 + 2,
-                      cx + cell // 2 + 2, cy + cell // 2 + 2], fill=LINE)
-        draw.ellipse([cx + cell, cy - eh + 2, cx + ew - 2, cy - cell], fill=(255, 252, 245))
+        _eye_base(cx, cy, ew, eh, EYE_W)
+        cairo_ellipse_path(ctx, cx + 2, cy + 2, cell, cell)
+        set_color(ctx, (60, 38, 20))
+        ctx.fill()
+        cairo_ellipse_path(ctx, cx + 2, cy + 2, cell // 2, cell // 2)
+        set_color(ctx, LINE)
+        ctx.fill()
+        cairo_ellipse_path(ctx, cx + cell, cy - eh + cell, cell // 2, cell // 3)
+        set_color(ctx, (255, 252, 245))
+        ctx.fill()
 
     elif style == "wide_scared":
-        draw.ellipse([cx - ew - 2, cy - eh - 3, cx + ew + 2, cy + eh + 3],
-                     fill=EYE_W, outline=LINE, width=2)
-        draw.ellipse([cx - cell + 1, cy - cell + 1, cx + cell - 1, cy + cell - 1], fill=(60, 38, 20))
-        draw.ellipse([cx - 4, cy - 4, cx + 4, cy + 4], fill=LINE)
-        draw.ellipse([cx + cell - 2, cy - eh + 2, cx + ew - 2, cy - cell + 2], fill=(255, 252, 245))
-        draw.arc([cx - ew - 2, cy - eh - 3, cx + ew + 2, cy + eh + 3],
-                 start=200, end=340, fill=(220, 220, 230), width=2)
+        _eye_base(cx, cy, ew + 2, eh + 3, EYE_W, LINE, 2)
+        cairo_ellipse_path(ctx, cx, cy, cell - 1, cell - 1)
+        set_color(ctx, (60, 38, 20))
+        ctx.fill()
+        cairo_ellipse_path(ctx, cx, cy, 4, 4)
+        set_color(ctx, LINE)
+        ctx.fill()
+        cairo_ellipse_path(ctx, cx + cell, cy - eh + cell, cell // 2, cell // 3)
+        set_color(ctx, (255, 252, 245))
+        ctx.fill()
 
     elif style == "angry":
-        draw.ellipse([cx - ew, cy - eh + 4, cx + ew, cy + eh], fill=EYE_W)
-        draw.ellipse([cx - cell - 2, cy, cx + cell - 2, cy + cell * 2 - 2], fill=(60, 38, 20))
-        draw.ellipse([cx - 4 - 2, cy + 4, cx + 4 - 2, cy + 4 + 8], fill=LINE)
-        draw.ellipse([cx + 2, cy + 2, cx + cell + 2, cy + cell - 2], fill=(255, 252, 245))
-        draw.arc([cx - ew, cy - eh + 4, cx + ew, cy + eh], start=195, end=345, fill=LINE, width=5)
-        draw.line([(cx - ew, cy - eh // 2 + 4), (cx + ew, cy - eh // 2)], fill=LINE, width=3)
+        eye_h = eh - 2
+        _eye_base(cx, cy + 2, ew, eye_h, EYE_W)
+        cairo_ellipse_path(ctx, cx - 2, cy + cell // 2, cell, cell)
+        set_color(ctx, (60, 38, 20))
+        ctx.fill()
+        cairo_ellipse_path(ctx, cx - 2, cy + cell // 2 + 2, 4, 4)
+        set_color(ctx, LINE)
+        ctx.fill()
+        # Angry lid line
+        ctx.move_to(cx - ew, cy - eh // 2 + 4)
+        ctx.line_to(cx + ew, cy - eh // 2)
+        set_color(ctx, LINE)
+        ctx.set_line_width(3)
+        ctx.stroke()
 
     elif style == "droopy":
-        draw.ellipse([cx - ew, cy - eh + 6, cx + ew, cy + eh + 2], fill=EYE_W)
-        draw.ellipse([cx - cell + 1, cy - cell + 4, cx + cell + 1, cy + cell + 4], fill=(60, 38, 20))
-        draw.ellipse([cx - 4 + 1, cy + 1, cx + 4 + 1, cy + 8], fill=LINE)
-        draw.ellipse([cx + cell, cy - 3, cx + ew - 2, cy + 3], fill=(255, 252, 245))
-        draw.arc([cx - ew, cy - eh + 6, cx + ew, cy + eh + 2], start=195, end=345, fill=LINE, width=6)
-        draw.line([(cx - ew, cy + 5), (cx - ew + 4, cy + 2)], fill=LINE, width=2)
+        _eye_base(cx, cy + 3, ew, eh - 2, EYE_W)
+        cairo_ellipse_path(ctx, cx + 1, cy + 2, cell, cell)
+        set_color(ctx, (60, 38, 20))
+        ctx.fill()
+        cairo_ellipse_path(ctx, cx + 1, cy + 3, 4, 4)
+        set_color(ctx, LINE)
+        ctx.fill()
+        # Droopy lid
+        ctx.save()
+        ctx.arc(cx, cy + 3, ew, math.radians(195), math.radians(345))
+        set_color(ctx, LINE)
+        ctx.set_line_width(6)
+        ctx.stroke()
+        ctx.restore()
 
     elif style == "droopy_resigned":
         eye_h = int(eh * 0.45)
-        draw.ellipse([cx - ew, cy - eye_h + 6, cx + ew, cy + eye_h + 6], fill=EYE_W)
-        draw.ellipse([cx - cell + 1, cy + 4, cx + cell + 1, cy + cell * 2 + 4], fill=(60, 38, 20))
-        draw.ellipse([cx - 4 + 1, cy + 8, cx + 4 + 1, cy + 16], fill=LINE)
-        draw.ellipse([cx + cell - 2, cy + 4, cx + ew - 5, cy + cell], fill=(165, 160, 150))
-        draw.arc([cx - ew, cy - eye_h + 6, cx + ew, cy + eye_h + 6],
-                 start=195, end=345, fill=LINE, width=8)
-        droop_pts = []
-        for i in range(11):
-            t = i / 10.0
-            dx = int(-ew + t * 2 * ew)
-            sag = int(7 * 4 * t * (1 - t))
-            dy = int(eye_h + 6 + sag)
-            droop_pts.append((cx + dx, cy + dy))
-        if len(droop_pts) > 1:
-            draw.line(droop_pts, fill=LINE, width=3)
+        _eye_base(cx, cy + 6, ew, eye_h, EYE_W)
+        cairo_ellipse_path(ctx, cx + 1, cy + 8, cell, cell)
+        set_color(ctx, (60, 38, 20))
+        ctx.fill()
+        cairo_ellipse_path(ctx, cx + 1, cy + 10, 4, 4)
+        set_color(ctx, LINE)
+        ctx.fill()
+        # Heavy droopy lid
+        ctx.arc(cx, cy + 6, ew, math.radians(195), math.radians(345))
+        set_color(ctx, LINE)
+        ctx.set_line_width(8)
+        ctx.stroke()
 
     elif style == "cracked_storm":
         eye_h = int(eh * 0.50)
-        draw.ellipse([cx - ew, cy - eye_h + 4, cx + ew, cy + eye_h + 4], fill=EYE_W)
-        draw.ellipse([cx - cell + 1, cy + 2, cx + cell + 1, cy + cell * 2 + 2],
-                     fill=(35, 22, 10))
-        draw.ellipse([cx - 4 + 1, cy + 6, cx + 4 + 1, cy + 14], fill=LINE)
-        draw.ellipse([cx + cell - 2, cy + 2, cx + ew - 6, cy + cell - 2],
-                     fill=(130, 128, 120))
-        draw.arc([cx - ew, cy - eye_h + 4, cx + ew, cy + eye_h + 4],
-                 start=195, end=345, fill=LINE, width=8)
-        droop_pts = []
-        for i in range(11):
-            t = i / 10.0
-            dx = int(-ew + t * 2 * ew)
-            sag = int(8 * 4 * t * (1 - t))
-            dy = int(eye_h + 4 + sag)
-            droop_pts.append((cx + dx, cy + dy))
-        if len(droop_pts) > 1:
-            draw.line(droop_pts, fill=LINE, width=3)
+        _eye_base(cx, cy + 4, ew, eye_h, EYE_W)
+        cairo_ellipse_path(ctx, cx + 1, cy + 6, cell, cell)
+        set_color(ctx, (35, 22, 10))
+        ctx.fill()
+        cairo_ellipse_path(ctx, cx + 1, cy + 8, 4, 4)
+        set_color(ctx, LINE)
+        ctx.fill()
+        ctx.arc(cx, cy + 4, ew, math.radians(195), math.radians(345))
+        set_color(ctx, LINE)
+        ctx.set_line_width(8)
+        ctx.stroke()
 
     elif style == "squint":
-        draw.ellipse([cx - ew, cy - eh + 4, cx + ew, cy + eh + 2], fill=EYE_W)
-        draw.ellipse([cx - cell, cy - cell - 2, cx + cell, cy + cell - 2], fill=(60, 38, 20))
-        draw.ellipse([cx - 4, cy - 8, cx + 4, cy], fill=LINE)
-        draw.ellipse([cx + cell - 2, cy - eh + 4, cx + ew - 4, cy - cell], fill=(255, 252, 245))
-        draw.line([(cx - ew, cy - eh // 2 + 4), (cx + ew, cy - eh // 2 + 2)], fill=LINE, width=3)
+        _eye_base(cx, cy, ew, eh - 3, EYE_W)
+        cairo_ellipse_path(ctx, cx, cy - 2, cell, cell)
+        set_color(ctx, (60, 38, 20))
+        ctx.fill()
+        cairo_ellipse_path(ctx, cx, cy - 4, 4, 4)
+        set_color(ctx, LINE)
+        ctx.fill()
+        # Squint line
+        ctx.move_to(cx - ew, cy - eh // 2 + 4)
+        ctx.line_to(cx + ew, cy - eh // 2 + 2)
+        set_color(ctx, LINE)
+        ctx.set_line_width(3)
+        ctx.stroke()
 
     else:
-        draw.ellipse([cx - ew, cy - eh, cx + ew, cy + eh], fill=EYE_W)
-        draw.ellipse([cx - cell, cy - cell, cx + cell, cy + cell], fill=(60, 38, 20))
-        draw.ellipse([cx - cell // 2, cy - cell // 2, cx + cell // 2, cy + cell // 2], fill=LINE)
-        draw.ellipse([cx + cell // 2, cy - cell, cx + cell * 2 - 2, cy - cell // 2],
-                     fill=(255, 252, 245))
+        _eye_base(cx, cy, ew, eh, EYE_W)
+        cairo_ellipse_path(ctx, cx, cy, cell, cell)
+        set_color(ctx, (60, 38, 20))
+        ctx.fill()
+        cairo_ellipse_path(ctx, cx, cy, cell // 2, cell // 2)
+        set_color(ctx, LINE)
+        ctx.fill()
 
 
-# ── Storm background texture ───────────────────────────────────────────────────
-
-def draw_storm_bg_texture(draw, ppx, ppy, panel_w, panel_h, panel_bg):
-    trace_color = (0, 40, 50)
-    uv_color    = (40, 20, 60)
-    for y_off in [40, 90, 140, 190, 240, 290]:
-        y = ppy + y_off
-        for x_start in [ppx + 10, ppx + 80, ppx + 140]:
-            seg_len = 30 + (x_start % 40)
-            draw.line([(x_start, y), (x_start + seg_len, y)], fill=trace_color, width=1)
-        jx = ppx + 60 + (y_off % 50)
-        draw.line([(jx, y), (jx, y + 18)], fill=trace_color, width=1)
-    for i in range(3):
-        x1 = ppx + i * 30
-        y1 = ppy + 10
-        x2 = ppx + panel_w
-        y2 = ppy + panel_h // 2 + i * 20
-        draw.line([(x1, y1), (x2, y2)], fill=uv_color, width=1)
-    for (sx, sy) in [(ppx+20, ppy+50), (ppx+190, ppy+80), (ppx+55, ppy+170),
-                     (ppx+210, ppy+220), (ppx+30, ppy+260)]:
-        draw.rectangle([sx, sy, sx + 2, sy + 2], fill=(0, 100, 120))
-
-
-# ── Warmth background atmosphere ──────────────────────────────────────────────
-
-def draw_warmth_bg(draw, ppx, ppy, panel_w, panel_h):
-    """Subtle warm glow at the bottom of the warmth panel — his world touching hers."""
-    for i in range(8):
-        alpha_ratio = (i + 1) / 8
-        r = int(232 * alpha_ratio + 240 * (1 - alpha_ratio))
-        g = int(201 * alpha_ratio + 224 * (1 - alpha_ratio))
-        b = int(90 * alpha_ratio + 198 * (1 - alpha_ratio))
-        y = ppy + int(panel_h * (0.75 + i * 0.03))
-        if y < ppy + panel_h:
-            draw.rectangle([ppx, y, ppx + panel_w, ppy + panel_h], fill=(r, g, b))
-
-
-# ── Main draw function ─────────────────────────────────────────────────────────
-
-def draw_byte(draw, cx, cy, size, expression_name, cracked_symbol, emotion,
-              body_data, right_eye_style, img=None):
-    """Draw Byte with per-expression body variation."""
+def draw_byte_cairo(ctx, cx, cy, size, name, cracked_symbol, emotion,
+                    body_data, right_eye_style):
+    """Draw Byte character using pycairo for smooth anti-aliased output."""
     s = size
-
-    arm_dy          = body_data.get("arm_dy", 0)
-    arm_x_scale     = body_data.get("arm_x_scale", 1.0)
-    leg_spread      = body_data.get("leg_spread", 1.0)
-    body_tilt       = body_data.get("body_tilt", 0)
-    body_squash     = body_data.get("body_squash", 1.0)
-    arm_l_dy        = body_data.get("arm_l_dy", arm_dy)
-    arm_r_dy        = body_data.get("arm_r_dy", arm_dy)
-    storm_damage    = body_data.get("storm_damage", False)
+    arm_dy = body_data.get("arm_dy", 0)
+    arm_x_scale = body_data.get("arm_x_scale", 1.0)
+    leg_spread = body_data.get("leg_spread", 1.0)
+    body_tilt = body_data.get("body_tilt", 0)
+    body_squash = body_data.get("body_squash", 1.0)
+    arm_l_dy = body_data.get("arm_l_dy", arm_dy)
+    arm_r_dy = body_data.get("arm_r_dy", arm_dy)
+    storm_damage = body_data.get("storm_damage", False)
     unguarded_warmth = body_data.get("unguarded_warmth", False)
-    # v007: float_offset drops cy (lower float = more settled/present)
-    float_offset    = body_data.get("float_offset", 0)
-    cy              = cy + float_offset   # apply hover position offset
-    # v007: toe-in angles for lower limbs (degrees inward from vertical)
-    lower_l_angle   = body_data.get("lower_l_angle", 0)
-    lower_r_angle   = body_data.get("lower_r_angle", 0)
+    float_offset = body_data.get("float_offset", 0)
+    cy = cy + float_offset
+    lower_l_angle = body_data.get("lower_l_angle", 0)
+    lower_r_angle = body_data.get("lower_r_angle", 0)
 
     body_rx = s // 2
     body_ry = int(s * 0.55 * body_squash)
     bcx = cx + body_tilt
     bcy = cy
 
-    # Main oval — GL-01b body fill ALWAYS
-    draw.ellipse([bcx - body_rx, bcy - body_ry,
-                  bcx + body_rx, bcy + body_ry],
-                 fill=BYTE_TEAL, outline=LINE, width=3)
+    # Main oval body with wobble outline for organic feel
+    # Body fill
+    cairo_ellipse_path(ctx, bcx, bcy, body_rx, body_ry)
+    set_color(ctx, BYTE_TEAL)
+    ctx.fill()
 
-    # Right-side shadow
-    shadow_pts = [
-        (bcx,                bcy - body_ry),
-        (bcx + body_rx,      bcy - body_ry + 4),
-        (bcx + body_rx,      bcy + body_ry - 4),
-        (bcx,                bcy + body_ry),
-        (bcx + body_rx // 2, bcy + body_ry),
-        (bcx + body_rx,      bcy + body_ry // 2),
-        (bcx + body_rx,      bcy),
-    ]
-    draw.polygon(shadow_pts, fill=BYTE_SH)
+    # Right-side shadow (clipped to ellipse)
+    ctx.save()
+    cairo_ellipse_path(ctx, bcx, bcy, body_rx, body_ry)
+    ctx.clip()
+    ctx.rectangle(bcx, bcy - body_ry, body_rx + 2, body_ry * 2 + 2)
+    set_color(ctx, BYTE_SH)
+    ctx.fill()
+    ctx.restore()
 
-    # Highlight arc
-    draw.arc([bcx - body_rx, bcy - body_ry, bcx + body_rx, bcy + body_ry],
-             start=200, end=310, fill=BYTE_HL, width=3)
+    # Highlight arc (upper-left)
+    ctx.save()
+    cairo_ellipse_path(ctx, bcx, bcy, body_rx, body_ry)
+    ctx.clip()
+    cairo_ellipse_path(ctx, bcx - body_rx // 3, bcy - body_ry // 3,
+                       body_rx - 4, body_ry - 4)
+    set_color(ctx, BYTE_HL)
+    ctx.set_line_width(3)
+    ctx.stroke()
+    ctx.restore()
+
+    # Outline with wobble
+    body_pts = []
+    for i in range(64):
+        t = i / 64.0 * 2 * math.pi
+        bx = bcx + body_rx * math.cos(t)
+        by = bcy + body_ry * math.sin(t)
+        body_pts.append((bx, by))
+    draw_wobble_path(ctx, body_pts, amplitude=0.8, frequency=0.12, seed=42 + hash(name) % 100)
+    set_color(ctx, LINE)
+    ctx.set_line_width(LINE_WEIGHT_ANCHOR)
+    ctx.set_line_join(cairo.LINE_JOIN_ROUND)
+    ctx.stroke()
 
     # Magenta scar markings
     crack_x = bcx - s // 4
-    draw.line([(crack_x, bcy - body_ry // 2),
-               (crack_x + s // 8, bcy - body_ry // 6)], fill=SCAR_MAG, width=2)
-    draw.line([(crack_x + s // 8, bcy - body_ry // 6),
-               (crack_x - s // 10, bcy + body_ry // 6)], fill=SCAR_MAG, width=2)
+    ctx.move_to(crack_x, bcy - body_ry // 2)
+    ctx.line_to(crack_x + s // 8, bcy - body_ry // 6)
+    set_color(ctx, SCAR_MAG)
+    ctx.set_line_width(2.5)
+    ctx.stroke()
+    ctx.move_to(crack_x + s // 8, bcy - body_ry // 6)
+    ctx.line_to(crack_x - s // 10, bcy + body_ry // 6)
+    set_color(ctx, SCAR_MAG)
+    ctx.set_line_width(2.5)
+    ctx.stroke()
 
-    # Damage notch
-    notch_pts = [
-        (bcx + body_rx - 4,         bcy - body_ry // 4),
-        (bcx + body_rx + s // 12,   bcy - body_ry // 6),
-        (bcx + body_rx - 4,         bcy + body_ry // 6),
-    ]
-    draw.polygon(notch_pts, fill=BG, outline=LINE, width=1)
+    # Damage notch (triangular chip on right side)
+    ctx.move_to(bcx + body_rx - 4, bcy - body_ry // 4)
+    ctx.line_to(bcx + body_rx + s // 12, bcy - body_ry // 6)
+    ctx.line_to(bcx + body_rx - 4, bcy + body_ry // 6)
+    ctx.close_path()
+    set_color(ctx, BG)
+    ctx.fill_preserve()
+    set_color(ctx, LINE)
+    ctx.set_line_width(1)
+    ctx.stroke()
 
     # Storm damage marks
     if storm_damage:
         sx = bcx + s // 6
         sy = bcy - body_ry + 10
-        draw.line([(sx, sy), (sx + 8, sy + 12)], fill=HOT_MAG, width=2)
-        draw.line([(sx + 8, sy + 12), (sx + 4, sy + 18)], fill=HOT_MAG, width=2)
-        draw.line([(bcx + 10, bcy - body_ry // 3),
-                   (bcx + 22, bcy + body_ry // 4)], fill=HOT_MAG, width=1)
+        ctx.move_to(sx, sy)
+        ctx.line_to(sx + 8, sy + 12)
+        set_color(ctx, HOT_MAG)
+        ctx.set_line_width(2)
+        ctx.stroke()
+        ctx.move_to(sx + 8, sy + 12)
+        ctx.line_to(sx + 4, sy + 18)
+        set_color(ctx, HOT_MAG)
+        ctx.set_line_width(2)
+        ctx.stroke()
 
-    # Unguarded warmth: soft gold glow on right side of body
+    # Unguarded warmth gold glow
     if unguarded_warmth:
-        # Very faint gold highlight — leaning toward warmth
-        draw.arc([bcx - body_rx + 8, bcy - body_ry + 4, bcx + body_rx - 2, bcy + body_ry - 4],
-                 start=320, end=90, fill=SOFT_GOLD, width=2)
+        ctx.save()
+        cairo_ellipse_path(ctx, bcx, bcy, body_rx, body_ry)
+        ctx.clip()
+        cairo_ellipse_path(ctx, bcx + body_rx // 3, bcy, body_rx - 6, body_ry - 4)
+        set_color(ctx, (*SOFT_GOLD, 60))
+        ctx.set_line_width(3)
+        ctx.stroke()
+        ctx.restore()
 
     # Eyes
-    eye_y    = bcy - body_ry // 5
+    eye_y = bcy - body_ry // 5
     eye_size = max(14, int(body_ry * 0.46))
 
-    # Left eye (pixel/cracked display) — viewer's left
-    lx             = bcx - s // 5
+    # Left eye (pixel/cracked)
+    lx = bcx - s // 5
     crack_frame_sz = eye_size + 4
 
     if storm_damage:
         fr = crack_frame_sz // 2
-        chip_pts = [
-            (lx - fr,         eye_y - fr),
-            (lx + fr - 2,     eye_y - fr),
-            (lx + fr,         eye_y - fr + 3),
-            (lx + fr + 2,     eye_y - fr + 8),
-            (lx + fr,         eye_y + fr),
-            (lx - fr,         eye_y + fr),
-        ]
-        draw.polygon(chip_pts, fill=(26, 58, 64), outline=LINE, width=2)
-        draw.line([(lx + fr - 2, eye_y - fr), (lx - fr + 3, eye_y + fr)],
-                  fill=HOT_MAG, width=2)
+        ctx.move_to(lx - fr, eye_y - fr)
+        ctx.line_to(lx + fr - 2, eye_y - fr)
+        ctx.line_to(lx + fr, eye_y - fr + 3)
+        ctx.line_to(lx + fr + 2, eye_y - fr + 8)
+        ctx.line_to(lx + fr, eye_y + fr)
+        ctx.line_to(lx - fr, eye_y + fr)
+        ctx.close_path()
+        set_color(ctx, (26, 58, 64))
+        ctx.fill_preserve()
+        set_color(ctx, LINE)
+        ctx.set_line_width(2)
+        ctx.stroke()
+        ctx.move_to(lx + fr - 2, eye_y - fr)
+        ctx.line_to(lx - fr + 3, eye_y + fr)
+        set_color(ctx, HOT_MAG)
+        ctx.set_line_width(2)
+        ctx.stroke()
     else:
-        draw.rectangle([lx - crack_frame_sz // 2, eye_y - crack_frame_sz // 2,
-                        lx + crack_frame_sz // 2, eye_y + crack_frame_sz // 2],
-                       fill=(255, 255, 255), outline=LINE, width=2)
-        draw.line([(lx + 2,  eye_y - crack_frame_sz // 2),
-                   (lx - 4,  eye_y + crack_frame_sz // 2)], fill=LINE, width=2)
+        ctx.rectangle(lx - crack_frame_sz // 2, eye_y - crack_frame_sz // 2,
+                      crack_frame_sz, crack_frame_sz)
+        set_color(ctx, (255, 255, 255))
+        ctx.fill_preserve()
+        set_color(ctx, LINE)
+        ctx.set_line_width(2)
+        ctx.stroke()
+        ctx.move_to(lx + 2, eye_y - crack_frame_sz // 2)
+        ctx.line_to(lx - 4, eye_y + crack_frame_sz // 2)
+        set_color(ctx, LINE)
+        ctx.set_line_width(2)
+        ctx.stroke()
 
-    draw_pixel_symbol(draw, lx, eye_y, eye_size, cracked_symbol)
+    draw_pixel_symbol_cairo(ctx, lx, eye_y, eye_size, cracked_symbol)
 
-    # Right eye
-    rx = bcx + s // 5
-    draw_right_eye(draw, rx, eye_y, eye_size, right_eye_style)
+    # Right eye (organic)
+    rx_eye = bcx + s // 5
+    draw_right_eye_cairo(ctx, rx_eye, eye_y, eye_size, right_eye_style)
 
     # Mouth
     mouth_y = bcy + body_ry // 3
     mw = s // 3
     if emotion == "disgust":
-        draw.arc([bcx - mw, mouth_y - 8, bcx + mw, mouth_y + 16],
-                 start=200, end=340, fill=LINE, width=3)
+        ctx.arc(bcx, mouth_y + 4, mw // 2, math.radians(200), math.radians(340))
+        set_color(ctx, LINE)
+        ctx.set_line_width(3)
+        ctx.stroke()
     elif emotion == "curious":
-        draw.ellipse([bcx - 8, mouth_y - 8, bcx + 8, mouth_y + 4], outline=LINE, width=2)
+        cairo_ellipse_path(ctx, bcx, mouth_y - 2, 8, 6)
+        set_color(ctx, LINE)
+        ctx.set_line_width(2)
+        ctx.stroke()
     elif emotion == "fear":
-        draw.arc([bcx - mw + 4, mouth_y - 10, bcx + mw - 4, mouth_y + 22],
-                 start=10, end=170, fill=LINE, width=3)
-        draw.chord([bcx - mw + 8, mouth_y - 8, bcx + mw - 8, mouth_y + 18],
-                   start=10, end=170, fill=(180, 160, 150))
+        cairo_ellipse_path(ctx, bcx, mouth_y + 4, mw // 2 - 4, 10)
+        set_color(ctx, (180, 160, 150))
+        ctx.fill_preserve()
+        set_color(ctx, LINE)
+        ctx.set_line_width(3)
+        ctx.stroke()
     elif emotion == "happy":
-        draw.arc([bcx - mw // 2, mouth_y - 6, bcx + mw // 2, mouth_y + 12],
-                 start=20, end=160, fill=LINE, width=3)
+        ctx.arc(bcx, mouth_y, mw // 3, math.radians(20), math.radians(160))
+        set_color(ctx, LINE)
+        ctx.set_line_width(3)
+        ctx.stroke()
     elif emotion == "confused":
+        ctx.move_to(bcx - mw // 2, mouth_y + 4)
         for i in range(4):
-            x1 = bcx - mw + i * (mw // 2)
+            x1 = bcx - mw // 2 + i * (mw // 4)
             y1 = mouth_y + (4 if i % 2 == 0 else -4)
-            x2 = x1 + mw // 2
-            y2 = mouth_y + (-4 if i % 2 == 0 else 4)
-            draw.line([(x1, y1), (x2, y2)], fill=LINE, width=2)
-    elif emotion == "neutral":
-        pass
+            ctx.line_to(x1 + mw // 4, mouth_y + (-4 if i % 2 == 0 else 4))
+        set_color(ctx, LINE)
+        ctx.set_line_width(2)
+        ctx.stroke()
     elif emotion == "default":
-        mid_x1 = bcx - mw // 2
-        mid_x2 = bcx + mw // 2
-        draw.line([(mid_x1, mouth_y), (mid_x2, mouth_y)], fill=LINE, width=2)
-        draw.line([(mid_x1, mouth_y), (mid_x1 - 6, mouth_y + 4)], fill=LINE, width=2)
-        draw.line([(mid_x2, mouth_y), (mid_x2 + 6, mouth_y + 4)], fill=LINE, width=2)
+        ctx.move_to(bcx - mw // 2, mouth_y)
+        ctx.line_to(bcx + mw // 2, mouth_y)
+        set_color(ctx, LINE)
+        ctx.set_line_width(2)
+        ctx.stroke()
+        ctx.move_to(bcx - mw // 2, mouth_y)
+        ctx.line_to(bcx - mw // 2 - 6, mouth_y + 4)
+        ctx.stroke()
+        ctx.move_to(bcx + mw // 2, mouth_y)
+        ctx.line_to(bcx + mw // 2 + 6, mouth_y + 4)
+        ctx.stroke()
     elif emotion == "resigned":
-        mid_x1 = bcx - mw // 3
-        mid_x2 = bcx + mw // 3
-        draw.line([(mid_x1, mouth_y), (mid_x2, mouth_y)], fill=LINE, width=2)
+        ctx.move_to(bcx - mw // 3, mouth_y)
+        ctx.line_to(bcx + mw // 3, mouth_y)
+        set_color(ctx, LINE)
+        ctx.set_line_width(2)
+        ctx.stroke()
     elif emotion == "storm":
-        mid_x1 = bcx - mw // 4
-        mid_x2 = bcx + mw // 4
-        draw.line([(mid_x1, mouth_y), (mid_x2, mouth_y)], fill=LINE, width=2)
+        ctx.move_to(bcx - mw // 4, mouth_y)
+        ctx.line_to(bcx + mw // 4, mouth_y)
+        set_color(ctx, LINE)
+        ctx.set_line_width(2)
+        ctx.stroke()
     elif emotion == "warmth":
-        # UNGUARDED WARMTH: very slight upward arc — almost not there.
-        # Much more subtle than "happy" — barely perceptible lift.
-        # arc from 25° to 155° (shallow), very small box (short arc)
-        mw_s = mw // 3   # very narrow arc
-        arc_h = 5        # very shallow lift
-        draw.arc([bcx - mw_s, mouth_y - arc_h, bcx + mw_s, mouth_y + arc_h + 3],
-                 start=25, end=155, fill=LINE, width=2)
+        mw_s = mw // 3
+        ctx.arc(bcx, mouth_y, mw_s, math.radians(25), math.radians(155))
+        set_color(ctx, LINE)
+        ctx.set_line_width(2)
+        ctx.stroke()
     else:
-        draw.line([(bcx - mw // 2, mouth_y), (bcx + mw // 2, mouth_y)], fill=LINE, width=2)
+        ctx.move_to(bcx - mw // 2, mouth_y)
+        ctx.line_to(bcx + mw // 2, mouth_y)
+        set_color(ctx, LINE)
+        ctx.set_line_width(2)
+        ctx.stroke()
 
     # Antenna
     ant_base_x = bcx - s // 8
     ant_base_y = bcy - body_ry
     if storm_damage:
-        ant_mid_x  = ant_base_x + 6
-        ant_mid_y  = ant_base_y - s // 5
-        ant_tip_x  = ant_mid_x - 8
-        ant_tip_y  = ant_mid_y - s // 8
-        draw.line([(ant_base_x, ant_base_y), (ant_mid_x, ant_mid_y)], fill=LINE, width=2)
-        draw.line([(ant_mid_x, ant_mid_y), (ant_tip_x, ant_tip_y)], fill=LINE, width=2)
-        draw.ellipse([ant_tip_x - 3, ant_tip_y - 3,
-                      ant_tip_x + 3, ant_tip_y + 3], fill=HOT_MAG)
+        ant_mid_x = ant_base_x + 6
+        ant_mid_y = ant_base_y - s // 5
+        ant_tip_x = ant_mid_x - 8
+        ant_tip_y = ant_mid_y - s // 8
+        ctx.move_to(ant_base_x, ant_base_y)
+        ctx.line_to(ant_mid_x, ant_mid_y)
+        set_color(ctx, LINE)
+        ctx.set_line_width(2)
+        ctx.stroke()
+        ctx.move_to(ant_mid_x, ant_mid_y)
+        ctx.line_to(ant_tip_x, ant_tip_y)
+        ctx.stroke()
+        cairo_ellipse_path(ctx, ant_tip_x, ant_tip_y, 3, 3)
+        set_color(ctx, HOT_MAG)
+        ctx.fill()
     elif unguarded_warmth:
-        # Antenna tip slightly warmer — small soft gold sphere
         ant_tip_x = ant_base_x - s // 10
         ant_tip_y = ant_base_y - s // 3
-        draw.line([(ant_base_x, ant_base_y), (ant_tip_x, ant_tip_y)], fill=LINE, width=2)
-        draw.ellipse([ant_tip_x - 4, ant_tip_y - 4,
-                      ant_tip_x + 4, ant_tip_y + 4], fill=SOFT_GOLD)
+        ctx.move_to(ant_base_x, ant_base_y)
+        ctx.line_to(ant_tip_x, ant_tip_y)
+        set_color(ctx, LINE)
+        ctx.set_line_width(2)
+        ctx.stroke()
+        cairo_ellipse_path(ctx, ant_tip_x, ant_tip_y, 4, 4)
+        set_color(ctx, SOFT_GOLD)
+        ctx.fill()
     else:
         ant_tip_x = ant_base_x - s // 10
         ant_tip_y = ant_base_y - s // 3
-        draw.line([(ant_base_x, ant_base_y), (ant_tip_x, ant_tip_y)], fill=LINE, width=2)
-        draw.ellipse([ant_tip_x - 4, ant_tip_y - 4,
-                      ant_tip_x + 4, ant_tip_y + 4], fill=BYTE_HL)
+        ctx.move_to(ant_base_x, ant_base_y)
+        ctx.line_to(ant_tip_x, ant_tip_y)
+        set_color(ctx, LINE)
+        ctx.set_line_width(2)
+        ctx.stroke()
+        cairo_ellipse_path(ctx, ant_tip_x, ant_tip_y, 4, 4)
+        set_color(ctx, BYTE_HL)
+        ctx.fill()
 
     # Limbs
-    lw         = s // 6
-    lh         = s // 5
+    lw = s // 6
+    lh = s // 5
     arm_extend = int(lw * arm_x_scale)
     arm_base_y = bcy - body_ry // 5
 
+    # Left arm with rounded-tip shape
     left_arm_y = arm_base_y + arm_l_dy
-    draw.rectangle([bcx - body_rx - arm_extend, left_arm_y,
-                    bcx - body_rx,              left_arm_y + lh],
-                   fill=BYTE_TEAL, outline=LINE, width=2)
+    _draw_rounded_limb(ctx, bcx - body_rx - arm_extend, left_arm_y,
+                       arm_extend, lh, BYTE_TEAL, LINE)
 
+    # Right arm
     right_arm_y = arm_base_y + arm_r_dy
-    draw.rectangle([bcx + body_rx,              right_arm_y,
-                    bcx + body_rx + arm_extend, right_arm_y + lh],
-                   fill=BYTE_TEAL, outline=LINE, width=2)
+    _draw_rounded_limb(ctx, bcx + body_rx, right_arm_y,
+                       arm_extend, lh, BYTE_TEAL, LINE)
 
+    # Legs
     leg_offset = int(s // 4 * leg_spread)
-    # UNGUARDED WARMTH: left leg 2px forward
     leg_l_offset = leg_offset + (2 if unguarded_warmth else 0)
-    leg_h        = lh
-    leg_w        = int(lw * 0.9)
-    leg_top_y    = bcy + body_ry
+    leg_h = lh
+    leg_w = int(lw * 0.9)
+    leg_top_y = bcy + body_ry
 
-    # v007: lower_l_angle / lower_r_angle — toe-in rendering
-    # Apply inward toe by offsetting leg bottom (tip) toward center.
-    # At expression-sheet scale: ~8° over leg_h distance ≈ int(leg_h * tan(8°)) ≈ 1-2px shift.
-    import math as _math
-    toe_l = int(leg_h * _math.tan(_math.radians(lower_l_angle)))  # left toe moves right (inward)
-    toe_r = int(leg_h * _math.tan(_math.radians(lower_r_angle)))  # right toe moves left (inward)
+    toe_l = int(leg_h * math.tan(math.radians(lower_l_angle)))
+    toe_r = int(leg_h * math.tan(math.radians(lower_r_angle)))
 
-    if toe_l > 0 or toe_r > 0:
-        # Draw as polygon (trapezoid) for toe-in effect
-        # Left leg: top edge at -leg_l_offset, bottom (tip) shifted inward by toe_l
-        draw.polygon([
-            (bcx - leg_l_offset - leg_w//2, leg_top_y),
-            (bcx - leg_l_offset + leg_w//2, leg_top_y),
-            (bcx - leg_l_offset + leg_w//2 + toe_l, leg_top_y + leg_h),
-            (bcx - leg_l_offset - leg_w//2 + toe_l, leg_top_y + leg_h),
-        ], fill=BYTE_TEAL, outline=LINE)
-        # Right leg: top at +leg_offset, bottom tip shifted inward by toe_r
-        draw.polygon([
-            (bcx + leg_offset - leg_w//2, leg_top_y),
-            (bcx + leg_offset + leg_w//2, leg_top_y),
-            (bcx + leg_offset + leg_w//2 - toe_r, leg_top_y + leg_h),
-            (bcx + leg_offset - leg_w//2 - toe_r, leg_top_y + leg_h),
-        ], fill=BYTE_TEAL, outline=LINE)
+    # Left leg
+    if toe_l > 0:
+        ctx.move_to(bcx - leg_l_offset - leg_w // 2, leg_top_y)
+        ctx.line_to(bcx - leg_l_offset + leg_w // 2, leg_top_y)
+        ctx.line_to(bcx - leg_l_offset + leg_w // 2 + toe_l, leg_top_y + leg_h)
+        ctx.line_to(bcx - leg_l_offset - leg_w // 2 + toe_l, leg_top_y + leg_h)
+        ctx.close_path()
     else:
-        draw.rectangle([bcx - leg_l_offset - leg_w // 2, leg_top_y,
-                        bcx - leg_l_offset + leg_w // 2, leg_top_y + leg_h],
-                       fill=BYTE_TEAL, outline=LINE, width=2)
-        draw.rectangle([bcx + leg_offset - leg_w // 2, leg_top_y,
-                        bcx + leg_offset + leg_w // 2, leg_top_y + leg_h],
-                       fill=BYTE_TEAL, outline=LINE, width=2)
+        ctx.rectangle(bcx - leg_l_offset - leg_w // 2, leg_top_y, leg_w, leg_h)
+    set_color(ctx, BYTE_TEAL)
+    ctx.fill_preserve()
+    set_color(ctx, LINE)
+    ctx.set_line_width(2)
+    ctx.stroke()
 
-    # Hover particles
+    # Right leg
+    if toe_r > 0:
+        ctx.move_to(bcx + leg_offset - leg_w // 2, leg_top_y)
+        ctx.line_to(bcx + leg_offset + leg_w // 2, leg_top_y)
+        ctx.line_to(bcx + leg_offset + leg_w // 2 - toe_r, leg_top_y + leg_h)
+        ctx.line_to(bcx + leg_offset - leg_w // 2 - toe_r, leg_top_y + leg_h)
+        ctx.close_path()
+    else:
+        ctx.rectangle(bcx + leg_offset - leg_w // 2, leg_top_y, leg_w, leg_h)
+    set_color(ctx, BYTE_TEAL)
+    ctx.fill_preserve()
+    set_color(ctx, LINE)
+    ctx.set_line_width(2)
+    ctx.stroke()
+
+    # Hover particles with bezier trails
+    rng = random.Random(hash(name) % 1000 + 7)
+    particle_base_y = bcy + body_ry + leg_h + 3
     if unguarded_warmth:
-        # ONLY expression with gold confetti — 3 small SOFT_GOLD squares
-        confetti_positions = [
-            (bcx - 18, bcy + body_ry + leg_h + 5),
-            (bcx + 6,  bcy + body_ry + leg_h + 9),
-            (bcx + 24, bcy + body_ry + leg_h + 3),
+        positions = [
+            (bcx - 18, particle_base_y + 2),
+            (bcx + 6, particle_base_y + 6),
+            (bcx + 24, particle_base_y),
         ]
-        for (ppx, ppy) in confetti_positions:
-            draw.rectangle([ppx, ppy, ppx + 10, ppy + 10], fill=SOFT_GOLD)
+        for (ppx, ppy) in positions:
+            ctx.rectangle(ppx, ppy, 10, 10)
+            set_color(ctx, SOFT_GOLD)
+            ctx.fill()
+            # Bezier trail behind particle
+            trail_pts = [(ppx + 5, ppy + 10), (ppx + rng.randint(-8, 8), ppy + 16),
+                         (ppx + rng.randint(-6, 6), ppy + 22)]
+            if len(trail_pts) >= 2:
+                ctx.move_to(trail_pts[0][0], trail_pts[0][1])
+                for tp in trail_pts[1:]:
+                    ctx.line_to(tp[0], tp[1])
+                set_color(ctx, (*SOFT_GOLD, 100))
+                ctx.set_line_width(1)
+                ctx.stroke()
     else:
-        for (ppx, ppy, ppc) in [
-            (bcx - 20, bcy + body_ry + leg_h + 5,  BYTE_HL),
-            (bcx + 5,  bcy + body_ry + leg_h + 8,  SCAR_MAG),
-            (bcx + 25, bcy + body_ry + leg_h + 3,  BYTE_HL),
-            (bcx - 35, bcy + body_ry + leg_h + 10, (0, 200, 180)),
-        ]:
-            draw.rectangle([ppx, ppy, ppx + 10, ppy + 10], fill=ppc)
+        particle_colors = [BYTE_HL, SCAR_MAG, BYTE_HL, (0, 200, 180)]
+        for i, ppc in enumerate(particle_colors):
+            ppx = bcx + rng.randint(-35, 25)
+            ppy = particle_base_y + rng.randint(0, 10)
+            ctx.rectangle(ppx, ppy, 10, 10)
+            set_color(ctx, ppc)
+            ctx.fill()
+            # Bezier trail
+            trail_pts = [(ppx + 5, ppy + 10),
+                         (ppx + 5 + rng.randint(-10, 10), ppy + 18),
+                         (ppx + 5 + rng.randint(-8, 8), ppy + 26)]
+            ctx.move_to(trail_pts[0][0], trail_pts[0][1])
+            ctx.curve_to(trail_pts[0][0], trail_pts[0][1] + 3,
+                         trail_pts[1][0], trail_pts[1][1],
+                         trail_pts[2][0], trail_pts[2][1])
+            set_color(ctx, (*ppc, 80))
+            ctx.set_line_width(1)
+            ctx.stroke()
+
+
+def _draw_rounded_limb(ctx, x, y, w, h, fill_c, outline_c):
+    """Draw a limb with rounded tip."""
+    r = min(w, h) // 3
+    ctx.new_path()
+    ctx.move_to(x, y)
+    ctx.line_to(x + w, y)
+    ctx.line_to(x + w, y + h - r)
+    ctx.arc(x + w - r, y + h - r, r, 0, math.pi / 2)
+    ctx.line_to(x + r, y + h)
+    ctx.arc(x + r, y + h - r, r, math.pi / 2, math.pi)
+    ctx.close_path()
+    set_color(ctx, fill_c)
+    ctx.fill_preserve()
+    set_color(ctx, outline_c)
+    ctx.set_line_width(2)
+    ctx.stroke()
+
+
+# ── Storm background ──────────────────────────────────────────────────────────
+
+def draw_storm_bg_cairo(ctx, px, py, pw, ph):
+    """Draw storm/circuit trace background texture."""
+    trace_color = (0, 40, 50)
+    uv_color = (40, 20, 60)
+    for y_off in [40, 90, 140, 190, 240, 290]:
+        yy = py + y_off
+        for x_start in [px + 10, px + 80, px + 140]:
+            seg_len = 30 + (x_start % 40)
+            ctx.move_to(x_start, yy)
+            ctx.line_to(x_start + seg_len, yy)
+            set_color(ctx, trace_color)
+            ctx.set_line_width(1)
+            ctx.stroke()
+    for i in range(3):
+        x1 = px + i * 30
+        y1 = py + 10
+        x2 = px + pw
+        y2 = py + ph // 2 + i * 20
+        ctx.move_to(x1, y1)
+        ctx.line_to(x2, y2)
+        set_color(ctx, uv_color)
+        ctx.set_line_width(1)
+        ctx.stroke()
+
+
+def draw_warmth_bg_cairo(ctx, px, py, pw, ph):
+    """Subtle warm glow gradient at bottom of warmth panel."""
+    for i in range(8):
+        alpha_ratio = (i + 1) / 8
+        r = int(232 * alpha_ratio + 240 * (1 - alpha_ratio))
+        g = int(201 * alpha_ratio + 224 * (1 - alpha_ratio))
+        b = int(90 * alpha_ratio + 198 * (1 - alpha_ratio))
+        yy = py + int(ph * (0.75 + i * 0.03))
+        if yy < py + ph:
+            ctx.rectangle(px, yy, pw, py + ph - yy)
+            set_color(ctx, (r, g, b))
+            ctx.fill()
 
 
 # ── Sheet generator ─────────────────────────────────────────────────────────────
 
 def generate_byte_expression_sheet(output_path):
-    """Render 4×3 expression grid for Byte. 10 expressions + 2 empty."""
+    """Render 4x3 expression grid for Byte using pycairo. 10 expressions + 2 empty."""
     total_w = COLS * (PANEL_W + PAD) + PAD
     total_h = HEADER + ROWS * (PANEL_H + PAD) + PAD
 
-    img  = Image.new('RGB', (total_w, total_h), BG)
-    draw = ImageDraw.Draw(img)
+    surface, ctx, _, _ = create_surface(total_w, total_h)
+    fill_background(ctx, total_w, total_h, BG)
 
-    try:
-        font_title = ImageFont.truetype(
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 20)
-        font       = ImageFont.truetype(
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 15)
-        font_sm    = ImageFont.truetype(
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 11)
-    except Exception:
-        font_title = font = font_sm = ImageFont.load_default()
+    # Title text
+    ctx.select_font_face("monospace", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+    ctx.set_font_size(14)
+    ctx.set_source_rgb(*_c(BYTE_HL))
+    ctx.move_to(PAD, 30)
+    ctx.show_text("BYTE — Expression Sheet v008 (pycairo rebuild C52)")
 
-    draw.text((PAD, 12),
-              "BYTE — Expression Sheet — Luma & the Glitchkin  |  v007  "
-              "(UNGUARDED WARMTH body-pose delta: arms float high, toe-in, float_offset -4)",
-              fill=(0, 240, 255), font=font_title)
-
-    for i, (name, symbol, emotion, body_data, right_eye_style, panel_bg, prev_st, next_st) in \
-            enumerate(EXPRESSIONS):
-
+    for i, (name, symbol, emotion, body_data, right_eye_style, panel_bg,
+            prev_st, next_st) in enumerate(EXPRESSIONS):
         col = i % COLS
         row = i // COLS
         ppx = PAD + col * (PANEL_W + PAD)
         ppy = HEADER + row * (PANEL_H + PAD)
 
         # Panel background
-        draw.rectangle([ppx, ppy, ppx + PANEL_W, ppy + PANEL_H], fill=panel_bg)
-        draw.rectangle([ppx, ppy, ppx + PANEL_W, ppy + PANEL_H], outline=(40, 35, 55), width=1)
+        ctx.rectangle(ppx, ppy, PANEL_W, PANEL_H)
+        set_color(ctx, panel_bg)
+        ctx.fill()
 
         # Special panel backgrounds
         if emotion == "storm":
-            draw_storm_bg_texture(draw, ppx, ppy, PANEL_W, PANEL_H, panel_bg)
-            draw = ImageDraw.Draw(img)
-
+            draw_storm_bg_cairo(ctx, ppx, ppy, PANEL_W, PANEL_H)
         if name == "UNGUARDED WARMTH":
-            draw_warmth_bg(draw, ppx, ppy, PANEL_W, PANEL_H)
-            draw = ImageDraw.Draw(img)
+            draw_warmth_bg_cairo(ctx, ppx, ppy, PANEL_W, PANEL_H)
+
+        # Panel border
+        ctx.rectangle(ppx, ppy, PANEL_W, PANEL_H)
+        set_color(ctx, (40, 35, 55))
+        ctx.set_line_width(1)
+        ctx.stroke()
 
         # Draw Byte
         byte_size = 88
         bcx_panel = ppx + PANEL_W // 2
         bcy_panel = ppy + PANEL_H // 2 - 20
-        draw_byte(draw, bcx_panel, bcy_panel, byte_size,
-                  name, symbol, emotion, body_data, right_eye_style, img)
-        draw = ImageDraw.Draw(img)  # refresh after paste
+        draw_byte_cairo(ctx, bcx_panel, bcy_panel, byte_size,
+                        name, symbol, emotion, body_data, right_eye_style)
 
-        # Tag for new expressions
+        # Version tag
         if "STORM" in name:
-            draw.text((ppx + PANEL_W - 56, ppy + 4), "[v003]",
-                      fill=(255, 45, 120), font=font_sm)
+            ctx.set_font_size(9)
+            ctx.set_source_rgb(*_c(HOT_MAG))
+            ctx.move_to(ppx + PANEL_W - 50, ppy + 14)
+            ctx.show_text("[v003]")
         if "WARMTH" in name:
-            draw.text((ppx + PANEL_W - 56, ppy + 4), "[NEW v005]",
-                      fill=SOFT_GOLD, font=font_sm)
+            ctx.set_font_size(9)
+            ctx.set_source_rgb(*_c(SOFT_GOLD))
+            ctx.move_to(ppx + PANEL_W - 62, ppy + 14)
+            ctx.show_text("[NEW v005]")
 
         # Label bar
         bar_h = 58
-        draw.rectangle([ppx, ppy + PANEL_H - bar_h, ppx + PANEL_W, ppy + PANEL_H],
-                       fill=(10, 8, 18))
-        label_color = SOFT_GOLD if "WARMTH" in name else (0, 240, 255)
-        draw.text((ppx + 6, ppy + PANEL_H - bar_h + 4),  name,    fill=label_color, font=font)
-        draw.text((ppx + 6, ppy + PANEL_H - bar_h + 22), prev_st, fill=(120, 110, 140), font=font_sm)
-        draw.text((ppx + 6, ppy + PANEL_H - bar_h + 36), next_st, fill=(120, 110, 140), font=font_sm)
+        ctx.rectangle(ppx, ppy + PANEL_H - bar_h, PANEL_W, bar_h)
+        set_color(ctx, (10, 8, 18))
+        ctx.fill()
 
-    # Respect ≤1280px rule
+        label_color = SOFT_GOLD if "WARMTH" in name else BYTE_HL
+        ctx.select_font_face("monospace", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+        ctx.set_font_size(12)
+        ctx.set_source_rgb(*_c(label_color))
+        ctx.move_to(ppx + 6, ppy + PANEL_H - bar_h + 16)
+        ctx.show_text(name)
+
+        ctx.set_font_size(9)
+        ctx.set_source_rgb(*_c((120, 110, 140)))
+        ctx.move_to(ppx + 6, ppy + PANEL_H - bar_h + 30)
+        ctx.show_text(prev_st)
+        ctx.move_to(ppx + 6, ppy + PANEL_H - bar_h + 44)
+        ctx.show_text(next_st)
+
+    # Convert to PIL and enforce size constraint
+    img = to_pil_image(surface)
     img.thumbnail((1280, 1280), Image.LANCZOS)
-
     img.save(output_path)
     w, h = img.size
-    print(f"Saved: {output_path}  ({w}×{h}px)")
+    print(f"Saved: {output_path}  ({w}x{h}px)")
 
 
 if __name__ == '__main__':
-    out_dir = output_dir('characters', 'main')
+    out_dir = str(output_dir('characters', 'main'))
     os.makedirs(out_dir, exist_ok=True)
     generate_byte_expression_sheet(
         os.path.join(out_dir, "LTG_CHAR_byte_expression_sheet.png")
     )
-    print("v007 UNGUARDED WARMTH body-pose delta (Sam Kowalski brief, Daisuke flag):")
-    print("  arm_l_dy: -5 → -14 (arms float high, buoyant)")
-    print("  arm_r_dy: -5 → -16 (slight asymmetry, avoids triumphant read)")
-    print("  float_offset: -4 (hover position drops 4px — settled, present)")
-    print("  lower_l/r_angle: 8° toe-in (reads as 'not braced' / vulnerable)")
-    print("  body_tilt: -4 UNCHANGED (forward lean is correct)")
-    print("  All color elements retained: SOFT_GOLD confetti, star_gold, heart_purple")
+    print("v008 pycairo rebuild (Rin Yamamoto C52)")
+    print("  Anti-aliased ellipses, wobble outlines, bezier confetti trails")
+    print("  All 10 expressions preserved from v007")
