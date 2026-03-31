@@ -805,9 +805,9 @@ def _draw_luma_on_context(ctx, cx, ground_y, char_h, expression, spec, scale=1.0
     back_foot_lift = spec["back_foot_lift"] * s
     heel_lift = spec.get("heel_lift", 0) * s
 
-    # Side view: near leg is slightly in front of hip (steps forward), far leg slightly back
-    near_leg_x = hip_cx + head_r * 0.18  # steps forward in the side plane
-    far_leg_x  = hip_cx - head_r * 0.14  # steps back
+    # Side view: both legs centered at hip_cx; depth read via y-axis only
+    near_leg_x = hip_cx  # near leg centered
+    far_leg_x  = hip_cx  # far leg centered
 
     # Near foot is slightly lower Y (closer = lower in perspective), far at ground
     near_foot_lift = front_foot_lift
@@ -815,7 +815,7 @@ def _draw_luma_on_context(ctx, cx, ground_y, char_h, expression, spec, scale=1.0
 
     leg_overlap = leg_w_top * 0.8
 
-    # Far leg drawn first (behind)
+    # Far leg drawn first (behind); slight knee bow for visual interest
     bl_top = (far_leg_x, torso_bot_y - leg_overlap)
     bl_knee = (far_leg_x - 2 * s, torso_bot_y + leg_h * 0.50)
     bl_ankle = (far_leg_x, ground_y - far_foot_lift - heel_lift - head_r * 0.25)
@@ -825,7 +825,7 @@ def _draw_luma_on_context(ctx, cx, ground_y, char_h, expression, spec, scale=1.0
     _draw_variable_stroke_limb(ctx, back_leg_pts, leg_w_top, leg_w_bot,
                                PANTS, LINE_COL, lw_major)
 
-    # Near leg drawn in front
+    # Near leg drawn in front; slight knee bow forward
     fl_top = (near_leg_x, torso_bot_y - leg_overlap)
     fl_knee = (near_leg_x + 3 * s, torso_bot_y + leg_h * 0.48)
     fl_ankle = (near_leg_x + 2 * s, ground_y - near_foot_lift - heel_lift - head_r * 0.25)
@@ -838,8 +838,8 @@ def _draw_luma_on_context(ctx, cx, ground_y, char_h, expression, spec, scale=1.0
     # Hip bridge: filled shape over the torso-leg junction (side view: narrow band)
     hip_bridge_y_top = torso_bot_y - torso_h * 0.04
     hip_bridge_y_bot = torso_bot_y + leg_w_top * 1.2
-    hip_bw = (abs(near_leg_x - far_leg_x) * 0.5 + leg_w_top * 1.4)
-    hip_bridge_cx = (near_leg_x + far_leg_x) * 0.5
+    hip_bw = leg_w_top * 1.4  # legs centered, so width from leg_w_top only
+    hip_bridge_cx = hip_cx
     ctx.new_path()
     ctx.move_to(hip_bridge_cx - hip_bw, hip_bridge_y_top)
     ctx.curve_to(hip_bridge_cx - hip_bw * 0.8, hip_bridge_y_bot + 4*s,
@@ -1666,14 +1666,14 @@ def _draw_luma_threequarter(ctx, cx, ground_y, char_h, expression, spec, scale=1
     heel_lift = spec.get("heel_lift", 0) * s
     stance_mult = spec.get("stance_wide", 1.0)
 
-    # X stagger (across the body): near leg slightly right-of-center, far leg left
-    near_leg_x = hip_cx + head_r * 0.20 * stance_mult
-    far_leg_x  = hip_cx - head_r * 0.25 * stance_mult
+    # Legs centered at hip_cx; depth read via y-axis only
+    near_leg_x = hip_cx  # near leg centered
+    far_leg_x  = hip_cx  # far leg centered
     # Y offset: near foot sits lower (front of body plane), far foot slightly higher
     near_extra_y = 0   # near leg at normal ground
     far_extra_lift = head_r * 0.06  # far foot slightly raised = depth recession
 
-    # Far leg first (behind near)
+    # Far leg first (behind near); slight knee bow for visual interest
     bl_top = (far_leg_x, torso_bot_y - leg_overlap)
     bl_knee = (far_leg_x - 2*s, torso_bot_y + leg_h * 0.49)
     bl_ankle = (far_leg_x + 1*s, ground_y - back_foot_lift - far_extra_lift - heel_lift - head_r * 0.25)
@@ -1683,7 +1683,7 @@ def _draw_luma_threequarter(ctx, cx, ground_y, char_h, expression, spec, scale=1
     _draw_variable_stroke_limb(ctx, back_leg_pts, leg_w_top, leg_w_bot * 0.90,
                                PANTS, LINE_COL, lw_major)
 
-    # Near leg on top
+    # Near leg on top; slight knee bow forward
     fl_top = (near_leg_x, torso_bot_y - leg_overlap)
     fl_knee = (near_leg_x + 3*s, torso_bot_y + leg_h * 0.48)
     fl_ankle = (near_leg_x + 2*s, ground_y - front_foot_lift - heel_lift - head_r * 0.25)
@@ -1694,8 +1694,8 @@ def _draw_luma_threequarter(ctx, cx, ground_y, char_h, expression, spec, scale=1
                                PANTS, LINE_COL, lw_major)
 
     # Hip bridge
-    hip_bw = (abs(near_leg_x - far_leg_x) * 0.5 + leg_w_top * 1.4)
-    hip_bridge_cx = (near_leg_x + far_leg_x) * 0.5
+    hip_bw = leg_w_top * 1.4  # legs centered, so width from leg_w_top only
+    hip_bridge_cx = hip_cx
     hip_bridge_y_top = torso_bot_y - torso_h * 0.04
     hip_bridge_y_bot = torso_bot_y + leg_w_top * 1.2
     ctx.new_path()
@@ -2355,13 +2355,12 @@ def _draw_luma_side_l(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
     back_foot_lift = spec_l["back_foot_lift"] * s
     heel_lift = spec.get("heel_lift", 0) * s
 
-    # Side-L faces left, so the near foot (facing direction) is to the LEFT.
-    # Near leg: slightly to the left of hip (forward in walk = -x), far leg: +x
-    near_leg_x = hip_cx - head_r * 0.18   # steps forward (leftward)
-    far_leg_x  = hip_cx + head_r * 0.14   # steps back (rightward)
-    far_extra_lift = head_r * 0.04
+    # Side-L faces left; both legs centered at hip_cx, depth read via y-axis only
+    near_leg_x = hip_cx  # near leg centered
+    far_leg_x  = hip_cx  # far leg centered
+    far_extra_lift = head_r * 0.04  # far foot slightly higher = receding
 
-    # Far leg first
+    # Far leg first; slight knee bow for visual interest
     bl_top = (far_leg_x, torso_bot_y - leg_overlap)
     bl_knee = (far_leg_x + 2 * s, torso_bot_y + leg_h * 0.50)
     bl_ankle = (far_leg_x, ground_y - back_foot_lift - far_extra_lift - heel_lift - head_r * 0.25)
@@ -2371,7 +2370,7 @@ def _draw_luma_side_l(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
     _draw_variable_stroke_limb(ctx, back_leg_pts, leg_w_top, leg_w_bot,
                                PANTS, LINE_COL, lw_major)
 
-    # Near leg on top
+    # Near leg on top; slight knee bow forward (leftward)
     fl_top = (near_leg_x, torso_bot_y - leg_overlap)
     fl_knee = (near_leg_x - 3 * s, torso_bot_y + leg_h * 0.48)
     fl_ankle = (near_leg_x - 2 * s, ground_y - front_foot_lift - heel_lift - head_r * 0.25)
@@ -2384,8 +2383,8 @@ def _draw_luma_side_l(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
     # Hip bridge
     hip_bridge_y_top = torso_bot_y - torso_h * 0.04
     hip_bridge_y_bot = torso_bot_y + leg_w_top * 1.2
-    hip_bw = (abs(near_leg_x - far_leg_x) * 0.5 + leg_w_top * 1.4)
-    hip_bridge_cx = (near_leg_x + far_leg_x) * 0.5
+    hip_bw = leg_w_top * 1.4  # legs centered, so width from leg_w_top only
+    hip_bridge_cx = hip_cx
     ctx.new_path()
     ctx.move_to(hip_bridge_cx - hip_bw, hip_bridge_y_top)
     ctx.curve_to(hip_bridge_cx - hip_bw * 0.8, hip_bridge_y_bot + 4*s,
