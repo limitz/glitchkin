@@ -64,6 +64,13 @@ If a required tool does not exist in the open source ecosystem, build it in Pyth
 | `LTG_TOOL_thumbnail_preview_v001.py` | Thumbnail preview renderer |
 | `LTG_TOOL_character_color_enhance.py` | Character color enhancement pass |
 
+### Character Renderers (Modular)
+
+| Filename | Description |
+|---|---|
+| `LTG_TOOL_char_byte.py` | Canonical Byte modular renderer (10 expressions, cairo, transparent ARGB surface) |
+| `LTG_TOOL_char_glitch.py` | Canonical Glitch modular renderer (9 expressions, cairo, transparent ARGB surface) |
+
 ### Character Generators
 
 | Filename | Description |
