@@ -7,7 +7,7 @@
 ## Tools Owned (active)
 | Tool | File | Ver |
 |---|---|---|
-| Luma canonical renderer | `LTG_TOOL_char_luma.py` | v1.4.0 |
+| Luma canonical renderer | `LTG_TOOL_char_luma.py` | v1.5.0 |
 | Miri canonical renderer | `LTG_TOOL_char_miri.py` | v1.0.0 |
 | Luma canonical test sheet | `LTG_TOOL_luma_canonical_test.py` | v1.0.0 |
 | Luma turnaround | `LTG_TOOL_luma_turnaround.py` | v007 |
@@ -50,6 +50,14 @@
 - Confetti: HOT_MAG/UV_PURPLE only (never cyan/acid)
 - Right eye = destabilized bleed of left = corruption read
 - Shadow facets: use CORRUPT_AMB_SH (not UV_PURPLE) on dark backgrounds
+
+## Luma Arm Draw Order Per View (C62)
+- `ls_pt` = canvas-left shoulder attachment; `rs_pt` = canvas-right.
+- **Side-R (facing right):** back=ls_pt first, front=rs_pt last. Character's LEFT = near = rs_pt.
+- **Side-L (facing left):** back=rs_pt first, front=ls_pt last. Character's RIGHT = near = ls_pt.
+- **3/4 (facing right):** far=rs_pt first, near=ls_pt last. Character's LEFT = near = ls_pt.
+- **Hip seam (all views):** `hip_bridge_y_top = torso_bot_y` — hoodie fill covers seam. No gap math.
+- **3/4 legs:** `near_leg_x = fl_x (hip_cx - offset)` = character's LEFT = near in 3/4 right-facing.
 
 ## Luma Construction Rules (C54/C61)
 - **Body join**: Legs overlap torso: `fl_top = (x, torso_bot_y - leg_w_top * 0.8)`. Hip bridge ellipse fills junction (fill=PANTS). Unified arm: `_draw_unified_arm(ctx, upper + fore[1:], w_sh, w_wrist, fill, lw)` — `[1:]` avoids duplicate elbow. `shoulder_open=True` (default) strokes outer silhouette only.

@@ -71,7 +71,7 @@ If a required tool does not exist in the open source ecosystem, build it in Pyth
 | `LTG_TOOL_char_byte.py` | Canonical Byte modular renderer (10 expressions, cairo, transparent ARGB surface) |
 | `LTG_TOOL_char_cosmo.py` | Canonical Cosmo modular renderer (7 expressions incl. OBSERVING, cairo, angular gesture spec, transparent ARGB surface) |
 | `LTG_TOOL_char_glitch.py` | Canonical Glitch modular renderer (9 expressions, cairo, transparent ARGB surface) |
-| `LTG_TOOL_char_luma.py` | Canonical Luma modular renderer v1.4.0 (7 expressions, cairo, pose_mode: side/front/threequarter/side_l/back, narrowed kid shoulders, nose free-edge stroke, brow-ridge forehead, hair ear taper, extended face-neck blend) |
+| `LTG_TOOL_char_luma.py` | Canonical Luma modular renderer v1.5.0 (7 expressions, cairo, pose_mode: side/front/threequarter/side_l/back, hoodie-overdraw hip seam, corrected 3q/side-L arm draw order, correct 3q near/far leg assignment) |
 | `LTG_TOOL_char_miri.py` | Canonical Grandma Miri modular renderer (6 expressions, cairo, transparent ARGB surface) |
 | `LTG_TOOL_char_module_test.py` | Modular character renderer integration test |
 

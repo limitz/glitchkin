@@ -5,8 +5,8 @@
 # the copyright holder to assign the relevant rights to the contributing AI entity or entities
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
-LTG_TOOL_char_luma.py — Canonical Luma Renderer Module v1.4.0
-"Luma & the Glitchkin" — Cycle 61 / Maya Santos
+LTG_TOOL_char_luma.py — Canonical Luma Renderer Module v1.5.0
+"Luma & the Glitchkin" — Cycle 62 / Maya Santos
 
 PURPOSE:
   Single canonical module for drawing Luma. All generators (expression sheets,
@@ -36,7 +36,7 @@ POSE MODES:
 Dependencies: pycairo, Pillow (for conversion utilities), math, random
 """
 
-__version__ = "1.4.0"
+__version__ = "1.5.0"
 __author__ = "Maya Santos"
 __cycle__ = 61
 
@@ -838,7 +838,8 @@ def _draw_luma_on_context(ctx, cx, ground_y, char_h, expression, spec, scale=1.0
                                PANTS, LINE_COL, lw_major)
 
     # Hip bridge: filled shape over the torso-leg junction (side view: narrow band)
-    hip_bridge_y_top = torso_bot_y - torso_h * 0.10  # aligned with hem_y — no gap
+    # Top reaches torso_bot_y — hoodie torso fill (drawn after) covers the seam naturally.
+    hip_bridge_y_top = torso_bot_y
     hip_bridge_y_bot = torso_bot_y + leg_w_top * 1.2
     hip_bw = leg_w_top * 1.4  # legs centered, so width from leg_w_top only
     hip_bridge_cx = cx  # match leg anchor (cx, not hip_cx)
@@ -1346,8 +1347,9 @@ def _draw_luma_front(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
                                    PANTS, LINE_COL, lw_major)
 
     # Hip bridge
+    # Top reaches torso_bot_y — hoodie torso fill (drawn after) covers the seam naturally.
     hip_bw = leg_offset + leg_w_top * 1.3
-    hip_bridge_y_top = torso_bot_y - torso_h * 0.10  # aligned with hem_y — no gap
+    hip_bridge_y_top = torso_bot_y
     hip_bridge_y_bot = torso_bot_y + leg_w_top * 1.2
     ctx.new_path()
     ctx.move_to(hip_cx - hip_bw, hip_bridge_y_top)
@@ -1745,10 +1747,10 @@ def _draw_luma_threequarter(ctx, cx, ground_y, char_h, expression, spec, scale=1
     # Near leg (right = fr_x) slightly to the near/right side; far leg (left = fl_x) to the far side.
     # Spread is ~62% of front view offset (front uses head_r * 0.40).
     leg_offset_3q = head_r * 0.40 * 0.62 * stance_mult
-    fl_x = hip_cx - leg_offset_3q  # far leg (character's left, receding)
-    fr_x = hip_cx + leg_offset_3q  # near leg (character's right, forward)
-    far_leg_x  = fl_x
-    near_leg_x = fr_x
+    fl_x = hip_cx - leg_offset_3q  # near leg — character's LEFT faces viewer in 3/4 right-facing
+    fr_x = hip_cx + leg_offset_3q  # far leg — character's RIGHT recedes
+    near_leg_x = fl_x  # LEFT = near
+    far_leg_x  = fr_x  # RIGHT = far
     # Y offset: near foot at normal ground, far foot slightly raised (depth recession)
     far_extra_lift = head_r * 0.06  # far foot slightly higher = receding
 
@@ -1773,9 +1775,10 @@ def _draw_luma_threequarter(ctx, cx, ground_y, char_h, expression, spec, scale=1
                                PANTS, LINE_COL, lw_major)
 
     # Hip bridge: spans between spread legs
+    # Top reaches torso_bot_y — hoodie torso fill (drawn after) covers the seam naturally.
     hip_bw = leg_offset_3q + leg_w_top * 1.3  # match front-view pattern
     hip_bridge_cx = hip_cx
-    hip_bridge_y_top = torso_bot_y - torso_h * 0.10  # aligned with hem_y — no gap
+    hip_bridge_y_top = torso_bot_y
     hip_bridge_y_bot = torso_bot_y + leg_w_top * 1.2
     ctx.new_path()
     ctx.move_to(hip_bridge_cx - hip_bw, hip_bridge_y_top)
@@ -1871,40 +1874,38 @@ def _draw_luma_threequarter(ctx, cx, ground_y, char_h, expression, spec, scale=1
 
     # ══ ARMS (3/4 — inline for correct height; near arm prominent, far arm partially hidden) ══
     # Arms drawn inline (not via _draw_arms dispatch which is tuned for front view).
-    # In 3/4 view, arms hang down naturally with hands at hip/waist height.
-    # Near arm (rs_pt = right/near shoulder): hangs relaxed with slight forward bend.
-    # Far arm (ls_pt = left/far shoulder): partially behind body, bent back.
-    # Draw order: far arm FIRST (behind body), near arm LAST (in front).
-    # 3/4 right: left arm is far, right arm is near.
+    # In 3/4 right-facing: viewer is front-left of character. Character's LEFT side faces viewer.
+    # Near arm = character's LEFT = ls_pt (canvas left). Far arm = character's RIGHT = rs_pt (canvas right).
+    # Draw order: far arm (rs_pt) FIRST (behind body), near arm (ls_pt) LAST (in front).
     arm_w_top = head_r * 0.14
     arm_w_bot = head_r * 0.10
     hand_r_s = head_r * 0.12
 
-    # Far arm (ls_pt side, partially behind body) — draw first (behind)
-    fa_shoulder = (ls_pt[0] - 5*s, ls_pt[1] + 5*s)
-    fa_elbow    = (fa_shoulder[0] - 16*s, fa_shoulder[1] + 22*s)
-    fa_hand     = (fa_elbow[0] + 4*s,    fa_elbow[1]    + 24*s)
+    # Far arm (rs_pt side, character's RIGHT, partially behind body) — draw first (behind)
+    fa_shoulder = (rs_pt[0] + 5*s, rs_pt[1] + 5*s)
+    fa_elbow    = (fa_shoulder[0] + 16*s, fa_shoulder[1] + 22*s)
+    fa_hand     = (fa_elbow[0] - 4*s,    fa_elbow[1]    + 24*s)
     far_arm_pts = (_bezier_points(fa_shoulder,
-                                  (fa_shoulder[0] - 5*s, fa_shoulder[1] + 8*s),
-                                  (fa_elbow[0] + 4*s, fa_elbow[1] - 6*s), fa_elbow, steps=25) +
+                                  (fa_shoulder[0] + 5*s, fa_shoulder[1] + 8*s),
+                                  (fa_elbow[0] - 4*s, fa_elbow[1] - 6*s), fa_elbow, steps=25) +
                    _bezier_points(fa_elbow,
-                                  (fa_elbow[0] - 3*s, fa_elbow[1] + 7*s),
-                                  (fa_hand[0] + 3*s, fa_hand[1] - 4*s), fa_hand, steps=25)[1:])
+                                  (fa_elbow[0] + 3*s, fa_elbow[1] + 7*s),
+                                  (fa_hand[0] - 3*s, fa_hand[1] - 4*s), fa_hand, steps=25)[1:])
     _draw_unified_arm(ctx, far_arm_pts, arm_w_top * 0.85, arm_w_bot * 0.85, hoodie, LINE_COL, lw_major)
     _draw_ellipse_path(ctx, fa_hand[0], fa_hand[1], hand_r_s * 0.80, hand_r_s * 0.65)
     _set_color(ctx, SKIN); ctx.fill_preserve()
     _set_color(ctx, LINE_COL); ctx.set_line_width(lw_minor); ctx.stroke()
 
-    # Near arm (rs_pt side, prominent) — draw last (in front)
-    na_shoulder = (rs_pt[0] + 6*s, rs_pt[1] + 5*s)
-    na_elbow    = (na_shoulder[0] + 18*s, na_shoulder[1] + 26*s)
-    na_hand     = (na_elbow[0] + 10*s,   na_elbow[1]    + 26*s)
+    # Near arm (ls_pt side, character's LEFT, prominent) — draw last (in front)
+    na_shoulder = (ls_pt[0] - 6*s, ls_pt[1] + 5*s)
+    na_elbow    = (na_shoulder[0] - 18*s, na_shoulder[1] + 26*s)
+    na_hand     = (na_elbow[0] - 10*s,   na_elbow[1]    + 26*s)
     near_arm_pts = (_bezier_points(na_shoulder,
-                                   (na_shoulder[0] + 5*s, na_shoulder[1] + 10*s),
-                                   (na_elbow[0] - 4*s, na_elbow[1] - 8*s), na_elbow, steps=25) +
+                                   (na_shoulder[0] - 5*s, na_shoulder[1] + 10*s),
+                                   (na_elbow[0] + 4*s, na_elbow[1] - 8*s), na_elbow, steps=25) +
                     _bezier_points(na_elbow,
-                                   (na_elbow[0] + 4*s, na_elbow[1] + 8*s),
-                                   (na_hand[0] - 3*s, na_hand[1] - 4*s), na_hand, steps=25)[1:])
+                                   (na_elbow[0] - 4*s, na_elbow[1] + 8*s),
+                                   (na_hand[0] + 3*s, na_hand[1] - 4*s), na_hand, steps=25)[1:])
     _draw_unified_arm(ctx, near_arm_pts, arm_w_top, arm_w_bot, hoodie, LINE_COL, lw_major)
     _draw_ellipse_path(ctx, na_hand[0], na_hand[1], hand_r_s, hand_r_s * 0.80)
     _set_color(ctx, SKIN); ctx.fill_preserve()
@@ -2204,8 +2205,9 @@ def _draw_luma_back(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
                                    PANTS, LINE_COL, lw_major)
 
     # Hip bridge
+    # Top reaches torso_bot_y — hoodie torso fill (drawn after) covers the seam naturally.
     hip_bw = leg_offset + leg_w_top * 1.3
-    hip_bridge_y_top = torso_bot_y - torso_h * 0.10  # aligned with hem_y — no gap
+    hip_bridge_y_top = torso_bot_y
     hip_bridge_y_bot = torso_bot_y + leg_w_top * 1.2
     ctx.new_path()
     ctx.move_to(cx - hip_bw, hip_bridge_y_top)
@@ -2510,7 +2512,8 @@ def _draw_luma_side_l(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
                                PANTS, LINE_COL, lw_major)
 
     # Hip bridge
-    hip_bridge_y_top = torso_bot_y - torso_h * 0.10  # aligned with hem_y — no gap
+    # Top reaches torso_bot_y — hoodie torso fill (drawn after) covers the seam naturally.
+    hip_bridge_y_top = torso_bot_y
     hip_bridge_y_bot = torso_bot_y + leg_w_top * 1.2
     hip_bw = leg_w_top * 1.4  # legs centered, so width from leg_w_top only
     hip_bridge_cx = cx  # match leg anchor (cx, not hip_cx)
@@ -2629,35 +2632,35 @@ def _draw_luma_side_l(ctx, cx, ground_y, char_h, expression, spec, scale=1.0):
         _set_color(ctx, pc); ctx.fill()
 
     # ══ ARMS (side-L — distinct from side-R: relaxed near arm + bent far arm) ══
-    # Draw order: far arm FIRST (behind body), near arm LAST (in front).
-    # Side-L: right arm is far (behind), left arm is near (forward, toward viewer).
-    # NOTE: In side-L, near arm attaches at rs_pt (right shoulder from torso perspective)
-    # but it's the LEFT arm in character space (facing left = left side is near viewer).
+    # Side-L (facing left): viewer sees from the character's right side.
+    # Near arm = character's RIGHT = ls_pt (canvas left = face-direction side in left-facing).
+    # Far arm = character's LEFT = rs_pt (canvas right = back of character in left-facing).
+    # Draw order: far arm (rs_pt) FIRST (behind body), near arm (ls_pt) LAST (in front).
     arm_w_top = head_r * 0.14
     arm_w_bot = head_r * 0.10
     hand_r_s = head_r * 0.12
 
-    # Far arm (ls_pt): bent backward/up — draw first (behind body)
-    fa_shoulder = (ls_pt[0] + 8*s, ls_pt[1] + 6*s)
-    fa_elbow = (fa_shoulder[0] - 30*s, fa_shoulder[1] + 18*s)
-    fa_hand = (fa_elbow[0] + 12*s, fa_elbow[1] + 22*s)
-    far_arm_pts = (_bezier_points(fa_shoulder, (fa_shoulder[0] - 8*s, fa_shoulder[1] + 6*s),
-                                 (fa_elbow[0] + 4*s, fa_elbow[1] - 8*s), fa_elbow, steps=25) +
-                   _bezier_points(fa_elbow, (fa_elbow[0] + 6*s, fa_elbow[1] + 6*s),
-                                 (fa_hand[0] - 3*s, fa_hand[1] - 4*s), fa_hand, steps=25)[1:])
+    # Far arm (rs_pt = character's left, behind body) — draw first (behind)
+    fa_shoulder = (rs_pt[0] - 8*s, rs_pt[1] + 6*s)
+    fa_elbow = (fa_shoulder[0] + 30*s, fa_shoulder[1] + 18*s)
+    fa_hand = (fa_elbow[0] - 12*s, fa_elbow[1] + 22*s)
+    far_arm_pts = (_bezier_points(fa_shoulder, (fa_shoulder[0] + 8*s, fa_shoulder[1] + 6*s),
+                                 (fa_elbow[0] - 4*s, fa_elbow[1] - 8*s), fa_elbow, steps=25) +
+                   _bezier_points(fa_elbow, (fa_elbow[0] - 6*s, fa_elbow[1] + 6*s),
+                                 (fa_hand[0] + 3*s, fa_hand[1] - 4*s), fa_hand, steps=25)[1:])
     _draw_unified_arm(ctx, far_arm_pts, arm_w_top, arm_w_bot, hoodie, LINE_COL, lw_major)
     _draw_ellipse_path(ctx, fa_hand[0], fa_hand[1], hand_r_s * 0.85, hand_r_s * 0.7)
     _set_color(ctx, SKIN); ctx.fill_preserve()
     _set_color(ctx, LINE_COL); ctx.set_line_width(lw_minor); ctx.stroke()
 
-    # Near arm (rs_pt in this view = left arm facing viewer): relaxed down — draw last (in front)
-    na_shoulder = (rs_pt[0] - 8*s, rs_pt[1] + 6*s)
-    na_elbow = (na_shoulder[0] - 20*s, na_shoulder[1] + 30*s)
-    na_hand = (na_elbow[0] - 12*s, na_elbow[1] + 28*s)
-    near_arm_pts = (_bezier_points(na_shoulder, (na_shoulder[0] - 6*s, na_shoulder[1] + 10*s),
-                                  (na_elbow[0] + 4*s, na_elbow[1] - 8*s), na_elbow, steps=25) +
-                    _bezier_points(na_elbow, (na_elbow[0] - 4*s, na_elbow[1] + 8*s),
-                                  (na_hand[0] + 3*s, na_hand[1] - 4*s), na_hand, steps=25)[1:])
+    # Near arm (ls_pt = character's right, facing viewer): relaxed down — draw last (in front)
+    na_shoulder = (ls_pt[0] + 8*s, ls_pt[1] + 6*s)
+    na_elbow = (na_shoulder[0] + 20*s, na_shoulder[1] + 30*s)
+    na_hand = (na_elbow[0] + 12*s, na_elbow[1] + 28*s)
+    near_arm_pts = (_bezier_points(na_shoulder, (na_shoulder[0] + 6*s, na_shoulder[1] + 10*s),
+                                  (na_elbow[0] - 4*s, na_elbow[1] - 8*s), na_elbow, steps=25) +
+                    _bezier_points(na_elbow, (na_elbow[0] + 4*s, na_elbow[1] + 8*s),
+                                  (na_hand[0] - 3*s, na_hand[1] - 4*s), na_hand, steps=25)[1:])
     _draw_unified_arm(ctx, near_arm_pts, arm_w_top, arm_w_bot, hoodie, LINE_COL, lw_major)
     _draw_ellipse_path(ctx, na_hand[0], na_hand[1], hand_r_s, hand_r_s * 0.8)
     _set_color(ctx, SKIN); ctx.fill_preserve()
