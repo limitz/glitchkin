@@ -37,6 +37,10 @@ except ImportError:
     def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFont
 import math, random, os
+import sys
+from LTG_TOOL_char_byte import draw_byte
+from LTG_TOOL_cairo_primitives import to_pil_rgba
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 PANELS_DIR = output_dir('storyboards', 'panels')
 OUTPUT_PATH = os.path.join(PANELS_DIR, "LTG_SB_cold_open_P06.png")
@@ -137,242 +141,54 @@ def draw_static_texture(draw, x0, y0, x1, y1, rng, tint=False):
         draw.line([(x0, sl_y), (x1, sl_y)], fill=col, width=1)
 
 
+
+
 def draw_byte_face(img, draw, face_cx, face_cy, face_r):
-    """
-    Draw Byte's face pressed against the screen glass from inside.
-    face_cx, face_cy: center of face
-    face_r: approximate radius of face area
-
-    Expression: DISGUSTED / RELUCTANT CURIOSITY
-    - He is pressed flat against the glass — face slightly squished
-    - Normal eye (viewer's right): 70% aperture squint
-    - Cracked eye (viewer's left): SEARCHING/PROCESSING dots
-    - Mouth: horizontal "ugh" flat grimace — corners pressed OUT
-    - Triangle-heavy, jagged angular shapes
-    - ELEC_CYAN + VOID_BLACK — no warm colors
-    """
-
-    # ── Head/body shape (angular, triangle-heavy — pressed against glass) ────
-    # Byte presses his face flat — so we draw his front-facing shape as
-    # a somewhat flattened oval/angular form
-
-    # Head is pressed — slightly squashed horizontally to suggest glass contact
-    head_w = int(face_r * 1.30)
-    head_h = int(face_r * 1.10)
-
-    # Head body — irregular polygon with jagged edges (Glitchkin pixel standard)
-    # 6-sided irregular polygon for head silhouette
-    head_pts = []
-    sides = 6
-    for i in range(sides):
-        base_angle = 2 * math.pi * i / sides - math.pi / 2
-        jitter = [0.12, -0.10, 0.15, -0.08, 0.13, -0.11][i]
-        angle = base_angle + jitter
-        rx = head_w * (1.0 + [0.05, 0.08, 0.04, 0.06, 0.03, 0.07][i])
-        ry = head_h * (1.0 + [0.04, 0.07, 0.08, 0.05, 0.06, 0.04][i])
-        head_pts.append((int(face_cx + rx * math.cos(angle)),
-                         int(face_cy + ry * math.sin(angle))))
-    draw.polygon(head_pts, fill=BYTE_TEAL, outline=VOID_BLACK)
-
-    # Darker inner core (depth on the face)
-    inner_pts = []
-    for i in range(sides):
-        base_angle = 2 * math.pi * i / sides - math.pi / 2
-        angle = base_angle
-        rx = head_w * 0.65
-        ry = head_h * 0.60
-        inner_pts.append((int(face_cx + rx * math.cos(angle)),
-                          int(face_cy + ry * math.sin(angle))))
-    draw.polygon(inner_pts, fill=BYTE_DARK)
-
-    # ── Arm stubs pressed against glass ──────────────────────────────────────
-    # Short stubby arms pressed flat — left and right
+    """Byte's face pressed against CRT glass — canonical renderer + composite."""
+    # Render Byte via canonical module (grumpy = disgusted/reluctant curiosity)
+    target_h = int(face_r * 2.4)
+    scale = target_h / 88.0  # base Byte size is 88px
+    surface = draw_byte(expression="grumpy", scale=scale, facing="front")
+    char_pil = _char_to_pil(surface)
+    # Resize to match expected face area
+    if char_pil.height > 0:
+        aspect = char_pil.width / char_pil.height
+        new_h = int(face_r * 2.2)
+        new_w = int(new_h * aspect)
+        char_pil = char_pil.resize((new_w, new_h), Image.LANCZOS)
+    _composite_char(img, char_pil, face_cx, face_cy)
+    # Pixel confetti bleeding out from screen edges near hands
     arm_cy = face_cy + int(face_r * 0.30)
-    for side in [-1, 1]:
-        arm_cx = face_cx + side * int(face_r * 1.20)
-        arm_pts = [
-            (face_cx + side * int(face_r * 0.88), arm_cy - 10),
-            (arm_cx + side * 8, arm_cy - 14),
-            (arm_cx + side * 18, arm_cy - 2),
-            (arm_cx + side * 14, arm_cy + 12),
-            (arm_cx - side * 2, arm_cy + 10),
-            (face_cx + side * int(face_r * 0.90), arm_cy + 6),
-        ]
-        draw.polygon(arm_pts, fill=BYTE_TEAL, outline=VOID_BLACK)
-
-    # Hand/palm pressed against glass — flat splat shape
-    for side in [-1, 1]:
-        palm_cx = face_cx + side * int(face_r * 1.48)
-        palm_cy = arm_cy + 4
-        palm_pts = [
-            (palm_cx - 10, palm_cy - 12),
-            (palm_cx + 4,  palm_cy - 16),
-            (palm_cx + 14, palm_cy - 8),
-            (palm_cx + 18, palm_cy + 4),
-            (palm_cx + 8,  palm_cy + 14),
-            (palm_cx - 6,  palm_cy + 10),
-            (palm_cx - 14, palm_cy + 0),
-        ]
-        draw.polygon(palm_pts, fill=ELEC_CYAN_HI, outline=VOID_BLACK)
-
-    # ── Eyes ─────────────────────────────────────────────────────────────────
-    eye_cy = face_cy - int(face_r * 0.15)
-    eye_sep = int(face_r * 0.52)
-
-    # NORMAL EYE — viewer's right (character's left)
-    # 70% aperture — slight squint, assessment not aggression
-    ne_cx = face_cx + eye_sep
-    ne_cy = eye_cy
-    ne_r  = int(face_r * 0.22)
-
-    # Eye white
-    draw.ellipse([ne_cx - ne_r, ne_cy - int(ne_r * 0.70),
-                  ne_cx + ne_r, ne_cy + int(ne_r * 0.70)],
-                 fill=BYTE_EYE_W, outline=VOID_BLACK, width=2)
-
-    # Top lid at 70% — slightly squinted
-    lid_drop = int(ne_r * 0.30)     # lid covers top 30%
-    draw.ellipse([ne_cx - ne_r, ne_cy - int(ne_r * 0.70),
-                  ne_cx + ne_r, ne_cy - int(ne_r * 0.70) + lid_drop * 2],
-                 fill=VOID_BLACK)
-    draw.line([(ne_cx - ne_r, ne_cy - int(ne_r * 0.70) + lid_drop),
-               (ne_cx + ne_r, ne_cy - int(ne_r * 0.70) + lid_drop)],
-              fill=VOID_BLACK, width=3)
-
-    # Iris — cyan (smaller than full eye)
-    iris_r = int(ne_r * 0.55)
-    draw.ellipse([ne_cx - iris_r, ne_cy - iris_r + lid_drop // 2,
-                  ne_cx + iris_r, ne_cy + iris_r - lid_drop // 4],
-                 fill=BYTE_EYE_CYAN, outline=VOID_BLACK, width=1)
-
-    # Pupil (small void center)
-    pu_r = int(iris_r * 0.38)
-    draw.ellipse([ne_cx - pu_r, ne_cy - pu_r + lid_drop // 3,
-                  ne_cx + pu_r, ne_cy + pu_r - lid_drop // 6],
-                 fill=VOID_BLACK)
-
-    # CRACKED EYE — viewer's left (character's right)
-    # Showing SEARCHING/PROCESSING state: 3 rotating dots cyan/magenta
-    ce_cx = face_cx - eye_sep
-    ce_cy = eye_cy
-    ce_r  = int(face_r * 0.22)
-
-    # Cracked eye socket (rectangular-ish, cracked glass look)
-    crack_eye_pts = [
-        (ce_cx - ce_r,     ce_cy - int(ce_r * 0.62)),
-        (ce_cx + ce_r,     ce_cy - int(ce_r * 0.62)),
-        (ce_cx + ce_r + 3, ce_cy),
-        (ce_cx + ce_r,     ce_cy + int(ce_r * 0.62)),
-        (ce_cx - ce_r,     ce_cy + int(ce_r * 0.62)),
-        (ce_cx - ce_r - 3, ce_cy),
-    ]
-    draw.polygon(crack_eye_pts, fill=VOID_BLACK, outline=ELEC_CYAN_DIM, width=2)
-
-    # Processing dots: 3 dots in a triangle arrangement, alt cyan/magenta
-    # CRACKED EYE DIVERGENCE (Lee Tanaka sight-line note):
-    # The cracked eye registers the environment differently from the normal eye.
-    # Shift dot cluster ~6° off-axis toward viewer's right (away from normal eye aim).
-    # Normal eye aims at center/Luma (slightly left of 0°). Cracked eye diverges outward.
-    # Divergence offset: shift dot cluster +int(ce_r*0.20) in X toward outer frame edge.
-    div_x = -int(ce_r * 0.20)   # diverge LEFT (away from normal eye) in viewer's frame
-    dot_r = int(ce_r * 0.18)
-    dot_positions = [
-        (ce_cx + div_x,          ce_cy - int(ce_r * 0.28)),  # top (diverged)
-        (ce_cx + div_x - int(ce_r * 0.28), ce_cy + int(ce_r * 0.15)),  # bottom-left
-        (ce_cx + div_x + int(ce_r * 0.28), ce_cy + int(ce_r * 0.15)),  # bottom-right
-    ]
-    dot_colors = [PROCESS_DOT_C, PROCESS_DOT_M, PROCESS_DOT_C]
-    for (dx, dy), dc in zip(dot_positions, dot_colors):
-        draw.ellipse([dx - dot_r, dy - dot_r, dx + dot_r, dy + dot_r], fill=dc)
-
-    # Crack lines across the eye (diagonal fracture — Byte's signature)
-    # Main crack: upper-left to lower-right diagonal
-    crack_x0 = ce_cx - ce_r + 4
-    crack_y0 = ce_cy - int(ce_r * 0.55)
-    crack_x1 = ce_cx + ce_r - 4
-    crack_y1 = ce_cy + int(ce_r * 0.55)
-    draw.line([(crack_x0, crack_y0), (crack_x1, crack_y1)], fill=CRACK_LINE, width=2)
-    # Branch crack
-    mid_cx = (crack_x0 + crack_x1) // 2
-    mid_cy = (crack_y0 + crack_y1) // 2
-    draw.line([(mid_cx, mid_cy), (mid_cx - 8, mid_cy - 12)], fill=CRACK_LINE, width=1)
-    draw.line([(mid_cx, mid_cy), (mid_cx + 10, mid_cy + 6)], fill=CRACK_LINE, width=1)
-
-    # ── Brow / upper face ridge ───────────────────────────────────────────────
-    # Angular brow ridges — part of Byte's triangle-heavy design
-    # Normal eye side (right): brow is furrowed — pressed down in center (disgust/assessment)
-    ne_brow_y = ne_cy - int(ne_r * 1.10)
-    draw.polygon([
-        (ne_cx - ne_r, ne_brow_y + 4),
-        (ne_cx + int(ne_r * 0.4), ne_brow_y - 4),
-        (ne_cx + ne_r + 4, ne_brow_y + 2),
-        (ne_cx + ne_r + 2, ne_brow_y + 8),
-        (ne_cx - ne_r + 2, ne_brow_y + 10),
-    ], fill=VOID_BLACK)
-
-    # Cracked eye side (left): brow also furrowed — slightly raised at outer edge
-    ce_brow_y = ce_cy - int(ce_r * 1.05)
-    draw.polygon([
-        (ce_cx - ce_r - 4, ce_brow_y + 4),
-        (ce_cx - int(ce_r * 0.4), ce_brow_y - 2),
-        (ce_cx + ce_r, ce_brow_y + 4),
-        (ce_cx + ce_r - 2, ce_brow_y + 9),
-        (ce_cx - ce_r - 2, ce_brow_y + 10),
-    ], fill=VOID_BLACK)
-
-    # ── Mouth — horizontal "ugh" grimace ─────────────────────────────────────
-    # Corners pressed OUTWARD — flat, not curled. Disgust, not snarl.
-    # Slight openness, pixel-teeth visible in row
-    mouth_cy = face_cy + int(face_r * 0.40)
-    mouth_w  = int(face_r * 0.80)
-    mouth_h  = int(face_r * 0.18)
-
-    # Mouth opening — flat horizontal ellipse
-    draw.ellipse([face_cx - mouth_w // 2, mouth_cy - mouth_h // 2,
-                  face_cx + mouth_w // 2, mouth_cy + mouth_h // 2],
-                 fill=VOID_BLACK, outline=ELEC_CYAN_DIM, width=1)
-
-    # Pixel teeth — small rectangles along top edge of mouth
-    teeth_y = mouth_cy - mouth_h // 2 + 1
-    tooth_w = 7
-    tooth_h = 6
-    num_teeth = mouth_w // (tooth_w + 2)
-    start_tx = face_cx - (num_teeth * (tooth_w + 2)) // 2
-    for ti in range(num_teeth):
-        tx = start_tx + ti * (tooth_w + 2)
-        draw.rectangle([tx, teeth_y, tx + tooth_w, teeth_y + tooth_h],
-                       fill=BYTE_EYE_W, outline=VOID_BLACK, width=1)
-
-    # Mouth corners pressed slightly OUT (not curled down) — small angular flares
-    for side in [-1, 1]:
-        corner_x = face_cx + side * mouth_w // 2
-        corner_y = mouth_cy
-        flare_pts = [
-            (corner_x, corner_y - 4),
-            (corner_x + side * 8, corner_y - 2),
-            (corner_x + side * 10, corner_y + 4),
-            (corner_x + side * 4, corner_y + 6),
-            (corner_x, corner_y + 4),
-        ]
-        draw.polygon(flare_pts, fill=BYTE_TEAL, outline=VOID_BLACK)
-
-    # ── Pixel confetti bleeding out from screen edges near hands ────────────
-    # Some confetti pixels are escaping — suggests screen membrane being breached
     for conf_seed in range(12):
         conf_rng = random.Random(conf_seed * 77)
-        # Near hand areas (left and right sides)
         for side in [-1, 1]:
             cx_conf = face_cx + side * int(face_r * 1.6) + conf_rng.randint(-20, 20)
             cy_conf = arm_cy + conf_rng.randint(-30, 40)
             conf_size = conf_rng.randint(3, 7)
-            col = CONFETTI_1 if conf_rng.randint(0, 1) == 0 else CONFETTI_2
+            col = (0, 212, 232) if conf_rng.randint(0, 1) == 0 else (232, 0, 152)
             draw.rectangle([cx_conf, cy_conf, cx_conf + conf_size, cy_conf + conf_size],
                            fill=col)
-
-    # ── Screen distortion ripple at face contact points ──────────────────────
-    # Where face is pressed against screen — pixel bleed / distortion rings
     add_glow(img, face_cx, face_cy, int(face_r * 1.6), ELEC_CYAN, steps=5, max_alpha=40)
-    draw = ImageDraw.Draw(img)
+
+def _char_to_pil(surface):
+    """Convert a cairo.ImageSurface from canonical char module to cropped PIL RGBA."""
+    from LTG_TOOL_cairo_primitives import to_pil_rgba
+    pil_img = to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    return pil_img
+
+
+def _composite_char(base_img, char_pil, cx, cy):
+    """Composite a character PIL RGBA image onto base_img centered at (cx, cy)."""
+    x = cx - char_pil.width // 2
+    y = cy - char_pil.height // 2
+    overlay = Image.new('RGBA', base_img.size, (0, 0, 0, 0))
+    overlay.paste(char_pil, (x, y), char_pil)
+    base_rgba = base_img.convert('RGBA')
+    result = Image.alpha_composite(base_rgba, overlay)
+    base_img.paste(result.convert('RGB'))
 
 
 def draw_scene(img):

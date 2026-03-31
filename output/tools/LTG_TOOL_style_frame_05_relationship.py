@@ -86,6 +86,10 @@ import random
 from PIL import Image, ImageDraw, ImageFilter
 
 _here = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, _here)
+from LTG_TOOL_char_luma import draw_luma as _canonical_draw_luma
+from LTG_TOOL_char_miri import draw_miri as _canonical_draw_miri
+from LTG_TOOL_cairo_primitives import to_pil_rgba as _to_pil_rgba
 
 OUTPUT_PATH = output_dir('color', 'style_frames', 'LTG_COLOR_styleframe_sf05.png')
 

@@ -47,6 +47,10 @@ Output: output/storyboards/panels/LTG_SB_cold_open_P07.png
 
 from PIL import Image, ImageDraw, ImageFont
 import math, random, os
+import sys
+from LTG_TOOL_char_byte import draw_byte
+from LTG_TOOL_cairo_primitives import to_pil_rgba
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 PANELS_DIR = output_dir('storyboards', 'panels')
 OUTPUT_PATH = os.path.join(PANELS_DIR, "LTG_SB_cold_open_P07.png")
@@ -146,172 +150,6 @@ def draw_confetti_burst(draw, cx, cy, count, rng_seed, r_spread=60):
         draw_irregular_poly(draw, px, py, r, sides, col, seed=i * 31 + rng_seed)
 
 
-def draw_byte_mid_phase(img, draw, byte_cx, byte_cy, body_h, screen_y2):
-    """
-    Byte mid-phase emergence from monitor screen.
-    Lower half: inside screen — desaturated, reduced opacity.
-    Upper half: real world — full teal, full opacity.
-    Expression: DETERMINED + ALARMED — wide eyes, slight open mouth.
-    Body vector: slightly upward (rising through membrane).
-    screen_y2: bottom edge of screen face (the crossing threshold line)
-    """
-    torso_h  = int(body_h * 0.62)
-    head_r   = int(body_h * 0.22)
-
-    torso_top_y = byte_cy - int(body_h * 0.50)
-    torso_bot_y = torso_top_y + torso_h
-    torso_half_w_top = int(body_h * 0.30)
-    torso_half_w_bot = int(body_h * 0.13)
-
-    # The threshold line is at screen_y2 — below = in screen (dim), above = real world (full)
-    threshold_y = screen_y2
-
-    # ── LOWER HALF (inside screen — desaturated) ──────────────────────────────
-    # Draw lower body clipped to below threshold as a separate layer
-    lower_h = int(body_h * 0.50)
-    lower_top = byte_cy  # body center = threshold
-    lower_bot = byte_cy + lower_h
-
-    # Lower torso (behind glass) — 5-sided poly, dim teal
-    lo_torso_pts = [
-        (byte_cx - torso_half_w_top,      lower_top + int(torso_h * 0.02)),
-        (byte_cx,                          lower_top - int(torso_h * 0.08)),
-        (byte_cx + torso_half_w_top,      lower_top + int(torso_h * 0.02)),
-        (byte_cx + torso_half_w_bot + 3,  lower_bot),
-        (byte_cx - torso_half_w_bot - 3,  lower_bot),
-    ]
-    draw.polygon(lo_torso_pts, fill=BYTE_TEAL_DIM, outline=ELEC_CYAN_DIM)
-
-    # Leg stubs (still inside)
-    leg_h   = int(body_h * 0.18)
-    leg_w   = int(body_h * 0.09)
-    for side in [-1, 1]:
-        leg_x = byte_cx + side * torso_half_w_bot // 2
-        draw.rectangle([leg_x - leg_w // 2, lower_bot,
-                        leg_x + leg_w // 2, lower_bot + leg_h],
-                       fill=BYTE_TEAL_DIM, outline=ELEC_CYAN_DIM)
-
-    # Glass-behind overlay: semi-transparent ELEC_CYAN to suggest glass
-    glass_overlay = Image.new('RGBA', img.size, (0, 0, 0, 0))
-    god            = ImageDraw.Draw(glass_overlay)
-    god.rectangle([byte_cx - torso_half_w_top - 5, lower_top - 5,
-                   byte_cx + torso_half_w_top + 5, lower_bot + leg_h + 5],
-                  fill=(*ELEC_CYAN, 28))
-    img.paste(Image.alpha_composite(img.convert('RGBA'), glass_overlay).convert('RGB'))
-
-    # ── UPPER HALF (emerged into real world — full teal, full opacity) ─────────
-    # Full-opacity upper torso
-    upper_top_y = torso_top_y
-    upper_bot_y = lower_top + int(torso_h * 0.04)   # slight overlap with threshold
-
-    up_torso_pts = [
-        (byte_cx - torso_half_w_top,     upper_top_y + int(torso_h * 0.18)),
-        (byte_cx,                         upper_top_y),
-        (byte_cx + torso_half_w_top,     upper_top_y + int(torso_h * 0.18)),
-        (byte_cx + torso_half_w_top - 2, upper_bot_y),
-        (byte_cx - torso_half_w_top + 2, upper_bot_y),
-    ]
-    draw.polygon(up_torso_pts, fill=BYTE_TEAL, outline=VOID_BLACK)
-
-    # Inner detail — darker core
-    inner_half_w = int(torso_half_w_top * 0.52)
-    inner_pts = [
-        (byte_cx - inner_half_w,  upper_top_y + int(torso_h * 0.28)),
-        (byte_cx,                  upper_top_y + int(torso_h * 0.10)),
-        (byte_cx + inner_half_w,  upper_top_y + int(torso_h * 0.28)),
-        (byte_cx + inner_half_w - 3, upper_bot_y - 4),
-        (byte_cx - inner_half_w + 3, upper_bot_y - 4),
-    ]
-    draw.polygon(inner_pts, fill=VOID_BLACK)
-
-    # HEAD (full opacity, upper real world)
-    head_cy = upper_top_y + int(head_r * 0.55)
-    draw_irregular_poly(draw, byte_cx, head_cy, head_r, 6,
-                        BYTE_TEAL, seed=7701, outline=VOID_BLACK)
-
-    # ── ARMS — raised (effort / determination) ───────────────────────────────
-    arm_top_y = upper_top_y + int(torso_h * 0.20)
-    arm_bot_y = upper_top_y + int(torso_h * 0.52)
-    arm_len   = int(body_h * 0.24)
-    arm_w     = int(body_h * 0.08)
-
-    for side in [-1, 1]:
-        arm_x0    = byte_cx + side * torso_half_w_top
-        arm_cx2   = arm_x0 + side * arm_len
-        arm_mid_y = arm_top_y + int((arm_bot_y - arm_top_y) * 0.5)
-        arm_pts   = [
-            (arm_x0,                     arm_top_y),
-            (arm_cx2 + side * 2,         arm_mid_y - arm_w),
-            (arm_cx2 + side * 4,         arm_mid_y + arm_w),
-            (arm_x0,                     arm_bot_y),
-        ]
-        draw.polygon(arm_pts, fill=BYTE_TEAL, outline=VOID_BLACK)
-        # Hands
-        hand_r = int(body_h * 0.065)
-        draw_irregular_poly(draw, arm_cx2 + side * 4, arm_mid_y, hand_r, 5,
-                            ELEC_CYAN_HI, seed=7702 + side * 3, outline=VOID_BLACK)
-
-    # ── EYES — DETERMINED + ALARMED (wide, energetic) ────────────────────────
-    eye_cy  = head_cy - int(head_r * 0.12)
-    eye_sep = int(head_r * 0.45)
-    e_r     = int(head_r * 0.32)   # WIDE open eyes for alarm
-
-    # Normal eye (right) — WIDE aperture, iris slightly LEFT (pushing forward)
-    ne_cx = byte_cx + eye_sep
-    ne_cy = eye_cy
-    # Wide open — no heavy lid droop
-    draw.ellipse([ne_cx - e_r, ne_cy - e_r,
-                  ne_cx + e_r, ne_cy + e_r],
-                 fill=BYTE_EYE_W, outline=VOID_BLACK, width=1)
-    # Thin alert upper lid
-    lid = int(e_r * 0.12)
-    draw.rectangle([ne_cx - e_r, ne_cy - e_r, ne_cx + e_r, ne_cy - e_r + lid],
-                   fill=VOID_BLACK)
-    # Iris — forward push (DETERMINED — iris slightly centered/left = effort-forward)
-    iris_r = int(e_r * 0.52)
-    iris_ox = -int(iris_r * 0.18)  # slight left/forward push
-    draw.ellipse([ne_cx - iris_r + iris_ox, ne_cy - iris_r + lid // 2,
-                  ne_cx + iris_r + iris_ox, ne_cy + iris_r],
-                 fill=BYTE_TEAL, outline=VOID_BLACK, width=1)
-    # Pupil dot (alarm state — tight, centered in iris)
-    draw.ellipse([ne_cx - 3 + iris_ox, ne_cy - 3 + lid // 2,
-                  ne_cx + 3 + iris_ox, ne_cy + 3 + lid // 2],
-                 fill=VOID_BLACK)
-
-    # Cracked eye (left) — WIDE, ALARMED state — processing pixels active
-    ce_cx = byte_cx - eye_sep
-    ce_cy = eye_cy
-    draw.ellipse([ce_cx - e_r, ce_cy - e_r,
-                  ce_cx + e_r, ce_cy + e_r],
-                 fill=VOID_BLACK, outline=ELEC_CYAN_DIM, width=1)
-    # Crack lines — diagonal fracture
-    draw.line([(ce_cx - e_r + 2, ce_cy - int(e_r * 0.70)),
-               (ce_cx + e_r - 2, ce_cy + int(e_r * 0.70))],
-              fill=CRACK_LINE, width=1)
-    # Processing dots — cyan + magenta alternating (3 dots) — ALARMED/PROCESSING
-    # Diverge slightly outward per Lee Tanaka sight-line spec
-    div_x = -int(e_r * 0.20)
-    for di, dot_col in enumerate([ELEC_CYAN_HI, HOT_MAGENTA, ELEC_CYAN_HI]):
-        dx = ce_cx + div_x + int((di - 1) * e_r * 0.35)
-        dy = ce_cy + int((di - 1) * 2)
-        draw.ellipse([dx - 2, dy - 2, dx + 2, dy + 2], fill=dot_col)
-
-    # ── MOUTH — slight open pixel shape (effort / alarm) ────────────────────
-    mouth_y  = head_cy + int(head_r * 0.42)
-    mouth_hw = int(head_r * 0.48)
-    # Open pixel mouth — short open rectangle
-    draw.rectangle([byte_cx - mouth_hw, mouth_y,
-                    byte_cx + mouth_hw, mouth_y + int(head_r * 0.22)],
-                   fill=VOID_BLACK, outline=ELEC_CYAN_DIM, width=1)
-    # Pixel teeth suggestion (3 small blocks)
-    tooth_w = max(1, (mouth_hw * 2) // 5)
-    for ti in range(3):
-        tx = byte_cx - mouth_hw + ti * (tooth_w + 2)
-        draw.rectangle([tx, mouth_y,
-                        tx + tooth_w, mouth_y + int(head_r * 0.12)],
-                       fill=BYTE_EYE_W)
-
-    return head_cy, head_r, body_h
 
 
 def draw_monitor_hero(draw, mon_cx, mon_cy, mon_w, mon_h):
@@ -435,6 +273,56 @@ def draw_secondary_monitors(draw, horizon_y, mon_cx, mon_cy):
         if is_warm:
             draw.text((bm_x + sm, bm_y + bm_h + 2), "warm\n(losing)",
                       font=load_font(8), fill=(180, 140, 80))
+
+
+
+def _char_to_pil(surface):
+    """Convert a cairo.ImageSurface from canonical char module to cropped PIL RGBA."""
+    from LTG_TOOL_cairo_primitives import to_pil_rgba
+    pil_img = to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    return pil_img
+
+
+def _composite_char(base_img, char_pil, cx, cy):
+    """Composite a character PIL RGBA image onto base_img centered at (cx, cy)."""
+    x = cx - char_pil.width // 2
+    y = cy - char_pil.height // 2
+    overlay = Image.new('RGBA', base_img.size, (0, 0, 0, 0))
+    overlay.paste(char_pil, (x, y), char_pil)
+    base_rgba = base_img.convert('RGBA')
+    result = Image.alpha_composite(base_rgba, overlay)
+    base_img.paste(result.convert('RGB'))
+
+def draw_byte_mid_phase(img, draw, byte_cx, byte_cy, body_h, screen_y2):
+    """Byte mid-phase through monitor — canonical renderer + composite."""
+    scale = body_h / 88.0
+    surface = draw_byte(expression="alarmed", scale=scale, facing="front")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        aspect = char_pil.width / char_pil.height
+        new_h = body_h
+        new_w = int(new_h * aspect)
+        char_pil = char_pil.resize((new_w, new_h), Image.LANCZOS)
+    # Lower half (below screen_y2) at reduced opacity to show mid-phase
+    full_byte = char_pil.copy()
+    paste_x = byte_cx - full_byte.width // 2
+    paste_y = byte_cy - full_byte.height // 2
+    # Create overlay with upper half full opacity, lower half faded
+    overlay = Image.new('RGBA', img.size, (0, 0, 0, 0))
+    overlay.paste(full_byte, (paste_x, paste_y), full_byte)
+    # Fade lower portion (below screen boundary)
+    if screen_y2 < paste_y + full_byte.height:
+        for y in range(max(0, screen_y2), min(img.size[1], paste_y + full_byte.height)):
+            for x in range(max(0, paste_x), min(img.size[0], paste_x + full_byte.width)):
+                r, g, b, a = overlay.getpixel((x, y))
+                if a > 0:
+                    overlay.putpixel((x, y), (r, g, b, int(a * 0.5)))
+    base_rgba = img.convert('RGBA')
+    result = Image.alpha_composite(base_rgba, overlay)
+    img.paste(result.convert('RGB'))
 
 
 def draw_scene(img):

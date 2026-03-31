@@ -38,6 +38,11 @@ Arc: SURPRISED — first contact. "Wait — that looked back at me."
 
 from PIL import Image, ImageDraw, ImageFont
 import math, random, os
+import sys
+from LTG_TOOL_char_byte import draw_byte
+from LTG_TOOL_char_luma import draw_luma as _draw_luma_canonical
+from LTG_TOOL_cairo_primitives import to_pil_rgba
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 PANELS_DIR = output_dir('storyboards', 'panels')
 OUTPUT_PATH = os.path.join(PANELS_DIR, "LTG_SB_act1_panel_a104.png")
@@ -109,257 +114,70 @@ def add_glow(img, cx, cy, r_max, color_rgb, steps=6, max_alpha=50):
         img.paste(Image.alpha_composite(base, glow).convert('RGB'))
 
 
+
+
+
+
+
+def _char_to_pil(surface):
+    """Convert a cairo.ImageSurface from canonical char module to cropped PIL RGBA."""
+    from LTG_TOOL_cairo_primitives import to_pil_rgba
+    pil_img = to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    return pil_img
+
+
+def _composite_char(base_img, char_pil, cx, cy):
+    """Composite a character PIL RGBA image onto base_img centered at (cx, cy)."""
+    x = cx - char_pil.width // 2
+    y = cy - char_pil.height // 2
+    overlay = Image.new('RGBA', base_img.size, (0, 0, 0, 0))
+    overlay.paste(char_pil, (x, y), char_pil)
+    base_rgba = base_img.convert('RGBA')
+    result = Image.alpha_composite(base_rgba, overlay)
+    base_img.paste(result.convert('RGB'))
+
 def draw_tv_with_byte(draw, img, rng):
-    """
-    CRT TV right half of frame, Byte clearly visible on screen.
-    Screen: mostly cleared static (Byte's presence has pushed it back slightly).
-    Byte: lower-center of screen, 2/3 body visible (chest up + head).
-    """
-    tv_left  = int(PW * 0.46)
-    tv_top   = int(DRAW_H * 0.08)
-    tv_right = PW - 8
-    tv_bot   = int(DRAW_H * 0.88)
-    tv_w     = tv_right - tv_left
-    tv_h     = tv_bot   - tv_top
-
-    # TV body
-    draw.rectangle([tv_left, tv_top, tv_right, tv_bot],
-                   fill=TV_BODY, outline=TV_TRIM, width=4)
-    for cx, cy in [(tv_left + 18, tv_top + 18), (tv_right - 18, tv_top + 18),
-                   (tv_left + 18, tv_bot - 18), (tv_right - 18, tv_bot - 18)]:
-        draw.ellipse([cx - 18, cy - 18, cx + 18, cy + 18], fill=TV_BODY)
-
-    bezel = 22
-    sx  = tv_left  + bezel
-    sy  = tv_top   + bezel
-    sw  = tv_right - bezel - sx
-    sh  = int(tv_h * 0.80)
-    # Screen bg — less static now (Byte has "displaced" it)
-    draw.rectangle([sx, sy, sx + sw, sy + sh], fill=(60, 78, 72))  # cleared/dim screen
-
-    # Residual static at screen edges (Byte displaced center)
-    for _ in range(120):
-        px = rng.randint(sx, sx + sw - 1)
-        py = rng.randint(sy, sy + sh - 1)
-        # Static only near screen edges
-        edge_dist = min(px - sx, sx + sw - px, py - sy, sy + sh - py)
-        if edge_dist < 40:
-            lum = rng.randint(40, 130)
-            draw.rectangle([px, py, px + 1, py + 1], fill=(lum, lum + 5, lum - 2))
-
-    # Scan lines
-    for scan_y in range(sy, sy + sh, 4):
-        draw.line([sx, scan_y, sx + sw, scan_y], fill=(48, 60, 56), width=1)
-
-    # Screen glow (strong — Byte is bright)
-    screen_cx = sx + sw // 2
-    screen_cy = sy + sh // 2
-    add_glow(img, screen_cx, screen_cy, 160, CRT_CYAN, steps=7, max_alpha=35)
-    draw = ImageDraw.Draw(img)
-
-    # ── BYTE on screen ───────────────────────────────────────────────────────
-    # Byte appears center-screen, 2/3 body reveal (chest up + head visible)
-    # He's small — this is a CRT TV at medium distance
-    byte_cx  = sx + sw // 2
-    byte_top = sy + sh // 2 - 10   # appears in lower-center of screen
-
-    # Body proportions — pixel/blocky digital character
-    byte_body_w = 36
-    byte_body_h = 32
-    byte_head_r = 16
-
-    byte_head_cy = byte_top - byte_head_r
-    byte_body_top = byte_top
-
-    # Byte's glow aura (he's digital — glows bright on screen)
-    add_glow(img, byte_cx, byte_top + byte_body_h // 2, 55,
-             BYTE_GLOW, steps=5, max_alpha=55)
-    draw = ImageDraw.Draw(img)
-
-    # Body (slightly rectangular — pixel character)
-    draw.rectangle([byte_cx - byte_body_w // 2, byte_body_top,
-                    byte_cx + byte_body_w // 2, byte_body_top + byte_body_h],
-                   fill=BYTE_BODY, outline=BYTE_OUTLINE, width=2)
-
-    # Arms CROSSED (indignant pose) — horizontal lines across torso
-    arm_y = byte_body_top + byte_body_h // 2
-    # Left arm
-    draw.rectangle([byte_cx - byte_body_w // 2 - 12, arm_y - 5,
-                    byte_cx + byte_body_w // 2 + 2, arm_y + 5],
-                   fill=BYTE_BODY, outline=BYTE_OUTLINE, width=1)
-    # Right arm crossing over
-    draw.rectangle([byte_cx - byte_body_w // 2, arm_y - 9,
-                    byte_cx + byte_body_w // 2 + 12, arm_y + 1],
-                   fill=BYTE_BODY, outline=BYTE_OUTLINE, width=1)
-    # Arm cross indication (line)
-    draw.line([(byte_cx - byte_body_w // 2 + 4, arm_y - 3),
-               (byte_cx + byte_body_w // 2 - 4, arm_y - 3)],
-              fill=BYTE_OUTLINE, width=2)
-
-    # Pixel accents on body
-    for px_off in [-12, 0, 12]:
-        draw.rectangle([byte_cx + px_off - 2, byte_body_top + 4,
-                        byte_cx + px_off + 2, byte_body_top + 8],
-                       fill=BYTE_PIXEL)
-
-    # Head
-    draw.rectangle([byte_cx - byte_head_r, byte_head_cy - byte_head_r,
-                    byte_cx + byte_head_r, byte_head_cy + byte_head_r],
-                   fill=BYTE_BODY, outline=BYTE_OUTLINE, width=2)
-
-    # Eyes — INDIGNANT: one eye slightly narrowed, one normal
-    # Left eye (viewer's left — his right) — slightly squinted (one-eyebrow raise)
-    le_x = byte_cx - byte_head_r // 2
-    re_x = byte_cx + byte_head_r // 2
-    eye_y = byte_head_cy - 2
-
-    # Left eye — normal width
-    draw.rectangle([le_x - 5, eye_y - 4, le_x + 5, eye_y + 4],
-                   fill=BYTE_EYE_W, outline=BYTE_OUTLINE, width=1)
-    draw.rectangle([le_x - 3, eye_y - 3, le_x + 3, eye_y + 3],
-                   fill=BYTE_PUPIL)
-
-    # Right eye — narrowed (indignant squint)
-    draw.rectangle([re_x - 5, eye_y - 2, re_x + 5, eye_y + 4],
-                   fill=BYTE_EYE_W, outline=BYTE_OUTLINE, width=1)
-    draw.rectangle([re_x - 3, eye_y - 1, re_x + 3, eye_y + 3],
-                   fill=BYTE_PUPIL)
-
-    # Brows — asymmetric (indignant: one raised HIGH, other flat/down)
-    # Left brow — raised high (surprise / "who are YOU")
-    draw.line([le_x - 6, eye_y - 8, le_x + 6, eye_y - 10],
-              fill=BYTE_OUTLINE, width=2)
-    # Right brow — flat/lowered (annoyed)
-    draw.line([re_x - 6, eye_y - 5, re_x + 6, eye_y - 4],
-              fill=BYTE_OUTLINE, width=2)
-
-    # Mouth — flat, slightly downturned (unamused / "really?")
-    draw.line([byte_cx - 6, byte_head_cy + byte_head_r // 2 + 2,
-               byte_cx + 6, byte_head_cy + byte_head_r // 2 + 2],
-              fill=BYTE_OUTLINE, width=2)
-    # Corner downturns
-    draw.line([byte_cx - 6, byte_head_cy + byte_head_r // 2 + 2,
-               byte_cx - 8, byte_head_cy + byte_head_r // 2 + 5],
-              fill=BYTE_OUTLINE, width=1)
-
-    # Pixel confetti around Byte (his digital presence bleeds into static)
-    confetti_positions = [
-        (byte_cx - 22, byte_head_cy - 14), (byte_cx + 20, byte_head_cy - 12),
-        (byte_cx - 28, byte_top + 10), (byte_cx + 24, byte_top + 8),
-        (byte_cx - 18, byte_top + byte_body_h + 6), (byte_cx + 16, byte_top + byte_body_h + 4),
-    ]
-    for cpx, cpy in confetti_positions:
-        draw.rectangle([cpx, cpy, cpx + 3, cpy + 3], fill=BYTE_PIXEL)
-
-    # TV controls bottom
-    ctrl_y = sy + sh + 4
-    ctrl_h = tv_bot - (sy + sh) - 8
-    led_cx = tv_left + tv_w - 30
-    led_cy = ctrl_y + max(ctrl_h // 2, 6)
-    draw.ellipse([led_cx - 4, led_cy - 4, led_cx + 4, led_cy + 4], fill=(220, 140, 40))
-    add_glow(img, led_cx, led_cy, 12, (220, 140, 40), steps=3, max_alpha=50)
-
-    # Stickers
-    for i, sc in enumerate([(200, 60, 60), (60, 180, 60)]):
-        draw.rectangle([tv_left + 14 + i * 18, tv_top + 14,
-                        tv_left + 14 + i * 18 + 12, tv_top + 22],
-                       fill=sc, outline=(150, 140, 120), width=1)
-
-    return draw
+    """TV with Byte on screen — canonical Byte renderer."""
+    # Draw TV frame first
+    tv_cx, tv_cy = int(PW * 0.72), int(DRAW_H * 0.38)
+    tv_w, tv_h = 140, 110
+    draw.rectangle([tv_cx - tv_w//2, tv_cy - tv_h//2,
+                    tv_cx + tv_w//2, tv_cy + tv_h//2],
+                   fill=(40, 35, 28), outline=(80, 70, 55), width=3)
+    # Screen area
+    scr_x0 = tv_cx - tv_w//2 + 8
+    scr_y0 = tv_cy - tv_h//2 + 8
+    scr_x1 = tv_cx + tv_w//2 - 8
+    scr_y1 = tv_cy + tv_h//2 - 8
+    draw.rectangle([scr_x0, scr_y0, scr_x1, scr_y1], fill=(10, 10, 20))
+    # Byte inside screen
+    scale = 0.6
+    surface = draw_byte(expression="grumpy", scale=scale, facing="front")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        target_h = scr_y1 - scr_y0 - 10
+        aspect = char_pil.width / char_pil.height
+        new_w = int(target_h * aspect)
+        char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
+    _composite_char(img, char_pil, (scr_x0 + scr_x1) // 2, (scr_y0 + scr_y1) // 2)
 
 
 def draw_luma_surprised(draw, img):
-    """
-    Luma — MCU left half, SURPRISED reaction to Byte appearing.
-    Expression: wide eyes, jaw dropped, slightly leaned back from prior lean-in.
-    This is pure shock — "it looked at me."
-    """
-    luma_cx  = int(PW * 0.20)
-    head_r   = 44
-    head_cx  = luma_cx + 6
-    head_cy  = int(DRAW_H * 0.32)
-    torso_top = head_cy + head_r + 4
-
-    # ── Hair ─────────────────────────────────────────────────────────────────
-    draw.ellipse([head_cx - head_r - 18, head_cy - head_r - 20,
-                  head_cx + head_r + 12, head_cy + head_r + 8],
-                 fill=LUMA_HAIR)
-    for hx, hy, hr in [(head_cx - head_r - 10, head_cy - head_r - 10, 9),
-                        (head_cx + head_r + 6, head_cy - head_r - 6, 7),
-                        (head_cx - head_r, head_cy - head_r - 18, 8)]:
-        draw.ellipse([hx - hr, hy - hr, hx + hr, hy + hr], fill=LUMA_HAIR)
-
-    # ── Body ─────────────────────────────────────────────────────────────────
-    draw.rectangle([luma_cx - 40, torso_top, luma_cx + 46, DRAW_H + 10],
-                   fill=LUMA_HOODIE, outline=LUMA_OUTLINE, width=2)
-
-    # CRT glow on face — strong (she's close to the screen)
-    glow_layer = Image.new('RGBA', (PW, DRAW_H), (0, 0, 0, 0))
-    gl = ImageDraw.Draw(glow_layer)
-    for r in [65, 45, 28]:
-        alpha = max(12, 45 - r // 2)
-        gl.ellipse([head_cx + head_r // 4 - r, head_cy - r,
-                    head_cx + head_r // 4 + r, head_cy + r],
-                   fill=(*CRT_GLOW, alpha))
-    base = img.convert('RGBA')
-    panel = base.crop((0, 0, PW, DRAW_H))
-    merged = Image.alpha_composite(panel.convert('RGBA'), glow_layer)
-    img.paste(merged.convert('RGB'), (0, 0))
-    draw = ImageDraw.Draw(img)
-
-    # ── Face ─────────────────────────────────────────────────────────────────
-    draw.ellipse([head_cx - head_r, head_cy - head_r,
-                  head_cx + head_r, head_cy + head_r],
-                 fill=LUMA_SKIN, outline=LUMA_OUTLINE, width=2)
-
-    # Eyes — VERY wide (full surprised aperture)
-    eye_y = head_cy - 6
-    eye_w = int(head_r * 0.58)
-    eye_h = int(head_r * 0.46)  # taller than normal (wide open = more height)
-
-    for side, ex_off in enumerate([int(head_r * 0.25), int(head_r * 0.70)]):
-        ex = head_cx + ex_off - head_r // 3
-        draw.ellipse([ex - eye_w // 2, eye_y - eye_h // 2,
-                      ex + eye_w // 2, eye_y + eye_h // 2],
-                     fill=(245, 242, 235), outline=LUMA_OUTLINE, width=1)
-        iris_r = int(eye_h * 0.38)
-        draw.ellipse([ex - iris_r, eye_y - iris_r, ex + iris_r, eye_y + iris_r],
-                     fill=LUMA_EYE)
-        draw.ellipse([ex - iris_r + 2, eye_y - iris_r + 2,
-                      ex + iris_r - 2, eye_y + iris_r - 2],
-                     fill=(18, 12, 6))
-        # CRT reflection in eye (cyan highlight)
-        draw.rectangle([ex + 2, eye_y - iris_r + 1, ex + 6, eye_y - iris_r + 5],
-                       fill=(0, 240, 255))
-
-    # Brows — HIGH raised (full surprise — both brows up)
-    brow_y = eye_y - eye_h // 2 - 10
-    for ex_off in [int(head_r * 0.25), int(head_r * 0.70)]:
-        ex = head_cx + ex_off - head_r // 3
-        draw.arc([ex - eye_w // 2, brow_y - 10, ex + eye_w // 2, brow_y + 4],
-                 start=200, end=340, fill=LUMA_HAIR, width=2)
-
-    # Mouth — OPEN/DROPPED (surprise — O shape)
-    mouth_cy = head_cy + int(head_r * 0.48)
-    # Dropped jaw = tall O shape
-    draw.ellipse([head_cx - int(head_r * 0.22), mouth_cy - 7,
-                  head_cx + int(head_r * 0.18), mouth_cy + 12],
-                 fill=(60, 36, 22), outline=LUMA_OUTLINE, width=2)
-    # Teeth suggestion (top teeth visible)
-    draw.rectangle([head_cx - int(head_r * 0.16), mouth_cy - 5,
-                    head_cx + int(head_r * 0.14), mouth_cy - 1],
-                   fill=(240, 235, 225))
-
-    # Nose
-    draw.arc([head_cx - 5, head_cy + 5, head_cx + 11, head_cy + 15],
-             start=240, end=300, fill=LUMA_OUTLINE, width=1)
-
-    # One hand visible (the reaching hand from previous panel — now pulling back slightly)
-    draw.ellipse([head_cx + head_r + 5, head_cy + 10,
-                  head_cx + head_r + 22, head_cy + 24],
-                 fill=LUMA_SKIN, outline=LUMA_OUTLINE)
-
-    return draw
+    """Luma surprised — canonical renderer."""
+    scale = 0.5
+    surface = _draw_luma_canonical(expression="SURPRISED", scale=scale, facing="left")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        target_h = 200
+        aspect = char_pil.width / char_pil.height
+        new_w = int(target_h * aspect)
+        char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
+    luma_cx = int(PW * 0.30)
+    luma_cy = int(DRAW_H * 0.62)
+    _composite_char(img, char_pil, luma_cx, luma_cy)
 
 
 def make_panel():

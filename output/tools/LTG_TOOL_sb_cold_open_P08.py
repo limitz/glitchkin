@@ -40,6 +40,10 @@ except ImportError:
     def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFont
 import math, random, os
+import sys
+from LTG_TOOL_char_byte import draw_byte
+from LTG_TOOL_cairo_primitives import to_pil_rgba
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 PANELS_DIR = output_dir('storyboards', 'panels')
 OUTPUT_PATH = os.path.join(PANELS_DIR, "LTG_SB_cold_open_P08.png")
@@ -124,190 +128,6 @@ def draw_irregular_poly(draw, cx, cy, r, sides, color, seed=0, outline=None):
     draw.polygon(pts, fill=color, outline=outline)
 
 
-def draw_byte_full_body(img, draw, byte_cx, byte_floor_y, body_h):
-    """
-    Draw Byte's full body standing in the real world.
-    byte_cx: horizontal center of Byte
-    byte_floor_y: y-coordinate of the floor (Byte stands on this)
-    body_h: height of Byte's full body in pixels
-    """
-    # Byte is TINY — body_h should be small (real world scale = ~6 inches)
-    # Full body = head + torso (inverted teardrop) + stubby legs
-
-    torso_h  = int(body_h * 0.65)
-    leg_h    = int(body_h * 0.28)
-    head_r   = int(body_h * 0.22)   # head is roughly top sphere of the teardrop
-
-    torso_top_y = byte_floor_y - body_h
-    torso_bot_y = byte_floor_y - leg_h
-    torso_cx    = byte_cx
-
-    # ── BODY (inverted teardrop — wide at top, tapers toward legs) ───────────
-    # 5-sided irregular polygon for torso
-    torso_half_w_top = int(body_h * 0.32)
-    torso_half_w_bot = int(body_h * 0.14)
-
-    torso_pts = [
-        (torso_cx - torso_half_w_top,     torso_top_y + int(torso_h * 0.18)),   # upper-left
-        (torso_cx,                        torso_top_y),                           # top center
-        (torso_cx + torso_half_w_top,     torso_top_y + int(torso_h * 0.18)),   # upper-right
-        (torso_cx + torso_half_w_bot + 4, torso_bot_y - 4),                      # lower-right
-        (torso_cx - torso_half_w_bot - 4, torso_bot_y - 4),                      # lower-left
-    ]
-    draw.polygon(torso_pts, fill=BYTE_TEAL, outline=VOID_BLACK)
-
-    # Inner body detail (darker core for depth)
-    inner_half_w = int(torso_half_w_top * 0.55)
-    inner_pts = [
-        (torso_cx - inner_half_w,  torso_top_y + int(torso_h * 0.28)),
-        (torso_cx,                 torso_top_y + int(torso_h * 0.10)),
-        (torso_cx + inner_half_w,  torso_top_y + int(torso_h * 0.28)),
-        (torso_cx + inner_half_w - 4, torso_bot_y - 8),
-        (torso_cx - inner_half_w + 4, torso_bot_y - 8),
-    ]
-    draw.polygon(inner_pts, fill=VOID_BLACK)
-
-    # ── HEAD (merged with torso top — big round top of teardrop) ─────────────
-    # Head protrudes from top of torso
-    head_cy = torso_top_y + int(head_r * 0.6)
-    # 6-sided irregular polygon for head
-    draw_irregular_poly(draw, torso_cx, head_cy, head_r, 6,
-                        BYTE_TEAL, seed=8801, outline=VOID_BLACK)
-
-    # ── ARMS (short stubby — angled slightly outward) ─────────────────────────
-    arm_top_y = torso_top_y + int(torso_h * 0.22)
-    arm_bot_y = torso_top_y + int(torso_h * 0.55)
-    arm_w     = int(body_h * 0.08)
-    arm_len   = int(body_h * 0.22)
-
-    for side in [-1, 1]:
-        arm_x0  = torso_cx + side * torso_half_w_top
-        arm_cx2 = arm_x0 + side * arm_len
-        arm_mid_y = (arm_top_y + arm_bot_y) // 2
-        # Arm as 4-point polygon
-        arm_pts = [
-            (arm_x0,          arm_top_y),
-            (arm_cx2 + side * 2, arm_mid_y - arm_w),
-            (arm_cx2 + side * 4, arm_mid_y + arm_w),
-            (arm_x0,          arm_bot_y),
-        ]
-        draw.polygon(arm_pts, fill=BYTE_TEAL, outline=VOID_BLACK)
-
-        # Hand (small irregular polygon)
-        hand_cx = arm_cx2 + side * 4
-        hand_cy = arm_mid_y
-        hand_r  = int(body_h * 0.068)
-        draw_irregular_poly(draw, hand_cx, hand_cy, hand_r, 5,
-                            ELEC_CYAN_HI, seed=8802 + side * 3, outline=VOID_BLACK)
-
-    # ── LEGS (short stubby, slightly spread) ─────────────────────────────────
-    leg_top_y = torso_bot_y - 4
-    leg_w     = int(body_h * 0.095)
-
-    for side in [-1, 1]:
-        leg_x    = torso_cx + side * torso_half_w_bot // 2
-        foot_x   = leg_x + side * int(body_h * 0.05)
-        leg_pts  = [
-            (leg_x - leg_w // 2, leg_top_y),
-            (leg_x + leg_w // 2, leg_top_y),
-            (foot_x + leg_w // 2 + side * 2, byte_floor_y),
-            (foot_x - leg_w // 2 + side * 2, byte_floor_y),
-        ]
-        draw.polygon(leg_pts, fill=BYTE_TEAL, outline=VOID_BLACK)
-
-        # Foot (wider — pixel foot shape, angular)
-        foot_y = byte_floor_y - 3
-        foot_pts = [
-            (foot_x - int(body_h * 0.06), foot_y),
-            (foot_x + side * int(body_h * 0.14) + int(body_h * 0.06), foot_y),
-            (foot_x + side * int(body_h * 0.14), foot_y + int(body_h * 0.06)),
-            (foot_x - int(body_h * 0.04), foot_y + int(body_h * 0.06)),
-        ]
-        draw.polygon(foot_pts, fill=ELEC_CYAN_HI, outline=VOID_BLACK)
-
-    # ── EYES ─────────────────────────────────────────────────────────────────
-    # At this scale, eyes are small but still read clearly
-    eye_cy = head_cy - int(head_r * 0.15)
-    eye_sep = int(head_r * 0.46)
-    e_r     = int(head_r * 0.30)
-
-    # Normal eye (right)
-    ne_cx = torso_cx + eye_sep
-    ne_cy = eye_cy
-    draw.ellipse([ne_cx - e_r, ne_cy - int(e_r * 0.75),
-                  ne_cx + e_r, ne_cy + int(e_r * 0.75)],
-                 fill=BYTE_EYE_W, outline=VOID_BLACK, width=1)
-    # Squint lid
-    lid = int(e_r * 0.28)
-    draw.line([(ne_cx - e_r, ne_cy - int(e_r * 0.75) + lid),
-               (ne_cx + e_r, ne_cy - int(e_r * 0.75) + lid)],
-              fill=VOID_BLACK, width=2)
-    draw.ellipse([ne_cx - e_r, ne_cy - int(e_r * 0.75),
-                  ne_cx + e_r, ne_cy - int(e_r * 0.75) + lid * 2],
-                 fill=VOID_BLACK)
-    # Iris — LEVEL-FORWARD gaze (Lee Tanaka: contempt beat = level-forward or slight upward)
-    # Slight upward offset: iris centered at slightly above the eye midpoint.
-    # NOT downward (shame/resignation) — Byte is contemptuous, not defeated.
-    iris_r = int(e_r * 0.50)
-    gaze_up = int(e_r * 0.10)   # subtle upward push — superiority/contempt gaze
-    draw.ellipse([ne_cx - iris_r, ne_cy - iris_r + lid // 2 - gaze_up,
-                  ne_cx + iris_r, ne_cy + iris_r - gaze_up],
-                 fill=BYTE_TEAL, outline=VOID_BLACK, width=1)
-
-    # Cracked eye (left)
-    ce_cx = torso_cx - eye_sep
-    ce_cy = eye_cy
-    draw.ellipse([ce_cx - e_r, ce_cy - int(e_r * 0.75),
-                  ce_cx + e_r, ce_cy + int(e_r * 0.75)],
-                 fill=VOID_BLACK, outline=ELEC_CYAN_DIM, width=1)
-    # Main crack line
-    draw.line([(ce_cx - e_r + 2, ce_cy - int(e_r * 0.65)),
-               (ce_cx + e_r - 2, ce_cy + int(e_r * 0.65))],
-              fill=CRACK_LINE, width=1)
-    # Alive eye dot — shifted upward to match level-forward/contempt gaze direction
-    # Sits at left-center rather than lower-left, consistent with outward-level aim
-    draw.ellipse([ce_cx - int(e_r * 0.38) - 2, ce_cy - int(e_r * 0.06),
-                  ce_cx - int(e_r * 0.38) + 4, ce_cy - int(e_r * 0.06) + 4],
-                 fill=ELEC_CYAN)
-
-    # ── EXPRESSION — grudging assessment ─────────────────────────────────────
-    # Mouth: narrow flat line — slightly downturned at corners (reluctant)
-    mouth_y = head_cy + int(head_r * 0.40)
-    mouth_hw = int(head_r * 0.50)
-    draw.line([(torso_cx - mouth_hw, mouth_y),
-               (torso_cx + mouth_hw, mouth_y)],
-              fill=VOID_BLACK, width=2)
-    # Slightly downturned corners
-    draw.line([(torso_cx - mouth_hw, mouth_y),
-               (torso_cx - mouth_hw - 3, mouth_y + 3)],
-              fill=VOID_BLACK, width=2)
-    draw.line([(torso_cx + mouth_hw, mouth_y),
-               (torso_cx + mouth_hw + 3, mouth_y + 3)],
-              fill=VOID_BLACK, width=2)
-
-    # ── PIXEL TRAILS / CONFETTI still drifting from emergence ────────────────
-    # Faint magenta + cyan pixel sparks floating upward and outward
-    for spark_seed in range(20):
-        srng = random.Random(spark_seed * 131 + 7)
-        # Drift pattern: sparks fall upward + spread left/right (post-emergence)
-        dx = srng.randint(-int(body_h * 1.8), int(body_h * 1.8))
-        dy = -srng.randint(int(body_h * 0.2), int(body_h * 2.2))   # upward
-        sx = torso_cx + dx
-        sy = torso_top_y + dy
-        if sy > 0 and sx > 0 and sx < PW:
-            spark_size = srng.randint(2, 5)
-            col = CONFETTI_C if srng.randint(0, 2) != 0 else CONFETTI_M
-            alpha_fade = max(0, 255 - abs(dy) // 2)
-            draw.rectangle([sx, sy, sx + spark_size, sy + spark_size], fill=col)
-
-    # Trailing pixel artifacts from emergence — elongated streaks downward from Byte
-    for trail_i in range(5):
-        trng = random.Random(trail_i * 43 + 200)
-        tx = torso_cx + trng.randint(-20, 20)
-        ty_start = torso_top_y - trng.randint(5, 25)
-        ty_end   = ty_start + trng.randint(8, 20)
-        col = ELEC_CYAN_DIM if trng.randint(0, 1) == 0 else CRACK_LINE
-        draw.line([(tx, ty_start), (tx, ty_end)], fill=col, width=1)
 
 
 def draw_desaturation_ring(draw, byte_cx, byte_floor_y, radius):
@@ -322,6 +142,41 @@ def draw_desaturation_ring(draw, byte_cx, byte_floor_y, radius):
         draw.ellipse([byte_cx - rw2, ring_y - rh2,
                       byte_cx + rw2, ring_y + rh2],
                      outline=DESAT_RING, width=1)
+
+
+
+def _char_to_pil(surface):
+    """Convert a cairo.ImageSurface from canonical char module to cropped PIL RGBA."""
+    from LTG_TOOL_cairo_primitives import to_pil_rgba
+    pil_img = to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    return pil_img
+
+
+def _composite_char(base_img, char_pil, cx, cy):
+    """Composite a character PIL RGBA image onto base_img centered at (cx, cy)."""
+    x = cx - char_pil.width // 2
+    y = cy - char_pil.height // 2
+    overlay = Image.new('RGBA', base_img.size, (0, 0, 0, 0))
+    overlay.paste(char_pil, (x, y), char_pil)
+    base_rgba = base_img.convert('RGBA')
+    result = Image.alpha_composite(base_rgba, overlay)
+    base_img.paste(result.convert('RGB'))
+
+def draw_byte_full_body(img, draw, byte_cx, byte_floor_y, body_h):
+    """Byte full body reveal — canonical renderer + composite."""
+    scale = body_h / 88.0
+    surface = draw_byte(expression="grumpy", scale=scale, facing="front")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        aspect = char_pil.width / char_pil.height
+        new_h = body_h
+        new_w = int(new_h * aspect)
+        char_pil = char_pil.resize((new_w, new_h), Image.LANCZOS)
+    # Position: feet at byte_floor_y
+    _composite_char(img, char_pil, byte_cx, byte_floor_y - char_pil.height // 2)
 
 
 def draw_scene(img):

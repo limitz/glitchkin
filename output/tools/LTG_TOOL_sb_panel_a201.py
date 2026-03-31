@@ -37,6 +37,11 @@ from PIL import Image, ImageDraw, ImageFont
 import math
 import random
 import os
+import sys
+from LTG_TOOL_char_cosmo import draw_cosmo
+from LTG_TOOL_char_luma import draw_luma as _draw_luma_canonical
+from LTG_TOOL_cairo_primitives import to_pil_rgba
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 ACT2_PANELS_DIR = output_dir('storyboards', 'act2', 'panels')
 PANELS_DIR = output_dir('storyboards', 'panels')
@@ -255,183 +260,8 @@ def draw_desk_and_monitor(draw, img):
     return mon_cx, mon_cy, desk_y_top
 
 
-def draw_cosmo_bg(draw, img, mon_cx, desk_y_top):
-    """
-    Cosmo at desk — BG, back/3-4 to camera.
-    Back of head visible, leaning forward toward monitor.
-    Screen glow catching on face profile.
-    FOCUSED state.
-    """
-    cx = int(PW * 0.62)
-    seat_y = int(DRAW_H * 0.72)
-
-    # BG scale — slightly smaller (depth reading)
-    scale = 0.72
-
-    head_r = int(22 * scale)
-    body_w = int(50 * scale)
-    body_h = int(70 * scale)
-
-    # Body (3/4 back view — torso slightly angled toward monitor)
-    body_cx = cx
-    body_top = seat_y - body_h - head_r * 2 + 5
-
-    draw.ellipse([body_cx - body_w // 2, body_top,
-                  body_cx + body_w // 2, body_top + body_h],
-                 fill=COSMO_SHIRT, outline=COSMO_OUTLINE, width=2)
-
-    # Legs / seated lower body
-    draw.ellipse([body_cx - body_w // 2 + 4, body_top + body_h - 10,
-                  body_cx + body_w // 2 - 4, body_top + body_h + 20],
-                 fill=COSMO_PANTS, outline=COSMO_OUTLINE, width=1)
-
-    # Chair (simple back)
-    chair_back_x = body_cx + body_w // 2 - 4
-    draw.line([chair_back_x, body_top + 10, chair_back_x, seat_y + 10],
-              fill=DESK_SHADOW, width=4)
-    draw.line([chair_back_x - 20, body_top + 10, chair_back_x + 5, body_top + 10],
-              fill=DESK_SHADOW, width=3)
-
-    # Arms reaching forward toward keyboard/monitor (FOCUSED lean)
-    # Left arm
-    draw.line([body_cx - 18, body_top + 20,
-               body_cx - 10, desk_y_top - 2],
-              fill=COSMO_SKIN, width=int(9 * scale))
-    # Right arm
-    draw.line([body_cx + 18, body_top + 20,
-               body_cx + 25, desk_y_top - 2],
-              fill=COSMO_SKIN, width=int(9 * scale))
-
-    # Head (back of head + slight profile glimpse — 3/4 away)
-    head_cx = body_cx + int(5 * scale)
-    head_cy = body_top - head_r + 2
-
-    draw.ellipse([head_cx - head_r, head_cy - head_r,
-                  head_cx + head_r, head_cy + head_r],
-                 fill=COSMO_SKIN, outline=COSMO_OUTLINE, width=2)
-
-    # Hair (back of head)
-    draw.ellipse([head_cx - head_r, head_cy - head_r - 2,
-                  head_cx + head_r, head_cy + 4],
-                 fill=COSMO_HAIR)
-
-    # Monitor glow on face/neck profile (side catch light)
-    add_glow(img, head_cx - head_r + 2, head_cy, head_r + 8,
-             (0, 160, 200), steps=4, max_alpha=40)
-
-    return cx, body_top
 
 
-def draw_doorway_and_luma(draw, img):
-    """
-    Doorway FG-left. Luma leaning in, DETERMINED.
-    FG = larger scale, brighter color, partial crop at bottom.
-    Warm hallway light from behind her.
-    """
-    # Doorway frame (left edge of frame)
-    door_x1 = 0
-    door_x2 = int(PW * 0.22)
-    door_top = 0
-    door_bot = DRAW_H
-
-    # Hallway warm light behind door (warm amber)
-    hall_layer = Image.new('RGBA', (PW, DRAW_H), (0, 0, 0, 0))
-    hd = ImageDraw.Draw(hall_layer)
-    # Warm light spilling from hallway
-    for r in [140, 110, 80, 55]:
-        alpha = max(6, 20 - r // 12)
-        hd.ellipse([door_x1 - r, door_top + door_bot // 2 - r,
-                    door_x1 + r, door_top + door_bot // 2 + r],
-                   fill=(220, 175, 100, alpha))
-    base = img.convert('RGBA')
-    panel_area = base.crop((0, 0, PW, DRAW_H))
-    merged = Image.alpha_composite(panel_area.convert('RGBA'), hall_layer)
-    img.paste(merged.convert('RGB'), (0, 0))
-    draw = ImageDraw.Draw(img)
-
-    # Door frame (left edge + top)
-    draw.rectangle([door_x2 - 8, door_top, door_x2, door_bot],
-                   fill=DOOR_FRAME, outline=(40, 30, 20))
-    draw.line([door_x2, door_top, door_x2, door_bot],
-              fill=(30, 22, 14), width=3)
-
-    # ── Luma — FG left, in doorway ─────────────────────────────────────────
-    # FG = full size, partially cropped at bottom (doorway establishes depth)
-    luma_cx = int(PW * 0.14)
-    luma_base = int(DRAW_H * 1.05)   # body extends below frame = FG depth read
-
-    head_r  = 36
-    body_w  = 72
-    body_h  = 110
-
-    head_cy = luma_base - body_h - head_r - 4
-
-    # Body (leaning in — torso angled slightly right into room)
-    body_top = head_cy + head_r + 2
-    lean_offset = 8   # lean into room
-    draw.ellipse([luma_cx - body_w // 2 + lean_offset, body_top,
-                  luma_cx + body_w // 2 + lean_offset, body_top + body_h],
-                 fill=LUMA_JACKET, outline=LUMA_OUTLINE, width=2)
-
-    # Arm (reaching into room or hand on doorframe — DETERMINED lean)
-    # Right arm extended forward into room
-    draw.line([luma_cx + body_w // 2 + lean_offset, body_top + 18,
-               luma_cx + body_w // 2 + lean_offset + 45, body_top + 28],
-              fill=LUMA_SKIN, width=10)
-    # Hand blob
-    draw.ellipse([luma_cx + body_w // 2 + lean_offset + 38, body_top + 22,
-                  luma_cx + body_w // 2 + lean_offset + 54, body_top + 36],
-                 fill=LUMA_SKIN, outline=LUMA_OUTLINE, width=1)
-
-    # Left arm on doorframe
-    draw.line([luma_cx - body_w // 2 + lean_offset, body_top + 18,
-               door_x2 - 4, body_top + 28],
-              fill=LUMA_SKIN, width=10)
-
-    # Head
-    draw.ellipse([luma_cx - head_r + lean_offset, head_cy - head_r,
-                  luma_cx + head_r + lean_offset, head_cy + head_r],
-                 fill=LUMA_SKIN, outline=LUMA_OUTLINE, width=2)
-
-    # Hair
-    draw.ellipse([luma_cx - head_r + lean_offset, head_cy - head_r - 2,
-                  luma_cx + head_r + lean_offset, head_cy + 8],
-                 fill=LUMA_HAIR)
-
-    # DETERMINED expression: eyes forward, chin slightly down, brows set
-    eye_y = head_cy - 4
-    # Eyes — both open, forward-facing gaze toward Cosmo
-    for ex_off in [-12, 12]:
-        ex = luma_cx + lean_offset + ex_off
-        draw.ellipse([ex - 7, eye_y - 5, ex + 7, eye_y + 5],
-                     fill=STATIC_WHITE)
-        draw.ellipse([ex - 4, eye_y - 3, ex + 4, eye_y + 3],
-                     fill=(40, 60, 80))    # dark iris — looking toward Cosmo
-
-    # Brows (set — determined, not raised/fearful — firm horizontal with slight inward angle)
-    draw.line([luma_cx + lean_offset - 16, eye_y - 9,
-               luma_cx + lean_offset - 4, eye_y - 8],
-              fill=LUMA_HAIR, width=2)
-    draw.line([luma_cx + lean_offset + 4, eye_y - 8,
-               luma_cx + lean_offset + 16, eye_y - 9],
-              fill=LUMA_HAIR, width=2)
-
-    # Mouth (firm small smile — confidence)
-    draw.arc([luma_cx + lean_offset - 8, head_cy + 5,
-              luma_cx + lean_offset + 8, head_cy + 15],
-             start=10, end=170, fill=LUMA_OUTLINE, width=2)
-
-    # Door frame casting shadow over part of Luma (depth feel)
-    shadow = Image.new('RGBA', (PW, DRAW_H), (0, 0, 0, 0))
-    shdw = ImageDraw.Draw(shadow)
-    shdw.rectangle([door_x2, 0, door_x2 + 12, DRAW_H], fill=(0, 0, 0, 40))
-    base = img.convert('RGBA')
-    panel_area = base.crop((0, 0, PW, DRAW_H))
-    merged = Image.alpha_composite(panel_area.convert('RGBA'), shadow)
-    img.paste(merged.convert('RGB'), (0, 0))
-    draw = ImageDraw.Draw(img)
-
-    return draw, luma_cx, lean_offset, head_cy
 
 
 def draw_annotations(draw, luma_cx, luma_lean, luma_head_cy,
@@ -471,6 +301,62 @@ def draw_annotations(draw, luma_cx, luma_lean, luma_head_cy,
     # Camera position callout
     draw.text((PW - 200, 8), "high-angle cam", font=font_ann, fill=ANN_DIM)
     draw.text((PW - 200, 18), "3/4 room view", font=font_ann, fill=ANN_DIM)
+
+
+
+def _char_to_pil(surface):
+    """Convert a cairo.ImageSurface from canonical char module to cropped PIL RGBA."""
+    from LTG_TOOL_cairo_primitives import to_pil_rgba
+    pil_img = to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    return pil_img
+
+
+def _composite_char(base_img, char_pil, cx, cy):
+    """Composite a character PIL RGBA image onto base_img centered at (cx, cy)."""
+    x = cx - char_pil.width // 2
+    y = cy - char_pil.height // 2
+    overlay = Image.new('RGBA', base_img.size, (0, 0, 0, 0))
+    overlay.paste(char_pil, (x, y), char_pil)
+    base_rgba = base_img.convert('RGBA')
+    result = Image.alpha_composite(base_rgba, overlay)
+    base_img.paste(result.convert('RGB'))
+
+def draw_cosmo_bg(draw, img, mon_cx, desk_y_top):
+    """Cosmo at desk — canonical renderer."""
+    scale = 0.8
+    surface = draw_cosmo(expression="SKEPTICAL", scale=scale, facing="front")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        target_h = int(desk_y_top * 0.6)
+        aspect = char_pil.width / char_pil.height
+        new_w = int(target_h * aspect)
+        char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
+    _composite_char(img, char_pil, mon_cx, desk_y_top - char_pil.height // 2 - 10)
+
+
+def draw_doorway_and_luma(draw, img):
+    """Luma in doorway — canonical renderer."""
+    # Draw doorway frame
+    door_cx = int(PW * 0.18)
+    door_top = int(DRAW_H * 0.15)
+    door_bottom = int(DRAW_H * 0.88)
+    door_w = 80
+    draw.rectangle([door_cx - door_w//2, door_top,
+                    door_cx + door_w//2, door_bottom],
+                   fill=(250, 240, 220), outline=(120, 100, 70), width=2)
+    # Luma in doorway
+    scale = 0.35
+    surface = _draw_luma_canonical(expression="CURIOUS", scale=scale, facing="right")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        target_h = int((door_bottom - door_top) * 0.7)
+        aspect = char_pil.width / char_pil.height
+        new_w = int(target_h * aspect)
+        char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
+    _composite_char(img, char_pil, door_cx, door_bottom - char_pil.height // 2 - 5)
 
 
 def make_panel():

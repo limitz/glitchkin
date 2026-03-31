@@ -49,6 +49,10 @@ import math
 import random
 import os
 import shutil
+import sys
+from LTG_TOOL_char_cosmo import draw_cosmo
+from LTG_TOOL_cairo_primitives import to_pil_rgba
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 PANELS_DIR = output_dir('storyboards', 'panels')
 ACT2_PANELS = output_dir('storyboards', 'act2', 'panels')
@@ -142,6 +146,47 @@ def load_fonts():
     )
 
 
+
+def _char_to_pil(surface):
+    """Convert a cairo.ImageSurface from canonical char module to cropped PIL RGBA."""
+    from LTG_TOOL_cairo_primitives import to_pil_rgba
+    pil_img = to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    return pil_img
+
+
+def _composite_char(base_img, char_pil, cx, cy):
+    """Composite a character PIL RGBA image onto base_img centered at (cx, cy)."""
+    x = cx - char_pil.width // 2
+    y = cy - char_pil.height // 2
+    overlay = Image.new('RGBA', base_img.size, (0, 0, 0, 0))
+    overlay.paste(char_pil, (x, y), char_pil)
+    base_rgba = base_img.convert('RGBA')
+    result = Image.alpha_composite(base_rgba, overlay)
+    base_img.paste(result.convert('RGB'))
+
+def draw_cosmo_skeptical(draw, cx, cy, head_w, head_h, full_body=True):
+    """Cosmo skeptical — canonical renderer."""
+    scale = head_h / 84.0
+    surface = draw_cosmo(expression="SKEPTICAL", scale=scale, facing="front")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        if full_body:
+            target_h = int(head_h * 3.5)
+        else:
+            target_h = int(head_h * 1.5)
+        aspect = char_pil.width / char_pil.height
+        new_w = int(target_h * aspect)
+        char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
+    try:
+        img = draw._image
+        _composite_char(img, char_pil, cx, cy)
+    except AttributeError:
+        pass
+
+
 def make_panel(filepath, shot_label, caption_text, draw_fn, bg_color=(30, 24, 20)):
     """Create a 480×270 storyboard panel."""
     img  = Image.new('RGB', (PW, PH), bg_color)
@@ -201,185 +246,6 @@ def pixel_confetti(draw, cx, cy, spread_x, spread_y, rng, n=10, colors=None):
         draw.rectangle([px, py, px + sz, py + sz], fill=col)
 
 
-def draw_cosmo_skeptical(draw, cx, cy, head_w, head_h, full_body=True):
-    """
-    Draw Cosmo with SKEPTICAL expression:
-      - One brow UP (his left = viewer's right), other brow flat
-      - Flat deadpan mouth
-      - Glasses tilted 9° (more than neutral 7°)
-      - Arms crossed (skeptical body language)
-    head_w, head_h: dimensions of the rounded-rectangle head
-    """
-    # ── Body ────────────────────────────────────────────────────────────────
-    torso_w = int(head_w * 0.86)
-    torso_h = int(head_h * 1.2)
-    neck_h  = int(head_h * 0.08)
-
-    head_top  = cy - head_h // 2
-    head_bot  = cy + head_h // 2
-    neck_top  = head_bot
-    neck_bot  = neck_top + neck_h
-    torso_top = neck_bot
-    torso_bot = torso_top + torso_h
-
-    if full_body:
-        # Upper legs
-        leg_w  = int(head_w * 0.22)
-        leg_h  = int(head_h * 0.8)
-        lleg_x = cx - torso_w // 2
-        rleg_x = cx + torso_w // 2 - leg_w
-        draw.rectangle([lleg_x, torso_bot, lleg_x + leg_w, torso_bot + leg_h],
-                       fill=COSMO_PANTS, outline=COSMO_OUTLINE, width=1)
-        draw.rectangle([rleg_x, torso_bot, rleg_x + leg_w, torso_bot + leg_h],
-                       fill=COSMO_PANTS, outline=COSMO_OUTLINE, width=1)
-
-        # Feet
-        foot_h = int(head_h * 0.12)
-        foot_w = int(head_w * 0.28)
-        draw.ellipse([lleg_x - 3, torso_bot + leg_h - 2,
-                      lleg_x + foot_w, torso_bot + leg_h + foot_h],
-                     fill=(40, 35, 30), outline=COSMO_OUTLINE, width=1)
-        draw.ellipse([rleg_x - 3, torso_bot + leg_h - 2,
-                      rleg_x + foot_w, torso_bot + leg_h + foot_h],
-                     fill=(40, 35, 30), outline=COSMO_OUTLINE, width=1)
-
-    # Torso
-    draw.rounded_rectangle([cx - torso_w // 2, torso_top, cx + torso_w // 2, torso_bot],
-                            radius=int(torso_w * 0.12),
-                            fill=COSMO_SHIRT, outline=COSMO_OUTLINE, width=2)
-
-    # Collar detail
-    draw.line([cx - 6, torso_top + 4, cx, torso_top + 14], fill=COSMO_OUTLINE, width=2)
-    draw.line([cx + 6, torso_top + 4, cx, torso_top + 14], fill=COSMO_OUTLINE, width=2)
-
-    # ── CROSSED ARMS (skeptical posture) ──────────────────────────────────
-    arm_y   = torso_top + torso_h // 3
-    arm_len = int(head_w * 0.55)
-    arm_w   = max(4, int(head_w * 0.12))
-
-    # Right arm crossing left (viewer's right to left)
-    draw.line([cx + torso_w // 2, arm_y,
-               cx - arm_len // 3, arm_y + 10],
-              fill=COSMO_SHIRT, width=arm_w)
-    draw.line([cx + torso_w // 2, arm_y,
-               cx - arm_len // 3, arm_y + 10],
-              fill=COSMO_OUTLINE, width=1)
-
-    # Left arm crossing right (viewer's left to right)
-    draw.line([cx - torso_w // 2, arm_y + 8,
-               cx + arm_len // 3, arm_y + 18],
-              fill=COSMO_SHIRT, width=arm_w)
-    draw.line([cx - torso_w // 2, arm_y + 8,
-               cx + arm_len // 3, arm_y + 18],
-              fill=COSMO_OUTLINE, width=1)
-
-    # Arm overlap block (center cross)
-    arm_cross_w = int(head_w * 0.60)
-    arm_cross_h = int(head_h * 0.18)
-    draw.rectangle([cx - arm_cross_w // 2, arm_y,
-                    cx + arm_cross_w // 2, arm_y + arm_cross_h],
-                   fill=COSMO_SHIRT, outline=COSMO_OUTLINE, width=1)
-
-    # Neck
-    draw.rectangle([cx - int(head_w * 0.14), neck_top,
-                    cx + int(head_w * 0.14), neck_bot],
-                   fill=COSMO_SKIN, outline=COSMO_OUTLINE, width=1)
-
-    # ── Head ────────────────────────────────────────────────────────────────
-    corner_r = int(head_w * 0.12)
-    draw.rounded_rectangle([cx - head_w // 2, head_top,
-                             cx + head_w // 2, head_bot],
-                            radius=corner_r,
-                            fill=COSMO_SKIN, outline=COSMO_OUTLINE, width=2)
-
-    # Hair (flat on top, very short)
-    hair_h = int(head_h * 0.15)
-    draw.rounded_rectangle([cx - head_w // 2 + 2, head_top - hair_h + 4,
-                             cx + head_w // 2 - 2, head_top + hair_h],
-                            radius=int(head_w * 0.10),
-                            fill=COSMO_HAIR, outline=COSMO_OUTLINE, width=1)
-
-    # Cowlick (top center, slight lean left)
-    cow_x = cx - int(head_w * 0.10)
-    cow_y = head_top - hair_h - 2
-    draw.ellipse([cow_x - 4, cow_y - 5, cow_x + 4, cow_y + 5],
-                 fill=COSMO_HAIR, outline=COSMO_OUTLINE, width=1)
-
-    # ── SKEPTICAL EXPRESSION ────────────────────────────────────────────────
-    # Glasses at 9° (more than neutral 7°)
-    # We'll draw glasses slightly tilted by offsetting L vs R eye heights
-    eye_y_base = cy - int(head_h * 0.05)
-    lens_r     = int(head_w * 0.16)   # each lens radius (0.32 × head_w / 2)
-    lens_sep   = int(head_w * 0.20)   # separation between lens centers
-    frame_w    = max(3, int(head_w * 0.06))
-
-    # 9° tilt: left lens (viewer) lower, right lens higher
-    tilt_offset = int(head_w * 0.08)  # ~9° approximated by vertical offset
-
-    # LEFT lens center (viewer's left = character's right)
-    l_lx = cx - lens_sep
-    l_ly = eye_y_base + tilt_offset // 2
-
-    # RIGHT lens center (viewer's right = character's left)
-    r_lx = cx + lens_sep
-    r_ly = eye_y_base - tilt_offset // 2
-
-    # Draw lenses (glass tint + frame)
-    for lx, ly in [(l_lx, l_ly), (r_lx, r_ly)]:
-        draw.ellipse([lx - lens_r, ly - lens_r, lx + lens_r, ly + lens_r],
-                     fill=COSMO_LENS, outline=COSMO_GLASS, width=frame_w)
-        # Glare highlight
-        draw.arc([lx - lens_r + 3, ly - lens_r + 3,
-                  lx - 4,         ly - 2],
-                 start=210, end=300, fill=STATIC_WHITE, width=max(1, frame_w // 2))
-
-    # Nose bridge
-    draw.line([l_lx + lens_r, l_ly, r_lx - lens_r, r_ly],
-              fill=COSMO_GLASS, width=frame_w)
-
-    # ── EYES through lenses ──────────────────────────────────────────────────
-    eye_r = int(lens_r * 0.55)
-    for lx, ly in [(l_lx, l_ly), (r_lx, r_ly)]:
-        draw.ellipse([lx - eye_r, ly - eye_r, lx + eye_r, ly + eye_r],
-                     fill=(235, 215, 180))
-        # Pupil
-        p_r = max(2, eye_r // 2)
-        draw.ellipse([lx - p_r, ly - p_r, lx + p_r, ly + p_r], fill=(20, 15, 10))
-        # Highlight
-        draw.rectangle([lx - p_r + 1, ly - p_r + 1,
-                        lx - p_r + 3, ly - p_r + 3], fill=STATIC_WHITE)
-
-    # ── SKEPTICAL BROWS ──────────────────────────────────────────────────────
-    brow_thick = max(2, int(head_w * 0.06))
-
-    # His LEFT brow = viewer's RIGHT (r_lx): RAISED high — the skeptical brow
-    brow_raise = int(head_h * 0.12)  # significantly raised
-    draw.arc([r_lx - lens_r, r_ly - lens_r - brow_raise - 4,
-              r_lx + lens_r, r_ly - lens_r + 4 - brow_raise],
-             start=200, end=340, fill=COSMO_HAIR, width=brow_thick)
-
-    # His RIGHT brow = viewer's LEFT (l_lx): FLAT (skeptical asymmetry)
-    flat_brow_y = l_ly - lens_r - 6
-    draw.line([l_lx - lens_r + 4, flat_brow_y,
-               l_lx + lens_r - 4, flat_brow_y],
-              fill=COSMO_HAIR, width=brow_thick)
-
-    # ── FLAT DEADPAN MOUTH ────────────────────────────────────────────────────
-    mouth_y = cy + int(head_h * 0.22)
-    mouth_w = int(head_w * 0.30)
-    draw.line([cx - mouth_w // 2, mouth_y,
-               cx + mouth_w // 2, mouth_y],
-              fill=COSMO_OUTLINE, width=max(2, int(head_w * 0.04)))
-
-    # Slight skeptical downturn at left corner
-    draw.line([cx - mouth_w // 2, mouth_y,
-               cx - mouth_w // 2 - 2, mouth_y + 3],
-              fill=COSMO_OUTLINE, width=max(2, int(head_w * 0.03)))
-
-
-# ═══════════════════════════════════════════════════════════════════════════════
-#  PANEL A2-03 — Cosmo SKEPTICAL (wide/medium — wrong plan beat)
-# ═══════════════════════════════════════════════════════════════════════════════
 
 def draw_a203(img, draw, font, font_bold, font_cap, font_ann):
     """

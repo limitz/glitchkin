@@ -37,6 +37,10 @@ from PIL import Image, ImageDraw, ImageFont
 import math
 import random
 import os
+import sys
+from LTG_TOOL_char_luma import draw_luma as _draw_luma_canonical
+from LTG_TOOL_cairo_primitives import to_pil_rgba
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 PANELS_DIR = output_dir('storyboards', 'panels')
 OUTPUT_PATH = os.path.join(PANELS_DIR, "LTG_SB_act1_panel_a103.png")
@@ -214,189 +218,42 @@ def draw_crt_corner(draw, img, rng):
     return draw
 
 
+
+
+
+def _char_to_pil(surface):
+    """Convert a cairo.ImageSurface from canonical char module to cropped PIL RGBA."""
+    from LTG_TOOL_cairo_primitives import to_pil_rgba
+    pil_img = to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    return pil_img
+
+
+def _composite_char(base_img, char_pil, cx, cy):
+    """Composite a character PIL RGBA image onto base_img centered at (cx, cy)."""
+    x = cx - char_pil.width // 2
+    y = cy - char_pil.height // 2
+    overlay = Image.new('RGBA', base_img.size, (0, 0, 0, 0))
+    overlay.paste(char_pil, (x, y), char_pil)
+    base_rgba = base_img.convert('RGBA')
+    result = Image.alpha_composite(base_rgba, overlay)
+    base_img.paste(result.convert('RGB'))
+
 def draw_luma_mcu(draw, img):
-    """
-    Luma — MCU / slightly low angle (camera is at child-height, looking upward).
-    Face fills at least 50% of frame width (400px at 800px wide).
-    Camera is BELOW Luma's eyeline — low angle = we look UP at her face.
-    CRT screen is OFF-FRAME lower-left — glow hits LEFT CHEEK (warm-green asymmetric).
-    Expression: CURIOUS → SURPRISED (transitional)
-      - One eye wider than the other (left eye wider — screen-side)
-      - Mouth slightly open
-    """
-    # MCU: face is the dominant element — fills the RIGHT 60% of the frame
-    # Left side has screen corner and glow; right side is Luma's face close-up
-    face_cx = int(PW * 0.60)     # center of face — shifted right
-    face_cy = int(DRAW_H * 0.38) # upper portion (slightly below top) — low angle
-
-    head_w = 290   # wide MCU — face fills > 50% of 800px frame
-    head_h = 260
-
-    # ── Background behind face ────────────────────────────────────────────────
-    # Wall — very dark, with CRT glow spilling from lower-left
-    draw.rectangle([0, 0, PW, DRAW_H], fill=BG_DARK)
-    # Floor line (low angle camera shows floor, slight upward perspective)
-    floor_y = int(DRAW_H * 0.80)
-    draw.rectangle([0, floor_y, PW, DRAW_H], fill=FLOOR_DARK)
-    draw.line([0, floor_y, PW, floor_y], fill=(38, 30, 20), width=2)
-
-    # CRT glow from lower-left corner (dominant light source)
-    add_glow(img, 0, DRAW_H, 500, CRT_AMBER_GREEN, steps=9, max_alpha=48)
-    add_glow(img, 0, DRAW_H, 320, CRT_AMBER, steps=6, max_alpha=38)
-    add_glow(img, 60, DRAW_H - 30, 250, CRT_GREEN, steps=5, max_alpha=28)
-    draw = ImageDraw.Draw(img)
-
-    # ── Neck + body (cropped MCU — lower body below frame) ───────────────────
-    neck_cx = face_cx
-    neck_top = face_cy + head_h // 2 - 15
-    neck_w   = 80
-    draw.rectangle([neck_cx - neck_w // 2, neck_top,
-                    neck_cx + neck_w // 2, DRAW_H + 40],
-                   fill=LUMA_SKIN, outline=LUMA_OUTLINE, width=1)
-
-    # Hoodie shoulders/body (cropped at bottom of frame — true MCU)
-    shoulder_w = head_w + 60
-    draw.ellipse([neck_cx - shoulder_w // 2, neck_top + 20,
-                  neck_cx + shoulder_w // 2, neck_top + 140],
-                 fill=LUMA_HOODIE, outline=LUMA_OUTLINE, width=2)
-    # Collar / hoodie body fills frame bottom
-    draw.rectangle([neck_cx - shoulder_w // 2, neck_top + 50,
-                    neck_cx + shoulder_w // 2, DRAW_H + 20],
-                   fill=LUMA_HOODIE, outline=LUMA_OUTLINE, width=2)
-
-    # ── Hair ─────────────────────────────────────────────────────────────────
-    # Hair crown (above face) — low angle = we see top of head
-    draw.ellipse([face_cx - head_w // 2 - 22, face_cy - head_h // 2 - 30,
-                  face_cx + head_w // 2 + 22, face_cy + head_h // 2 - 60],
-                 fill=LUMA_HAIR)
-    # Hair volume at sides
-    draw.ellipse([face_cx - head_w // 2 - 28, face_cy - head_h // 4,
-                  face_cx - head_w // 2 + 20, face_cy + head_h // 4],
-                 fill=LUMA_HAIR)
-    draw.ellipse([face_cx + head_w // 2 - 20, face_cy - head_h // 4,
-                  face_cx + head_w // 2 + 28, face_cy + head_h // 4],
-                 fill=LUMA_HAIR)
-    # Side hair strands
-    for dy in range(-60, 80, 18):
-        draw.ellipse([face_cx - head_w // 2 - 18, face_cy + dy,
-                      face_cx - head_w // 2 + 8, face_cy + dy + 14],
-                     fill=LUMA_HAIR)
-
-    # ── Face ─────────────────────────────────────────────────────────────────
-    # Shadow side (right side — away from CRT glow)
-    draw.ellipse([face_cx - head_w // 2, face_cy - head_h // 2,
-                  face_cx + head_w // 2, face_cy + head_h // 2],
-                 fill=LUMA_SKIN_DARK, outline=LUMA_OUTLINE, width=2)
-    # Lit side (LEFT side — facing screen glow) with warm-green tint
-    draw.ellipse([face_cx - head_w // 2, face_cy - head_h // 2,
-                  face_cx + 15, face_cy + head_h // 2],
-                 fill=LUMA_SKIN)
-
-    # ── CRT glow on LEFT CHEEK (screen side) — asymmetric lighting ───────────
-    glow_layer = Image.new('RGBA', (PW, DRAW_H), (0, 0, 0, 0))
-    gl = ImageDraw.Draw(glow_layer)
-
-    # Warm-green catch light on LEFT cheek (toward screen lower-left)
-    cheek_cx = face_cx - head_w // 4    # left cheek center
-    cheek_cy = face_cy + 30
-    for r in [110, 80, 55, 35]:
-        alpha = max(10, 42 - r // 3)
-        gl.ellipse([cheek_cx - r, cheek_cy - r,
-                    cheek_cx + r, cheek_cy + r],
-                   fill=(*CRT_AMBER_GREEN, alpha))
-    # Amber component on left brow
-    brow_glow_cx = face_cx - head_w // 3
-    brow_glow_cy = face_cy - head_h // 5
-    for r in [70, 48]:
-        alpha = max(8, 28 - r // 4)
-        gl.ellipse([brow_glow_cx - r, brow_glow_cy - r,
-                    brow_glow_cx + r, brow_glow_cy + r],
-                   fill=(*CRT_AMBER, alpha))
-
-    base       = img.convert('RGBA')
-    panel_crop = base.crop((0, 0, PW, DRAW_H))
-    merged     = Image.alpha_composite(panel_crop.convert('RGBA'), glow_layer)
-    img.paste(merged.convert('RGB'), (0, 0))
-    draw = ImageDraw.Draw(img)
-
-    # ── Eyes — transitional CURIOUS → SURPRISED ──────────────────────────────
-    # Left eye (CRT-facing side): WIDER — the surprising side
-    # Right eye: slightly less wide — asymmetric = transitional state
-    eye_y     = face_cy - head_h // 8
-    left_ex   = face_cx - int(head_w * 0.22)
-    right_ex  = face_cx + int(head_w * 0.22)
-
-    # LEFT EYE — wider (screen side, sees the Glitchkin first)
-    lew  = 70   # eye width
-    leh  = 55   # eye height (taller = more surprised)
-    draw.ellipse([left_ex - lew // 2, eye_y - leh // 2,
-                  left_ex + lew // 2, eye_y + leh // 2],
-                 fill=LUMA_EYE_WHITE, outline=LUMA_OUTLINE, width=2)
-    draw.ellipse([left_ex - 18, eye_y - 18, left_ex + 18, eye_y + 18],
-                 fill=LUMA_EYE_IRIS)
-    draw.ellipse([left_ex - 11, eye_y - 11, left_ex + 11, eye_y + 11],
-                 fill=LUMA_EYE_PUPIL)
-    # CRT catch-light in left eye (amber-green from screen)
-    draw.ellipse([left_ex - 8, eye_y - 8, left_ex - 2, eye_y - 2],
-                 fill=(160, 240, 80))
-    # Specular highlight
-    draw.ellipse([left_ex + 4, eye_y - 7, left_ex + 8, eye_y - 3],
-                 fill=(255, 255, 240))
-
-    # RIGHT EYE — slightly less open (curious, not yet fully surprised)
-    rew  = 60
-    reh  = 44
-    draw.ellipse([right_ex - rew // 2, eye_y - reh // 2,
-                  right_ex + rew // 2, eye_y + reh // 2],
-                 fill=LUMA_EYE_WHITE, outline=LUMA_OUTLINE, width=2)
-    draw.ellipse([right_ex - 14, eye_y - 14, right_ex + 14, eye_y + 14],
-                 fill=LUMA_EYE_IRIS)
-    draw.ellipse([right_ex - 9, eye_y - 9, right_ex + 9, eye_y + 9],
-                 fill=LUMA_EYE_PUPIL)
-    # Specular highlight
-    draw.ellipse([right_ex + 3, eye_y - 6, right_ex + 7, eye_y - 2],
-                 fill=(255, 255, 240))
-
-    # ── Brows — raised (both), left higher than right ─────────────────────────
-    brow_y = eye_y - leh // 2 - 14
-    # Left brow — higher arc (more surprised)
-    draw.arc([left_ex - lew // 2, brow_y - 14,
-              left_ex + lew // 2, brow_y + 8],
-             start=200, end=340, fill=LUMA_HAIR, width=3)
-    # Right brow — slightly lower (still raised but less)
-    draw.arc([right_ex - rew // 2, brow_y - 8,
-              right_ex + rew // 2, brow_y + 8],
-             start=200, end=340, fill=LUMA_HAIR, width=3)
-
-    # ── Nose (frontal MCU — straight-on) ─────────────────────────────────────
-    nose_tip_y = face_cy + 22
-    nose_cx    = face_cx - 8   # slight 3/4 turn toward screen
-    draw.line([nose_cx + 10, eye_y + 28, nose_cx + 8, nose_tip_y - 6],
-              fill=(170, 120, 75), width=2)
-    draw.arc([nose_cx - 12, nose_tip_y - 10,
-              nose_cx + 6, nose_tip_y + 4],
-             start=30, end=200, fill=LUMA_OUTLINE, width=2)
-    draw.arc([nose_cx + 6, nose_tip_y - 10,
-              nose_cx + 24, nose_tip_y + 4],
-             start=340, end=150, fill=LUMA_OUTLINE, width=2)
-
-    # ── Mouth — slightly open (surprise beginning) ────────────────────────────
-    mouth_y   = face_cy + head_h // 4 + 5
-    mouth_w   = 55
-    # Lower lip opening — O-shape, small
-    draw.arc([nose_cx - mouth_w // 2, mouth_y - 6,
-              nose_cx + mouth_w // 2, mouth_y + 18],
-             start=0, end=180, fill=LUMA_OUTLINE, width=3)
-    # Upper lip
-    draw.arc([nose_cx - mouth_w // 2 + 8, mouth_y - 14,
-              nose_cx + mouth_w // 2 - 8, mouth_y + 2],
-             start=200, end=340, fill=(165, 110, 75), width=2)
-    # Inner dark (mouth open)
-    draw.ellipse([nose_cx - 10, mouth_y - 2,
-                  nose_cx + 10, mouth_y + 12],
-                 fill=(38, 22, 14))
-
-    return draw
+    """Luma MCU — canonical renderer (close-up)."""
+    scale = 1.2
+    surface = _draw_luma_canonical(expression="CURIOUS", scale=scale, facing="right")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        target_h = int(DRAW_H * 0.85)
+        aspect = char_pil.width / char_pil.height
+        new_w = int(target_h * aspect)
+        char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
+    luma_cx = int(PW * 0.45)
+    luma_cy = int(DRAW_H * 0.55)
+    _composite_char(img, char_pil, luma_cx, luma_cy)
 
 
 def make_panel():

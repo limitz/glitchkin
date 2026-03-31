@@ -47,6 +47,10 @@ except ImportError:
     def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFont
 import math, random, os
+import sys
+from LTG_TOOL_char_glitch import draw_glitch
+from LTG_TOOL_cairo_primitives import to_pil_rgba
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 PANELS_DIR = output_dir('storyboards', 'panels')
 OUTPUT_PATH = os.path.join(PANELS_DIR, "LTG_SB_cold_open_P22.png")
@@ -135,84 +139,8 @@ def draw_distortion_rings(draw, cx, cy, count, base_r, rng):
                      outline=ring_color, width=1)
 
 
-def draw_glitchkin_face_ecl(draw, cx, cy, face_r, expression, rng):
-    """Draw a distinct Glitchkin face pressed against glass at ECU scale."""
-    # Squished face — slightly wider than tall (pressed flat)
-    rh = int(face_r * 0.82)
-    face_color = lerp_color(BYTE_TEAL, ELEC_CYAN, rng.uniform(0.25, 0.55))
-    draw.ellipse([cx - face_r, cy - rh, cx + face_r, cy + rh], fill=face_color)
-    # Slightly darker interior for form
-    inner_r = int(face_r * 0.75)
-    draw.ellipse([cx - inner_r, cy - int(rh * 0.7),
-                  cx + inner_r, cy + int(rh * 0.7)],
-                 fill=lerp_color(face_color, BYTE_BODY_DK, 0.15))
-
-    eye_r = max(4, int(face_r * 0.22))
-
-    if expression == "eager":
-        # Wide eyes, both open and bright
-        for ex_off in [-int(face_r * 0.32), int(face_r * 0.32)]:
-            draw.ellipse([cx + ex_off - eye_r, cy - eye_r - 2,
-                          cx + ex_off + eye_r, cy + eye_r - 2],
-                         fill=(0, 240, 255))
-            # Iris
-            ir = max(2, eye_r // 2)
-            draw.ellipse([cx + ex_off - ir, cy - ir - 2,
-                          cx + ex_off + ir, cy + ir - 2],
-                         fill=VOID_BLACK)
-        # Eager open mouth
-        draw.ellipse([cx - int(face_r * 0.18), cy + int(rh * 0.25),
-                      cx + int(face_r * 0.18), cy + int(rh * 0.55)],
-                     fill=(0, 180, 200))
-    elif expression == "squished_side":
-        # Face pressed sideways, one eye visible, cracked
-        # Only left half of face really visible (squished against glass at angle)
-        one_eye_x = cx - int(face_r * 0.15)
-        draw.ellipse([one_eye_x - eye_r, cy - eye_r,
-                      one_eye_x + eye_r, cy + eye_r],
-                     fill=(0, 240, 255))
-        ir = max(2, eye_r // 2)
-        draw.ellipse([one_eye_x - ir, cy - ir,
-                      one_eye_x + ir, cy + ir],
-                     fill=VOID_BLACK)
-        # Crack line through eye
-        draw.line([(one_eye_x - eye_r, cy - eye_r),
-                   (one_eye_x + eye_r + 2, cy + eye_r + 2)],
-                  fill=HOT_MAGENTA, width=2)
-        # Compressed mouth line
-        draw.line([(cx - int(face_r * 0.3), cy + int(rh * 0.35)),
-                   (cx + int(face_r * 0.1), cy + int(rh * 0.4))],
-                  fill=(0, 180, 200), width=2)
-    elif expression == "hidden":
-        # No face details — just the shape (shy, further back)
-        # Slightly desaturated
-        draw.ellipse([cx - face_r, cy - rh, cx + face_r, cy + rh],
-                     fill=lerp_color(face_color, VOID_BLACK, 0.2))
-
-    return face_r, rh
 
 
-def draw_glitchkin_hand(draw, cx, cy, size, splay, rng):
-    """Draw a Glitchkin hand pressing against glass — fingers splayed."""
-    # Palm
-    palm_r = size
-    draw.ellipse([cx - palm_r, cy - int(palm_r * 0.9),
-                  cx + palm_r, cy + int(palm_r * 0.9)],
-                 fill=lerp_color(BYTE_TEAL, ELEC_CYAN, 0.45))
-    # Fingers
-    n_fingers = rng.randint(3, 5) if splay else rng.randint(2, 3)
-    spread = 50 if splay else 25
-    for fi in range(n_fingers):
-        angle = math.radians(-90 - spread + fi * (2 * spread / max(1, n_fingers - 1)))
-        fl = palm_r + rng.randint(6, 14)
-        fw = max(3, int(palm_r * 0.3))
-        fx = int(cx + fl * math.cos(angle))
-        fy = int(cy + fl * math.sin(angle))
-        draw.line([(cx + int(palm_r * 0.3 * math.cos(angle)),
-                    cy + int(palm_r * 0.3 * math.sin(angle))),
-                   (fx, fy)], fill=BYTE_TEAL, width=fw)
-        # Fingertip blob
-        draw.ellipse([fx - 3, fy - 3, fx + 3, fy + 3], fill=ELEC_CYAN)
 
 
 def draw_screen_cracks(draw, origin_x, origin_y, length, branches, rng):
@@ -235,6 +163,64 @@ def draw_screen_cracks(draw, origin_x, origin_y, length, branches, rng):
                 bx = int(x + blen * math.cos(ba))
                 by = int(y + blen * math.sin(ba))
                 draw.line([(x, y), (bx, by)], fill=(200, 200, 210), width=1)
+
+
+
+def _char_to_pil(surface):
+    """Convert a cairo.ImageSurface from canonical char module to cropped PIL RGBA."""
+    from LTG_TOOL_cairo_primitives import to_pil_rgba
+    pil_img = to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    return pil_img
+
+
+def _composite_char(base_img, char_pil, cx, cy):
+    """Composite a character PIL RGBA image onto base_img centered at (cx, cy)."""
+    x = cx - char_pil.width // 2
+    y = cy - char_pil.height // 2
+    overlay = Image.new('RGBA', base_img.size, (0, 0, 0, 0))
+    overlay.paste(char_pil, (x, y), char_pil)
+    base_rgba = base_img.convert('RGBA')
+    result = Image.alpha_composite(base_rgba, overlay)
+    base_img.paste(result.convert('RGB'))
+
+def draw_glitchkin_face_ecl(draw, cx, cy, face_r, expression, rng):
+    """Glitchkin face ECL — canonical renderer."""
+    expr_map = {"neutral": "neutral", "mischievous": "mischievous",
+                "panicked": "panicked", "triumphant": "triumphant"}
+    expr = expr_map.get(expression, "neutral")
+    scale = face_r / 38.0
+    surface = draw_glitch(expression=expr, scale=scale, facing="front")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        target_h = int(face_r * 2.5)
+        aspect = char_pil.width / char_pil.height
+        new_w = int(target_h * aspect)
+        char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
+    try:
+        img = draw._image
+        _composite_char(img, char_pil, cx, cy)
+    except AttributeError:
+        pass
+
+
+def draw_glitchkin_hand(draw, cx, cy, size, splay, rng):
+    """Glitchkin hand — canonical renderer (uses Glitch as proxy)."""
+    scale = size / 76.0
+    surface = draw_glitch(expression="mischievous", scale=scale, facing="front")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        target_h = size
+        aspect = char_pil.width / char_pil.height
+        new_w = int(target_h * aspect)
+        char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
+    try:
+        img = draw._image
+        _composite_char(img, char_pil, cx, cy)
+    except AttributeError:
+        pass
 
 
 def draw_panel():

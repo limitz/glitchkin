@@ -47,6 +47,10 @@ except ImportError:
 from PIL import Image, ImageDraw, ImageFont
 import math
 import os
+import sys
+from LTG_TOOL_char_byte import draw_byte
+from LTG_TOOL_cairo_primitives import to_pil_rgba
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 ACT2_PANELS_DIR = output_dir('storyboards', 'act2', 'panels')
 OUTPUT_PATH     = os.path.join(ACT2_PANELS_DIR, "LTG_SB_act2_panel_a202.png")
@@ -200,272 +204,42 @@ def draw_downward_arrow_glyph(draw, origin_x, origin_y, pixel_size):
                            fill=color)
 
 
+
+
+
+def _char_to_pil(surface):
+    """Convert a cairo.ImageSurface from canonical char module to cropped PIL RGBA."""
+    from LTG_TOOL_cairo_primitives import to_pil_rgba
+    pil_img = to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    return pil_img
+
+
+def _composite_char(base_img, char_pil, cx, cy):
+    """Composite a character PIL RGBA image onto base_img centered at (cx, cy)."""
+    x = cx - char_pil.width // 2
+    y = cy - char_pil.height // 2
+    overlay = Image.new('RGBA', base_img.size, (0, 0, 0, 0))
+    overlay.paste(char_pil, (x, y), char_pil)
+    base_rgba = base_img.convert('RGBA')
+    result = Image.alpha_composite(base_rgba, overlay)
+    base_img.paste(result.convert('RGB'))
+
 def draw_byte_mcu(img, draw, font_ann):
-    """
-    Byte MCU — head + upper body, centered in frame.
-    Beat: VULNERABLE (RESIGNED geometry, 55% aperture)
-    Body: one arm beginning to fold in (transitional posture)
-    Byte body fill: GL-01b #00D4E8
-    """
-    # MCU framing: head+upper body, Byte centered, body fills ~70% of frame height
-    body_cx = PW // 2
-    body_cy = int(DRAW_H * 0.62)   # body center — head+body fills upper 80% of frame
-
-    # ── Body (OVAL — canonical Byte shape) ────────────────────────────────────
-    body_rx = 165   # half-width
-    body_ry = 185   # half-height (slightly squashed oval = Byte's shape)
-
-    # Slight backward lean (+4 body tilt — processing/beginning to pull back)
-    # Achieved by offsetting body slightly right of center
-    lean_offset = 6
-    bx = body_cx + lean_offset
-
-    # Body shadow/shading (darker back oval for depth)
-    draw.ellipse([bx - body_rx + 8, body_cy - body_ry + 8,
-                  bx + body_rx - 8, body_cy + body_ry - 8],
-                 fill=BYTE_MID)
-    # Body fill — GL-01b #00D4E8 (Byte Teal canonical)
-    draw.ellipse([bx - body_rx, body_cy - body_ry,
-                  bx + body_rx, body_cy + body_ry],
-                 fill=BYTE_BODY, outline=BYTE_OUTLINE, width=4)
-
-    # Body highlight zone (inner lighter ellipse — 3D read)
-    draw.ellipse([bx - body_rx + 18, body_cy - body_ry + 18,
-                  bx + body_rx - 55, body_cy + body_ry - 80],
-                 fill=(0, 225, 245))   # slightly brighter inner zone
-
-    # ── Arms — TRANSITIONAL POSTURE ────────────────────────────────────────────
-    # Left arm (viewer left): still extended downward — not yet folding in
-    # Right arm (viewer right): beginning to fold — elbow pulling toward body
-    arm_w = 38
-    arm_h = 85
-
-    # Left arm — extended normally (not yet folding)
-    alx = bx - body_rx - 6
-    aly = body_cy + 28
-    draw.ellipse([alx, aly, alx + arm_w, aly + arm_h],
-                 fill=BYTE_BODY, outline=BYTE_OUTLINE, width=3)
-    # Left arm shadow edge
-    draw.arc([alx, aly, alx + arm_w, aly + arm_h],
-             start=0, end=180, fill=BYTE_MID, width=6)
-
-    # Right arm — beginning to fold in (pulled ~40% toward body vs neutral)
-    # In neutral, arm_x_scale=1.0 puts arm at body edge.
-    # RESIGNED (full) uses arm_x_scale=0.50 — arm very close.
-    # A2-02 transitional: arm ~0.75 of way to body — clearly moving inward
-    arx = bx + body_rx - 26   # pulled significantly inward (vs edge at bx+body_rx)
-    ary = body_cy + 36
-    # Arm is foreshortened (folding in — slight perspective)
-    arm_fold_w = arm_w - 6    # slightly narrower = depth foreshortening
-    arm_fold_h = arm_h - 18   # shorter = beginning to compact
-    draw.ellipse([arx, ary, arx + arm_fold_w, ary + arm_fold_h],
-                 fill=BYTE_BODY, outline=BYTE_OUTLINE, width=3)
-    # Right arm shadow — fold shadow on inner edge
-    draw.arc([arx, ary, arx + arm_fold_w, ary + arm_fold_h],
-             start=180, end=360, fill=BYTE_MID, width=6)
-
-    # ── Hover particles (Cycle 10 spec: 10×10px, canonical) ───────────────────
-    # Reduced energy in RESIGNED state — fewer / dimmer particles
-    import random
-    rng = random.Random(202)
-    for _ in range(3):
-        px = bx + rng.randint(-body_rx - 14, body_rx + 14)
-        py = body_cy + rng.randint(-body_ry - 10, -body_ry + 10)
-        # 10×10px canonical hover particle
-        draw.rectangle([px, py, px + 10, py + 10],
-                       fill=(0, 168, 184), outline=(0, 140, 155), width=1)
-
-    # ── Face Plate ─────────────────────────────────────────────────────────────
-    # Face plate: inset panel on Byte's face (front-facing oval section)
-    face_cy   = body_cy - int(body_ry * 0.22)   # face in upper portion of body
-    fp_w      = 210
-    fp_h      = 152
-    fp_x      = bx - fp_w // 2
-    fp_y      = face_cy - fp_h // 2
-
-    draw.rounded_rectangle([fp_x, fp_y, fp_x + fp_w, fp_y + fp_h],
-                           radius=24, fill=BYTE_DARK,
-                           outline=BYTE_OUTLINE, width=3)
-
-    # ── LEFT EYE: Pixel display — RESIGNED downward arrow glyph ────────────────
-    # Left eye is the pixel-LED display eye (Byte's left = viewer's left)
-    left_eye_w = 72
-    left_eye_h = 50
-    lex = fp_x + 20
-    ley = fp_y + fp_h // 2 - left_eye_h // 2 - 6
-
-    # Eye bezel
-    draw.rectangle([lex, ley, lex + left_eye_w, ley + left_eye_h],
-                   fill=BYTE_BEZEL, outline=BYTE_OUTLINE, width=3)
-
-    # Dark interior
-    draw.rectangle([lex + 4, ley + 4, lex + left_eye_w - 4, ley + left_eye_h - 4],
-                   fill=GLYPH_DEAD)
-
-    # Downward arrow pixel glyph — RESIGNED state
-    arrow_ps    = 5   # pixel size
-    arrow_gw    = 5 * arrow_ps
-    arrow_gh    = 5 * arrow_ps
-    arrow_ox    = lex + (left_eye_w - arrow_gw) // 2
-    arrow_oy    = ley + (left_eye_h - arrow_gh) // 2
-    draw_downward_arrow_glyph(draw, arrow_ox, arrow_oy, arrow_ps)
-
-    # Subtle glow from pixel eye (very dim — low energy for RESIGNED)
-    add_glow(img, lex + left_eye_w // 2, ley + left_eye_h // 2,
-             20, (0, 168, 180), steps=4, max_alpha=18)
-    draw = ImageDraw.Draw(img)
-
-    # ── RIGHT EYE: Organic eye — RESIGNED 55% aperture ─────────────────────────
-    # Right eye = Byte's organic eye (right side of face = viewer's right)
-    # A2-02 spec: 55% aperture (more open than RESIGNED standard 45%)
-    # = "last flicker before giving up" — one tick more open than full RESIGNED
-    right_eye_w = 82
-    right_eye_h = 58
-    rex = fp_x + fp_w - 20 - right_eye_w
-    rey = fp_y + fp_h // 2 - right_eye_h // 2 - 6
-
-    # Eye frame bezel
-    draw.rectangle([rex, rey, rex + right_eye_w, rey + right_eye_h],
-                   fill=BYTE_BEZEL, outline=BYTE_OUTLINE, width=3)
-
-    # Eye sclera (white interior)
-    inner_m = 5
-    ew_inner_x1 = rex + inner_m
-    ew_inner_y1 = rey + inner_m
-    ew_inner_x2 = rex + right_eye_w - inner_m
-    ew_inner_y2 = rey + right_eye_h - inner_m
-
-    # RESIGNED geometry — 55% aperture version:
-    # aperture_h = height of visible eye area = 55% of total eye height
-    # (Standard RESIGNED = 45%, Standard NEUTRAL = 60%)
-    total_eye_h = right_eye_h - inner_m * 2
-    aperture_h  = int(total_eye_h * 0.55)   # 55% — A2-02 spec
-
-    # Eye white area (inside bezel, offset down slightly = weight of defeat)
-    eye_center_x = rex + right_eye_w // 2
-    eye_center_y = rey + right_eye_h // 2 + 4  # slight downward offset
-
-    ew = right_eye_w // 2 - inner_m   # half-width of eye
-    eh = right_eye_h // 2 - inner_m   # half-height of eye
-
-    # Draw eye white (will be partially covered by droopy lid below)
-    eye_h_55 = int(eh * 0.55)
-    draw.ellipse([eye_center_x - ew, eye_center_y - eye_h_55 + 5,
-                  eye_center_x + ew, eye_center_y + eye_h_55 + 5],
-                 fill=BYTE_EYE_W)
-
-    # Iris — shifted DOWN (downcast gaze — defeat/avoidance)
-    # Strongly downward: lower portion of sclera
-    cell = ew // 3   # relative unit
-    iris_cx = eye_center_x
-    iris_cy = eye_center_y + 7   # strongly downcast (+7px from center)
-    iris_r  = cell + 4
-    draw.ellipse([iris_cx - iris_r, iris_cy - iris_r,
-                  iris_cx + iris_r, iris_cy + iris_r],
-                 fill=(55, 35, 16))   # dark brown iris
-
-    # Pupil (same downcast direction)
-    pup_r = iris_r - 5
-    draw.ellipse([iris_cx - pup_r, iris_cy - pup_r,
-                  iris_cx + pup_r, iris_cy + pup_r],
-                 fill=BYTE_EYE_PUP)
-
-    # REDUCED highlight dot — dim, not extinguished (55% = still a flicker)
-    # Smaller than neutral highlight, positioned lower-right (match downcast iris)
-    draw.ellipse([iris_cx + 2, iris_cy - pup_r + 2,
-                  iris_cx + 6, iris_cy - pup_r + 6],
-                 fill=(180, 175, 165))   # dim grey-white (not full bright)
-
-    # HEAVY UPPER LID — pressing down (heavier than neutral, at 55% aperture)
-    # Arc across top of sclera
-    draw.arc([eye_center_x - ew, eye_center_y - eye_h_55 + 5,
-              eye_center_x + ew, eye_center_y + eye_h_55 + 5],
-             start=195, end=345, fill=BYTE_OUTLINE, width=8)
-    # Lid cover rectangle (fills top portion down to 55% mark)
-    lid_cover_h = int(total_eye_h * (1.0 - 0.55))   # top portion = 45% covered
-    draw.rectangle([rex + inner_m, rey + inner_m,
-                    rex + right_eye_w - inner_m,
-                    rey + inner_m + lid_cover_h],
-                   fill=BYTE_BEZEL)
-    # Lid edge line (weight of the heavy lid)
-    draw.line([rex + inner_m, rey + inner_m + lid_cover_h,
-               rex + right_eye_w - inner_m, rey + inner_m + lid_cover_h],
-              fill=BYTE_OUTLINE, width=3)
-
-    # PARABOLIC DROOPING LOWER LID — key geometry (from expression sheet v002)
-    # Parabolic sag: max droop at center. This is what distinguishes RESIGNED from NEUTRAL.
-    # (NEUTRAL has flat arc — RESIGNED has concave-downward parabolic curve)
-    droop_pts = []
-    for i in range(13):
-        t = i / 12.0   # 0..1 left to right
-        dx = int(-ew + t * 2 * ew)
-        # Parabolic sag formula — max 7px at center (matches expression sheet)
-        sag = int(7 * 4 * t * (1 - t))
-        dy  = int(eye_h_55 + 5 + sag)
-        droop_pts.append((eye_center_x + dx, eye_center_y + dy))
-    if len(droop_pts) > 1:
-        draw.line(droop_pts, fill=BYTE_OUTLINE, width=3)
-
-    # No smile crinkle (distinct from RELUCTANT JOY)
-
-    # ── RESIGNED MOUTH — flat short line ─────────────────────────────────────
-    # Flat line: no energy to frown, no energy to smile. Flatness IS the expression.
-    mouth_y    = fp_y + int(fp_h * 0.80)
-    mouth_cx   = bx
-    mouth_half = 22    # shorter than neutral (reduced energy)
-    draw.line([mouth_cx - mouth_half, mouth_y,
-               mouth_cx + mouth_half, mouth_y],
-              fill=BYTE_OUTLINE, width=3)
-    # Subtle corner tuck (not a downturn — pure flat resignation)
-    draw.line([mouth_cx - mouth_half, mouth_y,
-               mouth_cx - mouth_half + 4, mouth_y + 1],
-              fill=BYTE_OUTLINE, width=2)
-    draw.line([mouth_cx + mouth_half, mouth_y,
-               mouth_cx + mouth_half - 4, mouth_y + 1],
-              fill=BYTE_OUTLINE, width=2)
-
-    # ── Cyan glow corona (Byte's digital nature — dim, muted = RESIGNED) ─────
-    add_glow(img, bx, face_cy, 110, (0, 180, 200), steps=5, max_alpha=14)
-    draw = ImageDraw.Draw(img)
-
-    # ── Annotations ──────────────────────────────────────────────────────────
-    # Shot type
-    draw.text((8, 6), "MCU  —  Byte", font=font_ann, fill=ANN_COL)
-    draw.text((8, 18), "head + upper body", font=font_ann, fill=ANN_DIM)
-
-    # Expression annotation (right side)
-    ann_rx = PW - 160
-    draw.text((ann_rx, 6), "RESIGNED (55% apt)", font=font_ann, fill=CALLOUT_CYN)
-    draw.text((ann_rx, 18), "VULNERABLE beat", font=font_ann, fill=(180, 160, 90))
-    draw.text((ann_rx, 30), "pre-resignation", font=font_ann, fill=(150, 135, 75))
-
-    # Droopy lid callout
-    droop_ann_x = rex - 110
-    droop_ann_y = rey + inner_m + lid_cover_h - 4
-    draw.line([rex + inner_m - 2, droop_ann_y,
-               droop_ann_x + 85, droop_ann_y + 2],
-              fill=CALLOUT_CYN, width=1)
-    draw.text((droop_ann_x, droop_ann_y - 10), "droopy lower lid", font=font_ann,
-              fill=CALLOUT_CYN)
-    draw.text((droop_ann_x, droop_ann_y + 2), "parabolic sag", font=font_ann,
-              fill=CALLOUT_DIM)
-
-    # Aperture callout
-    draw.text((droop_ann_x, droop_ann_y + 14), "55% apt (not 45%)", font=font_ann,
-              fill=(180, 165, 80))
-
-    # Folding arm callout
-    arm_ann_y = ary + arm_fold_h // 2
-    draw.text((arx + arm_fold_w + 8, arm_ann_y), "arm folding in", font=font_ann,
-              fill=(160, 145, 85))
-    draw.text((arx + arm_fold_w + 8, arm_ann_y + 12), "transitional", font=font_ann,
-              fill=(130, 118, 68))
-
-    # Downcast pupil callout (brief)
-    draw.text((rex + right_eye_w + 8, rey + right_eye_h // 2),
-              "downcast pupil", font=font_ann, fill=CALLOUT_DIM)
-
-    return draw
+    """Byte MCU — canonical renderer (close-up)."""
+    scale = 2.5
+    surface = draw_byte(expression="searching", scale=scale, facing="front")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        target_h = int(DRAW_H * 0.80)
+        aspect = char_pil.width / char_pil.height
+        new_w = int(target_h * aspect)
+        char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
+    byte_cx = int(PW * 0.50)
+    byte_cy = int(DRAW_H * 0.48)
+    _composite_char(img, char_pil, byte_cx, byte_cy)
 
 
 def make_panel():

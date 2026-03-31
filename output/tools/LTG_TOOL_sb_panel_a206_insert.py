@@ -45,6 +45,11 @@ from PIL import Image, ImageDraw, ImageFont
 import math
 import random
 import os
+import sys
+from LTG_TOOL_char_cosmo import draw_cosmo
+from LTG_TOOL_char_luma import draw_luma as _draw_luma_canonical
+from LTG_TOOL_cairo_primitives import to_pil_rgba
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 PANELS_DIR = output_dir('storyboards', 'panels')
 OUTPUT_PATH = os.path.join(PANELS_DIR, "LTG_SB_act2_panel_a206_med.png")
@@ -196,193 +201,8 @@ def draw_phone_in_hand(draw, img, cx, cy, phone_w=36, phone_h=60):
               fill=(60, 58, 55), width=2)
 
 
-def draw_cosmo_med(draw, img, cx, cy, font_ann, horizon_y):
-    """Cosmo in MED shot — EXPECTANT/HOPEFUL expression, holding phone."""
-    head_w = 44
-    head_h = 52
-    head_cy = cy - 30
-
-    # Body
-    torso_w = 52
-    torso_h = 65
-    torso_top = head_cy + head_h // 2 + 3
-    torso_bot = torso_top + torso_h
-    draw.rounded_rectangle([cx - torso_w // 2, torso_top,
-                             cx + torso_w // 2, torso_bot],
-                            radius=6,
-                            fill=COSMO_SHIRT, outline=COSMO_OUTLINE, width=2)
-
-    # Collar
-    draw.line([cx - 5, torso_top + 4, cx, torso_top + 12], fill=COSMO_OUTLINE, width=2)
-    draw.line([cx + 5, torso_top + 4, cx, torso_top + 12], fill=COSMO_OUTLINE, width=2)
-
-    # Neck
-    draw.rectangle([cx - 7, head_cy + head_h // 2, cx + 7, torso_top + 2],
-                   fill=COSMO_SKIN, outline=COSMO_OUTLINE, width=1)
-
-    # Arms — both angled slightly down/inward toward phone
-    arm_top = torso_top + 8
-    # Left arm (holding side of phone)
-    draw.line([cx - torso_w // 2, arm_top, cx - 14, torso_top + 42],
-              fill=COSMO_SHIRT, width=12)
-    draw.line([cx - torso_w // 2, arm_top, cx - 14, torso_top + 42],
-              fill=COSMO_OUTLINE, width=1)
-    # Right arm (holding other side)
-    draw.line([cx + torso_w // 2, arm_top, cx + 14, torso_top + 42],
-              fill=COSMO_SHIRT, width=12)
-    draw.line([cx + torso_w // 2, arm_top, cx + 14, torso_top + 42],
-              fill=COSMO_OUTLINE, width=1)
-
-    # Hands holding phone
-    draw.ellipse([cx - 20, torso_top + 38, cx - 10, torso_top + 50],
-                 fill=COSMO_SKIN, outline=COSMO_OUTLINE, width=1)
-    draw.ellipse([cx + 10, torso_top + 38, cx + 20, torso_top + 50],
-                 fill=COSMO_SKIN, outline=COSMO_OUTLINE, width=1)
-
-    # Phone (between hands)
-    phone_cy = torso_top + 50
-    draw_phone_in_hand(draw, img, cx, phone_cy + 10, phone_w=30, phone_h=48)
-
-    # Head
-    corner_r = int(head_w * 0.12)
-    draw.rounded_rectangle([cx - head_w // 2, head_cy - head_h // 2,
-                             cx + head_w // 2, head_cy + head_h // 2],
-                            radius=corner_r,
-                            fill=COSMO_SKIN, outline=COSMO_OUTLINE, width=2)
-
-    # Hair
-    hair_h = int(head_h * 0.16)
-    draw.rounded_rectangle([cx - head_w // 2 + 2, head_cy - head_h // 2 - hair_h + 3,
-                             cx + head_w // 2 - 2, head_cy - head_h // 2 + hair_h],
-                            radius=int(head_w * 0.10),
-                            fill=COSMO_HAIR, outline=COSMO_OUTLINE, width=1)
-
-    # Glasses
-    lens_r   = int(head_w * 0.17)
-    lens_sep = int(head_w * 0.22)
-    frame_w  = max(2, int(head_w * 0.06))
-    eye_y    = head_cy - int(head_h * 0.05)
-
-    l_lx = cx - lens_sep
-    r_lx = cx + lens_sep
-
-    for lx in [l_lx, r_lx]:
-        draw.ellipse([lx - lens_r, eye_y - lens_r, lx + lens_r, eye_y + lens_r],
-                     fill=COSMO_LENS, outline=COSMO_GLASS, width=frame_w)
-    draw.line([l_lx + lens_r, eye_y, r_lx - lens_r, eye_y],
-              fill=COSMO_GLASS, width=frame_w)
-
-    # EXPECTANT eyes: wide, looking down at phone
-    eye_r = int(lens_r * 0.55)
-    for lx in [l_lx, r_lx]:
-        draw.ellipse([lx - eye_r, eye_y - eye_r, lx + eye_r, eye_y + eye_r],
-                     fill=(235, 215, 180))
-        p_r = max(2, eye_r // 2)
-        # Pupils looking DOWN toward phone
-        draw.ellipse([lx - p_r, eye_y, lx + p_r, eye_y + p_r * 2],
-                     fill=(20, 15, 10))
-        draw.rectangle([lx - p_r + 1, eye_y + 1,
-                        lx - p_r + 3, eye_y + 3], fill=STATIC_WHITE)
-
-    # HOPEFUL brows: both slightly raised (expectant)
-    brow_thick = max(2, int(head_w * 0.05))
-    for lx, ly in [(l_lx, eye_y), (r_lx, eye_y)]:
-        draw.arc([lx - lens_r, ly - lens_r - 10,
-                  lx + lens_r, ly - lens_r + 4],
-                 start=200, end=340, fill=COSMO_HAIR, width=brow_thick)
-
-    # Mouth: small hopeful upturn (slight smile — expectant)
-    mouth_y = head_cy + int(head_h * 0.22)
-    mouth_w = int(head_w * 0.25)
-    draw.arc([cx - mouth_w // 2, mouth_y - 4,
-              cx + mouth_w // 2, mouth_y + 4],
-             start=0, end=180, fill=COSMO_OUTLINE, width=max(2, int(head_w * 0.04)))
-
-    return head_cy, head_h
 
 
-def draw_luma_med(draw, cx, cy, font_ann):
-    """Luma in MED shot — beside Cosmo, EXPECTANT/HOPEFUL, leaning in to see phone."""
-    head_w = 40
-    head_h = 48
-    head_cy = cy - 25
-
-    # Body
-    torso_w = 48
-    torso_h = 60
-    torso_top = head_cy + head_h // 2 + 3
-    torso_bot = torso_top + torso_h
-    draw.rounded_rectangle([cx - torso_w // 2, torso_top,
-                             cx + torso_w // 2, torso_bot],
-                            radius=5,
-                            fill=LUMA_PJ, outline=LUMA_OUTLINE, width=2)
-
-    # Neck
-    draw.rectangle([cx - 6, head_cy + head_h // 2, cx + 6, torso_top + 2],
-                   fill=LUMA_SKIN, outline=LUMA_OUTLINE, width=1)
-
-    # Arm LEANING TOWARD phone (toward Cosmo, left arm reaches)
-    draw.line([cx - torso_w // 2, torso_top + 12, cx - 30, torso_top + 50],
-              fill=LUMA_SKIN, width=10)
-    draw.line([cx - torso_w // 2, torso_top + 12, cx - 30, torso_top + 50],
-              fill=LUMA_OUTLINE, width=1)
-    # Hand reaching
-    draw.ellipse([cx - 40, torso_top + 46, cx - 24, torso_top + 58],
-                 fill=LUMA_SKIN, outline=LUMA_OUTLINE, width=1)
-
-    # Right arm (relaxed at side)
-    draw.line([cx + torso_w // 2, torso_top + 12, cx + torso_w // 2 + 8, torso_top + 45],
-              fill=LUMA_SKIN, width=10)
-    draw.line([cx + torso_w // 2, torso_top + 12, cx + torso_w // 2 + 8, torso_top + 45],
-              fill=LUMA_OUTLINE, width=1)
-
-    # Hair
-    draw.ellipse([cx - head_w // 2 - 8, head_cy - head_h // 2 - 14,
-                  cx + head_w // 2 + 8, head_cy - head_h // 2 + 6],
-                 fill=LUMA_HAIR)
-    # Head
-    draw.ellipse([cx - head_w // 2, head_cy - head_h // 2,
-                  cx + head_w // 2, head_cy + head_h // 2],
-                 fill=LUMA_SKIN, outline=LUMA_OUTLINE, width=2)
-
-    # EXPECTANT eyes: wide, slightly tilted (excited to see result)
-    eye_sep = int(head_w * 0.25)
-    eye_r   = 7
-    for sign, ex in [(-1, cx - eye_sep), (1, cx + eye_sep)]:
-        ey = head_cy - 6
-        # Eye white
-        draw.ellipse([ex - eye_r, ey - eye_r, ex + eye_r, ey + eye_r],
-                     fill=(240, 220, 190))
-        # Iris (warm brown — Luma)
-        draw.ellipse([ex - eye_r + 2, ey - eye_r + 2, ex + eye_r - 2, ey + eye_r - 2],
-                     fill=(120, 70, 30))
-        # Pupil — looking sideways/down toward phone (down + toward Cosmo = left)
-        pu_off_x = -2 if sign < 0 else -3
-        pu_off_y = 2
-        draw.ellipse([ex + pu_off_x - 3, ey + pu_off_y - 3,
-                      ex + pu_off_x + 3, ey + pu_off_y + 3],
-                     fill=(20, 15, 10))
-        # Highlight
-        draw.rectangle([ex + pu_off_x - 2, ey + pu_off_y - 2,
-                        ex + pu_off_x, ey + pu_off_y], fill=STATIC_WHITE)
-
-    # HOPEFUL brows: slightly raised inward (excited/hopeful)
-    for ex in [cx - eye_sep, cx + eye_sep]:
-        ey = head_cy - 6
-        draw.arc([ex - eye_r - 2, ey - eye_r - 9,
-                  ex + eye_r + 2, ey - eye_r + 1],
-                 start=200, end=340, fill=(50, 32, 14), width=2)
-
-    # Mouth: open hopeful smile (small teeth visible)
-    mouth_y = head_cy + int(head_h * 0.25)
-    mouth_w = int(head_w * 0.35)
-    draw.arc([cx - mouth_w // 2, mouth_y - 5,
-              cx + mouth_w // 2, mouth_y + 5],
-             start=0, end=180, fill=LUMA_OUTLINE, width=2)
-    # Teeth suggestion
-    draw.rectangle([cx - mouth_w // 2 + 3, mouth_y - 3,
-                    cx + mouth_w // 2 - 3, mouth_y + 1],
-                   fill=(240, 235, 225))
 
 
 def generate():

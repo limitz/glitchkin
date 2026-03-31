@@ -37,6 +37,11 @@ from PIL import Image, ImageDraw, ImageFont
 import math
 import random
 import os
+import sys
+from LTG_TOOL_char_cosmo import draw_cosmo
+from LTG_TOOL_char_luma import draw_luma as _draw_luma_canonical
+from LTG_TOOL_cairo_primitives import to_pil_rgba
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 ACT2_PANELS_DIR = output_dir('storyboards', 'act2', 'panels')
 PANELS_DIR = output_dir('storyboards', 'panels')
@@ -239,219 +244,8 @@ def draw_millbrook_bg(draw, img):
     return horizon_y, vp_x
 
 
-def draw_cosmo_med(draw, img):
-    """
-    Cosmo — medium shot, slightly behind/right of Luma.
-    SKEPTICAL: arms crossed, one brow raised, flat mouth.
-    Mid-stride (walk-and-talk).
-    Slightly smaller scale than Luma (depth relationship).
-    """
-    cx = int(PW * 0.62)
-    feet_y = int(DRAW_H * 0.96)   # feet near bottom
-    scale = 0.88
-
-    head_r  = int(30 * scale)
-    body_w  = int(62 * scale)
-    body_h  = int(105 * scale)
-
-    head_cy = feet_y - body_h - head_r * 2
-
-    # ── Body (facing slightly left toward Luma) ─────────────────────────────
-    # Slight right lean (weight on back foot, skeptical posture)
-    lean = -6
-    body_cx = cx + lean
-
-    draw.ellipse([body_cx - body_w // 2, head_cy + head_r + 2,
-                  body_cx + body_w // 2, head_cy + head_r + 2 + body_h],
-                 fill=COSMO_SHIRT, outline=COSMO_OUTLINE, width=2)
-
-    # Pants / lower body
-    draw.ellipse([body_cx - body_w // 2 + 6, head_cy + head_r + 2 + body_h - 15,
-                  body_cx + body_w // 2 - 6, head_cy + head_r + 2 + body_h + 30],
-                 fill=COSMO_PANTS, outline=COSMO_OUTLINE, width=2)
-
-    # Legs (mid-stride — weight shifting back)
-    leg_top_y = head_cy + head_r + 2 + body_h + 15
-    # Left leg (slightly forward)
-    draw.line([body_cx - 12, leg_top_y,
-               body_cx - 8, feet_y],
-              fill=COSMO_PANTS, width=18)
-    # Right leg (back — stride)
-    draw.line([body_cx + 12, leg_top_y,
-               body_cx + 22, feet_y],
-              fill=COSMO_PANTS, width=18)
-
-    # ── ARMS CROSSED (skeptical) ────────────────────────────────────────────
-    arm_y = head_cy + head_r + 2 + int(body_h * 0.38)
-    arm_band_h = 14
-    # Crossed arm band across torso
-    draw.rectangle([body_cx - body_w // 2 - 6, arm_y,
-                    body_cx + body_w // 2 + 6, arm_y + arm_band_h],
-                   fill=COSMO_SKIN, outline=COSMO_OUTLINE, width=1)
-    # Left arm crossing over (visible forearm)
-    draw.line([body_cx - body_w // 2 + 4, arm_y + arm_band_h // 2,
-               body_cx + 10, arm_y + arm_band_h // 2 - 4],
-              fill=COSMO_SKIN, width=11)
-    # Right arm tucked under
-    draw.line([body_cx + body_w // 2 - 4, arm_y + arm_band_h // 2 + 2,
-               body_cx - 8, arm_y + arm_band_h // 2 + 6],
-              fill=COSMO_SHIRT, width=10)
-
-    # ── HEAD ───────────────────────────────────────────────────────────────
-    head_cx = cx + lean
-    draw.ellipse([head_cx - head_r, head_cy - head_r,
-                  head_cx + head_r, head_cy + head_r],
-                 fill=COSMO_SKIN, outline=COSMO_OUTLINE, width=2)
-
-    # Hair
-    draw.ellipse([head_cx - head_r, head_cy - head_r - 2,
-                  head_cx + head_r, head_cy + 6],
-                 fill=COSMO_HAIR)
-
-    # Eyes (facing slightly left toward Luma)
-    eye_y = head_cy - 4
-    for i, ex_off in enumerate([-11, 10]):
-        ex = head_cx + ex_off
-        draw.ellipse([ex - 6, eye_y - 5, ex + 6, eye_y + 5],
-                     fill=STATIC_WHITE)
-        draw.ellipse([ex - 2, eye_y - 2, ex + 2, eye_y + 2],
-                     fill=(40, 60, 80))
-
-    # Glasses
-    gl_y = eye_y
-    for ex_off in [-11, 10]:
-        ex = head_cx + ex_off
-        draw.rectangle([ex - 8, gl_y - 6, ex + 8, gl_y + 6],
-                       outline=(80, 55, 30), width=2)
-
-    # SKEPTICAL BROWS — asymmetric
-    # Raised brow (left eye, viewer's left = Cosmo's right — skeptical side)
-    draw.arc([head_cx - 20, eye_y - 18, head_cx - 3, eye_y - 6],
-             start=200, end=340, fill=COSMO_HAIR, width=2)
-    # Flat brow (right eye — other side flat/lower)
-    draw.line([head_cx + 2, eye_y - 9, head_cx + 17, eye_y - 9],
-              fill=COSMO_HAIR, width=2)
-
-    # SKEPTICAL MOUTH — flat with slight downturn at one corner
-    mouth_y = head_cy + 10
-    draw.line([head_cx - 9, mouth_y, head_cx + 9, mouth_y],
-              fill=COSMO_OUTLINE, width=2)
-    draw.line([head_cx - 9, mouth_y, head_cx - 11, mouth_y + 2],
-              fill=COSMO_OUTLINE, width=2)
-
-    return cx, head_cy
 
 
-def draw_luma_fg(draw, img):
-    """
-    Luma — FG left of frame, medium shot.
-    ENTHUSIASTIC: gesticulating, mid-stride, leaning forward.
-    Larger scale than Cosmo (she's closer to camera).
-    """
-    luma_cx = int(PW * 0.32)
-    feet_y  = int(DRAW_H * 1.0)   # feet at or just below frame bottom (FG depth)
-    scale   = 1.0                  # full size
-
-    head_r  = 36
-    body_w  = 72
-    body_h  = 115
-
-    head_cy = feet_y - body_h - head_r * 2 - 8
-
-    # ── Body (facing right toward Cosmo, mid-stride lean forward) ──────────
-    body_cx = luma_cx
-    lean_x  = 10   # forward lean
-
-    draw.ellipse([body_cx - body_w // 2 + lean_x, head_cy + head_r + 2,
-                  body_cx + body_w // 2 + lean_x, head_cy + head_r + 2 + body_h],
-                 fill=LUMA_JACKET, outline=LUMA_OUTLINE, width=2)
-
-    # Pants / lower body
-    draw.ellipse([body_cx - body_w // 2 + lean_x + 6,
-                  head_cy + head_r + 2 + body_h - 15,
-                  body_cx + body_w // 2 + lean_x - 6,
-                  head_cy + head_r + 2 + body_h + 32],
-                 fill=LUMA_PANTS, outline=LUMA_OUTLINE, width=2)
-
-    # Legs (mid-stride — forward momentum)
-    leg_top_y = head_cy + head_r + 2 + body_h + 18
-    # Left leg (back — stride)
-    draw.line([body_cx + lean_x - 14, leg_top_y,
-               body_cx - 30, feet_y],
-              fill=LUMA_PANTS, width=20)
-    # Right leg (forward)
-    draw.line([body_cx + lean_x + 14, leg_top_y,
-               body_cx + lean_x + 40, feet_y],
-              fill=LUMA_PANTS, width=20)
-
-    # ── ARMS GESTICULATING (enthusiastic pitch) ──────────────────────────
-    arm_y_base = head_cy + head_r + 2 + int(body_h * 0.25)
-    # Right arm (extended up and out — making a point)
-    draw.line([body_cx + body_w // 2 + lean_x - 4, arm_y_base,
-               body_cx + body_w // 2 + lean_x + 48, arm_y_base - 35],
-              fill=LUMA_SKIN, width=12)
-    # Hand/finger pointing
-    draw.ellipse([body_cx + body_w // 2 + lean_x + 38, arm_y_base - 42,
-                  body_cx + body_w // 2 + lean_x + 56, arm_y_base - 26],
-                 fill=LUMA_SKIN, outline=LUMA_OUTLINE, width=1)
-
-    # Left arm (bent upward, gesturing)
-    draw.line([body_cx - body_w // 2 + lean_x + 4, arm_y_base,
-               body_cx - body_w // 2 + lean_x - 24, arm_y_base - 22],
-              fill=LUMA_SKIN, width=12)
-    draw.line([body_cx - body_w // 2 + lean_x - 24, arm_y_base - 22,
-               body_cx - body_w // 2 + lean_x - 8, arm_y_base - 46],
-              fill=LUMA_SKIN, width=10)
-    # Second hand
-    draw.ellipse([body_cx - body_w // 2 + lean_x - 18, arm_y_base - 54,
-                  body_cx - body_w // 2 + lean_x + 2, arm_y_base - 38],
-                 fill=LUMA_SKIN, outline=LUMA_OUTLINE, width=1)
-
-    # ── HEAD ──────────────────────────────────────────────────────────────
-    head_cx = luma_cx + lean_x - 4   # face turned slightly right toward Cosmo
-    draw.ellipse([head_cx - head_r, head_cy - head_r,
-                  head_cx + head_r, head_cy + head_r],
-                 fill=LUMA_SKIN, outline=LUMA_OUTLINE, width=2)
-
-    # Hair
-    draw.ellipse([head_cx - head_r, head_cy - head_r - 2,
-                  head_cx + head_r, head_cy + 8],
-                 fill=LUMA_HAIR)
-
-    # ENTHUSIASTIC eyes — wide open, turned toward Cosmo
-    eye_y = head_cy - 5
-    for i, ex_off in enumerate([-12, 12]):
-        ex = head_cx + ex_off
-        draw.ellipse([ex - 8, eye_y - 6, ex + 8, eye_y + 6],
-                     fill=STATIC_WHITE)
-        # Iris shifted right (looking at Cosmo)
-        draw.ellipse([ex, eye_y - 4, ex + 6, eye_y + 4],
-                     fill=(60, 80, 120))
-        # Highlight
-        draw.rectangle([ex + 5, eye_y - 3, ex + 7, eye_y - 1], fill=STATIC_WHITE)
-
-    # ENTHUSIASTIC BROWS — both raised (energy/excitement)
-    draw.arc([head_cx - 22, eye_y - 18, head_cx - 4, eye_y - 6],
-             start=200, end=340, fill=LUMA_HAIR, width=2)
-    draw.arc([head_cx + 4, eye_y - 18, head_cx + 22, eye_y - 6],
-             start=200, end=340, fill=LUMA_HAIR, width=2)
-
-    # ENTHUSIASTIC MOUTH — open, mid-word (talking)
-    draw.ellipse([head_cx - 10, head_cy + 5, head_cx + 10, head_cy + 18],
-                 fill=(40, 20, 15), outline=LUMA_OUTLINE, width=1)
-    # Teeth (upper)
-    draw.rectangle([head_cx - 7, head_cy + 6, head_cx + 7, head_cy + 11],
-                   fill=STATIC_WHITE)
-
-    # Motion lines near right arm (gesticulating energy)
-    rng = random.Random(2205)
-    for _ in range(4):
-        mx = body_cx + body_w // 2 + lean_x + rng.randint(20, 50)
-        my = arm_y_base + rng.randint(-30, -10)
-        dl = rng.randint(10, 18)
-        draw.line([mx, my, mx + dl, my - dl // 2], fill=(240, 200, 100), width=1)
-
-    return luma_cx, head_cy, lean_x
 
 
 def draw_annotations(draw, luma_cx, luma_head_cy, luma_lean,
@@ -496,6 +290,57 @@ def draw_annotations(draw, luma_cx, luma_head_cy, luma_lean,
     # Afternoon light note
     draw.text((PW - 190, 8), "afternoon / warm exterior",
               font=font_ann, fill=ANN_DIM)
+
+
+
+def _char_to_pil(surface):
+    """Convert a cairo.ImageSurface from canonical char module to cropped PIL RGBA."""
+    from LTG_TOOL_cairo_primitives import to_pil_rgba
+    pil_img = to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    return pil_img
+
+
+def _composite_char(base_img, char_pil, cx, cy):
+    """Composite a character PIL RGBA image onto base_img centered at (cx, cy)."""
+    x = cx - char_pil.width // 2
+    y = cy - char_pil.height // 2
+    overlay = Image.new('RGBA', base_img.size, (0, 0, 0, 0))
+    overlay.paste(char_pil, (x, y), char_pil)
+    base_rgba = base_img.convert('RGBA')
+    result = Image.alpha_composite(base_rgba, overlay)
+    base_img.paste(result.convert('RGB'))
+
+def draw_cosmo_med(draw, img):
+    """Cosmo medium shot — canonical renderer."""
+    scale = 0.7
+    surface = draw_cosmo(expression="WORRIED", scale=scale, facing="front")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        target_h = 200
+        aspect = char_pil.width / char_pil.height
+        new_w = int(target_h * aspect)
+        char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
+    cosmo_cx = int(PW * 0.55)
+    cosmo_cy = int(DRAW_H * 0.55)
+    _composite_char(img, char_pil, cosmo_cx, cosmo_cy)
+
+
+def draw_luma_fg(draw, img):
+    """Luma foreground — canonical renderer."""
+    scale = 0.5
+    surface = _draw_luma_canonical(expression="DETERMINED", scale=scale, facing="left")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        target_h = 220
+        aspect = char_pil.width / char_pil.height
+        new_w = int(target_h * aspect)
+        char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
+    luma_cx = int(PW * 0.25)
+    luma_cy = int(DRAW_H * 0.60)
+    _composite_char(img, char_pil, luma_cx, luma_cy)
 
 
 def make_panel():

@@ -40,10 +40,20 @@ from __future__ import annotations
 
 import math
 import os
+import sys
 import json
 import random
 
 from PIL import Image, ImageDraw
+
+# --- Path setup ---
+_TOOL_DIR = os.path.dirname(os.path.abspath(__file__))
+if _TOOL_DIR not in sys.path:
+    sys.path.insert(0, _TOOL_DIR)
+
+# --- Canonical character renderer ---
+from LTG_TOOL_char_glitch import draw_glitch
+from LTG_TOOL_cairo_primitives import to_pil_rgba
 
 # --- Load config ---
 _CONFIG_PATH = os.path.join(os.path.dirname(__file__), "sheet_geometry_config.json")
@@ -131,171 +141,67 @@ def annot_text(draw, x, y, text, color=None):
 
 
 # ------------------------------------------------------------------ Glitch body
+# Canonical renderer: draw_glitch() from LTG_TOOL_char_glitch.py
 
-def diamond_pts(cx, cy, rx, ry, tilt_deg=0, squash=1.0, stretch=1.0):
-    """Return (top, right, bot, left) of Glitch's diamond body."""
-    ry_eff = int(ry * squash * stretch)
-    tilt = math.radians(tilt_deg)
-    top   = (cx + int(rx * 0.15 * math.sin(tilt)), cy - ry_eff + int(rx * 0.15 * math.cos(tilt)))
-    right = (cx + int(rx * math.cos(-tilt)),        cy + int(rx * 0.2 * math.sin(-tilt)))
-    bot   = (cx - int(rx * 0.15 * math.sin(tilt)),  cy + int(ry_eff * 1.15))
-    left  = (cx - int(rx * math.cos(-tilt)),         cy - int(rx * 0.2 * math.sin(-tilt)))
-    return top, right, bot, left
+# Expression mapping for motion beats:
+#   B1 PREDATORY STILL -> calculating
+#   B2 COVETOUS REACH  -> covetous
+#   B3 CORRUPTION SURGE -> panicked
+#   B4 RETREAT          -> stunned
 
+def render_glitch_to_panel(expression, scale=1.3):
+    """Render Glitch via canonical renderer, return cropped PIL RGBA image.
 
-def draw_pixel_eye(draw, ex, ey, cell, glyph):
-    """Draw a 3×3 pixel grid eye. Cell state map from glitch.md §6.1."""
-    cell_colors = {
-        0: VOID_BLACK, 1: CORRUPT_AMB_SH, 2: CORRUPT_AMB, 3: SOFT_GOLD,
-        4: HOT_MAG, 5: ACID_GREEN, 6: UV_PURPLE, 7: (248, 246, 236),
-    }
-    for row in range(3):
-        for col in range(3):
-            color = cell_colors.get(glyph[row][col], VOID_BLACK)
-            px = ex + col * cell
-            py = ey + row * cell
-            draw.rectangle([px, py, px + cell - 1, py + cell - 1], fill=color)
+    Args:
+        expression: one of the canonical expressions (calculating, covetous, panicked, stunned, etc.)
+        scale: size multiplier for the canonical renderer
 
-
-def destabilized_right_eye(left_glyph, seed=42):
-    """Generate destabilized right eye (performance state — glitch.md §6.3)."""
-    rng = random.Random(seed)
-    right = []
-    for row in left_glyph:
-        new_row = []
-        for state in row:
-            if state == 3:
-                new_row.append(rng.choice([1, 0]))
-            elif state == 4:
-                new_row.append(rng.choice([4, 0, 0]))
-            elif state == 5:
-                new_row.append(rng.choice([5, 0, 5]))
-            else:
-                new_row.append(state)
-        right.append(new_row)
-    return right
-
-
-def draw_confetti(draw, cx, cy_spike_tip, colors, count, spread, seed=7):
-    """Scatter pixel confetti below bottom spike tip."""
-    rng = random.Random(seed)
-    for _ in range(count):
-        dx = rng.randint(-spread, spread)
-        dy = rng.randint(0, int(spread * 0.8))
-        px, py = cx + dx, cy_spike_tip + dy + 4
-        sz = rng.choice([2, 3, 2])
-        draw.rectangle([px, py, px + sz, py + sz], fill=rng.choice(colors))
-
-
-def draw_glitch_figure(draw, cx, cy,
-                       rx=RX, ry=RY,
-                       tilt_deg=0,
-                       squash=1.0,
-                       stretch=1.0,
-                       spike_h=10,
-                       arm_l_dy=0,
-                       arm_r_dy=0,
-                       arm_l_extend=0,   # extra extension on left arm-spike tip
-                       arm_r_extend=0,   # extra extension on right arm-spike tip
-                       left_eye_glyph=None,
-                       bilateral=False,
-                       confetti_colors=None,
-                       confetti_count=8,
-                       confetti_spread=24,
-                       confetti_seed=7,
-                       crack_bright=False):  # B3: crack line brightened
+    Returns:
+        PIL RGBA image, tightly cropped to character bounds.
     """
-    Draw Glitch as a geometric construction figure.
-    cx, cy = body center. Glitch hovers — no ground contact.
-    Returns (top, right, bot, left, cy_top, cy_bot).
+    surface = draw_glitch(expression=expression, scale=scale)
+    char_img = to_pil_rgba(surface)
+    bbox = char_img.getbbox()
+    if bbox:
+        char_img = char_img.crop(bbox)
+    return char_img
+
+
+def paste_glitch_in_panel(img, draw, cx, cy, expression, scale=1.3, target_h=None):
+    """Render Glitch and paste centered at (cx, cy) on the motion sheet.
+
+    Args:
+        img: PIL Image (motion sheet)
+        draw: ImageDraw for img
+        cx, cy: center position on the sheet
+        expression: canonical expression string
+        scale: renderer scale
+        target_h: optional target height to resize to
+
+    Returns:
+        (img, draw, char_bbox) where char_bbox is (left, top, right, bottom)
+        of the pasted character on the sheet.
     """
-    if left_eye_glyph is None:
-        left_eye_glyph = [[0, 2, 0], [2, 1, 2], [0, 2, 0]]
+    char_img = render_glitch_to_panel(expression, scale=scale)
+    if target_h and char_img.height > 0:
+        ratio = target_h / char_img.height
+        new_w = max(1, int(char_img.width * ratio))
+        char_img = char_img.resize((new_w, target_h), Image.LANCZOS)
 
-    ry_eff = int(ry * squash * stretch)
-    tilt_off = int(tilt_deg * 0.4)  # spike lean follows body
+    paste_x = cx - char_img.width // 2
+    paste_y = cy - char_img.height // 2
 
-    top, right, bot, left = diamond_pts(cx, cy, rx, ry, tilt_deg, squash, stretch)
-    cy_bot = bot[1]
-    cy_top = top[1]
-    spike_tip_y = cy_bot + spike_h + 4
+    # Convert to RGBA for alpha composite
+    if img.mode != "RGBA":
+        img = img.convert("RGBA")
+    img.paste(char_img, (paste_x, paste_y), char_img)
+    if img.mode == "RGBA":
+        img = img.convert("RGB")
+    draw = ImageDraw.Draw(img)
 
-    # 1. Confetti (below bottom spike — drawn first)
-    if confetti_colors and confetti_count > 0:
-        draw_confetti(draw, cx, spike_tip_y, confetti_colors, confetti_count,
-                      confetti_spread, confetti_seed)
-
-    # 2. Bottom spike (3-point downward triangle — hover point)
-    bsp = [(cx - spike_h // 2, cy_bot), (cx + spike_h // 2, cy_bot),
-           (cx, spike_tip_y)]
-    draw.polygon(bsp, fill=CORRUPT_AMB_SH, outline=VOID_BLACK)
-
-    # 3. Body shadow (UV_PURPLE, offset +3 right, +4 down)
-    shadow_pts = [(p[0] + 3, p[1] + 4) for p in [top, right, bot, left]]
-    draw.polygon(shadow_pts, fill=UV_PURPLE)
-
-    # 4. Body fill (CORRUPT_AMBER — canonical)
-    body_pts = [top, right, bot, left]
-    draw.polygon(body_pts, fill=CORRUPT_AMB)
-
-    # 5. Highlight facet (upper-left triangle)
-    ctr_hl = (cx, cy - ry_eff // 4)
-    mid_tl = ((top[0] + left[0]) // 2, (top[1] + left[1]) // 2)
-    draw.polygon([top, ctr_hl, mid_tl], fill=CORRUPT_AMB_HL)
-
-    # 6. Outline
-    draw.polygon(body_pts, outline=VOID_BLACK, width=3)
-
-    # 7. HOT_MAG crack + fork (ALWAYS visible — G004)
-    crack_color = SOFT_GOLD if crack_bright else HOT_MAG  # brightened in B3 surge
-    crack_w = 3 if crack_bright else 2
-    cs = (cx - rx // 2, cy - ry_eff // 3)
-    ce = (cx + rx // 3, cy + ry_eff // 2)
-    draw.line([cs, ce], fill=crack_color, width=crack_w)
-    mid_c = ((cs[0] + ce[0]) // 2, (cs[1] + ce[1]) // 2)
-    fork = (cx + rx // 2, cy - ry_eff // 4)
-    draw.line([mid_c, fork], fill=crack_color, width=max(1, crack_w - 1))
-
-    # 8. Arm-spikes (geometric body extensions from left/right vertices)
-    ax_l = left[0] - 6
-    ay_l = left[1] + arm_l_dy
-    tip_l = (ax_l - 14 - arm_l_extend + int(tilt_deg * 0.3), ay_l - 8)
-    draw.polygon([(ax_l, ay_l - 5), (ax_l, ay_l + 5), tip_l],
-                 fill=CORRUPT_AMB, outline=VOID_BLACK)
-
-    ax_r = right[0] + 6
-    ay_r = right[1] + arm_r_dy
-    tip_r = (ax_r + 14 + arm_r_extend + int(tilt_deg * 0.3), ay_r - 8)
-    draw.polygon([(ax_r, ay_r - 5), (ax_r, ay_r + 5), tip_r],
-                 fill=CORRUPT_AMB, outline=VOID_BLACK)
-
-    # 9. Face (pixel eyes — glitch.md §6.4)
-    face_cy = cy - ry_eff // 6
-    cell = 7   # larger than expression sheet for motion doc readability
-    leye_x = cx - rx // 2 - cell * 3 // 2
-    leye_y = face_cy - cell * 3 // 2
-    reye_x = cx + rx // 2 - cell * 3 // 2
-    reye_y = face_cy - cell * 3 // 2
-
-    draw_pixel_eye(draw, leye_x, leye_y, cell, left_eye_glyph)
-    right_glyph = left_eye_glyph if bilateral else destabilized_right_eye(left_eye_glyph)
-    draw_pixel_eye(draw, reye_x, reye_y, cell, right_glyph)
-
-    # 10. Top spike (5-point crown — leans with body tilt)
-    sx = cx + tilt_off
-    tsp = [
-        (sx - spike_h // 2, cy_top),
-        (sx - spike_h,       cy_top - spike_h),
-        (sx,                  cy_top - spike_h * 2),   # tip
-        (sx + spike_h,        cy_top - spike_h),
-        (sx + spike_h // 2,   cy_top),
-    ]
-    draw.polygon(tsp, fill=CORRUPT_AMB, outline=VOID_BLACK)
-    if spike_h >= 6:
-        tip_x, tip_y = sx, cy_top - spike_h * 2
-        draw.line([(tip_x, tip_y - 3), (tip_x, tip_y - 6)], fill=HOT_MAG, width=2)
-
-    return top, right, bot, left, cy_top, cy_bot
+    char_bbox = (paste_x, paste_y,
+                 paste_x + char_img.width, paste_y + char_img.height)
+    return img, draw, char_bbox
 
 
 # ------------------------------------------------------------------ beat badge + frame
@@ -325,24 +231,14 @@ def draw_panel_b1(img, draw, col):
     cx = ox + pw // 2
     cy = oy + int(ph * 0.44)
 
-    # Neutral eye glyph (calculating: perfectly still — control read)
-    # CALCULATING eye = acid-X (same as mischievous per glitch.md §6.2)
-    calculating_eye = [[5, 0, 5], [0, 5, 0], [5, 0, 5]]
-
-    top, right, bot, left, cy_top, cy_bot = draw_glitch_figure(
-        draw, cx, cy,
-        tilt_deg=0,
-        squash=1.0, stretch=1.0,
-        spike_h=10,
-        arm_l_dy=0, arm_r_dy=0,
-        left_eye_glyph=calculating_eye,
-        bilateral=False,   # performance — asymmetric eyes
-        confetti_colors=None,
-        confetti_count=0,
-    )
+    # Canonical renderer: calculating expression = acid-X eyes, neutral body
+    target_h = int(ph * 0.55)
+    img, draw, cbbox = paste_glitch_in_panel(
+        img, draw, cx, cy, expression="calculating",
+        scale=1.3, target_h=target_h)
+    cy_top = cbbox[1]
 
     # NO HOVER INDICATOR — stillness is the annotation
-    # Crossed-out oscillation symbol (explicit: NOT hovering)
     hx, hy = cx - 52, oy + 22
     draw.text((hx, hy), "NO HOVER", fill=HOT_MAG)
     draw.text((hx, hy + 14), "NO CONFETTI", fill=HOT_MAG)
@@ -374,32 +270,21 @@ def draw_panel_b2(img, draw, col):
     cx = ox + pw // 2
     cy = oy + int(ph * 0.44)
 
-    # Covetous eye: acid slit top row — target lock
-    # Interior state: BILATERAL eyes (glitch.md §6.3 — G008)
-    covetous_eye = [[5, 5, 5], [0, 5, 0], [0, 0, 0]]
-
-    top, right, bot, left, cy_top, cy_bot = draw_glitch_figure(
-        draw, cx, cy,
-        tilt_deg=12,         # leans toward subject (covetous lean: +12° per glitch.md §5)
-        squash=1.0, stretch=1.0,
-        spike_h=12,          # covetous: 12 per glitch.md §3.1
-        arm_l_dy=18,         # left arm low (hanging — yearning weight)
-        arm_r_dy=-6,         # right arm slightly raised (reaching)
-        arm_r_extend=14,     # RIGHT arm extends toward subject (+14px extension)
-        left_eye_glyph=covetous_eye,
-        bilateral=True,      # INTERIOR STATE — G008 bilateral (glitch.md §6.3)
-        confetti_colors=[UV_PURPLE, UV_PURPLE, CORRUPT_AMB_SH],  # minimal UV only
-        confetti_count=4,
-        confetti_spread=18,
-        confetti_seed=33,
-    )
+    # Canonical renderer: covetous expression — bilateral eyes, tilt lean
+    target_h = int(ph * 0.55)
+    img, draw, cbbox = paste_glitch_in_panel(
+        img, draw, cx, cy, expression="covetous",
+        scale=1.3, target_h=target_h)
+    cy_top = cbbox[1]
+    right_x = cbbox[2]
+    right_y = cy
 
     # Slow arc arrow on extending right arm — smooth, long reach
-    draw_arrow(draw, right[0] + 16, right[1] - 6,
-               right[0] + 48, right[1] - 22,
+    draw_arrow(draw, right_x - 10, right_y - 6,
+               right_x + 20, right_y - 22,
                color=MOTION_ARROW, width=2, head=7)
-    annot_text(draw, right[0] + 32, right[1] - 36, "SLOW extend", color=MOTION_ARROW)
-    annot_text(draw, right[0] + 32, right[1] - 22, "toward subject", color=ANNOT_TEXT)
+    annot_text(draw, right_x + 4, right_y - 36, "SLOW extend", color=MOTION_ARROW)
+    annot_text(draw, right_x + 4, right_y - 22, "toward subject", color=ANNOT_TEXT)
 
     # Bilateral eye callout (key character read)
     annot_text(draw, ox + 6, cy_top - 48, "BILATERAL eyes:", color=SOFT_GOLD)
@@ -417,36 +302,22 @@ def draw_panel_b2(img, draw, col):
 
 
 def draw_panel_b3(img, draw, col):
-    """B3: CORRUPTION SURGE — body scale pulses ±15%, jittery. Crack brightens."""
+    """B3: CORRUPTION SURGE — body scale pulses +15%, jittery. Crack brightens."""
     ox, oy = panel_origin(col)
     pw, ph = PANEL_W, PANEL_H
     cx = ox + pw // 2
     cy = oy + int(ph * 0.44)
 
-    # Panicked eye: full HOT ring
-    panicked_eye = [[4, 4, 4], [4, 0, 4], [4, 4, 4]]
+    # Canonical renderer: panicked expression — HOT ring eyes, stretched body
+    target_h = int(ph * 0.62)  # +15% surge = slightly larger
+    img, draw, cbbox = paste_glitch_in_panel(
+        img, draw, cx, cy, expression="panicked",
+        scale=1.5, target_h=target_h)
+    cy_top = cbbox[1]
 
-    # B3: SURGE state — stretched body (showing +15% size pulse)
-    top, right, bot, left, cy_top, cy_bot = draw_glitch_figure(
-        draw, cx, cy,
-        tilt_deg=0,
-        squash=1.0, stretch=1.15,   # +15% body size at surge peak
-        spike_h=16,                  # spike_h increases during surge
-        arm_l_dy=-14, arm_r_dy=-16, # both arms flung out (panic)
-        left_eye_glyph=panicked_eye,
-        bilateral=False,   # panicked = performance (uncontrolled)
-        confetti_colors=[HOT_MAG, UV_PURPLE],
-        confetti_count=18,
-        confetti_spread=36,
-        confetti_seed=55,
-        crack_bright=True,  # crack brightened during surge
-    )
-
-    # Ghost body at neutral scale (dashed outline — before surge)
-    neutral_ry_eff = int(RY * 1.0)
-    ghost_top_y = cy - neutral_ry_eff
-    ghost_bot_y = cy + int(neutral_ry_eff * 1.15)
-    draw.line([(cx, ghost_top_y), (cx, ghost_top_y - 20 * 2)], fill=ACCENT_DASH, width=1)
+    # Ghost body at neutral scale annotation
+    ghost_top_y = cy - int(RY * 1.0)
+    draw.line([(cx, ghost_top_y), (cx, ghost_top_y - 40)], fill=ACCENT_DASH, width=1)
     annot_text(draw, cx + 6, ghost_top_y - 8, "neutral top (ghost)", color=ACCENT_DASH)
 
     # Scale pulse arrows (expand and compress — staccato)
@@ -464,7 +335,7 @@ def draw_panel_b3(img, draw, col):
     annot_text(draw, ox + 6, oy + ph - 54, "body: \u00b115% scale pulse, staccato fast", color=ANNOT_TEXT)
     annot_text(draw, ox + 6, oy + ph - 40, "spike_h=16 (elevated energy — loss of control)", color=ANNOT_TEXT)
     annot_text(draw, ox + 6, oy + ph - 26, "confetti: HOT_MAG+UV_PURPLE max (18px)", color=ANNOT_TEXT)
-    annot_text(draw, ox + 6, oy + ph - 12, "jitter: body oscillation x+y ±4px per frame", color=CORRUPT_AMB)
+    annot_text(draw, ox + 6, oy + ph - 12, "jitter: body oscillation x+y \u00b14px per frame", color=CORRUPT_AMB)
 
     draw_beat_badge(draw, ox, oy, 3, "CORRUPTION SURGE")
     draw_panel_frame(draw, ox, oy, pw, ph)
@@ -477,23 +348,12 @@ def draw_panel_b4(img, draw, col):
     cx = ox + pw // 2 + 20   # displaced right (retreating to viewer's right = away from subject)
     cy = oy + int(ph * 0.47)  # shifted down slightly for squash display
 
-    # Stunned eye: full HOT_MAG — overloaded
-    stunned_eye = [[4, 4, 4], [4, 4, 4], [4, 4, 4]]
-
-    top, right, bot, left, cy_top, cy_bot = draw_glitch_figure(
-        draw, cx, cy,
-        tilt_deg=-20,   # hard recoil away from subject (stunned: -18° per glitch.md §5)
-        squash=0.65,    # compressed on impact (between retreat 0.65 and panicked 0.55)
-        stretch=1.0,
-        spike_h=6,      # compressed under stress
-        arm_l_dy=8, arm_r_dy=10,   # both slightly dropped (defensive, not fully dropped)
-        left_eye_glyph=stunned_eye,
-        bilateral=False,   # stunned = performance
-        confetti_colors=[HOT_MAG, UV_PURPLE, CORRUPT_AMB_SH],
-        confetti_count=14,
-        confetti_spread=30,
-        confetti_seed=77,
-    )
+    # Canonical renderer: stunned expression — compressed, recoil
+    target_h = int(ph * 0.48)  # squashed = shorter
+    img, draw, cbbox = paste_glitch_in_panel(
+        img, draw, cx, cy, expression="stunned",
+        scale=1.3, target_h=target_h)
+    cy_top = cbbox[1]
 
     # Displacement direction arrow (backward = to the right in this composition)
     draw_arrow(draw, cx - 50, cy - 30, cx - 80, cy - 30,

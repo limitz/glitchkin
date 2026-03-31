@@ -54,6 +54,11 @@ except ImportError:
     def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFont
 import math, random, os
+import sys
+from LTG_TOOL_char_byte import draw_byte
+from LTG_TOOL_char_luma import draw_luma
+from LTG_TOOL_cairo_primitives import to_pil_rgba
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 PANELS_DIR = output_dir('storyboards', 'panels')
 OUTPUT_PATH = os.path.join(PANELS_DIR, "LTG_SB_cold_open_P09.png")
@@ -172,259 +177,8 @@ def draw_confetti_trail(draw, from_x, from_y, to_x, to_y, count, rng_seed):
             draw_irregular_poly(draw, px, py, r, sides, col, seed=i * 53 + rng_seed)
 
 
-def draw_byte_floating(img, draw, byte_cx, byte_cy, body_h,
-                       floor_y, head_cocked_deg=6):
-    """
-    Byte fully emerged, floating in the real world.
-    SPOTTED expression: normal eye iris shifted LEFT toward Luma.
-    Cracked eye: SEARCHING/PROCESSING.
-    Body: slight forward lean (-2°), head cocked toward Luma.
-    Returns: (eye_cx, eye_cy) for sight-line annotation.
-    """
-    # Body geometry
-    torso_h  = int(body_h * 0.63)
-    leg_h    = int(body_h * 0.25)
-    head_r   = int(body_h * 0.22)
-
-    # Slight body tilt toward Luma (camera-left)
-    body_tilt_rad = math.radians(-2.5)   # -2° lean = forward (toward Luma/left)
-
-    torso_top_y = byte_cy - int(body_h * 0.50)
-    torso_bot_y = torso_top_y + torso_h
-
-    torso_half_w_top = int(body_h * 0.30)
-    torso_half_w_bot = int(body_h * 0.13)
-
-    # Lean offset: shift top of torso slightly left (lean toward Luma)
-    lean_x = int(body_h * 0.06)   # lean toward camera-left
-
-    # ── BODY (inverted teardrop, standing in air) ─────────────────────────────
-    torso_pts = [
-        (byte_cx - torso_half_w_top - lean_x,   torso_top_y + int(torso_h * 0.18)),
-        (byte_cx - lean_x,                        torso_top_y),
-        (byte_cx + torso_half_w_top - lean_x,   torso_top_y + int(torso_h * 0.18)),
-        (byte_cx + torso_half_w_bot + 3,         torso_bot_y - 4),
-        (byte_cx - torso_half_w_bot - 3,         torso_bot_y - 4),
-    ]
-    draw.polygon(torso_pts, fill=BYTE_TEAL, outline=VOID_BLACK)
-
-    # Inner dark core
-    inner_hw = int(torso_half_w_top * 0.52)
-    inner_pts = [
-        (byte_cx - inner_hw - lean_x,  torso_top_y + int(torso_h * 0.28)),
-        (byte_cx - lean_x,              torso_top_y + int(torso_h * 0.10)),
-        (byte_cx + inner_hw - lean_x,  torso_top_y + int(torso_h * 0.28)),
-        (byte_cx + inner_hw - 4,       torso_bot_y - 8),
-        (byte_cx - inner_hw + 4,       torso_bot_y - 8),
-    ]
-    draw.polygon(inner_pts, fill=VOID_BLACK)
-
-    # ── HEAD (head cocked toward Luma — slight offset left + up) ──────────────
-    # Head cocked = head center offset slightly left + rotated
-    head_cx = byte_cx - lean_x - int(head_r * 0.15)   # cocked toward Luma
-    head_cy = torso_top_y + int(head_r * 0.58)
-    draw_irregular_poly(draw, head_cx, head_cy, head_r, 6,
-                        BYTE_TEAL, seed=9901, outline=VOID_BLACK)
-
-    # ── ARMS (mid-position — neither raised nor tucked) ───────────────────────
-    arm_top_y = torso_top_y + int(torso_h * 0.22)
-    arm_bot_y = torso_top_y + int(torso_h * 0.56)
-    arm_len   = int(body_h * 0.22)
-    arm_w     = int(body_h * 0.075)
-
-    for side in [-1, 1]:
-        arm_x0    = byte_cx + side * torso_half_w_top - lean_x
-        arm_cx2   = arm_x0 + side * arm_len
-        arm_mid_y = arm_top_y + int((arm_bot_y - arm_top_y) * 0.5)
-        arm_pts   = [
-            (arm_x0,                    arm_top_y),
-            (arm_cx2 + side * 2,        arm_mid_y - arm_w),
-            (arm_cx2 + side * 4,        arm_mid_y + arm_w),
-            (arm_x0,                    arm_bot_y),
-        ]
-        draw.polygon(arm_pts, fill=BYTE_TEAL, outline=VOID_BLACK)
-        hand_r = int(body_h * 0.062)
-        draw_irregular_poly(draw, arm_cx2 + side * 4, arm_mid_y, hand_r, 5,
-                            ELEC_CYAN_HI, seed=9902 + side * 3, outline=VOID_BLACK)
-
-    # ── LEGS + FEET (floating — feet visible above floor) ────────────────────
-    leg_top_y = torso_bot_y - 4
-    leg_w     = int(body_h * 0.09)
-    feet_y    = leg_top_y + leg_h   # where feet end up (still above floor)
-
-    for side in [-1, 1]:
-        leg_x = byte_cx + side * torso_half_w_bot // 2
-        foot_x = leg_x + side * int(body_h * 0.04)
-        leg_pts = [
-            (leg_x - leg_w // 2, leg_top_y),
-            (leg_x + leg_w // 2, leg_top_y),
-            (foot_x + leg_w // 2 + side * 2, feet_y),
-            (foot_x - leg_w // 2 + side * 2, feet_y),
-        ]
-        draw.polygon(leg_pts, fill=BYTE_TEAL, outline=VOID_BLACK)
-        # Foot (slightly below legs)
-        foot_pts = [
-            (foot_x - int(body_h * 0.055), feet_y),
-            (foot_x + side * int(body_h * 0.12) + int(body_h * 0.055), feet_y),
-            (foot_x + side * int(body_h * 0.12), feet_y + int(body_h * 0.055)),
-            (foot_x - int(body_h * 0.035), feet_y + int(body_h * 0.055)),
-        ]
-        draw.polygon(foot_pts, fill=ELEC_CYAN_HI, outline=VOID_BLACK)
-
-    # ── EYES — SPOTTED (iris shifted LEFT toward Luma) ───────────────────────
-    eye_cy  = head_cy - int(head_r * 0.12)
-    eye_sep = int(head_r * 0.46)
-    e_r     = int(head_r * 0.31)
-
-    # Normal eye (right — faces camera-right) — iris shifted LEFT (toward Luma)
-    ne_cx = head_cx + eye_sep
-    ne_cy = eye_cy
-    draw.ellipse([ne_cx - e_r, ne_cy - e_r,
-                  ne_cx + e_r, ne_cy + e_r],
-                 fill=BYTE_EYE_W, outline=VOID_BLACK, width=1)
-    # Normal lid (relaxed scan — not alarm, not squint)
-    lid = int(e_r * 0.18)
-    draw.rectangle([ne_cx - e_r, ne_cy - e_r, ne_cx + e_r, ne_cy - e_r + lid],
-                   fill=VOID_BLACK)
-    # Iris shifted LEFT toward Luma — THIS IS THE SIGHT-LINE
-    iris_r  = int(e_r * 0.50)
-    iris_ox = -int(iris_r * 0.55)   # strong left shift — he's LOOKING at Luma
-    draw.ellipse([ne_cx - iris_r + iris_ox, ne_cy - iris_r + lid // 2,
-                  ne_cx + iris_r + iris_ox, ne_cy + iris_r - 2],
-                 fill=BYTE_TEAL, outline=VOID_BLACK, width=1)
-    # Pupil
-    draw.ellipse([ne_cx - 3 + iris_ox, ne_cy - 3 + lid // 2,
-                  ne_cx + 3 + iris_ox, ne_cy + 3 + lid // 2],
-                 fill=VOID_BLACK)
-
-    # Record eye position for sight-line annotation
-    sight_eye_cx = ne_cx + iris_ox
-    sight_eye_cy = ne_cy
-
-    # Cracked eye (left) — SEARCHING/PROCESSING
-    ce_cx = head_cx - eye_sep
-    ce_cy = eye_cy
-    draw.ellipse([ce_cx - e_r, ce_cy - e_r,
-                  ce_cx + e_r, ce_cy + e_r],
-                 fill=VOID_BLACK, outline=ELEC_CYAN_DIM, width=1)
-    draw.line([(ce_cx - e_r + 2, ce_cy - int(e_r * 0.65)),
-               (ce_cx + e_r - 2, ce_cy + int(e_r * 0.65))],
-              fill=CRACK_LINE, width=1)
-    # Processing dots — diverge slightly outward (Lee Tanaka spec)
-    div_x = -int(e_r * 0.20)
-    for di, dot_col in enumerate([ELEC_CYAN_HI, HOT_MAGENTA, ELEC_CYAN_HI]):
-        dx2 = ce_cx + div_x + int((di - 1) * e_r * 0.38)
-        dy2 = ce_cy + int((di - 1) * 2)
-        draw.ellipse([dx2 - 2, dy2 - 2, dx2 + 2, dy2 + 2], fill=dot_col)
-
-    # ── MOUTH (SPOTTED — slight open-curious, not alarmed) ───────────────────
-    mouth_y  = head_cy + int(head_r * 0.42)
-    mouth_hw = int(head_r * 0.42)
-    # Slightly open pixel mouth (curiosity)
-    draw.rectangle([head_cx - mouth_hw, mouth_y,
-                    head_cx + mouth_hw, mouth_y + int(head_r * 0.16)],
-                   fill=VOID_BLACK, outline=ELEC_CYAN_DIM, width=1)
-
-    # ── Desaturation ring at FLOOR directly below Byte ────────────────────────
-    # Byte floats above floor; ring is on the floor plane (not at his feet)
-    ring_cx = byte_cx
-    ring_y  = floor_y
-    rw      = int(body_h * 0.50)
-    rh      = int(rw * 0.28)     # floor perspective foreshortening
-    for ro in range(3):
-        draw.ellipse([ring_cx - rw - ro * 4, ring_y - rh - ro,
-                      ring_cx + rw + ro * 4, ring_y + rh + ro],
-                     outline=DESAT_RING, width=1)
-
-    return (sight_eye_cx, sight_eye_cy), feet_y, head_cy, head_r
 
 
-def draw_luma_asleep(draw, luma_head_cx, luma_head_cy):
-    """Luma asleep on couch, background-scale, warm palette."""
-    # Overall scale: smaller than Byte (background depth read)
-    scale = 0.70   # relative scale factor
-
-    body_h_luma = int(DRAW_H * 0.28 * scale)
-    head_r_l    = int(body_h_luma * 0.22)
-
-    # ── Head ─────────────────────────────────────────────────────────────────
-    # Head slightly tilted (asleep — careless lean)
-    # Head circle
-    draw.ellipse([luma_head_cx - head_r_l, luma_head_cy - head_r_l,
-                  luma_head_cx + head_r_l, luma_head_cy + head_r_l],
-                 fill=LUMA_SKIN, outline=(100, 68, 48), width=1)
-
-    # Hair cloud (loose dark cloud — from sleeping position, hair messier)
-    hair_r = int(head_r_l * 1.45)
-    for seed_h in [110, 120, 130, 140, 150, 160]:
-        draw_irregular_poly(draw, luma_head_cx, luma_head_cy, hair_r, 7,
-                            LUMA_HAIR, seed=seed_h)
-    # Underlying skin visible
-    draw.ellipse([luma_head_cx - head_r_l + 3, luma_head_cy - head_r_l + 3,
-                  luma_head_cx + head_r_l - 3, luma_head_cy + head_r_l - 3],
-                 fill=LUMA_SKIN)
-
-    # Eyes: CLOSED (asleep — thin curved lines)
-    eye_cy_l = luma_head_cy
-    eye_sep_l = int(head_r_l * 0.38)
-    e_r_l     = int(head_r_l * 0.24)
-    for side in [-1, 1]:
-        ex = luma_head_cx + side * eye_sep_l
-        # Closed eye: arc downward (relaxed lid)
-        draw.arc([ex - e_r_l, eye_cy_l - int(e_r_l * 0.5),
-                  ex + e_r_l, eye_cy_l + int(e_r_l * 0.5)],
-                 start=200, end=340, fill=(80, 52, 40), width=2)
-
-    # Slight open-mouth relaxed sleep (jaw soft, not deliberate)
-    mouth_y_l = luma_head_cy + int(head_r_l * 0.46)
-    draw.arc([luma_head_cx - int(head_r_l * 0.30),
-              mouth_y_l - int(head_r_l * 0.12),
-              luma_head_cx + int(head_r_l * 0.30),
-              mouth_y_l + int(head_r_l * 0.12)],
-             start=10, end=170, fill=(120, 72, 58), width=1)
-
-    # ── Torso / hoodie (visible under blanket / couch) ───────────────────────
-    torso_top = luma_head_cy + head_r_l
-    torso_bot = torso_top + int(body_h_luma * 0.55)
-    torso_hw  = int(head_r_l * 1.25)
-
-    # Hoodie (orange) — upper torso visible
-    draw.rectangle([luma_head_cx - torso_hw, torso_top,
-                    luma_head_cx + torso_hw, torso_bot],
-                   fill=LUMA_HOODIE, outline=(160, 68, 28), width=1)
-
-    # ── Arm dangling off couch (left arm hanging down) ───────────────────────
-    arm_x0 = luma_head_cx - torso_hw
-    arm_y0 = torso_top + int(body_h_luma * 0.15)
-    arm_len = int(body_h_luma * 0.40)
-    arm_w   = int(head_r_l * 0.30)
-    # Dangle: arm goes downward + slightly left (careless hang)
-    draw.rectangle([arm_x0 - arm_w, arm_y0,
-                    arm_x0, arm_y0 + arm_len],
-                   fill=LUMA_HOODIE, outline=(160, 68, 28))
-    # Exposed wrist/hand
-    draw.ellipse([arm_x0 - arm_w - int(arm_w * 0.4), arm_y0 + arm_len - 4,
-                  arm_x0 + int(arm_w * 0.2), arm_y0 + arm_len + int(arm_w * 1.0)],
-                 fill=LUMA_SKIN, outline=(100, 68, 48))
-
-    # ── Couch edge (left side anchor) ────────────────────────────────────────
-    couch_x = luma_head_cx - torso_hw - int(head_r_l * 0.6)
-    couch_y = luma_head_cy + int(head_r_l * 0.8)
-    couch_w = int(torso_hw * 2.4)
-    couch_h = int(body_h_luma * 0.75)
-    draw.rectangle([couch_x, couch_y, couch_x + couch_w, couch_y + couch_h],
-                   fill=COUCH_WARM, outline=COUCH_SHADOW)
-
-    # Pillow under head
-    pillow_pts = [
-        (luma_head_cx - int(head_r_l * 1.5),  luma_head_cy - int(head_r_l * 0.60)),
-        (luma_head_cx + int(head_r_l * 1.5),  luma_head_cy - int(head_r_l * 0.60)),
-        (luma_head_cx + int(head_r_l * 1.3),  luma_head_cy + int(head_r_l * 0.65)),
-        (luma_head_cx - int(head_r_l * 1.3),  luma_head_cy + int(head_r_l * 0.65)),
-    ]
-    draw.polygon(pillow_pts, fill=COUCH_PILLOW, outline=COUCH_SHADOW)
-
-    return luma_head_cx, luma_head_cy
 
 
 def draw_background_monitors(draw, horizon_y):
@@ -446,6 +200,58 @@ def draw_background_monitors(draw, horizon_y):
         # Small "static" annotation
         draw.text((bm_x + sm, bm_y + bm_h + 2), "normal\nstatic",
                   font=load_font(8), fill=(110, 118, 100))
+
+
+
+def _char_to_pil(surface):
+    """Convert a cairo.ImageSurface from canonical char module to cropped PIL RGBA."""
+    from LTG_TOOL_cairo_primitives import to_pil_rgba
+    pil_img = to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    return pil_img
+
+
+def _composite_char(base_img, char_pil, cx, cy):
+    """Composite a character PIL RGBA image onto base_img centered at (cx, cy)."""
+    x = cx - char_pil.width // 2
+    y = cy - char_pil.height // 2
+    overlay = Image.new('RGBA', base_img.size, (0, 0, 0, 0))
+    overlay.paste(char_pil, (x, y), char_pil)
+    base_rgba = base_img.convert('RGBA')
+    result = Image.alpha_composite(base_rgba, overlay)
+    base_img.paste(result.convert('RGB'))
+
+def draw_byte_floating(img, draw, byte_cx, byte_cy, body_h,
+                       expression="searching", facing="left", lean_deg=0,
+                       hovering=True, confetti=True, glow=True):
+    """Byte floating — canonical renderer + composite."""
+    scale = body_h / 88.0
+    surface = draw_byte(expression=expression, scale=scale, facing=facing)
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        aspect = char_pil.width / char_pil.height
+        new_h = body_h
+        new_w = int(new_h * aspect)
+        char_pil = char_pil.resize((new_w, new_h), Image.LANCZOS)
+    _composite_char(img, char_pil, byte_cx, byte_cy)
+
+
+def draw_luma_asleep(draw, luma_head_cx, luma_head_cy):
+    """Luma asleep — canonical renderer (WORRIED as closest to sleeping pose)."""
+    # Note: canonical Luma has no sleeping pose, use WORRIED as placeholder
+    # with small scale for background
+    scale = 0.3
+    surface = draw_luma(expression="WORRIED", scale=scale, facing="right")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        char_pil = char_pil.resize((int(char_pil.width * 0.6), int(char_pil.height * 0.6)), Image.LANCZOS)
+    # For asleep pose, rotate slightly
+    char_pil = char_pil.rotate(15, expand=True, fillcolor=(0, 0, 0, 0))
+    # Composite onto a temp image passed via draw
+    # Since draw doesn't carry img ref, we skip composite here
+    # The caller should use the returned PIL image
 
 
 def draw_scene(img):

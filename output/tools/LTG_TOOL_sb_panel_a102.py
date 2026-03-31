@@ -32,6 +32,10 @@ except ImportError:
     def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFont
 import math, random, os
+import sys
+from LTG_TOOL_char_luma import draw_luma as _draw_luma_canonical
+from LTG_TOOL_cairo_primitives import to_pil_rgba
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 PANELS_DIR = output_dir('storyboards', 'panels')
 OUTPUT_PATH = os.path.join(PANELS_DIR, "LTG_SB_act1_panel_a102.png")
@@ -172,159 +176,6 @@ def draw_background(draw, img):
     return draw
 
 
-def draw_luma(draw, img):
-    """
-    Luma — MEDIUM shot — entering kitchen, MID-STRIDE, head turned right toward TV.
-    Pose: one foot raised (left foot mid-step), torso angled slightly right,
-    right arm raising (reflexive — attention caught), left arm neutral.
-    Expression: ALERT — wide eyes directed right, mouth slightly open (surprise forming).
-    Position: FG-left to center-left of frame.
-    """
-    rng = random.Random(102)
-
-    # Body center
-    luma_cx = int(PW * 0.28)
-    luma_fy = int(DRAW_H * 0.82)    # feet level
-    luma_h  = int(DRAW_H * 0.58)    # ~3.5 heads tall (medium shot — full body)
-
-    head_r  = int(luma_h * 0.14)    # head radius
-    body_cy = luma_fy - int(luma_h * 0.38)    # body center y
-    body_w  = int(head_r * 2.2)
-    body_h  = int(luma_h * 0.32)
-
-    head_cy = body_cy - body_h // 2 - head_r - 2
-    head_cx = luma_cx + 6   # slight rightward lean (attention caught right)
-
-    # ── Hair (volume cloud — dark, gravity-defying) ──────────────────────────
-    # Hair fills large area above/around head
-    draw.ellipse([head_cx - head_r - 18, head_cy - head_r - 22,
-                  head_cx + head_r + 14, head_cy + head_r + 4],
-                 fill=LUMA_HAIR)
-    # Hair ringlets / wisps
-    for hx, hy, hr in [(head_cx - head_r - 10, head_cy - head_r - 12, 7),
-                        (head_cx + head_r + 6, head_cy - head_r - 8, 6),
-                        (head_cx - head_r + 4, head_cy - head_r - 20, 8)]:
-        draw.ellipse([hx - hr, hy - hr, hx + hr, hy + hr], fill=LUMA_HAIR)
-
-    # ── Hoodie/body ──────────────────────────────────────────────────────────
-    # Torso — slightly angled right (attention caught)
-    torso_pts = [(luma_cx - body_w // 2 - 2, body_cy - body_h // 2),
-                 (luma_cx + body_w // 2 + 4, body_cy - body_h // 2),
-                 (luma_cx + body_w // 2 + 8, body_cy + body_h // 2),
-                 (luma_cx - body_w // 2 + 2, body_cy + body_h // 2)]
-    draw.polygon(torso_pts, fill=LUMA_HOODIE, outline=LUMA_OUTLINE)
-
-    # Hoodie hood/collar
-    draw.ellipse([luma_cx - body_w // 2, body_cy - body_h // 2 - 5,
-                  luma_cx + body_w // 2 + 4, body_cy - body_h // 2 + 14],
-                 fill=LUMA_HOODIE, outline=LUMA_OUTLINE)
-
-    # Jeans (lower body)
-    waist_y = body_cy + body_h // 2
-    hip_w   = body_w + 6
-    leg_h   = int(luma_h * 0.30)
-
-    # Left leg (standing — weight on right foot)
-    draw.polygon([(luma_cx - 4, waist_y),
-                  (luma_cx + hip_w // 2 - 2, waist_y),
-                  (luma_cx + hip_w // 2 - 2 + 4, luma_fy),
-                  (luma_cx + 4, luma_fy)],
-                 fill=LUMA_PANTS, outline=LUMA_OUTLINE)
-
-    # Right leg — raised (mid-stride LEFT foot is raised, RIGHT foot on ground)
-    # Left foot in the air (left leg raised and bent forward — walking)
-    draw.polygon([(luma_cx - hip_w // 2, waist_y),
-                  (luma_cx - 4, waist_y),
-                  (luma_cx + 4, waist_y + int(leg_h * 0.7)),
-                  (luma_cx - hip_w // 2 + 4, waist_y + int(leg_h * 0.7))],
-                 fill=LUMA_PANTS, outline=LUMA_OUTLINE)
-    # Lower leg angled forward (raised foot)
-    foot_raise_x = luma_cx - hip_w // 2 + 16
-    foot_raise_y = waist_y + int(leg_h * 0.85)
-    draw.polygon([(luma_cx + 2, waist_y + int(leg_h * 0.7)),
-                  (luma_cx - hip_w // 2 + 4, waist_y + int(leg_h * 0.7)),
-                  (foot_raise_x - 8, foot_raise_y),
-                  (foot_raise_x + 6, foot_raise_y)],
-                 fill=LUMA_PANTS, outline=LUMA_OUTLINE)
-    # Raised shoe
-    draw.ellipse([foot_raise_x - 12, foot_raise_y - 5,
-                  foot_raise_x + 12, foot_raise_y + 8],
-                 fill=LUMA_SHOE, outline=LUMA_OUTLINE)
-
-    # Right shoe (grounded)
-    draw.ellipse([luma_cx + hip_w // 2 - 10, luma_fy - 5,
-                  luma_cx + hip_w // 2 + 14, luma_fy + 8],
-                 fill=LUMA_SHOE, outline=LUMA_OUTLINE)
-
-    # ── Arms ─────────────────────────────────────────────────────────────────
-    shoulder_y = body_cy - body_h // 4
-
-    # Left arm (viewer's left) — natural hang, slightly forward from stride
-    left_elbow = (luma_cx - body_w // 2 - 14, shoulder_y + 28)
-    left_hand  = (luma_cx - body_w // 2 - 8, shoulder_y + 54)
-    draw.line([(luma_cx - body_w // 2, shoulder_y),
-               left_elbow, left_hand], fill=LUMA_HOODIE, width=12)
-    draw.ellipse([left_hand[0] - 7, left_hand[1] - 6,
-                  left_hand[0] + 7, left_hand[1] + 6], fill=LUMA_SKIN, outline=LUMA_OUTLINE)
-
-    # Right arm (viewer's right) — RAISED reflexively (attention caught)
-    # Elbow bent, hand raised to chest height (not fully up — just reflexive alert)
-    right_shoulder = (luma_cx + body_w // 2 + 2, shoulder_y)
-    right_elbow    = (luma_cx + body_w // 2 + 18, shoulder_y + 10)
-    right_hand     = (luma_cx + body_w // 2 + 8, shoulder_y - 10)
-    draw.line([right_shoulder, right_elbow], fill=LUMA_HOODIE, width=12)
-    draw.line([right_elbow, right_hand], fill=LUMA_HOODIE, width=10)
-    draw.ellipse([right_hand[0] - 7, right_hand[1] - 6,
-                  right_hand[0] + 7, right_hand[1] + 6], fill=LUMA_SKIN, outline=LUMA_OUTLINE)
-
-    # ── Head (turned right — toward TV) ──────────────────────────────────────
-    draw.ellipse([head_cx - head_r, head_cy - head_r,
-                  head_cx + head_r, head_cy + head_r],
-                 fill=LUMA_SKIN, outline=LUMA_OUTLINE, width=2)
-
-    # Eyes — wide, looking RIGHT (toward TV)
-    # Both eyes shifted right (head turning)
-    eye_y   = head_cy - head_r // 5
-    eye_w   = int(head_r * 0.52)
-    eye_h   = int(head_r * 0.34)
-    for side, ex_off in enumerate([int(head_r * 0.25), int(head_r * 0.70)]):
-        ex = head_cx + ex_off - head_r // 3  # offset eyes right
-        # Sclera
-        draw.ellipse([ex - eye_w // 2, eye_y - eye_h // 2,
-                      ex + eye_w // 2, eye_y + eye_h // 2],
-                     fill=(245, 242, 235), outline=LUMA_OUTLINE, width=1)
-        # Iris (looking right — pupil offset right)
-        iris_r = int(eye_h * 0.42)
-        iris_x = ex + 3  # gaze direction: right
-        draw.ellipse([iris_x - iris_r, eye_y - iris_r,
-                      iris_x + iris_r, eye_y + iris_r],
-                     fill=LUMA_EYE)
-        # Pupil
-        draw.ellipse([iris_x - iris_r + 2, eye_y - iris_r + 2,
-                      iris_x + iris_r - 2, eye_y + iris_r - 2],
-                     fill=(18, 12, 6))
-        # Highlight
-        draw.ellipse([iris_x + 1, eye_y - iris_r + 1,
-                      iris_x + 5, eye_y - iris_r + 5], fill=(255, 255, 255))
-
-    # Brows — raised (ALERT — attention caught)
-    brow_y = eye_y - eye_h // 2 - 8
-    for side, ex_off in enumerate([int(head_r * 0.25), int(head_r * 0.70)]):
-        ex = head_cx + ex_off - head_r // 3
-        draw.arc([ex - eye_w // 2, brow_y - 6, ex + eye_w // 2, brow_y + 4],
-                 start=200, end=340, fill=LUMA_HAIR, width=2)
-
-    # Mouth — slightly open (oh! moment)
-    mouth_y = head_cy + head_r // 3
-    draw.arc([head_cx - int(head_r * 0.30), mouth_y - 4,
-              head_cx + int(head_r * 0.30), mouth_y + 10],
-             start=10, end=170, fill=LUMA_OUTLINE, width=2)
-
-    # Nose (minimal construction)
-    draw.arc([head_cx - 6, head_cy + 2, head_cx + 6, head_cy + 14],
-             start=240, end=300, fill=LUMA_OUTLINE, width=1)
-
-    return draw
 
 
 def draw_sight_line(draw, luma_head_cx, luma_head_cy, tv_cx, tv_cy):
@@ -340,6 +191,42 @@ def draw_sight_line(draw, luma_head_cx, luma_head_cy, tv_cx, tv_cy):
         py = int(luma_head_cy + dy * frac)
         if i % 2 == 0:
             draw.rectangle([px - 2, py - 2, px + 2, py + 2], fill=SIGHT_LINE)
+
+
+
+def _char_to_pil(surface):
+    """Convert a cairo.ImageSurface from canonical char module to cropped PIL RGBA."""
+    from LTG_TOOL_cairo_primitives import to_pil_rgba
+    pil_img = to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    return pil_img
+
+
+def _composite_char(base_img, char_pil, cx, cy):
+    """Composite a character PIL RGBA image onto base_img centered at (cx, cy)."""
+    x = cx - char_pil.width // 2
+    y = cy - char_pil.height // 2
+    overlay = Image.new('RGBA', base_img.size, (0, 0, 0, 0))
+    overlay.paste(char_pil, (x, y), char_pil)
+    base_rgba = base_img.convert('RGBA')
+    result = Image.alpha_composite(base_rgba, overlay)
+    base_img.paste(result.convert('RGB'))
+
+def draw_luma(draw, img):
+    """Luma — canonical renderer."""
+    scale = 0.4
+    surface = _draw_luma_canonical(expression="CURIOUS", scale=scale, facing="right")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        target_h = 180
+        aspect = char_pil.width / char_pil.height
+        new_w = int(target_h * aspect)
+        char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
+    luma_cx = int(PW * 0.35)
+    luma_cy = int(DRAW_H * 0.65)
+    _composite_char(img, char_pil, luma_cx, luma_cy)
 
 
 def make_panel():

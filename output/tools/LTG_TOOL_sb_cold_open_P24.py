@@ -37,6 +37,12 @@ except ImportError:
     def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFont
 import math, random, os
+import sys
+from LTG_TOOL_char_luma import draw_luma as _draw_luma_canonical
+from LTG_TOOL_char_byte import draw_byte as _draw_byte_canonical
+from LTG_TOOL_char_glitch import draw_glitch
+from LTG_TOOL_cairo_primitives import to_pil_rgba
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 PANELS_DIR = output_dir('storyboards', 'panels')
 OUTPUT_PATH = os.path.join(PANELS_DIR, "LTG_SB_cold_open_P24.png")
@@ -193,65 +199,6 @@ def draw_breach_monitors(draw, img):
     return draw
 
 
-def draw_glitchkin_swarm(draw, img):
-    """
-    Draw Glitchkin pouring out — various shapes, sizes, angles.
-    They read as a chaotic wave emanating from the monitors.
-    At this scale, individual design detail is secondary to the WAVE read.
-    """
-    rng = random.Random(2424)
-
-    # Glitchkin positions — scattered across upper 2/3 of panel
-    # More dense near monitor wall, spreading outward
-    glitchkin_positions = []
-    for gi in range(28):
-        gx = rng.randint(10, PW - 10)
-        gy = rng.randint(10, int(DRAW_H * 0.72))
-        g_scale = rng.uniform(0.6, 1.6)   # varies in size (depth illusion)
-        glitchkin_positions.append((gx, gy, g_scale))
-
-    # Sort by Y (back to front)
-    glitchkin_positions.sort(key=lambda x: x[1])
-
-    for gi, (gx, gy, g_scale) in enumerate(glitchkin_positions):
-        body_r = int(12 * g_scale)
-        sides = rng.randint(4, 7)
-        # Color: mix of cyan, magenta, purple
-        col_choice = rng.randint(0, 3)
-        if col_choice == 0:
-            col = ELEC_CYAN
-        elif col_choice == 1:
-            col = HOT_MAGENTA
-        elif col_choice == 2:
-            col = UV_PURPLE
-        else:
-            col = ELEC_CYAN_HI
-
-        # Main body polygon
-        draw_irregular_poly(draw, gx, gy, body_r, sides, col,
-                            seed=gi * 37 + 100, outline=VOID_BLACK)
-
-        # Eyes — tiny dots
-        if body_r > 8:
-            eye_sep = int(body_r * 0.35)
-            eye_r = max(2, int(body_r * 0.15))
-            draw.ellipse([gx - eye_sep - eye_r, gy - eye_r,
-                          gx - eye_sep + eye_r, gy + eye_r],
-                         fill=BYTE_EYE_W)
-            draw.ellipse([gx + eye_sep - eye_r, gy - eye_r,
-                          gx + eye_sep + eye_r, gy + eye_r],
-                         fill=BYTE_EYE_W)
-
-        # Pixel trail behind each Glitchkin (motion blur)
-        trail_len = rng.randint(1, 3)
-        for ti in range(trail_len):
-            tx = gx + rng.randint(-20, 20) * (ti + 1) // 2
-            ty = gy + rng.randint(-15, 5)
-            trail_r = max(2, body_r - ti * 3)
-            draw_irregular_poly(draw, tx, ty, trail_r, sides, col,
-                                seed=gi * 53 + ti * 7 + 200)
-
-    return draw
 
 
 def draw_pixel_confetti_storm(draw):
@@ -278,244 +225,8 @@ def draw_pixel_confetti_storm(draw):
                             cs, rng.randint(4, 6), col, seed=ci * 17 + 300)
 
 
-def draw_luma(draw, img, luma_cx, luma_floor_y, body_h):
-    """
-    Draw Luma — low angle FG hero shot.
-    Chin up, eyes wide but jaw set. Grin starting to form.
-    Low angle = we look UP at her — heroic framing.
-    She is the warm identity anchor in the glitch chaos.
-    """
-    # At low angle, she appears taller than Byte — proper scale.
-    # body_h represents visible body from floor to head.
-
-    leg_h    = int(body_h * 0.32)
-    torso_h  = int(body_h * 0.38)
-    head_r   = int(body_h * 0.14)
-    head_cy  = luma_floor_y - body_h + head_r + int(body_h * 0.04)
-    torso_y0 = head_cy + head_r
-    torso_y1 = luma_floor_y - leg_h
-
-    # ── LEGS ─────────────────────────────────────────────────────────────────
-    leg_spread = int(body_h * 0.12)
-    for side in [-1, 1]:
-        leg_x = luma_cx + side * leg_spread
-        foot_x = luma_cx + side * int(leg_spread * 1.15)
-        draw.polygon([
-            (leg_x - int(body_h * 0.045), torso_y1),
-            (leg_x + int(body_h * 0.045), torso_y1),
-            (foot_x + int(body_h * 0.05), luma_floor_y),
-            (foot_x - int(body_h * 0.05), luma_floor_y),
-        ], fill=LUMA_PANT, outline=VOID_BLACK)
-        # Foot
-        draw.rectangle([foot_x - int(body_h * 0.055), luma_floor_y,
-                        foot_x + int(body_h * 0.055) + side * int(body_h * 0.04),
-                        luma_floor_y + int(body_h * 0.04)],
-                       fill=(60, 52, 44), outline=VOID_BLACK)
-
-    # ── TORSO (hoodie — canonical orange) ────────────────────────────────────
-    torso_hw_top = int(body_h * 0.17)   # slightly narrower at shoulder
-    torso_hw_bot = int(body_h * 0.15)
-    torso_pts = [
-        (luma_cx - torso_hw_top, torso_y0 + int(torso_h * 0.05)),
-        (luma_cx,                torso_y0),
-        (luma_cx + torso_hw_top, torso_y0 + int(torso_h * 0.05)),
-        (luma_cx + torso_hw_bot, torso_y1),
-        (luma_cx - torso_hw_bot, torso_y1),
-    ]
-    draw.polygon(torso_pts, fill=LUMA_HOODIE, outline=VOID_BLACK)
-    # Hoodie pocket (asymmetric bump left side)
-    pocket_cx = luma_cx - int(torso_hw_top * 0.3)
-    pocket_y  = torso_y0 + int(torso_h * 0.60)
-    pocket_pts = [
-        (pocket_cx - int(body_h * 0.05), pocket_y),
-        (pocket_cx + int(body_h * 0.07), pocket_y),
-        (pocket_cx + int(body_h * 0.06), pocket_y + int(body_h * 0.08)),
-        (pocket_cx - int(body_h * 0.06), pocket_y + int(body_h * 0.09)),
-    ]
-    draw.polygon(pocket_pts, fill=(200, 90, 40), outline=VOID_BLACK)
-
-    # ── ARMS ─────────────────────────────────────────────────────────────────
-    arm_top_y = torso_y0 + int(torso_h * 0.10)
-    arm_bot_y = torso_y0 + int(torso_h * 0.55)
-    arm_len   = int(body_h * 0.24)
-
-    # Right arm: raised/reaching up (ACTION pose — about to do something)
-    ra_x0 = luma_cx + torso_hw_top
-    ra_x1 = ra_x0 + arm_len
-    ra_y0 = arm_top_y
-    ra_y1 = arm_top_y - int(arm_len * 0.55)
-    arm_w = int(body_h * 0.045)
-    draw.polygon([
-        (ra_x0,       ra_y0),
-        (ra_x0 + arm_w, ra_y0 + arm_w),
-        (ra_x1 + arm_w, ra_y1 + arm_w),
-        (ra_x1,       ra_y1),
-    ], fill=LUMA_HOODIE, outline=VOID_BLACK)
-    # Right hand (raised, open)
-    draw_irregular_poly(draw, ra_x1 + arm_w // 2, ra_y1,
-                        int(body_h * 0.055), 5, LUMA_SKIN, seed=2401, outline=VOID_BLACK)
-
-    # Left arm: at side, casual/grounded
-    la_x0 = luma_cx - torso_hw_top
-    la_x1 = la_x0 - int(arm_len * 0.8)
-    la_y0 = arm_top_y
-    la_y1 = arm_bot_y + int(body_h * 0.05)
-    draw.polygon([
-        (la_x0,         la_y0),
-        (la_x0 - arm_w, la_y0 + arm_w),
-        (la_x1 - arm_w, la_y1),
-        (la_x1,         la_y1 - arm_w),
-    ], fill=LUMA_HOODIE, outline=VOID_BLACK)
-
-    # ── HEAD ─────────────────────────────────────────────────────────────────
-    # At low angle: we see slightly undersell of chin — head tilted up
-    draw_irregular_poly(draw, luma_cx, head_cy, head_r, 7,
-                        LUMA_SKIN, seed=2402, outline=VOID_BLACK)
-
-    # ── HAIR — chaotic cloud ─────────────────────────────────────────────────
-    # Hair is BIG and chaotic — even more so with glitch energy nearby
-    hair_r = int(head_r * 1.65)
-    for hair_blob in range(7):
-        brng = random.Random(hair_blob * 31 + 7)
-        bx = luma_cx + brng.randint(-int(head_r * 0.9), int(head_r * 0.9))
-        by = head_cy - int(head_r * 0.55) + brng.randint(-int(head_r * 0.5), int(head_r * 0.3))
-        br = int(head_r * brng.uniform(0.7, 1.15))
-        draw_irregular_poly(draw, bx, by, br, 5,
-                            LUMA_HAIR if hair_blob % 3 != 2 else LUMA_HAIR_HI,
-                            seed=hair_blob * 47 + 100, outline=None)
-
-    # ── FACE — adrenaline delight expression ─────────────────────────────────
-    eye_cy  = head_cy - int(head_r * 0.12)
-    eye_sep = int(head_r * 0.38)
-    eye_w   = int(head_r * 0.28)
-    eye_h   = int(head_r * 0.36)   # WIDE open eyes — adrenaline
-
-    for side in [-1, 1]:
-        ex = luma_cx + side * eye_sep
-        # Eye white (wide open ellipse)
-        draw.ellipse([ex - eye_w, eye_cy - eye_h, ex + eye_w, eye_cy + eye_h],
-                     fill=BYTE_EYE_W, outline=VOID_BLACK, width=2)
-        # Iris (warm amber/brown)
-        iris_r = int(eye_w * 0.55)
-        draw.ellipse([ex - iris_r, eye_cy - iris_r, ex + iris_r, eye_cy + iris_r],
-                     fill=(100, 70, 35), outline=VOID_BLACK, width=1)
-        # Pupil
-        pu_r = int(iris_r * 0.50)
-        draw.ellipse([ex - pu_r, eye_cy - pu_r, ex + pu_r, eye_cy + pu_r],
-                     fill=VOID_BLACK)
-        # Cyan catch light (glitch world in her eyes)
-        draw.ellipse([ex + iris_r // 4, eye_cy - iris_r // 2,
-                      ex + iris_r // 4 + 4, eye_cy - iris_r // 2 + 4],
-                     fill=ELEC_CYAN_HI)
-
-    # Brows — raised but not alarmed — excited surprise
-    brow_y = eye_cy - int(eye_h * 1.0)
-    for side in [-1, 1]:
-        bx_c = luma_cx + side * eye_sep
-        draw.polygon([
-            (bx_c - eye_w, brow_y + 4),
-            (bx_c + side * int(eye_w * 0.3), brow_y - 4 - int(head_r * 0.06)),
-            (bx_c + eye_w * side * -1, brow_y + 2),
-            (bx_c + eye_w * side * -1, brow_y + 7),
-            (bx_c - eye_w + 2, brow_y + 9),
-        ], fill=LUMA_HAIR)
-
-    # Mouth — the GRIN forming (wide, slight curl on both corners)
-    mouth_cy = head_cy + int(head_r * 0.38)
-    mouth_hw = int(head_r * 0.50)
-    # Base line (open mouth, grin forming)
-    draw.ellipse([luma_cx - mouth_hw, mouth_cy - int(head_r * 0.10),
-                  luma_cx + mouth_hw, mouth_cy + int(head_r * 0.14)],
-                 fill=VOID_BLACK, outline=LUMA_SKIN, width=1)
-    # Corner upturns (the grin)
-    for side in [-1, 1]:
-        corner_x = luma_cx + side * mouth_hw
-        draw.line([(corner_x, mouth_cy), (corner_x + side * 4, mouth_cy - 5)],
-                  fill=VOID_BLACK, width=2)
-
-    return draw
 
 
-def draw_byte_on_shoulder(draw, img, byte_cx, byte_cy, body_h):
-    """
-    Draw Byte riding on Luma's shoulder — RESIGNED DIGNITY.
-    Small relative to Luma's head. Present but not happy about it.
-    """
-    head_r = int(body_h * 0.20)
-    torso_r = int(body_h * 0.26)
-
-    # Byte body (inverted teardrop, compact)
-    torso_pts = [
-        (byte_cx - torso_r,     byte_cy + int(torso_r * 0.3)),
-        (byte_cx,               byte_cy - int(torso_r * 0.4)),
-        (byte_cx + torso_r,     byte_cy + int(torso_r * 0.3)),
-        (byte_cx + int(torso_r * 0.5), byte_cy + torso_r),
-        (byte_cx - int(torso_r * 0.5), byte_cy + torso_r),
-    ]
-    draw.polygon(torso_pts, fill=BYTE_TEAL, outline=VOID_BLACK)
-
-    # Head
-    draw_irregular_poly(draw, byte_cx, byte_cy - int(torso_r * 0.2),
-                        head_r, 6, BYTE_TEAL, seed=2499, outline=VOID_BLACK)
-
-    # Arms: slightly out (not hiding, not expressive — neutral resigned)
-    arm_y = byte_cy + int(torso_r * 0.05)
-    for side in [-1, 1]:
-        draw.polygon([
-            (byte_cx + side * torso_r, arm_y - 3),
-            (byte_cx + side * (torso_r + int(body_h * 0.15)), arm_y - 1),
-            (byte_cx + side * (torso_r + int(body_h * 0.14)), arm_y + 5),
-            (byte_cx + side * torso_r, arm_y + 4),
-        ], fill=BYTE_TEAL, outline=VOID_BLACK)
-
-    # Eyes — RESIGNED expression
-    eye_cy_b = byte_cy - int(torso_r * 0.15)
-    eye_sep_b = int(head_r * 0.42)
-    e_r = max(3, int(head_r * 0.32))
-
-    # Normal eye (right) — HEAVY LID, downward inner corner (resigned not angry)
-    ne_cx = byte_cx + eye_sep_b
-    draw.ellipse([ne_cx - e_r, eye_cy_b - int(e_r * 0.75),
-                  ne_cx + e_r, eye_cy_b + int(e_r * 0.75)],
-                 fill=BYTE_EYE_W, outline=VOID_BLACK, width=1)
-    heavy_lid = int(e_r * 0.42)   # heavy lid = resigned
-    draw.ellipse([ne_cx - e_r, eye_cy_b - int(e_r * 0.75),
-                  ne_cx + e_r, eye_cy_b - int(e_r * 0.75) + heavy_lid * 2],
-                 fill=VOID_BLACK)
-    draw.line([(ne_cx - e_r, eye_cy_b - int(e_r * 0.75) + heavy_lid),
-               (ne_cx + e_r, eye_cy_b - int(e_r * 0.75) + heavy_lid)],
-              fill=VOID_BLACK, width=2)
-    # Iris
-    ir = int(e_r * 0.45)
-    draw.ellipse([ne_cx - ir, eye_cy_b - ir + heavy_lid // 2,
-                  ne_cx + ir, eye_cy_b + ir - heavy_lid // 3],
-                 fill=BYTE_TEAL, outline=VOID_BLACK, width=1)
-
-    # Cracked eye (left)
-    ce_cx = byte_cx - eye_sep_b
-    draw.ellipse([ce_cx - e_r, eye_cy_b - int(e_r * 0.75),
-                  ce_cx + e_r, eye_cy_b + int(e_r * 0.75)],
-                 fill=VOID_BLACK, outline=ELEC_CYAN_DIM, width=1)
-    draw.line([(ce_cx - e_r + 2, eye_cy_b - int(e_r * 0.6)),
-               (ce_cx + e_r - 2, eye_cy_b + int(e_r * 0.6))],
-              fill=CRACK_LINE, width=1)
-    # Alive dot
-    draw.ellipse([ce_cx - int(e_r * 0.35), eye_cy_b - int(e_r * 0.05),
-                  ce_cx - int(e_r * 0.35) + 3, eye_cy_b - int(e_r * 0.05) + 3],
-                 fill=ELEC_CYAN)
-
-    # Mouth — flat "I resent this" line
-    mouth_y_b = byte_cy + int(torso_r * 0.30)
-    mouth_hw_b = int(head_r * 0.45)
-    draw.line([(byte_cx - mouth_hw_b, mouth_y_b),
-               (byte_cx + mouth_hw_b, mouth_y_b)],
-              fill=VOID_BLACK, width=2)
-
-    # ELEC_CYAN glow around Byte (he still radiates)
-    add_glow(img, byte_cx, byte_cy, int(body_h * 0.60), ELEC_CYAN, steps=4, max_alpha=28)
-    draw = ImageDraw.Draw(img)
-
-    return draw
 
 
 def apply_dutch_tilt(img, tilt_deg=12):
@@ -533,6 +244,71 @@ def apply_dutch_tilt(img, tilt_deg=12):
     top  = (rh - PH) // 2
     cropped = rotated.crop([left, top, left + PW, top + PH])
     return cropped
+
+
+
+def _char_to_pil(surface):
+    """Convert a cairo.ImageSurface from canonical char module to cropped PIL RGBA."""
+    from LTG_TOOL_cairo_primitives import to_pil_rgba
+    pil_img = to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    return pil_img
+
+
+def _composite_char(base_img, char_pil, cx, cy):
+    """Composite a character PIL RGBA image onto base_img centered at (cx, cy)."""
+    x = cx - char_pil.width // 2
+    y = cy - char_pil.height // 2
+    overlay = Image.new('RGBA', base_img.size, (0, 0, 0, 0))
+    overlay.paste(char_pil, (x, y), char_pil)
+    base_rgba = base_img.convert('RGBA')
+    result = Image.alpha_composite(base_rgba, overlay)
+    base_img.paste(result.convert('RGB'))
+
+def draw_luma(draw, img, luma_cx, luma_floor_y, body_h):
+    """Luma — canonical renderer."""
+    scale = body_h / 400.0
+    surface = _draw_luma_canonical(expression="DETERMINED", scale=scale, facing="right")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        aspect = char_pil.width / char_pil.height
+        new_h = body_h
+        new_w = int(new_h * aspect)
+        char_pil = char_pil.resize((new_w, new_h), Image.LANCZOS)
+    _composite_char(img, char_pil, luma_cx, luma_floor_y - char_pil.height // 2)
+
+
+def draw_byte_on_shoulder(draw, img, byte_cx, byte_cy, body_h):
+    """Byte on Luma's shoulder — canonical renderer."""
+    scale = body_h / 88.0
+    surface = _draw_byte_canonical(expression="neutral", scale=scale, facing="right")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        aspect = char_pil.width / char_pil.height
+        new_h = body_h
+        new_w = int(new_h * aspect)
+        char_pil = char_pil.resize((new_w, new_h), Image.LANCZOS)
+    _composite_char(img, char_pil, byte_cx, byte_cy)
+
+
+def draw_glitchkin_swarm(draw, img):
+    """Glitchkin swarm — canonical Glitch renderer for each member."""
+    rng = random.Random(2424)
+    expressions = ["mischievous", "panicked", "triumphant", "neutral", "calculating"]
+    positions = [(rng.randint(100, 700), rng.randint(50, 350)) for _ in range(8)]
+    for i, (sx, sy) in enumerate(positions):
+        expr = expressions[i % len(expressions)]
+        scale = rng.uniform(0.3, 0.6)
+        surface = draw_glitch(expression=expr, scale=scale, facing="front")
+        char_pil = _char_to_pil(surface)
+        if char_pil.height > 0:
+            target_h = rng.randint(30, 60)
+            aspect = char_pil.width / char_pil.height
+            new_w = int(target_h * aspect)
+            char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
+        _composite_char(img, char_pil, sx, sy)
 
 
 def draw_scene(img):

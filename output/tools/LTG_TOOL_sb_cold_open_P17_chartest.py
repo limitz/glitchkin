@@ -38,6 +38,11 @@ except ImportError:
 from PIL import Image, ImageDraw, ImageFont
 from LTG_TOOL_curve_utils import quadratic_bezier_pts as _cu_quadratic, cubic_bezier_pts as _cu_cubic
 import math, random, os
+import sys
+from LTG_TOOL_char_luma import draw_luma
+from LTG_TOOL_char_byte import draw_byte
+from LTG_TOOL_cairo_primitives import to_pil_rgba
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 PANELS_DIR = output_dir('storyboards', 'panels')
 OUTPUT_PATH = os.path.join(PANELS_DIR, "LTG_SB_cold_open_P17_chartest.png")
@@ -198,444 +203,55 @@ def draw_irregular_poly(draw, cx, cy, r, sides, color, rng, fill=True):
 # IMPROVED CHARACTER DRAWING — ORGANIC CURVES
 # ══════════════════════════════════════════════════════════════════════════════
 
+
+
+
+
+
+def _char_to_pil(surface):
+    """Convert a cairo.ImageSurface from canonical char module to cropped PIL RGBA."""
+    from LTG_TOOL_cairo_primitives import to_pil_rgba
+    pil_img = to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    return pil_img
+
+
+def _composite_char(base_img, char_pil, cx, cy):
+    """Composite a character PIL RGBA image onto base_img centered at (cx, cy)."""
+    x = cx - char_pil.width // 2
+    y = cy - char_pil.height // 2
+    overlay = Image.new('RGBA', base_img.size, (0, 0, 0, 0))
+    overlay.paste(char_pil, (x, y), char_pil)
+    base_rgba = base_img.convert('RGBA')
+    result = Image.alpha_composite(base_rgba, overlay)
+    base_img.paste(result.convert('RGB'))
+
 def draw_luma_sitting(draw, img, luma_cx, luma_floor_y):
-    """
-    Draw Luma sitting cross-legged with IMPROVED organic curve construction.
-
-    Key improvements over original:
-    - Head = 37% of visible character height (was ~25%)
-    - Organic bezier torso (bean shape, not rectangle)
-    - Gesture line: slight forward lean (assessing posture)
-    - Asymmetric messy hair with volume and overlap
-    - Tapered arms as tube polygons
-    - Mitten hands
-    - Larger eyes (30-35% of head width)
-    """
-    # Character proportions at sitting scale
-    # Visible height from top of hair to floor: ~140px
-    visible_h = 140
-    head_h = int(visible_h * 0.37)  # ~52px
-    head_r = head_h // 2  # ~26px
-
-    # Gesture line: slight forward lean (3-4 degrees toward Byte = camera-right)
-    lean_dx = 6  # pixels of forward lean at head
-
-    # Head center — HIGHER and LARGER than original
-    head_cy = luma_floor_y - 104
-    head_cx = luma_cx + lean_dx
-
-    # ── Cross-legged base (legs folded) ──
-    leg_w = 62
-    leg_h = 26
-    # Use bezier curves for leg shapes instead of flat polygon
-    left_leg = bezier3(
-        (luma_cx - leg_w, luma_floor_y),
-        (luma_cx - leg_w // 2, luma_floor_y - 12),
-        (luma_cx, luma_floor_y - 6),
-        steps=24
-    )
-    right_leg = bezier3(
-        (luma_cx, luma_floor_y - 6),
-        (luma_cx + leg_w // 2, luma_floor_y - 12),
-        (luma_cx + leg_w, luma_floor_y),
-        steps=24
-    )
-    # Build leg polygon with bottom curve
-    leg_bottom = bezier3(
-        (luma_cx + leg_w, luma_floor_y),
-        (luma_cx, luma_floor_y + leg_h - 4),
-        (luma_cx - leg_w, luma_floor_y),
-        steps=24
-    )
-    leg_poly = left_leg + right_leg + leg_bottom
-    smooth_polygon(draw, leg_poly, fill=LUMA_PANTS, outline=LINE, width=2)
-
-    # Shoes (tips of feet poking out) — rounded
-    for shoe_x in [luma_cx - leg_w - 4, luma_cx + leg_w + 4]:
-        shoe_pts = ellipse_points(shoe_x, luma_floor_y, 10, 6)
-        smooth_polygon(draw, shoe_pts, fill=(42, 36, 30), outline=LINE_THIN, width=1)
-
-    # ── Torso — ORGANIC BEAN SHAPE (not rectangle) ──
-    # Tapered: wider at shoulders, narrower at waist/hips
-    torso_top_y = luma_floor_y - 86
-    torso_bot_y = luma_floor_y + 2
-    shoulder_w = 48
-    waist_w = 38
-
-    # Build torso as bezier-outlined organic shape with gesture lean
-    # Left side (convex outward curve)
-    torso_left = bezier4(
-        (head_cx - shoulder_w, torso_top_y),
-        (head_cx - shoulder_w - 4, torso_top_y + (torso_bot_y - torso_top_y) * 0.3),
-        (luma_cx - waist_w - 2, torso_top_y + (torso_bot_y - torso_top_y) * 0.6),
-        (luma_cx - waist_w + 2, torso_bot_y),
-        steps=32
-    )
-    # Right side (convex outward curve)
-    torso_right = bezier4(
-        (luma_cx + waist_w - 2, torso_bot_y),
-        (luma_cx + waist_w + 2, torso_top_y + (torso_bot_y - torso_top_y) * 0.6),
-        (head_cx + shoulder_w + 4, torso_top_y + (torso_bot_y - torso_top_y) * 0.3),
-        (head_cx + shoulder_w, torso_top_y),
-        steps=32
-    )
-    # Top edge (shoulder line — slight curve)
-    torso_top = bezier3(
-        (head_cx + shoulder_w, torso_top_y),
-        (head_cx, torso_top_y - 4),  # slight upward curve
-        (head_cx - shoulder_w, torso_top_y),
-        steps=16
-    )
-    torso_poly = torso_left + torso_right + torso_top
-    smooth_polygon(draw, torso_poly, fill=LUMA_HOODIE, outline=LINE, width=2)
-
-    # Hoodie collar — V-neck shape
-    collar_pts = [
-        (head_cx - 14, torso_top_y + 2),
-        (head_cx, torso_top_y + 16),
-        (head_cx + 14, torso_top_y + 2),
-    ]
-    draw.polygon(collar_pts, fill=(250, 232, 200))
-    polyline(draw, collar_pts, LINE_THIN, width=1)
-
-    # Hoodie hem line (slightly curved)
-    hem_pts = bezier3(
-        (luma_cx - waist_w + 4, torso_bot_y - 4),
-        (luma_cx, torso_bot_y - 8),
-        (luma_cx + waist_w - 4, torso_bot_y - 4),
-        steps=16
-    )
-    polyline(draw, hem_pts, LINE_THIN, width=1)
-
-    # Wrinkle lines at waist (minimal fabric detail)
-    for wx, wy in [(head_cx - 18, torso_top_y + 40), (head_cx + 12, torso_top_y + 38)]:
-        wrinkle = bezier3((wx - 8, wy), (wx, wy - 3), (wx + 8, wy + 1), steps=8)
-        polyline(draw, wrinkle, LINE_THIN, width=1)
-
-    # ── Arms — tapered tube polygons, crossed loosely in lap ──
-    # Left arm: from left shoulder, curves across to right lap
-    la_centerline = bezier4(
-        (head_cx - shoulder_w + 6, torso_top_y + 12),    # shoulder
-        (head_cx - shoulder_w - 8, torso_top_y + 38),    # elbow out
-        (luma_cx - 10, luma_floor_y - 28),               # forearm curves in
-        (luma_cx + 18, luma_floor_y - 16),               # hand in lap
-        steps=24
-    )
-    la_poly = tube_polygon(la_centerline, 11, 7)  # tapers from shoulder to wrist
-    smooth_polygon(draw, la_poly, fill=LUMA_HOODIE, outline=LINE, width=2)
-
-    # Left hand (mitten shape)
-    lh_x, lh_y = int(luma_cx + 18), int(luma_floor_y - 16)
-    hand_pts = ellipse_points(lh_x, lh_y, 8, 6)
-    smooth_polygon(draw, hand_pts, fill=LUMA_SKIN, outline=LINE_THIN, width=1)
-    # Thumb bump
-    draw.ellipse([lh_x + 4, lh_y - 6, lh_x + 10, lh_y], fill=LUMA_SKIN)
-
-    # Right arm: from right shoulder, rests on right knee area
-    ra_centerline = bezier4(
-        (head_cx + shoulder_w - 6, torso_top_y + 12),    # shoulder
-        (head_cx + shoulder_w + 6, torso_top_y + 36),    # elbow out slightly
-        (luma_cx + 30, luma_floor_y - 26),               # forearm
-        (luma_cx + leg_w - 12, luma_floor_y - 10),       # hand on knee
-        steps=24
-    )
-    ra_poly = tube_polygon(ra_centerline, 11, 7)
-    smooth_polygon(draw, ra_poly, fill=LUMA_HOODIE, outline=LINE, width=2)
-
-    # Right hand
-    rh_x, rh_y = int(luma_cx + leg_w - 12), int(luma_floor_y - 10)
-    hand_pts = ellipse_points(rh_x, rh_y, 8, 6)
-    smooth_polygon(draw, hand_pts, fill=LUMA_SKIN, outline=LINE_THIN, width=1)
-    draw.ellipse([rh_x + 4, rh_y - 5, rh_x + 10, rh_y + 1], fill=LUMA_SKIN)
-
-    # ── Neck — short, slightly angled with lean ──
-    neck_pts = [
-        (head_cx - 10, torso_top_y + 2),
-        (head_cx + 10, torso_top_y + 2),
-        (head_cx + 8, head_cy + head_r - 2),
-        (head_cx - 8, head_cy + head_r - 2),
-    ]
-    draw.polygon(neck_pts, fill=LUMA_SKIN)
-
-    # ── Head — LARGER, organic circle ──
-    # Slightly taller than wide (oval, not perfect circle)
-    head_pts = ellipse_points(head_cx, head_cy, head_r, int(head_r * 1.05))
-    smooth_polygon(draw, head_pts, fill=LUMA_SKIN, outline=LINE, width=2)
-
-    # ── Face — 3/4 toward camera-right (toward Byte) ──
-    # EXPRESSION: ASSESSING — level eyes, slightly set brow, closed neutral mouth
-
-    # Eyes — LARGER (30-35% of head width = ~16-18px wide)
-    eye_size = int(head_r * 0.65)  # ~17px diameter per eye
-    eye_h = int(eye_size * 0.65)   # slightly taller than wide for expression range
-
-    # Right eye (facing Byte — primary visible eye at 3/4)
-    re_cx = head_cx + int(head_r * 0.28)
-    re_cy = head_cy - int(head_r * 0.08)
-    # Eye white — organic shape (not circle)
-    re_pts = ellipse_points(re_cx, re_cy, eye_size // 2, eye_h // 2)
-    smooth_polygon(draw, re_pts, fill=(245, 238, 228), outline=LINE, width=2)
-    # Iris — large, takes up most of eye
-    ir_r = int(eye_size * 0.35)
-    ir_cx = re_cx + int(ir_r * 0.30)  # looking slightly toward Byte
-    draw.ellipse([ir_cx - ir_r, re_cy - ir_r, ir_cx + ir_r, re_cy + ir_r],
-                 fill=(130, 78, 40))
-    # Pupil
-    pr = int(ir_r * 0.55)
-    draw.ellipse([ir_cx - pr, re_cy - pr, ir_cx + pr, re_cy + pr],
-                 fill=VOID_BLACK)
-    # Highlight
-    draw.ellipse([ir_cx - pr + 2, re_cy - pr + 1, ir_cx - pr + 5, re_cy - pr + 4],
-                 fill=(255, 255, 255))
-    # Upper eyelid — SHAPED (slightly lowered = ASSESSING, not fully open)
-    lid_pts = bezier3(
-        (re_cx - eye_size // 2 - 1, re_cy - 1),
-        (re_cx, re_cy - eye_h // 2 + 2),  # lid drops 2px = assessing squint
-        (re_cx + eye_size // 2 + 1, re_cy - 1),
-        steps=16
-    )
-    polyline(draw, lid_pts, LINE, width=2)
-
-    # Left eye (partially visible at 3/4 — narrower)
-    le_cx = head_cx - int(head_r * 0.18)
-    le_cy = head_cy - int(head_r * 0.06)
-    le_size = int(eye_size * 0.65)  # narrower at 3/4
-    le_h = int(eye_h * 0.65)
-    le_pts = ellipse_points(le_cx, le_cy, le_size // 2, le_h // 2)
-    smooth_polygon(draw, le_pts, fill=(245, 238, 228), outline=LINE, width=1)
-    # Left iris
-    lir_r = int(le_size * 0.35)
-    draw.ellipse([le_cx - lir_r, le_cy - lir_r, le_cx + lir_r, le_cy + lir_r],
-                 fill=(130, 78, 40))
-    draw.ellipse([le_cx - lir_r + 2, le_cy - lir_r + 2,
-                  le_cx + lir_r - 2, le_cy + lir_r - 2],
-                 fill=VOID_BLACK)
-
-    # Brows — CURVED, not straight lines. Slightly set (assessing)
-    # Right brow: slight lowering at outer edge (concentrating)
-    rbrow = bezier3(
-        (re_cx - eye_size // 2, re_cy - eye_h // 2 - 6),
-        (re_cx, re_cy - eye_h // 2 - 10),  # apex higher
-        (re_cx + eye_size // 2 + 2, re_cy - eye_h // 2 - 4),  # drops at outer
-        steps=12
-    )
-    polyline(draw, rbrow, (42, 22, 10), width=3)
-
-    # Left brow: matching curve at 3/4
-    lbrow = bezier3(
-        (le_cx - le_size // 2 - 1, le_cy - le_h // 2 - 5),
-        (le_cx, le_cy - le_h // 2 - 8),
-        (le_cx + le_size // 2, le_cy - le_h // 2 - 4),
-        steps=12
-    )
-    polyline(draw, lbrow, (42, 22, 10), width=2)
-
-    # Nose — small bridge shape
-    nose_pts = bezier3(
-        (head_cx + 2, head_cy + int(head_r * 0.10)),
-        (head_cx + 5, head_cy + int(head_r * 0.28)),
-        (head_cx + 1, head_cy + int(head_r * 0.35)),
-        steps=8
-    )
-    polyline(draw, nose_pts, LUMA_SKIN_SH, width=2)
-
-    # Mouth — closed, neutral with slight asymmetry (thinking)
-    mouth_y = head_cy + int(head_r * 0.52)
-    mouth_pts = bezier3(
-        (head_cx - 8, mouth_y + 1),
-        (head_cx + 2, mouth_y - 2),  # slightly asymmetric
-        (head_cx + 10, mouth_y),
-        steps=12
-    )
-    polyline(draw, mouth_pts, (120, 72, 44), width=2)
-
-    # ── Hair — ASYMMETRIC, MESSY, WITH VOLUME ──
-    # Hair is drawn LAST to overlap the head boundary
-    # This is the key silhouette differentiator for Luma
-
-    # Base hair mass — irregular cloud that breaks the head circle
-    hair_base_pts = []
-    hair_angles = list(range(180, 540, 8))  # top half of head + overlap
-    for ha in hair_angles:
-        angle = math.radians(ha)
-        # Vary radius to create messy asymmetric silhouette
-        base_r = head_r + 14
-        # LEFT side bigger (her characteristic messy side)
-        if 200 < ha < 320:
-            base_r += RNG.randint(4, 12)
-        elif 320 < ha < 400:
-            base_r += RNG.randint(2, 8)
-        else:
-            base_r += RNG.randint(0, 6)
-        hx = head_cx + int(base_r * math.cos(angle))
-        hy = head_cy + int(base_r * 0.95 * math.sin(angle))
-        # Only draw hair above mouth level
-        if hy < head_cy + int(head_r * 0.45):
-            hair_base_pts.append((hx, hy))
-
-    # Close the hair shape along the face edge
-    hair_base_pts.append((head_cx + int(head_r * 0.9), head_cy + int(head_r * 0.4)))
-    hair_base_pts.append((head_cx - int(head_r * 0.7), head_cy + int(head_r * 0.4)))
-
-    if len(hair_base_pts) > 3:
-        smooth_polygon(draw, hair_base_pts, fill=LUMA_HAIR)
-
-    # Hair strands — individual spikes/wisps breaking the silhouette
-    strand_angles = [195, 215, 240, 260, 280, 310, 340, 370, 395, 420, 450]
-    for sa in strand_angles:
-        angle = math.radians(sa)
-        base_r = head_r + 10
-        strand_len = RNG.randint(12, 24)
-        strand_w = RNG.choice([2, 3, 3, 4])
-        sx = head_cx + int(base_r * math.cos(angle))
-        sy = head_cy + int(base_r * 0.90 * math.sin(angle))
-        ex = head_cx + int((base_r + strand_len) * math.cos(angle + RNG.uniform(-0.15, 0.15)))
-        ey = head_cy + int((base_r + strand_len) * 0.90 * math.sin(angle + RNG.uniform(-0.15, 0.15)))
-        if sy < head_cy + int(head_r * 0.3):
-            draw.line([(sx, sy), (ex, ey)], fill=LUMA_HAIR, width=strand_w)
-
-    # Hair highlight strand (lighter, shows volume)
-    for ha in [240, 280, 350]:
-        angle = math.radians(ha)
-        r_inner = head_r + 6
-        r_outer = head_r + 14
-        hx1 = head_cx + int(r_inner * math.cos(angle))
-        hy1 = head_cy + int(r_inner * 0.90 * math.sin(angle))
-        hx2 = head_cx + int(r_outer * math.cos(angle + 0.08))
-        hy2 = head_cy + int(r_outer * 0.90 * math.sin(angle + 0.08))
-        if hy1 < head_cy + int(head_r * 0.2):
-            draw.line([(hx1, hy1), (hx2, hy2)], fill=LUMA_HAIR_HL, width=2)
-
-    # ── Blush (subtle, under eyes) ──
-    blush_layer = Image.new("RGBA", img.size, (0, 0, 0, 0))
-    bd = ImageDraw.Draw(blush_layer)
-    for boff in [int(head_r * 0.35), -int(head_r * 0.15)]:
-        bx = head_cx + boff
-        by = head_cy + int(head_r * 0.15)
-        bd.ellipse([bx - 10, by - 5, bx + 10, by + 5],
-                   fill=(232, 148, 100, 50))
-    img.paste(Image.alpha_composite(img.convert('RGBA'), blush_layer).convert('RGB'))
-    return ImageDraw.Draw(img)  # refresh draw context after paste
+    """Luma sitting — canonical renderer (CURIOUS expression)."""
+    scale = 0.5
+    surface = draw_luma(expression="CURIOUS", scale=scale, facing="right")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        target_h = int(luma_floor_y * 0.35)
+        aspect = char_pil.width / char_pil.height
+        new_w = int(target_h * aspect)
+        char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
+    _composite_char(img, char_pil, luma_cx, luma_floor_y - char_pil.height // 2)
 
 
 def draw_byte_hovering(draw, img, byte_cx, byte_cy, body_h, body_w):
-    """
-    Draw Byte hovering with SLIGHT IMPROVEMENTS.
-
-    Byte's design already works (audit: PASS for identity). Changes:
-    - Slight forward lean toward the chip (curiosity in body language)
-    - Arms as curved shapes, not rectangles
-    - Subtle body tilt (2-3 degrees)
-    """
-    # Slight forward lean (toward chip = camera-left)
-    lean_dx = -4
-    body_cx = byte_cx + lean_dx
-    body_top_y = byte_cy - body_h // 2
-
-    # Body fill — teardrop with lean
-    # Top half: ellipse
-    draw.ellipse([body_cx - body_w // 2, body_top_y,
-                  body_cx + body_w // 2, byte_cy + body_h // 4],
-                 fill=BYTE_TEAL)
-    # Bottom half: tapered triangle
-    draw.polygon([
-        (body_cx - body_w // 2, byte_cy + body_h // 8),
-        (body_cx, byte_cy + body_h // 2),
-        (body_cx + body_w // 2, byte_cy + body_h // 8),
-    ], fill=BYTE_TEAL)
-
-    # Body shadow (left/cool side)
-    draw.ellipse([body_cx - body_w // 2, body_top_y,
-                  body_cx, byte_cy + body_h // 4],
-                 fill=BYTE_DARK)
-
-    # ── Face: 3/4 toward Luma — STILL expression ──
-    face_cx = body_cx - int(body_w * 0.08)
-    face_cy = body_top_y + int(body_h * 0.25)
-    face_r  = int(body_w * 0.45)
-
-    draw.ellipse([face_cx - face_r, face_cy - face_r,
-                  face_cx + face_r, face_cy + face_r],
-                 fill=BYTE_TEAL)
-
-    # Normal eye (toward Luma)
-    ne_cx = face_cx - int(face_r * 0.35)
-    ne_cy = face_cy - int(face_r * 0.18)
-    ne_r  = int(face_r * 0.30)
-    draw.ellipse([ne_cx - ne_r, ne_cy - ne_r, ne_cx + ne_r, ne_cy + ne_r],
-                 fill=(8, 8, 18))
-    DEEP_CYAN = (0, 155, 175)
-    draw.ellipse([ne_cx - ne_r + 3, ne_cy - ne_r + 3,
-                  ne_cx + ne_r - 3, ne_cy + ne_r - 3],
-                 fill=DEEP_CYAN)
-    iris_shift_x = -int(ne_r * 0.30)
-    draw.ellipse([ne_cx + iris_shift_x - 5, ne_cy - 5,
-                  ne_cx + iris_shift_x + 5, ne_cy + 5],
-                 fill=VOID_BLACK)
-
-    # Cracked eye (outward)
-    ce_cx = face_cx + int(face_r * 0.32)
-    ce_cy = face_cy - int(face_r * 0.18)
-    ce_r  = int(face_r * 0.28)
-    draw.ellipse([ce_cx - ce_r, ce_cy - ce_r, ce_cx + ce_r, ce_cy + ce_r],
-                 fill=(8, 8, 18))
-    for crack_ang in [30, 70, 120, 160]:
-        ca = math.radians(crack_ang)
-        draw.line([(int(ce_cx + ce_r * 0.2 * math.cos(ca)),
-                    int(ce_cy + ce_r * 0.2 * math.sin(ca))),
-                   (int(ce_cx + ce_r * 0.9 * math.cos(ca)),
-                    int(ce_cy + ce_r * 0.9 * math.sin(ca)))],
-                  fill=HOT_MAGENTA, width=1)
-    div_x = -int(ce_r * 0.20)
-    draw.ellipse([ce_cx + div_x - 3, ce_cy - 3,
-                  ce_cx + div_x + 3, ce_cy + 3],
-                 fill=ELEC_CYAN)
-
-    # Mouth — neutral, slight pixel grimace
-    mouth_y = face_cy + int(face_r * 0.40)
-    mouth_w = int(face_r * 0.60)
-    draw.rectangle([face_cx - mouth_w, mouth_y - 2,
-                    face_cx + mouth_w, mouth_y + 2],
-                   fill=VOID_BLACK)
-    for mx_tooth in range(face_cx - mouth_w + 2, face_cx + mouth_w - 2, 5):
-        draw.point((mx_tooth, mouth_y), fill=(200, 200, 210))
-
-    # Arms — CURVED tube shapes, not rectangles
-    arm_top_y = body_top_y + int(body_h * 0.35)
-
-    # Left arm: slight curve hanging down (not rectangular)
-    la_center = bezier3(
-        (body_cx - body_w // 2 - 2, arm_top_y),
-        (body_cx - body_w // 2 - 10, arm_top_y + int(body_h * 0.14)),
-        (body_cx - body_w // 2 - 4, arm_top_y + int(body_h * 0.22)),
-        steps=12
-    )
-    la_poly = tube_polygon(la_center, 6, 4)
-    smooth_polygon(draw, la_poly, fill=BYTE_TEAL)
-
-    # Right arm: similar curve
-    ra_center = bezier3(
-        (body_cx + body_w // 2 + 2, arm_top_y),
-        (body_cx + body_w // 2 + 10, arm_top_y + int(body_h * 0.14)),
-        (body_cx + body_w // 2 + 4, arm_top_y + int(body_h * 0.22)),
-        steps=12
-    )
-    ra_poly = tube_polygon(ra_center, 6, 4)
-    smooth_polygon(draw, ra_poly, fill=BYTE_TEAL)
-
-    # Legs — short stubs with slight curve
-    leg_top_y = byte_cy + int(body_h * 0.35)
-    for leg_off in [-10, 10]:
-        leg_center = bezier3(
-            (body_cx + leg_off, leg_top_y),
-            (body_cx + leg_off - 1, leg_top_y + int(body_h * 0.12)),
-            (body_cx + leg_off, leg_top_y + int(body_h * 0.22)),
-            steps=8
-        )
-        leg_poly = tube_polygon(leg_center, 7, 5)
-        smooth_polygon(draw, leg_poly, fill=BYTE_TEAL)
-
-    return face_cy, face_r, body_cx, body_w
+    """Byte hovering — canonical renderer (neutral expression)."""
+    scale = body_h / 88.0
+    surface = draw_byte(expression="neutral", scale=scale, facing="front")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        aspect = char_pil.width / char_pil.height
+        new_h = body_h
+        new_w = int(new_h * aspect)
+        char_pil = char_pil.resize((new_w, new_h), Image.LANCZOS)
+    _composite_char(img, char_pil, byte_cx, byte_cy)
 
 
 def draw_panel():

@@ -65,8 +65,18 @@ except ImportError:
     def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
     def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 import math
+import os
+import sys
 import random
 from PIL import Image, ImageDraw
+
+# Canonical character renderer imports
+_here = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, _here)
+from LTG_TOOL_char_luma import draw_luma as _canonical_draw_luma
+from LTG_TOOL_char_byte import draw_byte as _canonical_draw_byte
+from LTG_TOOL_char_glitch import draw_glitch as _canonical_draw_glitch
+from LTG_TOOL_cairo_primitives import to_pil_rgba as _to_pil_rgba
 
 # ── Canvas ────────────────────────────────────────────────────────────────────
 W, H = 1280, 720  # C41: native 1280×720 — eliminates LANCZOS anti-aliasing of UV_PURPLE outlines (was 1920×1080 + thumbnail())
@@ -550,223 +560,101 @@ def draw_lighting_overlay(img):
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Characters (draw SEVENTH — after lighting overlay)
+# Uses canonical character renderers (char_*.py modules).
 # ─────────────────────────────────────────────────────────────────────────────
 
-def draw_luma(draw, cx, cy, h):
+def _cairo_char_to_pil(surface, target_h):
+    """Convert a cairo.ImageSurface character to a cropped, resized PIL RGBA image.
+
+    Crops to bounding box, scales to fit target_h while preserving aspect ratio.
     """
-    Draw Luma as simplified pixel-art figure.
-    DRW-18 UV Purple rim (#7B2FBE) on Luma's hair crown — prevents merging with BG.
+    pil_img = _to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    # Scale to target height, preserving aspect ratio
+    if pil_img.height > 0:
+        scale_factor = target_h / pil_img.height
+        new_w = max(1, int(pil_img.width * scale_factor))
+        new_h = max(1, int(pil_img.height * scale_factor))
+        pil_img = pil_img.resize((new_w, new_h), Image.LANCZOS)
+    return pil_img
+
+
+def _paste_char(img, char_pil, cx, cy, anchor="foot"):
+    """Paste a character PIL RGBA image onto img at (cx, cy).
+
+    anchor="foot": cy is the foot/bottom position; cx is horizontal center.
+    anchor="center": cx, cy is the center of the character.
+    Returns refreshed ImageDraw.
     """
-    head_h = h // 5
-    head_w = int(head_h * 0.85)
-    torso_h = int(h * 0.30)
-    leg_h = int(h * 0.35)
-    arm_w = max(3, head_w // 5)
-
-    foot_y = cy
-    leg_top = foot_y - leg_h
-    torso_top = leg_top - torso_h
-    head_top = torso_top - head_h
-
-    leg_w = head_w // 2
-    ll_x = cx - leg_w
-    draw.rectangle([ll_x, leg_top, ll_x + leg_w - 2, foot_y], fill=JEANS_BASE)
-    rl_x = cx - 2
-    draw.rectangle([rl_x, leg_top, rl_x + leg_w - 2, foot_y], fill=JEANS_BASE)
-    draw.line([(rl_x + leg_w - 2, leg_top), (rl_x + leg_w - 2, foot_y)],
-              fill=JEANS_SEAM, width=1)
-
-    shoe_h = max(3, h // 20)
-    draw.rectangle([ll_x - 1, foot_y - shoe_h, ll_x + leg_w + 1, foot_y],
-                   fill=LUMA_SHOE)
-    draw.rectangle([rl_x - 1, foot_y - shoe_h, rl_x + leg_w + 1, foot_y],
-                   fill=LUMA_SHOE)
-
-    torso_x = cx - int(head_w * 0.55)
-    torso_w = int(head_w * 1.1)
-    draw.rectangle([torso_x, torso_top, torso_x + torso_w, leg_top], fill=HOODIE_UV_MOD)
-    hem_h = max(3, torso_h // 5)
-    draw.rectangle([torso_x, leg_top - hem_h, torso_x + torso_w, leg_top],
-                   fill=HOODIE_HEM)
-    rng_pg = random.Random(33)
-    for gx in range(torso_x + 2, torso_x + torso_w - 2, 5):
-        for gy in range(torso_top + 3, leg_top - hem_h - 2, 5):
-            if rng_pg.random() < 0.35:
-                draw.rectangle([gx, gy, gx + 1, gy + 1], fill=ELEC_CYAN)
-
-    arm_top = torso_top + torso_h // 6
-    arm_bot = torso_top + int(torso_h * 0.75)
-    la_x = torso_x - arm_w
-    draw.rectangle([la_x, arm_top, la_x + arm_w, arm_bot], fill=HOODIE_UV_MOD)
-    ra_x = torso_x + torso_w
-    draw.rectangle([ra_x, arm_top, ra_x + arm_w, arm_bot - 4], fill=HOODIE_UV_MOD)
-
-    head_x = cx - head_w // 2
-    draw.rectangle([head_x, head_top, head_x + head_w, torso_top], fill=SKIN_UV_MOD)
-    shadow_w = head_w // 3
-    draw.rectangle([head_x + head_w - shadow_w, head_top,
-                    head_x + head_w, torso_top], fill=SKIN_SHADOW)
-    hi_h = head_h // 4
-    draw.rectangle([head_x + 2, head_top, head_x + head_w - shadow_w - 1,
-                    head_top + hi_h], fill=SKIN_BOUNCE)
-
-    # Hair (HAIR_BASE + UV_PURPLE crown sheen)
-    hair_h = max(4, head_h // 3)
-    draw.rectangle([head_x - 3, head_top - hair_h + 2,
-                    head_x + head_w + 4, head_top + hair_h // 2], fill=HAIR_BASE)
-    sheen_h = hair_h // 2
-    draw.rectangle([head_x + 1, head_top - hair_h + 2,
-                    head_x + head_w - 2, head_top - hair_h + 2 + sheen_h],
-                   fill=HAIR_UV_SHEEN)
-
-    # DRW-18 UV Purple RIM on hair crown — bright rim strip
-    rim_h = max(2, hair_h // 4)
-    rim_w = head_w + 6
-    draw.rectangle([head_x - 2, head_top - hair_h + 2,
-                    head_x - 2 + rim_w, head_top - hair_h + 2 + rim_h],
-                   fill=HAIR_UV_RIM)
-
-    eye_x = head_x + head_w // 4
-    eye_y = head_top + head_h // 2
-    eye_w = max(4, head_w // 4)
-    eye_h = max(3, head_h // 5)
-    draw.rectangle([eye_x, eye_y, eye_x + eye_w, eye_y + eye_h], fill=(200, 180, 210))
-    iris_x = eye_x + eye_w // 4
-    draw.rectangle([iris_x, eye_y + 1, iris_x + eye_w // 2, eye_y + eye_h - 1],
-                   fill=(50, 30, 60))
-    draw.rectangle([eye_x - 1, eye_y - 1, eye_x + eye_w + 1, eye_y + eye_h + 1],
-                   outline=(30, 20, 40), width=1)
+    if anchor == "foot":
+        paste_x = cx - char_pil.width // 2
+        paste_y = cy - char_pil.height
+    else:  # center
+        paste_x = cx - char_pil.width // 2
+        paste_y = cy - char_pil.height // 2
+    img_rgba = img.convert("RGBA")
+    img_rgba.paste(char_pil, (paste_x, paste_y), char_pil)
+    img.paste(img_rgba.convert("RGB"))
+    return ImageDraw.Draw(img)
 
 
-def draw_byte(draw, cx, cy, h):
+def draw_luma(draw, img, cx, cy, h):
+    """Draw Luma via canonical renderer. cx, cy = foot position, h = total height.
+
+    Glitch Layer scene: UV-tinted lighting, facing right (toward Byte).
     """
-    Draw Byte — GL-01b Byte Teal body, ELEC_CYAN outline (home territory = more alive).
-    Cyan eye LEFT (facing Luma). Magenta eye RIGHT (facing void).
+    scene_lighting = {
+        "key_light_color": (123, 47, 190),   # UV_PURPLE ambient
+        "key_light_dir": "above",
+        "ambient": (40, 20, 80),
+    }
+    # Scale factor: canonical draw_luma at scale=1.0 produces ~400px char at 2x.
+    # We need h pixels tall. Use scale to approximate.
+    scale = max(0.3, h / 200.0)
+    surface = _canonical_draw_luma(
+        expression="CURIOUS", scale=scale, facing="right",
+        scene_lighting=scene_lighting)
+    char_pil = _cairo_char_to_pil(surface, h)
+    return _paste_char(img, char_pil, cx, cy, anchor="foot")
 
-    FIX 1: BYTE_BODY = (0, 212, 232) GL-01b Byte Teal — NOT Void Black.
-            Body was invisible against UV Purple ambient — now clearly readable.
-    FIX 2: Eye radius = max(15, h//5) — minimum 15px, both eyes large and readable.
-    FIX 3: Void Black slash removed from magenta eye — both eyes clean, unobstructed.
+
+def draw_byte(draw, img, cx, cy, h):
+    """Draw Byte via canonical renderer. cx, cy = center position, h = body height.
+
+    Glitch Layer home territory: searching expression, facing left (toward Luma).
     """
-    body_w = int(h * 0.7)
-    body_h = h
-
-    # FIX 1: BYTE_BODY = GL-01b Byte Teal (0, 212, 232) — visible against UV Purple
-    draw.ellipse([cx - body_w // 2, cy - body_h // 2,
-                  cx + body_w // 2, cy + body_h // 2],
-                 fill=BYTE_BODY)
-
-    # Inner glow layer — slightly darker teal, creates depth
-    glow_shrink = max(2, h // 8)
-    draw.ellipse([cx - body_w // 2 + glow_shrink, cy - body_h // 2 + glow_shrink,
-                  cx + body_w // 2 - glow_shrink, cy + body_h // 2 - glow_shrink],
-                 fill=BYTE_GLOW)
-
-    # ELEC_CYAN outline (home territory — more alive than storm variant)
-    draw.ellipse([cx - body_w // 2, cy - body_h // 2,
-                  cx + body_w // 2, cy + body_h // 2],
-                 outline=ELEC_CYAN, width=max(1, h // 12))
-
-    rng_bt = random.Random(21)
-    for _ in range(4):
-        tx1 = cx - body_w // 3 + rng_bt.randint(0, body_w // 3)
-        ty1 = cy - body_h // 3 + rng_bt.randint(0, body_h // 3)
-        tx2 = tx1 + rng_bt.randint(-8, 8)
-        ty2 = ty1 + rng_bt.randint(-8, 8)
-        draw.line([(tx1, ty1), (tx2, ty2)], fill=ELEC_CYAN, width=1)
-
-    # FIX 2: Eye radius — minimum 15px (was max(2, h//7) ≈ 10px)
-    eye_r = max(15, h // 5)
-    eye_y = cy - h // 10
-
-    # LEFT eye: ELEC_CYAN — facing Luma, digital identity
-    left_eye_x = cx - body_w // 5
-    draw.ellipse([left_eye_x - eye_r, eye_y - eye_r,
-                  left_eye_x + eye_r, eye_y + eye_r],
-                 fill=ELEC_CYAN)
-
-    # RIGHT eye: HOT_MAGENTA — facing void
-    # FIX 3: NO Void Black diagonal slash — eye is clean and readable
-    right_eye_x = cx + body_w // 5
-    draw.ellipse([right_eye_x - eye_r, eye_y - eye_r,
-                  right_eye_x + eye_r, eye_y + eye_r],
-                 fill=HOT_MAGENTA)
-    # Removed: draw.line([...], fill=VOID_BLACK, ...) — was making eye invisible
+    scene_lighting = {
+        "tint": (0, 240, 255),       # ELEC_CYAN home territory glow
+        "intensity": 0.15,
+        "direction": "above",
+    }
+    scale = max(0.3, h / 88.0)
+    surface = _canonical_draw_byte(
+        expression="searching", scale=scale, facing="left",
+        scene_lighting=scene_lighting)
+    char_pil = _cairo_char_to_pil(surface, h)
+    return _paste_char(img, char_pil, cx, cy, anchor="center")
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Glitch (G007 FIX — C40)
-# ─────────────────────────────────────────────────────────────────────────────
+def draw_glitch(draw, img, cx, cy, body_h):
+    """Draw Glitch via canonical renderer. cx, cy = body center, body_h = ry.
 
-def draw_glitch(draw, cx, cy, body_h):
+    Glitch Layer native: YEARNING expression (still, watching Luma).
     """
-    Draw Glitch on the midground platform in its native environment (The Other Side).
-    G007 FIX (C40): Glitch diamond body drawn with VOID_BLACK outline=width 3 per spec §2.2.
-    In SF03, Glitch is in its home — YEARNING/still state. Subdued spike, quiet eyes.
-    cx, cy: body center. body_h: vertical half-extent (ry).
-    """
-    rx = int(body_h * 0.88)   # horizontal half-extent (ry > rx: taller than wide)
-    ry = body_h
-    tilt_deg = 3               # nearly upright but still slightly wrong
-    angle = math.radians(tilt_deg)
-
-    # Diamond body points (spec §2.1 formula)
-    top   = (cx + int(rx * 0.15 * math.sin(angle)),  cy - ry + int(rx * 0.15 * math.cos(angle)))
-    right = (cx + int(rx * math.cos(-angle)),          cy + int(rx * 0.2 * math.sin(-angle)))
-    bot   = (cx - int(rx * 0.15 * math.sin(angle)),  cy + int(ry * 1.15))
-    left  = (cx - int(rx * math.cos(-angle)),          cy - int(rx * 0.2 * math.sin(-angle)))
-    pts = [top, right, bot, left]
-
-    # UV_PURPLE shadow offset (+3, +4) — spec §2.2
-    sh_pts = [(x + 3, y + 4) for x, y in pts]
-    draw.polygon(sh_pts, fill=UV_PURPLE)
-
-    # Main body fill — CORRUPT_AMBER
-    draw.polygon(pts, fill=CORRUPT_AMBER)
-
-    # Highlight facet — upper-left triangle
-    ctr = (cx, cy - ry // 4)
-    mid_tl = ((top[0] + left[0]) // 2, (top[1] + left[1]) // 2)
-    CORRUPT_AMB_HL = (255, 185, 80)
-    draw.polygon([top, ctr, mid_tl], fill=CORRUPT_AMB_HL)
-
-    # G007 SPEC §2.2: VOID_BLACK outline on body polygon — width=3
-    draw.polygon(pts, outline=VOID_BLACK, width=3)
-
-    # HOT_MAG crack drawn AFTER body fill (spec §2.3 stacking order)
-    cs = (cx - rx // 2, cy - ry // 3)
-    ce = (cx + rx // 3, cy + ry // 2)
-    draw.line([cs, ce], fill=HOT_MAGENTA, width=2)
-    mid_c = ((cs[0] + ce[0]) // 2, (cs[1] + ce[1]) // 2)
-    draw.line([mid_c, (cx + rx // 2, cy - ry // 4)], fill=HOT_MAGENTA, width=1)
-
-    # Top spike — YEARNING state: subdued (spike_h=6 equiv at this scale)
-    spike_h = max(3, ry // 5)
-    sx = cx + int(rx * 0.15 * math.sin(angle))
-    cy_top = top[1]
-    spike_pts = [
-        (sx - spike_h // 2, cy_top),
-        (sx - spike_h,      cy_top - spike_h),
-        (sx,                cy_top - spike_h * 2),
-        (sx + spike_h,      cy_top - spike_h),
-        (sx + spike_h // 2, cy_top),
-    ]
-    draw.polygon(spike_pts, fill=CORRUPT_AMBER)
-    draw.polygon(spike_pts, outline=VOID_BLACK, width=2)
-    draw.line([(sx, cy_top - spike_h * 2), (sx, cy_top - spike_h * 2 - max(2, ry // 10))],
-              fill=HOT_MAGENTA, width=2)
-
-    # Pixel eyes — YEARNING state: UV_PURPLE dim glow (both bilateral, soft)
-    eye_cell = max(2, rx // 5)
-    face_cy = cy - ry // 6
-    for eye_cx in [cx - rx // 3, cx + rx // 3]:
-        draw.rectangle([eye_cx - eye_cell, face_cy - eye_cell,
-                        eye_cx + eye_cell, face_cy + eye_cell],
-                       fill=UV_PURPLE)
-        # Dim center — the YEARNING "watching" glow
-        draw.rectangle([eye_cx - eye_cell // 2, face_cy - eye_cell // 2,
-                        eye_cx + eye_cell // 2, face_cy + eye_cell // 2],
-                       fill=(80, 30, 140))  # dim UV — not full ACID_GREEN, just watching
+    scene_lighting = {
+        "tint": (123, 47, 190),      # UV_PURPLE ambient
+        "intensity": 0.10,
+        "direction": "above",
+    }
+    target_h = int(body_h * 2.5)   # full height including spikes/confetti
+    scale = max(0.3, body_h / 38.0)
+    surface = _canonical_draw_glitch(
+        expression="yearning", scale=scale, facing="front",
+        scene_lighting=scene_lighting)
+    char_pil = _cairo_char_to_pil(surface, target_h)
+    return _paste_char(img, char_pil, cx, cy, anchor="center")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -895,25 +783,25 @@ def generate(output_path):
     print("Lighting overlay (UV Purple ambient + cyan bounce + blue waterfall)...")
     draw = draw_lighting_overlay(img)
 
-    print("Character: Luma (UV Purple hair rim)...")
+    print("Character: Luma (canonical renderer — CURIOUS, UV ambient)...")
     luma_cx = int(W * 0.14)
     luma_cy = int(H * 0.66)
     luma_h  = int(H * 0.20)
-    draw_luma(draw, luma_cx, luma_cy, luma_h)
+    draw = draw_luma(draw, img, luma_cx, luma_cy, luma_h)
 
-    print("Character: Byte (FIX: Teal body + enlarged eyes + no slash)...")
+    print("Character: Byte (canonical renderer — searching, home territory)...")
     byte_cx = int(W * 0.22)
     byte_cy = int(H * 0.62)
     byte_h  = int(H * 0.07)
-    draw_byte(draw, byte_cx, byte_cy, byte_h)
+    draw = draw_byte(draw, img, byte_cx, byte_cy, byte_h)
 
-    print("Character: Glitch (G007 FIX C40 — VOID_BLACK outline, YEARNING state, midground)...")
+    print("Character: Glitch (canonical renderer — yearning, midground)...")
     # Glitch on midground platform at right of frame — native to this world.
     # Mid-distance scale: ~8% of frame height. YEARNING state — still, watching Luma.
     glitch_cx = int(W * 0.68)
     glitch_cy = int(H * 0.58)
     glitch_body_h = int(H * 0.08)  # ry (vertical half-extent)
-    draw_glitch(draw, glitch_cx, glitch_cy, glitch_body_h)
+    draw = draw_glitch(draw, img, glitch_cx, glitch_cy, glitch_body_h)
 
     print("Confetti (seed=77, ambient, no warm colors)...")
     draw = draw_confetti(draw)

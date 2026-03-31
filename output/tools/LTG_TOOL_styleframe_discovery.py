@@ -56,6 +56,8 @@ from LTG_TOOL_cairo_primitives import (
     draw_gradient_fill, draw_wobble_path, draw_smooth_polygon,
     draw_ellipse, to_pil_image, to_pil_rgba, set_color
 )
+from LTG_TOOL_char_luma import draw_luma as _canonical_draw_luma, cairo_surface_to_pil as _luma_to_pil
+from LTG_TOOL_char_byte import draw_byte as _canonical_draw_byte
 
 # Wand compositing — graceful fallback to PIL if unavailable
 _WAND_OK = False
@@ -603,602 +605,154 @@ def draw_couch(draw, luma_cx, luma_base_y):
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# PYCAIRO CHARACTER RENDERING — Luma (C52)
+# CHARACTER RENDERING — Canonical module wrappers (C53 modular migration)
 # ═══════════════════════════════════════════════════════════════════════════
 
-def draw_luma_cairo(luma_cx, luma_base_y, facing_monitor_x, byte_cx_target,
-                    byte_cy_target, crt_cx):
-    """Draw Luma using pycairo bezier curves. Returns RGBA PIL image + geometry dict.
+def render_luma_for_scene(luma_cx, luma_base_y, target_h=None):
+    """Render Luma via canonical char_luma module and place at scene position.
 
-    Scene-lit: CRT tint on skin/hoodie, cyan catch-lights, shoulder involvement.
+    Returns RGBA PIL image (W x H canvas) + geometry dict for lighting passes.
     """
-    surface, ctx, w_px, h_px = create_surface(W, H, scale=1)
+    # Target character height at 2x internal resolution
+    if target_h is None:
+        target_h = sp(430)  # matches original inline body+head+legs height
 
-    luma_x = luma_cx
-    y_base = luma_base_y
-    lean_offset = sp(44)
+    # Render at scale=2.0 for crisp detail, SURPRISED expression matches
+    # SF01 Discovery scene (wonder/awe at CRT emergence)
+    surface = _canonical_draw_luma(
+        expression="SURPRISED",
+        scale=2.0,
+        facing="right",
+        scene_lighting={"key_light_color": SCENE_COOL_TINT,
+                        "key_light_dir": "right",
+                        "ambient": SCENE_WARM_TINT},
+    )
+    char_img = _luma_to_pil(surface)
 
-    # ── Jeans (scene-lit) ──
-    jeans_crt = blend_color(JEANS, SCENE_COOL_TINT, 0.08)
-    jeans_shadow = blend_color(JEANS_SH, SCENE_WARM_TINT, 0.05)
+    # Trim transparent padding to content bounds
+    bbox = char_img.getbbox()
+    if bbox is None:
+        empty = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        return empty, {"head_cx": luma_cx, "head_cy": luma_base_y - target_h // 2,
+                       "head_r": sp(72), "hand_cx": luma_cx + sp(80),
+                       "hand_cy": luma_base_y - sp(200), "torso_top": luma_base_y - sp(260),
+                       "torso_half_w": sp(44), "lean_offset": sp(44)}
+    trimmed = char_img.crop(bbox)
+    orig_w, orig_h = trimmed.size
 
-    # Left leg (away-side — warm shadow)
-    ctx.new_path()
-    draw_smooth_polygon(ctx, [
-        (luma_x - sp(48), y_base), (luma_x - sp(50), y_base - sp(88)),
-        (luma_x - sp(15), y_base - sp(90)), (luma_x - sp(20), y_base),
-    ], bulge_frac=0.04)
-    set_color(ctx, jeans_shadow)
-    ctx.fill()
+    # Scale to match target height in scene
+    scale_factor = target_h / orig_h
+    new_w = max(1, int(orig_w * scale_factor))
+    new_h = target_h
+    resized = trimmed.resize((new_w, new_h), Image.LANCZOS)
 
-    # Right leg (CRT-side — brighter)
-    ctx.new_path()
-    draw_smooth_polygon(ctx, [
-        (luma_x + sp(14), y_base), (luma_x + sp(12), y_base - sp(86)),
-        (luma_x + sp(46), y_base - sp(84)), (luma_x + sp(44), y_base - sp(4)),
-    ], bulge_frac=0.04)
-    set_color(ctx, jeans_crt)
-    ctx.fill()
+    # Place on full-canvas layer, feet at luma_base_y, centered at luma_cx
+    canvas = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    paste_x = luma_cx - new_w // 2
+    paste_y = luma_base_y - new_h
+    canvas.paste(resized, (paste_x, paste_y), resized)
 
-    # Shoes
-    for shoe_x0, shoe_x1 in [(luma_x - sp(60), luma_x - sp(8)),
-                               (luma_x + sp(2), luma_x + sp(58))]:
-        ctx.rectangle(shoe_x0, y_base - sp(10), shoe_x1 - shoe_x0, sp(32))
-        set_color(ctx, WARM_CREAM)
-        ctx.fill()
-        ctx.rectangle(shoe_x0 - sp(2), y_base + sp(16), shoe_x1 - shoe_x0 + sp(4), sp(10))
-        set_color(ctx, DEEP_COCOA)
-        ctx.fill()
+    # Estimate geometry for downstream lighting passes
+    # Head is roughly in the upper 30% of the character
+    head_r = int(new_h * 0.11)
+    head_cx = luma_cx + int(new_w * 0.08)  # slight lean offset
+    head_cy = paste_y + int(new_h * 0.18)
+    # Hand position: right arm reaching toward CRT, roughly at torso level
+    hand_cx = luma_cx + int(new_w * 0.45)
+    hand_cy = paste_y + int(new_h * 0.42)
+    torso_top = paste_y + int(new_h * 0.28)
 
-    # ── Torso (scene-lit hoodie with gradient via cairo linear gradient) ──
-    torso_top = y_base - sp(260)
-    torso_bot = y_base - sp(90)
-    torso_half_w = sp(44)
-
-    # Build torso as a filled shape with hoodie gradient
-    # The lean makes the top offset to the right
-    tl = (luma_x - torso_half_w + lean_offset, torso_top)
-    tr = (luma_x + torso_half_w + lean_offset, torso_top)
-    br = (luma_x + torso_half_w, torso_bot)
-    bl = (luma_x - torso_half_w, torso_bot)
-
-    # C47 shoulder involvement: screen-side shoulder raised
-    # CRT-facing shoulder rises 5px, shifts outward 6px
-    shoulder_raise = sp(5)
-    shoulder_out = sp(6)
-    tr_adj = (tr[0] + shoulder_out, tr[1] - shoulder_raise)
-
-    ctx.new_path()
-    draw_smooth_polygon(ctx, [tl, tr_adj, br, bl], bulge_frac=0.06)
-
-    # Linear gradient: warm shadow (left/away-side) to CRT-lit hoodie (right)
-    hoodie_crt = blend_color(HOODIE_ORANGE, SCENE_COOL_TINT, 0.25)
-    hoodie_warm = blend_color(HOODIE_SHADOW, SCENE_WARM_TINT, 0.12)
-    pat = cairo.LinearGradient(bl[0], torso_top, br[0], torso_top)
-    pat.add_color_stop_rgb(0.0, *_c(hoodie_warm))
-    pat.add_color_stop_rgb(0.4, *_c(HOODIE_ORANGE))
-    pat.add_color_stop_rgb(1.0, *_c(hoodie_crt))
-    ctx.set_source(pat)
-    ctx.fill()
-
-    # Hoodie bottom band
-    ctx.rectangle(luma_x - torso_half_w, torso_bot - sp(8),
-                  torso_half_w * 2, sp(8))
-    set_color(ctx, HOODIE_AMBIENT)
-    ctx.fill()
-
-    # Hoodie pixel pattern squares (C38: 12 pixels)
-    rng_px = random.Random(55)
-    for i in range(12):
-        ppx = luma_x - torso_half_w + lean_offset + rng_px.randint(sp(2), torso_half_w * 2 - sp(6))
-        ppy = torso_top + rng_px.randint(sp(4), sp(50))
-        pps = rng_px.choice([sp(4), sp(6), sp(8)])
-        col_choices = [ELEC_CYAN, BYTE_TEAL, (0, 200, 220), (0, 240, 240)]
-        pc = rng_px.choice(col_choices)
-        ctx.rectangle(ppx, ppy, pps, pps)
-        set_color(ctx, pc)
-        ctx.fill()
-
-    # ── Neck ──
-    head_cx = luma_x + lean_offset
-    head_cy = torso_top - sp(70)
-    ctx.rectangle(head_cx - sp(6), torso_top, sp(12), sp(30))
-    set_color(ctx, HOODIE_ORANGE)
-    ctx.fill()
-
-    # Neck visible skin
-    for row in range(torso_top + sp(2), head_cy + sp(60)):
-        t_n = (row - (torso_top + sp(2))) / max(1, (head_cy + sp(60)) - (torso_top + sp(2)))
-        half_w_n = sp(18) - int(t_n * sp(4))
-        ctx.rectangle(luma_x - half_w_n + int(t_n * sp(4)), row, half_w_n * 2, 1)
-        set_color(ctx, HOODIE_ORANGE)
-        ctx.fill()
-
-    # ── Reaching arm (C38) — scene-lit ──
-    arm_shoulder_x = luma_x - sp(10) + lean_offset
-    arm_shoulder_y = torso_top + sp(25)
-    arm_target_x = facing_monitor_x - sp(10)
-    arm_target_y = torso_top + sp(45)
-    elbow_x = (arm_shoulder_x + arm_target_x) // 2 + sp(16)
-    elbow_y = arm_shoulder_y - sp(32)
-
-    arm_color_crt = blend_color(CYAN_SKIN, SCENE_COOL_TINT, 0.20)
-    arm_w = sp(18)
-
-    # Upper arm
-    _draw_tapered_limb_cairo(ctx, arm_shoulder_x, arm_shoulder_y,
-                              elbow_x, elbow_y, arm_w, arm_w - sp(2), arm_color_crt)
-    # Forearm
-    _draw_tapered_limb_cairo(ctx, elbow_x, elbow_y,
-                              arm_target_x, arm_target_y, arm_w - sp(2), arm_w - sp(4), arm_color_crt)
-
-    hand_cx = arm_target_x
-    hand_cy = arm_target_y
-
-    # Hand — open palm
-    draw_ellipse(ctx, hand_cx, hand_cy + sp(4), sp(14), sp(14))
-    set_color(ctx, arm_color_crt)
-    ctx.fill()
-
-    # Fingers (C38 — spread open, reaching)
-    finger_offsets = [(-sp(12), -sp(20)), (-sp(6), -sp(24)), (sp(2), -sp(24)), (sp(10), -sp(20))]
-    for fdx, fdy in finger_offsets:
-        ctx.set_line_width(sp(6))
-        ctx.move_to(hand_cx + fdx // 2, hand_cy - sp(4))
-        ctx.line_to(hand_cx + fdx, hand_cy + fdy)
-        set_color(ctx, arm_color_crt)
-        ctx.stroke()
-    # Thumb
-    ctx.set_line_width(sp(6))
-    ctx.move_to(hand_cx - sp(12), hand_cy + sp(6))
-    ctx.line_to(hand_cx - sp(22), hand_cy - sp(4))
-    set_color(ctx, arm_color_crt)
-    ctx.stroke()
-
-    # Palm CRT glow particles
-    rng_palm = random.Random(91)
-    for _ in range(8):
-        px_g = hand_cx + rng_palm.randint(-sp(14), sp(14))
-        py_g = hand_cy + rng_palm.randint(-sp(10), sp(6))
-        ps_g = rng_palm.choice([2, 3, 4])
-        pc = rng_palm.choice([ELEC_CYAN, (180, 240, 255), BYTE_TEAL])
-        ctx.rectangle(px_g, py_g, ps_g, ps_g)
-        set_color(ctx, pc)
-        ctx.fill()
-
-    # ── Head (scene-lit with pycairo) ──
-    head_gaze_offset = sp(18)
-    head_cx_final = head_cx + head_gaze_offset
-    head_cy_final = head_cy + sp(6)
-    scale_h = 0.92
-    def p(n): return int(n * scale_h * min(SX, SY))
-    head_r = p(72)
-
-    # Head fill — scene-lit gradient (CRT side cyan, away side warm)
-    skin_crt = blend_color(SKIN_HL, SCENE_COOL_TINT, SCENE_COOL_INFLUENCE)
-    skin_warm = blend_color(SKIN_SH, SCENE_WARM_TINT, SCENE_WARM_INFLUENCE)
-
-    draw_ellipse(ctx, head_cx_final, head_cy_final, head_r, head_r)
-    pat_head = cairo.LinearGradient(head_cx_final - head_r, head_cy_final,
-                                     head_cx_final + head_r, head_cy_final)
-    pat_head.add_color_stop_rgb(0.0, *_c(skin_warm))
-    pat_head.add_color_stop_rgb(0.5, *_c(SKIN))
-    pat_head.add_color_stop_rgb(1.0, *_c(skin_crt))
-    ctx.set_source(pat_head)
-    ctx.fill()
-
-    # Head outline — wobble via draw_wobble_path
-    num_pts = 24
-    head_pts = []
-    for i in range(num_pts):
-        angle = (2 * math.pi * i / num_pts) - math.pi / 2
-        hx = head_cx_final + head_r * math.cos(angle)
-        hy = head_cy_final + head_r * math.sin(angle)
-        head_pts.append((hx, hy))
-
-    draw_wobble_path(ctx, head_pts, amplitude=sp(2), frequency=0.15,
-                     seed=101, closed=True, jitter=0.5)
-    ctx.set_line_width(sp(3))
-    set_color(ctx, LINE)
-    ctx.stroke()
-
-    # Hair base
-    draw_ellipse(ctx, head_cx_final, head_cy_final - head_r * 0.15, head_r, head_r * 0.55)
-    set_color(ctx, HAIR_COLOR)
-    ctx.fill()
-
-    # ── Eyes (C38 + C47 sight-line geometry) ──
-    EYE_W_C = (242, 240, 248)
-    EYE_IRIS = (58, 32, 18)
-    EYE_PUP  = (20, 12, 8)
-
-    lex = head_cx_final + p(4)
-    ley = head_cy_final - p(10)
-    ew  = int(head_r * 0.22)
-    leh = p(34)
-
-    # Screen-side eye (wider — wonder)
-    draw_ellipse(ctx, lex, ley, ew, leh)
-    set_color(ctx, EYE_W_C)
-    ctx.fill()
-    draw_ellipse(ctx, lex, ley, ew, leh)
-    ctx.set_line_width(sp(2))
-    set_color(ctx, LINE)
-    ctx.stroke()
-
-    # Iris
-    iris_r = p(15)
-    draw_ellipse(ctx, lex, ley + p(2), iris_r, iris_r)
-    set_color(ctx, EYE_IRIS)
-    ctx.fill()
-    # Pupil
-    draw_ellipse(ctx, lex, ley + p(1), p(9), p(8))
-    set_color(ctx, EYE_PUP)
-    ctx.fill()
-    # Catch-light — cyan-tinted (scene-lit)
-    draw_ellipse(ctx, lex + p(6), ley - p(6), p(4), p(4))
-    set_color(ctx, (180, 255, 255))
-    ctx.fill()
-
-    # Away-side eye (squinted — intensity)
-    rex = head_cx_final + p(38)
-    rey = head_cy_final - p(8)
-    reh = p(22)
-
-    draw_ellipse(ctx, rex, rey, ew, reh)
-    set_color(ctx, EYE_W_C)
-    ctx.fill()
-    draw_ellipse(ctx, rex, rey, ew, reh)
-    ctx.set_line_width(sp(2))
-    set_color(ctx, LINE)
-    ctx.stroke()
-
-    # Iris
-    draw_ellipse(ctx, rex, rey + p(2), iris_r, iris_r)
-    set_color(ctx, EYE_IRIS)
-    ctx.fill()
-
-    # C47 sight-line fix: pupil shift aimed at Byte
-    mid_eye_x = (lex + rex) // 2
-    mid_eye_y = (ley + rey) // 2
-    _byte_cy = byte_cy_target if byte_cy_target is not None else mid_eye_y
-    aim_dx = byte_cx_target - mid_eye_x
-    aim_dy = _byte_cy - mid_eye_y
-    aim_dist = max(1, (aim_dx**2 + aim_dy**2) ** 0.5)
-    pupil_mag = p(8)
-    psx = int(pupil_mag * aim_dx / aim_dist)
-    psy = int(pupil_mag * aim_dy / aim_dist)
-
-    # Away-side pupil + catch-light
-    draw_ellipse(ctx, rex + psx, rey + psy + p(1), p(9), p(8))
-    set_color(ctx, EYE_PUP)
-    ctx.fill()
-    draw_ellipse(ctx, rex + psx + p(6), rey + psy - p(6), p(4), p(4))
-    set_color(ctx, (180, 255, 255))
-    ctx.fill()
-
-    # Screen-side pupil shifted too
-    draw_ellipse(ctx, lex + psx, ley + psy + p(1), p(9), p(8))
-    set_color(ctx, EYE_PUP)
-    ctx.fill()
-
-    # ── Brows (C38) ──
-    # Screen-side brow — raised high (wonder)
-    ctx.set_line_width(p(6))
-    ctx.set_line_cap(cairo.LINE_CAP_ROUND)
-    ctx.move_to(lex - p(30), ley - p(54))
-    ctx.curve_to(lex - p(15), ley - p(64), lex + p(5), ley - p(62), lex + p(22), ley - p(46))
-    set_color(ctx, HAIR_COLOR)
-    ctx.stroke()
-
-    # Away-side brow — doubt variant
-    ctx.set_line_width(p(5))
-    ctx.move_to(rex - p(22), rey - p(38))
-    ctx.curve_to(rex - p(12), rey - p(36), rex + p(5), rey - p(32), rex + p(26), rey - p(26))
-    set_color(ctx, HAIR_COLOR)
-    ctx.stroke()
-
-    # ── Nose ──
-    draw_ellipse(ctx, head_cx_final - p(3), head_cy_final + p(11), p(3), p(3))
-    set_color(ctx, SKIN_SH)
-    ctx.fill()
-    draw_ellipse(ctx, head_cx_final + p(5) + p(4), head_cy_final + p(11), p(3), p(3))
-    set_color(ctx, SKIN_SH)
-    ctx.fill()
-
-    # ── Mouth (C38 — barely parted, held breath) ──
-    m_off = p(2)
-    ctx.set_line_width(p(3))
-    ctx.set_line_cap(cairo.LINE_CAP_ROUND)
-    # Upper lip arc
-    ctx.new_path()
-    m_cx = head_cx_final + m_off
-    m_cy = head_cy_final + p(35)
-    ctx.move_to(m_cx - p(28), m_cy)
-    ctx.curve_to(m_cx - p(14), m_cy - p(6), m_cx + p(14), m_cy - p(6), m_cx + p(28), m_cy)
-    set_color(ctx, LINE)
-    ctx.stroke()
-
-    # Lip fill (pale interior)
-    ctx.new_path()
-    ctx.move_to(m_cx - p(24), m_cy)
-    ctx.curve_to(m_cx - p(12), m_cy + p(10), m_cx + p(12), m_cy + p(10), m_cx + p(24), m_cy)
-    ctx.close_path()
-    set_color(ctx, (240, 212, 190))
-    ctx.fill()
-
-    # Thin parting line
-    ctx.set_line_width(p(1))
-    ctx.move_to(m_cx - p(10), m_cy + p(2))
-    ctx.line_to(m_cx + p(10), m_cy + p(2))
-    set_color(ctx, (160, 100, 60))
-    ctx.stroke()
-
-    # ── Blush ──
-    draw_ellipse(ctx, head_cx_final - head_r + p(34), head_cy_final + p(22), p(28), p(18))
-    ctx.set_source_rgba(*_ca((*BLUSH_LEFT, 80)))
-    ctx.fill()
-    draw_ellipse(ctx, head_cx_final + head_r - p(34), head_cy_final + p(22), p(28), p(18))
-    ctx.set_source_rgba(*_ca((*BLUSH_RIGHT, 80)))
-    ctx.fill()
-
-    # ── Hair strands (C38 — screen-side forward pull) ──
-    ctx.set_line_cap(cairo.LINE_CAP_ROUND)
-
-    # Strand 1: away-side arc (counterweight float-back)
-    ctx.set_line_width(p(8))
-    ctx.new_path()
-    ctx.arc(head_cx_final - p(35), head_cy_final - p(168), p(25), math.radians(30), math.radians(200))
-    set_color(ctx, HAIR_COLOR)
-    ctx.stroke()
-
-    # Strand 2: screen-side arc (forward pull toward CRT)
-    ctx.set_line_width(p(7))
-    ctx.new_path()
-    ctx.arc(head_cx_final + p(35), head_cy_final - p(150), p(35), math.radians(330), math.radians(545))
-    set_color(ctx, HAIR_COLOR)
-    ctx.stroke()
-
-    # Strand 3: crown tuft (upward energy)
-    ctx.set_line_width(p(6))
-    ctx.new_path()
-    ctx.arc(head_cx_final, head_cy_final - p(180), p(20), math.radians(225), math.radians(355))
-    set_color(ctx, HAIR_COLOR)
-    ctx.stroke()
-
-    # Strand 4: fine trailing wisp
-    ctx.set_line_width(p(4))
-    ctx.new_path()
-    ctx.arc(head_cx_final + p(43), head_cy_final - p(148), p(25), math.radians(290), math.radians(495))
-    set_color(ctx, HAIR_COLOR)
-    ctx.stroke()
-
-    # Hair edge highlight from CRT — cyan fringe (key anti-cutout detail)
-    ctx.set_line_width(p(2))
-    ctx.new_path()
-    ctx.arc(head_cx_final + p(42), head_cy_final - p(150), p(32), math.radians(310), math.radians(520))
-    set_color(ctx, (0, 180, 200))
-    ctx.stroke()
-
-    # ── Collar ──
-    collar_offset = p(6)
-    draw_ellipse(ctx, head_cx_final + collar_offset, head_cy_final + head_r + p(45),
-                 p(90), p(35))
-    set_color(ctx, HOODIE_ORANGE)
-    ctx.fill()
-    # Collar outline (lower half arc)
-    ctx.new_path()
-    ctx.save()
-    ctx.translate(head_cx_final + collar_offset, head_cy_final + head_r + p(45))
-    ctx.scale(p(90), p(35))
-    ctx.arc(0, 0, 1.0, 0, math.pi)
-    ctx.restore()
-    ctx.set_line_width(p(3))
-    set_color(ctx, LINE)
-    ctx.stroke()
-
-    # Convert cairo surface to PIL RGBA
-    luma_img = to_pil_rgba(surface)
-
-    return luma_img, {
-        "head_cx": head_cx_final, "head_cy": head_cy_final,
+    return canvas, {
+        "head_cx": head_cx, "head_cy": head_cy,
         "head_r": head_r,
         "hand_cx": hand_cx, "hand_cy": hand_cy,
         "torso_top": torso_top,
-        "torso_half_w": torso_half_w,
-        "lean_offset": lean_offset,
+        "torso_half_w": sp(44),
+        "lean_offset": sp(44),
     }
 
 
-def _draw_tapered_limb_cairo(ctx, x0, y0, x1, y1, w0, w1, color):
-    """Draw a tapered limb segment using cairo bezier envelope."""
-    dx = x1 - x0
-    dy = y1 - y0
-    length = math.sqrt(dx * dx + dy * dy) or 1.0
-    nx = -dy / length
-    ny = dx / length
-    hw0 = w0 / 2.0
-    hw1 = w1 / 2.0
+def render_byte_for_scene(emerge_cx, emerge_cy, emerge_rx, emerge_ry,
+                          luma_hand_x, luma_hand_y):
+    """Render Byte via canonical char_byte module and place at scene position.
 
-    ctx.new_path()
-    ctx.move_to(x0 + nx * hw0, y0 + ny * hw0)
-    # Slight outward curve on left side
-    mx = (x0 + x1) / 2.0 + nx * (hw0 + hw1) * 0.3
-    my = (y0 + y1) / 2.0 + ny * (hw0 + hw1) * 0.3
-    ctx.curve_to(x0 + nx * hw0 + dx * 0.33, y0 + ny * hw0 + dy * 0.33,
-                 mx, my,
-                 x1 + nx * hw1, y1 + ny * hw1)
-    # End cap
-    ctx.line_to(x1 - nx * hw1, y1 - ny * hw1)
-    # Right side back
-    mx2 = (x0 + x1) / 2.0 - nx * (hw0 + hw1) * 0.3
-    my2 = (y0 + y1) / 2.0 - ny * (hw0 + hw1) * 0.3
-    ctx.curve_to(mx2, my2,
-                 x0 - nx * hw0 + dx * 0.33, y0 - ny * hw0 + dy * 0.33,
-                 x0 - nx * hw0, y0 - ny * hw0)
-    ctx.close_path()
-    set_color(ctx, color)
-    ctx.fill()
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# PYCAIRO CHARACTER RENDERING — Byte (C52)
-# ═══════════════════════════════════════════════════════════════════════════
-
-def draw_byte_cairo(emerge_cx, emerge_cy, emerge_rx, emerge_ry,
-                    luma_hand_x, luma_hand_y):
-    """Draw Byte using pycairo smooth curves. Returns RGBA PIL image."""
-    surface, ctx, w_px, h_px = create_surface(W, H, scale=1)
-
+    Returns RGBA PIL image (W x H canvas) with Byte and scene FX (gap glow, particles).
+    """
+    # Byte body dimensions from original inline code
     byte_cx = emerge_cx
     byte_cy = emerge_cy - int(emerge_ry * 0.20)
     byte_rx = int(emerge_rx * 0.78)
     byte_ry = int(emerge_ry * 0.80)
+    target_h = byte_ry * 2 + sp(40)  # body height + antenna/particles margin
 
-    # Distortion rings (3 concentric)
-    for i in range(3):
-        dist_rx = byte_rx + sp(12) + i * sp(10)
-        dist_ry = byte_ry + sp(8)  + i * sp(7)
-        draw_ellipse(ctx, byte_cx, byte_cy, dist_rx, dist_ry)
-        ctx.set_line_width(sp(2))
-        set_color(ctx, (0, 168 + i * 20, 180 + i * 18))
-        ctx.stroke()
+    # Render via canonical module — "searching" matches SF01 emergence curiosity
+    surface = _canonical_draw_byte(
+        expression="searching",
+        scale=2.0,
+        facing="left",
+        scene_lighting={"tint": SCENE_COOL_TINT, "intensity": 0.25, "direction": "left"},
+    )
+    char_img = to_pil_rgba(surface)
 
-    # Byte body — smooth ellipse with gradient fill
-    draw_ellipse(ctx, byte_cx, byte_cy, byte_rx, byte_ry)
-    pat_byte = cairo.RadialGradient(byte_cx - int(byte_rx * 0.2),
-                                     byte_cy - int(byte_ry * 0.25),
-                                     0,
-                                     byte_cx, byte_cy,
-                                     max(byte_rx, byte_ry))
-    pat_byte.add_color_stop_rgb(0.0, *_c(BYTE_HL))
-    pat_byte.add_color_stop_rgb(0.5, *_c(BYTE_TEAL))
-    pat_byte.add_color_stop_rgb(1.0, *_c(BYTE_SH))
-    ctx.set_source(pat_byte)
-    ctx.fill()
+    # Trim and scale
+    bbox = char_img.getbbox()
+    if bbox is None:
+        return Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    trimmed = char_img.crop(bbox)
+    orig_w, orig_h = trimmed.size
+    scale_factor = target_h / orig_h
+    new_w = max(1, int(orig_w * scale_factor))
+    new_h = target_h
+    resized = trimmed.resize((new_w, new_h), Image.LANCZOS)
 
-    # Submerge fade into void at lower body
-    VOID_POCKET = (14, 14, 30)
-    submerge_y = byte_cy + int(byte_ry * 0.50)
-    for row_offset in range(0, int(byte_ry * 0.38), sp(4)):
-        y_row = submerge_y + row_offset
-        t_fade = row_offset / max(1, int(byte_ry * 0.38))
-        fade_rx = int(byte_rx * (1 - t_fade * 0.3))
-        col = (
-            int(VOID_POCKET[0] * t_fade + BYTE_TEAL[0] * (1 - t_fade)),
-            int(VOID_POCKET[1] * t_fade + BYTE_TEAL[1] * (1 - t_fade)),
-            int(VOID_POCKET[2] * t_fade + BYTE_TEAL[2] * (1 - t_fade)),
-        )
-        ctx.move_to(byte_cx - fade_rx, y_row)
-        ctx.line_to(byte_cx + fade_rx, y_row)
-        ctx.set_line_width(sp(4))
-        set_color(ctx, col)
-        ctx.stroke()
+    # Composite onto full scene canvas
+    canvas = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    paste_x = byte_cx - new_w // 2
+    paste_y = byte_cy - new_h // 2
+    canvas.paste(resized, (paste_x, paste_y), resized)
 
-    # Amber outline (corrupted amber)
-    for i in range(sp(3)):
-        draw_ellipse(ctx, byte_cx, byte_cy, byte_rx + i, byte_ry + i)
-        ctx.set_line_width(1)
-        set_color(ctx, CORRUPTED_AMBER)
-        ctx.stroke()
+    # Draw scene-specific FX on a cairo surface: gap glow + spark particles
+    fx_surface, fx_ctx, _, _ = create_surface(W, H, scale=1)
 
-    # ── Eyes ──
-    # Left eye — glitch-style square brackets
-    eye_size = max(sp(8), int(byte_rx * 0.22))
-    lex_b = byte_cx - int(byte_rx * 0.30)
-    ley_b = byte_cy - int(byte_ry * 0.12)
-    ctx.rectangle(lex_b - eye_size // 2, ley_b - eye_size,
-                  eye_size, eye_size // 3 + eye_size)
-    # Two horizontal bars (glitch bracket eye)
-    ctx.rectangle(lex_b - eye_size // 2, ley_b - eye_size, eye_size, eye_size // 3)
-    set_color(ctx, ELEC_CYAN)
-    ctx.fill()
-    ctx.rectangle(lex_b - eye_size // 2, ley_b + eye_size // 2, eye_size, eye_size // 2)
-    set_color(ctx, ELEC_CYAN)
-    ctx.fill()
-
-    # Right eye — round (organic/human side)
-    rex_b = byte_cx + int(byte_rx * 0.30)
-    rey_b = byte_cy - int(byte_ry * 0.12)
-    r_eye_w = int(byte_rx * 0.36)
-    r_eye_h = int(byte_ry * 0.36)
-    draw_ellipse(ctx, rex_b, rey_b, r_eye_w, r_eye_h)
-    set_color(ctx, (240, 240, 245))
-    ctx.fill()
-    draw_ellipse(ctx, rex_b, rey_b, r_eye_w, r_eye_h)
-    ctx.set_line_width(sp(2))
-    set_color(ctx, LINE)
-    ctx.stroke()
-
-    # Pupil
-    pupil_r = int(r_eye_w * 0.55)
-    draw_ellipse(ctx, rex_b - sp(4), rey_b, pupil_r, pupil_r)
-    set_color(ctx, LINE)
-    ctx.fill()
-    # Iris highlight
-    draw_ellipse(ctx, rex_b - sp(2), rey_b - int(r_eye_h * 0.2),
-                 int(r_eye_w * 0.15), int(r_eye_h * 0.2))
-    set_color(ctx, ELEC_CYAN)
-    ctx.fill()
-
-    # Scar
-    scar_x = byte_cx + int(byte_rx * 0.10)
-    scar_y = byte_cy - int(byte_ry * 0.30)
-    ctx.set_line_width(sp(3))
-    ctx.set_line_cap(cairo.LINE_CAP_ROUND)
-    ctx.move_to(scar_x, scar_y)
-    ctx.line_to(scar_x + int(byte_rx * 0.18), scar_y + int(byte_ry * 0.22))
-    set_color(ctx, SCAR_MAG)
-    ctx.stroke()
-    ctx.set_line_width(sp(2))
-    ctx.move_to(scar_x + int(byte_rx * 0.06), scar_y + int(byte_ry * 0.08))
-    ctx.line_to(scar_x + int(byte_rx * 0.24), scar_y + int(byte_ry * 0.16))
-    set_color(ctx, SCAR_MAG)
-    ctx.stroke()
-
-    # ── Tendril arm reaching toward Luma ──
+    # Tendril from Byte toward Luma's hand (scene-specific connection)
     arm_start_x = byte_cx - byte_rx
     arm_start_y = byte_cy + int(byte_ry * 0.10)
-    target_x = luma_hand_x
-    target_y = luma_hand_y
     steps = 30
     tendril_pts = []
-    cp1x = arm_start_x + int((target_x - arm_start_x) * 0.33)
+    cp1x = arm_start_x + int((luma_hand_x - arm_start_x) * 0.33)
     cp1y = arm_start_y - int(byte_ry * 0.5)
     for i in range(steps + 1):
         t = i / steps
-        px_t = (1-t)**2 * arm_start_x + 2*(1-t)*t * cp1x + t**2 * target_x
-        py_t = (1-t)**2 * arm_start_y + 2*(1-t)*t * cp1y + t**2 * target_y
+        px_t = (1-t)**2 * arm_start_x + 2*(1-t)*t * cp1x + t**2 * luma_hand_x
+        py_t = (1-t)**2 * arm_start_y + 2*(1-t)*t * cp1y + t**2 * luma_hand_y
         tendril_pts.append((px_t, py_t))
 
-    # Draw tapered tendril with cairo
     for i in range(len(tendril_pts) - 1):
         thickness = max(sp(2), int(sp(8) * (1 - i / len(tendril_pts))))
-        ctx.set_line_width(thickness)
-        ctx.set_line_cap(cairo.LINE_CAP_ROUND)
-        ctx.move_to(tendril_pts[i][0], tendril_pts[i][1])
-        ctx.line_to(tendril_pts[i+1][0], tendril_pts[i+1][1])
-        set_color(ctx, BYTE_TEAL)
-        ctx.stroke()
+        fx_ctx.set_line_width(thickness)
+        fx_ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+        fx_ctx.move_to(tendril_pts[i][0], tendril_pts[i][1])
+        fx_ctx.line_to(tendril_pts[i+1][0], tendril_pts[i+1][1])
+        set_color(fx_ctx, BYTE_TEAL)
+        fx_ctx.stroke()
 
     # Tendril tip glow
     if tendril_pts:
         tx, ty = tendril_pts[-1]
-        draw_ellipse(ctx, tx, ty, sp(8), sp(8))
-        set_color(ctx, ELEC_CYAN)
-        ctx.fill()
+        draw_ellipse(fx_ctx, tx, ty, sp(8), sp(8))
+        set_color(fx_ctx, ELEC_CYAN)
+        fx_ctx.fill()
 
     # Gap glow between tendril and hand
-    gap_cx = (tendril_pts[-1][0] + luma_hand_x) // 2 if tendril_pts else luma_hand_x - sp(40)
-    gap_cy = (tendril_pts[-1][1] + luma_hand_y) // 2 if tendril_pts else luma_hand_y
-    # Radial glow
-    draw_ellipse(ctx, gap_cx, gap_cy, sx(55), sy(38))
+    gap_cx = int((tendril_pts[-1][0] + luma_hand_x) / 2) if tendril_pts else luma_hand_x - sp(40)
+    gap_cy = int((tendril_pts[-1][1] + luma_hand_y) / 2) if tendril_pts else luma_hand_y
+    draw_ellipse(fx_ctx, gap_cx, gap_cy, sx(55), sy(38))
     pat_gap = cairo.RadialGradient(gap_cx, gap_cy, 0, gap_cx, gap_cy, max(sx(55), sy(38)))
     pat_gap.add_color_stop_rgba(0.0, *_ca((180, 255, 255, 120)))
     pat_gap.add_color_stop_rgba(0.5, *_ca((0, 240, 255, 60)))
     pat_gap.add_color_stop_rgba(1.0, 0, 0, 0, 0)
-    ctx.set_source(pat_gap)
-    ctx.fill()
+    fx_ctx.set_source(pat_gap)
+    fx_ctx.fill()
 
     # Spark particles
     rng_gap = random.Random(77)
@@ -1207,35 +761,13 @@ def draw_byte_cairo(emerge_cx, emerge_cy, emerge_rx, emerge_ry,
         spy = gap_cy + rng_gap.randint(-sy(32), sy(32))
         sps = rng_gap.choice([2, 3, 4])
         spc = rng_gap.choice([ELEC_CYAN, STATIC_WHITE, (180, 255, 255)])
-        ctx.rectangle(spx, spy, sps, sps)
-        set_color(ctx, spc)
-        ctx.fill()
+        fx_ctx.rectangle(spx, spy, sps, sps)
+        set_color(fx_ctx, spc)
+        fx_ctx.fill()
 
-    # Antenna
-    ant_x = byte_cx + int(byte_rx * 0.20)
-    ant_y = byte_cy - byte_ry
-    ctx.set_line_width(sp(3))
-    ctx.move_to(ant_x, ant_y)
-    ctx.line_to(ant_x + sp(10), ant_y - sp(30))
-    set_color(ctx, BYTE_TEAL)
-    ctx.stroke()
-    draw_ellipse(ctx, ant_x + sp(11), ant_y - sp(33), sp(5), sp(5))
-    set_color(ctx, ELEC_CYAN)
-    ctx.fill()
-
-    # Data particles
-    rng_p = random.Random(77)
-    for _ in range(18):
-        pdx = rng_p.randint(-int(emerge_rx * 1.6), int(emerge_rx * 1.6))
-        pdy = rng_p.randint(-int(emerge_ry * 1.6), int(emerge_ry * 1.6))
-        ps  = rng_p.choice([sp(2), sp(3), sp(4)])
-        pc  = rng_p.choice([ELEC_CYAN, BYTE_TEAL, (0, 200, 220)])
-        ctx.rectangle(emerge_cx + pdx, emerge_cy + pdy, ps, ps)
-        set_color(ctx, pc)
-        ctx.fill()
-
-    byte_img = to_pil_rgba(surface)
-    return byte_img
+    fx_img = to_pil_rgba(fx_surface)
+    canvas = Image.alpha_composite(canvas, fx_img)
+    return canvas
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -1375,15 +907,11 @@ def generate(skip_fill_light=False):
         img = img.convert("RGB")
     draw = ImageDraw.Draw(img)
 
-    # STEP 4: Luma — pycairo character rendering
+    # STEP 4: Luma — canonical char_luma module rendering
     arm_target_x = scr_x0 - sx(20)
     crt_cx = bg_data["mw_x"] + bg_data["mw_w"] // 2
 
-    luma_img, luma_data = draw_luma_cairo(
-        luma_cx, luma_base_y, arm_target_x,
-        byte_cx_target=emerge_cx, byte_cy_target=emerge_cy,
-        crt_cx=crt_cx
-    )
+    luma_img, luma_data = render_luma_for_scene(luma_cx, luma_base_y)
 
     # Composite Luma onto background
     base_rgba = img.convert("RGBA")
@@ -1403,9 +931,9 @@ def generate(skip_fill_light=False):
     )
     draw = ImageDraw.Draw(img)
 
-    # STEP 6: Byte — pycairo character rendering
-    byte_img = draw_byte_cairo(emerge_cx, emerge_cy, emerge_rx, emerge_ry,
-                                luma_data["hand_cx"], luma_data["hand_cy"])
+    # STEP 6: Byte — canonical char_byte module rendering
+    byte_img = render_byte_for_scene(emerge_cx, emerge_cy, emerge_rx, emerge_ry,
+                                     luma_data["hand_cx"], luma_data["hand_cy"])
     base_rgba = img.convert("RGBA")
     base_rgba = Image.alpha_composite(base_rgba, byte_img)
     img = base_rgba.convert("RGB")

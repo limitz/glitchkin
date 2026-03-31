@@ -42,6 +42,9 @@ from LTG_TOOL_procedural_draw import (
     wobble_line, wobble_polygon, variable_stroke,
     add_rim_light, add_face_lighting
 )
+from LTG_TOOL_cairo_primitives import to_pil_rgba
+from LTG_TOOL_char_luma import draw_luma as _canonical_draw_luma, cairo_surface_to_pil as _luma_to_pil
+from LTG_TOOL_char_byte import draw_byte as _canonical_draw_byte
 
 OUTPUT_PATH = output_dir('color', 'style_frames', 'LTG_COLOR_styleframe_discovery_scenelit.png')
 

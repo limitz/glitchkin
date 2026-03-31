@@ -83,6 +83,8 @@ from LTG_TOOL_procedural_draw import (
     add_rim_light, add_face_lighting, silhouette_test, value_study,
     get_char_bbox
 )
+from LTG_TOOL_char_luma import draw_luma as _canonical_draw_luma
+from LTG_TOOL_cairo_primitives import to_pil_rgba as _to_pil_rgba
 
 OUTPUT_PATH = output_dir('color', 'style_frames', 'LTG_COLOR_styleframe_sf04.png')
 NOLIGHT_PATH = output_dir('color', 'style_frames', 'LTG_COLOR_styleframe_sf04_nolight.png')
@@ -638,216 +640,55 @@ def draw_cool_floor_bounce(img, draw):
     return draw
 
 
+def _cairo_char_to_pil_sf04(surface, target_h):
+    """Convert cairo.ImageSurface to cropped, resized PIL RGBA at target height."""
+    pil_img = _to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    if pil_img.height > 0:
+        scale_factor = target_h / pil_img.height
+        new_w = max(1, int(pil_img.width * scale_factor))
+        new_h = max(1, int(pil_img.height * scale_factor))
+        pil_img = pil_img.resize((new_w, new_h), Image.LANCZOS)
+    return pil_img
+
+
 def draw_luma(img, draw, transparent_layer=False):
     """
-    Draw Luma in the kitchen doorway area — returning home.
-    Standing pose, facing slightly right (toward camera/viewer).
-    Pitch scale: head_r = 42px. Face test gate NOT triggered (pitch scale).
-    Glitch-residue detail: one cyan pixel-grid streak in left hoodie sleeve.
+    Draw Luma via canonical renderer — returning home in kitchen doorway.
+    DELIGHTED expression, facing right. Warm kitchen scene_lighting.
 
     C53: transparent_layer=True skips rim light (handled by Wand compositing).
     """
-    rng = random.Random(55)
-
-    # Character geometry
-    head_r = 42
-    luma_cx = sx(640)   # center-left of frame — just entered kitchen
+    # Character geometry — preserve original placement
+    luma_cx = sx(640)   # center-left of frame
+    body_bot = sy(640)  # foot position
     head_cy = sy(280)
+    total_h = body_bot - (head_cy - 42)  # head top to foot
 
-    body_top = head_cy + head_r + sp(4)
-    body_bot = sy(640)
-    body_w   = sp(62)
+    scene_lighting = {
+        "key_light_color": (212, 146, 58),   # SUNLIT_AMBER — warm kitchen
+        "key_light_dir": "left",
+        "ambient": (200, 170, 130),
+    }
+    scale = max(0.5, total_h / 400.0)
+    surface = _canonical_draw_luma(
+        expression="DELIGHTED", scale=scale, facing="right",
+        scene_lighting=scene_lighting)
+    char_pil = _cairo_char_to_pil_sf04(surface, total_h)
 
-    shoulder_y = body_top + sp(12)
-    hip_y      = body_top + int((body_bot - body_top) * 0.55)
-
-    # ── Legs ──────────────────────────────────────────────────────────────────
-    leg_h   = body_bot - hip_y
-    leg_w   = sp(22)
-    leg_gap = sp(10)
-    # Left leg
-    draw.rectangle([luma_cx - leg_gap - leg_w, hip_y,
-                    luma_cx - leg_gap, body_bot],
-                   fill=JEANS)
-    # Right leg (slight step forward — returning home pose)
-    draw.rectangle([luma_cx + leg_gap, hip_y,
-                    luma_cx + leg_gap + leg_w, body_bot - sp(8)],
-                   fill=JEANS)
-    # Leg shadow sides
-    draw.rectangle([luma_cx - leg_gap - leg_w, hip_y,
-                    luma_cx - leg_gap - leg_w + sp(5), body_bot],
-                   fill=JEANS_SH)
-    draw.rectangle([luma_cx + leg_gap + leg_w - sp(5), hip_y,
-                    luma_cx + leg_gap + leg_w, body_bot - sp(8)],
-                   fill=JEANS_SH)
-    # Shoes
-    draw.ellipse([luma_cx - leg_gap - leg_w - sp(4), body_bot - sp(8),
-                  luma_cx - leg_gap + sp(4), body_bot + sp(8)],
-                 fill=SHOE_DARK)
-    draw.ellipse([luma_cx + leg_gap - sp(4), body_bot - sp(16),
-                  luma_cx + leg_gap + leg_w + sp(4), body_bot],
-                 fill=SHOE_DARK)
-
-    # ── Hoodie body (A-line silhouette) ───────────────────────────────────────
-    hoodie_poly = [
-        (luma_cx - body_w // 2, shoulder_y),
-        (luma_cx + body_w // 2, shoulder_y),
-        (luma_cx + body_w // 2 + sp(10), hip_y),
-        (luma_cx - body_w // 2 - sp(10), hip_y),
-    ]
-    draw.polygon(hoodie_poly, fill=HOODIE_ORANGE)
-    # Hoodie shadow side (left)
-    shadow_poly = [
-        (luma_cx - body_w // 2, shoulder_y),
-        (luma_cx - sp(12), shoulder_y),
-        (luma_cx - sp(12), hip_y),
-        (luma_cx - body_w // 2 - sp(10), hip_y),
-    ]
-    draw.polygon(shadow_poly, fill=HOODIE_SHADOW)
+    # Paste onto img (or transparent layer)
+    paste_x = luma_cx - char_pil.width // 2
+    paste_y = body_bot - char_pil.height
+    img_rgba = img.convert("RGBA")
+    img_rgba.paste(char_pil, (paste_x, paste_y), char_pil)
+    img.paste(img_rgba.convert("RGB"))
     draw = ImageDraw.Draw(img)
 
-    # ── Pixel grid on chest (hoodie design) ───────────────────────────────────
-    grid_cx = luma_cx + sp(6)
-    grid_cy = shoulder_y + sp(28)
-    px_size = sp(4)
-    pixel_pattern = [
-        (1,0),(2,0),(0,1),(3,1),(1,2),(2,2),(0,3),(3,3),(1,4),(2,4)
-    ]
-    for (px, py) in pixel_pattern:
-        draw.rectangle([grid_cx + px * (px_size + 1),
-                        grid_cy + py * (px_size + 1),
-                        grid_cx + px * (px_size + 1) + px_size,
-                        grid_cy + py * (px_size + 1) + px_size],
-                       fill=HOODIE_SHADOW)
-
-    # ── GLITCH RESIDUE: cyan pixel streak in left sleeve ─────────────────────
-    # One subtle ELEC_CYAN detail — marks the crossing between worlds
-    sleeve_x = luma_cx - body_w // 2 - sp(12)
-    sleeve_y = shoulder_y + sp(18)
-    residue_pixels = [(0,0),(1,0),(0,1),(2,1),(1,2),(0,3),(1,3)]
-    px_tiny = sp(3)
-    for (rpx, rpy) in residue_pixels:
-        draw.rectangle([sleeve_x + rpx * (px_tiny + 1),
-                        sleeve_y + rpy * (px_tiny + 1),
-                        sleeve_x + rpx * (px_tiny + 1) + px_tiny,
-                        sleeve_y + rpy * (px_tiny + 1) + px_tiny],
-                       fill=HOODIE_PIXEL)
-
-    # ── Arms ──────────────────────────────────────────────────────────────────
-    # Left arm (slightly out, backpack strap implied)
-    arm_l_x0 = luma_cx - body_w // 2 - sp(22)
-    arm_l_y0 = shoulder_y + sp(4)
-    arm_l_x1 = luma_cx - body_w // 2
-    arm_l_y1 = shoulder_y + sp(52)
-    draw.rectangle([arm_l_x0, arm_l_y0, arm_l_x1, arm_l_y1], fill=HOODIE_SHADOW)
-    # Right arm (slightly forward — reaching/open)
-    arm_r_x0 = luma_cx + body_w // 2
-    arm_r_y0 = shoulder_y + sp(4)
-    arm_r_x1 = luma_cx + body_w // 2 + sp(22)
-    arm_r_y1 = shoulder_y + sp(56)
-    draw.rectangle([arm_r_x0, arm_r_y0, arm_r_x1, arm_r_y1], fill=HOODIE_ORANGE)
-
-    # Hands
-    draw.ellipse([arm_l_x0 - sp(6), arm_l_y1 - sp(4),
-                  arm_l_x0 + sp(14), arm_l_y1 + sp(14)],
-                 fill=SKIN)
-    draw.ellipse([arm_r_x1 - sp(8), arm_r_y1 - sp(4),
-                  arm_r_x1 + sp(14), arm_r_y1 + sp(14)],
-                 fill=SKIN)
-
-    # ── Neck ──────────────────────────────────────────────────────────────────
-    neck_w = sp(16)
-    draw.rectangle([luma_cx - neck_w // 2, head_cy + head_r - sp(4),
-                    luma_cx + neck_w // 2, body_top + sp(6)],
-                   fill=SKIN)
-
-    # ── Head (circle) ─────────────────────────────────────────────────────────
-    draw.ellipse([luma_cx - head_r, head_cy - head_r,
-                  luma_cx + head_r, head_cy + head_r],
-                 fill=SKIN, outline=LINE, width=sp(2))
-
-    # ── Hair cloud (asymmetric) ───────────────────────────────────────────────
-    hair_puffs = [
-        (luma_cx - sp(22), head_cy - sp(28), sp(24)),
-        (luma_cx,          head_cy - sp(38), sp(22)),
-        (luma_cx + sp(20), head_cy - sp(30), sp(20)),
-        (luma_cx - sp(38), head_cy - sp(8),  sp(18)),
-        (luma_cx + sp(36), head_cy - sp(12), sp(16)),
-    ]
-    for (hx, hy, hr) in hair_puffs:
-        draw.ellipse([hx - hr, hy - hr, hx + hr, hy + hr], fill=HAIR_COLOR)
-
-    # ── Face features ─────────────────────────────────────────────────────────
-    # Eyes (warm, wide — HOME expression)
-    eye_w = int(head_r * 0.22)   # canonical: eye_w = int(head_r * 0.22)
-    eye_h = int(eye_w * 1.3)
-    eye_l_cx = luma_cx - sp(14)
-    eye_r_cx = luma_cx + sp(14)
-    eye_cy   = head_cy - sp(4)
-
-    # Eye whites
-    draw.ellipse([eye_l_cx - eye_w, eye_cy - eye_h,
-                  eye_l_cx + eye_w, eye_cy + eye_h],
-                 fill=(245, 242, 235), outline=LINE, width=sp(2))
-    draw.ellipse([eye_r_cx - eye_w, eye_cy - eye_h,
-                  eye_r_cx + eye_w, eye_cy + eye_h],
-                 fill=(245, 242, 235), outline=LINE, width=sp(2))
-    # Iris (warm brown — REAL WORLD, no cyan residue in eyes)
-    iris_r = int(eye_w * 0.72)
-    draw.ellipse([eye_l_cx - iris_r, eye_cy - iris_r,
-                  eye_l_cx + iris_r, eye_cy + iris_r],
-                 fill=(90, 62, 38))
-    draw.ellipse([eye_r_cx - iris_r, eye_cy - iris_r,
-                  eye_r_cx + iris_r, eye_cy + iris_r],
-                 fill=(90, 62, 38))
-    # Pupils
-    pup_r = int(iris_r * 0.55)
-    draw.ellipse([eye_l_cx - pup_r, eye_cy - pup_r,
-                  eye_l_cx + pup_r, eye_cy + pup_r],
-                 fill=(22, 12, 6))
-    draw.ellipse([eye_r_cx - pup_r, eye_cy - pup_r,
-                  eye_r_cx + pup_r, eye_cy + pup_r],
-                 fill=(22, 12, 6))
-    # Eye highlight (value ceiling)
-    hl_r = max(2, int(pup_r * 0.45))
-    draw.ellipse([eye_l_cx + pup_r // 2 - hl_r, eye_cy - pup_r // 2 - hl_r,
-                  eye_l_cx + pup_r // 2 + hl_r, eye_cy - pup_r // 2 + hl_r],
-                 fill=SPECULAR_WHITE)
-    draw.ellipse([eye_r_cx + pup_r // 2 - hl_r, eye_cy - pup_r // 2 - hl_r,
-                  eye_r_cx + pup_r // 2 + hl_r, eye_cy - pup_r // 2 + hl_r],
-                 fill=SPECULAR_WHITE)
-
-    # Brows (soft — relief/home expression)
-    brow_y = eye_cy - eye_h - sp(6)
-    draw.arc([eye_l_cx - sp(14), brow_y - sp(5), eye_l_cx + sp(14), brow_y + sp(5)],
-             start=200, end=340, fill=HAIR_COLOR, width=sp(3))
-    draw.arc([eye_r_cx - sp(14), brow_y - sp(5), eye_r_cx + sp(14), brow_y + sp(5)],
-             start=200, end=340, fill=HAIR_COLOR, width=sp(3))
-
-    # Mouth (soft smile — relief)
-    mouth_y = head_cy + sp(12)
-    draw.arc([luma_cx - sp(14), mouth_y - sp(6), luma_cx + sp(14), mouth_y + sp(6)],
-             start=10, end=170, fill=LINE, width=sp(3))
-
-    # Nose (simple)
-    draw.arc([luma_cx - sp(5), head_cy + sp(2), luma_cx + sp(5), head_cy + sp(10)],
-             start=200, end=340, fill=(160, 100, 65), width=sp(2))
-
-    # Blush
-    draw.ellipse([eye_l_cx - sp(12), eye_cy + sp(4),
-                  eye_l_cx + sp(12), eye_cy + sp(14)],
-                 fill=(*BLUSH, 120))
-    draw.ellipse([eye_r_cx - sp(12), eye_cy + sp(4),
-                  eye_r_cx + sp(12), eye_cy + sp(14)],
-                 fill=(*BLUSH, 120))
-
-    draw = ImageDraw.Draw(img)
-
-    # ── Rim light on Luma (warm — from window, right side) ────────────────────
-    # C53: skip rim light when drawing on transparent layer (Wand handles lighting)
+    # Rim light (skip on transparent layer — Wand handles lighting)
     if not transparent_layer:
-        luma_cx_val = luma_cx  # per-character cx, NOT canvas midpoint
-        img_out = add_rim_light(img, side="right", char_cx=luma_cx_val,
+        img_out = add_rim_light(img, side="right", char_cx=luma_cx,
                                 light_color=SUNLIT_AMBER, threshold=160, width=sp(2))
         if img_out is not None:
             img = img_out

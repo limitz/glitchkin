@@ -44,6 +44,10 @@ except ImportError:
     def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFont
 import math, random, os
+import sys
+from LTG_TOOL_char_glitch import draw_glitch
+from LTG_TOOL_cairo_primitives import to_pil_rgba
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 PANELS_DIR = output_dir('storyboards', 'panels')
 OUTPUT_PATH = os.path.join(PANELS_DIR, "LTG_SB_cold_open_P21.png")
@@ -123,46 +127,64 @@ def draw_irregular_poly(draw, cx, cy, r, sides, color, rng, fill=True):
         draw.polygon(pts, outline=color)
 
 
+
+
+
+
+
+def _char_to_pil(surface):
+    """Convert a cairo.ImageSurface from canonical char module to cropped PIL RGBA."""
+    from LTG_TOOL_cairo_primitives import to_pil_rgba
+    pil_img = to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    return pil_img
+
+
+def _composite_char(base_img, char_pil, cx, cy):
+    """Composite a character PIL RGBA image onto base_img centered at (cx, cy)."""
+    x = cx - char_pil.width // 2
+    y = cy - char_pil.height // 2
+    overlay = Image.new('RGBA', base_img.size, (0, 0, 0, 0))
+    overlay.paste(char_pil, (x, y), char_pil)
+    base_rgba = base_img.convert('RGBA')
+    result = Image.alpha_composite(base_rgba, overlay)
+    base_img.paste(result.convert('RGB'))
+
 def draw_glitchkin_hand_press(draw, cx, cy, size, rng):
-    """Draw a Glitchkin hand pressing against glass from inside — played/fist press."""
-    # Palm
-    draw.ellipse([cx - size, cy - size, cx + size, cy + size],
-                 fill=lerp_color(BYTE_TEAL, ELEC_CYAN, 0.3))
-    # Fingers (3-4 stubby digits spreading)
-    for fi in range(rng.randint(3, 4)):
-        angle = math.radians(-40 + fi * 30 + rng.randint(-8, 8))
-        fx = int(cx + (size + 4) * math.cos(angle))
-        fy = int(cy + (size + 4) * math.sin(angle))
-        draw.ellipse([fx - 3, fy - 3, fx + 3, fy + 3],
-                     fill=BYTE_TEAL)
-    # Distortion ring
-    ring_r = size + rng.randint(6, 14)
-    ring_color = lerp_color(ELEC_CYAN, (255, 255, 255), 0.3)
-    draw.ellipse([cx - ring_r, cy - ring_r, cx + ring_r, cy + ring_r],
-                 outline=(*ring_color,), width=1)
-    # Second ring (wider, fainter)
-    ring_r2 = ring_r + rng.randint(4, 8)
-    draw.ellipse([cx - ring_r2, cy - ring_r2, cx + ring_r2, cy + ring_r2],
-                 outline=lerp_color(ring_color, VOID_BLACK, 0.4), width=1)
+    """Glitchkin hand pressed against screen — canonical renderer."""
+    scale = size / 76.0
+    surface = draw_glitch(expression="yearning", scale=scale, facing="front")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        target_h = int(size * 1.2)
+        aspect = char_pil.width / char_pil.height
+        new_w = int(target_h * aspect)
+        char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
+    # Composite via draw's image
+    try:
+        img = draw._image
+        _composite_char(img, char_pil, cx, cy)
+    except AttributeError:
+        pass
 
 
 def draw_glitchkin_face_press(draw, cx, cy, size, rng):
-    """Draw a Glitchkin face pressed flat against glass."""
-    # Squished face circle
-    face_r = size
-    draw.ellipse([cx - face_r, cy - int(face_r * 0.8),
-                  cx + face_r, cy + int(face_r * 0.8)],
-                 fill=lerp_color(BYTE_TEAL, ELEC_CYAN, rng.uniform(0.1, 0.4)))
-    # Two eyes (pixel grid style)
-    for ex in [-int(face_r * 0.35), int(face_r * 0.35)]:
-        er = max(2, int(face_r * 0.2))
-        draw.rectangle([cx + ex - er, cy - er, cx + ex + er, cy + er],
-                       fill=(0, 180, 200))
-    # One cracked eye (random)
-    if rng.random() > 0.4:
-        crack_x = cx + int(face_r * 0.35)
-        draw.line([(crack_x - 2, cy - 3), (crack_x + 3, cy + 3)],
-                  fill=HOT_MAGENTA, width=1)
+    """Glitchkin face pressed against screen — canonical renderer."""
+    scale = size / 76.0
+    surface = draw_glitch(expression="yearning", scale=scale, facing="front")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        target_h = int(size * 1.5)
+        aspect = char_pil.width / char_pil.height
+        new_w = int(target_h * aspect)
+        char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
+    try:
+        img = draw._image
+        _composite_char(img, char_pil, cx, cy)
+    except AttributeError:
+        pass
 
 
 def draw_panel():

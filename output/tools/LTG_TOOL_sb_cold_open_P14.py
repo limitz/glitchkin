@@ -51,6 +51,10 @@ except ImportError:
     def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFont
 import math, random, os
+import sys
+from LTG_TOOL_char_byte import draw_byte
+from LTG_TOOL_cairo_primitives import to_pil_rgba
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 PANELS_DIR = output_dir('storyboards', 'panels')
 OUTPUT_PATH = os.path.join(PANELS_DIR, "LTG_SB_cold_open_P14.png")
@@ -136,123 +140,6 @@ def draw_irregular_poly(draw, cx, cy, r, sides, color, rng, seed_offset=0):
     draw.polygon(pts, fill=color)
 
 
-def draw_byte_silhouette(draw, cx, cy, scale=1.0, alpha_factor=1.0, img=None,
-                         alarmed=False, trail_arm_angle=None):
-    """
-    Draw a simplified Byte silhouette (body + head) for multi-exposure ghost trail.
-    alpha_factor 0.0–1.0: opacity control for ghost trail.
-    alarmed: if True, draw ALARMED expression (cracked eye wider, asymmetric brows, mouth).
-    trail_arm_angle: if set, angle in radians from origin → impact for asymmetric arm recoil.
-      - Trailing arm (toward origin) extends backward; flung arm extends at impact reaction.
-    Uses RGBA overlay when img is provided.
-    """
-    body_h = int(42 * scale)
-    body_w = int(28 * scale)
-    head_r = int(16 * scale)
-    arm_w  = int(6 * scale)
-    arm_l  = int(14 * scale)
-    leg_h  = int(12 * scale)
-
-    alpha  = int(255 * alpha_factor)
-    color  = (*BYTE_TEAL, alpha)
-
-    if img is None:
-        # Direct draw — no alpha
-        c = BYTE_TEAL
-        # Body
-        draw.ellipse([cx - body_w // 2, cy - body_h // 2,
-                      cx + body_w // 2, cy + body_h // 2], fill=c)
-        # Head
-        draw.ellipse([cx - head_r, cy - body_h // 2 - head_r,
-                      cx + head_r, cy - body_h // 2 + head_r], fill=c)
-        # Eyes (pixel blocks)
-        ey = cy - body_h // 2
-        for ex_off in [-6, 5]:
-            draw.rectangle([cx + ex_off * int(scale), ey - 3,
-                             cx + ex_off * int(scale) + 4, ey + 2],
-                            fill=VOID_BLACK)
-        # Arms (symmetric — no trail angle in direct mode)
-        draw.rectangle([cx - body_w // 2 - arm_l, cy - arm_w // 2,
-                         cx - body_w // 2,        cy + arm_w // 2], fill=c)
-        draw.rectangle([cx + body_w // 2,         cy - arm_w // 2,
-                         cx + body_w // 2 + arm_l, cy + arm_w // 2], fill=c)
-        # Legs
-        for lx_off in [-8, 6]:
-            draw.rectangle([cx + lx_off * int(scale), cy + body_h // 2,
-                             cx + lx_off * int(scale) + 5, cy + body_h // 2 + leg_h],
-                            fill=c)
-    else:
-        # RGBA overlay for transparency
-        layer = Image.new('RGBA', img.size, (0, 0, 0, 0))
-        ld    = ImageDraw.Draw(layer)
-        bw2   = body_w // 2
-        bh2   = body_h // 2
-        ld.ellipse([cx - bw2, cy - bh2, cx + bw2, cy + bh2], fill=color)
-        ld.ellipse([cx - head_r, cy - bh2 - head_r,
-                    cx + head_r, cy - bh2 + head_r], fill=color)
-
-        # ── Arms: asymmetric if trail_arm_angle is set ──────────────────────
-        if trail_arm_angle is not None:
-            # Trailing arm: extends BACK toward origin (opposite of travel direction)
-            trail_dx = -int(arm_l * 1.3 * math.cos(trail_arm_angle))
-            trail_dy = -int(arm_l * 1.3 * math.sin(trail_arm_angle))
-            t_x0 = cx - bw2
-            t_y0 = cy - arm_w // 2
-            ld.line([(t_x0, t_y0 + arm_w // 2),
-                     (t_x0 + trail_dx, t_y0 + arm_w // 2 + trail_dy)],
-                    fill=color, width=arm_w)
-            # Flung arm: extends OUTWARD perpendicular to travel (impact reaction)
-            perp_angle = trail_arm_angle + math.pi / 2
-            flung_dx = int(arm_l * 1.5 * math.cos(perp_angle))
-            flung_dy = int(arm_l * 1.5 * math.sin(perp_angle))
-            f_x0 = cx + bw2
-            f_y0 = cy - arm_w // 2
-            ld.line([(f_x0, f_y0 + arm_w // 2),
-                     (f_x0 + flung_dx, f_y0 + arm_w // 2 + flung_dy)],
-                    fill=color, width=arm_w)
-        else:
-            # Symmetric arms (ghost trail positions)
-            ld.rectangle([cx - bw2 - arm_l, cy - arm_w // 2,
-                           cx - bw2,        cy + arm_w // 2], fill=color)
-            ld.rectangle([cx + bw2,         cy - arm_w // 2,
-                           cx + bw2 + arm_l, cy + arm_w // 2], fill=color)
-
-        # ── Eyes + expression ───────────────────────────────────────────────
-        ey   = cy - bh2
-        eye_c = (0, 0, 0, alpha)
-
-        if alarmed:
-            # ALARMED EXPRESSION at impact — Lee Tanaka C47 staging review
-            # Left eye (normal) — wider than default: 6px tall instead of 5px
-            ne_x = cx - int(6 * scale)
-            ld.rectangle([ne_x, ey - 4, ne_x + int(5 * scale), ey + 3], fill=eye_c)
-            # Right eye (cracked) — even wider: 8px tall, with crack line
-            ce_x = cx + int(4 * scale)
-            ld.rectangle([ce_x, ey - 5, ce_x + int(5 * scale), ey + 4], fill=eye_c)
-            # Crack line across cracked eye (HOT_MAGENTA scar)
-            crack_c = (*HOT_MAGENTA, alpha)
-            ld.line([(ce_x - 1, ey - 3), (ce_x + int(5 * scale) + 1, ey + 2)],
-                    fill=crack_c, width=max(1, int(scale)))
-            # Asymmetric brows: left brow higher (alarm), right brow lower
-            brow_c = (*BYTE_BODY, alpha)
-            brow_y_l = ey - int(7 * scale)
-            brow_y_r = ey - int(5 * scale)
-            ld.line([(ne_x - 1, brow_y_l + 2), (ne_x + int(5 * scale) + 1, brow_y_l)],
-                    fill=brow_c, width=max(1, int(2 * scale)))
-            ld.line([(ce_x - 1, brow_y_r), (ce_x + int(5 * scale) + 1, brow_y_r + 2)],
-                    fill=brow_c, width=max(1, int(2 * scale)))
-            # Mouth: open O shape (alarmed gasp)
-            mouth_cx = cx
-            mouth_cy = ey + int(8 * scale)
-            mouth_r  = max(2, int(3 * scale))
-            ld.ellipse([mouth_cx - mouth_r, mouth_cy - mouth_r,
-                        mouth_cx + mouth_r, mouth_cy + mouth_r], fill=eye_c)
-        else:
-            # Default expressionless eyes for ghost trail positions
-            for ex_off in [-6, 5]:
-                ld.rectangle([cx + ex_off, ey - 3, cx + ex_off + 4, ey + 2], fill=eye_c)
-
-        img.paste(Image.alpha_composite(img.convert('RGBA'), layer).convert('RGB'))
 
 
 def draw_book(draw, cx, cy, w, h, color, tilt_deg=0):
@@ -302,6 +189,49 @@ def draw_rubber_duck(draw, cx, cy, scale=1.0):
     draw.polygon(beak_pts, fill=RUBBER_BEAK)
     # Eye dot
     draw.ellipse([hx + 2, hy - 3, hx + 6, hy + 1], fill=VOID_BLACK)
+
+
+
+def _char_to_pil(surface):
+    """Convert a cairo.ImageSurface from canonical char module to cropped PIL RGBA."""
+    from LTG_TOOL_cairo_primitives import to_pil_rgba
+    pil_img = to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    return pil_img
+
+
+def _composite_char(base_img, char_pil, cx, cy):
+    """Composite a character PIL RGBA image onto base_img centered at (cx, cy)."""
+    x = cx - char_pil.width // 2
+    y = cy - char_pil.height // 2
+    overlay = Image.new('RGBA', base_img.size, (0, 0, 0, 0))
+    overlay.paste(char_pil, (x, y), char_pil)
+    base_rgba = base_img.convert('RGBA')
+    result = Image.alpha_composite(base_rgba, overlay)
+    base_img.paste(result.convert('RGB'))
+
+def draw_byte_silhouette(draw, cx, cy, scale=1.0, alpha_factor=1.0, img=None,
+                         expression="alarmed", ghost=False):
+    """Byte silhouette/ghost for ricochet trail — canonical renderer."""
+    byte_scale = scale * 0.8
+    surface = draw_byte(expression=expression, scale=byte_scale, facing="front")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        target_h = int(80 * scale)
+        aspect = char_pil.width / char_pil.height
+        new_w = int(target_h * aspect)
+        char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
+    if alpha_factor < 1.0 or ghost:
+        # Reduce alpha for ghost silhouettes
+        alpha_mult = alpha_factor if not ghost else alpha_factor * 0.4
+        r, g, b, a = char_pil.split()
+        a = a.point(lambda x: int(x * alpha_mult))
+        char_pil = Image.merge('RGBA', (r, g, b, a))
+    if img is not None:
+        _composite_char(img, char_pil, cx, cy)
+    return char_pil
 
 
 def draw_panel():

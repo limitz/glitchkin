@@ -43,6 +43,10 @@ from PIL import Image, ImageDraw, ImageFont
 import math
 import random
 import os
+import sys
+from LTG_TOOL_char_miri import draw_miri
+from LTG_TOOL_cairo_primitives import to_pil_rgba
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 ACT2_PANELS_DIR = output_dir('storyboards', 'act2', 'panels')
 PANELS_DIR = output_dir('storyboards', 'panels')
@@ -157,208 +161,6 @@ def draw_background(draw, img):
     add_glow(img, 0, DRAW_H, 220, CRT_AMBER, steps=5, max_alpha=28)
 
 
-def draw_miri_face(draw, img):
-    """
-    Grandma Miri — MEDIUM CU from Luma's POV (eye height, slightly upward).
-    Face fills upper 2/3 of frame.
-    INTIMATE framing — not larger-than-life, but personal and close.
-    Miri is centered, face at top 2/3 of DRAW_H.
-
-    Expression: SURPRISED → KNOWING
-    """
-    face_cx = PW // 2
-    # Slightly upward tilt: face center at ~35% from top of draw area
-    face_cy = int(DRAW_H * 0.35)
-
-    head_w  = 310   # wide MCU — intimate, personal
-    head_h  = 280
-
-    # ── Shoulders (bottom of frame — body below face in POV shot) ────────────
-    shoulder_w = 420
-    shoulder_y = face_cy + head_h // 2 - 20
-    # Sweater torso (partially visible at bottom)
-    draw.ellipse([face_cx - shoulder_w // 2, shoulder_y,
-                  face_cx + shoulder_w // 2, shoulder_y + 150],
-                 fill=MIRI_SWEATER, outline=(100, 60, 35), width=2)
-    # Neck
-    neck_w = 80
-    draw.rectangle([face_cx - neck_w // 2, shoulder_y - 30,
-                    face_cx + neck_w // 2, shoulder_y + 30],
-                   fill=MIRI_SKIN, outline=MIRI_OUTLINE, width=1)
-
-    # ── Hair — framing face, kitchen backlight rim ────────────────────────────
-    # Hair above face
-    draw.ellipse([face_cx - head_w // 2 - 15, face_cy - head_h // 2 - 35,
-                  face_cx + head_w // 2 + 15, face_cy - head_h // 2 + 45],
-                 fill=MIRI_HAIR)
-    draw.ellipse([face_cx - head_w // 2 + 8, face_cy - head_h // 2 - 30,
-                  face_cx + head_w // 2 - 8, face_cy - head_h // 2 + 35],
-                 fill=MIRI_HAIR_DARK)
-
-    # Rim light on hair from kitchen behind (warm amber highlight)
-    glow_layer = Image.new('RGBA', (PW, DRAW_H), (0, 0, 0, 0))
-    gl = ImageDraw.Draw(glow_layer)
-    # Top of hair lit from behind
-    for r in [80, 55, 35]:
-        alpha = max(12, 45 - r // 2)
-        gl.ellipse([face_cx - r, face_cy - head_h // 2 - 30 - r,
-                    face_cx + r, face_cy - head_h // 2 - 30 + r],
-                   fill=(*KITCHEN_WARM, alpha))
-    # Left side rim
-    left_rim_cx = face_cx - head_w // 2 - 5
-    left_rim_cy = face_cy
-    for r in [50, 35]:
-        alpha = max(10, 30 - r // 2)
-        gl.ellipse([left_rim_cx - r, left_rim_cy - r,
-                    left_rim_cx + r, left_rim_cy + r],
-                   fill=(*KITCHEN_WARM, alpha))
-    # Right side rim
-    right_rim_cx = face_cx + head_w // 2 + 5
-    right_rim_cy = face_cy
-    for r in [50, 35]:
-        alpha = max(10, 30 - r // 2)
-        gl.ellipse([right_rim_cx - r, right_rim_cy - r,
-                    right_rim_cx + r, right_rim_cy + r],
-                   fill=(*KITCHEN_WARM, alpha))
-
-    # CRT catch light on LEFT cheek (amber-green from off-frame lower-left)
-    cheek_cx = face_cx - head_w // 4
-    cheek_cy = face_cy + 25
-    for r in [90, 65, 42]:
-        alpha = max(8, 30 - r // 3)
-        gl.ellipse([cheek_cx - r, cheek_cy - r,
-                    cheek_cx + r, cheek_cy + r],
-                   fill=(*CRT_AMBER, alpha))
-    # Green component on left brow
-    brow_gx = face_cx - head_w // 3
-    brow_gy = face_cy - head_h // 5
-    for r in [60, 40]:
-        alpha = max(6, 20 - r // 4)
-        gl.ellipse([brow_gx - r, brow_gy - r,
-                    brow_gx + r, brow_gy + r],
-                   fill=(*CRT_GREEN, alpha))
-
-    base  = img.convert('RGBA')
-    panel = base.crop((0, 0, PW, DRAW_H))
-    merged = Image.alpha_composite(panel.convert('RGBA'), glow_layer)
-    img.paste(merged.convert('RGB'), (0, 0))
-    draw = ImageDraw.Draw(img)
-
-    # Hair side volume
-    draw.ellipse([face_cx - head_w // 2 - 18, face_cy - head_h // 4,
-                  face_cx - head_w // 2 + 32, face_cy + head_h // 4],
-                 fill=MIRI_HAIR)
-    draw.ellipse([face_cx + head_w // 2 - 32, face_cy - head_h // 4,
-                  face_cx + head_w // 2 + 18, face_cy + head_h // 4],
-                 fill=MIRI_HAIR)
-
-    # ── Main face ────────────────────────────────────────────────────────────
-    draw.ellipse([face_cx - head_w // 2, face_cy - head_h // 2,
-                  face_cx + head_w // 2, face_cy + head_h // 2],
-                 fill=MIRI_SKIN, outline=MIRI_OUTLINE, width=2)
-
-    # ── Facial detail lines (age = earned warmth) ─────────────────────────────
-    # Laugh lines at cheek corners
-    for offset_y in [0, 5]:
-        draw.arc([face_cx - head_w // 4 - 10, face_cy + 22 + offset_y,
-                  face_cx - head_w // 4 + 18, face_cy + 52 + offset_y],
-                 start=220, end=320, fill=MIRI_OUTLINE, width=1)
-    for offset_y in [0, 5]:
-        draw.arc([face_cx + head_w // 4 - 18, face_cy + 22 + offset_y,
-                  face_cx + head_w // 4 + 10, face_cy + 52 + offset_y],
-                 start=220, end=320, fill=MIRI_OUTLINE, width=1)
-    # Forehead lines (2, subtle)
-    for ly in [face_cy - head_h // 3 + 5, face_cy - head_h // 3 + 15]:
-        draw.arc([face_cx - head_w // 3, ly, face_cx + head_w // 3, ly + 10],
-                 start=200, end=340, fill=(170, 120, 80), width=1)
-
-    # ── EYES — SURPRISED / KNOWING ──────────────────────────────────────────
-    eye_y    = face_cy - 18
-    eye_sep  = 72
-    eye_w    = 56
-    eye_h    = 44
-
-    for side, ex_off in enumerate([-eye_sep, eye_sep]):
-        ex = face_cx + ex_off
-
-        # Sclera — wide open
-        draw.ellipse([ex - eye_w // 2, eye_y - eye_h // 2,
-                      ex + eye_w // 2, eye_y + eye_h // 2],
-                     fill=STATIC_WHITE, outline=MIRI_OUTLINE, width=2)
-        # Iris
-        draw.ellipse([ex - 15, eye_y - 15, ex + 15, eye_y + 15],
-                     fill=(110, 75, 42))
-        # Pupil
-        draw.ellipse([ex - 9, eye_y - 9, ex + 9, eye_y + 9],
-                     fill=(20, 12, 8))
-        # CRT catch-light (amber — left eye has more since facing screen)
-        goff = 6 if side == 0 else 4
-        draw.ellipse([ex - 9 + goff, eye_y - 9 + 3,
-                      ex - 9 + goff + 5, eye_y - 9 + 8],
-                     fill=CRT_AMBER)
-        draw.rectangle([ex + 7, eye_y - 8, ex + 10, eye_y - 5],
-                       fill=CRT_GREEN)
-        # Lower eyelid crinkle (recognition warmth)
-        draw.arc([ex - eye_w // 2 + 6, eye_y + eye_h // 4,
-                  ex + eye_w // 2 - 6, eye_y + eye_h // 2 + 7],
-                 start=10, end=170, fill=MIRI_OUTLINE, width=1)
-
-    # ── BROWS — raised soft arc (wonder, not alarm) ───────────────────────────
-    brow_y = eye_y - eye_h // 2 - 12
-    for side, ex_off in enumerate([-eye_sep, eye_sep]):
-        ex = face_cx + ex_off
-        draw.arc([ex - eye_w // 2, brow_y - 10,
-                  ex + eye_w // 2, brow_y + 12],
-                 start=200, end=340, fill=MIRI_HAIR_DARK, width=3)
-        for hx in range(ex - eye_w // 2 + 5, ex + eye_w // 2 - 5, 7):
-            angle_y = brow_y - int(10 * math.sin(
-                math.pi * (hx - (ex - eye_w // 2)) / eye_w))
-            draw.line([hx, angle_y + 2, hx + 3, angle_y - 2],
-                      fill=MIRI_HAIR_DARK, width=1)
-
-    # ── NOSE (MCU — visible) ─────────────────────────────────────────────────
-    nose_tip_y = eye_y + 52
-    draw.line([face_cx - 4, eye_y + 16, face_cx - 7, nose_tip_y - 5],
-              fill=(170, 115, 75), width=2)
-    draw.arc([face_cx - 22, nose_tip_y - 12, face_cx - 2, nose_tip_y + 5],
-             start=30, end=200, fill=MIRI_OUTLINE, width=2)
-    draw.arc([face_cx + 2, nose_tip_y - 12, face_cx + 22, nose_tip_y + 5],
-             start=340, end=150, fill=MIRI_OUTLINE, width=2)
-    draw.ellipse([face_cx - 8, nose_tip_y - 6, face_cx + 8, nose_tip_y + 6],
-                 fill=MIRI_SKIN_LIGHT)
-
-    # ── MOUTH — SURPRISED → KNOWING ──────────────────────────────────────────
-    mouth_y   = face_cy + 72
-    mouth_half = 44
-
-    # Slightly open (surprise — lips parted)
-    draw.arc([face_cx - mouth_half, mouth_y - 8,
-              face_cx + mouth_half, mouth_y + 12],
-             start=5, end=175, fill=MIRI_OUTLINE, width=3)
-
-    # Right corner lifting (recognition — her left, viewer's right)
-    draw.arc([face_cx + mouth_half - 22, mouth_y - 16,
-              face_cx + mouth_half + 10, mouth_y + 4],
-             start=260, end=360, fill=MIRI_OUTLINE, width=2)
-
-    # Upper lip
-    draw.arc([face_cx - mouth_half + 8, mouth_y - 14,
-              face_cx + mouth_half - 8, mouth_y],
-             start=200, end=340, fill=(160, 105, 70), width=2)
-    # Lower lip
-    draw.arc([face_cx - mouth_half + 12, mouth_y - 2,
-              face_cx + mouth_half - 12, mouth_y + 18],
-             start=0, end=180, fill=(185, 120, 85), width=2)
-
-    # Nasolabial folds
-    draw.arc([face_cx - 42, nose_tip_y,
-              face_cx - 14, mouth_y + 5],
-             start=240, end=330, fill=(170, 115, 78), width=1)
-    draw.arc([face_cx + 14, nose_tip_y,
-              face_cx + 42, mouth_y + 5],
-             start=210, end=300, fill=(170, 115, 78), width=1)
-
-    return draw
 
 
 def draw_annotations(draw, font_ann):
@@ -401,6 +203,42 @@ def draw_annotations(draw, font_ann):
               font=font_ann, fill=ANN_DIM)
     draw.text((PW - 220, 18), "intimate / personal",
               font=font_ann, fill=ANN_DIM)
+
+
+
+def _char_to_pil(surface):
+    """Convert a cairo.ImageSurface from canonical char module to cropped PIL RGBA."""
+    from LTG_TOOL_cairo_primitives import to_pil_rgba
+    pil_img = to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    return pil_img
+
+
+def _composite_char(base_img, char_pil, cx, cy):
+    """Composite a character PIL RGBA image onto base_img centered at (cx, cy)."""
+    x = cx - char_pil.width // 2
+    y = cy - char_pil.height // 2
+    overlay = Image.new('RGBA', base_img.size, (0, 0, 0, 0))
+    overlay.paste(char_pil, (x, y), char_pil)
+    base_rgba = base_img.convert('RGBA')
+    result = Image.alpha_composite(base_rgba, overlay)
+    base_img.paste(result.convert('RGB'))
+
+def draw_miri_face(draw, img):
+    """Miri face CU — canonical renderer."""
+    scale = 1.5
+    surface = draw_miri(expression="WARM", scale=scale, facing="right")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        target_h = int(DRAW_H * 0.80)
+        aspect = char_pil.width / char_pil.height
+        new_w = int(target_h * aspect)
+        char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
+    miri_cx = int(PW * 0.48)
+    miri_cy = int(DRAW_H * 0.50)
+    _composite_char(img, char_pil, miri_cx, miri_cy)
 
 
 def make_panel():

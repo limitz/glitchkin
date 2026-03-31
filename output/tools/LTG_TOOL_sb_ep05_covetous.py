@@ -48,6 +48,12 @@ except ImportError:
     def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
 from PIL import Image, ImageDraw, ImageFont
 import math, random, os
+import sys
+from LTG_TOOL_char_glitch import draw_glitch as _draw_glitch_canonical
+from LTG_TOOL_char_byte import draw_byte as _draw_byte_canonical
+from LTG_TOOL_char_luma import draw_luma as _draw_luma_canonical
+from LTG_TOOL_cairo_primitives import to_pil_rgba
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 PANELS_DIR = output_dir('storyboards', 'panels')
 OUTPUT_PATH = os.path.join(PANELS_DIR, "LTG_SB_ep05_covetous.png")
@@ -140,279 +146,10 @@ def diamond_pts(cx, cy, rx, ry, tilt_deg=0):
     return top, right, bot, left
 
 
-def draw_glitch(draw, cx, cy, rx=34, ry=38, tilt_deg=12,
-                spike_h=12, arm_l_dy=-8, arm_r_dy=-6,
-                scale=1.0):
-    """
-    Draw Glitch in COVETOUS state.
-    tilt_deg=+12 (lean toward Luma / camera-right).
-    Bilateral acid-slit eyes: [[5,5,5],[0,5,0],[0,0,0]]
-    Arms slightly raised toward Luma.
-    """
-    # Scale all measurements
-    rx = int(rx * scale)
-    ry = int(ry * scale)
-    spike_h = int(spike_h * scale)
-
-    top, right, bot, left = diamond_pts(cx, cy, rx, ry, tilt_deg)
-
-    # ── Shadow offset (+3px right, +4px down per spec) ────────────────────────
-    sh_pts = [(p[0] + 3, p[1] + 4) for p in [top, right, bot, left]]
-    draw.polygon(sh_pts, fill=UV_PURPLE_DIM)
-
-    # ── Body fill ─────────────────────────────────────────────────────────────
-    draw.polygon([top, right, bot, left], fill=CORRUPT_AMBER, outline=VOID_BLACK)
-
-    # ── Highlight facet (upper-left triangle) ─────────────────────────────────
-    ctr    = (cx, cy - ry // 4)
-    mid_tl = ((top[0] + left[0]) // 2, (top[1] + left[1]) // 2)
-    draw.polygon([top, ctr, mid_tl], fill=CORRUPT_AMB_HL)
-
-    # ── Outline (reapply over highlight) ──────────────────────────────────────
-    draw.polygon([top, right, bot, left], fill=None, outline=VOID_BLACK)
-
-    # ── HOT_MAG crack (diagonal upper-left to lower-right) ───────────────────
-    cs = (cx - rx // 2, cy - ry // 3)
-    ce = (cx + rx // 3, cy + ry // 2)
-    draw.line([cs, ce], fill=HOT_MAG, width=max(1, int(2 * scale)))
-    mid_c = ((cs[0] + ce[0]) // 2, (cs[1] + ce[1]) // 2)
-    fork  = (cx + rx // 2, cy - ry // 4)
-    draw.line([mid_c, fork], fill=HOT_MAG, width=1)
-
-    # ── Top spike (crown, 5-point) ────────────────────────────────────────────
-    a       = math.radians(tilt_deg)
-    tilt_off = int(a * rx * 0.4)
-    sy       = top[1]
-    sx       = cx + tilt_off
-    spike_pts = [
-        (sx - spike_h // 2, sy),
-        (sx - spike_h,       sy - spike_h),
-        (sx,                 sy - spike_h * 2),    # tip
-        (sx + spike_h,       sy - spike_h),
-        (sx + spike_h // 2,  sy),
-    ]
-    draw.polygon(spike_pts, fill=CORRUPT_AMBER, outline=VOID_BLACK)
-    # HOT_MAG spark at tip
-    tip = spike_pts[2]
-    draw.line([tip, (tip[0], tip[1] - int(spike_h * 0.4))], fill=HOT_MAG, width=2)
-
-    # ── Bottom spike (hover point) ─────────────────────────────────────────────
-    by = bot[1]
-    bot_spike_pts = [
-        (cx - spike_h // 2, by),
-        (cx + spike_h // 2, by),
-        (cx,                by + spike_h + 4),
-    ]
-    draw.polygon(bot_spike_pts, fill=CORRUPT_AMB_SH, outline=VOID_BLACK)
-
-    # ── Arm-spikes ─────────────────────────────────────────────────────────────
-    # Left arm-spike (from left vertex)
-    arm_spike_h = max(4, int(10 * scale))
-    for (vertex, arm_dy, arm_dir) in [(left, arm_l_dy, -1), (right, arm_r_dy, 1)]:
-        vx, vy = vertex
-        # arm_dy < 0 = raised (reaching forward/toward subject)
-        scaled_dy = int(arm_dy * scale)
-        arm_tip_y = vy + scaled_dy
-        arm_tip_x = vx + arm_dir * arm_spike_h
-        arm_pts = [
-            (vx,                    vy - arm_spike_h // 3),
-            (vx,                    vy + arm_spike_h // 3),
-            (arm_tip_x,             arm_tip_y),
-        ]
-        draw.polygon(arm_pts, fill=CORRUPT_AMBER, outline=VOID_BLACK)
-
-    # ── COVETOUS eyes (bilateral acid slit: [[5,5,5],[0,5,0],[0,0,0]]) ─────────
-    # cell_size proportional to rx
-    cell = max(3, int(4 * scale))
-    face_cy = cy - int(ry * 0.15)   # eye row slightly above center
-
-    for eye_side, ex in [(-1, cx - rx // 2), (1, cx + rx // 2)]:
-        leye_x = ex - cell * 3 // 2
-        leye_y = face_cy - cell * 3 // 2
-        # COVETOUS glyph: [[5,5,5],[0,5,0],[0,0,0]]
-        # Row 0 (top): all lit. Row 1 (mid): center only. Row 2 (bot): all dark.
-        glyph = [
-            [1, 1, 1],   # top row: all acid green
-            [0, 1, 0],   # mid row: center only
-            [0, 0, 0],   # bot row: all dark
-        ]
-        for row_i, row in enumerate(glyph):
-            for col_i, val in enumerate(row):
-                px = leye_x + col_i * cell
-                py = leye_y + row_i * cell
-                fill = ACID_GREEN if val else VOID_BLACK
-                draw.rectangle([px, py, px + cell - 1, py + cell - 1], fill=fill)
-
-    return top, bot, left, right
 
 
-def draw_byte_barrier(draw, cx, cy, body_h, scale=0.75):
-    """
-    Byte in barrier posture: positioned between Glitch and Luma.
-    Arms extended slightly (barrier lean). Scale < Glitch (Byte reads smaller).
-    """
-    bh = int(body_h * scale)
-    torso_h  = int(bh * 0.62)
-    head_r   = int(bh * 0.22)
-    leg_h    = int(bh * 0.25)
-
-    torso_top_y = cy - int(bh * 0.50)
-    torso_bot_y = torso_top_y + torso_h
-    torso_hw_t  = int(bh * 0.29)
-    torso_hw_b  = int(bh * 0.12)
-
-    # Body (inverted teardrop)
-    torso_pts = [
-        (cx - torso_hw_t, torso_top_y + int(torso_h * 0.18)),
-        (cx,              torso_top_y),
-        (cx + torso_hw_t, torso_top_y + int(torso_h * 0.18)),
-        (cx + torso_hw_b + 3, torso_bot_y - 4),
-        (cx - torso_hw_b - 3, torso_bot_y - 4),
-    ]
-    draw.polygon(torso_pts, fill=BYTE_TEAL, outline=VOID_BLACK)
-
-    # Inner core
-    ihw = int(torso_hw_t * 0.52)
-    inner_pts = [
-        (cx - ihw, torso_top_y + int(torso_h * 0.28)),
-        (cx,       torso_top_y + int(torso_h * 0.10)),
-        (cx + ihw, torso_top_y + int(torso_h * 0.28)),
-        (cx + ihw - 3, torso_bot_y - 8),
-        (cx - ihw + 3, torso_bot_y - 8),
-    ]
-    draw.polygon(inner_pts, fill=VOID_BLACK)
-
-    # Head
-    head_cy = torso_top_y + int(head_r * 0.58)
-    draw_irregular_poly(draw, cx, head_cy, head_r, 6, BYTE_TEAL, seed=5501, outline=VOID_BLACK)
-
-    # Arms — EXTENDED (barrier posture — arms out at body level)
-    arm_top_y = torso_top_y + int(torso_h * 0.20)
-    arm_bot_y = torso_top_y + int(torso_h * 0.55)
-    arm_len   = int(bh * 0.26)    # slightly extended for barrier read
-    arm_w     = int(bh * 0.075)
-
-    for side in [-1, 1]:
-        ax0    = cx + side * torso_hw_t
-        ax2    = ax0 + side * arm_len
-        amid_y = arm_top_y + int((arm_bot_y - arm_top_y) * 0.5)
-        arm_pts = [
-            (ax0,                   arm_top_y),
-            (ax2 + side * 2,        amid_y - arm_w),
-            (ax2 + side * 4,        amid_y + arm_w),
-            (ax0,                   arm_bot_y),
-        ]
-        draw.polygon(arm_pts, fill=BYTE_TEAL, outline=VOID_BLACK)
-        hand_r = int(bh * 0.062)
-        draw_irregular_poly(draw, ax2 + side * 4, amid_y, hand_r, 5,
-                            ELEC_CYAN_HI, seed=5502 + side * 3, outline=VOID_BLACK)
-
-    # Legs
-    leg_top_y = torso_bot_y - 4
-    leg_w     = int(bh * 0.09)
-    for side in [-1, 1]:
-        lx = cx + side * torso_hw_b // 2
-        fx = lx + side * int(bh * 0.04)
-        leg_pts = [
-            (lx - leg_w // 2, leg_top_y),
-            (lx + leg_w // 2, leg_top_y),
-            (fx + leg_w // 2 + side * 2, leg_top_y + leg_h),
-            (fx - leg_w // 2 + side * 2, leg_top_y + leg_h),
-        ]
-        draw.polygon(leg_pts, fill=BYTE_TEAL, outline=VOID_BLACK)
-
-    # Eyes — organic (left, faces toward Glitch) + cracked (right, faces outward)
-    eye_cy  = head_cy - int(head_r * 0.12)
-    eye_sep = int(head_r * 0.45)
-    e_r     = int(head_r * 0.30)
-
-    # Left (organic) eye faces Glitch (camera-left) — iris slightly left
-    le_cx = cx - eye_sep
-    draw.ellipse([le_cx - e_r, eye_cy - e_r, le_cx + e_r, eye_cy + e_r],
-                 fill=BYTE_EYE_W, outline=VOID_BLACK, width=1)
-    iris_r = int(e_r * 0.50)
-    iris_ox = -int(iris_r * 0.30)    # shifted toward Glitch
-    draw.ellipse([le_cx - iris_r + iris_ox, eye_cy - iris_r,
-                  le_cx + iris_r + iris_ox, eye_cy + iris_r],
-                 fill=ELEC_CYAN, outline=VOID_BLACK, width=1)
-
-    # Right (cracked) eye faces outward
-    re_cx = cx + eye_sep
-    draw.ellipse([re_cx - e_r, eye_cy - e_r, re_cx + e_r, eye_cy + e_r],
-                 fill=VOID_BLACK, outline=ELEC_CYAN_HI, width=1)
-    draw.line([(re_cx - e_r + 2, eye_cy - int(e_r * 0.65)),
-               (re_cx + e_r - 2, eye_cy + int(e_r * 0.65))],
-              fill=CRACK_LINE, width=1)
-    draw.ellipse([re_cx - 3, eye_cy - 3, re_cx + 3, eye_cy + 3],
-                 fill=ELEC_CYAN)
-
-    # Mouth — flat, protective (barrier posture = determined neutrality)
-    mouth_y  = head_cy + int(head_r * 0.42)
-    mouth_hw = int(head_r * 0.44)
-    draw.line([(cx - mouth_hw, mouth_y), (cx + mouth_hw, mouth_y)],
-              fill=VOID_BLACK, width=2)
-
-    return head_cy, head_r
 
 
-def draw_luma_right(draw, cx, cy, scale=0.65):
-    """
-    Luma in right zone — warm palette. Background-scale (smaller than Byte).
-    Slightly behind Byte's depth plane.
-    """
-    bh    = int(DRAW_H * 0.35 * scale)
-    head_r = int(bh * 0.22)
-
-    # Head
-    draw.ellipse([cx - head_r, cy - head_r, cx + head_r, cy + head_r],
-                 fill=LUMA_SKIN, outline=(100, 68, 48))
-
-    # Hair cloud
-    hair_r = int(head_r * 1.42)
-    for seed_h in [201, 211, 221, 231, 241, 251]:
-        draw_irregular_poly(draw, cx, cy, hair_r, 7, LUMA_HAIR, seed=seed_h)
-    draw.ellipse([cx - head_r + 3, cy - head_r + 3,
-                  cx + head_r - 3, cy + head_r - 3], fill=LUMA_SKIN)
-
-    # Eyes (slightly apprehensive — sensing something is wrong, but asleep or unaware)
-    eye_cy_l = cy
-    eye_sep_l = int(head_r * 0.38)
-    e_r_l     = int(head_r * 0.22)
-    for side in [-1, 1]:
-        ex = cx + side * eye_sep_l
-        draw.ellipse([ex - e_r_l, eye_cy_l - e_r_l,
-                      ex + e_r_l, eye_cy_l + e_r_l],
-                     fill=(60, 38, 28))
-        # Iris
-        draw.ellipse([ex - int(e_r_l * 0.58), eye_cy_l - int(e_r_l * 0.58),
-                      ex + int(e_r_l * 0.58), eye_cy_l + int(e_r_l * 0.58)],
-                     fill=(80, 48, 30))
-
-    # Hoodie body (orange — this is the warm zone that Glitch covets)
-    torso_top = cy + head_r
-    torso_bot = torso_top + int(bh * 0.52)
-    torso_hw  = int(head_r * 1.24)
-    draw.rectangle([cx - torso_hw, torso_top, cx + torso_hw, torso_bot],
-                   fill=LUMA_HOODIE, outline=(160, 68, 28))
-
-    # Hoodie pocket (canonical pocket bump asymmetry)
-    pock_x = cx - int(torso_hw * 0.18)
-    pock_y = torso_top + int((torso_bot - torso_top) * 0.55)
-    pock_w = int(torso_hw * 0.85)
-    pock_h = int((torso_bot - torso_top) * 0.40)
-    draw.rectangle([pock_x, pock_y, pock_x + pock_w, pock_y + pock_h],
-                   fill=(200, 88, 40), outline=(160, 68, 28))
-
-    # Legs (standing)
-    leg_top = torso_bot
-    leg_h   = int(bh * 0.22)
-    leg_w   = int(head_r * 0.50)
-    for side in [-1, 1]:
-        lx = cx + side * int(torso_hw * 0.40)
-        draw.rectangle([lx - leg_w, leg_top, lx + leg_w, leg_top + leg_h],
-                       fill=(60, 52, 80), outline=(38, 30, 54))   # dark pants (UV ambient)
-
-    return cx, cy
 
 
 def draw_platform_lines(draw, n_lines=4, seed=88):
@@ -431,6 +168,79 @@ def draw_platform_lines(draw, n_lines=4, seed=88):
             y_off = rng.randint(-3, 3)
             draw.line([(px_off, py + y_off), (px_off, py + y_off + int(DRAW_H * 0.07))],
                       fill=PLATFORM_MID, width=1)
+
+
+
+def _char_to_pil(surface):
+    """Convert a cairo.ImageSurface from canonical char module to cropped PIL RGBA."""
+    from LTG_TOOL_cairo_primitives import to_pil_rgba
+    pil_img = to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    return pil_img
+
+
+def _composite_char(base_img, char_pil, cx, cy):
+    """Composite a character PIL RGBA image onto base_img centered at (cx, cy)."""
+    x = cx - char_pil.width // 2
+    y = cy - char_pil.height // 2
+    overlay = Image.new('RGBA', base_img.size, (0, 0, 0, 0))
+    overlay.paste(char_pil, (x, y), char_pil)
+    base_rgba = base_img.convert('RGBA')
+    result = Image.alpha_composite(base_rgba, overlay)
+    base_img.paste(result.convert('RGB'))
+
+def draw_glitch(draw, cx, cy, rx=34, ry=38, tilt_deg=12,
+                expression="covetous", facing="front"):
+    """Glitch — canonical renderer."""
+    scale = ry / 38.0
+    surface = _draw_glitch_canonical(expression=expression, scale=scale, facing=facing)
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        target_h = int(ry * 3.0)
+        aspect = char_pil.width / char_pil.height
+        new_w = int(target_h * aspect)
+        char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
+    try:
+        img = draw._image
+        _composite_char(img, char_pil, cx, cy)
+    except AttributeError:
+        pass
+
+
+def draw_byte_barrier(draw, cx, cy, body_h, scale=0.75):
+    """Byte in barrier pose — canonical renderer."""
+    byte_scale = (body_h * scale) / 88.0
+    surface = _draw_byte_canonical(expression="alarmed", scale=byte_scale, facing="front")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        target_h = int(body_h * scale)
+        aspect = char_pil.width / char_pil.height
+        new_w = int(target_h * aspect)
+        char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
+    try:
+        img = draw._image
+        _composite_char(img, char_pil, cx, cy)
+    except AttributeError:
+        pass
+
+
+def draw_luma_right(draw, cx, cy, scale=0.65):
+    """Luma on right side — canonical renderer."""
+    luma_scale = scale
+    surface = _draw_luma_canonical(expression="WORRIED", scale=luma_scale, facing="right")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        target_h = int(200 * scale)
+        aspect = char_pil.width / char_pil.height
+        new_w = int(target_h * aspect)
+        char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
+    try:
+        img = draw._image
+        _composite_char(img, char_pil, cx, cy)
+    except AttributeError:
+        pass
 
 
 def draw_scene(img):

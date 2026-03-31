@@ -39,6 +39,10 @@ except ImportError:
 from PIL import Image, ImageDraw, ImageFont
 import random
 import os
+import sys
+from LTG_TOOL_char_miri import draw_miri
+from LTG_TOOL_cairo_primitives import to_pil_rgba
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 ACT2_PANELS_DIR = output_dir('storyboards', 'act2', 'panels')
 PANELS_DIR = output_dir('storyboards', 'panels')
@@ -206,128 +210,50 @@ def draw_hallway_perspective(draw, img):
     add_glow(img, vp_x, door_bot, 150, DOORWAY_MID, steps=5, max_alpha=30)
 
 
+
+
+
+def _char_to_pil(surface):
+    """Convert a cairo.ImageSurface from canonical char module to cropped PIL RGBA."""
+    from LTG_TOOL_cairo_primitives import to_pil_rgba
+    pil_img = to_pil_rgba(surface)
+    bbox = pil_img.getbbox()
+    if bbox:
+        pil_img = pil_img.crop(bbox)
+    return pil_img
+
+
+def _composite_char(base_img, char_pil, cx, cy):
+    """Composite a character PIL RGBA image onto base_img centered at (cx, cy)."""
+    x = cx - char_pil.width // 2
+    y = cy - char_pil.height // 2
+    overlay = Image.new('RGBA', base_img.size, (0, 0, 0, 0))
+    overlay.paste(char_pil, (x, y), char_pil)
+    base_rgba = base_img.convert('RGBA')
+    result = Image.alpha_composite(base_rgba, overlay)
+    base_img.paste(result.convert('RGB'))
+
 def draw_miri_silhouette(draw, img):
-    """
-    Miri's silhouette in doorway — backlit.
-    Standing center-doorway, MEDIUM shot (full or 3/4 body).
-    Head COCKED (tilted right ~15°) — listening posture.
-    Holding tea towel in one hand (arms slightly away from body).
-    Pure dark silhouette — warm rim light traces her edges.
-    """
-    # Miri's body center in doorway
-    sil_cx   = PW // 2
-    sil_bot  = int(DRAW_H * 0.82)    # feet at bottom of doorway
-    sil_h    = 260                    # full body height (MEDIUM shot)
-    sil_top  = sil_bot - sil_h
-
-    # Body proportions (older woman, sturdy build)
-    head_r     = 30    # head radius
-    neck_h     = 18
-    torso_w    = 60
-    torso_h    = 100
-    hip_w      = 68
-    leg_w      = 28
-    leg_h      = 95
-
-    # HEAD — cocked right (~15 degrees = head center shifted)
-    head_cx = sil_cx + 12   # head leans right
-    head_cy = sil_top + head_r
-
-    # Draw silhouette from top to bottom
-    # Head (slightly offset right = listening tilt)
-    draw.ellipse([head_cx - head_r, head_cy - head_r,
-                  head_cx + head_r, head_cy + head_r],
-                 fill=MIRI_SILHOUETTE)
-
-    # Hair volume (bun suggestion on top-left of head)
-    draw.ellipse([head_cx - head_r - 8, head_cy - head_r - 10,
-                  head_cx + head_r - 5, head_cy - head_r + 12],
-                 fill=MIRI_SILHOUETTE)
-
-    # Neck
-    neck_top = head_cy + head_r - 5
-    neck_bot = neck_top + neck_h
-    draw.rectangle([sil_cx - 12, neck_top, sil_cx + 12, neck_bot],
-                   fill=MIRI_SILHOUETTE)
-
-    # Torso (upper body — slightly hunched forward, listening)
-    torso_top = neck_bot - 5
-    torso_bot = torso_top + torso_h
-    draw.ellipse([sil_cx - torso_w // 2, torso_top,
-                  sil_cx + torso_w // 2, torso_bot],
-                 fill=MIRI_SILHOUETTE)
-
-    # ── LEFT ARM — holding tea towel (drooping from hand) ─────────────────────
-    # Left arm: extends slightly outward and down, towel hangs
-    la_shoulder_x = sil_cx - torso_w // 2 + 8
-    la_shoulder_y = torso_top + 20
-    la_elbow_x    = la_shoulder_x - 22
-    la_elbow_y    = la_shoulder_y + 45
-    la_hand_x     = la_elbow_x - 10
-    la_hand_y     = la_elbow_y + 35
-
-    draw.line([la_shoulder_x, la_shoulder_y,
-               la_elbow_x, la_elbow_y,
-               la_hand_x, la_hand_y],
-              fill=MIRI_SILHOUETTE, width=14)
-    # Tea towel hanging from hand (rectangle slightly bent)
-    towel_top_x  = la_hand_x - 6
-    towel_top_y  = la_hand_y
-    draw.polygon([
-        (towel_top_x, towel_top_y),
-        (towel_top_x + 22, towel_top_y),
-        (towel_top_x + 20, towel_top_y + 50),
-        (towel_top_x - 4, towel_top_y + 50),
-    ], fill=MIRI_SILHOUETTE)
-
-    # ── RIGHT ARM — raised slightly (stopped mid-motion) ──────────────────────
-    ra_shoulder_x = sil_cx + torso_w // 2 - 8
-    ra_shoulder_y = torso_top + 20
-    ra_elbow_x    = ra_shoulder_x + 18
-    ra_elbow_y    = ra_shoulder_y + 30
-    ra_hand_x     = ra_elbow_x + 5
-    ra_hand_y     = ra_elbow_y - 12
-
-    draw.line([ra_shoulder_x, ra_shoulder_y,
-               ra_elbow_x, ra_elbow_y,
-               ra_hand_x, ra_hand_y],
-              fill=MIRI_SILHOUETTE, width=14)
-    # Hand blob
-    draw.ellipse([ra_hand_x - 9, ra_hand_y - 9,
-                  ra_hand_x + 9, ra_hand_y + 9],
-                 fill=MIRI_SILHOUETTE)
-
-    # ── Hips / skirt ──────────────────────────────────────────────────────────
-    hip_top = torso_bot - 20
-    hip_bot = hip_top + 50
-    draw.ellipse([sil_cx - hip_w // 2, hip_top,
-                  sil_cx + hip_w // 2, hip_bot],
-                 fill=MIRI_SILHOUETTE)
-
-    # ── Legs ──────────────────────────────────────────────────────────────────
-    leg_top = hip_bot - 18
-    # Left leg
-    ll_cx = sil_cx - leg_w // 2 - 4
-    draw.rectangle([ll_cx - leg_w // 2, leg_top,
-                    ll_cx + leg_w // 2, sil_bot],
-                   fill=MIRI_SILHOUETTE)
-    # Right leg
-    rl_cx = sil_cx + leg_w // 2 + 4
-    draw.rectangle([rl_cx - leg_w // 2, leg_top,
-                    rl_cx + leg_w // 2, sil_bot],
-                   fill=MIRI_SILHOUETTE)
-
-    # ── Rim light (warm amber edge — kitchen light wrapping around silhouette) ─
-    # Thin bright edges on silhouette outline (ADD glow near edges)
-    add_glow(img, head_cx - head_r, head_cy, 22, KITCHEN_GLOW, steps=3, max_alpha=45)
-    add_glow(img, head_cx + head_r, head_cy, 22, KITCHEN_GLOW, steps=3, max_alpha=45)
-    add_glow(img, sil_cx - torso_w // 2, torso_top + torso_h // 2,
-             20, KITCHEN_GLOW, steps=3, max_alpha=40)
-    add_glow(img, sil_cx + torso_w // 2, torso_top + torso_h // 2,
-             20, KITCHEN_GLOW, steps=3, max_alpha=40)
-    add_glow(img, la_hand_x, la_hand_y, 18, KITCHEN_GLOW, steps=3, max_alpha=35)
-
-    return draw
+    """Miri silhouette in hallway — canonical renderer."""
+    scale = 0.5
+    surface = draw_miri(expression="KNOWING", scale=scale, facing="right")
+    char_pil = _char_to_pil(surface)
+    if char_pil.height > 0:
+        target_h = 200
+        aspect = char_pil.width / char_pil.height
+        new_w = int(target_h * aspect)
+        char_pil = char_pil.resize((new_w, target_h), Image.LANCZOS)
+    # Darken to silhouette
+    r, g, b, a = char_pil.split()
+    silhouette = Image.merge('RGBA', (
+        r.point(lambda x: int(x * 0.15)),
+        g.point(lambda x: int(x * 0.15)),
+        b.point(lambda x: int(x * 0.15)),
+        a
+    ))
+    miri_cx = int(PW * 0.50)
+    miri_cy = int(DRAW_H * 0.55)
+    _composite_char(img, silhouette, miri_cx, miri_cy)
 
 
 def make_panel():
