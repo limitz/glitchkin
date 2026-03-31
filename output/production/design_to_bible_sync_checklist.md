@@ -92,7 +92,17 @@ Use this checklist whenever ANY of the following occur:
 - [ ] No story bible update needed (production rules live in image-rules.md, not the bible)
 - [ ] Notify: all affected character artists
 
-### G. World/Location Change
+### G. Library/Tool Stack Change
+(e.g., new rendering library adopted, drawing engine swap, QA tool library change)
+
+- [ ] Update `production_bible.md` Section 9A — add library to core toolchain with description
+- [ ] Update `docs/pil-standards.md` — add to dependency list with usage guidance
+- [ ] Update `output/production/library_adoption_guide.md` — add entry with install, usage, and what-it-replaces
+- [ ] Check if `output/tools/README.md` needs a note about library transition
+- [ ] Review `character_expression_body_language_targets.md` — are any targets now too conservative given new capabilities?
+- [ ] Notify: Alex Chen (pipeline sign-off), Sam Kowalski (shared primitives), Kai Nakamura (QA tools)
+
+### H. World/Location Change
 (e.g., Millbrook specificity C43, school name, CRT location)
 
 - [ ] Update `production_bible.md` Section 6 — affected location entry
@@ -112,6 +122,7 @@ Use this checklist whenever ANY of the following occur:
 | Accessory/Costume | Maya Santos | Priya Shah (story) + Maya (design doc) | Alex Chen |
 | New Character | Alex Chen (decision) | Priya Shah (both bibles) | Alex Chen |
 | Production Rule | Alex Chen / Lee Tanaka | Alex Chen (production bible) | Alex Chen |
+| Library/Tool Stack | Alex Chen (decision) + evaluator | Priya Shah (bible 9A) + Alex Chen (pil-standards) | Alex Chen |
 | World/Location | Priya Shah (story decision) | Priya Shah (both bibles) | Alex Chen |
 
 ---

@@ -260,13 +260,22 @@ The full visual specification is maintained in the **Style Guide** (`/home/wipka
 The entire pitch package is built by AI agents (Claude) operating programmatically. No GUI applications are used. Every asset — character sheets, style frames, environments, storyboards, color scripts, brand marks — is generated and iterated through Python code.
 
 **Core toolchain:**
-- **Python 3.8+ / Pillow (PIL)** — all image generation, compositing, and batch processing
-- **NumPy** — color math, pixel analysis, Porter-Duff blending
-- **OpenCV (cv2)** — edge detection, perspective analysis, QA tooling
+- **Python 3.8+ / Pillow (PIL)** — image I/O, compositing, and background drawing
+- **NumPy** — array operations, pixel analysis
+- **OpenCV (cv2)** — edge detection, perspective analysis, QA tooling (BGR default — convert on load)
 - **PyTorch / torchvision** — pretrained model QA (object detection on output frames)
 
+**Character rendering & drawing (C51 library stack):**
+- **pycairo** — primary character drawing engine. True bezier curves, native anti-aliasing (19x improvement over PIL baseline), variable-width strokes, native gradient fills, float-precision geometry. Replaces PIL `draw.rectangle/polygon` for all character rendering. Cairo surfaces convert to PIL Images for compositing.
+- **Wand** (ImageMagick Python bindings) — compositing operations: shadows, glows, scene tint, layered blending. Replaces manual NumPy blending for multi-layer composition.
+- **bezier** — proper bezier curve math: arc-length parameterization, subdivision, intersection detection, curvature analysis. Wrapped by `LTG_TOOL_curve_utils.py`. Replaces hand-rolled bezier functions.
+- **Shapely** — geometric polygon operations for silhouette analysis: overlap ratio, IoU, outline simplification, width profiles. Wrapped by `LTG_TOOL_curve_utils.py`. Replaces pixel-level mask operations for resolution-independent QA.
+- **colour-science** — perceptual color math: accurate CIE LAB/LUV conversions, delta-E calculations (CIE2000), chromatic adaptation, gamut mapping. Replaces manual LAB/delta-E calculations in QA tools.
+- **freetype-py** — selective text rendering with precise glyph metrics and kerning. Replaces PIL `ImageFont` for cases requiring typographic control (title cards, in-world text, QA overlays).
+- **scikit-image** — image analysis for QA: structural similarity (SSIM), edge quality metrics, morphological operations. Replaces manual cv2 edge analysis pipelines.
+
 **Pitch asset specs:**
-- **Canvas:** Native 1280×720 (16:9). Hard limit: ≤1280px in both dimensions.
+- **Canvas:** Native 1280×720 (16:9). Hard limit: ≤1280px in both dimensions. Internal rendering at 2x (2560×1440) permitted for anti-aliasing — downscale to 1280×720 with LANCZOS before saving.
 - **Bit depth:** 8-bit PNG (PIL default)
 - **Color space:** sRGB
 - **Version control:** Standard Git (no LFS configured for pitch phase)

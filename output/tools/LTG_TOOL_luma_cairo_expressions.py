@@ -152,16 +152,16 @@ GESTURE_SPECS = {
         "gaze_dy": -2,            # slightly up
     },
     "SURPRISED": {
-        "hip_shift": -20,         # hips shift left (dramatic backward)
-        "shoulder_offset": 14,    # shoulders compensate right (more extreme)
-        "head_offset": 12,        # head snaps back (more extreme)
-        "torso_lean": 22,         # lean backward (dramatic startle recoil)
+        "hip_shift": -26,         # hips shift left (dramatic backward, amplified)
+        "shoulder_offset": 18,    # shoulders compensate right (more extreme)
+        "head_offset": 16,        # head snaps back (more extreme)
+        "torso_lean": 28,         # lean backward (dramatic startle recoil, amplified)
         "hip_tilt": -7.0,         # sharp tilt toward back foot
         "shoulder_tilt": 8.0,     # shoulders rise unevenly (protective hunch)
         "head_tilt": 12.0,        # tilts away from surprise source (exaggerated)
         "weight_front": 0.25,
         "weight_back": 0.75,
-        "front_foot_lift": 8,     # front foot lifts (startle — more visible)
+        "front_foot_lift": 14,    # front foot lifts high (startle — amplified for silhouette)
         "back_foot_lift": 0,
         "front_foot_angle": 15,
         "back_foot_angle": -10,
@@ -546,10 +546,10 @@ def draw_luma_expression(ctx, cx, ground_y, char_h, expression, spec, scale=1.0)
     hand_r_s = head_r * 0.12
 
     if spec["left_arm"] == "forward_reaching":
-        # CURIOUS: left arm slightly forward, palm-down
+        # CURIOUS: left arm extended forward, palm-down (amplified for silhouette contrast)
         la_shoulder = (ls_pt[0] + 10*s, ls_pt[1] + 8*s)
-        la_elbow = (la_shoulder[0] - 40*s, la_shoulder[1] + 20*s)
-        la_hand = (la_elbow[0] - 20*s, la_elbow[1] - 30*s)
+        la_elbow = (la_shoulder[0] - 55*s, la_shoulder[1] + 18*s)
+        la_hand = (la_elbow[0] - 30*s, la_elbow[1] - 35*s)
         upper_la = bezier_points(la_shoulder,
                                   (la_shoulder[0] - 15*s, la_shoulder[1] + 5*s),
                                   (la_elbow[0] + 5*s, la_elbow[1] - 8*s),
@@ -578,10 +578,10 @@ def draw_luma_expression(ctx, cx, ground_y, char_h, expression, spec, scale=1.0)
         ctx.stroke()
 
     elif spec["left_arm"] == "defensive_high":
-        # SURPRISED: left arm up near face, palm outward (defensive)
+        # SURPRISED: left arm raised high near face, palm outward (amplified for silhouette)
         la_shoulder = (ls_pt[0] + 10*s, ls_pt[1] + 5*s)
-        la_elbow = (la_shoulder[0] - 20*s, la_shoulder[1] - 25*s)
-        la_hand = (la_elbow[0] - 10*s, la_elbow[1] - 30*s)
+        la_elbow = (la_shoulder[0] - 30*s, la_shoulder[1] - 35*s)
+        la_hand = (la_elbow[0] - 15*s, la_elbow[1] - 40*s)
         upper_la = bezier_points(la_shoulder,
                                   (la_shoulder[0] - 12*s, la_shoulder[1] - 8*s),
                                   (la_elbow[0] + 5*s, la_elbow[1] + 10*s),
@@ -656,10 +656,10 @@ def draw_luma_expression(ctx, cx, ground_y, char_h, expression, spec, scale=1.0)
         ctx.stroke()
 
     elif spec["right_arm"] == "flung_back":
-        # SURPRISED: right arm flung to side and behind (counterbalance)
+        # SURPRISED: right arm flung wide to side and behind (amplified for silhouette)
         ra_shoulder = (rs_pt[0] - 8*s, rs_pt[1] + 5*s)
-        ra_elbow = (ra_shoulder[0] + 35*s, ra_shoulder[1] + 15*s)
-        ra_hand = (ra_elbow[0] + 25*s, ra_elbow[1] + 20*s)
+        ra_elbow = (ra_shoulder[0] + 50*s, ra_shoulder[1] + 12*s)
+        ra_hand = (ra_elbow[0] + 35*s, ra_elbow[1] + 25*s)
         upper_ra = bezier_points(ra_shoulder,
                                   (ra_shoulder[0] + 15*s, ra_shoulder[1] + 3*s),
                                   (ra_elbow[0] - 8*s, ra_elbow[1] - 5*s),

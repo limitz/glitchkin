@@ -285,4 +285,37 @@ Beyond individual expression sheets, the pitch needs to show how characters phys
 
 ---
 
-*Priya Shah — C50*
+## 5. C51 LIBRARY CAPABILITY REVIEW — TARGET ADJUSTMENTS
+
+The C51 library stack (pycairo, Wand, bezier, Shapely, colour-science, freetype-py, scikit-image) fundamentally changes what character artists can render. Several targets in this document were implicitly conservative because they assumed PIL polygon construction. This section identifies targets that should be raised and new targets that are now achievable.
+
+### Targets Raised
+
+| Character | Expression | Original Target | Revised Target | Why |
+|---|---|---|---|---|
+| **Luma** | DOUBT-IN-CERTAINTY | "Split stance, torso twisted" — described as a static pose | **Add weight-shift animation keyframe pair**: pycairo bezier curves can render the oscillation between forward and back as two distinct keyframes with continuous curve deformation. The split should read as *in motion*, not frozen. Build both the "leaning in" and "pulling back" keyframes so storyboarders can interpolate between them. | pycairo bezier deformation makes continuous curve changes between keyframes buildable. PIL could only approximate each pose independently. |
+| **Luma** | Hair State (all expressions) | "Lifts slightly," "maximum volume," "tightens and pulls back" — described qualitatively | **Specify hair as bezier curve clusters with per-expression control points.** Each hair state should be defined as a set of bezier control point offsets from the neutral state. Maya can now build hair as actual curves that deform organically, not as polygon silhouettes. Target: 8-12 bezier curves per hair mass, each with 3-4 control points. | bezier library enables arc-length-parameterized hair strands. Hand-rolled polygon hair was the reason hair "volume" was described vaguely — there was no way to build it precisely. |
+| **Cosmo** | GENUINELY FRIGHTENED | "Glasses tilt spikes to 12-15 degrees" | **Add glasses slide down nose (2-3px) as a separate deformation.** The tilt increase plus the slide communicates physical disruption more precisely. pycairo can render the glasses as a compound bezier shape that both tilts and translates. | PIL rendered glasses as a fixed rectangle group. pycairo can deform the bridge and lens shapes independently. |
+| **Cosmo** | Notebook positions (all) | Five positions described as locations only | **Add notebook page splay.** When clutched to chest (frightened), pages compress. When open in front (engaged), pages fan 5-10 degrees. When dangling (relaxed), spine curves under gravity. When dropped, pages separate on impact. pycairo bezier fills make page edges buildable as curves, not flat rectangles. | PIL notebooks were flat rectangles. Curved page edges are now trivially renderable. |
+| **Byte** | Confetti system (all expressions) | Confetti described by count and color only | **Add confetti particle shape variation.** With pycairo, confetti particles can be tiny bezier shapes (not just circles/squares): teal sparks for neutral, elongated streaks for anger, soft rounded puffs for reluctant joy, desaturated fragments for defeat. Shape vocabulary adds a read layer that count/color alone cannot. | PIL confetti was limited to `draw.ellipse` and `draw.rectangle`. pycairo can draw arbitrary small shapes efficiently. |
+| **Grandma Miri** | Cardigan (all expressions) | "Inverse-trapezoid shoulders" — described as a fixed silhouette shape | **Cardigan drape responds to pose.** When Miri leans forward (PROTECTIVE CONCERN), fabric bunches at the front fold. When she opens toward Luma (THE HANDOFF), the reaching side pulls taut while the other side drapes. Wand compositing + pycairo curves can render fabric folds as gradient-shaded bezier shapes. Target: 3-5 fold lines per pose variant, with Wand soft-shadow between folds. | PIL could not render fabric folds. The "inverse-trapezoid" was the best approximation of a cardigan that flat geometry could produce. |
+| **Grandma Miri** | Tea cup | "Held at chest height" — static object | **Tea cup catches scene light.** Wand compositing can apply CRT tint, warm ambient, or pre-dawn cool to the tea cup surface and the liquid within. The cup should be a micro-lighting reference in every frame Miri holds it — it tells the audience the color temperature of the room. colour-science can validate that the cup's tint matches the scene palette. | Manual NumPy blending made per-object lighting impractical. Wand makes it a compositing pass. |
+| **Glitch** | All mechanical movements | "Linear or instantaneous" motion only | **Target unchanged** — but add: the ABSENCE of bezier easing on Glitch's motion is now a deliberate artistic choice that reads more powerfully against a cast whose bodies are built from bezier curves. The contrast between organic (pycairo curves) and mechanical (linear interpolation) is the new library stack's strongest narrative tool for Glitch. No target increase needed — the quality increase comes from the contrast, not from Glitch's own rendering. | The gap between Glitch and the organic cast widens automatically when the organic cast improves. |
+
+### New Targets Now Achievable
+
+These were not in the original C50 document because they were not buildable with the PIL pipeline:
+
+1. **Variable line weight on character outlines.** pycairo variable-width strokes mean thick-at-joints, thin-at-curves line work is now standard. Target: 2:1 thick-to-thin ratio (e.g., 4px at shoulder joint, 2px along arm curve at output scale). This single change eliminates the "uniform thickness = mechanical" read that critics flagged since C15.
+
+2. **Form-following shadows on character bodies.** Wand compositing + pycairo gradient fills enable soft directional shadows that follow body curvature. Target: one primary shadow direction per scene (matching the environment lighting spec from Hana's system), with shadow edge softness proportional to distance from the light-facing edge. This eliminates the flat cel-shadow look that made characters read as paper cutouts.
+
+3. **Silhouette distinctiveness QA gate.** Shapely can now compute pairwise IoU between all five character silhouettes automatically. Target: every character pair must have a Shapely distinctiveness score (1 - IoU) of at least 0.15 at neutral pose. C50 baseline: Miri vs. 3 characters was 0.02 (FAIL). The new construction approaches (bezier curves, variable proportions) should push all pairs above threshold, but the QA gate catches regressions.
+
+4. **Expression range QA gate.** scikit-image SSIM can measure whether two expression renders for the same character are visually distinct. Target: any two different named expressions for the same character must have SSIM below 0.85 (i.e., they look meaningfully different). C50 baseline: Glitch had 12/15 expression pairs above 0.90 (barely distinguishable). The new rendering capabilities make larger visual differences achievable, and this gate ensures they are achieved.
+
+5. **Per-expression hair deformation for Luma.** The bezier hair system makes it possible to define Luma's hair as a deformable curve mesh. Target: 5 distinct hair states (alert/lifted, compressed/scared, exploded/joyful, tense/focused, split/doubt) each defined by control point offsets from neutral. The hair states were described qualitatively in the C50 tables above; they can now be specified as buildable geometry.
+
+---
+
+*Priya Shah — C50 (Sections 1-4), C51 update (Section 5)*

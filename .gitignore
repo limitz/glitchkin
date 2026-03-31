@@ -2,6 +2,9 @@
 .claude/
 MEMORY.md
 
+# Memory backups — local only
+backup/
+
 # Reference images — local only, not for commit (copyright/licensing)
 reference/
 
