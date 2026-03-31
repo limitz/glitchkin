@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from __future__ import annotations
 # © 2026 — "Luma & the Glitchkin." All rights reserved. This work was created through AI
 # direction and human assistance. Copyright vests solely in the human author under current law,
 # which does not recognise AI as a rights-holding legal person. It is the express intent of
@@ -50,7 +51,6 @@ except ImportError:
     import pathlib
     def output_dir(*parts): return pathlib.Path("/home/wipkat/team/output").joinpath(*parts)
     def ensure_dir(path): path.mkdir(parents=True, exist_ok=True); return path
-from __future__ import annotations
 import os
 import math
 import random

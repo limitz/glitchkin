@@ -683,19 +683,12 @@ def generate():
     img.paste(base_rgba.convert("RGB"))
     draw = ImageDraw.Draw(img)
 
-    # STEP 4: Luma's Body — SCENE-LIT VERSION
-    crt_cx = bg_data["mw_x"] + bg_data["mw_w"] // 2
-    arm_target_x = scr_x0 - sx(20)
-    body_data = draw_luma_body_scenelit(draw, luma_cx, luma_base_y, arm_target_x, crt_cx)
-
-    # STEP 5: Luma's Head — SCENE-LIT VERSION
-    head_gaze_offset = sp(18)
-    head_cx = body_data["head_cx"] + head_gaze_offset
-    head_cy = body_data["head_cy"] + sp(6)
-    draw, head_r = draw_luma_head_scenelit(img, draw, head_cx, head_cy,
-                                            scale=0.92,
-                                            byte_cx_target=emerge_cx,
-                                            byte_cy_target=emerge_cy)
+    # STEP 4+5: Luma — SCENE-LIT VERSION (canonical char_luma renderer)
+    img, body_data = render_luma_for_scenelit(img, luma_cx, luma_base_y)
+    draw = ImageDraw.Draw(img)
+    head_cx = body_data["head_cx"]
+    head_cy = body_data["head_cy"]
+    head_r = body_data["head_r"]
 
     # STEP 5b: Bounce light from couch/floor onto character lower half
     img = draw_bounce_light(
@@ -709,10 +702,12 @@ def generate():
     )
     draw = ImageDraw.Draw(img)
 
-    # STEP 6: Byte
+    # STEP 6: Byte (canonical char_byte renderer)
     luma_hand_x = body_data["hand_cx"]
     luma_hand_y = body_data["hand_cy"]
-    draw_byte(draw, emerge_cx, emerge_cy, emerge_rx, emerge_ry, luma_hand_x, luma_hand_y)
+    img = render_byte_for_scenelit(img, emerge_cx, emerge_cy, emerge_rx, emerge_ry,
+                                   luma_hand_x, luma_hand_y)
+    draw = ImageDraw.Draw(img)
 
     # STEP 7: Lighting overlay — AFTER character draw (key structural change)
     mw_x = bg_data["mw_x"]; mw_y = bg_data["mw_y"]

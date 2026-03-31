@@ -48,13 +48,13 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Panel sequence: (filepath, beat_label, arc_label, arc_color_rgb)
 PANEL_SEQUENCE = [
-    (PANELS_DIR + "/LTG_SB_act1_panel_a101.png",
+    (str(PANELS_DIR) + "/LTG_SB_act1_panel_a101.png",
      "A1-01\nestablishing", "ESTABLISHING", (200, 170, 80)),
-    (PANELS_DIR + "/LTG_SB_act1_panel_a102.png",
+    (str(PANELS_DIR) + "/LTG_SB_act1_panel_a102.png",
      "A1-02\narrival",      "ARRIVAL",      (0,  200, 210)),
-    (PANELS_DIR + "/LTG_SB_act1_panel_a103.png",     # v002 — MCU rebuild
+    (str(PANELS_DIR) + "/LTG_SB_act1_panel_a103.png",     # v002 — MCU rebuild
      "A1-03\ndiscovery v2", "DISCOVERY",    (0,  210, 220)),
-    (PANELS_DIR + "/LTG_SB_act1_panel_a104.png",
+    (str(PANELS_DIR) + "/LTG_SB_act1_panel_a104.png",
      "A1-04\nfirst contact","FIRST CONTACT",(0,  240, 255)),
 ]
 
@@ -106,10 +106,10 @@ def ensure_panels_exist():
         "/home/wipkat/team/output/tools/LTG_TOOL_sb_panel_a104_kitchen.py",
     ]
     outputs = [
-        PANELS_DIR + "/LTG_SB_act1_panel_a101.png",
-        PANELS_DIR + "/LTG_SB_act1_panel_a102.png",
-        PANELS_DIR + "/LTG_SB_act1_panel_a103.png",
-        PANELS_DIR + "/LTG_SB_act1_panel_a104.png",
+        str(PANELS_DIR) + "/LTG_SB_act1_panel_a101.png",
+        str(PANELS_DIR) + "/LTG_SB_act1_panel_a102.png",
+        str(PANELS_DIR) + "/LTG_SB_act1_panel_a103.png",
+        str(PANELS_DIR) + "/LTG_SB_act1_panel_a104.png",
     ]
     for gen, out in zip(generators, outputs):
         if not os.path.exists(out):

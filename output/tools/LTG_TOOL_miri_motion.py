@@ -206,6 +206,7 @@ def draw_miri_figure(draw, ox, oy, head_r=22,
     shoulder_y = body_top_y + int(hr * 0.14)
     cardigan_bot = body_bot_y + cardigan_hem_extra
     cardigan_w_bot = body_w + int(hr * 0.16)
+    neck_h = int(hr * 0.35)  # neck height proportional to head radius
     head_lean_off = int(math.tan(math.radians(head_tilt)) * hr * 0.7)
     neck_top = body_top_y - neck_h
     head_cx = body_cx + head_lean_off - lean_off

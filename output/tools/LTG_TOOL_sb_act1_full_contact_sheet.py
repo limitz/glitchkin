@@ -51,15 +51,15 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Panels in arc sequence — (filepath, short_label, arc_label, arc_color_rgb, section)
 PANEL_SEQUENCE = [
-    (PANELS_DIR + "/LTG_SB_act1_panel_a101.png",
+    (str(PANELS_DIR) + "/LTG_SB_act1_panel_a101.png",
      "A1-01\nkitchen wide",  "QUIET",          (180, 160, 100),  "COLD OPEN — Kitchen"),
-    (PANELS_DIR + "/LTG_SB_act1_panel_a102.png",
+    (str(PANELS_DIR) + "/LTG_SB_act1_panel_a102.png",
      "A1-02\narrival MED",   "SEARCHING",      (200, 180, 120),  "COLD OPEN — Kitchen"),
-    (PANELS_DIR + "/LTG_SB_act1_panel_a103.png",
+    (str(PANELS_DIR) + "/LTG_SB_act1_panel_a103.png",
      "A1-03\ndiscovery MCU", "DISCOVERY",      (0, 200, 180),    "COLD OPEN — Kitchen"),
-    (PANELS_DIR + "/LTG_SB_act1_panel_a104.png",
+    (str(PANELS_DIR) + "/LTG_SB_act1_panel_a104.png",
      "A1-04\nfirst contact", "FIRST-CONTACT",  (220, 200, 60),   "COLD OPEN — Kitchen"),
-    (PANELS_DIR + "/LTG_SB_act2_panel_a104.png",
+    (str(PANELS_DIR) + "/LTG_SB_act2_panel_a104.png",
      "A1-04\nclassroom",     "NEAR-MISS",      (200, 140, 60),   "Act 1 — Classroom"),
 ]
 

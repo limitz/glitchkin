@@ -130,6 +130,74 @@ def render_byte_to_panel(expression, scale=1.0, facing="front"):
     return char_img
 
 
+# Expression mapping for commitment arc phases
+_COMMITMENT_EXPR_MAP = {
+    'avoidance': 'resigned',
+    'searching': 'searching',
+    'commitment': 'unguarded_warmth',
+}
+_COMMITMENT_EYE_MAP = {
+    'avoidance': 'resigned',
+    'searching': 'searching',
+    'commitment': 'unguarded_warmth',
+}
+
+
+def draw_byte_commitment(img, draw, cx, cy, bw, bh,
+                         tilt_deg=0, arm_phase='pinned', eye_phase='avoidance',
+                         glow_level=1, float_level='high', antenna_lean=0,
+                         ghost=False, ghost_alpha=0.3):
+    """Render Byte in a commitment-arc pose using the canonical renderer.
+
+    Maps the old inline drawing call signature to the canonical char_byte
+    renderer, composites onto img, and returns (img, draw).
+    """
+    expression = _COMMITMENT_EXPR_MAP.get(eye_phase, 'neutral')
+    # Scale relative to panel body size
+    scale = max(0.6, bh / 26.0)
+    target_h = int(bh * 4.5)
+
+    char_img = render_byte_to_panel(expression, scale=scale, facing="front")
+
+    if target_h > 0 and char_img.height > 0:
+        ratio = target_h / char_img.height
+        new_w = max(1, int(char_img.width * ratio))
+        char_img = char_img.resize((new_w, target_h), Image.LANCZOS)
+
+    if ghost:
+        import numpy as np
+        r, g, b, a = char_img.split()
+        a_arr = np.array(a)
+        a_arr = (a_arr * ghost_alpha).astype('uint8')
+        a = Image.fromarray(a_arr, mode='L')
+        char_img = Image.merge("RGBA", (r, g, b, a))
+
+    paste_x = cx - char_img.width // 2
+    paste_y = cy - char_img.height // 2
+
+    if img.mode != "RGBA":
+        img = img.convert("RGBA")
+    img.paste(char_img, (paste_x, paste_y), char_img)
+    img = img.convert("RGB")
+    draw = ImageDraw.Draw(img)
+
+    # Draw glow halo if glow_level > 0
+    if glow_level > 0 and not ghost:
+        glow_alpha = min(85, glow_level * 25)
+        glow_r = int(bw * 0.6 + glow_level * 4)
+        glow_col = (*ELEC_CYAN, glow_alpha) if glow_level < 3 else (*COMMITMENT_COL, glow_alpha)
+        glow_layer = Image.new("RGBA", img.size, (0, 0, 0, 0))
+        glow_draw = ImageDraw.Draw(glow_layer)
+        glow_draw.ellipse([cx - glow_r, cy - glow_r, cx + glow_r, cy + glow_r],
+                          fill=glow_col)
+        base_rgba = img.convert("RGBA")
+        base_rgba = Image.alpha_composite(base_rgba, glow_layer)
+        img = base_rgba.convert("RGB")
+        draw = ImageDraw.Draw(img)
+
+    return img, draw
+
+
 def paste_byte_in_panel(img, draw, cx, cy, expression, scale=1.0,
                         target_h=None, facing="front", ghost=False, ghost_alpha=0.3):
     """Render Byte and paste centered at (cx, cy) on the motion sheet.

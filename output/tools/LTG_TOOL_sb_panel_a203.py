@@ -48,6 +48,8 @@ import math
 import random
 import os
 import sys
+import numpy as np
+from PIL import Image
 from LTG_TOOL_char_luma import draw_luma as _draw_luma_canonical
 from LTG_TOOL_char_cosmo import draw_cosmo
 from LTG_TOOL_cairo_primitives import to_pil_rgba
@@ -276,6 +278,47 @@ def draw_whiteboard_third_character(draw, font_ann, wb_x, wb_y, wb_w, wb_h):
 
 
 
+
+
+def _cairo_to_pil(surface):
+    """Convert cairo ARGB surface to PIL RGBA image."""
+    import cairo
+    w, h = surface.get_width(), surface.get_height()
+    buf = surface.get_data()
+    arr = np.frombuffer(buf, dtype=np.uint8).reshape(h, w, 4).copy()
+    # BGRA -> RGBA
+    arr[:, :, [0, 2]] = arr[:, :, [2, 0]]
+    return Image.fromarray(arr, 'RGBA')
+
+
+def _composite_char(img, surface, cx, floor_y, target_h):
+    """Composite a cairo character surface onto a PIL image."""
+    char_pil = _cairo_to_pil(surface)
+    bbox = char_pil.getbbox()
+    if bbox:
+        char_pil = char_pil.crop(bbox)
+    ratio = target_h / max(char_pil.height, 1)
+    char_pil = char_pil.resize((int(char_pil.width * ratio), target_h), Image.LANCZOS)
+    paste_x = cx - char_pil.width // 2
+    paste_y = floor_y - char_pil.height
+    img.paste(char_pil, (paste_x, paste_y), char_pil)
+    head_cy = paste_y + int(target_h * 0.15)
+    head_r = int(target_h * 0.12)
+    return (cx, head_cy, int(char_pil.width * 0.3), int(target_h * 0.25), cx - head_r, head_cy, head_r)
+
+
+def draw_luma_background(draw, horizon_y):
+    """Luma in background right — canonical renderer at small scale."""
+    surface = _draw_luma_canonical("CURIOUS", scale=0.3, facing="left")
+    _composite_char(draw._image, surface, 375, horizon_y + 10, 68)
+
+
+def draw_cosmo_foreground(draw, font_ann, horizon_y):
+    """Cosmo foreground left — SKEPTICAL, cowboy shot via canonical renderer."""
+    cosmo_cx = 155
+    target_h = 180
+    surface, _geom = draw_cosmo("SKEPTICAL", scale=0.7, facing="right")
+    return _composite_char(draw._image, surface, cosmo_cx, DRAW_H + 15, target_h)
 
 
 def generate():

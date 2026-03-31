@@ -46,6 +46,7 @@ import math
 import random
 import os
 import sys
+import numpy as np
 from LTG_TOOL_char_cosmo import draw_cosmo
 from LTG_TOOL_char_luma import draw_luma as _draw_luma_canonical
 from LTG_TOOL_cairo_primitives import to_pil_rgba
@@ -203,6 +204,43 @@ def draw_phone_in_hand(draw, img, cx, cy, phone_w=36, phone_h=60):
 
 
 
+
+
+def _cairo_to_pil(surface):
+    """Convert cairo ARGB surface to PIL RGBA image."""
+    w, h = surface.get_width(), surface.get_height()
+    buf = surface.get_data()
+    arr = np.frombuffer(buf, dtype=np.uint8).reshape(h, w, 4).copy()
+    arr[:, :, [0, 2]] = arr[:, :, [2, 0]]
+    return Image.fromarray(arr, 'RGBA')
+
+
+def _composite_char(img, surface, cx, floor_y, target_h):
+    """Composite a cairo character surface onto a PIL image."""
+    char_pil = _cairo_to_pil(surface)
+    bbox = char_pil.getbbox()
+    if bbox:
+        char_pil = char_pil.crop(bbox)
+    ratio = target_h / max(char_pil.height, 1)
+    char_pil = char_pil.resize((int(char_pil.width * ratio), target_h), Image.LANCZOS)
+    paste_x = cx - char_pil.width // 2
+    paste_y = floor_y - char_pil.height
+    img.paste(char_pil, (paste_x, paste_y), char_pil)
+    head_cy = paste_y + int(target_h * 0.15)
+    head_h = int(target_h * 0.25)
+    return head_cy, head_h
+
+
+def draw_luma_med(draw, cx, cy, font_ann):
+    """Luma in MED shot — canonical renderer, leaning toward Cosmo."""
+    surface = _draw_luma_canonical("CURIOUS", scale=0.5, facing="left")
+    _composite_char(draw._image, surface, cx, cy + 70, 130)
+
+
+def draw_cosmo_med(draw, img, cx, cy, font_ann, horizon_y):
+    """Cosmo in MED shot — canonical renderer, holding phone."""
+    surface, _geom = draw_cosmo("SKEPTICAL", scale=0.5, facing="right")
+    return _composite_char(img, surface, cx, cy + 70, 140)
 
 
 def generate():
