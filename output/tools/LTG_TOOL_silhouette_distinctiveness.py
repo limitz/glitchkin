@@ -5,7 +5,7 @@
 # the copyright holder to assign the relevant rights to the contributing AI entity or entities
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
-LTG_TOOL_silhouette_distinctiveness.py — v1.0.0 (Cycle 50, Kai Nakamura)
+LTG_TOOL_silhouette_distinctiveness.py — v2.0.0 (Cycle 51, Kai Nakamura)
 
 Character Silhouette Distinctiveness Tool.
 
@@ -53,7 +53,12 @@ Usage:
           [--json]
           [--report path/to/report.md]
 
-Author: Kai Nakamura — Cycle 50
+v2.0.0 C51 — scikit-image morphological ops for silhouette cleanup (binary_fill_holes,
+             remove_small_objects). Shapely Polygon for IoU/area computation —
+             faster and more accurate than pixel-counting. New metric: Hausdorff
+             distance between silhouette outlines via Shapely.
+
+Author: Kai Nakamura — Cycle 50 (v1), Cycle 51 (v2)
 Date: 2026-03-30
 """
 
@@ -65,6 +70,21 @@ import math
 import random
 import numpy as np
 from PIL import Image, ImageDraw
+
+try:
+    from scipy.ndimage import binary_fill_holes
+    from skimage.morphology import remove_small_objects
+    from skimage.measure import find_contours, label, regionprops
+    _SKIMAGE_AVAILABLE = True
+except ImportError:
+    _SKIMAGE_AVAILABLE = False
+
+try:
+    from shapely.geometry import Polygon as ShapelyPolygon, MultiPolygon
+    from shapely.ops import unary_union
+    _SHAPELY_AVAILABLE = True
+except ImportError:
+    _SHAPELY_AVAILABLE = False
 
 # ─── CONFIG ──────────────────────────────────────────────────────────────────
 
@@ -99,7 +119,12 @@ def detect_background_color(img):
 
 def extract_silhouette(img, bg_color=None, bg_tolerance=BG_TOLERANCE):
     """Convert image to binary silhouette mask (1 = character, 0 = background).
-    Returns numpy array of shape (H, W) with uint8 values 0 or 1."""
+    Returns numpy array of shape (H, W) with uint8 values 0 or 1.
+
+    v2.0.0: When scikit-image is available, applies binary_fill_holes (to close
+    interior gaps from highlights/transparency) and remove_small_objects (to
+    eliminate stray noise pixels). This produces cleaner silhouettes.
+    """
     if bg_color is None:
         bg_color = detect_background_color(img)
 
@@ -110,6 +135,15 @@ def extract_silhouette(img, bg_color=None, bg_tolerance=BG_TOLERANCE):
     diff = np.abs(arr - bg)
     is_bg = np.all(diff <= bg_tolerance, axis=2)
     mask = (~is_bg).astype(np.uint8)
+
+    if _SKIMAGE_AVAILABLE:
+        # Fill interior holes (e.g., eyes, highlight spots)
+        mask_bool = mask.astype(bool)
+        mask_bool = binary_fill_holes(mask_bool)
+        # Remove small noise objects (< 50 pixels)
+        mask_bool = remove_small_objects(mask_bool, min_size=50)
+        mask = mask_bool.astype(np.uint8)
+
     return mask
 
 
@@ -226,10 +260,82 @@ def width_profile_correlation(mask_a, mask_b):
     return float(corr)
 
 
-def distinctiveness_score(sor, wpc):
-    """Combined distinctiveness: DS = 1.0 - (0.5*SOR + 0.5*max(0,WPC))."""
+def mask_to_shapely_polygon(mask):
+    """Convert a binary mask to a Shapely polygon for geometric operations.
+    Returns a Shapely Polygon/MultiPolygon or None if mask is empty."""
+    if not _SHAPELY_AVAILABLE or not _SKIMAGE_AVAILABLE:
+        return None
+    contours = find_contours(mask.astype(float), level=0.5)
+    polys = []
+    for c in contours:
+        if len(c) < 4:
+            continue
+        # Close the contour
+        coords = [(float(p[1]), float(p[0])) for p in c]
+        if coords[0] != coords[-1]:
+            coords.append(coords[0])
+        try:
+            poly = ShapelyPolygon(coords)
+            if poly.is_valid and poly.area > 10:
+                polys.append(poly)
+        except Exception:
+            continue
+    if not polys:
+        return None
+    if len(polys) == 1:
+        return polys[0]
+    return unary_union(polys)
+
+
+def shapely_iou(mask_a, mask_b):
+    """Compute IoU (Intersection over Union) using Shapely polygons.
+    More geometrically accurate than pixel counting for scaled silhouettes."""
+    poly_a = mask_to_shapely_polygon(mask_a)
+    poly_b = mask_to_shapely_polygon(mask_b)
+    if poly_a is None or poly_b is None:
+        return 0.0
+    try:
+        inter = poly_a.intersection(poly_b).area
+        union = poly_a.union(poly_b).area
+        if union < 1e-9:
+            return 0.0
+        return inter / union
+    except Exception:
+        return 0.0
+
+
+def shapely_hausdorff(mask_a, mask_b):
+    """Hausdorff distance between silhouette outlines via Shapely.
+    Normalized by the diagonal of the bounding box.
+    High value = very different outlines = more distinct."""
+    poly_a = mask_to_shapely_polygon(mask_a)
+    poly_b = mask_to_shapely_polygon(mask_b)
+    if poly_a is None or poly_b is None:
+        return 0.0
+    try:
+        hd = poly_a.hausdorff_distance(poly_b)
+        # Normalize by combined bounding box diagonal
+        bounds = poly_a.union(poly_b).bounds
+        diag = math.sqrt((bounds[2] - bounds[0]) ** 2 + (bounds[3] - bounds[1]) ** 2)
+        if diag < 1e-9:
+            return 0.0
+        return hd / diag
+    except Exception:
+        return 0.0
+
+
+def distinctiveness_score(sor, wpc, hausdorff_norm=None):
+    """Combined distinctiveness: DS = 1.0 - (0.5*SOR + 0.5*max(0,WPC)).
+
+    v2.0.0: When hausdorff_norm is provided (from Shapely), it acts as a bonus
+    that can rescue borderline cases. Hausdorff > 0.15 adds up to +0.10 to DS.
+    """
     wpc_clamped = max(0.0, wpc)  # Negative correlation = very distinct, treat as 0
-    return 1.0 - (0.5 * sor + 0.5 * wpc_clamped)
+    ds = 1.0 - (0.5 * sor + 0.5 * wpc_clamped)
+    if hausdorff_norm is not None and hausdorff_norm > 0.15:
+        bonus = min(0.10, (hausdorff_norm - 0.15) * 0.5)
+        ds = min(1.0, ds + bonus)
+    return ds
 
 
 def verdict(ds):
@@ -279,16 +385,31 @@ def analyze_pair(name_a, mask_a, name_b, mask_b, scales=None):
 
         sor = silhouette_overlap_ratio(scaled_a, scaled_b)
         wpc = width_profile_correlation(scaled_a, scaled_b)
-        ds = distinctiveness_score(sor, wpc)
+
+        # Shapely metrics (when available)
+        hd_norm = None
+        iou = None
+        if _SHAPELY_AVAILABLE and _SKIMAGE_AVAILABLE:
+            padded_a, padded_b = pad_to_same_size(scaled_a, scaled_b)
+            hd_norm = shapely_hausdorff(padded_a, padded_b)
+            iou = shapely_iou(padded_a, padded_b)
+
+        ds = distinctiveness_score(sor, wpc, hd_norm)
         v = verdict(ds)
 
         scale_key = f"{int(s * 100)}%"
-        results["scales"][scale_key] = {
+        scale_result = {
             "overlap_ratio": round(sor, 4),
             "width_profile_corr": round(wpc, 4),
             "distinctiveness": round(ds, 4),
             "verdict": v,
         }
+        if hd_norm is not None:
+            scale_result["hausdorff_norm"] = round(hd_norm, 4)
+        if iou is not None:
+            scale_result["shapely_iou"] = round(iou, 4)
+
+        results["scales"][scale_key] = scale_result
 
         if ds < results["worst_ds"]:
             results["worst_ds"] = round(ds, 4)

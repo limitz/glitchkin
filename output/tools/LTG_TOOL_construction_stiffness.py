@@ -5,7 +5,7 @@
 # the copyright holder to assign the relevant rights to the contributing AI entity or entities
 # upon such time as they acquire recognised legal personhood under applicable law.
 """
-LTG_TOOL_construction_stiffness.py — v1.0.0 (Cycle 50, Kai Nakamura)
+LTG_TOOL_construction_stiffness.py — v2.0.0 (Cycle 51, Kai Nakamura)
 
 Construction Stiffness Detector.
 
@@ -49,7 +49,13 @@ Usage:
   --min-run         Minimum consecutive pixels for a "straight run" (default 8).
   --straightness    Max deviation ratio for straight classification (default 0.02).
 
-Author: Kai Nakamura — Cycle 50
+v2.0.0 C51 — scikit-image backend: Canny via skimage.feature.canny, contour tracing
+             via skimage.measure.find_contours. Produces cleaner contours with
+             sub-pixel accuracy. Falls back to cv2 then PIL if skimage unavailable.
+             Shapely LineString used for contour straightness analysis when available
+             (faster, more numerically stable simplify-based detection).
+
+Author: Kai Nakamura — Cycle 50 (v1), Cycle 51 (v2)
 Date: 2026-03-30
 """
 
@@ -60,6 +66,20 @@ import json
 import math
 import numpy as np
 from PIL import Image, ImageDraw
+
+try:
+    from skimage.feature import canny as skimage_canny
+    from skimage.measure import find_contours as skimage_find_contours
+    from skimage.filters import gaussian as skimage_gaussian
+    _SKIMAGE_AVAILABLE = True
+except ImportError:
+    _SKIMAGE_AVAILABLE = False
+
+try:
+    from shapely.geometry import LineString as ShapelyLineString
+    _SHAPELY_AVAILABLE = True
+except ImportError:
+    _SHAPELY_AVAILABLE = False
 
 try:
     import cv2
@@ -111,6 +131,28 @@ def extract_silhouette_mask(img, bg_tolerance=BG_TOLERANCE):
     return mask
 
 
+def extract_outline_skimage(mask):
+    """Use scikit-image Canny + find_contours for sub-pixel outline extraction.
+    Returns list of contour point arrays (each Nx2, dtype float) and edge image."""
+    # Normalize mask to float [0,1]
+    mask_f = (mask > 127).astype(np.float64)
+    # Smooth slightly before edge detection
+    smoothed = skimage_gaussian(mask_f, sigma=1.0, preserve_range=True)
+    edges = skimage_canny(smoothed, sigma=0.5, low_threshold=0.3, high_threshold=0.7)
+    # find_contours returns list of (N,2) arrays in (row, col) order
+    contours_rc = skimage_find_contours(mask_f, level=0.5)
+    # Convert to (x, y) format for compatibility
+    contours = []
+    for c in contours_rc:
+        if len(c) < 3:
+            continue
+        # c is (row, col) -> convert to (x, y) = (col, row)
+        xy = np.column_stack([c[:, 1], c[:, 0]])
+        contours.append(xy)
+    edge_img = (edges * 255).astype(np.uint8)
+    return contours, edge_img
+
+
 def extract_outline_cv2(mask):
     """Use OpenCV Canny + contour finding to get outline points.
     Returns list of contour point arrays and the edge image."""
@@ -148,6 +190,121 @@ def extract_outline_pil(mask_np):
 
 
 # ─── STRAIGHTNESS ANALYSIS ──────────────────────────────────────────────────
+
+
+def analyze_contour_straightness_shapely(points, min_run=DEFAULT_MIN_RUN,
+                                          straightness_threshold=DEFAULT_STRAIGHTNESS):
+    """Shapely-based straightness analysis using Douglas-Peucker simplification.
+
+    Strategy: simplify the contour with a tight tolerance. Long segments in the
+    simplified line correspond to straight runs in the original. We map each
+    original point to its nearest simplified segment and measure deviation.
+
+    This is faster and more numerically stable than the sliding-window approach
+    for large contours."""
+    n = len(points)
+    if n < min_run:
+        return {
+            "total_pixels": n,
+            "straight_pixels": 0,
+            "curved_pixels": n,
+            "straight_pct": 0.0,
+            "longest_straight_run": 0,
+            "straight_runs": [],
+        }
+
+    line = ShapelyLineString(points)
+    # Simplify with tolerance proportional to straightness_threshold * typical segment length
+    # A tighter tolerance means more segments kept = more curves detected
+    avg_seg_len = line.length / max(n - 1, 1)
+    tolerance = straightness_threshold * avg_seg_len * min_run
+    simplified = line.simplify(tolerance, preserve_topology=True)
+    simp_coords = list(simplified.coords)
+
+    # Build segments from simplified line
+    segments = []
+    for i in range(len(simp_coords) - 1):
+        x1, y1 = simp_coords[i]
+        x2, y2 = simp_coords[i + 1]
+        seg_len = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+        segments.append((x1, y1, x2, y2, seg_len))
+
+    # Map original points to simplified segments
+    is_straight = [False] * n
+    straight_runs = []
+    current_run_start = None
+    current_seg_idx = 0
+
+    for i, (px, py) in enumerate(points):
+        # Find nearest simplified segment
+        best_seg = 0
+        best_dist = float('inf')
+        for si, (x1, y1, x2, y2, sl) in enumerate(segments):
+            d = _point_to_seg_dist(px, py, x1, y1, x2, y2)
+            if d < best_dist:
+                best_dist = d
+                best_seg = si
+
+        seg = segments[best_seg]
+        # A point is on a "straight" segment if the segment is long enough
+        if seg[4] >= min_run:
+            is_straight[i] = True
+
+    # Extract runs
+    run_start = None
+    for i in range(n):
+        if is_straight[i]:
+            if run_start is None:
+                run_start = i
+        else:
+            if run_start is not None:
+                run_len = i - run_start
+                if run_len >= min_run:
+                    straight_runs.append({
+                        "start": run_start,
+                        "end": i,
+                        "length": run_len,
+                    })
+                run_start = None
+    if run_start is not None:
+        run_len = n - run_start
+        if run_len >= min_run:
+            straight_runs.append({
+                "start": run_start,
+                "end": n,
+                "length": run_len,
+            })
+
+    # Recompute is_straight based on valid runs only
+    is_straight_final = [False] * n
+    longest_run = 0
+    for run in straight_runs:
+        for k in range(run["start"], min(run["end"], n)):
+            is_straight_final[k] = True
+        longest_run = max(longest_run, run["length"])
+
+    straight_count = sum(is_straight_final)
+    return {
+        "total_pixels": n,
+        "straight_pixels": straight_count,
+        "curved_pixels": n - straight_count,
+        "straight_pct": straight_count / n if n > 0 else 0.0,
+        "longest_straight_run": longest_run,
+        "straight_runs": straight_runs,
+        "is_straight": is_straight_final,
+    }
+
+
+def _point_to_seg_dist(px, py, x1, y1, x2, y2):
+    """Distance from point to line segment (not infinite line)."""
+    dx, dy = x2 - x1, y2 - y1
+    length_sq = dx * dx + dy * dy
+    if length_sq < 1e-9:
+        return math.sqrt((px - x1) ** 2 + (py - y1) ** 2)
+    t = max(0.0, min(1.0, ((px - x1) * dx + (py - y1) * dy) / length_sq))
+    proj_x = x1 + t * dx
+    proj_y = y1 + t * dy
+    return math.sqrt((px - proj_x) ** 2 + (py - proj_y) ** 2)
 
 
 def point_to_line_distance(px, py, x1, y1, x2, y2):
@@ -269,34 +426,53 @@ def verdict(score):
 
 def analyze_image(filepath, min_run=DEFAULT_MIN_RUN,
                   straightness=DEFAULT_STRAIGHTNESS):
-    """Analyze a single character image for construction stiffness."""
+    """Analyze a single character image for construction stiffness.
+
+    Backend priority: skimage > cv2 > PIL fallback.
+    Straightness analysis: Shapely (if available) > sliding-window.
+    """
     img = Image.open(filepath).convert("RGB")
     mask = extract_silhouette_mask(img)
 
-    all_points = []
+    total_straight = 0
+    total_curved = 0
+    total_pixels = 0
+    longest_run = 0
+    all_runs = []
+    backend_name = "pil"
 
-    if _CV2_AVAILABLE:
-        contours, edges = extract_outline_cv2(mask)
+    # Choose straightness analyzer
+    use_shapely = _SHAPELY_AVAILABLE
+    straightness_fn = (analyze_contour_straightness_shapely if use_shapely
+                       else analyze_contour_straightness)
+
+    if _SKIMAGE_AVAILABLE:
+        backend_name = "skimage" + ("+shapely" if use_shapely else "")
+        contours, edges = extract_outline_skimage(mask)
         for contour in contours:
-            if len(contour) < min_run:
+            n_pts = len(contour)
+            if n_pts < min_run:
+                total_curved += n_pts
+                total_pixels += n_pts
                 continue
-            pts = [(int(p[0][0]), int(p[0][1])) for p in contour]
-            all_points.extend(pts)
+            pts = [(float(p[0]), float(p[1])) for p in contour]
+            result = straightness_fn(pts, min_run, straightness)
+            total_straight += result["straight_pixels"]
+            total_curved += result["curved_pixels"]
+            total_pixels += result["total_pixels"]
+            longest_run = max(longest_run, result["longest_straight_run"])
+            all_runs.extend(result["straight_runs"])
 
-        # Analyze each contour separately and aggregate
-        total_straight = 0
-        total_curved = 0
-        total_pixels = 0
-        longest_run = 0
-        all_runs = []
-
+    elif _CV2_AVAILABLE:
+        backend_name = "cv2" + ("+shapely" if use_shapely else "")
+        contours, edges = extract_outline_cv2(mask)
         for contour in contours:
             if len(contour) < min_run:
                 total_curved += len(contour)
                 total_pixels += len(contour)
                 continue
             pts = [(int(p[0][0]), int(p[0][1])) for p in contour]
-            result = analyze_contour_straightness(pts, min_run, straightness)
+            result = straightness_fn(pts, min_run, straightness)
             total_straight += result["straight_pixels"]
             total_curved += result["curved_pixels"]
             total_pixels += result["total_pixels"]
@@ -307,7 +483,6 @@ def analyze_image(filepath, min_run=DEFAULT_MIN_RUN,
         points, edge_mask = extract_outline_pil(mask)
         total_pixels = len(points)
         if total_pixels >= min_run:
-            # Sort points for contour ordering (simple row-major, not ideal but functional)
             result = analyze_contour_straightness(points, min_run, straightness)
             total_straight = result["straight_pixels"]
             total_curved = result["curved_pixels"]
@@ -334,7 +509,7 @@ def analyze_image(filepath, min_run=DEFAULT_MIN_RUN,
         "stiffness_score": round(ss, 4),
         "verdict": v,
         "num_straight_runs": len(all_runs),
-        "backend": "cv2" if _CV2_AVAILABLE else "pil",
+        "backend": backend_name,
     }
 
 
@@ -363,42 +538,60 @@ def generate_visualization(filepath, output_path, min_run=DEFAULT_MIN_RUN,
     w, h = img.size
     viz = Image.new("RGB", (w, h), (30, 30, 30))
 
-    # Draw silhouette as dark grey
-    mask_img = Image.fromarray(mask)
-    for y in range(h):
-        for x in range(w):
-            if mask[y, x] > 127:
-                viz.putpixel((x, y), (60, 60, 60))
+    # Draw silhouette as dark grey using numpy for speed
+    viz_arr = np.array(viz)
+    fg = mask > 127
+    viz_arr[fg] = [60, 60, 60]
 
-    draw = ImageDraw.Draw(viz)
+    use_shapely = _SHAPELY_AVAILABLE
+    straightness_fn = (analyze_contour_straightness_shapely if use_shapely
+                       else analyze_contour_straightness)
 
-    if _CV2_AVAILABLE:
+    def _draw_contour_on_arr(pts, is_straight_flags, arr, width, height):
+        """Draw contour points onto numpy array: red=straight, green=curved."""
+        for idx, (px_f, py_f) in enumerate(pts):
+            px, py = int(round(px_f)), int(round(py_f))
+            if 0 <= px < width and 0 <= py < height:
+                if idx < len(is_straight_flags) and is_straight_flags[idx]:
+                    arr[py, px] = [255, 50, 50]   # Red = straight
+                else:
+                    arr[py, px] = [0, 200, 0]      # Green = curved
+
+    if _SKIMAGE_AVAILABLE:
+        contours, edges = extract_outline_skimage(mask)
+        for contour in contours:
+            n_pts = len(contour)
+            if n_pts < min_run:
+                for p in contour:
+                    px, py = int(round(p[0])), int(round(p[1]))
+                    if 0 <= px < w and 0 <= py < h:
+                        viz_arr[py, px] = [0, 200, 0]
+                continue
+            pts = [(float(p[0]), float(p[1])) for p in contour]
+            result = straightness_fn(pts, min_run, straightness)
+            is_straight = result.get("is_straight", [False] * len(pts))
+            _draw_contour_on_arr(pts, is_straight, viz_arr, w, h)
+
+    elif _CV2_AVAILABLE:
         contours, edges = extract_outline_cv2(mask)
         for contour in contours:
             if len(contour) < min_run:
-                # Draw all as green (curved)
                 for p in contour:
                     px, py = int(p[0][0]), int(p[0][1])
                     if 0 <= px < w and 0 <= py < h:
-                        viz.putpixel((px, py), (0, 200, 0))
+                        viz_arr[py, px] = [0, 200, 0]
                 continue
-
             pts = [(int(p[0][0]), int(p[0][1])) for p in contour]
-            result = analyze_contour_straightness(pts, min_run, straightness)
+            result = straightness_fn(pts, min_run, straightness)
             is_straight = result.get("is_straight", [False] * len(pts))
-
-            for idx, (px, py) in enumerate(pts):
-                if 0 <= px < w and 0 <= py < h:
-                    if idx < len(is_straight) and is_straight[idx]:
-                        viz.putpixel((px, py), (255, 50, 50))  # Red = straight
-                    else:
-                        viz.putpixel((px, py), (0, 200, 0))    # Green = curved
+            _draw_contour_on_arr(pts, is_straight, viz_arr, w, h)
     else:
         points, edge_mask = extract_outline_pil(mask)
-        # All green for PIL fallback (no contour ordering = unreliable straight detection)
-        for y, x in points:
-            if 0 <= x < w and 0 <= y < h:
-                viz.putpixel((x, y), (0, 200, 0))
+        for y_pt, x_pt in points:
+            if 0 <= x_pt < w and 0 <= y_pt < h:
+                viz_arr[y_pt, x_pt] = [0, 200, 0]
+
+    viz = Image.fromarray(viz_arr)
 
     # Ensure within 1280px
     vw, vh = viz.size
@@ -419,7 +612,13 @@ def format_report(results):
     lines.append("=" * 70)
     lines.append("CONSTRUCTION STIFFNESS REPORT")
     lines.append("=" * 70)
-    lines.append(f"Backend: {'OpenCV (cv2)' if _CV2_AVAILABLE else 'PIL fallback (reduced accuracy)'}")
+    if _SKIMAGE_AVAILABLE:
+        be = "scikit-image" + (" + Shapely" if _SHAPELY_AVAILABLE else "")
+    elif _CV2_AVAILABLE:
+        be = "OpenCV (cv2)" + (" + Shapely" if _SHAPELY_AVAILABLE else "")
+    else:
+        be = "PIL fallback (reduced accuracy)"
+    lines.append(f"Backend: {be}")
     lines.append("")
 
     for r in results:
@@ -456,7 +655,13 @@ def format_markdown_report(results):
     lines = []
     lines.append("# Construction Stiffness Report")
     lines.append("")
-    lines.append(f"**Backend:** {'OpenCV (cv2)' if _CV2_AVAILABLE else 'PIL fallback'}")
+    if _SKIMAGE_AVAILABLE:
+        be = "scikit-image" + (" + Shapely" if _SHAPELY_AVAILABLE else "")
+    elif _CV2_AVAILABLE:
+        be = "OpenCV (cv2)" + (" + Shapely" if _SHAPELY_AVAILABLE else "")
+    else:
+        be = "PIL fallback"
+    lines.append(f"**Backend:** {be}")
     lines.append("")
 
     lines.append("| File | Outline px | Straight % | Longest Run | Stiffness | Verdict |")

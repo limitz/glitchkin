@@ -1,4 +1,6 @@
+# agent files
 .claude/
+MEMORY.md
 
 # Reference images — local only, not for commit (copyright/licensing)
 reference/

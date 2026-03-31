@@ -7,7 +7,7 @@
 LTG_TOOL_color_verify.py
 ==============================
 Canonical color verification utility for "Luma & the Glitchkin."
-Version 3.0.0 — adds CORRUPT_AMBER fringe detection mode.
+Version 4.0.0 — adds colour-science ΔE2000 perceptual color distance.
 
 All v001/v002 API is preserved unchanged. New function
 :func:`detect_corrupt_amber` validates that GL-07 (#FF8C00) pixels in a
@@ -18,10 +18,15 @@ Author: Kai Nakamura (Technical Art Engineer)
 Created: Cycle 25 — 2026-03-29  (v001)
 Updated: Cycle 31 — 2026-03-29  (v002 — histogram mode)
 Updated: Cycle 47 — 2026-03-30  (v003 — CORRUPT_AMBER detection mode, Jordan Reed)
-Version: 3.0.0
+Version: 4.0.0
 
 CHANGELOG
 ---------
+v4.0.0  C51 — Add ``verify_canonical_colors_deltaE()`` function that uses colour-science
+               library for perceptually accurate ΔE2000 color distance instead of
+               hue-angle-only comparison. This catches lightness and chroma drift
+               that pure hue comparison misses. Falls back gracefully if colour-science
+               is not installed. New ``--delta-e`` CLI flag.
 v3.0.0  C47 — Add ``detect_corrupt_amber()`` function. Given a composited RGB image
                and CRT bounding box, finds GL-07 hue pixels, validates they are
                spatially contained and have composited intensity consistent with
@@ -35,6 +40,13 @@ v1.0.0  C25 — Initial release.
 """
 
 import colorsys
+
+try:
+    import colour as colour_science
+    import numpy as np
+    _COLOUR_SCIENCE_AVAILABLE = True
+except ImportError:
+    _COLOUR_SCIENCE_AVAILABLE = False
 
 
 # ---------------------------------------------------------------------------
@@ -381,6 +393,137 @@ def verify_canonical_colors(img, palette_dict, max_delta_hue=5, histogram=False)
 
 
 # ---------------------------------------------------------------------------
+# ΔE2000 Verification Mode (v4.0.0 — C51)
+# ---------------------------------------------------------------------------
+
+# ΔE2000 thresholds (industry standard perceptual difference)
+# JND (just noticeable difference) ≈ 1.0
+# ΔE < 2.0  = imperceptible to most observers
+# ΔE 2-5    = noticeable on close inspection
+# ΔE 5-10   = obvious difference
+# ΔE > 10   = colors perceived as completely different
+_DELTA_E_PASS_THRESHOLD = 5.0    # max acceptable ΔE2000 from canonical
+_DELTA_E_WARN_THRESHOLD = 8.0    # above this = likely wrong color
+
+
+def _rgb_to_lab(r, g, b):
+    """Convert sRGB (0-255) to CIE Lab using colour-science.
+    Returns Lab as numpy array [L, a, b]."""
+    if not _COLOUR_SCIENCE_AVAILABLE:
+        return None
+    rgb = np.array([r / 255.0, g / 255.0, b / 255.0])
+    xyz = colour_science.sRGB_to_XYZ(rgb)
+    lab = colour_science.XYZ_to_Lab(xyz)
+    return lab
+
+
+def compute_delta_e_2000(rgb_a, rgb_b):
+    """Compute ΔE2000 between two RGB colors (0-255 each).
+
+    Returns float or None if colour-science is not available.
+    """
+    if not _COLOUR_SCIENCE_AVAILABLE:
+        return None
+    lab_a = _rgb_to_lab(*rgb_a)
+    lab_b = _rgb_to_lab(*rgb_b)
+    if lab_a is None or lab_b is None:
+        return None
+    return float(colour_science.delta_E(lab_a, lab_b, method='CIE 2000'))
+
+
+def verify_canonical_colors_deltaE(img, palette_dict=None,
+                                     max_delta_e=_DELTA_E_PASS_THRESHOLD):
+    """
+    Verify canonical colors using ΔE2000 perceptual color distance.
+
+    Unlike the hue-based verify_canonical_colors(), this catches:
+    - Lightness drift (same hue but too dark/light)
+    - Chroma drift (same hue but desaturated)
+    - Combined hue+lightness+chroma shifts
+
+    Parameters
+    ----------
+    img : PIL.Image
+        The image to verify.
+    palette_dict : dict or None
+        Color palette to check. Defaults to canonical LTG palette.
+    max_delta_e : float
+        Maximum acceptable ΔE2000 distance. Default: 5.0.
+
+    Returns
+    -------
+    dict
+        Per-color results keyed by color name, plus "overall_pass" and
+        "delta_e_available" keys. Each color entry includes delta_e_2000
+        alongside the traditional hue delta for comparison.
+    """
+    if not _COLOUR_SCIENCE_AVAILABLE:
+        return {
+            "delta_e_available": False,
+            "overall_pass": True,
+            "message": "colour-science not installed; ΔE2000 verification skipped.",
+        }
+
+    if palette_dict is None:
+        palette_dict = get_canonical_palette()
+
+    results = {"delta_e_available": True}
+    all_pass = True
+
+    for color_name, target_rgb in palette_dict.items():
+        matched = _collect_near_color_pixels(img, target_rgb, radius=40)
+
+        if not matched:
+            results[color_name] = {
+                "target_rgb": target_rgb,
+                "status": "not_found",
+                "pass": True,
+            }
+            continue
+
+        # Compute median matched pixel color
+        if len(matched) > 0:
+            arr = np.array(matched, dtype=np.float64)
+            median_rgb = tuple(int(round(v)) for v in np.median(arr, axis=0))
+        else:
+            continue
+
+        # ΔE2000
+        de = compute_delta_e_2000(target_rgb, median_rgb)
+        if de is None:
+            continue
+
+        # Also compute traditional hue delta for comparison
+        target_hue = _rgb_to_hue(*target_rgb)
+        found_hue = _rgb_to_hue(*median_rgb)
+        hue_delta = _hue_delta(target_hue, found_hue) if (target_hue >= 0 and found_hue >= 0) else None
+
+        color_pass = de <= max_delta_e
+        if not color_pass:
+            all_pass = False
+
+        # Lab values for reporting
+        target_lab = _rgb_to_lab(*target_rgb)
+        found_lab = _rgb_to_lab(*median_rgb)
+
+        entry = {
+            "target_rgb": target_rgb,
+            "found_rgb": median_rgb,
+            "delta_e_2000": round(de, 2),
+            "hue_delta": round(hue_delta, 2) if hue_delta is not None else None,
+            "target_lab": [round(v, 2) for v in target_lab] if target_lab is not None else None,
+            "found_lab": [round(v, 2) for v in found_lab] if found_lab is not None else None,
+            "pass": color_pass,
+            "sample_count": len(matched),
+            "verdict": "PASS" if de <= max_delta_e else ("WARN" if de <= _DELTA_E_WARN_THRESHOLD else "FAIL"),
+        }
+        results[color_name] = entry
+
+    results["overall_pass"] = all_pass
+    return results
+
+
+# ---------------------------------------------------------------------------
 # CORRUPT_AMBER Detection Mode (v003 — C47)
 # ---------------------------------------------------------------------------
 
@@ -523,7 +666,7 @@ if __name__ == "__main__":
     from PIL import Image, ImageDraw
 
     parser = argparse.ArgumentParser(
-        description="LTG color verification utility — v3.0.0",
+        description="LTG color verification utility — v4.0.0",
     )
     parser.add_argument(
         "image", nargs="?", default=None,
@@ -540,6 +683,14 @@ if __name__ == "__main__":
     parser.add_argument(
         "--crt-box", nargs=4, type=int, metavar=("X0", "Y0", "X1", "Y1"),
         help="CRT glow bounding box for CORRUPT_AMBER spatial containment check",
+    )
+    parser.add_argument(
+        "--delta-e", action="store_true",
+        help="Run ΔE2000 perceptual color distance verification (v4.0.0, requires colour-science)",
+    )
+    parser.add_argument(
+        "--max-delta-e", type=float, default=_DELTA_E_PASS_THRESHOLD,
+        help=f"Maximum acceptable ΔE2000 distance (default {_DELTA_E_PASS_THRESHOLD})",
     )
     args = parser.parse_args()
 
@@ -569,6 +720,30 @@ if __name__ == "__main__":
                     print(format_histogram(v["hue_histogram"], v["canonical_bucket_index"]))
 
         overall = report["overall_pass"]
+
+        # ΔE2000 verification (v4.0.0)
+        if args.delta_e:
+            de_report = verify_canonical_colors_deltaE(img_in, palette, max_delta_e=args.max_delta_e)
+            print(f"\nΔE2000 verification (colour-science):")
+            if not de_report.get("delta_e_available", False):
+                print(f"  {de_report.get('message', 'Not available')}")
+            else:
+                for k2, v2 in de_report.items():
+                    if k2 in ("overall_pass", "delta_e_available", "message"):
+                        continue
+                    if isinstance(v2, dict):
+                        status = v2.get("status", "checked")
+                        if status in ("not_found", "achromatic_target"):
+                            print(f"  {k2:20s}  status={status}")
+                        else:
+                            vrd = v2.get("verdict", "?")
+                            print(f"  {k2:20s}  ΔE2000={v2['delta_e_2000']:.2f}  "
+                                  f"hue_delta={v2.get('hue_delta', 'N/A')}°  "
+                                  f"[{vrd}]  n={v2['sample_count']}")
+                            if v2.get("target_lab"):
+                                print(f"    target_Lab={v2['target_lab']}  found_Lab={v2['found_lab']}")
+                print(f"\n  ΔE2000 overall: {'PASS' if de_report['overall_pass'] else 'FAIL'}")
+                overall = overall and de_report["overall_pass"]
 
         # CORRUPT_AMBER detection (v003)
         if args.corrupt_amber:

@@ -31,5 +31,10 @@ Failure to do this causes subsequent draws to silently go to a stale surface (co
 - NumPy and OpenCV (cv2) authorized for array ops and analysis (OpenCV default is BGR — convert on load)
 - PyTorch authorized if neural analysis needed
 - **pycairo / cairocffi authorized for character rendering** (bezier curves, anti-aliased strokes, gradient fills). Cairo surfaces convert to PIL Images for compositing.
+- **bezier** (`pip install bezier`) — proper bezier curve math: arc-length parameterization, subdivision, intersection detection, curvature. Wrapped by `LTG_TOOL_curve_utils.py`. Prefer over hand-rolled bezier functions.
+- **Shapely** (`pip install Shapely`) — geometric polygon operations for silhouette analysis: overlap ratio, IoU, outline simplification, width profiles. Wrapped by `LTG_TOOL_curve_utils.py`. Prefer over pixel-level mask operations for resolution-independent QA.
 - All freely downloadable libraries are allowed (open source preferred; proprietary OK if license permits use in producing the pitch)
 - All procedural elements must use seeded RNG for reproducibility
+
+### Bezier Curve Migration (C51)
+New tools should import bezier utilities from `LTG_TOOL_curve_utils.py` instead of defining local bezier functions. Existing tools with hand-rolled bezier functions (bezier3, bezier4, bezier_point, etc.) should migrate incrementally. Run `python3 LTG_TOOL_curve_utils.py --audit` to check migration status.
